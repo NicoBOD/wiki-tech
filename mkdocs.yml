@@ -22,13 +22,20 @@ theme:
   custom_dir: overrides
   features:
     - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
     - navigation.top
+    - navigation.path
+    - navigation.indexes
+    - navigation.expand
+    - navigation.footer
     - search.highlight
     - search.suggest
+    - search.share
     - content.code.copy
     - content.action.edit
     - content.action.view
+    - toc.follow
 
 plugins:
   - search:
@@ -83,3 +90,4 @@ markdown_extensions:
   - tables
   - toc:
       permalink: true
+      toc_depth: 3
