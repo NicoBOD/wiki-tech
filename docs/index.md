@@ -1,3 +1,7 @@
+---
+icon: material/home
+---
+
 # Bienvenue sur Wiki Tech
 
 Wiki technique personnel de **NicoBOD** — administrateur systèmes et réseaux, cloud & cybersécurité.
