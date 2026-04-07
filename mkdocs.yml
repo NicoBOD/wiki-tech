@@ -32,6 +32,8 @@ theme:
 plugins:
   - search:
       lang: fr
+  - tags:
+      tags_file: tags.md
 
 nav:
   - Accueil: index.md
@@ -44,6 +46,7 @@ nav:
   - Logiciels: logiciels/index.md
   - Debug: debug/index.md
   - Astuces: astuces/index.md
+  - Tags: tags.md
 
 markdown_extensions:
   - admonition
