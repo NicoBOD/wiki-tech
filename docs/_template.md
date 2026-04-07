@@ -88,6 +88,22 @@ Description de l'erreur ou du symptôme observé.
 |-------------------|-------------|
 | `commande` | Ce qu'elle fait |
 
+<!-- BLOC: Checklist — Utilisez pour les listes de vérification -->
+## Checklist
+
+- [x] Étape terminée
+- [ ] Étape à faire
+- [ ] Étape à faire
+
+<!-- BLOC: Glossaire — Utilisez pour définir des termes techniques -->
+## Glossaire
+
+Terme 1
+:   Définition du terme 1.
+
+Terme 2
+:   Définition du terme 2.
+
 <!-- BLOC: Vérification — Utilisez après une procédure ou une solution -->
 ## Vérification
 
@@ -105,3 +121,90 @@ commande de vérification
 
 - [Lien 1](url) — Description
 - [Lien 2](url) — Description
+
+<!-- ============================================================ -->
+<!-- RÉFÉRENCE SYNTAXE                                             -->
+<!-- Aide-mémoire des syntaxes Markdown disponibles sur ce wiki.   -->
+<!-- Supprimez cette section dans vos notes — elle est juste là    -->
+<!-- pour vous rappeler ce qui est disponible.                     -->
+<!-- ============================================================ -->
+
+<!-- RÉFÉRENCE: Syntaxes Markdown disponibles
+
+=== Mise en forme ===
+**gras**                            Texte en gras
+*italique*                          Texte en italique
+==texte surligné==                  Texte surligné (mark)
+^^texte^^                           Exposant (caret)
+~texte~                             Indice (tilde)
+~~texte barré~~                     Texte barré (tilde)
+`code inline`                       Code en ligne
+++ctrl+s++                          Touches clavier (keys)
+
+=== Suivi de modifications (critic) ===
+{++texte ajouté++}                  Ajout
+{--texte supprimé--}                Suppression
+{~~ancien~>nouveau~~}               Remplacement
+{==texte commenté==}{>>raison<<}    Commentaire
+
+=== Symboles automatiques (smartsymbols) ===
+(c) (r) (tm)                        © ® ™
++/- -->  <--  <-->                   ± → ← ↔
+1/4 1/2 3/4                          ¼ ½ ¾
+!=                                   ≠
+
+=== Listes de tâches ===
+- [x] Tâche terminée
+- [ ] Tâche à faire
+
+=== Listes de définitions ===
+Terme
+:   Définition du terme.
+
+=== Notes de bas de page ===
+Texte avec une note[^1].
+[^1]: Contenu de la note de bas de page.
+
+=== Abréviations (tooltip au survol) ===
+*[API]: Application Programming Interface
+*[DNS]: Domain Name System
+
+=== Onglets ===
+=== "Onglet 1"
+    Contenu de l'onglet 1.
+=== "Onglet 2"
+    Contenu de l'onglet 2.
+
+=== Admonitions (boîtes d'alerte) ===
+!!! note "Titre"         Note / information
+!!! tip "Titre"          Astuce
+!!! warning "Titre"      Avertissement
+!!! danger "Titre"       Danger
+!!! success "Titre"      Succès
+!!! failure "Titre"      Échec
+!!! abstract "Titre"     Résumé
+!!! question "Titre"     Question
+!!! example "Titre"      Exemple
+!!! quote "Titre"        Citation
+
+??? note "Titre"         Admonition dépliable (fermée par défaut)
+???+ note "Titre"        Admonition dépliable (ouverte par défaut)
+
+=== Blocs de code ===
+```python title="script.py" linenums="1" hl_lines="2 3"
+def hello():
+    print("Hello")      # ligne surlignée
+    return True          # ligne surlignée
+```
+
+=== Icônes Material ===
+:material-server:       Serveur
+:material-lan:          Réseau
+:material-cloud:        Cloud
+:material-shield-lock:  Sécurité
+:material-robot:        IA
+:material-cog:          Automatisation
+:material-bug:          Bug
+:material-lightbulb:    Astuce
+
+-->
