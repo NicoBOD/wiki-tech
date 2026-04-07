@@ -51,7 +51,9 @@ nav:
   - Cloud: cloud/index.md
   - Cybersécurité: cybersecurite/index.md
   - IA: ia/index.md
-  - Automatisation: automatisation/index.md
+  - Automatisation:
+    - automatisation/index.md
+    - Les bases de n8n: automatisation/bases-n8n.md
   - Logiciels: logiciels/index.md
   - Debug:
     - debug/index.md
