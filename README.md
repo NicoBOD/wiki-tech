@@ -4,7 +4,7 @@ Wiki technique personnel de NicoBOD — notes, découvertes, débugs et astuces.
 
 Thèmes : systèmes, réseaux, cloud, cybersécurité, IA, automatisation, logiciels.
 
-**Consulter le wiki :** [nicobod.github.io/wiki-tech](https://nicobod.github.io/wiki-tech)
+**Consulter le wiki :** [wiki.bodaine.fr](https://wiki.bodaine.fr)
 
 ## Ajouter du contenu
 
