@@ -54,8 +54,10 @@ nav:
 copyright: >
   &copy; 2026 Nicolas BODAINE — Hébergé sur
   <a href="https://pages.github.com" target="_blank" rel="noopener">GitHub Pages</a>
+  — <a href="mentions-legales/">Mentions légales</a>
 
 extra:
+  generator: false
   social:
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/in/bodaine
