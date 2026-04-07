@@ -87,6 +87,31 @@
   background-color: rgba(17, 148, 142, 0.1);
 }
 
+/* --- Homepage cards --- */
+.grid.cards > ul > li {
+  border: 1px solid rgba(17, 148, 142, 0.2);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.grid.cards > ul > li:hover {
+  border-color: #11948e;
+  box-shadow: 0 4px 12px rgba(17, 148, 142, 0.15);
+}
+
+.grid.cards > ul > li .twemoji svg,
+.grid.cards > ul > li .middle svg {
+  fill: #11948e;
+}
+
+[data-md-color-scheme="slate"] .grid.cards > ul > li {
+  border-color: rgba(17, 148, 142, 0.3);
+}
+
+[data-md-color-scheme="slate"] .grid.cards > ul > li:hover {
+  border-color: #15b8b1;
+  box-shadow: 0 4px 12px rgba(17, 148, 142, 0.25);
+}
+
 /* --- Scrollbar (webkit) --- */
 ::-webkit-scrollbar-thumb {
   background-color: #11948e;
