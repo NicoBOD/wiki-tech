@@ -1,28 +1,30 @@
 {% extends "base.html" %}
 
 {% block extrahead %}
-  {% set title = page.meta.get("title", page.title) %}
-  {% if not page.is_homepage %}
-    {% set full_title = title ~ " — " ~ config.site_name %}
-  {% else %}
-    {% set full_title = config.site_name %}
+  {% if page %}
+    {% set title = page.meta.get("title", page.title) %}
+    {% if not page.is_homepage %}
+      {% set full_title = title ~ " — " ~ config.site_name %}
+    {% else %}
+      {% set full_title = config.site_name %}
+    {% endif %}
+    {% set description = page.meta.get("description", config.site_description) %}
+
+    <!-- SEO -->
+    <meta name="author" content="Nicolas BODAINE">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ full_title }}">
+    <meta property="og:description" content="{{ description }}">
+    <meta property="og:url" content="{{ page.canonical_url }}">
+    <meta property="og:site_name" content="{{ config.site_name }}">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{{ full_title }}">
+    <meta name="twitter:description" content="{{ description }}">
   {% endif %}
-  {% set description = page.meta.get("description", config.site_description) %}
-
-  <!-- SEO -->
-  <meta name="author" content="Nicolas BODAINE">
-  <meta name="robots" content="index, follow">
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="{{ full_title }}">
-  <meta property="og:description" content="{{ description }}">
-  <meta property="og:url" content="{{ page.canonical_url }}">
-  <meta property="og:site_name" content="{{ config.site_name }}">
-  <meta property="og:locale" content="fr_FR">
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="{{ full_title }}">
-  <meta name="twitter:description" content="{{ description }}">
 {% endblock %}
