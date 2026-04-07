@@ -10,14 +10,14 @@ theme:
   language: fr
   palette:
     - scheme: default
-      primary: indigo
-      accent: indigo
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-7
         name: Passer en mode sombre
     - scheme: slate
-      primary: indigo
-      accent: indigo
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-4
         name: Passer en mode clair
@@ -48,6 +48,9 @@ nav:
   - Debug: debug/index.md
   - Astuces: astuces/index.md
   - Tags: tags.md
+
+extra_css:
+  - stylesheets/extra.css
 
 markdown_extensions:
   - admonition
