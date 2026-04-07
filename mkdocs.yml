@@ -45,7 +45,9 @@ nav:
   - IA: ia/index.md
   - Automatisation: automatisation/index.md
   - Logiciels: logiciels/index.md
-  - Debug: debug/index.md
+  - Debug:
+    - debug/index.md
+    - NVIDIA — Écran noir après veille: debug/nvidia-veille-ecran-noir.md
   - Astuces: astuces/index.md
   - Tags: tags.md
 
