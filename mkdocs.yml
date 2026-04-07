@@ -1,9 +1,7 @@
 site_name: Wiki Tech — NicoBOD
 site_url: https://wiki.bodaine.fr/
 site_description: Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation
-repo_url: https://github.com/NicoBOD/wiki-tech
-repo_name: NicoBOD/wiki-tech
-edit_uri: edit/main/docs/
+edit_uri: https://github.com/NicoBOD/wiki-tech/edit/main/docs/
 
 theme:
   name: material
@@ -54,9 +52,7 @@ nav:
   - Tags: tags.md
 
 copyright: >
-  &copy; 2026 Nicolas BODAINE — Hébergé sur
-  <a href="https://pages.github.com" target="_blank" rel="noopener">GitHub Pages</a>
-  — <a href="mentions-legales/">Mentions légales</a>
+  <a href="mentions-legales/">Mentions légales</a>
 
 extra:
   generator: false
