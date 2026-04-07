@@ -21,6 +21,7 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Passer en mode clair
+  custom_dir: overrides
   features:
     - navigation.tabs
     - navigation.sections

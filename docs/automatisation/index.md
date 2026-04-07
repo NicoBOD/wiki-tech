@@ -1,5 +1,6 @@
 ---
 icon: material/cog
+description: Notes techniques sur n8n, scripts, Ansible, CI/CD et tâches planifiées (cron).
 ---
 
 # Automatisation

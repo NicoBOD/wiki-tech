@@ -1,5 +1,6 @@
 ---
 icon: material/home
+description: Wiki technique personnel de Nicolas BODAINE — notes sur les systèmes, réseaux, cloud, cybersécurité, IA et automatisation.
 ---
 
 # Bienvenue sur Wiki Tech

@@ -1,5 +1,6 @@
 ---
 icon: material/shield-lock
+description: Notes techniques sur le hardening, pentest, logs, SIEM et bonnes pratiques de cybersécurité.
 ---
 
 # Cybersécurité

@@ -1,5 +1,6 @@
 ---
 icon: material/apps
+description: Notes techniques sur les applications, configurations, outils et Docker.
 ---
 
 # Logiciels
