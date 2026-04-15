@@ -506,6 +506,36 @@ https://paperclip.tutotech.org/invite/pcp_bootstrap_xxxxx
 ```
 
 ---
+## Connexion à Claude via abonnement (sans clé API)
+
+### Contexte : deux façons d'utiliser Claude avec Paperclip
+
+Paperclip peut se connecter à Claude de deux manières différentes :
+
+| Méthode | Fonctionnement | Quand l'utiliser |
+|---------|----------------|-----------------|
+| **Clé API** (`ANTHROPIC_API_KEY`) | Appels directs à l'API Anthropic, facturés à l'usage (tokens) | Usage professionnel, volume important |
+| **Abonnement OAuth** | Utilise votre compte Claude.ai (Pro, Max, Team) via une connexion OAuth | Vous avez déjà un abonnement Claude actif |
+
+Ce guide décrit la méthode **abonnement OAuth**, qui permet d'utiliser Paperclip sans consommer de tokens API.
+
+!!! note "Claude CLI déjà inclus"
+    Contrairement à certains guides tiers, **il n'est pas nécessaire d'installer Node.js ni Claude CLI manuellement** dans le conteneur. L'image `ghcr.io/paperclipai/paperclip:latest` inclut déjà Claude CLI (`/usr/local/bin/claude`). Installer une deuxième version crée des conflits.
+
+---
+
+### Étape 10 : Préparer la persistance du token OAuth
+
+Le token d'authentification OAuth est stocké par Claude CLI dans un répertoire de configuration. Par défaut, ce répertoire est `~/.claude/` — qui se trouve dans la **couche éphémère** du conteneur et est effacé à chaque recréation (mise à jour d'image, `docker compose down && up`).
+
+La solution est de définir la variable `CLAUDE_CONFIG_DIR` pour pointer vers un chemin à l'intérieur du volume `/paperclip`, qui lui est persistant.
+
+Vérifiez que votre `docker-compose.yml` contient bien cette ligne dans la section `environment` du service `server` :
+
+```yaml title="docker-compose.yml (extrait)"
+environment:
+  # ...autres variables...
+  CLAUDE_CONFIG_DIR: "/paperclip/.claude-config"
 
 ## Problèmes rencontrés
 
