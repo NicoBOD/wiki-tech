@@ -223,7 +223,11 @@ services:
       BETTER_AUTH_SECRET: "${BETTER_AUTH_SECRET}"
       OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
       ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
+      # Stocke le token OAuth Claude CLI dans le volume persistant /paperclip
+      # Sans cette variable, le token est perdu à chaque recréation du conteneur
+      CLAUDE_CONFIG_DIR: "/paperclip/.claude-config"
     volumes:
+
       - paperclip-data:/paperclip
     depends_on:
       db:
@@ -244,6 +248,8 @@ volumes:
 | `PAPERCLIP_PUBLIC_URL` | `https://paperclip.tutotech.org` | URL publique utilisée pour les cookies d'auth et les redirections OAuth |
 | `restart: unless-stopped` | — | Le conteneur redémarre automatiquement après un reboot de la VM |
 | `depends_on` + `healthcheck` | — | Le serveur attend que PostgreSQL soit prêt avant de démarrer |
+| `CLAUDE_CONFIG_DIR` | `/paperclip/.claude-config` | Persiste le token OAuth de Claude CLI dans le volume — indispensable pour la connexion via abonnement |
+
 
 !!! warning "Adapter le domaine"
     Remplacez toutes les occurrences de `paperclip.tutotech.org` par votre propre domaine.
@@ -293,6 +299,21 @@ Cosmos Server stocke sa configuration dans `/var/lib/cosmos/cosmos.config.json`.
 
 !!! danger "Fichier sensible"
     Ce fichier contient des **certificats TLS et des clés privées**. Faites toujours une sauvegarde avant de le modifier.
+
+**Ajoute cet avertissement au début de l'Étape 7**, avant le sous-titre "7.1 — Sauvegarder" :
+
+```markdown
+!!! tip "En cas de redéploiement"
+    Si vous redéployez Paperclip sur un serveur où Cosmos était déjà configuré pour ce domaine, vérifiez si la route existe avant de lancer le script :
+    ```bash
+    sudo python3 -c "
+    import json
+    c = json.load(open('/var/lib/cosmos/cosmos.config.json'))
+    routes = c['HTTPConfig']['ProxyConfig']['Routes']
+    for r in routes: print(r['Name'], '->', r['Target'])
+    "
+    ```
+    Si la ligne `paperclip -> http://localhost:3100` apparaît, **passez directement à l'Étape 8** — la route et le certificat Let's Encrypt sont encore valides.
 
 #### 7.1 — Sauvegarder la configuration Cosmos
 
@@ -393,6 +414,15 @@ docker exec paperclip-server-1 \
 ```
 
 Cette commande crée le fichier `/paperclip/instances/default/config.json` dans le volume Docker.
+
+Vérifiez que les fichiers ont bien été créés avant de passer à l'étape suivante :
+
+```bash
+sudo ls /var/lib/docker/volumes/paperclip_paperclip-data/_data/instances/default/
+
+!!! success "Résultat attendu"
+    .env  config.json  data  logs  secrets  telemetry    
+Si config.json n'apparaît pas encore, attendez quelques secondes et relancez la commande.
 
 #### 8.2 — Corriger la configuration d'instance
 
@@ -683,6 +713,51 @@ Si l'URL d'invitation a expiré ou a déjà été utilisée :
 docker exec paperclip-server-1 \
     node cli/node_modules/tsx/dist/cli.mjs cli/src/index.ts auth bootstrap-ceo
 ```
+
+### Redéploiement complet (volumes supprimés)
+
+Si vous avez supprimé la stack et ses volumes et souhaitez repartir de zéro, voici la séquence complète dans l'ordre correct :
+
+```bash
+cd /home/nicolas.bodaine/docker-compose/paperclip
+
+# 1. Démarrer la stack
+docker compose up -d
+
+# 2. Lancer l'onboarding (génère master key + config.json)
+docker exec paperclip-server-1 \
+    node cli/node_modules/tsx/dist/cli.mjs cli/src/index.ts onboard --yes
+
+# 3. Vérifier que config.json est créé avant de continuer
+sudo ls /var/lib/docker/volumes/paperclip_paperclip-data/_data/instances/default/
+
+# 4. Corriger config.json (authenticated, lan, publicUrl, auth)
+sudo python3 - << 'PYEOF'
+import json
+path = "/var/lib/docker/volumes/paperclip_paperclip-data/_data/instances/default/config.json"
+with open(path) as f: c = json.load(f)
+c['server']['deploymentMode'] = 'authenticated'
+c['server']['bind'] = 'lan'
+c['server']['host'] = '0.0.0.0'
+c['server']['publicUrl'] = 'https://paperclip.tutotech.org'
+c['server']['allowedHostnames'] = ['paperclip.tutotech.org']
+c['auth']['baseUrlMode'] = 'explicit'
+c['auth']['publicBaseUrl'] = 'https://paperclip.tutotech.org'
+c['auth'].pop('baseUrl', None)
+with open(path, 'w') as f: json.dump(c, f, indent=2)
+print("config.json corrigé ✓")
+PYEOF
+
+# 5. Corriger les permissions
+sudo chown -R 1000:1000 \
+    /var/lib/docker/volumes/paperclip_paperclip-data/_data/instances/default/
+
+# 6. Redémarrer le serveur
+docker compose restart server
+
+# 7. Générer l'invitation admin
+docker exec paperclip-server-1 \
+    node cli/node_modules/tsx/dist/cli.mjs cli/src/index.ts auth bootstrap-ceo
 
 ### Ajouter une nouvelle route dans Cosmos
 
