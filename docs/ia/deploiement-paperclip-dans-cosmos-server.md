@@ -300,19 +300,16 @@ Cosmos Server stocke sa configuration dans `/var/lib/cosmos/cosmos.config.json`.
 !!! danger "Fichier sensible"
     Ce fichier contient des **certificats TLS et des clés privées**. Faites toujours une sauvegarde avant de le modifier.
 
-**Ajoute cet avertissement au début de l'Étape 7**, avant le sous-titre "7.1 — Sauvegarder" :
-
-```markdown
 !!! tip "En cas de redéploiement"
     Si vous redéployez Paperclip sur un serveur où Cosmos était déjà configuré pour ce domaine, vérifiez si la route existe avant de lancer le script :
-    ```bash
-    sudo python3 -c "
-    import json
-    c = json.load(open('/var/lib/cosmos/cosmos.config.json'))
-    routes = c['HTTPConfig']['ProxyConfig']['Routes']
-    for r in routes: print(r['Name'], '->', r['Target'])
-    "
-    ```
+
+        sudo python3 -c "
+        import json
+        c = json.load(open('/var/lib/cosmos/cosmos.config.json'))
+        routes = c['HTTPConfig']['ProxyConfig']['Routes']
+        for r in routes: print(r['Name'], '->', r['Target'])
+        "
+
     Si la ligne `paperclip -> http://localhost:3100` apparaît, **passez directement à l'Étape 8** — la route et le certificat Let's Encrypt sont encore valides.
 
 #### 7.1 — Sauvegarder la configuration Cosmos
@@ -419,9 +416,13 @@ Vérifiez que les fichiers ont bien été créés avant de passer à l'étape su
 
 ```bash
 sudo ls /var/lib/docker/volumes/paperclip_paperclip-data/_data/instances/default/
+```
 
 !!! success "Résultat attendu"
-    .env  config.json  data  logs  secrets  telemetry    
+    ```
+    .env  config.json  data  logs  secrets  telemetry
+    ```
+
 Si config.json n'apparaît pas encore, attendez quelques secondes et relancez la commande.
 
 #### 8.2 — Corriger la configuration d'instance
@@ -566,6 +567,7 @@ Vérifiez que votre `docker-compose.yml` contient bien cette ligne dans la secti
 environment:
   # ...autres variables...
   CLAUDE_CONFIG_DIR: "/paperclip/.claude-config"
+```
 
 ## Problèmes rencontrés
 
@@ -758,6 +760,7 @@ docker compose restart server
 # 7. Générer l'invitation admin
 docker exec paperclip-server-1 \
     node cli/node_modules/tsx/dist/cli.mjs cli/src/index.ts auth bootstrap-ceo
+```
 
 ### Ajouter une nouvelle route dans Cosmos
 
