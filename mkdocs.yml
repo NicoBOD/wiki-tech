@@ -52,7 +52,9 @@ nav:
   - Réseaux: reseaux/index.md
   - Cloud: cloud/index.md
   - Cybersécurité: cybersecurite/index.md
-  - IA: ia/index.md
+  - IA:
+    - ia/index.md
+    - Déploiement de Paperclip derrière Cosmos Server: ia/deploiement-paperclip-dans-cosmos-server.md
   - Automatisation:
     - automatisation/index.md
     - Les bases de n8n: automatisation/bases-n8n.md

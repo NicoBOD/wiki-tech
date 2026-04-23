@@ -6,3 +6,7 @@ description: Notes techniques sur n8n, scripts, Ansible, CI/CD et tâches planif
 # Automatisation
 
 Notes sur n8n, scripts, Ansible, CI/CD et tâches planifiées (cron).
+
+## Articles
+
+- [Les bases de n8n](bases-n8n.md)
