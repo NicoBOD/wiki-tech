@@ -46,7 +46,9 @@ plugins:
 
 nav:
   - Accueil: index.md
-  - Systèmes: systemes/index.md
+  - Systèmes:
+    - systemes/index.md
+    - Comprendre et gérer le machine-id sous Linux: systemes/machine-id-linux.md
   - Réseaux: reseaux/index.md
   - Cloud: cloud/index.md
   - Cybersécurité: cybersecurite/index.md
