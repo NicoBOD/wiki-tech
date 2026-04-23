@@ -303,14 +303,12 @@ Cosmos Server stocke sa configuration dans `/var/lib/cosmos/cosmos.config.json`.
 !!! tip "En cas de redéploiement"
     Si vous redéployez Paperclip sur un serveur où Cosmos était déjà configuré pour ce domaine, vérifiez si la route existe avant de lancer le script :
 
-    ```bash
-    sudo python3 -c "
-    import json
-    c = json.load(open('/var/lib/cosmos/cosmos.config.json'))
-    routes = c['HTTPConfig']['ProxyConfig']['Routes']
-    for r in routes: print(r['Name'], '->', r['Target'])
-    "
-    ```
+        sudo python3 -c "
+        import json
+        c = json.load(open('/var/lib/cosmos/cosmos.config.json'))
+        routes = c['HTTPConfig']['ProxyConfig']['Routes']
+        for r in routes: print(r['Name'], '->', r['Target'])
+        "
 
     Si la ligne `paperclip -> http://localhost:3100` apparaît, **passez directement à l'Étape 8** — la route et le certificat Let's Encrypt sont encore valides.
 
