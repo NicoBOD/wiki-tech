@@ -6,3 +6,8 @@ description: Notes techniques sur Linux, Windows, virtualisation, machines virtu
 # Systèmes
 
 Notes sur Linux, Windows, virtualisation, machines virtuelles et stockage.
+
+## Articles
+
+- [Comprendre et gérer le machine-id sous Linux](machine-id-linux.md)
+- [virt-sysprep — préparer une image Linux au clonage](virt-sysprep-preparer-image-linux-clonage.md)

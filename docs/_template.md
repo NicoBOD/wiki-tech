@@ -149,7 +149,7 @@ commande de vérification
 
 === Symboles automatiques (smartsymbols) ===
 (c) (r) (tm)                        © ® ™
-+/- -->  <--  <-->                   ± → ← ↔
++/- -- >  <--  <-- >                 ± → ← ↔
 1/4 1/2 3/4                          ¼ ½ ¾
 !=                                   ≠
 

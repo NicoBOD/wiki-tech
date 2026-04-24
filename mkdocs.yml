@@ -67,7 +67,7 @@ nav:
   - Tags: tags.md
 
 copyright: >
-  <a href="mentions-legales/">Mentions légales</a>
+  <a href="/mentions-legales/">Mentions légales</a>
 
 extra:
   generator: false
