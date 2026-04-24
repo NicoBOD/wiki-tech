@@ -50,6 +50,7 @@ nav:
     - systemes/index.md
     - Comprendre et gérer le machine-id sous Linux: systemes/machine-id-linux.md
     - virt-sysprep — préparer une image Linux au clonage: systemes/virt-sysprep-preparer-image-linux-clonage.md
+    - Migration de mon application Stop Repeat de Lovable vers un Coolify self-hosted: systemes/migration-stop-repeat-lovable-vers-coolify.md
   - Réseaux: reseaux/index.md
   - Cloud: cloud/index.md
   - Cybersécurité: cybersecurite/index.md
