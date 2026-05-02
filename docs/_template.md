@@ -1,6 +1,6 @@
 ---
 title: Titre de la note
-date: YYYY-MM-DD
+date: 2026-05-02
 author: Nicolas BODAINE
 tags:
   - tag1
@@ -9,6 +9,14 @@ difficulty: débutant | intermédiaire | avancé
 os: Ubuntu 24.04 | Windows Server 2025 | ...
 status: brouillon | publié
 ---
+
+<!-- ============================================================ -->
+<!-- ⚠️ RAPPEL IMPORTANT :                                          -->
+<!-- Pensez TOUJOURS à ajouter une entrée dans le fichier d'index  -->
+<!-- (index.md) du dossier correspondant (ex: docs/cloud/index.md) -->
+<!-- afin de référencer ce nouvel article et permettre aux         -->
+<!-- visiteurs de le trouver et de cliquer dessus !                -->
+<!-- ============================================================ -->
 
 # Titre de la note
 
@@ -19,7 +27,7 @@ status: brouillon | publié
 |-----------|--------|
 | Difficulté | Intermédiaire |
 | OS / Environnement | Ubuntu 24.04 |
-| Dernière mise à jour | YYYY-MM-DD |
+| Dernière mise à jour | 2026-05-02 |
 
 <!-- ============================================================ -->
 <!-- BLOCS MODULAIRES                                              -->
@@ -184,7 +192,7 @@ Texte avec une note[^1].
 !!! failure "Titre"      Échec
 !!! abstract "Titre"     Résumé
 !!! question "Titre"     Question
-!!! example "Titre"      Exemple
+!!! example "Titre"        Exemple
 !!! quote "Titre"        Citation
 
 ??? note "Titre"         Admonition dépliable (fermée par défaut)
