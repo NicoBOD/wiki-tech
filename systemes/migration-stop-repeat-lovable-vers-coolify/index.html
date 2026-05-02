@@ -1,0 +1,2695 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation">
+      
+      
+        <meta name="author" content="Nicolas BODAINE">
+      
+      
+        <link rel="canonical" href="https://wiki.bodaine.fr/systemes/migration-stop-repeat-lovable-vers-coolify/">
+      
+      
+        <link rel="prev" href="../virt-sysprep-preparer-image-linux-clonage/">
+      
+      
+        <link rel="next" href="../../reseaux/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Migration de mon application Stop Repeat de Lovable vers un Coolify self-hosted - Wiki Tech — NicoBOD</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+    
+    
+      
+    
+    
+
+    <!-- SEO -->
+    <meta name="author" content="Nicolas BODAINE">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Migration de mon application Stop Repeat de Lovable vers un Coolify self-hosted — Wiki Tech — NicoBOD">
+    <meta property="og:description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation">
+    <meta property="og:url" content="https://wiki.bodaine.fr/systemes/migration-stop-repeat-lovable-vers-coolify/">
+    <meta property="og:site_name" content="Wiki Tech — NicoBOD">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Migration de mon application Stop Repeat de Lovable vers un Coolify self-hosted — Wiki Tech — NicoBOD">
+    <meta name="twitter:description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation">
+  
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#migration-de-mon-application-stop-repeat-de-lovable-vers-un-coolify-self-hosted" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../.." title="Wiki Tech — NicoBOD" class="md-header__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wiki Tech — NicoBOD
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Migration de mon application Stop Repeat de Lovable vers un Coolify self-hosted
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Passer en mode sombre"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer en mode sombre" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Passer en mode clair"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer en mode clair" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Partager" aria-label="Partager" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 1h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1m0 8h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1m0 8h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1M9 5h1V3H9zm0 8h1v-2H9zm0 8h1v-2H9zM5 3v2h2V3zm0 8v2h2v-2zm0 8v2h2v-2z"/></svg>
+    
+  
+  Systèmes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../reseaux/" class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 2c-1.11 0-2 .89-2 2v3c0 1.11.89 2 2 2h1v2H2v2h4v2H5c-1.11 0-2 .89-2 2v3c0 1.11.89 2 2 2h4c1.11 0 2-.89 2-2v-3c0-1.11-.89-2-2-2H8v-2h8v2h-1c-1.11 0-2 .89-2 2v3c0 1.11.89 2 2 2h4c1.11 0 2-.89 2-2v-3c0-1.11-.89-2-2-2h-1v-2h4v-2h-9V9h1c1.11 0 2-.89 2-2V4c0-1.11-.89-2-2-2zm0 2h4v3h-4zM5 17h4v3H5zm10 0h4v3h-4z"/></svg>
+    
+  
+  Réseaux
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../cloud/" class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 20q-2.28 0-3.89-1.57Q1 16.85 1 14.58q0-1.95 1.17-3.48 1.18-1.53 3.08-1.95.63-2.3 2.5-3.72Q9.63 4 12 4q2.93 0 4.96 2.04Q19 8.07 19 11q1.73.2 2.86 1.5 1.14 1.28 1.14 3 0 1.88-1.31 3.19T18.5 20Z"/></svg>
+    
+  
+  Cloud
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../cybersecurite/" class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5zm0 6c1.4 0 2.8 1.1 2.8 2.5V11c.6 0 1.2.6 1.2 1.3v3.5c0 .6-.6 1.2-1.3 1.2H9.2c-.6 0-1.2-.6-1.2-1.3v-3.5c0-.6.6-1.2 1.2-1.2V9.5C9.2 8.1 10.6 7 12 7m0 1.2c-.8 0-1.5.5-1.5 1.3V11h3V9.5c0-.8-.7-1.3-1.5-1.3"/></svg>
+    
+  
+  Cybersécurité
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../ia/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/></svg>
+    
+  
+  IA
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../automatisation/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+    
+  
+  Automatisation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../logiciels/" class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 20h4v-4h-4m0-2h4v-4h-4m-6-2h4V4h-4m6 4h4V4h-4m-6 10h4v-4h-4m-6 4h4v-4H4m0 10h4v-4H4m6 4h4v-4h-4M4 8h4V4H4z"/></svg>
+    
+  
+  Logiciels
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../debug/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 12h-4v-2h4m0 6h-4v-2h4m6-6h-2.81a6 6 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6 6 0 0 0-2.83 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20z"/></svg>
+    
+  
+  Debug
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../astuces/" class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+    
+  
+  Astuces
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../tags/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tags
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Wiki Tech — NicoBOD" class="md-nav__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Wiki Tech — NicoBOD
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 1h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1m0 8h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1m0 8h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1M9 5h1V3H9zm0 8h1v-2H9zm0 8h1v-2H9zM5 3v2h2V3zm0 8v2h2v-2zm0 8v2h2v-2z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Systèmes
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Systèmes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../machine-id-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Comprendre et gérer le machine-id sous Linux
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../virt-sysprep-preparer-image-linux-clonage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    virt-sysprep — préparer une image Linux au clonage
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration de mon application Stop Repeat de Lovable vers un Coolify self-hosted
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration de mon application Stop Repeat de Lovable vers un Coolify self-hosted
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#contexte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contexte
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prérequis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture-cible" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture cible
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#procedure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Procédure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Procédure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-preparation-du-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1 : Préparation du code
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-deployer-supabase-self-hosted" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2 : Déployer Supabase self-hosted
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-deploiement-du-frontend-avec-cicd-github-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3 : Déploiement du frontend avec CI/CD GitHub App
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-4-edge-functions-et-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4 : Edge Functions et secrets
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-5-pg_cron-jobs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 5 : pg_cron jobs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-6-google-oauth-provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6 : Google OAuth provider
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-tests-fonctionnels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7 : Tests fonctionnels
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vérification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pieges-rencontres-et-solutions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pièges rencontrés et solutions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ce-qui-reste-a-faire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ce qui reste à faire
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aide-memoire-sous-domaines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aide-mémoire — Sous-domaines
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aide-memoire-commandes-utiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aide-mémoire — Commandes utiles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reseaux/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 2c-1.11 0-2 .89-2 2v3c0 1.11.89 2 2 2h1v2H2v2h4v2H5c-1.11 0-2 .89-2 2v3c0 1.11.89 2 2 2h4c1.11 0 2-.89 2-2v-3c0-1.11-.89-2-2-2H8v-2h8v2h-1c-1.11 0-2 .89-2 2v3c0 1.11.89 2 2 2h4c1.11 0 2-.89 2-2v-3c0-1.11-.89-2-2-2h-1v-2h4v-2h-9V9h1c1.11 0 2-.89 2-2V4c0-1.11-.89-2-2-2zm0 2h4v3h-4zM5 17h4v3H5zm10 0h4v3h-4z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Réseaux
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 20q-2.28 0-3.89-1.57Q1 16.85 1 14.58q0-1.95 1.17-3.48 1.18-1.53 3.08-1.95.63-2.3 2.5-3.72Q9.63 4 12 4q2.93 0 4.96 2.04Q19 8.07 19 11q1.73.2 2.86 1.5 1.14 1.28 1.14 3 0 1.88-1.31 3.19T18.5 20Z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cybersecurite/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5zm0 6c1.4 0 2.8 1.1 2.8 2.5V11c.6 0 1.2.6 1.2 1.3v3.5c0 .6-.6 1.2-1.3 1.2H9.2c-.6 0-1.2-.6-1.2-1.3v-3.5c0-.6.6-1.2 1.2-1.2V9.5C9.2 8.1 10.6 7 12 7m0 1.2c-.8 0-1.5.5-1.5 1.3V11h3V9.5c0-.8-.7-1.3-1.5-1.3"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cybersécurité
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../ia/" class="md-nav__link ">
+              
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    IA
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    IA
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ia/deploiement-paperclip-dans-cosmos-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Déploiement de Paperclip derrière Cosmos Server
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../automatisation/" class="md-nav__link ">
+              
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Automatisation
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Automatisation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../automatisation/bases-n8n/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Les bases de n8n
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../logiciels/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 20h4v-4h-4m0-2h4v-4h-4m-6-2h4V4h-4m6 4h4V4h-4m-6 10h4v-4h-4m-6 4h4v-4H4m0 10h4v-4H4m6 4h4v-4h-4M4 8h4V4H4z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Logiciels
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../debug/" class="md-nav__link ">
+              
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 12h-4v-2h4m0 6h-4v-2h4m6-6h-2.81a6 6 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6 6 0 0 0-2.83 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Debug
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../debug/nvidia-veille-ecran-noir/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NVIDIA — Écran noir après veille
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../astuces/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Astuces
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tags/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.5 7A1.5 1.5 0 0 1 4 5.5 1.5 1.5 0 0 1 5.5 4 1.5 1.5 0 0 1 7 5.5 1.5 1.5 0 0 1 5.5 7m15.91 4.58-9-9C12.05 2.22 11.55 2 11 2H4c-1.11 0-2 .89-2 2v7c0 .55.22 1.05.59 1.41l8.99 9c.37.36.87.59 1.42.59s1.05-.23 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.56-.23-1.06-.59-1.42"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#contexte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contexte
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prérequis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture-cible" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture cible
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#procedure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Procédure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Procédure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-preparation-du-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1 : Préparation du code
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-deployer-supabase-self-hosted" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2 : Déployer Supabase self-hosted
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-deploiement-du-frontend-avec-cicd-github-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3 : Déploiement du frontend avec CI/CD GitHub App
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-4-edge-functions-et-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4 : Edge Functions et secrets
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-5-pg_cron-jobs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 5 : pg_cron jobs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-6-google-oauth-provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6 : Google OAuth provider
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-tests-fonctionnels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7 : Tests fonctionnels
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vérification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pieges-rencontres-et-solutions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pièges rencontrés et solutions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ce-qui-reste-a-faire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ce qui reste à faire
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aide-memoire-sous-domaines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aide-mémoire — Sous-domaines
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aide-memoire-commandes-utiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aide-mémoire — Commandes utiles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Systèmes
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:ci-cd" class="md-tag">ci-cd</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:coolify" class="md-tag">coolify</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:docker" class="md-tag">docker</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:github-app" class="md-tag">github-app</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:lovable" class="md-tag">lovable</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:migration" class="md-tag">migration</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:react" class="md-tag">react</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:self-hosting" class="md-tag">self-hosting</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:supabase" class="md-tag">supabase</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:traefik" class="md-tag">traefik</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:vite" class="md-tag">vite</a>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/NicoBOD/wiki-tech/edit/main/docs/systemes/migration-stop-repeat-lovable-vers-coolify.md" title="Editer cette page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/NicoBOD/wiki-tech/raw/main/docs/systemes/migration-stop-repeat-lovable-vers-coolify.md" title="Consulter la source de cette page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<h1 id="migration-de-mon-application-stop-repeat-de-lovable-vers-un-coolify-self-hosted">Migration de mon application Stop Repeat de Lovable vers un Coolify self-hosted<a class="headerlink" href="#migration-de-mon-application-stop-repeat-de-lovable-vers-un-coolify-self-hosted" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Résumé</p>
+<p>J'ai migré mon application <strong>Stop Repeat</strong> (gestionnaire de tâches familiales React/Vite) hébergée chez <strong>Lovable Cloud</strong> avec une base <strong>Supabase managée</strong> vers une infrastructure entièrement self-hosted sur ma VM Azure (Coolify + Traefik + Supabase complet).
+Cette note retrace toute la procédure : refactor du code, déploiement de Supabase self-hosted (15 conteneurs), mise en place de la CI/CD via GitHub App, configuration des edge functions, du SMTP, des cron jobs et de Google OAuth.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Propriété</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Difficulté</td>
+<td>Avancé</td>
+</tr>
+<tr>
+<td>OS / Environnement</td>
+<td>Debian 13, Coolify v4.0.0-beta.470, Traefik v3.6, Supabase self-hosted</td>
+</tr>
+<tr>
+<td>Dernière mise à jour</td>
+<td>2026-04-25</td>
+</tr>
+</tbody>
+</table>
+<h2 id="contexte">Contexte<a class="headerlink" href="#contexte" title="Permanent link">&para;</a></h2>
+<p>Mon app <strong>Stop Repeat</strong> est un SPA React + Vite + TypeScript permettant à des parents de créer des tâches récurrentes pour leurs enfants, avec gamification (récompenses, pénalités, streaks, badges) et notifications push. Le code est public sur <a href="https://github.com/TutoTech/family-flow">TutoTech/family-flow</a>.</p>
+<p>Initialement, le projet était hébergé sur <strong>Lovable Cloud</strong> :</p>
+<ul>
+<li><strong>Frontend</strong> servi par Lovable</li>
+<li><strong>Base de données + Auth + Storage + 10 Edge Functions</strong> sur un projet Supabase managé (<code>fzstjebbxbejypgwamqx.supabase.co</code>)</li>
+<li><strong>Authentification Google</strong> via un wrapper propriétaire <code>@lovable.dev/cloud-auth-js</code></li>
+<li><strong>Paiements Stripe</strong> + <strong>notifications push VAPID</strong></li>
+</ul>
+<p>J'avais plusieurs raisons de vouloir m'auto-héberger :</p>
+<ul>
+<li><strong>Autonomie</strong> vis-à-vis de Lovable et Supabase Cloud</li>
+<li><strong>Maîtrise</strong> de mes données et de l'infrastructure</li>
+<li><strong>Coûts</strong> (Supabase Cloud devient payant au-delà des limites du free tier)</li>
+<li><strong>CI/CD</strong> : déclencher un redéploiement automatique à chaque push GitHub</li>
+</ul>
+<p>Je disposais déjà d'un serveur <strong>Coolify</strong> (v4) sur une VM Azure Debian 13 avec <strong>Traefik</strong> comme reverse proxy. J'ai donc décidé d'y déployer toute la stack.</p>
+<p>J'ai gardé en parallèle le déploiement Lovable comme <strong>fallback de sécurité</strong> pendant toute la durée de la migration, en travaillant sur une branche dédiée <code>coolify-deploy</code>.</p>
+<h2 id="prerequis">Prérequis<a class="headerlink" href="#prerequis" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Une VM avec <strong>au moins 8 Go de RAM</strong> (j'ai dû redimensionner la mienne en <code>Standard_B2as_v2</code> Azure car Supabase self-hosted ajoute environ 2 Go d'utilisation)</li>
+<li><strong>Coolify</strong> déjà installé et fonctionnel avec <strong>Traefik</strong> comme reverse proxy</li>
+<li>Un domaine pointant vers le serveur (j'utilise <code>tutotech.org</code>) avec la possibilité de créer des sous-domaines</li>
+<li>Un fournisseur DNS supportant l'<strong>API DNS challenge</strong> pour Let's Encrypt (j'utilise Infomaniak)</li>
+<li>Une <strong>clé SSH</strong> pour pousser sur GitHub</li>
+<li>Le repo de l'app <strong>clonable</strong> localement</li>
+<li>Les secrets de l'app (VAPID, Stripe, OAuth Google, SMTP) à portée de main</li>
+</ul>
+<h2 id="architecture-cible">Architecture cible<a class="headerlink" href="#architecture-cible" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>                     INTERNET
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>                        │
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>                        ▼
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>              [Traefik (coolify-proxy)]
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>              ────────┬──────────┬──────────┬──────────────┐
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>                      │          │          │              │
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>                      ▼          ▼          ▼              ▼
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>          stop-repeat       supabase    studio.supabase    webhook
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>          .tutotech.org   .tutotech.org .tutotech.org  .tutotech.org
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>              │               │              │              │
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>              ▼               ▼              ▼              ▼
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>          [nginx-           [Kong       [Studio UI]     [Coolify
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>           unprivileged]    gateway]         │           webhook]
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>              │               │              │              │
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>          [SPA Vite]      ┌──┴───┐           │              │
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>                          ▼      ▼           │              │
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>                    [GoTrue] [PostgREST]     │              │
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>                    [Storage] [Realtime]     │              │
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>                    [Edge functions]         │              │
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>                          │                  │              │
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>                          ▼                  ▼              │
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>                       [PostgreSQL 15 + pg_cron + pg_net]   │
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>                                                             │
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>              GitHub push → coolify-deploy ─────────────────┘
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>                  ↓
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>              Auto-build + redeploy
+</code></pre></div>
+<h2 id="procedure">Procédure<a class="headerlink" href="#procedure" title="Permanent link">&para;</a></h2>
+<p>J'ai découpé la migration en <strong>7 phases</strong> que j'ai exécutées dans l'ordre.</p>
+<h3 id="phase-1-preparation-du-code">Phase 1 : Préparation du code<a class="headerlink" href="#phase-1-preparation-du-code" title="Permanent link">&para;</a></h3>
+<p>Je devais d'abord adapter le code de l'app pour qu'il soit déployable hors de Lovable.</p>
+<h4 id="11-cloner-le-repo-et-creer-une-branche-dediee">1.1 Cloner le repo et créer une branche dédiée<a class="headerlink" href="#11-cloner-le-repo-et-creer-une-branche-dediee" title="Permanent link">&para;</a></h4>
+<p>J'ai configuré ma clé SSH et cloné le repo, puis créé une branche <code>coolify-deploy</code> pour que <code>main</code> reste exclusivement utilisé par Lovable comme fallback :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:TutoTech/family-flow.git
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nb">cd</span><span class="w"> </span>family-flow
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>coolify-deploy
+</code></pre></div>
+<h4 id="12-remplacer-lovable-auth-par-supabase-oauth-natif">1.2 Remplacer Lovable Auth par Supabase OAuth natif<a class="headerlink" href="#12-remplacer-lovable-auth-par-supabase-oauth-natif" title="Permanent link">&para;</a></h4>
+<p>Le wrapper <code>@lovable.dev/cloud-auth-js</code> était utilisé uniquement dans <code>LoginForm.tsx</code> et <code>SignupForm.tsx</code> pour le bouton « Continuer avec Google ». C'était une fine couche d'OAuth relais qui pouvait être remplacée par l'API native de Supabase.</p>
+<p>J'ai supprimé le wrapper Lovable :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>rm<span class="w"> </span>-rf<span class="w"> </span>src/integrations/lovable/
+</code></pre></div>
+<p>Puis dans <code>src/components/auth/LoginForm.tsx</code> et <code>src/components/auth/SignupForm.tsx</code>, j'ai remplacé l'import et l'appel :</p>
+<div class="highlight"><span class="filename">Avant (Lovable)</span><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">lovable</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;@/integrations/lovable/index&quot;</span><span class="p">;</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1">// ...</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">error</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">lovable</span><span class="p">.</span><span class="nx">auth</span><span class="p">.</span><span class="nx">signInWithOAuth</span><span class="p">(</span><span class="s2">&quot;google&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="nx">redirect_uri</span><span class="o">:</span><span class="w"> </span><span class="kt">window.location.origin</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">});</span>
+</code></pre></div>
+<div class="highlight"><span class="filename">Après (Supabase natif)</span><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">supabase</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;@/integrations/supabase/client&quot;</span><span class="p">;</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1">// ...</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">error</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">supabase</span><span class="p">.</span><span class="nx">auth</span><span class="p">.</span><span class="nx">signInWithOAuth</span><span class="p">({</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="nx">provider</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;google&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="nx">options</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">redirectTo</span><span class="o">:</span><span class="w"> </span><span class="kt">window.location.origin</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot;/&quot;</span><span class="w"> </span><span class="p">},</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p">});</span>
+</code></pre></div>
+<p>J'ai également retiré la dépendance <code>@lovable.dev/cloud-auth-js</code> du <code>package.json</code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Attention au redirect_to</p>
+<p>À mon premier essai, j'avais mis <code>redirectTo: window.location.origin + "/auth/callback"</code> mais cette route n'existait pas dans React Router et le user tombait sur une <strong>404</strong> après le login Google. J'ai dû corriger en pointant vers <code>/</code> (la landing page) — le client Supabase parse automatiquement le hash de l'URL au chargement de la page et établit la session.</p>
+</div>
+<h4 id="13-creer-un-dockerfile-multi-stage">1.3 Créer un Dockerfile multi-stage<a class="headerlink" href="#13-creer-un-dockerfile-multi-stage" title="Permanent link">&para;</a></h4>
+<p>Le repo n'avait aucune containerisation. J'ai créé un <code>Dockerfile</code> multi-stage : étape <strong>builder</strong> avec Node 20 pour <code>npm run build</code>, puis étape <strong>runtime</strong> avec <code>nginx-unprivileged:1.27-alpine</code>.</p>
+<div class="highlight"><span class="filename">Dockerfile</span><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c"># syntax=docker/dockerfile:1.7</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c"># ---------- Build stage ----------</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="k">FROM</span><span class="w"> </span><span class="s">node:20-alpine</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="s">builder</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="k">COPY</span><span class="w"> </span>package.json<span class="w"> </span>package-lock.json<span class="w"> </span>./
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="k">RUN</span><span class="w"> </span>npm<span class="w"> </span>ci<span class="w"> </span>--no-audit<span class="w"> </span>--no-fund
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="c"># Build-time Supabase config (injected by Coolify as ARG)</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="k">ARG</span><span class="w"> </span>VITE_SUPABASE_URL
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="k">ARG</span><span class="w"> </span>VITE_SUPABASE_PUBLISHABLE_KEY
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="k">ARG</span><span class="w"> </span>VITE_SUPABASE_PROJECT_ID
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="k">ENV</span><span class="w"> </span><span class="nv">VITE_SUPABASE_URL</span><span class="o">=</span><span class="nv">$VITE_SUPABASE_URL</span>
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="k">ENV</span><span class="w"> </span><span class="nv">VITE_SUPABASE_PUBLISHABLE_KEY</span><span class="o">=</span><span class="nv">$VITE_SUPABASE_PUBLISHABLE_KEY</span>
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="k">ENV</span><span class="w"> </span><span class="nv">VITE_SUPABASE_PROJECT_ID</span><span class="o">=</span><span class="nv">$VITE_SUPABASE_PROJECT_ID</span>
+<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>
+<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="k">COPY</span><span class="w"> </span>.<span class="w"> </span>.
+<a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="k">RUN</span><span class="w"> </span>npm<span class="w"> </span>run<span class="w"> </span>build
+<a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>
+<a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="c"># ---------- Runtime stage ----------</span>
+<a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="k">FROM</span><span class="w"> </span><span class="s">nginxinc/nginx-unprivileged:1.27-alpine</span>
+<a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a><span class="k">COPY</span><span class="w"> </span>--from<span class="o">=</span>builder<span class="w"> </span>/app/dist<span class="w"> </span>/usr/share/nginx/html
+<a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="k">COPY</span><span class="w"> </span>nginx.conf<span class="w"> </span>/etc/nginx/conf.d/default.conf
+<a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="k">EXPOSE</span><span class="w"> </span><span class="s">8080</span>
+</code></pre></div>
+<p>J'ai accompagné ce Dockerfile d'un <code>nginx.conf</code> avec <strong>fallback SPA</strong> (essentiel pour React Router), <strong>gzip</strong>, <strong>cache assets</strong> et <strong>headers de sécurité</strong> :</p>
+<div class="highlight"><span class="filename">nginx.conf</span><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">8080</span><span class="p">;</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">_</span><span class="p">;</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="kn">root</span><span class="w"> </span><span class="s">/usr/share/nginx/html</span><span class="p">;</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="kn">index</span><span class="w"> </span><span class="s">index.html</span><span class="p">;</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Frame-Options</span><span class="w"> </span><span class="s">&quot;SAMEORIGIN&quot;</span><span class="w"> </span><span class="s">always</span><span class="p">;</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Content-Type-Options</span><span class="w"> </span><span class="s">&quot;nosniff&quot;</span><span class="w"> </span><span class="s">always</span><span class="p">;</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Referrer-Policy</span><span class="w"> </span><span class="s">&quot;strict-origin-when-cross-origin&quot;</span><span class="w"> </span><span class="s">always</span><span class="p">;</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">    </span><span class="kn">gzip</span><span class="w"> </span><span class="no">on</span><span class="p">;</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">    </span><span class="kn">gzip_vary</span><span class="w"> </span><span class="no">on</span><span class="p">;</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">    </span><span class="kn">gzip_min_length</span><span class="w"> </span><span class="mi">1024</span><span class="p">;</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">    </span><span class="kn">gzip_types</span><span class="w"> </span><span class="s">text/plain</span><span class="w"> </span><span class="s">text/css</span><span class="w"> </span><span class="s">application/javascript</span><span class="w"> </span><span class="s">application/json</span><span class="w"> </span><span class="s">image/svg+xml</span><span class="p">;</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="sr">*</span><span class="w"> </span><span class="s">\.(js|css|woff2?|png|jpg|svg|ico)</span>$<span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="w">        </span><span class="kn">expires</span><span class="w"> </span><span class="s">30d</span><span class="p">;</span>
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Cache-Control</span><span class="w"> </span><span class="s">&quot;public,</span><span class="w"> </span><span class="s">immutable&quot;</span><span class="p">;</span>
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>
+<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a><span class="w">        </span><span class="kn">try_files</span><span class="w"> </span><span class="nv">$uri</span><span class="w"> </span><span class="nv">$uri/</span><span class="w"> </span><span class="s">/index.html</span><span class="p">;</span>
+<a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a><span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Cache-Control</span><span class="w"> </span><span class="s">&quot;no-store,</span><span class="w"> </span><span class="s">no-cache,</span><span class="w"> </span><span class="s">must-revalidate&quot;</span><span class="p">;</span>
+<a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a><span class="p">}</span>
+</code></pre></div>
+<p>J'ai testé le build localement avec <code>docker build</code> et <code>docker run</code> — image fonctionnelle, page Stop Repeat servie correctement.</p>
+<h4 id="14-commit-et-push">1.4 Commit et push<a class="headerlink" href="#14-commit-et-push" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>git<span class="w"> </span>add<span class="w"> </span>Dockerfile<span class="w"> </span>nginx.conf<span class="w"> </span>.dockerignore<span class="w"> </span>package.json<span class="w"> </span>src/components/auth/
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Prépare le déploiement Coolify self-hosted&quot;</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>coolify-deploy
+</code></pre></div>
+<h3 id="phase-2-deployer-supabase-self-hosted">Phase 2 : Déployer Supabase self-hosted<a class="headerlink" href="#phase-2-deployer-supabase-self-hosted" title="Permanent link">&para;</a></h3>
+<p>C'est la phase la plus lourde — Supabase self-hosted comporte <strong>15 conteneurs</strong> : <code>db</code> (PostgreSQL 15), <code>auth</code> (GoTrue), <code>rest</code> (PostgREST), <code>realtime</code>, <code>storage</code>, <code>imgproxy</code>, <code>kong</code>, <code>studio</code>, <code>meta</code>, <code>functions</code> (Deno), <code>analytics</code> (Logflare), <code>vector</code>, <code>supavisor</code> (pooler), <code>db-config</code>, <code>deno-cache</code>.</p>
+<h4 id="21-recuperer-le-compose-officiel">2.1 Récupérer le compose officiel<a class="headerlink" href="#21-recuperer-le-compose-officiel" title="Permanent link">&para;</a></h4>
+<p>J'ai téléchargé les fichiers officiels du repo Supabase :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>/opt/docker/supabase
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="nb">cd</span><span class="w"> </span>/opt/docker/supabase
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://raw.githubusercontent.com/supabase/supabase/master/docker/docker-compose.yml<span class="w"> </span>-o<span class="w"> </span>docker-compose.yml
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://raw.githubusercontent.com/supabase/supabase/master/docker/.env.example<span class="w"> </span>-o<span class="w"> </span>.env.example
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="c1"># Récupérer aussi le dossier volumes/ qui contient kong.yml, init SQL, etc.</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>git<span class="w"> </span>clone<span class="w"> </span>--depth<span class="w"> </span><span class="m">1</span><span class="w"> </span>--filter<span class="o">=</span>blob:none<span class="w"> </span>--sparse<span class="w"> </span>https://github.com/supabase/supabase.git<span class="w"> </span>/tmp/supabase-src
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="nb">cd</span><span class="w"> </span>/tmp/supabase-src<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>sparse-checkout<span class="w"> </span><span class="nb">set</span><span class="w"> </span>docker/volumes
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>cp<span class="w"> </span>-r<span class="w"> </span>docker/volumes<span class="w"> </span>/opt/docker/supabase/volumes
+</code></pre></div>
+<h4 id="22-generer-les-secrets">2.2 Générer les secrets<a class="headerlink" href="#22-generer-les-secrets" title="Permanent link">&para;</a></h4>
+<p>Supabase fournit deux scripts de génération : <code>generate-keys.sh</code> (clés HS256 legacy) et <code>add-new-auth-keys.sh</code> (clés ES256 asymétriques).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">cd</span><span class="w"> </span>/opt/docker/supabase
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>mkdir<span class="w"> </span>utils
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://raw.githubusercontent.com/supabase/supabase/master/docker/utils/generate-keys.sh<span class="w"> </span>-o<span class="w"> </span>utils/generate-keys.sh
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://raw.githubusercontent.com/supabase/supabase/master/docker/utils/add-new-auth-keys.sh<span class="w"> </span>-o<span class="w"> </span>utils/add-new-auth-keys.sh
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="c1"># Génère JWT_SECRET, ANON_KEY, SERVICE_ROLE_KEY, POSTGRES_PASSWORD, etc.</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>sh<span class="w"> </span>utils/generate-keys.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>/tmp/supabase-keys.txt
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="c1"># Génère les nouvelles clés ES256 (nécessite Node + openssl)</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-v<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">:/work&quot;</span><span class="w"> </span>-w<span class="w"> </span>/work<span class="w"> </span>node:20-alpine<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">  </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;apk add --no-cache openssl &amp;&amp; sh utils/add-new-auth-keys.sh --update-env&quot;</span>
+</code></pre></div>
+<p>Ensuite j'ai consolidé toutes les variables (URLs, DB, Auth, Storage, Functions, Kong, etc.) dans le fichier <code>.env</code>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Variables URL importantes</p>
+<p>J'ai bien renseigné :</p>
+<ul>
+<li><code>SUPABASE_PUBLIC_URL=https://supabase.tutotech.org</code></li>
+<li><code>API_EXTERNAL_URL=https://supabase.tutotech.org</code></li>
+<li><code>SITE_URL=https://stop-repeat.tutotech.org</code></li>
+<li><code>ADDITIONAL_REDIRECT_URLS=https://stop-repeat.tutotech.org/**</code></li>
+</ul>
+</div>
+<h4 id="23-adapter-le-compose-pour-traefik">2.3 Adapter le compose pour Traefik<a class="headerlink" href="#23-adapter-le-compose-pour-traefik" title="Permanent link">&para;</a></h4>
+<p>Je n'ai pas modifié le <code>docker-compose.yml</code> officiel, j'ai créé un <code>docker-compose.override.yml</code> qui :</p>
+<ul>
+<li>Retire l'exposition des ports 8000/8443 de Kong sur l'hôte (Traefik intercepte)</li>
+<li>Ajoute les <strong>labels Traefik</strong> sur Kong pour <code>supabase.tutotech.org</code> (avec CORS)</li>
+<li>Ajoute les <strong>labels Traefik</strong> sur Studio pour <code>studio.supabase.tutotech.org</code> (avec <strong>IPWhiteList VPN only</strong>)</li>
+<li>Connecte Kong et Studio au réseau <code>traefik-supabase</code></li>
+</ul>
+<div class="highlight"><span class="filename">docker-compose.override.yml (extrait Kong)</span><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nt">services</span><span class="p">:</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="nt">kong</span><span class="p">:</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w"> </span><span class="kt">!reset</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">traefik-supabase</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">    </span><span class="nt">labels</span><span class="p">:</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.enable=true&quot;</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.docker.network=traefik-supabase&quot;</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.http.routers.supabase-api.rule=Host(`supabase.tutotech.org`)&quot;</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.http.routers.supabase-api.entrypoints=https&quot;</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.http.routers.supabase-api.tls.certresolver=letsencrypt&quot;</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.http.services.supabase-api.loadbalancer.server.port=8000&quot;</span>
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.http.routers.supabase-api.middlewares=supabase-cors&quot;</span>
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.http.middlewares.supabase-cors.headers.accesscontrolalloworiginlist=https://stop-repeat.tutotech.org&quot;</span>
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="w">      </span><span class="c1"># ...</span>
+<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a>
+<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="w">  </span><span class="nt">studio</span><span class="p">:</span>
+<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">traefik-supabase</span>
+<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a><span class="w">    </span><span class="nt">labels</span><span class="p">:</span>
+<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.enable=true&quot;</span>
+<a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.http.routers.supabase-studio.rule=Host(`studio.supabase.tutotech.org`)&quot;</span>
+<a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.http.routers.supabase-studio.middlewares=studio-vpn-only&quot;</span>
+<a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.http.middlewares.studio-vpn-only.ipwhitelist.sourcerange=10.223.172.0/24,127.0.0.1/32&quot;</span>
+<a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a><span class="w">      </span><span class="c1"># ...</span>
+<a id="__codelineno-10-28" name="__codelineno-10-28" href="#__codelineno-10-28"></a>
+<a id="__codelineno-10-29" name="__codelineno-10-29" href="#__codelineno-10-29"></a><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a><span class="w">  </span><span class="nt">traefik-supabase</span><span class="p">:</span>
+<a id="__codelineno-10-31" name="__codelineno-10-31" href="#__codelineno-10-31"></a><span class="w">    </span><span class="nt">external</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-10-32" name="__codelineno-10-32" href="#__codelineno-10-32"></a><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">traefik-supabase</span>
+</code></pre></div>
+<p>J'ai créé le réseau externe puis connecté <code>coolify-proxy</code> (Traefik) à ce réseau :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>docker<span class="w"> </span>network<span class="w"> </span>create<span class="w"> </span>traefik-supabase
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>docker<span class="w"> </span>network<span class="w"> </span>connect<span class="w"> </span>traefik-supabase<span class="w"> </span>coolify-proxy
+</code></pre></div>
+<p>J'ai aussi ajouté <code>traefik-supabase</code> (et plus tard <code>traefik-stop-repeat</code>) au compose <strong>persistant</strong> de Coolify-proxy (<code>/data/coolify/proxy/docker-compose.yml</code>) pour que les réseaux soient maintenus aux restarts de Traefik.</p>
+<h4 id="24-creer-les-enregistrements-dns">2.4 Créer les enregistrements DNS<a class="headerlink" href="#24-creer-les-enregistrements-dns" title="Permanent link">&para;</a></h4>
+<p>J'ai créé chez Infomaniak :</p>
+<table>
+<thead>
+<tr>
+<th>Sous-domaine</th>
+<th>Type</th>
+<th>Cible</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>supabase.tutotech.org</code></td>
+<td>A</td>
+<td>IP publique du serveur</td>
+<td>API Supabase (Kong)</td>
+</tr>
+<tr>
+<td><code>studio.supabase.tutotech.org</code></td>
+<td>A</td>
+<td>IP publique du serveur</td>
+<td>Studio (filtré VPN)</td>
+</tr>
+<tr>
+<td><code>stop-repeat.tutotech.org</code></td>
+<td>A</td>
+<td>IP publique du serveur</td>
+<td>Frontend</td>
+</tr>
+<tr>
+<td><code>webhook.tutotech.org</code></td>
+<td>A</td>
+<td>IP publique du serveur</td>
+<td>Webhooks GitHub</td>
+</tr>
+</tbody>
+</table>
+<h4 id="25-demarrer-la-stack">2.5 Démarrer la stack<a class="headerlink" href="#25-demarrer-la-stack" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nb">cd</span><span class="w"> </span>/opt/docker/supabase
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>docker<span class="w"> </span>compose<span class="w"> </span>pull
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+</code></pre></div>
+<p>Au bout de <strong>30 secondes</strong>, les 15 services étaient <code>healthy</code>. La RAM est passée de 2.6 Go à 4.4 Go utilisés (sur 7.7 Go disponibles).</p>
+<h4 id="26-appliquer-les-67-migrations-sql">2.6 Appliquer les 67 migrations SQL<a class="headerlink" href="#26-appliquer-les-67-migrations-sql" title="Permanent link">&para;</a></h4>
+<p>Mon repo <code>family-flow</code> contenait <strong>67 migrations SQL</strong> dans <code>supabase/migrations/</code>. Je les ai rejouées en ordre chronologique :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nb">cd</span><span class="w"> </span>/home/nicolas-bodaine/git/family-flow/supabase/migrations
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="nv">POSTGRES_PW</span><span class="o">=</span><span class="k">$(</span>grep<span class="w"> </span><span class="s2">&quot;^POSTGRES_PASSWORD=&quot;</span><span class="w"> </span>/opt/docker/supabase/.env<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="o">=</span><span class="w"> </span>-f2<span class="k">)</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="k">for</span><span class="w"> </span>f<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>ls<span class="w"> </span>*.sql<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">    </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-i<span class="w"> </span>supabase-db<span class="w"> </span>env<span class="w"> </span><span class="nv">PGPASSWORD</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$POSTGRES_PW</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">      </span>psql<span class="w"> </span>-U<span class="w"> </span>postgres<span class="w"> </span>-d<span class="w"> </span>postgres<span class="w"> </span>&lt;<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$f</span><span class="s2">&quot;</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="k">done</span>
+</code></pre></div>
+<p>J'ai obtenu <strong>66 succès et 1 erreur</strong> sur une migration qui tentait d'insérer des données liées à un user (FK vers <code>auth.users</code>). Ce n'était pas bloquant — la DB est vierge à ce stade. <strong>19 tables publiques</strong> ont été créées (<code>families</code>, <code>profiles</code>, <code>task_templates</code>, <code>task_instances</code>, <code>rewards</code>, <code>child_stats</code>, etc.).</p>
+<h3 id="phase-3-deploiement-du-frontend-avec-cicd-github-app">Phase 3 : Déploiement du frontend avec CI/CD GitHub App<a class="headerlink" href="#phase-3-deploiement-du-frontend-avec-cicd-github-app" title="Permanent link">&para;</a></h3>
+<h4 id="31-creer-lapplication-coolify-via-api">3.1 Créer l'application Coolify via API<a class="headerlink" href="#31-creer-lapplication-coolify-via-api" title="Permanent link">&para;</a></h4>
+<p>J'ai utilisé l'API Coolify pour créer l'application (j'avais déjà créé une <strong>GitHub App</strong> « coolify-tutotech-org-github-app-1 » sous mon organisation TutoTech) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nv">COOLIFY_TOKEN</span><span class="o">=</span><span class="s2">&quot;...&quot;</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="nv">SERVER_UUID</span><span class="o">=</span><span class="s2">&quot;...&quot;</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="nv">PROJECT_TUTOTECH</span><span class="o">=</span><span class="s2">&quot;...&quot;</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="nv">GITHUB_APP_UUID</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="w">  </span><span class="c1"># uuid de coolify-tutotech-org-github-app-1</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">&quot;http://localhost:8000/api/v1/applications/private-github-app&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$COOLIFY_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="w">  </span>-d<span class="w"> </span><span class="s2">&quot;{</span>
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="s2">    \&quot;project_uuid\&quot;: \&quot;</span><span class="nv">$PROJECT_TUTOTECH</span><span class="s2">\&quot;,</span>
+<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="s2">    \&quot;server_uuid\&quot;: \&quot;</span><span class="nv">$SERVER_UUID</span><span class="s2">\&quot;,</span>
+<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a><span class="s2">    \&quot;github_app_uuid\&quot;: \&quot;</span><span class="nv">$GITHUB_APP_UUID</span><span class="s2">\&quot;,</span>
+<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a><span class="s2">    \&quot;environment_name\&quot;: \&quot;production\&quot;,</span>
+<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a><span class="s2">    \&quot;git_repository\&quot;: \&quot;TutoTech/family-flow\&quot;,</span>
+<a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a><span class="s2">    \&quot;git_branch\&quot;: \&quot;coolify-deploy\&quot;,</span>
+<a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a><span class="s2">    \&quot;build_pack\&quot;: \&quot;dockerfile\&quot;,</span>
+<a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a><span class="s2">    \&quot;ports_exposes\&quot;: \&quot;8080\&quot;,</span>
+<a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a><span class="s2">    \&quot;name\&quot;: \&quot;stop-repeat\&quot;,</span>
+<a id="__codelineno-14-19" name="__codelineno-14-19" href="#__codelineno-14-19"></a><span class="s2">    \&quot;domains\&quot;: \&quot;https://stop-repeat.tutotech.org\&quot;,</span>
+<a id="__codelineno-14-20" name="__codelineno-14-20" href="#__codelineno-14-20"></a><span class="s2">    \&quot;instant_deploy\&quot;: false</span>
+<a id="__codelineno-14-21" name="__codelineno-14-21" href="#__codelineno-14-21"></a><span class="s2">  }&quot;</span>
+</code></pre></div>
+<h4 id="32-configurer-les-variables-denvironnement-build-time">3.2 Configurer les variables d'environnement build-time<a class="headerlink" href="#32-configurer-les-variables-denvironnement-build-time" title="Permanent link">&para;</a></h4>
+<p>Les variables <code>VITE_*</code> doivent être disponibles <strong>au build</strong> (pas au runtime) pour que Vite les inline dans le bundle JS. Je les ai ajoutées via l'API :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nv">APP_UUID</span><span class="o">=</span><span class="s2">&quot;...&quot;</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="nv">ANON_KEY</span><span class="o">=</span><span class="k">$(</span>grep<span class="w"> </span><span class="s2">&quot;^ANON_KEY=&quot;</span><span class="w"> </span>/opt/docker/supabase/.env<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="o">=</span><span class="w"> </span>-f2<span class="k">)</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">&quot;http://localhost:8000/api/v1/applications/</span><span class="nv">$APP_UUID</span><span class="s2">/envs&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$COOLIFY_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;key&quot;: &quot;VITE_SUPABASE_URL&quot;, &quot;value&quot;: &quot;https://supabase.tutotech.org&quot;}&#39;</span>
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">&quot;.../envs&quot;</span><span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;{\&quot;key\&quot;: \&quot;VITE_SUPABASE_PUBLISHABLE_KEY\&quot;, \&quot;value\&quot;: \&quot;</span><span class="nv">$ANON_KEY</span><span class="s2">\&quot;}&quot;</span>
+<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">&quot;.../envs&quot;</span><span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;key&quot;: &quot;VITE_SUPABASE_PROJECT_ID&quot;, &quot;value&quot;: &quot;stop-repeat-selfhosted&quot;}&#39;</span>
+</code></pre></div>
+<h4 id="33-premier-deploiement">3.3 Premier déploiement<a class="headerlink" href="#33-premier-deploiement" title="Permanent link">&para;</a></h4>
+<p>J'ai déclenché un déploiement manuel via l'API et il a réussi en <strong>~17 secondes</strong> (build Docker + nginx).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>curl<span class="w"> </span><span class="s2">&quot;http://localhost:8000/api/v1/deploy?uuid=</span><span class="nv">$APP_UUID</span><span class="s2">&amp;force=false&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$COOLIFY_TOKEN</span><span class="s2">&quot;</span>
+</code></pre></div>
+<p>L'app était accessible sur <code>https://stop-repeat.tutotech.org</code> avec un certificat <strong>Let's Encrypt</strong> valide (DNS challenge Infomaniak via la config Traefik existante).</p>
+<h4 id="34-activer-le-webhook-cicd">3.4 Activer le webhook CI/CD<a class="headerlink" href="#34-activer-le-webhook-cicd" title="Permanent link">&para;</a></h4>
+<p>C'est ici que j'ai rencontré un piège : mon domaine <code>coolify.tutotech.org</code> pointe vers l'IP <strong>VPN privée</strong> (10.223.172.1) pour des raisons de sécurité. GitHub ne pouvait donc <strong>pas atteindre l'endpoint webhook</strong> depuis Internet.</p>
+<div class="admonition tip">
+<p class="admonition-title">Solution : un domaine public dédié pour les webhooks</p>
+<p>J'ai créé un sous-domaine <code>webhook.tutotech.org</code> pointant vers l'<strong>IP publique</strong>, et configuré une route Traefik dédiée qui n'expose <strong>que</strong> le path <code>/webhooks/</code> de Coolify.</p>
+</div>
+<p>J'ai créé un fichier de config dynamique Traefik :</p>
+<div class="highlight"><span class="filename">/data/coolify/proxy/dynamic/coolify-webhook.yml</span><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="nt">http</span><span class="p">:</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="w">  </span><span class="nt">routers</span><span class="p">:</span>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="w">    </span><span class="nt">coolify-webhook</span><span class="p">:</span>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="w">      </span><span class="nt">rule</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Host(`webhook.tutotech.org`)</span><span class="nv"> </span><span class="s">&amp;&amp;</span><span class="nv"> </span><span class="s">PathPrefix(`/webhooks/`)&quot;</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="w">      </span><span class="nt">entryPoints</span><span class="p">:</span>
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https</span>
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="w">      </span><span class="nt">tls</span><span class="p">:</span>
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="w">        </span><span class="nt">certResolver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">letsencrypt</span>
+<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="w">      </span><span class="nt">service</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">coolify-dashboard</span>
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>
+<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a><span class="w">  </span><span class="nt">services</span><span class="p">:</span>
+<a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a><span class="w">    </span><span class="nt">coolify-dashboard</span><span class="p">:</span>
+<a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a><span class="w">      </span><span class="nt">loadBalancer</span><span class="p">:</span>
+<a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a><span class="w">        </span><span class="nt">servers</span><span class="p">:</span>
+<a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a><span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http://coolify:8080&quot;</span>
+</code></pre></div>
+<p>Puis dans la <strong>GitHub App</strong> (paramètres de l'organisation TutoTech), j'ai mis à jour l'URL du webhook vers :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>https://webhook.tutotech.org/webhooks/source/github/events
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Ne pas mettre <code>/manage</code> à la fin</p>
+<p>Mon premier essai avec <code>/webhooks/source/github/events/manage</code> ne fonctionnait pas (cette route n'existe pas dans Coolify). La bonne URL est juste <code>/webhooks/source/github/events</code>.</p>
+</div>
+<p>À mon push suivant, le webhook a déclenché le déploiement en <strong>~5 secondes</strong>. La CI/CD était opérationnelle.</p>
+<h3 id="phase-4-edge-functions-et-secrets">Phase 4 : Edge Functions et secrets<a class="headerlink" href="#phase-4-edge-functions-et-secrets" title="Permanent link">&para;</a></h3>
+<h4 id="41-copier-les-10-fonctions">4.1 Copier les 10 fonctions<a class="headerlink" href="#41-copier-les-10-fonctions" title="Permanent link">&para;</a></h4>
+<p>Le service <code>supabase-edge-functions</code> du compose monte le dossier <code>/opt/docker/supabase/volumes/functions/</code> vers <code>/home/deno/functions/</code>. J'ai copié mes 10 functions :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="k">for</span><span class="w"> </span>fn<span class="w"> </span><span class="k">in</span><span class="w"> </span>/home/nicolas-bodaine/git/family-flow/supabase/functions/*/<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">    </span>cp<span class="w"> </span>-r<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$fn</span><span class="s2">&quot;</span><span class="w"> </span>/opt/docker/supabase/volumes/functions/
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="k">done</span>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>docker<span class="w"> </span>restart<span class="w"> </span>supabase-edge-functions
+</code></pre></div>
+<p>Les functions deviennent immédiatement accessibles sur :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>https://supabase.tutotech.org/functions/v1/&lt;nom-fonction&gt;
+</code></pre></div>
+<h4 id="42-injecter-les-secrets-via-loverride">4.2 Injecter les secrets via l'override<a class="headerlink" href="#42-injecter-les-secrets-via-loverride" title="Permanent link">&para;</a></h4>
+<p>Les fonctions ont besoin de secrets pour fonctionner (Stripe, VAPID). Je les ai ajoutés au <code>.env</code> puis injectés dans le service <code>functions</code> via l'override :</p>
+<div class="highlight"><span class="filename">docker-compose.override.yml (extrait functions)</span><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="nt">services</span><span class="p">:</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="w">  </span><span class="nt">functions</span><span class="p">:</span>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="w">      </span><span class="nt">VAPID_PUBLIC_KEY</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${VAPID_PUBLIC_KEY}</span>
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="w">      </span><span class="nt">VAPID_PRIVATE_KEY</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${VAPID_PRIVATE_KEY}</span>
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="w">      </span><span class="nt">VAPID_EMAIL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${VAPID_EMAIL}</span>
+<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a><span class="w">      </span><span class="nt">STRIPE_SECRET_KEY</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${STRIPE_SECRET_KEY}</span>
+<a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a><span class="w">      </span><span class="nt">STRIPE_WEBHOOK_SECRET</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${STRIPE_WEBHOOK_SECRET}</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Réutiliser les VAPID de Lovable</p>
+<p>J'ai récupéré les <strong>mêmes</strong> VAPID keys depuis le dashboard Supabase Lovable plutôt que d'en générer de nouvelles. Ainsi, les enfants déjà inscrits aux notifications push n'auront <strong>pas</strong> à re-autoriser au moment de la migration des données.</p>
+</div>
+<h4 id="43-configurer-le-smtp-pour-les-emails-de-confirmation">4.3 Configurer le SMTP pour les emails de confirmation<a class="headerlink" href="#43-configurer-le-smtp-pour-les-emails-de-confirmation" title="Permanent link">&para;</a></h4>
+<p>Au premier signup test, j'ai obtenu une erreur <strong>« Error sending confirmation email »</strong>. La cause : le <code>.env</code> pointait vers <code>supabase-mail:2500</code> (le service mock du compose), inexistant.</p>
+<p>J'ai créé un <strong>mot de passe d'application</strong> sur Infomaniak pour le compte <code>admin@tutotech.org</code>, puis configuré :</p>
+<div class="highlight"><span class="filename">.env</span><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="na">SMTP_HOST</span><span class="o">=</span><span class="s">mail.infomaniak.com</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="na">SMTP_PORT</span><span class="o">=</span><span class="s">465</span>
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="na">SMTP_USER</span><span class="o">=</span><span class="s">admin@tutotech.org</span>
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="na">SMTP_PASS</span><span class="o">=</span><span class="s">&lt;mot-de-passe-application&gt;</span>
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="na">SMTP_SENDER_NAME</span><span class="o">=</span><span class="s">Stop Repeat</span>
+<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="na">SMTP_ADMIN_EMAIL</span><span class="o">=</span><span class="s">admin@tutotech.org</span>
+</code></pre></div>
+<p>Après <code>docker compose up -d auth</code>, le test de signup envoyait bien l'email de confirmation.</p>
+<h3 id="phase-5-pg_cron-jobs">Phase 5 : pg_cron jobs<a class="headerlink" href="#phase-5-pg_cron-jobs" title="Permanent link">&para;</a></h3>
+<p>L'app a besoin de <strong>3 tâches planifiées</strong> :</p>
+<ul>
+<li><strong><code>daily-task-reset</code></strong> : régénère les instances de tâches du jour pour toutes les familles (5h UTC)</li>
+<li><strong><code>task-reminders</code></strong> : envoie les rappels push (toutes les 15 min)</li>
+<li><strong><code>cleanup-evidence-photos</code></strong> : supprime les photos preuve expirées (toutes les heures)</li>
+</ul>
+<p>Les extensions <code>pg_cron</code> et <code>pg_net</code> étaient déjà installées dans l'image <code>supabase/postgres</code>. J'ai créé les jobs :</p>
+<div class="highlight"><span class="filename">Création des cron jobs</span><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="c1">-- Job 1 : daily-task-reset (5h UTC)</span>
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="k">SELECT</span><span class="w"> </span><span class="n">cron</span><span class="p">.</span><span class="n">schedule</span><span class="p">(</span>
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="w">  </span><span class="s1">&#39;daily-task-reset&#39;</span><span class="p">,</span>
+<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="w">  </span><span class="s1">&#39;0 5 * * *&#39;</span><span class="p">,</span>
+<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="w">  </span><span class="err">$$</span>
+<a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a><span class="w">  </span><span class="k">SELECT</span><span class="w"> </span><span class="n">net</span><span class="p">.</span><span class="n">http_post</span><span class="p">(</span>
+<a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a><span class="w">    </span><span class="n">url</span><span class="w"> </span><span class="p">:</span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;https://supabase.tutotech.org/functions/v1/daily-task-reset&#39;</span><span class="p">,</span>
+<a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a><span class="w">    </span><span class="n">headers</span><span class="w"> </span><span class="p">:</span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;{&quot;Content-Type&quot;: &quot;application/json&quot;, &quot;Authorization&quot;: &quot;Bearer &lt;ANON_KEY&gt;&quot;}&#39;</span><span class="p">::</span><span class="n">jsonb</span><span class="p">,</span>
+<a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a><span class="w">    </span><span class="n">body</span><span class="w"> </span><span class="p">:</span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;{}&#39;</span><span class="p">::</span><span class="n">jsonb</span>
+<a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a><span class="w">  </span><span class="p">);</span>
+<a id="__codelineno-23-11" name="__codelineno-23-11" href="#__codelineno-23-11"></a><span class="w">  </span><span class="err">$$</span>
+<a id="__codelineno-23-12" name="__codelineno-23-12" href="#__codelineno-23-12"></a><span class="p">);</span>
+<a id="__codelineno-23-13" name="__codelineno-23-13" href="#__codelineno-23-13"></a>
+<a id="__codelineno-23-14" name="__codelineno-23-14" href="#__codelineno-23-14"></a><span class="c1">-- Job 2 : task-reminders (toutes les 15 min)</span>
+<a id="__codelineno-23-15" name="__codelineno-23-15" href="#__codelineno-23-15"></a><span class="k">SELECT</span><span class="w"> </span><span class="n">cron</span><span class="p">.</span><span class="n">schedule</span><span class="p">(</span>
+<a id="__codelineno-23-16" name="__codelineno-23-16" href="#__codelineno-23-16"></a><span class="w">  </span><span class="s1">&#39;task-reminders&#39;</span><span class="p">,</span>
+<a id="__codelineno-23-17" name="__codelineno-23-17" href="#__codelineno-23-17"></a><span class="w">  </span><span class="s1">&#39;*/15 * * * *&#39;</span><span class="p">,</span>
+<a id="__codelineno-23-18" name="__codelineno-23-18" href="#__codelineno-23-18"></a><span class="w">  </span><span class="err">$$</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="n">net</span><span class="p">.</span><span class="n">http_post</span><span class="p">(</span><span class="n">url</span><span class="w"> </span><span class="p">:</span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;https://supabase.tutotech.org/functions/v1/task-reminders&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span><span class="w"> </span><span class="err">$$</span>
+<a id="__codelineno-23-19" name="__codelineno-23-19" href="#__codelineno-23-19"></a><span class="p">);</span>
+<a id="__codelineno-23-20" name="__codelineno-23-20" href="#__codelineno-23-20"></a>
+<a id="__codelineno-23-21" name="__codelineno-23-21" href="#__codelineno-23-21"></a><span class="c1">-- Job 3 : cleanup-evidence-photos (toutes les heures, fonction SQL native)</span>
+<a id="__codelineno-23-22" name="__codelineno-23-22" href="#__codelineno-23-22"></a><span class="k">SELECT</span><span class="w"> </span><span class="n">cron</span><span class="p">.</span><span class="n">schedule</span><span class="p">(</span>
+<a id="__codelineno-23-23" name="__codelineno-23-23" href="#__codelineno-23-23"></a><span class="w">  </span><span class="s1">&#39;cleanup-evidence-photos&#39;</span><span class="p">,</span>
+<a id="__codelineno-23-24" name="__codelineno-23-24" href="#__codelineno-23-24"></a><span class="w">  </span><span class="s1">&#39;0 * * * *&#39;</span><span class="p">,</span>
+<a id="__codelineno-23-25" name="__codelineno-23-25" href="#__codelineno-23-25"></a><span class="w">  </span><span class="err">$$</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">public</span><span class="p">.</span><span class="n">cleanup_expired_evidence_photos</span><span class="p">();</span><span class="w"> </span><span class="err">$$</span>
+<a id="__codelineno-23-26" name="__codelineno-23-26" href="#__codelineno-23-26"></a><span class="p">);</span>
+</code></pre></div>
+<p>J'ai vérifié leur bon fonctionnement en déclenchant un appel manuel via <code>pg_net</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="k">SELECT</span><span class="w"> </span><span class="n">net</span><span class="p">.</span><span class="n">http_post</span><span class="p">(</span><span class="n">url</span><span class="w"> </span><span class="p">:</span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;https://supabase.tutotech.org/functions/v1/task-reminders&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="k">SELECT</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">status_code</span><span class="p">,</span><span class="w"> </span><span class="n">content</span><span class="p">::</span><span class="nb">text</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">net</span><span class="p">.</span><span class="n">_http_response</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">DESC</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="c1">-- Retour : status_code=200, content={&quot;reminders_sent&quot;:0}  ✓</span>
+</code></pre></div>
+<h3 id="phase-6-google-oauth-provider">Phase 6 : Google OAuth provider<a class="headerlink" href="#phase-6-google-oauth-provider" title="Permanent link">&para;</a></h3>
+<p>Pour activer le bouton « Continuer avec Google », j'ai créé un <strong>OAuth 2.0 Client ID</strong> sur Google Cloud Console :</p>
+<ol>
+<li><strong>OAuth consent screen</strong> → External, app name « Stop Repeat », support email <code>admin@tutotech.org</code></li>
+<li><strong>Credentials</strong> → Create OAuth client ID → Web application</li>
+<li><strong>Authorized JavaScript origins</strong> : <code>https://stop-repeat.tutotech.org</code></li>
+<li><strong>Authorized redirect URIs</strong> : <code>https://supabase.tutotech.org/auth/v1/callback</code></li>
+</ol>
+<p>J'ai injecté le <code>Client ID</code> et <code>Client Secret</code> dans <code>.env</code> puis dans le service <code>auth</code> via l'override :</p>
+<div class="highlight"><span class="filename">docker-compose.override.yml (extrait auth)</span><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="nt">services</span><span class="p">:</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="w">  </span><span class="nt">auth</span><span class="p">:</span>
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="w">      </span><span class="nt">GOTRUE_EXTERNAL_GOOGLE_ENABLED</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${GOOGLE_ENABLED}</span>
+<a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="w">      </span><span class="nt">GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${GOOGLE_CLIENT_ID}</span>
+<a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a><span class="w">      </span><span class="nt">GOTRUE_EXTERNAL_GOOGLE_SECRET</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${GOOGLE_SECRET}</span>
+<a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a><span class="w">      </span><span class="nt">GOTRUE_EXTERNAL_GOOGLE_REDIRECT_URI</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${API_EXTERNAL_URL}/auth/v1/callback</span>
+</code></pre></div>
+<p>Après <code>docker compose up -d auth</code>, GoTrue exposait <code>"google": true</code> dans son endpoint <code>/auth/v1/settings</code>, et un <code>GET /auth/v1/authorize?provider=google</code> retournait bien un <strong>302</strong> vers <code>accounts.google.com</code>.</p>
+<h3 id="phase-7-tests-fonctionnels">Phase 7 : Tests fonctionnels<a class="headerlink" href="#phase-7-tests-fonctionnels" title="Permanent link">&para;</a></h3>
+<p>J'ai validé le bout-en-bout :</p>
+<ul>
+<li><strong>Signup parent</strong> avec email/mot de passe → email de confirmation reçu sur <code>admin@tutotech.org</code> → confirmation OK</li>
+<li><strong>Création d'un enfant</strong> via la edge function <code>create-child-account</code> → OK</li>
+<li><strong>OAuth Google</strong> : après correction du <code>redirectTo</code> (de <code>/auth/callback</code> vers <code>/</code>), le compte Google est correctement créé dans <code>auth.users</code> avec son nom (récupéré depuis Google) et l'utilisateur est redirigé vers la landing page avec sa session active</li>
+<li><strong>CI/CD GitHub App</strong> : un push sur <code>coolify-deploy</code> déclenche un build Coolify en moins de 5 secondes, et le déploiement aboutit en ~17 secondes</li>
+</ul>
+<h2 id="verification">Vérification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
+<p>Quelques commandes utiles pour vérifier que tout fonctionne :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="c1"># Tous les conteneurs Supabase healthy</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>docker<span class="w"> </span>ps<span class="w"> </span>--filter<span class="w"> </span><span class="s2">&quot;name=supabase&quot;</span><span class="w"> </span>--format<span class="w"> </span><span class="s2">&quot;{{.Names}}\t{{.Status}}&quot;</span>
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>
+<a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a><span class="c1"># Test API REST (avec apikey)</span>
+<a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a><span class="nv">ANON</span><span class="o">=</span><span class="k">$(</span>grep<span class="w"> </span><span class="s2">&quot;^ANON_KEY=&quot;</span><span class="w"> </span>/opt/docker/supabase/.env<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="o">=</span><span class="w"> </span>-f2<span class="k">)</span>
+<a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;https://supabase.tutotech.org/rest/v1/&quot;</span><span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;apikey: </span><span class="nv">$ANON</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.swagger&#39;</span>
+<a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a>
+<a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a><span class="c1"># Test Auth settings</span>
+<a id="__codelineno-26-9" name="__codelineno-26-9" href="#__codelineno-26-9"></a>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;https://supabase.tutotech.org/auth/v1/settings&quot;</span><span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;apikey: </span><span class="nv">$ANON</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.external&#39;</span>
+<a id="__codelineno-26-10" name="__codelineno-26-10" href="#__codelineno-26-10"></a>
+<a id="__codelineno-26-11" name="__codelineno-26-11" href="#__codelineno-26-11"></a><span class="c1"># Test edge function</span>
+<a id="__codelineno-26-12" name="__codelineno-26-12" href="#__codelineno-26-12"></a>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;https://supabase.tutotech.org/functions/v1/push-vapid-key&quot;</span><span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;apikey: </span><span class="nv">$ANON</span><span class="s2">&quot;</span>
+<a id="__codelineno-26-13" name="__codelineno-26-13" href="#__codelineno-26-13"></a>
+<a id="__codelineno-26-14" name="__codelineno-26-14" href="#__codelineno-26-14"></a><span class="c1"># Test Google OAuth (doit renvoyer 302 vers accounts.google.com)</span>
+<a id="__codelineno-26-15" name="__codelineno-26-15" href="#__codelineno-26-15"></a>curl<span class="w"> </span>-sI<span class="w"> </span><span class="s2">&quot;https://supabase.tutotech.org/auth/v1/authorize?provider=google&amp;redirect_to=https://stop-repeat.tutotech.org/&quot;</span><span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;apikey: </span><span class="nv">$ANON</span><span class="s2">&quot;</span>
+<a id="__codelineno-26-16" name="__codelineno-26-16" href="#__codelineno-26-16"></a>
+<a id="__codelineno-26-17" name="__codelineno-26-17" href="#__codelineno-26-17"></a><span class="c1"># Lister les cron jobs</span>
+<a id="__codelineno-26-18" name="__codelineno-26-18" href="#__codelineno-26-18"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>supabase-db<span class="w"> </span>psql<span class="w"> </span>-U<span class="w"> </span>postgres<span class="w"> </span>-d<span class="w"> </span>postgres<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;SELECT jobid, jobname, schedule FROM cron.job;&quot;</span>
+<a id="__codelineno-26-19" name="__codelineno-26-19" href="#__codelineno-26-19"></a>
+<a id="__codelineno-26-20" name="__codelineno-26-20" href="#__codelineno-26-20"></a><span class="c1"># Tester la CI/CD</span>
+<a id="__codelineno-26-21" name="__codelineno-26-21" href="#__codelineno-26-21"></a>git<span class="w"> </span>commit<span class="w"> </span>--allow-empty<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;test ci/cd&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>coolify-deploy
+<a id="__codelineno-26-22" name="__codelineno-26-22" href="#__codelineno-26-22"></a><span class="c1"># → Vérifier dans l&#39;UI Coolify qu&#39;un build se lance</span>
+</code></pre></div>
+<div class="admonition success">
+<p class="admonition-title">Résultat attendu</p>
+<p>Tous les endpoints répondent avec un code HTTP 2xx (ou 302 pour OAuth, ou 401 si auth requise), les certificats sont émis par Let's Encrypt, et un push GitHub déclenche bien un nouveau déploiement automatique.</p>
+</div>
+<h2 id="pieges-rencontres-et-solutions">Pièges rencontrés et solutions<a class="headerlink" href="#pieges-rencontres-et-solutions" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Piège</th>
+<th>Symptôme</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Coolify domain en VPN-only</td>
+<td>GitHub ne peut pas envoyer de webhook</td>
+<td>Créer un sous-domaine public <code>webhook.*</code> exposant uniquement <code>/webhooks/*</code></td>
+</tr>
+<tr>
+<td>Mauvaise URL webhook</td>
+<td>Le push ne déclenche rien</td>
+<td>Utiliser <code>/webhooks/source/github/events</code> (sans <code>/manage</code>)</td>
+</tr>
+<tr>
+<td><code>acme.json</code> permissions</td>
+<td>Cert auto-signé Traefik au lieu de Let's Encrypt</td>
+<td><code>chmod 600 /data/coolify/proxy/acme.json</code> (Coolify l'écrase parfois en <code>770</code>)</td>
+</tr>
+<tr>
+<td>Route <code>/auth/callback</code> inexistante</td>
+<td>404 après login Google</td>
+<td>Pointer <code>redirectTo</code> vers <code>/</code> (Supabase parse le hash automatiquement)</td>
+</tr>
+<tr>
+<td>SMTP <code>supabase-mail</code> introuvable</td>
+<td>« Error sending confirmation email »</td>
+<td>Configurer un vrai SMTP (j'utilise Infomaniak avec mot de passe d'application)</td>
+</tr>
+<tr>
+<td>RAM serrée</td>
+<td>OOM kill possible avec 4 Go</td>
+<td>Redimensionner la VM Azure à <code>B2as_v2</code> (8 Go)</td>
+</tr>
+<tr>
+<td><code>is_build_time</code> non accepté par l'API</td>
+<td>Erreur de validation à l'ajout d'env</td>
+<td>Ne pas l'envoyer — Coolify détecte automatiquement les <code>VITE_*</code> comme build-time</td>
+</tr>
+</tbody>
+</table>
+<h2 id="ce-qui-reste-a-faire">Ce qui reste à faire<a class="headerlink" href="#ce-qui-reste-a-faire" title="Permanent link">&para;</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Prochaine étape : migration des données de production</p>
+<p>Cette note couvre le <strong>déploiement de l'infrastructure self-hosted</strong>. Il me reste à migrer les <strong>données de production</strong> depuis Lovable :</p>
+<ul>
+<li><strong><code>auth.users</code></strong> (avec les hashes bcrypt préservés pour que les users n'aient pas à réinitialiser leur mot de passe)</li>
+<li>Toutes les données métier (familles, tâches, récompenses, statistiques, etc.)</li>
+<li>Le <strong>bucket Storage <code>task-evidence</code></strong> (photos de preuve)</li>
+<li>Les <strong>identités OAuth Google</strong> liées aux comptes existants</li>
+</ul>
+<p>Cette étape sera documentée dans un complément à cette note.</p>
+</div>
+<h2 id="aide-memoire-sous-domaines">Aide-mémoire — Sous-domaines<a class="headerlink" href="#aide-memoire-sous-domaines" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Sous-domaine</th>
+<th>Usage</th>
+<th>Accès</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>stop-repeat.tutotech.org</code></td>
+<td>Frontend SPA</td>
+<td>Public</td>
+</tr>
+<tr>
+<td><code>supabase.tutotech.org</code></td>
+<td>API Supabase (Kong gateway : REST, Auth, Storage, Realtime, Functions)</td>
+<td>Public</td>
+</tr>
+<tr>
+<td><code>studio.supabase.tutotech.org</code></td>
+<td>Dashboard Studio (admin DB)</td>
+<td>VPN uniquement</td>
+</tr>
+<tr>
+<td><code>coolify.tutotech.org</code></td>
+<td>UI Coolify</td>
+<td>VPN uniquement</td>
+</tr>
+<tr>
+<td><code>webhook.tutotech.org</code></td>
+<td>Endpoint webhooks GitHub (uniquement <code>/webhooks/*</code>)</td>
+<td>Public</td>
+</tr>
+</tbody>
+</table>
+<h2 id="aide-memoire-commandes-utiles">Aide-mémoire — Commandes utiles<a class="headerlink" href="#aide-memoire-commandes-utiles" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Commande / Action</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>docker compose up -d</code> (depuis <code>/opt/docker/supabase</code>)</td>
+<td>Démarrer la stack Supabase</td>
+</tr>
+<tr>
+<td><code>docker compose logs -f auth</code></td>
+<td>Suivre les logs de GoTrue</td>
+</tr>
+<tr>
+<td><code>docker exec supabase-db psql -U postgres -d postgres</code></td>
+<td>Console SQL avec super-user</td>
+</tr>
+<tr>
+<td><code>SELECT * FROM cron.job;</code></td>
+<td>Lister les jobs planifiés</td>
+</tr>
+<tr>
+<td><code>SELECT * FROM net._http_response ORDER BY id DESC LIMIT 5;</code></td>
+<td>Voir les dernières réponses pg_net</td>
+</tr>
+<tr>
+<td><code>git push origin coolify-deploy</code></td>
+<td>Déclencher un redéploiement automatique</td>
+</tr>
+<tr>
+<td><code>curl /api/v1/deploy?uuid=...</code> (API Coolify)</td>
+<td>Forcer un redéploiement manuel</td>
+</tr>
+</tbody>
+</table>
+<h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://supabase.com/docs/guides/self-hosting/docker">Supabase Self-Hosting Docker</a> — Documentation officielle</li>
+<li><a href="https://coolify.io/docs">Coolify Documentation</a> — Documentation officielle</li>
+<li><a href="https://doc.traefik.io/traefik/routing/overview/">Traefik v3 — Routing</a> — Configuration des routers, services, middlewares</li>
+<li><a href="https://supabase.com/docs/reference/self-hosting-auth/introduction">GoTrue / Auth API</a> — API d'authentification</li>
+<li><a href="https://github.com/citusdata/pg_cron">pg_cron</a> — Planification de jobs PostgreSQL</li>
+<li><a href="https://doc.traefik.io/traefik/https/acme/#dnschallenge">Let's Encrypt DNS Challenge</a> — Émission de certificats wildcard via DNS</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../virt-sysprep-preparer-image-linux-clonage/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: virt-sysprep — préparer une image Linux au clonage">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                virt-sysprep — préparer une image Linux au clonage
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../reseaux/" class="md-footer__link md-footer__link--next" aria-label="Suivant: Réseaux">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                Réseaux
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      <a href="/mentions-legales/">Mentions légales</a>
+
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/bodaine" target="_blank" rel="noopener" title="Nicolas BODAINE sur LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://github.com/NicoBOD" target="_blank" rel="noopener" title="NicoBOD sur GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://nicolas.bodaine.fr" target="_blank" rel="noopener" title="Portfolio de Nicolas BODAINE" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.path", "navigation.indexes", "navigation.expand", "navigation.footer", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.action.edit", "content.action.view", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
