@@ -27,7 +27,7 @@ status: brouillon | publié
 |-----------|--------|
 | Difficulté | Intermédiaire |
 | OS / Environnement | Ubuntu 24.04 |
-| Dernière mise à jour | 2026-05-02 |
+| Dernière mise à jour | YYYY-MM-DD |
 
 <!-- ============================================================ -->
 <!-- BLOCS MODULAIRES                                              -->
@@ -192,7 +192,7 @@ Texte avec une note[^1].
 !!! failure "Titre"      Échec
 !!! abstract "Titre"     Résumé
 !!! question "Titre"     Question
-!!! example "Titre"        Exemple
+!!! example "Titre"      Exemple
 !!! quote "Titre"        Citation
 
 ??? note "Titre"         Admonition dépliable (fermée par défaut)
@@ -202,7 +202,7 @@ Texte avec une note[^1].
 ```python title="script.py" linenums="1" hl_lines="2 3"
 def hello():
     print("Hello")      # ligne surlignée
-    return True          # ligne surlignée
+    return True         # ligne surlignée
 ```
 
 === Icônes Material ===
