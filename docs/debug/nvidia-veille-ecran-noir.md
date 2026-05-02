@@ -1,6 +1,6 @@
 ---
 title: "NVIDIA — Écran noir après sortie de veille"
-date: 2026-04-07
+date: 2026-05-03
 author: Nicolas BODAINE
 tags:
   - nvidia
@@ -25,8 +25,8 @@ status: publié
 | Difficulté | Intermédiaire |
 | OS / Environnement | Ubuntu 24.04 Desktop — Gnome — X11 |
 | GPU | NVIDIA GeForce GTX 1060 6GB |
-| Driver | nvidia-driver-580 (580.126.09) |
-| Dernière mise à jour | 2026-04-07 |
+| Driver | nvidia-driver-580 (580.142) |
+| Dernière mise à jour | 2026-05-03 |
 
 ## Contexte
 
@@ -81,6 +81,21 @@ systemctl is-enabled nvidia-suspend nvidia-resume nvidia-hibernate
 cat /proc/driver/nvidia/params | grep -E 'Preserve|TemporaryFilePath'
 ```
 
+### 5. Confirmer que nvidia-resume.service s'est exécuté au dernier réveil
+
+```bash
+journalctl -b -1 -u nvidia-suspend.service -u nvidia-resume.service -u nvidia-display-restore.service
+```
+
+!!! warning "Signe d'alerte — WantedBy silencieusement ignoré"
+    Si `nvidia-suspend.service` apparaît mais **pas** `nvidia-resume.service`, le mécanisme
+    `WantedBy=systemd-suspend.service` ne fonctionne pas dans le chemin de retour de veille
+    sur **systemd 255** (Ubuntu 24.04).
+
+    Les services sont activés et correctement liés dans `systemd-suspend.service.wants/`
+    mais ne sont jamais déclenchés au réveil — même si les étapes 2 et 3 ont déjà été appliquées.
+    → Appliquer l'**Étape 4** ci-dessous.
+
 ## Solution
 
 ### Étape 1 : Installer les headers du noyau (si manquants)
@@ -134,7 +149,37 @@ sudo systemctl daemon-reload
 sudo systemctl enable nvidia-display-restore.service
 ```
 
-### Étape 4 : Vérifier la cohérence de la config modprobe
+!!! warning "Limitation sur systemd 255 / Ubuntu 24.04"
+    Ce service utilise `WantedBy=systemd-suspend.service`, le même mécanisme que
+    `nvidia-resume.service`. Sur systemd 255, ce mécanisme peut échouer silencieusement
+    au réveil : le service est activé mais jamais déclenché.
+    Si l'écran reste noir malgré cette étape, appliquer l'**Étape 4**.
+
+### Étape 4 : Drop-in systemd — garantir l'exécution au réveil
+
+!!! info "Quand appliquer cette étape"
+    À appliquer si, après les étapes 2 et 3, `nvidia-resume.service` n'apparaît toujours
+    pas dans les journaux après un réveil (cf. Diagnostic — étape 5).
+
+Ce drop-in attache `nvidia-sleep.sh resume` directement à `ExecStartPost` de
+`systemd-suspend.service`, ce qui garantit son exécution indépendamment du mécanisme `WantedBy`.
+
+```bash
+sudo mkdir -p /etc/systemd/system/systemd-suspend.service.d/
+sudo tee /etc/systemd/system/systemd-suspend.service.d/nvidia-resume.conf << 'EOF'
+[Service]
+ExecStartPost=-/usr/bin/nvidia-sleep.sh resume
+EOF
+sudo systemctl daemon-reload
+```
+
+!!! success "Pourquoi ce fix est plus fiable"
+    - `ExecStartPost` s'exécute **toujours** dès que `systemd-sleep suspend` se termine (après le réveil), indépendamment de la version de systemd.
+    - Le préfixe `-` ignore les erreurs éventuelles sans bloquer le service.
+    - Le fichier est dans `/etc/systemd/system/` et ne sera pas écrasé par une mise à jour du driver.
+    - `nvidia-sleep.sh resume` est idempotent : l'appeler en doublon avec le hook `/usr/lib/systemd/system-sleep/nvidia` existant est sans danger.
+
+### Étape 5 : Vérifier la cohérence de la config modprobe
 
 ```bash
 grep -r 'NVreg_' /etc/modprobe.d/
@@ -162,6 +207,9 @@ Après avoir appliqué les corrections, vérifier la configuration complète :
 # Services activés
 systemctl is-enabled nvidia-suspend nvidia-resume nvidia-hibernate nvidia-display-restore
 
+# Drop-in appliqué
+systemctl cat systemd-suspend.service | grep -A2 ExecStart
+
 # Chaîne de services
 systemctl list-dependencies systemd-suspend.service
 
@@ -178,6 +226,10 @@ cat /sys/power/mem_sleep
     enabled
     enabled
     enabled
+
+    ExecStart=/usr/lib/systemd/systemd-sleep suspend
+    # /etc/systemd/system/systemd-suspend.service.d/nvidia-resume.conf
+    ExecStartPost=-/usr/bin/nvidia-sleep.sh resume
 
     systemd-suspend.service
     ├─nvidia-display-restore.service
@@ -197,6 +249,15 @@ Puis tester la mise en veille :
 ```bash
 systemctl suspend
 ```
+
+Après le réveil, vérifier que le drop-in s'est exécuté :
+
+```bash
+journalctl -b 0 -u systemd-suspend.service
+```
+
+!!! success "Résultat attendu après réveil"
+    La sortie doit contenir une ligne mentionnant `nvidia-sleep.sh` dans l'`ExecStartPost`.
 
 !!! tip "Astuce"
     Si l'écran met 2-3 secondes à revenir après le réveil, c'est normal (délai du service de restauration).
