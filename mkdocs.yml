@@ -53,7 +53,9 @@ nav:
     - Migration de mon application Stop Repeat de Lovable vers un Coolify self-hosted: systemes/migration-stop-repeat-lovable-vers-coolify.md
   - Réseaux: reseaux/index.md
   - Cloud: cloud/index.md
-  - Cybersécurité: cybersecurite/index.md
+  - Cybersécurité:
+    - cybersecurite/index.md
+    - UFW sur Ubuntu Server — ouvrir seulement SSH, HTTP et HTTPS: cybersecurite/ufw-ubuntu-server-premieres-regles.md
   - IA:
     - ia/index.md
     - Déploiement de Paperclip derrière Cosmos Server: ia/deploiement-paperclip-dans-cosmos-server.md
