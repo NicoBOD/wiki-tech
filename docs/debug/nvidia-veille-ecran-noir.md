@@ -1,6 +1,6 @@
 ---
 title: "NVIDIA — Écran noir après sortie de veille"
-date: 2026-05-03
+date: 2026-05-30
 author: Nicolas BODAINE
 tags:
   - nvidia
@@ -25,8 +25,8 @@ status: publié
 | Difficulté | Intermédiaire |
 | OS / Environnement | Ubuntu 24.04 Desktop — Gnome — X11 |
 | GPU | NVIDIA GeForce GTX 1060 6GB |
-| Driver | nvidia-driver-580 (580.142) |
-| Dernière mise à jour | 2026-05-03 |
+| Driver | nvidia-driver-580 (580.159.03) |
+| Dernière mise à jour | 2026-05-30 |
 
 ## Contexte
 
@@ -161,14 +161,17 @@ sudo systemctl enable nvidia-display-restore.service
     À appliquer si, après les étapes 2 et 3, `nvidia-resume.service` n'apparaît toujours
     pas dans les journaux après un réveil (cf. Diagnostic — étape 5).
 
-Ce drop-in attache `nvidia-sleep.sh resume` directement à `ExecStartPost` de
-`systemd-suspend.service`, ce qui garantit son exécution indépendamment du mécanisme `WantedBy`.
+Ce drop-in attache `nvidia-sleep.sh resume` **et la restauration du VT** directement à `ExecStartPost` de `systemd-suspend.service`, ce qui garantit leur exécution indépendamment du mécanisme `WantedBy` (et rend le service de l'Étape 3 redondant).
 
 ```bash
 sudo mkdir -p /etc/systemd/system/systemd-suspend.service.d/
 sudo tee /etc/systemd/system/systemd-suspend.service.d/nvidia-resume.conf << 'EOF'
 [Service]
+# Restauration VRAM
 ExecStartPost=-/usr/bin/nvidia-sleep.sh resume
+# Restauration du VT — remplace nvidia-display-restore.service (Étape 3)
+ExecStartPost=-/bin/sleep 2
+ExecStartPost=-/bin/bash -c 'echo resume > /proc/driver/nvidia/suspend 2>/dev/null; VT=$(cat /sys/class/tty/tty0/active 2>/dev/null | tr -dc "0-9"); if [ "$VT" = "63" ] || [ -z "$VT" ] || [ "$VT" -gt 7 ]; then chvt 2; fi'
 EOF
 sudo systemctl daemon-reload
 ```
@@ -178,6 +181,15 @@ sudo systemctl daemon-reload
     - Le préfixe `-` ignore les erreurs éventuelles sans bloquer le service.
     - Le fichier est dans `/etc/systemd/system/` et ne sera pas écrasé par une mise à jour du driver.
     - `nvidia-sleep.sh resume` est idempotent : l'appeler en doublon avec le hook `/usr/lib/systemd/system-sleep/nvidia` existant est sans danger.
+    - Le `chvt 2` final n'agit que si l'on est resté bloqué sur VT63 (ou un VT inconnu), donc inoffensif sinon.
+
+!!! tip "L'Étape 3 devient redondante"
+    Avec les 3 `ExecStartPost` du drop-in ci-dessus, le `nvidia-display-restore.service` de l'Étape 3 ne sert plus à rien — il ne tournait de toute façon pas, victime du même bug `WantedBy`. Après plusieurs cycles suspend/resume validés, tu peux le désactiver :
+    ```bash
+    sudo systemctl disable nvidia-display-restore.service
+    ```
+
+    Cas observé en pratique (2026-05-30) : sans le `chvt` dans le drop-in, la VRAM est bien restaurée mais l'écran reste sur VT63 → écran noir malgré l'Étape 4 d'origine. C'est pour ça que le drop-in inclut désormais les 3 actions.
 
 ### Étape 5 : Vérifier la cohérence de la config modprobe
 
@@ -230,6 +242,8 @@ cat /sys/power/mem_sleep
     ExecStart=/usr/lib/systemd/systemd-sleep suspend
     # /etc/systemd/system/systemd-suspend.service.d/nvidia-resume.conf
     ExecStartPost=-/usr/bin/nvidia-sleep.sh resume
+    ExecStartPost=-/bin/sleep 2
+    ExecStartPost=-/bin/bash -c 'echo resume > /proc/driver/nvidia/suspend …; chvt 2; fi'
 
     systemd-suspend.service
     ├─nvidia-display-restore.service
@@ -257,7 +271,10 @@ journalctl -b 0 -u systemd-suspend.service
 ```
 
 !!! success "Résultat attendu après réveil"
-    La sortie doit contenir une ligne mentionnant `nvidia-sleep.sh` dans l'`ExecStartPost`.
+    La sortie doit contenir des lignes mentionnant `nvidia-sleep.sh` **et** `chvt` dans les `ExecStartPost`. Vérification plus directe :
+    ```bash
+    systemctl show systemd-suspend.service -p ExecStartPost | tr ' ' '\n' | grep -E 'nvidia-sleep|chvt'
+    ```
 
 !!! tip "Astuce"
     Si l'écran met 2-3 secondes à revenir après le réveil, c'est normal (délai du service de restauration).
