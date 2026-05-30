@@ -65,6 +65,7 @@ nav:
   - Automatisation:
     - automatisation/index.md
     - Les bases de n8n: automatisation/bases-n8n.md
+    - Planifier un script avec un timer systemd sous Linux: automatisation/planifier-script-timer-systemd-linux.md
   - Logiciels: logiciels/index.md
   - Debug:
     - debug/index.md
