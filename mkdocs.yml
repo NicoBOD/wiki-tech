@@ -57,6 +57,7 @@ nav:
   - Cloud: cloud/index.md
   - Cybersécurité:
     - cybersecurite/index.md
+    - Installer et configurer Fail2ban pour protéger SSH sur Ubuntu Server 24.04: cybersecurite/fail2ban-proteger-ssh-ubuntu-server.md
     - UFW sur Ubuntu Server — ouvrir seulement SSH, HTTP et HTTPS: cybersecurite/ufw-ubuntu-server-premieres-regles.md
   - IA:
     - ia/index.md
