@@ -66,7 +66,9 @@ nav:
     - automatisation/index.md
     - Les bases de n8n: automatisation/bases-n8n.md
     - Planifier un script avec un timer systemd sous Linux: automatisation/planifier-script-timer-systemd-linux.md
-  - Logiciels: logiciels/index.md
+  - Logiciels:
+    - logiciels/index.md
+    - Installer Docker Engine et le plugin Docker Compose sur Ubuntu 24.04: logiciels/installer-docker-engine-ubuntu-2404.md
   - Debug:
     - debug/index.md
     - NVIDIA — Écran noir après veille: debug/nvidia-veille-ecran-noir.md
