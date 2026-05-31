@@ -71,6 +71,7 @@ nav:
     - Installer Docker Engine et le plugin Docker Compose sur Ubuntu 24.04: logiciels/installer-docker-engine-ubuntu-2404.md
   - Debug:
     - debug/index.md
+    - Identifier les ports ouverts et les services à l’écoute avec `ss` et `lsof` sous Linux: debug/identifier-ports-ouverts-services-ecoute-ss-lsof-linux.md
     - NVIDIA — Écran noir après veille: debug/nvidia-veille-ecran-noir.md
   - Astuces: astuces/index.md
   - Tags: tags.md
