@@ -66,6 +66,7 @@ nav:
     - automatisation/index.md
     - Les bases de n8n: automatisation/bases-n8n.md
     - Planifier un script avec un timer systemd sous Linux: automatisation/planifier-script-timer-systemd-linux.md
+    - "Premiers pas avec Ansible : créer un inventaire et lancer un premier playbook sur plusieurs VM Linux": automatisation/premiers-pas-ansible-inventaire-playbook-vm-linux.md
   - Logiciels:
     - logiciels/index.md
     - Installer Docker Engine et le plugin Docker Compose sur Ubuntu 24.04: logiciels/installer-docker-engine-ubuntu-2404.md
