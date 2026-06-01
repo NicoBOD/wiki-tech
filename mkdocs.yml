@@ -56,7 +56,9 @@ nav:
     - reseaux/index.md
     - Configurer une adresse IP statique avec Netplan sur Ubuntu Server 24.04: reseaux/configurer-ip-statique-netplan-ubuntu-server.md
     - Mettre en place un VPN WireGuard simple entre deux machines Ubuntu: reseaux/mettre-en-place-vpn-wireguard-simple-entre-deux-machines-ubuntu.md
-  - Cloud: cloud/index.md
+  - Cloud:
+    - cloud/index.md
+    - Déployer PedagogIA sur Google Cloud Run + MongoDB Atlas: cloud/deploy-pedagogia-gcp.md
   - Cybersécurité:
     - cybersecurite/index.md
     - Installer et configurer Fail2ban pour protéger SSH sur Ubuntu Server 24.04: cybersecurite/fail2ban-proteger-ssh-ubuntu-server.md
@@ -76,6 +78,8 @@ nav:
     - debug/index.md
     - Identifier les ports ouverts et les services à l’écoute avec `ss` et `lsof` sous Linux: debug/identifier-ports-ouverts-services-ecoute-ss-lsof-linux.md
     - NVIDIA — Écran noir après veille: debug/nvidia-veille-ecran-noir.md
+    - AppImageLauncher — Échec d'intégration sur Ubuntu 24.04 (compression zstd): debug/appimagelauncher-compression-zstd-ubuntu-2404.md
+    - Sniffnet AppImage — Installation et lancement sur Ubuntu 24.04: debug/sniffnet-appimage-ubuntu-2404.md
   - Astuces: astuces/index.md
   - Tags: tags.md
 
