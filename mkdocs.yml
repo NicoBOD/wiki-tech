@@ -62,6 +62,7 @@ nav:
   - Cloud:
     - cloud/index.md
     - Déployer PedagogIA sur Google Cloud Run + MongoDB Atlas: cloud/deploy-pedagogia-gcp.md
+    - Personnaliser une VM Ubuntu au premier démarrage avec cloud-init et NoCloud: cloud/personnaliser-vm-ubuntu-cloud-init-nocloud.md
   - Cybersécurité:
     - cybersecurite/index.md
     - Installer et configurer Fail2ban pour protéger SSH sur Ubuntu Server 24.04: cybersecurite/fail2ban-proteger-ssh-ubuntu-server.md
