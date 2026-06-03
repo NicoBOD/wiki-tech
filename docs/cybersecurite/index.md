@@ -9,4 +9,5 @@ Retrouvez ici tous les tutoriels et bonnes pratiques pour sécuriser vos serveur
 
 - [UFW sur Ubuntu Server — ouvrir seulement SSH, HTTP et HTTPS](ufw-ubuntu-server-premieres-regles.md)
 - [Installer et configurer Fail2ban pour protéger SSH sur Ubuntu Server 24.04](fail2ban-proteger-ssh-ubuntu-server.md)
+- [Sécuriser un serveur web Nginx avec Let's Encrypt et Certbot sur Ubuntu Server](certbot-nginx-https-lets-encrypt-ubuntu.md)
 - [Configurer l’accès SSH par clé et désactiver l’authentification par mot de passe sur Ubuntu Server](ssh-cle-publique-desactiver-mot-de-passe.md)
