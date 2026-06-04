@@ -54,6 +54,7 @@ nav:
     - "Étendre un volume logique LVM après ajout d’un disque sur une VM Linux": systemes/etendre-volume-logique-lvm-apres-ajout-disque-vm-linux.md
     - Partager un dossier entre deux machines Linux avec NFS sur Ubuntu Server: systemes/partager-dossier-nfs-entre-deux-machines-linux-ubuntu-server.md
     - Migration de mon application Stop Repeat de Lovable vers un Coolify self-hosted: systemes/migration-stop-repeat-lovable-vers-coolify.md
+    - "Gérer les services Linux avec systemctl : l'essentiel pour l'administration": systemes/gerer-services-linux-systemctl-essentiel.md
   - Réseaux:
     - reseaux/index.md
     - Configurer une adresse IP statique avec Netplan sur Ubuntu Server 24.04: reseaux/configurer-ip-statique-netplan-ubuntu-server.md

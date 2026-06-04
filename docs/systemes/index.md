@@ -15,3 +15,4 @@ Notes sur Linux, Windows, virtualisation, machines virtuelles et stockage.
 - [Étendre un volume logique LVM après ajout d’un disque sur une VM Linux](etendre-volume-logique-lvm-apres-ajout-disque-vm-linux.md)
 - [Partager un dossier entre deux machines Linux avec NFS sur Ubuntu Server](partager-dossier-nfs-entre-deux-machines-linux-ubuntu-server.md)
 - [Migration de mon application Stop Repeat de Lovable vers un Coolify self-hosted](migration-stop-repeat-lovable-vers-coolify.md)
+- [Gérer les services Linux avec systemctl : l'essentiel pour l'administration](gerer-services-linux-systemctl-essentiel.md)
