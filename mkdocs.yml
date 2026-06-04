@@ -81,6 +81,7 @@ nav:
   - Logiciels:
     - logiciels/index.md
     - Installer Docker Engine et le plugin Docker Compose sur Ubuntu 24.04: logiciels/installer-docker-engine-ubuntu-2404.md
+    - Créer et lancer une application multi-conteneurs avec Docker Compose: logiciels/creer-lancer-application-multi-conteneurs-docker-compose.md
   - Debug:
     - debug/index.md
     - "Lire, filtrer et suivre les logs avec `journalctl` pour diagnostiquer un service Linux": debug/journalctl-lire-filtrer-suivre-logs-systemd-linux.md
