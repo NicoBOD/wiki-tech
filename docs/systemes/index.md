@@ -18,3 +18,4 @@ Notes sur Linux, Windows, virtualisation, machines virtuelles et stockage.
 - [Migration de mon application Stop Repeat de Lovable vers un Coolify self-hosted](migration-stop-repeat-lovable-vers-coolify.md)
 - [Gérer les services Linux avec systemctl : l'essentiel pour l'administration](gerer-services-linux-systemctl-essentiel.md)
 - [Comprendre et gérer les permissions sous Linux (chmod, chown)](gerer-permissions-fichiers-chmod-chown-linux.md)
+- [Maintenir ses sessions terminal à distance avec tmux sous Linux](tmux-maintenir-sessions-terminal-distance.md)

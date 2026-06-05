@@ -57,6 +57,7 @@ nav:
     - Migration de mon application Stop Repeat de Lovable vers un Coolify self-hosted: systemes/migration-stop-repeat-lovable-vers-coolify.md
     - "Gérer les services Linux avec systemctl : l'essentiel pour l'administration": systemes/gerer-services-linux-systemctl-essentiel.md
     - Comprendre et gérer les permissions sous Linux (chmod, chown): systemes/gerer-permissions-fichiers-chmod-chown-linux.md
+    - Maintenir ses sessions terminal à distance avec tmux sous Linux: systemes/tmux-maintenir-sessions-terminal-distance.md
   - Réseaux:
     - reseaux/index.md
     - Configurer une adresse IP statique avec Netplan sur Ubuntu Server 24.04: reseaux/configurer-ip-statique-netplan-ubuntu-server.md
