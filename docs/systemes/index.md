@@ -10,6 +10,7 @@ Notes sur Linux, Windows, virtualisation, machines virtuelles et stockage.
 ## Articles
 
 - [Comprendre et gérer le machine-id sous Linux](machine-id-linux.md)
+- [Surveiller et analyser l'espace disque sous Linux avec df, du et ncdu](surveiller-analyser-espace-disque-linux-df-du-ncdu.md)
 - [virt-sysprep — préparer une image Linux au clonage](virt-sysprep-preparer-image-linux-clonage.md)
 - [Sauvegarder et restaurer un dossier avec `rsync` sur Linux en local ou via SSH](sauvegarder-restaurer-dossier-rsync-linux-local-ssh.md)
 - [Étendre un volume logique LVM après ajout d’un disque sur une VM Linux](etendre-volume-logique-lvm-apres-ajout-disque-vm-linux.md)
