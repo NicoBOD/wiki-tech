@@ -9,6 +9,7 @@ Notes sur Linux, Windows, virtualisation, machines virtuelles et stockage.
 
 ## Articles
 
+- [Rechercher des fichiers sous Linux avec la commande find](rechercher-fichiers-commande-find-linux.md)
 - [Comprendre et gérer le machine-id sous Linux](machine-id-linux.md)
 - [Surveiller et analyser l'espace disque sous Linux avec df, du et ncdu](surveiller-analyser-espace-disque-linux-df-du-ncdu.md)
 - [virt-sysprep — préparer une image Linux au clonage](virt-sysprep-preparer-image-linux-clonage.md)
