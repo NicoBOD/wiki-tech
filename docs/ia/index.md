@@ -1,12 +1,12 @@
 ---
 icon: material/robot
-description: Notes sur les LLM, prompts, agents, modèles et outils d'intelligence artificielle.
+description: Outils d'IA générative, LLMs locaux, agents autonomes et assistants.
 ---
 
-# IA
+# Intelligence Artificielle
 
-Notes sur les LLM, prompts, agents, modèles et outils d'intelligence artificielle.
+Outils d'IA générative, LLMs locaux, agents autonomes et assistants.
 
-## Articles
+## Outils & Déploiements Locaux
 
-- [Déploiement de Paperclip derrière Cosmos Server](deploiement-paperclip-dans-cosmos-server.md)
+- [Déploiement de Paperclip derrière Cosmos Server](deploiement-paperclip-dans-cosmos-server.md) — Héberger l'interface Paperclip en toute sécurité sur son propre serveur.
