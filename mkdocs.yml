@@ -95,7 +95,9 @@ nav:
     - NVIDIA — Écran noir après veille: debug/nvidia-veille-ecran-noir.md
     - AppImageLauncher — Échec d'intégration sur Ubuntu 24.04 (compression zstd): debug/appimagelauncher-compression-zstd-ubuntu-2404.md
     - Sniffnet AppImage — Installation et lancement sur Ubuntu 24.04: debug/sniffnet-appimage-ubuntu-2404.md
-  - Astuces: astuces/index.md
+  - Astuces:
+    - astuces/index.md
+    - Créer des alias persistants avec .bashrc: astuces/creer-alias-persistants-bashrc-linux.md
   - Tags: tags.md
 
 copyright: >
