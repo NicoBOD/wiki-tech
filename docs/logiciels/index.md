@@ -11,3 +11,7 @@ Installation, configuration et utilisation de logiciels métiers et conteneurs (
 
 - [Installer Docker Engine et le plugin Docker Compose sur Ubuntu 24.04](installer-docker-engine-ubuntu-2404.md) — Préparer un socle moderne pour faire tourner des applications isolées.
 - [Créer et lancer une application multi-conteneurs avec Docker Compose](creer-lancer-application-multi-conteneurs-docker-compose.md) — Orchestrer le déploiement d'une stack (ex: frontend, backend, BDD) en une commande.
+
+## Outils de développement
+
+- [Installer et configurer Git pour versionner ses premiers projets](installer-configurer-git-versionner-projets.md) — Installer Git, se configurer et comprendre les bases locales.
