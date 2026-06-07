@@ -99,6 +99,7 @@ nav:
     - Sniffnet AppImage — Installation et lancement sur Ubuntu 24.04: debug/sniffnet-appimage-ubuntu-2404.md
   - Astuces:
     - astuces/index.md
+    - "Maîtriser l'historique Bash avec history et Ctrl+R": astuces/maitriser-historique-bash-history-ctrl-r.md
     - Créer des alias persistants avec .bashrc: astuces/creer-alias-persistants-bashrc-linux.md
   - Tags: tags.md
 
