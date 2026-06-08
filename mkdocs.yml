@@ -104,6 +104,7 @@ nav:
     - astuces/index.md
     - "Maîtriser l'historique Bash avec history et Ctrl+R": astuces/maitriser-historique-bash-history-ctrl-r.md
     - Créer des alias persistants avec .bashrc: astuces/creer-alias-persistants-bashrc-linux.md
+    - Naviguer plus vite dans ses dossiers Linux avec pushd et popd: astuces/naviguer-plus-vite-dossiers-linux-pushd-popd.md
   - Tags: tags.md
 
 copyright: >
