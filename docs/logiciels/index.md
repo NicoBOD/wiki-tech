@@ -14,4 +14,5 @@ Installation, configuration et utilisation de logiciels métiers et conteneurs (
 
 ## Outils de développement
 
+- [Débuter avec Postman pour tester des API REST](debuter-postman-tester-api-rest.md) — Installer Postman, forger ses premières requêtes GET/POST et comprendre les bases.
 - [Installer et configurer Git pour versionner ses premiers projets](installer-configurer-git-versionner-projets.md) — Installer Git, se configurer et comprendre les bases locales.
