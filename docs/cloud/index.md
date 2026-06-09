@@ -11,6 +11,10 @@ Notes sur Azure, AWS, GCP, Infrastructure as Code (Terraform, Bicep) et conteneu
 
 - [Déployer PedagogIA sur Google Cloud Run + MongoDB Atlas](deploy-pedagogia-gcp.md) — Déploiement serverless, gestion stateless et intégration Cloud Storage.
 
+## Amazon Web Services (AWS)
+
+- [Déployer un site web statique avec Amazon S3](deployer-site-web-statique-amazon-s3.md) — Hébergement serverless, configuration de bucket policy et accès public.
+
 ## Cloud-Init & Provisioning
 
 - [Personnaliser une VM Ubuntu au premier démarrage avec cloud-init et NoCloud](personnaliser-vm-ubuntu-cloud-init-nocloud.md) — Utiliser la méthode NoCloud pour amorcer une VM sans serveur de métadonnées.

@@ -70,6 +70,7 @@ nav:
     - cloud/index.md
     - Déployer PedagogIA sur Google Cloud Run + MongoDB Atlas: cloud/deploy-pedagogia-gcp.md
     - Personnaliser une VM Ubuntu au premier démarrage avec cloud-init et NoCloud: cloud/personnaliser-vm-ubuntu-cloud-init-nocloud.md
+    - Déployer un site web statique avec Amazon S3: cloud/deployer-site-web-statique-amazon-s3.md
     - Déployer un conteneur via Azure Container Instances (ACI): cloud/deployer-conteneur-azure-container-instances-aci.md
   - Cybersécurité:
     - cybersecurite/index.md
