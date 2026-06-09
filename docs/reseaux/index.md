@@ -16,6 +16,10 @@ Configuration réseau, routage, VPN, et services de proxy sous Linux.
 
 - [Mettre en place un VPN WireGuard simple entre deux machines Ubuntu](mettre-en-place-vpn-wireguard-simple-entre-deux-machines-ubuntu.md) — Créer un tunnel chiffré, rapide et moderne entre deux points du réseau.
 
+## Diagnostic & Outils
+
+- [Mesurer la bande passante réelle entre deux machines avec iperf3](mesurer-bande-passante-iperf3.md) — Outil indispensable pour tester le débit maximal et la fiabilité de vos liens réseau.
+
 ## Proxy & Web
 
 - [Mettre en place un Reverse Proxy (Proxy Inverse) avec Nginx](mettre-en-place-reverse-proxy-nginx-ubuntu.md) — Exposer plusieurs services locaux sur le port 80 sous un même nom de domaine.
