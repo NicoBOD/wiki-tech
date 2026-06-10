@@ -15,6 +15,10 @@ Ansible, n8n, scripts bash, CI/CD et tâches planifiées (cron/timers).
 
 - [Créer son premier pipeline CI/CD avec GitHub Actions](premier-pipeline-ci-cd-github-actions.md) — Automatiser le test et la validation de son code via les workflows natifs de GitHub.
 
+## Conteneurs & Maintenance
+
+- [Mettre à jour automatiquement ses conteneurs Docker avec Watchtower](mettre-a-jour-automatiquement-conteneurs-docker-avec-watchtower.md) — Automatiser la mise à jour des images de vos conteneurs en cours d'exécution.
+
 ## Tâches Planifiées
 
 - [Planifier un script avec un timer systemd sous Linux](planifier-script-timer-systemd-linux.md) — Remplacer le classique cron par des timers plus flexibles et observables.
