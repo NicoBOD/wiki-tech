@@ -86,6 +86,7 @@ nav:
     - Déploiement de Paperclip derrière Cosmos Server: ia/deploiement-paperclip-dans-cosmos-server.md
     - Installer et utiliser Ollama pour exécuter des LLM en local: ia/installer-utiliser-ollama-llm-local.md
     - Connecter Open WebUI à Ollama (Votre propre ChatGPT local): ia/connecter-open-webui-ollama-chatgpt-local.md
+    - Déployer une solution RAG locale avec AnythingLLM et Docker: ia/deployer-rag-local-anythingllm-docker.md
   - Automatisation:
     - automatisation/index.md
     - Les bases de n8n: automatisation/bases-n8n.md
