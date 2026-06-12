@@ -65,6 +65,7 @@ nav:
     - Configurer une adresse IP statique avec Netplan sur Ubuntu Server 24.04: reseaux/configurer-ip-statique-netplan-ubuntu-server.md
     - "Diagnostiquer une panne DNS avec `dig`, `host` et `resolvectl` sur Ubuntu": reseaux/diagnostiquer-panne-dns-dig-host-resolvectl-ubuntu.md
     - Mettre en place un VPN WireGuard simple entre deux machines Ubuntu: reseaux/mettre-en-place-vpn-wireguard-simple-entre-deux-machines-ubuntu.md
+    - "Analyser le trafic réseau avec Wireshark : Capturer et filtrer les paquets": reseaux/analyser-trafic-reseau-wireshark-capturer-filtrer.md
     - Mesurer la bande passante réelle entre deux machines avec iperf3: reseaux/mesurer-bande-passante-iperf3.md
     - Mettre en place un Reverse Proxy (Proxy Inverse) avec Nginx: reseaux/mettre-en-place-reverse-proxy-nginx-ubuntu.md
   - Cloud:

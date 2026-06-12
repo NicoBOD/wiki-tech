@@ -18,6 +18,7 @@ Configuration réseau, routage, VPN, et services de proxy sous Linux.
 
 ## Diagnostic & Outils
 
+- [Analyser le trafic réseau avec Wireshark : Capturer et filtrer les paquets](analyser-trafic-reseau-wireshark-capturer-filtrer.md) — Comprendre ce qui transite sur votre réseau grâce au sniffer le plus populaire.
 - [Mesurer la bande passante réelle entre deux machines avec iperf3](mesurer-bande-passante-iperf3.md) — Outil indispensable pour tester le débit maximal et la fiabilité de vos liens réseau.
 
 ## Proxy & Web
