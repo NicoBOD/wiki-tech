@@ -14,6 +14,7 @@ Notes sur Azure, AWS, GCP, Infrastructure as Code (Terraform, Bicep) et conteneu
 ## Amazon Web Services (AWS)
 
 - [Créer un réseau privé virtuel (VPC) isolé et sécurisé sur AWS](creer-vpc-isole-securise-aws.md) — Concevoir une architecture réseau de zéro (VPC, Subnets, IGW) avec AWS CLI.
+- [Déployer une base de données relationnelle managée (RDS PostgreSQL) sur AWS](deployer-base-de-donnees-rds-postgresql-aws.md) — Créer et configurer une instance PostgreSQL managée sur le Free Tier avec accès réseau sécurisé.
 - [Déployer un site web statique avec Amazon S3](deployer-site-web-statique-amazon-s3.md) — Hébergement serverless, configuration de bucket policy et accès public.
 
 ## Cloud-Init & Provisioning
