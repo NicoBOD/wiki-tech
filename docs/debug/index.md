@@ -9,6 +9,7 @@ Outils et méthodologies pour diagnostiquer et résoudre des problèmes informat
 
 ## Analyse Système & Réseau
 
+- [Diagnostiquer la consommation CPU et mémoire sous Linux avec htop et free](diagnostiquer-consommation-cpu-memoire-htop-free.md) — Surveiller les ressources de son serveur et identifier les processus gourmands.
 - [Lire, filtrer et suivre les logs avec journalctl](journalctl-lire-filtrer-suivre-logs-systemd-linux.md) — Plonger dans les journaux système de systemd pour comprendre les crashs.
 - [Identifier les ports ouverts et les services à l’écoute avec `ss` et `lsof` sous Linux](identifier-ports-ouverts-services-ecoute-ss-lsof-linux.md) — Savoir quel daemon occupe quel port pour éviter les conflits.
 

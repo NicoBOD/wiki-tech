@@ -106,6 +106,7 @@ nav:
     - Débuter avec Postman pour tester des API REST: logiciels/debuter-postman-tester-api-rest.md
   - Debug:
     - debug/index.md
+    - Diagnostiquer la consommation CPU et mémoire sous Linux avec htop et free: debug/diagnostiquer-consommation-cpu-memoire-htop-free.md
     - "Lire, filtrer et suivre les logs avec `journalctl` pour diagnostiquer un service Linux": debug/journalctl-lire-filtrer-suivre-logs-systemd-linux.md
     - Identifier les ports ouverts et les services à l’écoute avec `ss` et `lsof` sous Linux: debug/identifier-ports-ouverts-services-ecoute-ss-lsof-linux.md
     - NVIDIA — Écran noir après veille: debug/nvidia-veille-ecran-noir.md
