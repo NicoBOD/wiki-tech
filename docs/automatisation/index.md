@@ -19,6 +19,10 @@ Ansible, n8n, scripts bash, CI/CD et tâches planifiées (cron/timers).
 
 - [Mettre à jour automatiquement ses conteneurs Docker avec Watchtower](mettre-a-jour-automatiquement-conteneurs-docker-avec-watchtower.md) — Automatiser la mise à jour des images de vos conteneurs en cours d'exécution.
 
+## Scripts & Outils Ligne de Commande
+
+- [Sauvegardes automatisées avec script Bash robuste](sauvegarde-automatisee-script-bash-robuste.md) — Créer un script Bash avec gestion des erreurs et journalisation.
+
 ## Tâches Planifiées
 
 - [Planifier un script avec un timer systemd sous Linux](planifier-script-timer-systemd-linux.md) — Remplacer le classique cron par des timers plus flexibles et observables.

@@ -93,6 +93,7 @@ nav:
     - automatisation/index.md
     - Les bases de n8n: automatisation/bases-n8n.md
     - Planifier un script avec un timer systemd sous Linux: automatisation/planifier-script-timer-systemd-linux.md
+    - Sauvegardes automatisées avec script Bash robuste: automatisation/sauvegarde-automatisee-script-bash-robuste.md
     - "Premiers pas avec Ansible : créer un inventaire et lancer un premier playbook sur plusieurs VM Linux": automatisation/premiers-pas-ansible-inventaire-playbook-vm-linux.md
     - Créer son premier pipeline CI/CD avec GitHub Actions: automatisation/premier-pipeline-ci-cd-github-actions.md
     - Mettre à jour automatiquement ses conteneurs Docker avec Watchtower: automatisation/mettre-a-jour-automatiquement-conteneurs-docker-avec-watchtower.md
