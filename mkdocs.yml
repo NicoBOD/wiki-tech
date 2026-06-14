@@ -88,6 +88,8 @@ nav:
     - ia/index.md
     - Déploiement de Paperclip derrière Cosmos Server: ia/deploiement-paperclip-dans-cosmos-server.md
     - Installer et utiliser Ollama pour exécuter des LLM en local: ia/installer-utiliser-ollama-llm-local.md
+    - "Intégrer l'assistant IA Continue.dev à VS Code avec un modèle Ollama local": ia/integrer-continue-dev-vscode-ollama-local.md
+    - Créer un script Python interagissant avec un LLM local via Ollama: ia/script-python-interaction-llm-local-ollama.md
     - Connecter Open WebUI à Ollama (Votre propre ChatGPT local): ia/connecter-open-webui-ollama-chatgpt-local.md
     - Déployer une solution RAG locale avec AnythingLLM et Docker: ia/deployer-rag-local-anythingllm-docker.md
   - Automatisation:

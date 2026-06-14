@@ -16,4 +16,5 @@ Outils d'IA générative, LLMs locaux, agents autonomes et assistants.
 
 ## Développement & Intégration
 
+- [Intégrer l'assistant IA Continue.dev à VS Code avec un modèle Ollama local](integrer-continue-dev-vscode-ollama-local.md) — Remplacer GitHub Copilot par une alternative 100% locale, gratuite et privée.
 - [Créer un script Python interagissant avec un LLM local via Ollama](script-python-interaction-llm-local-ollama.md) — Intégrer les modèles IA locaux dans vos propres scripts avec la librairie Python.
