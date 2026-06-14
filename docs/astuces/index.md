@@ -9,6 +9,7 @@ Tips & tricks divers pour gagner du temps.
 
 ## Productivité en ligne de commande
 
+- [Simplifier l'aide dans le terminal : utiliser tldr au lieu des pages man](simplifier-aide-terminal-tldr.md) — Obtenir des exemples concis de commandes au lieu de parcourir les longs manuels.
 - [Gagner en productivité dans le terminal avec fzf (Fuzzy Finder)](fzf-recherche-floue-terminal-linux.md) — Outil de recherche ultra-rapide pour fichiers et historique.
 - [Maîtriser l'historique Bash avec history et Ctrl+R](maitriser-historique-bash-history-ctrl-r.md) — Retrouver et relancer rapidement des commandes.
 - [Créer des alias persistants avec .bashrc](creer-alias-persistants-bashrc-linux.md) — Simplifier et raccourcir les commandes longues récurrentes.
