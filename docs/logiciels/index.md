@@ -11,6 +11,7 @@ Installation, configuration et utilisation de logiciels métiers et conteneurs (
 
 - [Installer Docker Engine et le plugin Docker Compose sur Ubuntu 24.04](installer-docker-engine-ubuntu-2404.md) — Préparer un socle moderne pour faire tourner des applications isolées.
 - [Créer et lancer une application multi-conteneurs avec Docker Compose](creer-lancer-application-multi-conteneurs-docker-compose.md) — Orchestrer le déploiement d'une stack (ex: frontend, backend, BDD) en une commande.
+- [Installer et configurer Portainer pour gérer ses conteneurs Docker](installer-configurer-portainer-docker.md) — Déployer une interface web graphique intuitive pour piloter ses environnements Docker.
 
 ## Outils de développement
 
