@@ -1,0 +1,15 @@
+# Dépendances de build du Wiki Tech
+# Versions épinglées pour garantir des déploiements reproductibles
+# et éviter qu'une future version majeure ne casse le site.
+
+# Thème + génération des social cards (extra "imaging" : pillow, cairosvg)
+mkdocs-material[imaging]>=9.5,<10
+
+# Date de dernière mise à jour automatique depuis l'historique Git
+mkdocs-git-revision-date-localized-plugin>=1.2
+
+# Flux RSS des derniers articles
+mkdocs-rss-plugin>=1.12
+
+# Minification du HTML généré
+mkdocs-minify-plugin>=0.8
