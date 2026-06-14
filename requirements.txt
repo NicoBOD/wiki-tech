@@ -1,0 +1,4 @@
+# Dépendances de build du Wiki Tech
+# Versions épinglées pour garantir des déploiements reproductibles
+# et éviter qu'une future version majeure ne casse le site.
+mkdocs-material>=9.5,<10

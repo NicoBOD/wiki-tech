@@ -3,9 +3,16 @@ site_url: https://wiki.bodaine.fr/
 site_description: Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation
 edit_uri: https://github.com/NicoBOD/wiki-tech/edit/main/docs/
 
+# Fichiers présents dans docs/ mais exclus du site généré
+# (non publiés, non indexés par la recherche, absents du sitemap)
+exclude_docs: |
+  _template.md
+
 theme:
   name: material
   language: fr
+  logo: assets/logo.svg
+  favicon: assets/favicon.svg
   palette:
     - scheme: default
       primary: custom
@@ -21,18 +28,22 @@ theme:
         name: Passer en mode clair
   custom_dir: overrides
   features:
+    - navigation.instant
+    - navigation.instant.progress
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.sections
     - navigation.top
     - navigation.path
     - navigation.indexes
-    - navigation.expand
+    - navigation.prune
     - navigation.footer
     - search.highlight
     - search.suggest
     - search.share
     - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
     - content.action.edit
     - content.action.view
     - toc.follow
@@ -41,8 +52,7 @@ plugins:
   - search:
       lang: fr
       separator: '[\s\-,:!=\[\]()"/]+|(?<!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
-  - tags:
-      tags_file: tags.md
+  - tags
 
 nav:
   - Accueil: index.md
