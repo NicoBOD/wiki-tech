@@ -53,6 +53,22 @@ plugins:
       lang: fr
       separator: '[\s\-,:!=\[\]()"/]+|(?<!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
   - tags
+  - git-revision-date-localized:
+      type: date
+      locale: fr
+      enable_creation_date: true
+      fallback_to_build_date: true
+  - social
+  - rss:
+      match_path: "(systemes|reseaux|cloud|cybersecurite|ia|automatisation|logiciels|debug|astuces)/.*"
+      date_from_meta:
+        as_creation: date
+      categories:
+        - tags
+  - minify:
+      minify_html: true
+      htmlmin_opts:
+        remove_comments: true
 
 nav:
   - Accueil: index.md

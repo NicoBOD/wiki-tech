@@ -13,10 +13,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Historique complet requis par git-revision-date-localized
+          # pour calculer la date de dernière mise à jour de chaque page.
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
+
+      # Bibliothèques système nécessaires à la génération des social cards
+      # (plugin social → cairosvg / pillow).
+      - name: Installer les dépendances système d'imagerie
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcairo2-dev libfreetype6-dev libffi-dev libjpeg-dev libpng-dev libz-dev
 
       - run: pip install -r requirements.txt
 
