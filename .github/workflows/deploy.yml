@@ -22,12 +22,12 @@ jobs:
         with:
           python-version: '3.x'
 
-      # Bibliothèques système nécessaires à la génération des social cards
-      # (plugin social → cairosvg / pillow).
+      # Bibliothèques système pour les social cards (plugin social →
+      # cairosvg / pillow) et la compression d'images (optimize → pngquant).
       - name: Installer les dépendances système d'imagerie
         run: |
           sudo apt-get update
-          sudo apt-get install -y libcairo2-dev libfreetype6-dev libffi-dev libjpeg-dev libpng-dev libz-dev
+          sudo apt-get install -y libcairo2-dev libfreetype6-dev libffi-dev libjpeg-dev libpng-dev libz-dev pngquant
 
       - run: pip install -r requirements.txt
 

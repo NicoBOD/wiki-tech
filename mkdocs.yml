@@ -14,19 +14,31 @@ theme:
   language: fr
   logo: assets/logo.svg
   favicon: assets/favicon.svg
+  font:
+    text: Inter
+    code: JetBrains Mono
   palette:
-    - scheme: default
+    # Suit la préférence système (clair/sombre) de l'utilisateur
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Passer en mode clair
+    # Mode clair forcé
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
       primary: custom
       accent: custom
       toggle:
         icon: material/brightness-7
         name: Passer en mode sombre
-    - scheme: slate
+    # Mode sombre forcé
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
       primary: custom
       accent: custom
       toggle:
         icon: material/brightness-4
-        name: Passer en mode clair
+        name: Revenir au thème système
   custom_dir: overrides
   features:
     - navigation.instant
@@ -54,6 +66,8 @@ plugins:
       lang: fr
       separator: '[\s\-,:!=\[\]()"/]+|(?<!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
   - tags
+  # Métadonnées par dossier via .meta.yml (réduit la duplication)
+  - meta
   - git-revision-date-localized:
       type: date
       locale: fr
@@ -63,12 +77,16 @@ plugins:
   # Auto-héberge les ressources externes (images, polices) au build :
   # aucune requête vers des tiers, conformité RGPD, robustesse.
   - privacy
+  # Zoom / lightbox au clic sur les images (captures d'écran)
+  - glightbox
   - rss:
       match_path: "(systemes|reseaux|cloud|cybersecurite|ia|automatisation|logiciels|debug|astuces)/.*"
       date_from_meta:
         as_creation: date
       categories:
         - tags
+  # Compresse PNG/JPG au build (pngquant + pillow), sources intactes
+  - optimize
   - minify:
       minify_html: true
       htmlmin_opts:
