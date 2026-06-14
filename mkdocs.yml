@@ -7,6 +7,7 @@ edit_uri: https://github.com/NicoBOD/wiki-tech/edit/main/docs/
 # (non publiés, non indexés par la recherche, absents du sitemap)
 exclude_docs: |
   _template.md
+  !.well-known/
 
 theme:
   name: material
@@ -59,6 +60,9 @@ plugins:
       enable_creation_date: true
       fallback_to_build_date: true
   - social
+  # Auto-héberge les ressources externes (images, polices) au build :
+  # aucune requête vers des tiers, conformité RGPD, robustesse.
+  - privacy
   - rss:
       match_path: "(systemes|reseaux|cloud|cybersecurite|ia|automatisation|logiciels|debug|astuces)/.*"
       date_from_meta:

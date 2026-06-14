@@ -1,0 +1,6 @@
+# Politique de divulgation responsable des vulnérabilités — Wiki Tech
+# https://www.rfc-editor.org/rfc/rfc9116
+Contact: mailto:contact@tutotech.org
+Expires: 2027-06-14T00:00:00.000Z
+Preferred-Languages: fr, en
+Canonical: https://wiki.bodaine.fr/.well-known/security.txt

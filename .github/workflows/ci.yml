@@ -1,34 +1,34 @@
-name: Deploy Wiki
+name: Validation build
 
+# Vérifie que le site se construit sans erreur AVANT d'arriver sur main.
+# Le build --strict échoue sur les liens internes cassés, les références
+# manquantes et les avertissements de configuration.
 on:
+  pull_request:
   push:
-    branches:
+    branches-ignore:
       - main
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
-          # Historique complet requis par git-revision-date-localized
-          # pour calculer la date de dernière mise à jour de chaque page.
           fetch-depth: 0
 
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.x'
 
-      # Bibliothèques système nécessaires à la génération des social cards
-      # (plugin social → cairosvg / pillow).
       - name: Installer les dépendances système d'imagerie
         run: |
           sudo apt-get update
-          sudo apt-get install -y libcairo2-dev libfreetype6-dev libffi-dev libjpeg-dev libpng-dev libz-dev
+          sudo apt-get install -y libcairo2-dev libfreetype6-dev libffi-dev libjpeg-dev libpng-dev libz-dev pngquant
 
       - run: pip install -r requirements.txt
 
-      - run: mkdocs gh-deploy --force
+      - run: mkdocs build --strict
