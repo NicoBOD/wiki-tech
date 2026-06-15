@@ -40,7 +40,7 @@ jobs:
 
       - name: Ouvrir / mettre à jour une issue si des liens sont cassés
         if: steps.lychee.outputs.exit_code != 0
-        uses: peter-evans/create-issue-from-file@v5
+        uses: peter-evans/create-issue-from-file@v6
         with:
           title: "🔗 Liens cassés détectés par lychee"
           content-filepath: ./lychee/out.md
