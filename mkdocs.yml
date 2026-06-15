@@ -9,6 +9,25 @@ exclude_docs: |
   _template.md
   !.well-known/
 
+# Validation des liens au build. Couplé à `mkdocs build --strict` en CI,
+# tout avertissement devient une erreur : on détecte les liens internes
+# cassés, les ancres #section disparues et les liens absolus involontaires.
+validation:
+  nav:
+    omitted_files: warn
+    not_found: warn
+    absolute_links: warn
+  links:
+    not_found: warn
+    anchors: warn
+    absolute_links: warn
+    unrecognized_links: warn
+
+# Page volontairement absente de la nav (accessible via le footer/copyright) :
+# on l'exclut du contrôle omitted_files pour qu'il reste pertinent.
+not_in_nav: |
+  mentions-legales/index.md
+
 theme:
   name: material
   language: fr
@@ -43,6 +62,8 @@ theme:
   features:
     - navigation.instant
     - navigation.instant.progress
+    - navigation.instant.prefetch
+    - navigation.tracking
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.sections
