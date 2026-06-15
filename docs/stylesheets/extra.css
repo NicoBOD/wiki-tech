@@ -121,3 +121,36 @@
 ::-webkit-scrollbar-thumb:hover {
   background-color: #0d6e6a;
 }
+
+/* --- Typographie & lisibilité --- */
+.md-typeset {
+  font-feature-settings: "kern", "liga", "calt";
+}
+
+/* Titres : un peu plus de respiration et de contraste */
+.md-typeset h1 {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.md-typeset h2 {
+  margin-top: 2.2rem;
+  font-weight: 700;
+}
+
+/* Soulignement discret des liens au survol du contenu */
+.md-typeset a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+/* Ligature/lisibilité du code monospace */
+.md-typeset code,
+.md-typeset pre {
+  font-feature-settings: "liga" 0;
+}
+
+/* Images : coins arrondis + transition douce pour la lightbox */
+.md-typeset img:not(.twemoji):not([src$=".svg"]) {
+  border-radius: 6px;
+}
