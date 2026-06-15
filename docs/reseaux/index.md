@@ -7,6 +7,10 @@ description: Configuration réseau, routage, VPN, et services de proxy sous Linu
 
 Configuration réseau, routage, VPN, et services de proxy sous Linux.
 
+## Services d'Infrastructure
+
+- [Mettre en place un serveur DHCP local avec Kea sur Ubuntu](installer-configurer-serveur-dhcp-kea-ubuntu.md) — Remplacer isc-dhcp-server par le serveur moderne de l'ISC pour gérer vos adresses IP locales.
+
 ## Configuration IP & DNS
 
 - [Configurer une adresse IP statique avec Netplan sur Ubuntu Server 24.04](configurer-ip-statique-netplan-ubuntu-server.md) — Fixer l'adresse de son serveur via le nouveau standard YAML d'Ubuntu.
