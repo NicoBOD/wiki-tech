@@ -1,0 +1,47 @@
+name: Vérification des liens
+
+# Contrôle périodique des liens (internes et externes) des notes.
+# Workflow SÉPARÉ et planifié : il ne bloque jamais un déploiement.
+# En cas de liens morts, une issue est créée / mise à jour automatiquement.
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # tous les lundis à 06:00 UTC
+  workflow_dispatch:       # lancement manuel possible depuis l'onglet Actions
+
+permissions:
+  contents: read
+  issues: write
+
+# Évite deux vérifications simultanées (planifiée + manuelle).
+concurrency:
+  group: linkcheck
+  cancel-in-progress: true
+
+jobs:
+  linkcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Vérifier les liens
+        id: lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          # On accepte 403 et 429 : de nombreux sites renvoient ces codes
+          # aux robots ou en cas de limite de débit sans que le lien soit mort.
+          args: >-
+            --no-progress
+            --max-retries 2
+            --accept 200..=299,403,429
+            'docs/**/*.md'
+            'README.md'
+          # N'échoue pas le job : le résultat est remonté via une issue.
+          fail: false
+
+      - name: Ouvrir / mettre à jour une issue si des liens sont cassés
+        if: steps.lychee.outputs.exit_code != 0
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "🔗 Liens cassés détectés par lychee"
+          content-filepath: ./lychee/out.md
+          labels: maintenance, liens-cassés
