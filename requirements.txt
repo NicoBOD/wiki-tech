@@ -15,5 +15,5 @@ mkdocs-rss-plugin>=1.12
 mkdocs-minify-plugin>=0.8
 
 # Zoom / lightbox sur les images
-mkdocs-glightbox>=0.4
+mkdocs-glightbox>=0.5.2
 
