@@ -35,7 +35,7 @@ jobs:
       # Cache des social cards (plugin social) et des images compressées
       # (plugin optimize) pour éviter de tout régénérer à chaque run.
       - name: Cache MkDocs (.cache)
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .cache
           key: mkdocs-cache-${{ hashFiles('docs/**', 'mkdocs.yml') }}
