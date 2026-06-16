@@ -18,3 +18,7 @@ Installation, configuration et utilisation de logiciels métiers et conteneurs (
 - [Configurer VS Code avec Remote-SSH pour administrer un serveur Linux](configurer-vs-code-remote-ssh.md) — Utiliser l'interface graphique de VS Code pour éditer des fichiers et exécuter des commandes sur un serveur Linux distant.
 - [Débuter avec Postman pour tester des API REST](debuter-postman-tester-api-rest.md) — Installer Postman, forger ses premières requêtes GET/POST et comprendre les bases.
 - [Installer et configurer Git pour versionner ses premiers projets](installer-configurer-git-versionner-projets.md) — Installer Git, se configurer et comprendre les bases locales.
+
+## Outils d'administration
+
+- [Découvrir et utiliser MobaXterm pour l'administration distante](utiliser-mobaxterm-administration-distante.md) — Découvrir, installer et utiliser ce couteau suisse (SSH, SFTP, serveur X) pour Windows.
