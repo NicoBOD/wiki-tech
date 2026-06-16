@@ -9,6 +9,7 @@ Outils d'IA générative, LLMs locaux, agents autonomes et assistants.
 
 ## Outils & Déploiements Locaux
 
+- [Analyser des images en local avec Ollama et le modèle LLaVA](analyser-images-local-ollama-llava.md) — Analyser le contenu de vos propres images de manière privée avec un modèle multimodal.
 - [Connecter Open WebUI à Ollama (Votre propre ChatGPT local)](connecter-open-webui-ollama-chatgpt-local.md) — Interface web pour les LLMs d'Ollama via Docker.
 - [Déploiement de Paperclip derrière Cosmos Server](deploiement-paperclip-dans-cosmos-server.md) — Héberger l'interface Paperclip en toute sécurité sur son propre serveur.
 - [Déployer une solution RAG locale avec AnythingLLM et Docker](deployer-rag-local-anythingllm-docker.md) — Discuter de façon privée avec ses documents (PDF, Word) en utilisant l'IA.
