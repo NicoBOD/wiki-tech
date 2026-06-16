@@ -9,6 +9,7 @@ Notes sur Azure, AWS, GCP, Infrastructure as Code (Terraform, Bicep) et conteneu
 
 ## Google Cloud Platform (GCP)
 
+- [Déployer une application Docker sans serveur avec Google Cloud Run](deployer-application-docker-google-cloud-run.md) — Déploiement d'un conteneur avec gcloud, Artifact Registry et scale-to-zero.
 - [Déployer PedagogIA sur Google Cloud Run + MongoDB Atlas](deploy-pedagogia-gcp.md) — Déploiement serverless, gestion stateless et intégration Cloud Storage.
 
 ## Amazon Web Services (AWS)

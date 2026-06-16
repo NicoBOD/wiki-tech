@@ -140,6 +140,7 @@ nav:
     - Mettre en place un Reverse Proxy (Proxy Inverse) avec Nginx: reseaux/mettre-en-place-reverse-proxy-nginx-ubuntu.md
   - Cloud:
     - cloud/index.md
+    - Déployer une application Docker sans serveur avec Google Cloud Run: cloud/deployer-application-docker-google-cloud-run.md
     - Déployer PedagogIA sur Google Cloud Run + MongoDB Atlas: cloud/deploy-pedagogia-gcp.md
     - "Créer un réseau privé virtuel (VPC) isolé et sécurisé sur AWS": cloud/creer-vpc-isole-securise-aws.md
     - Déployer une base de données relationnelle managée (RDS PostgreSQL) sur AWS: cloud/deployer-base-de-donnees-rds-postgresql-aws.md
