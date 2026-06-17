@@ -131,6 +131,7 @@ nav:
     - Maintenir ses sessions terminal à distance avec tmux sous Linux: systemes/tmux-maintenir-sessions-terminal-distance.md
   - Réseaux:
     - reseaux/index.md
+    - Configurer le NAT et le routage pour transformer un serveur Linux en routeur avec nftables: reseaux/configurer-nat-routage-serveur-linux-nftables.md
     - Mettre en place un serveur DHCP local avec Kea sur Ubuntu: reseaux/installer-configurer-serveur-dhcp-kea-ubuntu.md
     - Configurer une adresse IP statique avec Netplan sur Ubuntu Server 24.04: reseaux/configurer-ip-statique-netplan-ubuntu-server.md
     - "Diagnostiquer une panne DNS avec `dig`, `host` et `resolvectl` sur Ubuntu": reseaux/diagnostiquer-panne-dns-dig-host-resolvectl-ubuntu.md

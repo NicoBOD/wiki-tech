@@ -11,6 +11,10 @@ Configuration réseau, routage, VPN, et services de proxy sous Linux.
 
 - [Mettre en place un serveur DHCP local avec Kea sur Ubuntu](installer-configurer-serveur-dhcp-kea-ubuntu.md) — Remplacer isc-dhcp-server par le serveur moderne de l'ISC pour gérer vos adresses IP locales.
 
+## Routage & Pare-feu
+
+- [Configurer le NAT et le routage pour transformer un serveur Linux en routeur avec nftables](configurer-nat-routage-serveur-linux-nftables.md) — Transformer un serveur Linux standard en véritable routeur pour votre réseau local (LAN).
+
 ## Configuration IP & DNS
 
 - [Configurer une adresse IP statique avec Netplan sur Ubuntu Server 24.04](configurer-ip-statique-netplan-ubuntu-server.md) — Fixer l'adresse de son serveur via le nouveau standard YAML d'Ubuntu.
