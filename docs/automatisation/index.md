@@ -13,6 +13,7 @@ Ansible, n8n, scripts bash, CI/CD et tâches planifiées (cron/timers).
 
 ## Infrastructure as Code (IaC)
 
+- [Créer des environnements de test locaux reproductibles avec Vagrant et VirtualBox](creer-environnements-test-vagrant-virtualbox.md) — Automatiser la création et configuration de machines virtuelles via un fichier Vagrantfile.
 - [Déployer son infrastructure avec Terraform (premiers pas)](debuter-terraform-infrastructure-as-code.md) — Déployer automatiquement des ressources (ex: conteneur Docker) via le code.
 
 ## Intégration & Déploiement Continus (CI/CD)

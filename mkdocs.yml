@@ -168,6 +168,7 @@ nav:
     - Déployer une solution RAG locale avec AnythingLLM et Docker: ia/deployer-rag-local-anythingllm-docker.md
   - Automatisation:
     - automatisation/index.md
+    - Créer des environnements de test locaux reproductibles avec Vagrant et VirtualBox: automatisation/creer-environnements-test-vagrant-virtualbox.md
     - Les bases de n8n: automatisation/bases-n8n.md
     - Planifier un script avec un timer systemd sous Linux: automatisation/planifier-script-timer-systemd-linux.md
     - Sauvegardes automatisées avec script Bash robuste: automatisation/sauvegarde-automatisee-script-bash-robuste.md
