@@ -25,3 +25,4 @@ Protection des serveurs, pare-feu, certificats SSL et bonnes pratiques de durcis
 ## Audit & Conformité
 
 - [Auditer la sécurité de son serveur Linux avec Lynis](lynis-audit-securite-linux.md) — Réaliser un scan de vulnérabilités et évaluer le durcissement du système avec un outil open-source.
+- [Cartographier et analyser les ports d'un réseau avec Nmap](cartographier-analyser-ports-reseau-nmap.md) — Découvrir les hôtes actifs et les services ouverts avec le scanner de référence.
