@@ -13,6 +13,10 @@ Outils et méthodologies pour diagnostiquer et résoudre des problèmes informat
 - [Lire, filtrer et suivre les logs avec journalctl](journalctl-lire-filtrer-suivre-logs-systemd-linux.md) — Plonger dans les journaux système de systemd pour comprendre les crashs.
 - [Identifier les ports ouverts et les services à l’écoute avec `ss` et `lsof` sous Linux](identifier-ports-ouverts-services-ecoute-ss-lsof-linux.md) — Savoir quel daemon occupe quel port pour éviter les conflits.
 
+## Développement & Scripts
+
+- [Déboguer une application Python avec pdb en ligne de commande](deboguer-application-python-pdb-cli.md) — Inspecter le comportement d'un script en cours d'exécution de manière interactive.
+
 ## Cas Résolus
 
 - [NVIDIA — Écran noir après sortie de veille](nvidia-veille-ecran-noir.md) — Correction d'un problème d'affichage sur les pilotes propriétaires sous Linux.
