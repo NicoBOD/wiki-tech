@@ -186,6 +186,7 @@ nav:
     - Configurer VS Code avec Remote-SSH pour administrer un serveur Linux: logiciels/configurer-vs-code-remote-ssh.md
     - Installer et configurer Git pour versionner ses premiers projets: logiciels/installer-configurer-git-versionner-projets.md
     - Débuter avec Postman pour tester des API REST: logiciels/debuter-postman-tester-api-rest.md
+    - "Installer et configurer Windows Terminal pour unifier ses environnements CLI (PowerShell, WSL, SSH)": logiciels/installer-configurer-windows-terminal.md
     - "Découvrir et utiliser MobaXterm pour l'administration distante": logiciels/utiliser-mobaxterm-administration-distante.md
   - Debug:
     - debug/index.md
