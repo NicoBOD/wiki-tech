@@ -161,6 +161,7 @@ nav:
     - Sécuriser un volume de données avec le chiffrement LUKS sous Linux: cybersecurite/securiser-volume-donnees-chiffrement-luks-linux.md
   - IA:
     - ia/index.md
+    - Transcrire de l'audio en texte localement avec OpenAI Whisper: ia/transcrire-audio-texte-local-whisper.md
     - Analyser des images en local avec Ollama et le modèle LLaVA: ia/analyser-images-local-ollama-llava.md
     - Déploiement de Paperclip derrière Cosmos Server: ia/deploiement-paperclip-dans-cosmos-server.md
     - Installer et utiliser Ollama pour exécuter des LLM en local: ia/installer-utiliser-ollama-llm-local.md

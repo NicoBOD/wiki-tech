@@ -14,6 +14,7 @@ Outils d'IA générative, LLMs locaux, agents autonomes et assistants.
 - [Déploiement de Paperclip derrière Cosmos Server](deploiement-paperclip-dans-cosmos-server.md) — Héberger l'interface Paperclip en toute sécurité sur son propre serveur.
 - [Déployer une solution RAG locale avec AnythingLLM et Docker](deployer-rag-local-anythingllm-docker.md) — Discuter de façon privée avec ses documents (PDF, Word) en utilisant l'IA.
 - [Installer et utiliser Ollama pour exécuter des LLM en local](installer-utiliser-ollama-llm-local.md) — Déployer et interroger des modèles de langage sur son propre serveur sans cloud.
+- [Transcrire de l'audio en texte localement avec OpenAI Whisper](transcrire-audio-texte-local-whisper.md) — Utiliser le modèle Whisper open source pour la reconnaissance vocale sur sa machine.
 
 ## Développement & Intégration
 
