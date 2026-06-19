@@ -159,6 +159,7 @@ nav:
     - Auditer la sécurité de son serveur Linux avec Lynis: cybersecurite/lynis-audit-securite-linux.md
     - "Cartographier et analyser les ports d'un réseau avec Nmap": cybersecurite/cartographier-analyser-ports-reseau-nmap.md
     - Sécuriser un volume de données avec le chiffrement LUKS sous Linux: cybersecurite/securiser-volume-donnees-chiffrement-luks-linux.md
+    - Renforcer la sécurité d'un service avec AppArmor sous Ubuntu: cybersecurite/renforcer-securite-service-apparmor-ubuntu.md
   - IA:
     - ia/index.md
     - Transcrire de l'audio en texte localement avec OpenAI Whisper: ia/transcrire-audio-texte-local-whisper.md

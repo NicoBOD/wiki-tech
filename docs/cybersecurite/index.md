@@ -26,3 +26,7 @@ Protection des serveurs, pare-feu, certificats SSL et bonnes pratiques de durcis
 
 - [Auditer la sécurité de son serveur Linux avec Lynis](lynis-audit-securite-linux.md) — Réaliser un scan de vulnérabilités et évaluer le durcissement du système avec un outil open-source.
 - [Cartographier et analyser les ports d'un réseau avec Nmap](cartographier-analyser-ports-reseau-nmap.md) — Découvrir les hôtes actifs et les services ouverts avec le scanner de référence.
+
+## Durcissement Système
+
+- [Renforcer la sécurité d'un service avec AppArmor sous Ubuntu](renforcer-securite-service-apparmor-ubuntu.md) — Créer un périmètre de sécurité strict (sandbox) pour limiter les capacités des applications.
