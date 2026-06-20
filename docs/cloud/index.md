@@ -14,6 +14,7 @@ Notes sur Azure, AWS, GCP, Infrastructure as Code (Terraform, Bicep) et conteneu
 
 ## Amazon Web Services (AWS)
 
+- [Créer une alerte de facturation sur AWS (AWS Budgets) pour sécuriser ses travaux pratiques](creer-alerte-facturation-aws-budgets.md) — Configurer un budget pour recevoir une notification par email avant que les coûts n'explosent.
 - [Configurer et utiliser AWS CLI pour interagir avec les services Amazon Web Services](installer-configurer-aws-cli.md) — Configurer les accès, profils et informations d'identification pour interagir avec AWS en ligne de commande.
 - [Créer un réseau privé virtuel (VPC) isolé et sécurisé sur AWS](creer-vpc-isole-securise-aws.md) — Concevoir une architecture réseau de zéro (VPC, Subnets, IGW) avec AWS CLI.
 - [Déployer une base de données relationnelle managée (RDS PostgreSQL) sur AWS](deployer-base-de-donnees-rds-postgresql-aws.md) — Créer et configurer une instance PostgreSQL managée sur le Free Tier avec accès réseau sécurisé.
