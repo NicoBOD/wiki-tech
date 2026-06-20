@@ -15,6 +15,7 @@ Ansible, n8n, scripts bash, CI/CD et tâches planifiées (cron/timers).
 
 - [Créer des environnements de test locaux reproductibles avec Vagrant et VirtualBox](creer-environnements-test-vagrant-virtualbox.md) — Automatiser la création et configuration de machines virtuelles via un fichier Vagrantfile.
 - [Déployer son infrastructure avec Terraform (premiers pas)](debuter-terraform-infrastructure-as-code.md) — Déployer automatiquement des ressources (ex: conteneur Docker) via le code.
+- [Automatiser la création de machines virtuelles Proxmox avec Terraform](creer-vm-proxmox-terraform.md) — Déployer automatiquement des machines virtuelles via l'API Proxmox VE.
 
 ## Intégration & Déploiement Continus (CI/CD)
 
