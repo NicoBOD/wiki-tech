@@ -17,6 +17,7 @@ Configuration réseau, routage, VPN, et services de proxy sous Linux.
 
 ## Configuration IP & DNS
 
+- [Configurer des VLANs (802.1q) sur un serveur Linux avec Netplan](configurer-vlans-8021q-netplan-linux.md) — Connecter et partitionner une interface physique sur un lien trunk.
 - [Configurer une adresse IP statique avec Netplan sur Ubuntu Server 24.04](configurer-ip-statique-netplan-ubuntu-server.md) — Fixer l'adresse de son serveur via le nouveau standard YAML d'Ubuntu.
 - [Diagnostiquer une panne DNS avec `dig`, `host` et `resolvectl` sur Ubuntu](diagnostiquer-panne-dns-dig-host-resolvectl-ubuntu.md) — Trouver d'où vient le problème de résolution des noms de domaine.
 
