@@ -194,6 +194,7 @@ nav:
     - Débuter avec Postman pour tester des API REST: logiciels/debuter-postman-tester-api-rest.md
     - "Installer et configurer Windows Terminal pour unifier ses environnements CLI (PowerShell, WSL, SSH)": logiciels/installer-configurer-windows-terminal.md
     - "Découvrir et utiliser MobaXterm pour l'administration distante": logiciels/utiliser-mobaxterm-administration-distante.md
+    - "Obsidian : Créer et organiser sa propre base de connaissances technique en Markdown": logiciels/obsidian-base-connaissances-technique-markdown.md
   - Debug:
     - debug/index.md
     - Diagnostiquer les problèmes matériels et pilotes sous Linux avec dmesg: debug/diagnostiquer-materiel-pilotes-linux-dmesg.md
