@@ -18,5 +18,6 @@ Outils d'IA générative, LLMs locaux, agents autonomes et assistants.
 
 ## Développement & Intégration
 
+- [Déployer Tabby en local : l'alternative open source à GitHub Copilot](deployer-tabby-local-alternative-github-copilot.md) — Installer et configurer un assistant IA de complétion de code 100% autonome et privé.
 - [Intégrer l'assistant IA Continue.dev à VS Code avec un modèle Ollama local](integrer-continue-dev-vscode-ollama-local.md) — Remplacer GitHub Copilot par une alternative 100% locale, gratuite et privée.
 - [Créer un script Python interagissant avec un LLM local via Ollama](script-python-interaction-llm-local-ollama.md) — Intégrer les modèles IA locaux dans vos propres scripts avec la librairie Python.
