@@ -155,6 +155,7 @@ nav:
     - cybersecurite/index.md
     - "Sécuriser SSH avec l'authentification double facteur (MFA) via Google Authenticator": cybersecurite/ssh-mfa-google-authenticator.md
     - Installer et configurer Fail2ban pour protéger SSH sur Ubuntu Server 24.04: cybersecurite/fail2ban-proteger-ssh-ubuntu-server.md
+    - "Protéger un serveur Linux avec CrowdSec : l'alternative collaborative à Fail2ban": cybersecurite/crowdsec-alternative-fail2ban-linux.md
     - UFW sur Ubuntu Server — ouvrir seulement SSH, HTTP et HTTPS: cybersecurite/ufw-ubuntu-server-premieres-regles.md
     - Sécuriser un serveur web Nginx avec Let's Encrypt et Certbot sur Ubuntu Server: cybersecurite/certbot-nginx-https-lets-encrypt-ubuntu.md
     - Configurer l’accès SSH par clé et désactiver l’authentification par mot de passe sur Ubuntu Server: cybersecurite/ssh-cle-publique-desactiver-mot-de-passe.md

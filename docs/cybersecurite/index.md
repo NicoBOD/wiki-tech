@@ -12,6 +12,7 @@ Protection des serveurs, pare-feu, certificats SSL et bonnes pratiques de durcis
 - [Sécuriser SSH avec l'authentification double facteur (MFA) via Google Authenticator](ssh-mfa-google-authenticator.md) — Ajouter une surcouche de sécurité (TOTP) aux connexions distantes.
 - [Configurer l’accès SSH par clé et désactiver l’authentification par mot de passe sur Ubuntu Server](ssh-cle-publique-desactiver-mot-de-passe.md) — Se prémunir contre les attaques par force brute sur le port 22.
 - [Installer et configurer Fail2ban pour protéger SSH sur Ubuntu Server 24.04](fail2ban-proteger-ssh-ubuntu-server.md) — Bannir automatiquement les adresses IP tentant de forcer l'accès.
+- [Protéger un serveur Linux avec CrowdSec : l'alternative collaborative à Fail2ban](crowdsec-alternative-fail2ban-linux.md) — Détecter et bloquer les attaques via un système de renseignement communautaire sur les menaces (CTI).
 
 ## Pare-feu (Firewall)
 
