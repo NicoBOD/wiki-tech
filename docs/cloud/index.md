@@ -14,6 +14,7 @@ Notes sur Azure, AWS, GCP, Infrastructure as Code (Terraform, Bicep) et conteneu
 
 ## Amazon Web Services (AWS)
 
+- [Créer et configurer sa première machine virtuelle EC2 sur AWS](creer-premiere-machine-virtuelle-ec2-aws.md) — Lancer et configurer une instance Ubuntu EC2, règles de sécurité, et accès SSH sur AWS.
 - [Créer une alerte de facturation sur AWS (AWS Budgets) pour sécuriser ses travaux pratiques](creer-alerte-facturation-aws-budgets.md) — Configurer un budget pour recevoir une notification par email avant que les coûts n'explosent.
 - [Configurer et utiliser AWS CLI pour interagir avec les services Amazon Web Services](installer-configurer-aws-cli.md) — Configurer les accès, profils et informations d'identification pour interagir avec AWS en ligne de commande.
 - [Créer un réseau privé virtuel (VPC) isolé et sécurisé sur AWS](creer-vpc-isole-securise-aws.md) — Concevoir une architecture réseau de zéro (VPC, Subnets, IGW) avec AWS CLI.

@@ -142,6 +142,7 @@ nav:
     - Mettre en place un Reverse Proxy (Proxy Inverse) avec Nginx: reseaux/mettre-en-place-reverse-proxy-nginx-ubuntu.md
   - Cloud:
     - cloud/index.md
+    - Créer et configurer sa première machine virtuelle EC2 sur AWS: cloud/creer-premiere-machine-virtuelle-ec2-aws.md
     - Créer une alerte de facturation sur AWS (AWS Budgets) pour sécuriser ses travaux pratiques: cloud/creer-alerte-facturation-aws-budgets.md
     - Déployer une application Docker sans serveur avec Google Cloud Run: cloud/deployer-application-docker-google-cloud-run.md
     - Déployer PedagogIA sur Google Cloud Run + MongoDB Atlas: cloud/deploy-pedagogia-gcp.md
