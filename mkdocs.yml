@@ -131,6 +131,7 @@ nav:
     - Maintenir ses sessions terminal à distance avec tmux sous Linux: systemes/tmux-maintenir-sessions-terminal-distance.md
   - Réseaux:
     - reseaux/index.md
+    - Créer des tunnels sécurisés avec la redirection de ports SSH: reseaux/creer-tunnels-securises-redirection-ports-ssh.md
     - Configurer le NAT et le routage pour transformer un serveur Linux en routeur avec nftables: reseaux/configurer-nat-routage-serveur-linux-nftables.md
     - Mettre en place un serveur DHCP local avec Kea sur Ubuntu: reseaux/installer-configurer-serveur-dhcp-kea-ubuntu.md
     - Configurer des VLANs (802.1q) sur un serveur Linux avec Netplan: reseaux/configurer-vlans-8021q-netplan-linux.md

@@ -23,6 +23,7 @@ Configuration réseau, routage, VPN, et services de proxy sous Linux.
 
 ## Sécurité & Accès Distant
 
+- [Créer des tunnels sécurisés avec la redirection de ports SSH](creer-tunnels-securises-redirection-ports-ssh.md) — Créer des tunnels locaux, distants et dynamiques (SOCKS proxy) pour sécuriser des flux ou contourner un NAT.
 - [Mettre en place un VPN WireGuard simple entre deux machines Ubuntu](mettre-en-place-vpn-wireguard-simple-entre-deux-machines-ubuntu.md) — Créer un tunnel chiffré, rapide et moderne entre deux points du réseau.
 
 ## Diagnostic & Outils
