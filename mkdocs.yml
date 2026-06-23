@@ -178,6 +178,7 @@ nav:
     - Déployer une solution RAG locale avec AnythingLLM et Docker: ia/deployer-rag-local-anythingllm-docker.md
   - Automatisation:
     - automatisation/index.md
+    - Simplifier et automatiser les commandes de ses projets avec un Makefile: automatisation/simplifier-automatiser-commandes-projets-makefile.md
     - Créer des environnements de test locaux reproductibles avec Vagrant et VirtualBox: automatisation/creer-environnements-test-vagrant-virtualbox.md
     - Automatiser la création de machines virtuelles Proxmox avec Terraform: automatisation/creer-vm-proxmox-terraform.md
     - Les bases de n8n: automatisation/bases-n8n.md

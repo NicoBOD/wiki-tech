@@ -27,6 +27,7 @@ Ansible, n8n, scripts bash, CI/CD et tâches planifiées (cron/timers).
 
 ## Scripts & Outils Ligne de Commande
 
+- [Simplifier et automatiser les commandes de ses projets avec un Makefile](simplifier-automatiser-commandes-projets-makefile.md) — Regrouper les commandes récurrentes (Docker, tests, build) sous des raccourcis simples.
 - [Sauvegardes automatisées avec script Bash robuste](sauvegarde-automatisee-script-bash-robuste.md) — Créer un script Bash avec gestion des erreurs et journalisation.
 
 ## Tâches Planifiées
