@@ -7,6 +7,10 @@ description: Outils et méthodologies pour diagnostiquer et résoudre des probl�
 
 Outils et méthodologies pour diagnostiquer et résoudre des problèmes informatiques.
 
+## Serveurs Web
+
+- [Diagnostiquer une erreur 502/504 Bad Gateway sur un serveur web](diagnostiquer-erreur-502-504-bad-gateway-serveur-web.md) — Comprendre et résoudre les erreurs de proxy HTTP fréquentes.
+
 ## Analyse Système & Réseau
 
 - [Diagnostiquer les problèmes matériels et pilotes sous Linux avec dmesg](diagnostiquer-materiel-pilotes-linux-dmesg.md) — Surveiller le tampon du noyau pour détecter les pannes matérielles et les problèmes de pilotes.
