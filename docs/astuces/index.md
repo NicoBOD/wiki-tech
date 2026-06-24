@@ -9,6 +9,7 @@ Tips & tricks divers pour gagner du temps.
 
 ## Productivité en ligne de commande
 
+- [Maintenir ses sessions terminal actives et multiplexer son affichage avec Tmux](maintenir-sessions-terminal-tmux.md) — Détacher des processus longs et diviser son écran en plusieurs terminaux virtuels.
 - [Manipuler et exécuter des commandes en lots avec xargs](manipuler-executer-commandes-lots-xargs.md) — Exécuter efficacement des commandes sur de grandes listes d'éléments ou résultats de recherche.
 - [Simplifier l'aide dans le terminal : utiliser tldr au lieu des pages man](simplifier-aide-terminal-tldr.md) — Obtenir des exemples concis de commandes au lieu de parcourir les longs manuels.
 - [Gagner en productivité dans le terminal avec fzf (Fuzzy Finder)](fzf-recherche-floue-terminal-linux.md) — Outil de recherche ultra-rapide pour fichiers et historique.

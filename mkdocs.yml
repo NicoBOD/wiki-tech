@@ -212,6 +212,7 @@ nav:
     - Sniffnet AppImage — Installation et lancement sur Ubuntu 24.04: debug/sniffnet-appimage-ubuntu-2404.md
   - Astuces:
     - astuces/index.md
+    - Maintenir ses sessions terminal actives et multiplexer son affichage avec Tmux: astuces/maintenir-sessions-terminal-tmux.md
     - Manipuler et exécuter des commandes en lots avec xargs: astuces/manipuler-executer-commandes-lots-xargs.md
     - "Simplifier l'aide dans le terminal : utiliser tldr au lieu des pages man": astuces/simplifier-aide-terminal-tldr.md
     - Gagner en productivité dans le terminal avec fzf (Fuzzy Finder): astuces/fzf-recherche-floue-terminal-linux.md
