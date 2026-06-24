@@ -133,8 +133,10 @@ RUN rm -rf /var/www/html/* \
 # Copie du fichier de configuration Moodle
 COPY config.php /var/www/html/config.php
 
-# Copie des plugins personnalisés (le cas échéant)
+# Copie des plugins et thèmes personnalisés (le cas échéant)
 COPY tutotech /var/www/html/local/tutotech
+COPY theme/moove /var/www/html/theme/moove
+COPY blocks/xp /var/www/html/blocks/xp
 
 # Figer les permissions système
 RUN mkdir -p /var/moodledata \
@@ -311,17 +313,22 @@ Afin de pouvoir contrôler Moodle directement via le tableau de bord Coolify (gr
 ### Pourquoi ne PAS installer de plugin via l'interface web ?
 Dans un conteneur standard, le dossier `/var/www/html` n'est pas persistant (il n'est pas mappé à un volume pour des raisons de sécurité). Si vous autorisez l'interface web à installer un plugin, les fichiers PHP seront écrits de manière temporaire. Au prochain déploiement ou redémarrage de la pile, **le plugin disparaîtra**, provoquant un crash ou des dysfonctionnements majeurs puisque la base de données Moodle s'attend à ce que le plugin soit toujours présent.
 
-### Procédure de déploiement d'un plugin (exemple: `local_tutotech`)
+### Procédure générale de déploiement d'un plugin
 
-1. **Extraction** : Téléchargez et extrayez le plugin dans `/home/nicolas-bodaine/moodle-custom-build/`.
-2. **Nommage du dossier** : Respectez strictement la nomenclature Moodle. Par exemple, pour un composant nommé `local_tutotech`, Moodle s'attend à ce que le code soit placé dans le répertoire `local/tutotech/`. Renommez le dossier extrait en `tutotech` sur l'hôte.
-3. **Déclaration de copie** : Ajoutez l'instruction de copie dans le `Dockerfile` (voir Étape 1) :
+1. **Extraction** : Téléchargez et extrayez le plugin ou thème sur l'hôte dans `/home/nicolas-bodaine/moodle-custom-build/`.
+2. **Nommage et structure du dossier** : Respectez strictement la structure attendue par Moodle.
+   - Par exemple, pour un plugin local nommé `local_tutotech`, le dossier de build doit être `tutotech/` et copié vers `/var/www/html/local/tutotech`.
+   - Pour un thème comme `theme_moove`, le dossier de build doit être `theme/moove/` et copié vers `/var/www/html/theme/moove`.
+   - Pour un bloc comme `block_xp`, le dossier de build doit être `blocks/xp/` et copié vers `/var/www/html/blocks/xp`.
+3. **Déclaration de copie** : Ajoutez les instructions de copie dans le `Dockerfile` (voir Étape 1) :
    ```dockerfile
    COPY tutotech /var/www/html/local/tutotech
+   COPY theme/moove /var/www/html/theme/moove
+   COPY blocks/xp /var/www/html/blocks/xp
    ```
-4. **Build** : Compilez la nouvelle image locale en exécutant `./build.sh`.
-5. **Déploiement** : Cliquez sur **Deploy** ou redémarrez le service dans Coolify pour lancer le nouveau conteneur.
-6. **Mise à niveau de la base de données** : Indiquez à Moodle d'appliquer la mise à jour en base :
+4. **Build** : Compilez la nouvelle image locale en exécutant le script `./build.sh` dans `/home/nicolas-bodaine/moodle-custom-build/`.
+5. **Déploiement** : Lancez une redéploiement forcé du service dans Coolify pour instancier les nouveaux conteneurs avec l'image fraîchement construite.
+6. **Mise à niveau de la base de données** : Indiquez à Moodle d'appliquer les schémas et configurations en base :
    ```bash
    docker exec moodle-hk1pkqqots65e6occy3wfmhn php /var/www/html/admin/cli/upgrade.php --non-interactive
    ```
@@ -329,6 +336,30 @@ Dans un conteneur standard, le dossier `/var/www/html` n'est pas persistant (il 
    ```bash
    docker exec moodle-hk1pkqqots65e6occy3wfmhn php /var/www/html/admin/cli/purge_caches.php
    ```
+
+---
+
+### Cas Particulier : Le Thème Moove (`theme_moove`) et la modification du bandeau publicitaire
+
+Le thème **Moove** (`theme_moove`) a été personnalisé pour retirer un bandeau publicitaire indésirable de "Conecti.me Partners" faisant la promotion de services tiers (ReadSpeaker, etc.) sur la page d'administration.
+
+**Détails de la modification réalisée sur le thème :**
+1. **Fichier modifié** : `theme/moove/classes/output/core/admin_renderer.php`
+2. **Changements de code** :
+   - Retrait de l'appel `$output .= $this->conectime_partners_content();` dans la fonction `admin_notifications_page(...)`.
+   - Suppression complète de la définition de la méthode privée `conectime_partners_content(): string` qui affichait le bandeau Mustache.
+3. **Fichiers supprimés** (pour nettoyer le dépôt et les ressources inutilisées) :
+   - Le template mustache : `theme/moove/templates/moove/conectime_partners_banner.mustache`
+   - Le logo SVG partenaire : `theme/moove/pix/partner-readspeaker.svg`
+   - Les traductions associées dans `theme/moove/lang/en/theme_moove.php`.
+
+Ce thème épuré est directement intégré à l'image via l'étape de copie dans le `Dockerfile`.
+
+---
+
+### Cas Particulier : Module Level Up XP (`block_xp`)
+
+Le module de gamification **Level Up XP** (`block_xp`) est un plugin tiers installé pour attribuer des points d'expérience aux apprenants. Il est stocké dans `/home/nicolas-bodaine/moodle-custom-build/blocks/xp` sur l'hôte et automatiquement injecté au même titre que les autres extensions.
 
 ---
 
