@@ -189,6 +189,7 @@ nav:
     - Mettre à jour automatiquement ses conteneurs Docker avec Watchtower: automatisation/mettre-a-jour-automatiquement-conteneurs-docker-avec-watchtower.md
     - "Déployer son infrastructure avec Terraform (premiers pas)": automatisation/debuter-terraform-infrastructure-as-code.md
   - Logiciels:
+    - "Gérer ses mots de passe hors-ligne en toute sécurité avec KeePassXC": logiciels/keepassxc-mot-de-passe.md
     - logiciels/index.md
     - Installer Docker Engine et le plugin Docker Compose sur Ubuntu 24.04: logiciels/installer-docker-engine-ubuntu-2404.md
     - Créer et lancer une application multi-conteneurs avec Docker Compose: logiciels/creer-lancer-application-multi-conteneurs-docker-compose.md
