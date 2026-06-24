@@ -21,3 +21,4 @@ Tips & tricks divers pour gagner du temps.
 ## Manipulation de données
 
 - [Extraire et formater des données JSON avec la commande jq](extraire-formater-donnees-json-commande-jq.md) — Parser, filtrer et extraire facilement des valeurs depuis des fichiers JSON ou des réponses d'API REST.
+- [Manipuler et transformer des flux de texte avec sed](manipuler-transformer-flux-texte-sed.md) — Remplacer, filtrer et supprimer du texte à la volée dans des fichiers de configuration sans éditeur texte.

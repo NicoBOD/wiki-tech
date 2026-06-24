@@ -222,6 +222,7 @@ nav:
     - "Maîtriser les redirections des sorties standard et d'erreur sous Linux (> et 2>)": astuces/maitriser-redirections-sorties-standard-erreur-linux.md
     - Naviguer plus vite dans ses dossiers Linux avec pushd et popd: astuces/naviguer-plus-vite-dossiers-linux-pushd-popd.md
     - Extraire et formater des données JSON avec la commande jq: astuces/extraire-formater-donnees-json-commande-jq.md
+    - Manipuler et transformer des flux de texte avec sed: astuces/manipuler-transformer-flux-texte-sed.md
   - Tags: tags.md
 
 copyright: >
