@@ -28,4 +28,4 @@ Outils et méthodologies pour diagnostiquer et résoudre des problèmes informat
 - [Sniffnet AppImage — Installation et lancement sur Ubuntu 24.04](sniffnet-appimage-ubuntu-2404.md) — Astuce pour faire fonctionner l'interface de surveillance réseau de Sniffnet.
 - [AppImageLauncher — Échec d'intégration sur Ubuntu 24.04 (compression zstd)](appimagelauncher-compression-zstd-ubuntu-2404.md) — Contourner l'erreur de compression Zstandard qui empêche l'intégration des AppImages.
 
-- [---](diagnostiquer-processus-defaillant-strace.md)
+- [Diagnostiquer un processus défaillant avec strace](diagnostiquer-processus-defaillant-strace.md)
