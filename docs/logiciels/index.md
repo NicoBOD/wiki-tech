@@ -13,6 +13,7 @@ Installation, configuration et utilisation de logiciels métiers et conteneurs (
 - [Créer et lancer une application multi-conteneurs avec Docker Compose](creer-lancer-application-multi-conteneurs-docker-compose.md) — Orchestrer le déploiement d'une stack (ex: frontend, backend, BDD) en une commande.
 - [Installer et configurer Portainer pour gérer ses conteneurs Docker](installer-configurer-portainer-docker.md) — Déployer une interface web graphique intuitive pour piloter ses environnements Docker.
 - [Migration et sécurisation de Moodle sous Docker](moodle-custom-docker.md) — Guide complet sur la migration depuis Bitnami vers une image Docker officielle sur-mesure intégrée dans Coolify.
+- [Retirer le bandeau publicitaire du thème Moove de Moodle](retirer-banniere-theme-moove-moodle.md) — Deux méthodes (CSS ou PHP) pour nettoyer la page de notifications d'administration.
 
 ## Outils de développement
 
