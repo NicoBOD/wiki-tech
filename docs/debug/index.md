@@ -27,3 +27,5 @@ Outils et méthodologies pour diagnostiquer et résoudre des problèmes informat
 - [NVIDIA — Écran noir après sortie de veille](nvidia-veille-ecran-noir.md) — Correction d'un problème d'affichage sur les pilotes propriétaires sous Linux.
 - [Sniffnet AppImage — Installation et lancement sur Ubuntu 24.04](sniffnet-appimage-ubuntu-2404.md) — Astuce pour faire fonctionner l'interface de surveillance réseau de Sniffnet.
 - [AppImageLauncher — Échec d'intégration sur Ubuntu 24.04 (compression zstd)](appimagelauncher-compression-zstd-ubuntu-2404.md) — Contourner l'erreur de compression Zstandard qui empêche l'intégration des AppImages.
+
+- [---](diagnostiquer-processus-defaillant-strace.md)

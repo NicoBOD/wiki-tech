@@ -27,3 +27,5 @@ Installation, configuration et utilisation de logiciels métiers et conteneurs (
 ## Outils de productivité et documentation
 
 - [Obsidian : Créer et organiser sa propre base de connaissances technique en Markdown](obsidian-base-connaissances-technique-markdown.md) — Déployer et organiser son wiki personnel local pour centraliser ses notes de TP et ses procédures.
+
+- [Gérer ses mots de passe hors-ligne en toute sécurité avec KeePassXC](keepassxc-mot-de-passe.md)
