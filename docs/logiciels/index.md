@@ -12,6 +12,7 @@ Installation, configuration et utilisation de logiciels métiers et conteneurs (
 - [Installer Docker Engine et le plugin Docker Compose sur Ubuntu 24.04](installer-docker-engine-ubuntu-2404.md) — Préparer un socle moderne pour faire tourner des applications isolées.
 - [Créer et lancer une application multi-conteneurs avec Docker Compose](creer-lancer-application-multi-conteneurs-docker-compose.md) — Orchestrer le déploiement d'une stack (ex: frontend, backend, BDD) en une commande.
 - [Installer et configurer Portainer pour gérer ses conteneurs Docker](installer-configurer-portainer-docker.md) — Déployer une interface web graphique intuitive pour piloter ses environnements Docker.
+- [Migration et sécurisation de Moodle sous Docker](moodle-custom-docker.md) — Guide complet sur la migration depuis Bitnami vers une image Docker officielle sur-mesure intégrée dans Coolify.
 
 ## Outils de développement
 
@@ -27,5 +28,4 @@ Installation, configuration et utilisation de logiciels métiers et conteneurs (
 ## Outils de productivité et documentation
 
 - [Obsidian : Créer et organiser sa propre base de connaissances technique en Markdown](obsidian-base-connaissances-technique-markdown.md) — Déployer et organiser son wiki personnel local pour centraliser ses notes de TP et ses procédures.
-
 - [Gérer ses mots de passe hors-ligne en toute sécurité avec KeePassXC](keepassxc-mot-de-passe.md)

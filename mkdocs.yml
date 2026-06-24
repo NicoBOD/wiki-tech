@@ -195,6 +195,7 @@ nav:
     - Installer Docker Engine et le plugin Docker Compose sur Ubuntu 24.04: logiciels/installer-docker-engine-ubuntu-2404.md
     - Créer et lancer une application multi-conteneurs avec Docker Compose: logiciels/creer-lancer-application-multi-conteneurs-docker-compose.md
     - Installer et configurer Portainer pour gérer ses conteneurs Docker: logiciels/installer-configurer-portainer-docker.md
+    - "Migration et sécurisation de Moodle sous Docker": logiciels/moodle-custom-docker.md
     - Configurer VS Code avec Remote-SSH pour administrer un serveur Linux: logiciels/configurer-vs-code-remote-ssh.md
     - Installer et configurer Git pour versionner ses premiers projets: logiciels/installer-configurer-git-versionner-projets.md
     - Débuter avec Postman pour tester des API REST: logiciels/debuter-postman-tester-api-rest.md
