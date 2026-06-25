@@ -182,6 +182,7 @@ nav:
     - Simplifier et automatiser les commandes de ses projets avec un Makefile: automatisation/simplifier-automatiser-commandes-projets-makefile.md
     - Créer des environnements de test locaux reproductibles avec Vagrant et VirtualBox: automatisation/creer-environnements-test-vagrant-virtualbox.md
     - Automatiser la création de machines virtuelles Proxmox avec Terraform: automatisation/creer-vm-proxmox-terraform.md
+    - "Automatiser la création d'images systèmes (Templates) avec Packer": automatisation/automatiser-creation-images-systemes-packer.md
     - Les bases de n8n: automatisation/bases-n8n.md
     - Planifier un script avec un timer systemd sous Linux: automatisation/planifier-script-timer-systemd-linux.md
     - Sauvegardes automatisées avec script Bash robuste: automatisation/sauvegarde-automatisee-script-bash-robuste.md
