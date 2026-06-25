@@ -29,5 +29,6 @@ Protection des serveurs, pare-feu, certificats SSL et bonnes pratiques de durcis
 - [Cartographier et analyser les ports d'un réseau avec Nmap](cartographier-analyser-ports-reseau-nmap.md) — Découvrir les hôtes actifs et les services ouverts avec le scanner de référence.
 
 ## Durcissement Système
+- [Configurer `sudo` en toute sécurité avec `visudo`](configurer-sudo-visudo.md) — Limiter les privilèges des utilisateurs.
 
 - [Renforcer la sécurité d'un service avec AppArmor sous Ubuntu](renforcer-securite-service-apparmor-ubuntu.md) — Créer un périmètre de sécurité strict (sandbox) pour limiter les capacités des applications.

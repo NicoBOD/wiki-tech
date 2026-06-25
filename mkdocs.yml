@@ -154,6 +154,7 @@ nav:
     - Déployer un site web statique avec Amazon S3: cloud/deployer-site-web-statique-amazon-s3.md
     - Déployer un conteneur via Azure Container Instances (ACI): cloud/deployer-conteneur-azure-container-instances-aci.md
   - Cybersécurité:
+    - "Configurer sudo en toute sécurité avec visudo": cybersecurite/configurer-sudo-visudo.md
     - cybersecurite/index.md
     - "Sécuriser SSH avec l'authentification double facteur (MFA) via Google Authenticator": cybersecurite/ssh-mfa-google-authenticator.md
     - Installer et configurer Fail2ban pour protéger SSH sur Ubuntu Server 24.04: cybersecurite/fail2ban-proteger-ssh-ubuntu-server.md
