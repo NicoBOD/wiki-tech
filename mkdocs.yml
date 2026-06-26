@@ -228,6 +228,7 @@ nav:
     - Créer des alias persistants avec .bashrc: astuces/creer-alias-persistants-bashrc-linux.md
     - "Maîtriser les redirections des sorties standard et d'erreur sous Linux (> et 2>)": astuces/maitriser-redirections-sorties-standard-erreur-linux.md
     - Naviguer plus vite dans ses dossiers Linux avec pushd et popd: astuces/naviguer-plus-vite-dossiers-linux-pushd-popd.md
+    - Analyser et extraire des colonnes de texte sous Linux avec awk: astuces/analyser-extraire-colonnes-texte-awk.md
     - Extraire et formater des données JSON avec la commande jq: astuces/extraire-formater-donnees-json-commande-jq.md
     - Manipuler et transformer des flux de texte avec sed: astuces/manipuler-transformer-flux-texte-sed.md
   - Tags: tags.md
