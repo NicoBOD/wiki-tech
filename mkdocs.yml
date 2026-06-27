@@ -157,6 +157,7 @@ nav:
     - Déployer un conteneur via Azure Container Instances (ACI): cloud/deployer-conteneur-azure-container-instances-aci.md
   - Cybersécurité:
     - "Configurer sudo en toute sécurité avec visudo": cybersecurite/configurer-sudo-visudo.md
+    - Renforcer la politique de mots de passe sous Linux avec pam_pwquality: cybersecurite/renforcer-politique-mots-de-passe-pam-pwquality-linux.md
     - cybersecurite/index.md
     - "Sécuriser SSH avec l'authentification double facteur (MFA) via Google Authenticator": cybersecurite/ssh-mfa-google-authenticator.md
     - Installer et configurer Fail2ban pour protéger SSH sur Ubuntu Server 24.04: cybersecurite/fail2ban-proteger-ssh-ubuntu-server.md
