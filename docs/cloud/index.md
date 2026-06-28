@@ -28,4 +28,5 @@ Notes sur Azure, AWS, GCP, Infrastructure as Code (Terraform, Bicep) et conteneu
 
 ## Microsoft Azure
 
+- [Créer et configurer sa première machine virtuelle sur Microsoft Azure](creer-premiere-machine-virtuelle-azure.md) — Lancer une instance Ubuntu, ouvrir des ports et s'y connecter via Azure CLI.
 - [Déployer un conteneur via Azure Container Instances (ACI)](deployer-conteneur-azure-container-instances-aci.md) — Déployer rapidement une image Docker serverless avec la ligne de commande Azure.
