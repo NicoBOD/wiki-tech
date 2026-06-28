@@ -186,6 +186,7 @@ nav:
     - Déployer une solution RAG locale avec AnythingLLM et Docker: ia/deployer-rag-local-anythingllm-docker.md
   - Automatisation:
     - automatisation/index.md
+    - Créer des alertes automatisées via Webhook (Slack/Discord) en Bash: automatisation/creer-alertes-automatisees-webhook-bash.md
     - Simplifier et automatiser les commandes de ses projets avec un Makefile: automatisation/simplifier-automatiser-commandes-projets-makefile.md
     - Créer des environnements de test locaux reproductibles avec Vagrant et VirtualBox: automatisation/creer-environnements-test-vagrant-virtualbox.md
     - Automatiser la création de machines virtuelles Proxmox avec Terraform: automatisation/creer-vm-proxmox-terraform.md
