@@ -171,6 +171,7 @@ nav:
     - "Cartographier et analyser les ports d'un réseau avec Nmap": cybersecurite/cartographier-analyser-ports-reseau-nmap.md
     - Sécuriser un volume de données avec le chiffrement LUKS sous Linux: cybersecurite/securiser-volume-donnees-chiffrement-luks-linux.md
     - Renforcer la sécurité d'un service avec AppArmor sous Ubuntu: cybersecurite/renforcer-securite-service-apparmor-ubuntu.md
+    - Chiffrer et signer des fichiers avec GPG sous Linux: cybersecurite/chiffrer-signer-fichiers-gpg-linux.md
   - IA:
     - ia/index.md
     - "Déployer Tabby en local : l'alternative open source à GitHub Copilot": ia/deployer-tabby-local-alternative-github-copilot.md

@@ -22,6 +22,7 @@ Protection des serveurs, pare-feu, certificats SSL et bonnes pratiques de durcis
 
 - [Sécuriser un serveur web Nginx avec Let's Encrypt et Certbot sur Ubuntu Server](certbot-nginx-https-lets-encrypt-ubuntu.md) — Obtenir et renouveler automatiquement un certificat TLS/SSL gratuit.
 - [Sécuriser un volume de données avec le chiffrement LUKS sous Linux](securiser-volume-donnees-chiffrement-luks-linux.md) — Protéger les données au repos en chiffrant un disque ou une partition.
+- [Chiffrer et signer des fichiers avec GPG sous Linux](chiffrer-signer-fichiers-gpg-linux.md) — Garantir la confidentialité et l'authenticité de vos fichiers locaux et échangés.
 
 ## Audit & Conformité
 
