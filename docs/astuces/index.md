@@ -18,6 +18,10 @@ Tips & tricks divers pour gagner du temps.
 - [Maîtriser les redirections des sorties standard et d'erreur sous Linux (> et 2>)](maitriser-redirections-sorties-standard-erreur-linux.md) — Comprendre et utiliser stdout et stderr pour dompter les flux de commandes.
 - [Naviguer plus vite dans ses dossiers Linux avec pushd et popd](naviguer-plus-vite-dossiers-linux-pushd-popd.md) — Jongler entre plusieurs répertoires via une pile (stack).
 
+## Réseau & Transferts
+
+- [Partager des fichiers rapidement en local avec un serveur HTTP éphémère](partager-fichiers-serveur-http-ephemere.md) — Lancer un serveur web temporaire en une ligne pour transférer des données.
+
 ## Manipulation de données
 
 - [Analyser et extraire des colonnes de texte sous Linux avec awk](analyser-extraire-colonnes-texte-awk.md) — Manipuler et filtrer des données tabulaires directement dans le terminal.
