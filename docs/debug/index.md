@@ -19,6 +19,10 @@ Outils et méthodologies pour diagnostiquer et résoudre des problèmes informat
 - [Identifier les ports ouverts et les services à l’écoute avec `ss` et `lsof` sous Linux](identifier-ports-ouverts-services-ecoute-ss-lsof-linux.md) — Savoir quel daemon occupe quel port pour éviter les conflits.
 - [Capturer et diagnostiquer le trafic réseau en ligne de commande avec tcpdump](capturer-diagnostiquer-trafic-reseau-tcpdump.md) — Analyser et filtrer les paquets réseau depuis un terminal pour le dépannage.
 
+## Conteneurisation
+
+- [Diagnostiquer un conteneur Docker en échec avec logs et inspect](diagnostiquer-conteneur-docker-en-echec-logs-inspect.md) — Utiliser docker logs et docker inspect pour comprendre l'arrêt inattendu d'un conteneur.
+
 ## Développement & Scripts
 
 - [Déboguer une application Python avec pdb en ligne de commande](deboguer-application-python-pdb-cli.md) — Inspecter le comportement d'un script en cours d'exécution de manière interactive.
