@@ -14,6 +14,7 @@ Notes sur Azure, AWS, GCP, Infrastructure as Code (Terraform, Bicep) et conteneu
 
 ## Amazon Web Services (AWS)
 
+- [Créer et déployer sa première fonction Serverless avec AWS Lambda](creer-deployer-premiere-fonction-serverless-aws-lambda.md) — Création, configuration et exécution de code Python sans serveur.
 - [Sécuriser son compte AWS : les bases d'IAM (Identity and Access Management)](securiser-compte-aws-bases-iam.md) — Protéger le compte racine avec MFA et créer des accès administrateurs délégués.
 - [Créer et configurer sa première machine virtuelle EC2 sur AWS](creer-premiere-machine-virtuelle-ec2-aws.md) — Lancer et configurer une instance Ubuntu EC2, règles de sécurité, et accès SSH sur AWS.
 - [Créer une alerte de facturation sur AWS (AWS Budgets) pour sécuriser ses travaux pratiques](creer-alerte-facturation-aws-budgets.md) — Configurer un budget pour recevoir une notification par email avant que les coûts n'explosent.
