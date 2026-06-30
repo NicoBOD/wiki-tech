@@ -9,6 +9,7 @@ Configuration réseau, routage, VPN, et services de proxy sous Linux.
 
 ## Services d'Infrastructure
 
+- [Bloquer les requêtes malveillantes et publicités avec Pi-hole](installer-configurer-pi-hole-reseau-local.md) — Déployer un trou noir DNS pour sécuriser votre réseau local.
 - [Mettre en place un serveur DHCP local avec Kea sur Ubuntu](installer-configurer-serveur-dhcp-kea-ubuntu.md) — Remplacer isc-dhcp-server par le serveur moderne de l'ISC pour gérer vos adresses IP locales.
 
 ## Routage & Pare-feu
