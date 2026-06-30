@@ -207,6 +207,7 @@ nav:
     - Créer et lancer une application multi-conteneurs avec Docker Compose: logiciels/creer-lancer-application-multi-conteneurs-docker-compose.md
     - Installer et configurer Portainer pour gérer ses conteneurs Docker: logiciels/installer-configurer-portainer-docker.md
     - "Migration et sécurisation de Moodle sous Docker": logiciels/moodle-custom-docker.md
+    - Retirer le bandeau publicitaire du thème Moove de Moodle: logiciels/retirer-banniere-theme-moove-moodle.md
     - Configurer VS Code avec Remote-SSH pour administrer un serveur Linux: logiciels/configurer-vs-code-remote-ssh.md
     - Installer et configurer Git pour versionner ses premiers projets: logiciels/installer-configurer-git-versionner-projets.md
     - Débuter avec Postman pour tester des API REST: logiciels/debuter-postman-tester-api-rest.md
@@ -221,6 +222,7 @@ nav:
     - "Lire, filtrer et suivre les logs avec `journalctl` pour diagnostiquer un service Linux": debug/journalctl-lire-filtrer-suivre-logs-systemd-linux.md
     - Identifier les ports ouverts et les services à l’écoute avec `ss` et `lsof` sous Linux: debug/identifier-ports-ouverts-services-ecoute-ss-lsof-linux.md
     - Capturer et diagnostiquer le trafic réseau en ligne de commande avec tcpdump: debug/capturer-diagnostiquer-trafic-reseau-tcpdump.md
+    - Diagnostiquer un processus défaillant avec strace: debug/diagnostiquer-processus-defaillant-strace.md
     - Diagnostiquer un conteneur Docker en échec avec logs et inspect: debug/diagnostiquer-conteneur-docker-en-echec-logs-inspect.md
     - Déboguer une application Python avec pdb en ligne de commande: debug/deboguer-application-python-pdb-cli.md
     - NVIDIA — Écran noir après veille: debug/nvidia-veille-ecran-noir.md
