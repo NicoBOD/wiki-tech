@@ -21,6 +21,7 @@ Administration système, stockage, sécurité locale et gestion des utilisateurs
 ## Stockage & Sauvegarde
 
 - [Surveiller et analyser l'espace disque sous Linux avec df, du et ncdu](surveiller-analyser-espace-disque-linux-df-du-ncdu.md) — Identifier les dossiers volumineux et prévenir la saturation des disques.
+- [Créer et gérer un fichier d'échange (Swap) sous Linux](creer-gerer-fichier-echange-swap-linux.md) — Configurer de la mémoire virtuelle pour éviter les arrêts inopinés par manque de RAM.
 - [Étendre un volume logique LVM après ajout d’un disque sur une VM Linux](etendre-volume-logique-lvm-apres-ajout-disque-vm-linux.md) — Agrandir l'espace de stockage à chaud de manière transparente.
 - [Sauvegarder et restaurer un dossier avec `rsync` sur Linux en local ou via SSH](sauvegarder-restaurer-dossier-rsync-linux-local-ssh.md) — Synchroniser des données efficacement et reprendre des transferts interrompus.
 

@@ -118,6 +118,7 @@ nav:
   - Systèmes:
     - systemes/index.md
     - Rechercher des fichiers sous Linux avec la commande find: systemes/rechercher-fichiers-commande-find-linux.md
+    - Créer et gérer un fichier d'échange (Swap) sous Linux: systemes/creer-gerer-fichier-echange-swap-linux.md
     - "Surveiller et analyser l'espace disque sous Linux avec df, du et ncdu": systemes/surveiller-analyser-espace-disque-linux-df-du-ncdu.md
     - Comprendre et gérer le machine-id sous Linux: systemes/machine-id-linux.md
     - virt-sysprep — préparer une image Linux au clonage: systemes/virt-sysprep-preparer-image-linux-clonage.md
