@@ -23,6 +23,7 @@ Installation, configuration et utilisation de logiciels métiers et conteneurs (
 
 ## Outils d'administration
 
+- [Utiliser DBeaver pour explorer et administrer ses bases de données](utiliser-dbeaver-explorer-administrer-bases-de-donnees.md) — Outil graphique universel pour gérer presque tous les moteurs du marché (PostgreSQL, MySQL, SQLite, etc.).
 - [Installer et configurer Windows Terminal pour unifier ses environnements CLI (PowerShell, WSL, SSH)](installer-configurer-windows-terminal.md) — Rassembler et personnaliser tous ses terminaux Windows dans une interface moderne et unifiée.
 - [Découvrir et utiliser MobaXterm pour l'administration distante](utiliser-mobaxterm-administration-distante.md) — Découvrir, installer et utiliser ce couteau suisse (SSH, SFTP, serveur X) pour Windows.
 

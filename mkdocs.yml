@@ -215,6 +215,7 @@ nav:
     - Configurer VS Code avec Remote-SSH pour administrer un serveur Linux: logiciels/configurer-vs-code-remote-ssh.md
     - Installer et configurer Git pour versionner ses premiers projets: logiciels/installer-configurer-git-versionner-projets.md
     - Débuter avec Postman pour tester des API REST: logiciels/debuter-postman-tester-api-rest.md
+    - Utiliser DBeaver pour explorer et administrer ses bases de données: logiciels/utiliser-dbeaver-explorer-administrer-bases-de-donnees.md
     - "Installer et configurer Windows Terminal pour unifier ses environnements CLI (PowerShell, WSL, SSH)": logiciels/installer-configurer-windows-terminal.md
     - "Découvrir et utiliser MobaXterm pour l'administration distante": logiciels/utiliser-mobaxterm-administration-distante.md
     - "Obsidian : Créer et organiser sa propre base de connaissances technique en Markdown": logiciels/obsidian-base-connaissances-technique-markdown.md
