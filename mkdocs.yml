@@ -197,6 +197,7 @@ nav:
     - Automatiser la création de machines virtuelles Proxmox avec Terraform: automatisation/creer-vm-proxmox-terraform.md
     - "Automatiser la création d'images systèmes (Templates) avec Packer": automatisation/automatiser-creation-images-systemes-packer.md
     - Les bases de n8n: automatisation/bases-n8n.md
+    - Planifier des tâches récurrentes simplement sous Linux avec cron (crontab): automatisation/planifier-taches-recurrentes-linux-cron-crontab.md
     - Planifier un script avec un timer systemd sous Linux: automatisation/planifier-script-timer-systemd-linux.md
     - Sauvegardes automatisées avec script Bash robuste: automatisation/sauvegarde-automatisee-script-bash-robuste.md
     - "Premiers pas avec Ansible : créer un inventaire et lancer un premier playbook sur plusieurs VM Linux": automatisation/premiers-pas-ansible-inventaire-playbook-vm-linux.md
