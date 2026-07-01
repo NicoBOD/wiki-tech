@@ -188,6 +188,7 @@ nav:
     - Créer un script Python interagissant avec un LLM local via Ollama: ia/script-python-interaction-llm-local-ollama.md
     - "Créer une équipe d'agents IA autonomes avec CrewAI et Ollama": ia/creer-agents-autonomes-crewai-ollama.md
     - Connecter Open WebUI à Ollama (Votre propre ChatGPT local): ia/connecter-open-webui-ollama-chatgpt-local.md
+    - Déployer un proxy IA unifié avec LiteLLM pour centraliser ses modèles: ia/deployer-proxy-ia-unifie-litellm-docker.md
     - Déployer une solution RAG locale avec AnythingLLM et Docker: ia/deployer-rag-local-anythingllm-docker.md
   - Automatisation:
     - automatisation/index.md
