@@ -161,9 +161,9 @@ nav:
     - Créer et configurer sa première machine virtuelle sur Microsoft Azure: cloud/creer-premiere-machine-virtuelle-azure.md
     - Déployer un conteneur via Azure Container Instances (ACI): cloud/deployer-conteneur-azure-container-instances-aci.md
   - Cybersécurité:
+    - cybersecurite/index.md
     - "Configurer sudo en toute sécurité avec visudo": cybersecurite/configurer-sudo-visudo.md
     - Renforcer la politique de mots de passe sous Linux avec pam_pwquality: cybersecurite/renforcer-politique-mots-de-passe-pam-pwquality-linux.md
-    - cybersecurite/index.md
     - "Sécuriser SSH avec l'authentification double facteur (MFA) via Google Authenticator": cybersecurite/ssh-mfa-google-authenticator.md
     - Installer et configurer Fail2ban pour protéger SSH sur Ubuntu Server 24.04: cybersecurite/fail2ban-proteger-ssh-ubuntu-server.md
     - "Protéger un serveur Linux avec CrowdSec : l'alternative collaborative à Fail2ban": cybersecurite/crowdsec-alternative-fail2ban-linux.md
