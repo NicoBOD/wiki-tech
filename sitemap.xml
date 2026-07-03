@@ -2,510 +2,510 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://wiki.bodaine.fr/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/tags/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/astuces/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/astuces/analyser-extraire-colonnes-texte-awk/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/astuces/creer-alias-persistants-bashrc-linux/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/astuces/extraire-formater-donnees-json-commande-jq/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/astuces/fzf-recherche-floue-terminal-linux/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/astuces/maintenir-sessions-terminal-tmux/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/astuces/maitriser-historique-bash-history-ctrl-r/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/astuces/maitriser-redirections-sorties-standard-erreur-linux/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/astuces/manipuler-executer-commandes-lots-xargs/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/astuces/manipuler-transformer-flux-texte-sed/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/astuces/naviguer-plus-vite-dossiers-linux-pushd-popd/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/astuces/partager-fichiers-serveur-http-ephemere/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/astuces/simplifier-aide-terminal-tldr/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/automatisation/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/automatisation/automatiser-creation-images-systemes-packer/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/automatisation/bases-n8n/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/automatisation/creer-alertes-automatisees-webhook-bash/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/automatisation/creer-environnements-test-vagrant-virtualbox/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/automatisation/creer-vm-proxmox-terraform/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/automatisation/debuter-terraform-infrastructure-as-code/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/automatisation/mettre-a-jour-automatiquement-conteneurs-docker-avec-watchtower/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/automatisation/planifier-script-timer-systemd-linux/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/automatisation/planifier-taches-recurrentes-linux-cron-crontab/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/automatisation/premier-pipeline-ci-cd-github-actions/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/automatisation/premiers-pas-ansible-inventaire-playbook-vm-linux/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/automatisation/sauvegarde-automatisee-script-bash-robuste/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/automatisation/simplifier-automatiser-commandes-projets-makefile/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cloud/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cloud/creer-alerte-facturation-aws-budgets/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cloud/creer-deployer-premiere-fonction-serverless-aws-lambda/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cloud/creer-premiere-machine-virtuelle-azure/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cloud/creer-premiere-machine-virtuelle-ec2-aws/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cloud/creer-vpc-isole-securise-aws/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cloud/deploy-pedagogia-gcp/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cloud/deployer-application-docker-google-cloud-run/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cloud/deployer-base-de-donnees-rds-postgresql-aws/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cloud/deployer-conteneur-azure-container-instances-aci/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cloud/deployer-site-web-statique-amazon-s3/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cloud/installer-configurer-aws-cli/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cloud/personnaliser-vm-ubuntu-cloud-init-nocloud/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cloud/securiser-compte-aws-bases-iam/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cybersecurite/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cybersecurite/cartographier-analyser-ports-reseau-nmap/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cybersecurite/certbot-nginx-https-lets-encrypt-ubuntu/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cybersecurite/chiffrer-signer-fichiers-gpg-linux/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cybersecurite/configurer-sudo-visudo/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cybersecurite/crowdsec-alternative-fail2ban-linux/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cybersecurite/fail2ban-proteger-ssh-ubuntu-server/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cybersecurite/lynis-audit-securite-linux/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cybersecurite/renforcer-politique-mots-de-passe-pam-pwquality-linux/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cybersecurite/renforcer-securite-service-apparmor-ubuntu/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cybersecurite/securiser-volume-donnees-chiffrement-luks-linux/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cybersecurite/ssh-cle-publique-desactiver-mot-de-passe/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cybersecurite/ssh-mfa-google-authenticator/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/cybersecurite/ufw-ubuntu-server-premieres-regles/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/debug/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/debug/appimagelauncher-compression-zstd-ubuntu-2404/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/debug/capturer-diagnostiquer-trafic-reseau-tcpdump/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/debug/deboguer-application-python-pdb-cli/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/debug/diagnostiquer-consommation-cpu-memoire-htop-free/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/debug/diagnostiquer-conteneur-docker-en-echec-logs-inspect/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/debug/diagnostiquer-erreur-502-504-bad-gateway-serveur-web/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/debug/diagnostiquer-materiel-pilotes-linux-dmesg/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/debug/diagnostiquer-processus-defaillant-strace/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/debug/identifier-ports-ouverts-services-ecoute-ss-lsof-linux/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/debug/journalctl-lire-filtrer-suivre-logs-systemd-linux/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/debug/nvidia-veille-ecran-noir/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/debug/sniffnet-appimage-ubuntu-2404/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/ia/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/ia/analyser-images-local-ollama-llava/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/ia/connecter-open-webui-ollama-chatgpt-local/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/ia/creer-agents-autonomes-crewai-ollama/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/ia/deploiement-paperclip-dans-cosmos-server/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/ia/deployer-dify-local-docker/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/ia/deployer-proxy-ia-unifie-litellm-docker/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/ia/deployer-rag-local-anythingllm-docker/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/ia/deployer-tabby-local-alternative-github-copilot/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/ia/installer-stable-diffusion-local-automatic1111/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/ia/installer-utiliser-ollama-llm-local/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/ia/integrer-continue-dev-vscode-ollama-local/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/ia/script-python-interaction-llm-local-ollama/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/ia/transcrire-audio-texte-local-whisper/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/logiciels/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/logiciels/configurer-vs-code-remote-ssh/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/logiciels/creer-lancer-application-multi-conteneurs-docker-compose/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/logiciels/debuter-postman-tester-api-rest/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/logiciels/installer-configurer-git-versionner-projets/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/logiciels/installer-configurer-portainer-docker/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/logiciels/installer-configurer-windows-terminal/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/logiciels/installer-docker-engine-ubuntu-2404/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/logiciels/keepassxc-mot-de-passe/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/logiciels/moodle-custom-docker/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/logiciels/obsidian-base-connaissances-technique-markdown/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/logiciels/retirer-banniere-theme-moove-moodle/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/logiciels/utiliser-dbeaver-explorer-administrer-bases-de-donnees/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/logiciels/utiliser-mobaxterm-administration-distante/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/mentions-legales/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/reseaux/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/reseaux/analyser-trafic-reseau-wireshark-capturer-filtrer/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/reseaux/configurer-agregation-liens-bonding-lacp-netplan-ubuntu/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/reseaux/configurer-ip-statique-netplan-ubuntu-server/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/reseaux/configurer-nat-routage-serveur-linux-nftables/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/reseaux/configurer-vlans-8021q-netplan-linux/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/reseaux/creer-tunnels-securises-redirection-ports-ssh/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/reseaux/diagnostiquer-panne-dns-dig-host-resolvectl-ubuntu/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/reseaux/diagnostiquer-routage-latence-reseau-mtr/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/reseaux/installer-configurer-pi-hole-reseau-local/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/reseaux/installer-configurer-serveur-dhcp-kea-ubuntu/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/reseaux/mesurer-bande-passante-iperf3/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/reseaux/mettre-en-place-reverse-proxy-nginx-ubuntu/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/reseaux/mettre-en-place-vpn-wireguard-simple-entre-deux-machines-ubuntu/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/systemes/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/systemes/creer-gerer-fichier-echange-swap-linux/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/systemes/etendre-volume-logique-lvm-apres-ajout-disque-vm-linux/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/systemes/gerer-permissions-fichiers-chmod-chown-linux/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/systemes/gerer-services-linux-systemctl-essentiel/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/systemes/machine-id-linux/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/systemes/migration-stop-repeat-lovable-vers-coolify/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/systemes/partager-dossier-nfs-entre-deux-machines-linux-ubuntu-server/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/systemes/partager-dossier-reseau-local-samba-ubuntu-server/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/systemes/rechercher-fichiers-commande-find-linux/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/systemes/sauvegarder-restaurer-dossier-rsync-linux-local-ssh/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/systemes/surveiller-analyser-espace-disque-linux-df-du-ncdu/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/systemes/tmux-maintenir-sessions-terminal-distance/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/systemes/virt-sysprep-preparer-image-linux-clonage/</loc>
-         <lastmod>2026-07-01</lastmod>
+         <lastmod>2026-07-03</lastmod>
     </url>
 </urlset>
