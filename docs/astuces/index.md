@@ -16,6 +16,7 @@ Tips & tricks divers pour gagner du temps.
 - [Maîtriser l'historique Bash avec history et Ctrl+R](maitriser-historique-bash-history-ctrl-r.md) — Retrouver et relancer rapidement des commandes.
 - [Créer des alias persistants avec .bashrc](creer-alias-persistants-bashrc-linux.md) — Simplifier et raccourcir les commandes longues récurrentes.
 - [Maîtriser les redirections des sorties standard et d'erreur sous Linux (> et 2>)](maitriser-redirections-sorties-standard-erreur-linux.md) — Comprendre et utiliser stdout et stderr pour dompter les flux de commandes.
+- [Capturer et afficher simultanément une sortie avec la commande tee sous Linux](capturer-afficher-sortie-simultanement-tee-linux.md) — Enregistrer une commande dans un log tout en continuant à la suivre à l'écran.
 - [Naviguer plus vite dans ses dossiers Linux avec pushd et popd](naviguer-plus-vite-dossiers-linux-pushd-popd.md) — Jongler entre plusieurs répertoires via une pile (stack).
 
 ## Réseau & Transferts

@@ -244,6 +244,7 @@ nav:
     - "Maîtriser l'historique Bash avec history et Ctrl+R": astuces/maitriser-historique-bash-history-ctrl-r.md
     - Créer des alias persistants avec .bashrc: astuces/creer-alias-persistants-bashrc-linux.md
     - "Maîtriser les redirections des sorties standard et d'erreur sous Linux (> et 2>)": astuces/maitriser-redirections-sorties-standard-erreur-linux.md
+    - Capturer et afficher simultanément une sortie avec la commande tee sous Linux: astuces/capturer-afficher-sortie-simultanement-tee-linux.md
     - Naviguer plus vite dans ses dossiers Linux avec pushd et popd: astuces/naviguer-plus-vite-dossiers-linux-pushd-popd.md
     - Partager des fichiers rapidement en local avec un serveur HTTP éphémère: astuces/partager-fichiers-serveur-http-ephemere.md
     - Analyser et extraire des colonnes de texte sous Linux avec awk: astuces/analyser-extraire-colonnes-texte-awk.md
