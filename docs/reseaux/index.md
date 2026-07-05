@@ -21,6 +21,7 @@ Configuration réseau, routage, VPN, et services de proxy sous Linux.
 - [Configurer des VLANs (802.1q) sur un serveur Linux avec Netplan](configurer-vlans-8021q-netplan-linux.md) — Connecter et partitionner une interface physique sur un lien trunk.
 - [Configurer une adresse IP statique avec Netplan sur Ubuntu Server 24.04](configurer-ip-statique-netplan-ubuntu-server.md) — Fixer l'adresse de son serveur via le nouveau standard YAML d'Ubuntu.
 - [Configurer une agrégation de liens (Bonding/LACP) avec Netplan sous Ubuntu](configurer-agregation-liens-bonding-lacp-netplan-ubuntu.md) — Regrouper plusieurs interfaces réseau pour de la redondance et de la bande passante.
+- [Installer et configurer un résolveur DNS cache local avec Unbound sur Ubuntu](installer-configurer-resolveur-dns-cache-local-unbound-ubuntu.md) — Déployer son propre résolveur récursif validateur avec cache local et DNSSEC.
 - [Diagnostiquer une panne DNS avec `dig`, `host` et `resolvectl` sur Ubuntu](diagnostiquer-panne-dns-dig-host-resolvectl-ubuntu.md) — Trouver d'où vient le problème de résolution des noms de domaine.
 
 ## Sécurité & Accès Distant

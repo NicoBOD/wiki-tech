@@ -140,6 +140,7 @@ nav:
     - Configurer une adresse IP statique avec Netplan sur Ubuntu Server 24.04: reseaux/configurer-ip-statique-netplan-ubuntu-server.md
     - Configurer une agrégation de liens (Bonding/LACP) avec Netplan sous Ubuntu: reseaux/configurer-agregation-liens-bonding-lacp-netplan-ubuntu.md
     - "Diagnostiquer une panne DNS avec `dig`, `host` et `resolvectl` sur Ubuntu": reseaux/diagnostiquer-panne-dns-dig-host-resolvectl-ubuntu.md
+    - "Installer et configurer un résolveur DNS cache local avec Unbound sur Ubuntu": reseaux/installer-configurer-resolveur-dns-cache-local-unbound-ubuntu.md
     - Mettre en place un VPN WireGuard simple entre deux machines Ubuntu: reseaux/mettre-en-place-vpn-wireguard-simple-entre-deux-machines-ubuntu.md
     - "Analyser le trafic réseau avec Wireshark : Capturer et filtrer les paquets": reseaux/analyser-trafic-reseau-wireshark-capturer-filtrer.md
     - Diagnostiquer les problèmes de routage et de latence réseau avec mtr: reseaux/diagnostiquer-routage-latence-reseau-mtr.md
