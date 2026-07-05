@@ -34,5 +34,6 @@ Protection des serveurs, pare-feu, certificats SSL et bonnes pratiques de durcis
 ## Durcissement Système
 - [Configurer `sudo` en toute sécurité avec `visudo`](configurer-sudo-visudo.md) — Limiter les privilèges des utilisateurs.
 - [Renforcer la politique de mots de passe sous Linux avec pam_pwquality](renforcer-politique-mots-de-passe-pam-pwquality-linux.md) — Imposer des règles de complexité, de longueur et de qualité sur les mots de passe.
+- [Activer le lecteur d'empreintes digitales (login + sudo) sur ThinkPad sous Ubuntu 24.04](activer-lecteur-empreintes-digitales-login-sudo-thinkpad-ubuntu.md) — Faire fonctionner un capteur Validity 138a:0097 (python-validity/open-fprintd) pour déverrouiller la session et authentifier sudo.
 
 - [Renforcer la sécurité d'un service avec AppArmor sous Ubuntu](renforcer-securite-service-apparmor-ubuntu.md) — Créer un périmètre de sécurité strict (sandbox) pour limiter les capacités des applications.

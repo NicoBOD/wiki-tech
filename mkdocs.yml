@@ -176,6 +176,7 @@ nav:
     - Sécuriser un volume de données avec le chiffrement LUKS sous Linux: cybersecurite/securiser-volume-donnees-chiffrement-luks-linux.md
     - "Déverrouiller automatiquement LUKS au démarrage avec le TPM2 et Clevis (Ubuntu 24.04)": cybersecurite/dechiffrer-automatiquement-luks-tpm2-clevis-secure-boot-ubuntu.md
     - Renforcer la sécurité d'un service avec AppArmor sous Ubuntu: cybersecurite/renforcer-securite-service-apparmor-ubuntu.md
+    - "Activer le lecteur d'empreintes digitales (login + sudo) sur ThinkPad sous Ubuntu 24.04": cybersecurite/activer-lecteur-empreintes-digitales-login-sudo-thinkpad-ubuntu.md
     - Chiffrer et signer des fichiers avec GPG sous Linux: cybersecurite/chiffrer-signer-fichiers-gpg-linux.md
     - "Analyser son réseau Wi-Fi en mode moniteur et tester l'injection avec Aircrack-ng": cybersecurite/analyser-wifi-mode-moniteur-injection-aircrack-ng.md
   - IA:
