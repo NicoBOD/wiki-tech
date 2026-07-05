@@ -253,6 +253,10 @@
          <lastmod>2026-07-05</lastmod>
     </url>
     <url>
+         <loc>https://wiki.bodaine.fr/debug/centraliser-exporter-journaux-linux-rsyslog-serveur-distant/</loc>
+         <lastmod>2026-07-05</lastmod>
+    </url>
+    <url>
          <loc>https://wiki.bodaine.fr/debug/deboguer-application-python-pdb-cli/</loc>
          <lastmod>2026-07-05</lastmod>
     </url>
@@ -450,6 +454,10 @@
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/reseaux/installer-configurer-pi-hole-reseau-local/</loc>
+         <lastmod>2026-07-05</lastmod>
+    </url>
+    <url>
+         <loc>https://wiki.bodaine.fr/reseaux/installer-configurer-resolveur-dns-cache-local-unbound-ubuntu/</loc>
          <lastmod>2026-07-05</lastmod>
     </url>
     <url>
