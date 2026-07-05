@@ -173,6 +173,7 @@ nav:
     - Auditer la sécurité de son serveur Linux avec Lynis: cybersecurite/lynis-audit-securite-linux.md
     - "Cartographier et analyser les ports d'un réseau avec Nmap": cybersecurite/cartographier-analyser-ports-reseau-nmap.md
     - Sécuriser un volume de données avec le chiffrement LUKS sous Linux: cybersecurite/securiser-volume-donnees-chiffrement-luks-linux.md
+    - "Déverrouiller automatiquement LUKS au démarrage avec le TPM2 et Clevis (Ubuntu 24.04)": cybersecurite/dechiffrer-automatiquement-luks-tpm2-clevis-secure-boot-ubuntu.md
     - Renforcer la sécurité d'un service avec AppArmor sous Ubuntu: cybersecurite/renforcer-securite-service-apparmor-ubuntu.md
     - Chiffrer et signer des fichiers avec GPG sous Linux: cybersecurite/chiffrer-signer-fichiers-gpg-linux.md
     - "Analyser son réseau Wi-Fi en mode moniteur et tester l'injection avec Aircrack-ng": cybersecurite/analyser-wifi-mode-moniteur-injection-aircrack-ng.md

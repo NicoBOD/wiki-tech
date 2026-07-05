@@ -22,6 +22,7 @@ Protection des serveurs, pare-feu, certificats SSL et bonnes pratiques de durcis
 
 - [Sécuriser un serveur web Nginx avec Let's Encrypt et Certbot sur Ubuntu Server](certbot-nginx-https-lets-encrypt-ubuntu.md) — Obtenir et renouveler automatiquement un certificat TLS/SSL gratuit.
 - [Sécuriser un volume de données avec le chiffrement LUKS sous Linux](securiser-volume-donnees-chiffrement-luks-linux.md) — Protéger les données au repos en chiffrant un disque ou une partition.
+- [Déverrouiller automatiquement LUKS au démarrage avec le TPM2 et Clevis (Ubuntu 24.04)](dechiffrer-automatiquement-luks-tpm2-clevis-secure-boot-ubuntu.md) — Ne plus saisir sa phrase de passe au boot en déléguant le déverrouillage au TPM, de façon sûre et réversible.
 - [Chiffrer et signer des fichiers avec GPG sous Linux](chiffrer-signer-fichiers-gpg-linux.md) — Garantir la confidentialité et l'authenticité de vos fichiers locaux et échangés.
 
 ## Audit & Conformité
