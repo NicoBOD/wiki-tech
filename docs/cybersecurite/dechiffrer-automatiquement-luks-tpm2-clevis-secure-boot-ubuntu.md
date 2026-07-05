@@ -371,6 +371,71 @@ sudo systemd-cryptenroll /dev/nvme0n1p3 --wipe-slot=tpm2
 !!! danger "Ne jamais supprimer le keyslot du mot de passe"
     Le keyslot 0 (mot de passe d'origine) est le parachute maître : **il ne doit jamais être supprimé**.
 
+## Changer sa phrase de passe LUKS sans casser l'auto-unlock
+
+Un jour ou l'autre, il faut faire tourner (ou renforcer) la phrase de passe. Bonne nouvelle : **changer le mot de passe n'impacte aucune des configurations ci-dessus.**
+
+!!! tip "Pourquoi c'est sans risque pour Clevis"
+    Chaque keyslot LUKS **emballe indépendamment la même clé maîtresse**. Le mot de passe (un slot), la recovery key (un autre slot) et le keyslot **Clevis/TPM2** sont totalement indépendants. Modifier le mot de passe ne ré-emballe que **son** slot : le TPM continue de déverrouiller via son propre slot, **sans aucune reconfiguration** (rien à refaire côté `crypttab`, initramfs ou Clevis).
+
+### Méthode sûre : « ajouter puis supprimer »
+
+Plutôt que de modifier le slot du mot de passe *sur place*, on ajoute le nouveau dans un slot libre, on le teste, **puis** on supprime l'ancien. Ainsi on n'est **jamais** sans accès valide (on garde en permanence l'ancien mot de passe **+** la recovery **+** le TPM).
+
+```bash
+# 0. Sauvegarde fraîche du header AVANT (parachute)
+sudo cryptsetup luksHeaderBackup /dev/nvme0n1p3 \
+  --header-backup-file ~/luks-header-avant-chgt-$(date +%F).img
+
+# 1. Ajouter le NOUVEAU mot de passe dans un slot libre
+#    (invite: ancienne passphrase, puis nouvelle x2)
+sudo cryptsetup luksAddKey /dev/nvme0n1p3
+
+# 2. Repérer le nouveau slot (ex. 4) et VÉRIFIER qu'il fonctionne (non destructif)
+sudo cryptsetup luksDump /dev/nvme0n1p3 | grep -E '^[[:space:]]+[0-9]+: luks2'
+sudo cryptsetup open --test-passphrase --key-slot 4 /dev/nvme0n1p3 -v   # tape le NOUVEAU
+
+# 3. Seulement ensuite : supprimer l'ANCIEN slot (ex. slot 0)
+#    (invite: "any remaining passphrase" -> tape le NOUVEAU mot de passe)
+sudo cryptsetup luksKillSlot /dev/nvme0n1p3 0
+```
+
+!!! warning "À l'étape 3"
+    Au prompt `Enter any remaining passphrase:`, saisissez le **NOUVEAU** mot de passe : cryptsetup exige la preuve que vous détenez **un autre** slot valide avant d'effacer l'ancien. C'est ce garde-fou qui empêche tout blocage.
+
+Vérifiez ensuite que Clevis fonctionne toujours (test à froid du JWE, cf. section *Vérification*), puis que le nouveau mot de passe déverrouille au reboot.
+
+### ⚠️ Le piège des sauvegardes de header (à ne pas manquer)
+
+Changer un mot de passe **ne change PAS la clé maîtresse** du disque. Conséquence critique :
+
+!!! danger "Vos anciennes sauvegardes de header restent dangereuses"
+    Toute sauvegarde de header **prise avant** le retrait de l'ancien slot contient **encore ce slot** — donc encore cassable avec l'ancien mot de passe, ce qui redonne la **même clé maîtresse** et déchiffre le disque **actuel**. Si vous changez un mot de passe *faible*, vous **devez** :
+
+    1. Créer une **sauvegarde fraîche** du header (postérieure au retrait de l'ancien slot),
+    2. **Détruire** (`shred -u`) toutes les anciennes sauvegardes (disque **et** clés USB) contenant l'ancien slot.
+
+    ```bash
+    # Nouvelle sauvegarde propre
+    sudo cryptsetup luksHeaderBackup /dev/nvme0n1p3 \
+      --header-backup-file ~/luks-header-APRES-chgt-$(date +%F).img
+    # Contrôle : l'ancien slot ne doit plus apparaître
+    sudo cryptsetup luksDump ~/luks-header-APRES-chgt-$(date +%F).img | grep -E '^[[:space:]]+[0-9]+: luks2'
+    # Destruction sécurisée des anciennes
+    shred -u ~/ancienne-sauvegarde-header.img
+    ```
+
+!!! quote "Option « nucléaire » (fuite suspectée)"
+    Si une image du disque ou du header a pu **fuiter** pendant la période du mot de passe faible, nettoyer les sauvegardes ne suffit pas (la clé maîtresse, elle, est inchangée). Le seul vrai remède est de **re-chiffrer avec une nouvelle clé maîtresse** : `sudo cryptsetup reencrypt /dev/nvme0n1p3` (long, sensible, **sauvegardez les données avant**). Inutile dans un usage normal sans fuite suspectée.
+
+### Rappel de sécurité lié à l'auto-unlock
+
+Avec l'auto-déverrouillage TPM, le disque se déchiffre **seul au boot** : la phrase de passe LUKS n'est **plus une barrière au démarrage** pour un voleur qui allume la machine. La protection physique repose alors sur :
+
+- un **mot de passe de session fort** + verrouillage d'écran (barrière principale à l'allumage) ;
+- le scellement **PCR 7 + Secure Boot** (empêche de booter un autre OS) — renforcé par un **mot de passe UEFI (supervisor)** ;
+- en option, un **PIN TPM** au binding Clevis (défense en profondeur, mais réintroduit une saisie au boot).
+
 ## Aide-mémoire
 
 | Commande / Action | Description |
@@ -378,6 +443,9 @@ sudo systemd-cryptenroll /dev/nvme0n1p3 --wipe-slot=tpm2
 | `cryptsetup luksHeaderBackup <dev> --header-backup-file <f>` | Sauvegarder l'en-tête LUKS (parachute) |
 | `cryptsetup luksHeaderRestore <dev> --header-backup-file <f>` | Restaurer l'en-tête LUKS |
 | `cryptsetup luksDump <dev>` | Afficher keyslots et tokens |
+| `cryptsetup luksAddKey <dev>` | Ajouter une phrase de passe dans un slot libre |
+| `cryptsetup open --test-passphrase --key-slot N <dev>` | Tester une passphrase sur un slot (non destructif) |
+| `cryptsetup luksKillSlot <dev> N` | Supprimer le slot N (authentifié par un autre slot) |
 | `clevis luks bind -d <dev> tpm2 '{"pcr_bank":"sha256","pcr_ids":"7"}'` | Lier un keyslot au TPM2 (PCR 7) |
 | `clevis luks list -d <dev>` | Lister les bindings Clevis |
 | `clevis luks unbind -d <dev> -s <slot>` | Retirer un binding Clevis |
