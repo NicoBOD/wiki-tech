@@ -122,6 +122,7 @@ nav:
     - "Surveiller et analyser l'espace disque sous Linux avec df, du et ncdu": systemes/surveiller-analyser-espace-disque-linux-df-du-ncdu.md
     - Comprendre et gérer le machine-id sous Linux: systemes/machine-id-linux.md
     - virt-sysprep — préparer une image Linux au clonage: systemes/virt-sysprep-preparer-image-linux-clonage.md
+    - Créer et gérer des snapshots de VM avec virsh (libvirt) sur Ubuntu Server: systemes/creer-gerer-snapshots-vm-virsh-libvirt-ubuntu-server.md
     - "Sauvegarder et restaurer un dossier avec `rsync` sur Linux en local ou via SSH": systemes/sauvegarder-restaurer-dossier-rsync-linux-local-ssh.md
     - "Étendre un volume logique LVM après ajout d’un disque sur une VM Linux": systemes/etendre-volume-logique-lvm-apres-ajout-disque-vm-linux.md
     - Partager un dossier sur le réseau local avec Samba sur Ubuntu Server: systemes/partager-dossier-reseau-local-samba-ubuntu-server.md
@@ -215,6 +216,7 @@ nav:
     - Installer Docker Engine et le plugin Docker Compose sur Ubuntu 24.04: logiciels/installer-docker-engine-ubuntu-2404.md
     - Créer et lancer une application multi-conteneurs avec Docker Compose: logiciels/creer-lancer-application-multi-conteneurs-docker-compose.md
     - Installer et configurer Portainer pour gérer ses conteneurs Docker: logiciels/installer-configurer-portainer-docker.md
+    - Déployer une instance GitLab CE auto-hébergée avec Docker Compose sur Ubuntu Server: logiciels/deployer-gitlab-ce-auto-hebergee-docker-compose-ubuntu-server.md
     - "Migration et sécurisation de Moodle sous Docker": logiciels/moodle-custom-docker.md
     - Retirer le bandeau publicitaire du thème Moove de Moodle: logiciels/retirer-banniere-theme-moove-moodle.md
     - Configurer VS Code avec Remote-SSH pour administrer un serveur Linux: logiciels/configurer-vs-code-remote-ssh.md
