@@ -162,6 +162,7 @@ nav:
     - Déployer un site web statique avec Amazon S3: cloud/deployer-site-web-statique-amazon-s3.md
     - Créer et configurer sa première machine virtuelle sur Microsoft Azure: cloud/creer-premiere-machine-virtuelle-azure.md
     - Déployer un conteneur via Azure Container Instances (ACI): cloud/deployer-conteneur-azure-container-instances-aci.md
+    - Stocker et partager des fichiers dans Azure Blob Storage: cloud/stocker-partager-fichiers-azure-blob-storage.md
   - Cybersécurité:
     - cybersecurite/index.md
     - "Configurer sudo en toute sécurité avec visudo": cybersecurite/configurer-sudo-visudo.md

@@ -31,3 +31,4 @@ Notes sur Azure, AWS, GCP, Infrastructure as Code (Terraform, Bicep) et conteneu
 
 - [Créer et configurer sa première machine virtuelle sur Microsoft Azure](creer-premiere-machine-virtuelle-azure.md) — Lancer une instance Ubuntu, ouvrir des ports et s'y connecter via Azure CLI.
 - [Déployer un conteneur via Azure Container Instances (ACI)](deployer-conteneur-azure-container-instances-aci.md) — Déployer rapidement une image Docker serverless avec la ligne de commande Azure.
+- [Stocker et partager des fichiers dans Azure Blob Storage](stocker-partager-fichiers-azure-blob-storage.md) — Créer un compte de stockage, uploader et télécharger des blobs, puis générer un lien de partage temporaire avec un jeton SAS.
