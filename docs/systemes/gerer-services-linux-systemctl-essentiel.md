@@ -1,5 +1,5 @@
 ---
-title: Gérer les services Linux avec systemctl : l'essentiel pour l'administration
+title: "Gérer les services Linux avec systemctl : l'essentiel pour l'administration"
 date: 2026-06-04
 author: Nicolas BODAINE
 tags:
@@ -29,6 +29,11 @@ status: publié
 Aujourd'hui, la quasi-totalité des distributions Linux modernes utilisent **systemd** comme système d'initialisation (PID 1). C'est lui qui orchestre le démarrage du système et gère les services en arrière-plan (serveurs web, bases de données, pare-feu, etc.). 
 
 Pour interagir avec ces services, l'outil incontournable est `systemctl`. Que vous gériez un serveur en production ou un environnement de lab, savoir manipuler les états des services est une compétence fondamentale en administration système.
+
+## Prérequis
+
+- Un système d'exploitation Linux basé sur systemd (Ubuntu, Debian, RHEL, etc.).
+- Un compte utilisateur disposant des droits `sudo` pour exécuter les commandes d'administration.
 
 ## Procédure
 

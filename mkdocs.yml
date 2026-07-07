@@ -118,9 +118,11 @@ nav:
   - Systèmes:
     - systemes/index.md
     - Rechercher des fichiers sous Linux avec la commande find: systemes/rechercher-fichiers-commande-find-linux.md
+    - Créer et gérer un fichier d'échange (Swap) sous Linux: systemes/creer-gerer-fichier-echange-swap-linux.md
     - "Surveiller et analyser l'espace disque sous Linux avec df, du et ncdu": systemes/surveiller-analyser-espace-disque-linux-df-du-ncdu.md
     - Comprendre et gérer le machine-id sous Linux: systemes/machine-id-linux.md
     - virt-sysprep — préparer une image Linux au clonage: systemes/virt-sysprep-preparer-image-linux-clonage.md
+    - Créer et gérer des snapshots de VM avec virsh (libvirt) sur Ubuntu Server: systemes/creer-gerer-snapshots-vm-virsh-libvirt-ubuntu-server.md
     - "Sauvegarder et restaurer un dossier avec `rsync` sur Linux en local ou via SSH": systemes/sauvegarder-restaurer-dossier-rsync-linux-local-ssh.md
     - "Étendre un volume logique LVM après ajout d’un disque sur une VM Linux": systemes/etendre-volume-logique-lvm-apres-ajout-disque-vm-linux.md
     - Partager un dossier sur le réseau local avec Samba sur Ubuntu Server: systemes/partager-dossier-reseau-local-samba-ubuntu-server.md
@@ -131,6 +133,7 @@ nav:
     - Maintenir ses sessions terminal à distance avec tmux sous Linux: systemes/tmux-maintenir-sessions-terminal-distance.md
   - Réseaux:
     - reseaux/index.md
+    - Bloquer les requêtes malveillantes et publicités avec Pi-hole: reseaux/installer-configurer-pi-hole-reseau-local.md
     - Créer des tunnels sécurisés avec la redirection de ports SSH: reseaux/creer-tunnels-securises-redirection-ports-ssh.md
     - Configurer le NAT et le routage pour transformer un serveur Linux en routeur avec nftables: reseaux/configurer-nat-routage-serveur-linux-nftables.md
     - Mettre en place un serveur DHCP local avec Kea sur Ubuntu: reseaux/installer-configurer-serveur-dhcp-kea-ubuntu.md
@@ -138,6 +141,7 @@ nav:
     - Configurer une adresse IP statique avec Netplan sur Ubuntu Server 24.04: reseaux/configurer-ip-statique-netplan-ubuntu-server.md
     - Configurer une agrégation de liens (Bonding/LACP) avec Netplan sous Ubuntu: reseaux/configurer-agregation-liens-bonding-lacp-netplan-ubuntu.md
     - "Diagnostiquer une panne DNS avec `dig`, `host` et `resolvectl` sur Ubuntu": reseaux/diagnostiquer-panne-dns-dig-host-resolvectl-ubuntu.md
+    - "Installer et configurer un résolveur DNS cache local avec Unbound sur Ubuntu": reseaux/installer-configurer-resolveur-dns-cache-local-unbound-ubuntu.md
     - Mettre en place un VPN WireGuard simple entre deux machines Ubuntu: reseaux/mettre-en-place-vpn-wireguard-simple-entre-deux-machines-ubuntu.md
     - "Analyser le trafic réseau avec Wireshark : Capturer et filtrer les paquets": reseaux/analyser-trafic-reseau-wireshark-capturer-filtrer.md
     - Diagnostiquer les problèmes de routage et de latence réseau avec mtr: reseaux/diagnostiquer-routage-latence-reseau-mtr.md
@@ -145,6 +149,7 @@ nav:
     - Mettre en place un Reverse Proxy (Proxy Inverse) avec Nginx: reseaux/mettre-en-place-reverse-proxy-nginx-ubuntu.md
   - Cloud:
     - cloud/index.md
+    - Créer et déployer sa première fonction Serverless avec AWS Lambda: cloud/creer-deployer-premiere-fonction-serverless-aws-lambda.md
     - "Sécuriser son compte AWS : les bases d'IAM (Identity and Access Management)": cloud/securiser-compte-aws-bases-iam.md
     - Créer et configurer sa première machine virtuelle EC2 sur AWS: cloud/creer-premiere-machine-virtuelle-ec2-aws.md
     - Créer une alerte de facturation sur AWS (AWS Budgets) pour sécuriser ses travaux pratiques: cloud/creer-alerte-facturation-aws-budgets.md
@@ -157,10 +162,11 @@ nav:
     - Déployer un site web statique avec Amazon S3: cloud/deployer-site-web-statique-amazon-s3.md
     - Créer et configurer sa première machine virtuelle sur Microsoft Azure: cloud/creer-premiere-machine-virtuelle-azure.md
     - Déployer un conteneur via Azure Container Instances (ACI): cloud/deployer-conteneur-azure-container-instances-aci.md
+    - Stocker et partager des fichiers dans Azure Blob Storage: cloud/stocker-partager-fichiers-azure-blob-storage.md
   - Cybersécurité:
+    - cybersecurite/index.md
     - "Configurer sudo en toute sécurité avec visudo": cybersecurite/configurer-sudo-visudo.md
     - Renforcer la politique de mots de passe sous Linux avec pam_pwquality: cybersecurite/renforcer-politique-mots-de-passe-pam-pwquality-linux.md
-    - cybersecurite/index.md
     - "Sécuriser SSH avec l'authentification double facteur (MFA) via Google Authenticator": cybersecurite/ssh-mfa-google-authenticator.md
     - Installer et configurer Fail2ban pour protéger SSH sur Ubuntu Server 24.04: cybersecurite/fail2ban-proteger-ssh-ubuntu-server.md
     - "Protéger un serveur Linux avec CrowdSec : l'alternative collaborative à Fail2ban": cybersecurite/crowdsec-alternative-fail2ban-linux.md
@@ -170,7 +176,11 @@ nav:
     - Auditer la sécurité de son serveur Linux avec Lynis: cybersecurite/lynis-audit-securite-linux.md
     - "Cartographier et analyser les ports d'un réseau avec Nmap": cybersecurite/cartographier-analyser-ports-reseau-nmap.md
     - Sécuriser un volume de données avec le chiffrement LUKS sous Linux: cybersecurite/securiser-volume-donnees-chiffrement-luks-linux.md
+    - "Déverrouiller automatiquement LUKS au démarrage avec le TPM2 et Clevis (Ubuntu 24.04)": cybersecurite/dechiffrer-automatiquement-luks-tpm2-clevis-secure-boot-ubuntu.md
     - Renforcer la sécurité d'un service avec AppArmor sous Ubuntu: cybersecurite/renforcer-securite-service-apparmor-ubuntu.md
+    - "Activer le lecteur d'empreintes digitales (login + sudo) sur ThinkPad sous Ubuntu 24.04": cybersecurite/activer-lecteur-empreintes-digitales-login-sudo-thinkpad-ubuntu.md
+    - Chiffrer et signer des fichiers avec GPG sous Linux: cybersecurite/chiffrer-signer-fichiers-gpg-linux.md
+    - "Analyser son réseau Wi-Fi en mode moniteur et tester l'injection avec Aircrack-ng": cybersecurite/analyser-wifi-mode-moniteur-injection-aircrack-ng.md
   - IA:
     - ia/index.md
     - "Déployer Tabby en local : l'alternative open source à GitHub Copilot": ia/deployer-tabby-local-alternative-github-copilot.md
@@ -184,6 +194,7 @@ nav:
     - Créer un script Python interagissant avec un LLM local via Ollama: ia/script-python-interaction-llm-local-ollama.md
     - "Créer une équipe d'agents IA autonomes avec CrewAI et Ollama": ia/creer-agents-autonomes-crewai-ollama.md
     - Connecter Open WebUI à Ollama (Votre propre ChatGPT local): ia/connecter-open-webui-ollama-chatgpt-local.md
+    - Déployer un proxy IA unifié avec LiteLLM pour centraliser ses modèles: ia/deployer-proxy-ia-unifie-litellm-docker.md
     - Déployer une solution RAG locale avec AnythingLLM et Docker: ia/deployer-rag-local-anythingllm-docker.md
   - Automatisation:
     - automatisation/index.md
@@ -193,6 +204,7 @@ nav:
     - Automatiser la création de machines virtuelles Proxmox avec Terraform: automatisation/creer-vm-proxmox-terraform.md
     - "Automatiser la création d'images systèmes (Templates) avec Packer": automatisation/automatiser-creation-images-systemes-packer.md
     - Les bases de n8n: automatisation/bases-n8n.md
+    - Planifier des tâches récurrentes simplement sous Linux avec cron (crontab): automatisation/planifier-taches-recurrentes-linux-cron-crontab.md
     - Planifier un script avec un timer systemd sous Linux: automatisation/planifier-script-timer-systemd-linux.md
     - Sauvegardes automatisées avec script Bash robuste: automatisation/sauvegarde-automatisee-script-bash-robuste.md
     - "Premiers pas avec Ansible : créer un inventaire et lancer un premier playbook sur plusieurs VM Linux": automatisation/premiers-pas-ansible-inventaire-playbook-vm-linux.md
@@ -205,10 +217,13 @@ nav:
     - Installer Docker Engine et le plugin Docker Compose sur Ubuntu 24.04: logiciels/installer-docker-engine-ubuntu-2404.md
     - Créer et lancer une application multi-conteneurs avec Docker Compose: logiciels/creer-lancer-application-multi-conteneurs-docker-compose.md
     - Installer et configurer Portainer pour gérer ses conteneurs Docker: logiciels/installer-configurer-portainer-docker.md
+    - Déployer une instance GitLab CE auto-hébergée avec Docker Compose sur Ubuntu Server: logiciels/deployer-gitlab-ce-auto-hebergee-docker-compose-ubuntu-server.md
     - "Migration et sécurisation de Moodle sous Docker": logiciels/moodle-custom-docker.md
+    - Retirer le bandeau publicitaire du thème Moove de Moodle: logiciels/retirer-banniere-theme-moove-moodle.md
     - Configurer VS Code avec Remote-SSH pour administrer un serveur Linux: logiciels/configurer-vs-code-remote-ssh.md
     - Installer et configurer Git pour versionner ses premiers projets: logiciels/installer-configurer-git-versionner-projets.md
     - Débuter avec Postman pour tester des API REST: logiciels/debuter-postman-tester-api-rest.md
+    - Utiliser DBeaver pour explorer et administrer ses bases de données: logiciels/utiliser-dbeaver-explorer-administrer-bases-de-donnees.md
     - "Installer et configurer Windows Terminal pour unifier ses environnements CLI (PowerShell, WSL, SSH)": logiciels/installer-configurer-windows-terminal.md
     - "Découvrir et utiliser MobaXterm pour l'administration distante": logiciels/utiliser-mobaxterm-administration-distante.md
     - "Obsidian : Créer et organiser sa propre base de connaissances technique en Markdown": logiciels/obsidian-base-connaissances-technique-markdown.md
@@ -217,9 +232,13 @@ nav:
     - Diagnostiquer une erreur 502/504 Bad Gateway sur un serveur web: debug/diagnostiquer-erreur-502-504-bad-gateway-serveur-web.md
     - Diagnostiquer les problèmes matériels et pilotes sous Linux avec dmesg: debug/diagnostiquer-materiel-pilotes-linux-dmesg.md
     - Diagnostiquer la consommation CPU et mémoire sous Linux avec htop et free: debug/diagnostiquer-consommation-cpu-memoire-htop-free.md
+    - Diagnostiquer un disque plein ou une saturation I/O sur Linux avec iostat et iotop: debug/diagnostiquer-disque-plein-saturation-io-iostat-iotop-linux.md
+    - Centraliser et exporter les journaux Linux avec rsyslog vers un serveur de logs distant: debug/centraliser-exporter-journaux-linux-rsyslog-serveur-distant.md
     - "Lire, filtrer et suivre les logs avec `journalctl` pour diagnostiquer un service Linux": debug/journalctl-lire-filtrer-suivre-logs-systemd-linux.md
     - Identifier les ports ouverts et les services à l’écoute avec `ss` et `lsof` sous Linux: debug/identifier-ports-ouverts-services-ecoute-ss-lsof-linux.md
     - Capturer et diagnostiquer le trafic réseau en ligne de commande avec tcpdump: debug/capturer-diagnostiquer-trafic-reseau-tcpdump.md
+    - Diagnostiquer un processus défaillant avec strace: debug/diagnostiquer-processus-defaillant-strace.md
+    - Diagnostiquer un conteneur Docker en échec avec logs et inspect: debug/diagnostiquer-conteneur-docker-en-echec-logs-inspect.md
     - Déboguer une application Python avec pdb en ligne de commande: debug/deboguer-application-python-pdb-cli.md
     - NVIDIA — Écran noir après veille: debug/nvidia-veille-ecran-noir.md
     - AppImageLauncher — Échec d'intégration sur Ubuntu 24.04 (compression zstd): debug/appimagelauncher-compression-zstd-ubuntu-2404.md
@@ -233,7 +252,9 @@ nav:
     - "Maîtriser l'historique Bash avec history et Ctrl+R": astuces/maitriser-historique-bash-history-ctrl-r.md
     - Créer des alias persistants avec .bashrc: astuces/creer-alias-persistants-bashrc-linux.md
     - "Maîtriser les redirections des sorties standard et d'erreur sous Linux (> et 2>)": astuces/maitriser-redirections-sorties-standard-erreur-linux.md
+    - Capturer et afficher simultanément une sortie avec la commande tee sous Linux: astuces/capturer-afficher-sortie-simultanement-tee-linux.md
     - Naviguer plus vite dans ses dossiers Linux avec pushd et popd: astuces/naviguer-plus-vite-dossiers-linux-pushd-popd.md
+    - Partager des fichiers rapidement en local avec un serveur HTTP éphémère: astuces/partager-fichiers-serveur-http-ephemere.md
     - Analyser et extraire des colonnes de texte sous Linux avec awk: astuces/analyser-extraire-colonnes-texte-awk.md
     - Extraire et formater des données JSON avec la commande jq: astuces/extraire-formater-donnees-json-commande-jq.md
     - Manipuler et transformer des flux de texte avec sed: astuces/manipuler-transformer-flux-texte-sed.md

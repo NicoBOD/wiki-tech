@@ -154,3 +154,9 @@
 .md-typeset img:not(.twemoji):not([src$=".svg"]) {
   border-radius: 6px;
 }
+
+/* Masquer les icônes de statut (l'icône "i" entouré) dans la barre latérale de navigation */
+.md-status {
+  display: none !important;
+}
+
