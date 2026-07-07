@@ -175,4 +175,4 @@ ping 8.8.8.8
 ## Ressources
 
 - [Documentation officielle nftables](https://wiki.nftables.org/) — Wiki complet sur la syntaxe et les cas d'usage.
-- [Wiki Arch Linux : nftables](https://wiki.archlinux.org/title/Nftables_(Fran%C3%A7ais)) — Excellente ressource vulgarisée sur le filtrage réseau.
+- [Wiki Arch Linux : nftables](https://wiki.archlinux.org/title/Nftables) — Excellente ressource vulgarisée sur le filtrage réseau (page en anglais, la version française a été retirée du wiki).

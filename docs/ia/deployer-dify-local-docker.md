@@ -119,4 +119,4 @@ sudo docker compose ps
 
 - [Documentation officielle de Dify](https://docs.dify.ai/) — Guide complet et concepts avancés.
 - [Dépôt GitHub de Dify](https://github.com/langgenius/dify) — Code source et issues tracker.
-- [Connecter Ollama à Dify](https://docs.dify.ai/tutorials/local-llm) — Guide spécifique pour les LLM locaux.
+- [Connecter Ollama à Dify](https://marketplace.dify.ai/plugin/langgenius/ollama) — Guide spécifique pour les LLM locaux.

@@ -119,7 +119,7 @@ Sur Ubuntu 24.04, ce fichier **n'est pas fourni** par défaut. On le récupère 
 
 ```bash
 sudo mkdir -p /var/lib/unbound
-sudo wget -O /var/lib/unbound/root.hints https://www.internic.net/domain/root.hints
+sudo wget -O /var/lib/unbound/root.hints https://www.internic.net/domain/named.root
 ```
 
 Vérifiez rapidement le contenu :
@@ -409,8 +409,8 @@ Forwarder
 
 ## Ressources
 
-- [Documentation officielle Unbound — NLnet Labs](https://docs.unbound.nl/) — Documentation de référence du résolveur, options et tutoriels.
-- [Guide Unbound pour serveurs — Ubuntu Server](https://documentation.ubuntu.com/server/how-to/networking/dns-servers/) — Démarche officielle Ubuntu pour déployer Unbound.
+- [Documentation officielle Unbound — NLnet Labs](https://unbound.docs.nlnetlabs.nl/en/latest/) — Documentation de référence du résolveur, options et tutoriels.
+- [Guide DNS pour serveurs — Ubuntu Server](https://ubuntu.com/server/docs/how-to/networking/install-dns/) — Démarche officielle Ubuntu pour déployer un service DNS (orientée BIND9, à adapter pour Unbound).
 - [RFC 8499 — DNS Terminology](https://www.rfc-editor.org/rfc/rfc8499.html) — Terminologie normalisée des concepts DNS (récursif, cache, etc.).
 - [ICANN — Root Servers](https://www.icann.org/) — Présentation de la racine DNS et des 13 serveurs.
-- [IANA — Root hints](https://www.internic.net/domain/root.hints) — Source officielle du fichier `root.hints` utilisé dans ce tutoriel.
+- [IANA — Root hints](https://www.internic.net/domain/named.root) — Source officielle du fichier `root.hints` utilisé dans ce tutoriel.

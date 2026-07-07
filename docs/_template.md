@@ -127,8 +127,8 @@ commande de vérification
 <!-- BLOC: Ressources — Utilisez pour référencer docs et sources -->
 ## Ressources
 
-- [Lien 1](url) — Description
-- [Lien 2](url) — Description
+- [Lien 1](https://exemple.org) — Description
+- [Lien 2](https://exemple.org) — Description
 
 <!-- ============================================================ -->
 <!-- RÉFÉRENCE SYNTAXE                                             -->

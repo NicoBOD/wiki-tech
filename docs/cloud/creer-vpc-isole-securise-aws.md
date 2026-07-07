@@ -143,4 +143,4 @@ aws ec2 delete-vpc --vpc-id $VPC_ID
 ## Ressources
 
 - [Documentation officielle AWS - Fonctionnement des VPC](https://docs.aws.amazon.com/fr_fr/vpc/latest/userguide/how-it-works.html) — Présentation des concepts fondamentaux.
-- [AWS Skill Builder - AWS Cloud Practitioner Essentials](https://explore.skillbuilder.aws/learn/course/external/view/elearning/134/aws-cloud-practitioner-essentials) — Formation gratuite incluant les bases du réseau AWS.
+- [AWS Skill Builder - AWS Cloud Practitioner](https://skillbuilder.aws/exam-prep/cloud-practioner) — Formation gratuite incluant les bases du réseau AWS.

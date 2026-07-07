@@ -26,7 +26,7 @@ status: publié
 
 ## Contexte
 
-[PedagogIA](https://github.com/TutoTech/PedagogIA) est une application web auto-hébergeable de génération de contenus pédagogiques assistée par IA (Python/JS). Bien qu'elle tourne nativement sur Coolify (Docker avec état), le déploiement sur Google Cloud Run nécessite quelques adaptations en raison de la nature *stateless* (sans état) de l'environnement serverless. 
+**PedagogIA** (dépôt privé de l'association TutoTech) est une application web auto-hébergeable de génération de contenus pédagogiques assistée par IA (Python/JS). Bien qu'elle tourne nativement sur Coolify (Docker avec état), le déploiement sur Google Cloud Run nécessite quelques adaptations en raison de la nature *stateless* (sans état) de l'environnement serverless. 
 
 Les bases de données locales (MongoDB/SQLite) et l'enregistrement de fichiers sur le disque du conteneur ne survivent pas aux redémarrages sur Cloud Run. La solution consiste à déporter la base de données sur **MongoDB Atlas** et le stockage de fichiers (.pptx, images) sur **Google Cloud Storage (GCS)**.
 
@@ -119,5 +119,5 @@ Cela signifie que l'application a "planté" en silence avant de pouvoir ouvrir l
 ## Ressources
 
 - [Documentation Google Cloud Run](https://cloud.google.com/run/docs)
-- [MongoDB Atlas - Network Access](https://www.mongodb.com/docs/atlas/security-add-ip-address/)
-- [Dépôt TutoTech/PedagogIA](https://github.com/TutoTech/PedagogIA)
+- [MongoDB Atlas - Network Access](https://www.mongodb.com/docs/atlas/security/add-ip-address-to-list/)
+- Dépôt TutoTech/PedagogIA (privé)

@@ -310,6 +310,6 @@ logrotate
 - [Documentation officielle rsyslog](https://www.rsyslog.com/doc/) — Référence des modules `imudp`, `omudp`, templates, actions.
 - [RFC 5424 — The Syslog Protocol (IETF)](https://www.rfc-editor.org/rfc/rfc5424) — Format normalisé des messages Syslog.
 - [Ubuntu Server Guide — Logging](https://help.ubuntu.com/lts/serverguide/log-files.html) — Vue d'ensemble de rsyslog sur Ubuntu Server.
-- [Debian Administrator's Handbook — syslog & rsyslog](https://debian-handbook.info/browse/stable/unix.services.html#sect.unix-syslog) — Comprendre l'écosystème Syslog sous Debian.
-- [ANSSI — Recommandations relatives à l'exploitation des journaux](https://www.ssi.gouv.fr/guide/recommandations-de-securite-relatives-a-lexploitation-des-journaux-devenements/) — Guide d'hygiène : justifications de la centralisation des logs en environnement professionnel.
+- [Debian Administrator's Handbook — syslog & rsyslog](https://www.debian.org/doc/manuals/debian-handbook/sect.syslog.en.html) — Comprendre l'écosystème Syslog sous Debian.
+- [ANSSI — Recommandations relatives à l'exploitation des journaux](https://messervices.cyber.gouv.fr/documents-guides/anssi-guide-recommandations_securite_architecture_systeme_journalisation.pdf) — Guide d'hygiène : justifications de la centralisation des logs en environnement professionnel.
 - Manpage locale : `man rsyslogd`, `/usr/share/doc/rsyslog/`.

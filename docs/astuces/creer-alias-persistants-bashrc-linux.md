@@ -104,4 +104,3 @@ Vous pouvez alors taper `maj` ou `ll` pour vérifier leur bon fonctionnement.
 ## Ressources
 
 - [Documentation GNU Bash - Aliases](https://www.gnu.org/software/bash/manual/html_node/Aliases.html) — Manuel officiel
-- [Ubuntu Documentation - Command line aliases](https://help.ubuntu.com/community/Aliases) — Guide Ubuntu sur les alias
