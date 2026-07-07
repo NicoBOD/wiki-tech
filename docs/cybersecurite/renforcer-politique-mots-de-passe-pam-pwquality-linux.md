@@ -124,4 +124,4 @@ sudo deluser --remove-home testuser
 ## Ressources
 
 - [Manuel Ubuntu : pam_pwquality](https://manpages.ubuntu.com/manpages/jammy/en/man8/pam_pwquality.8.html) — Documentation officielle des paramètres.
-- [ANSSI : Recommandations de sécurité relatives aux mots de passe](https://www.ssi.gouv.fr/administration/guide/recommandations-de-securite-relatives-aux-mots-de-passe/) — Pour justifier le choix d'une longueur minimale (ex: 14 ou 15 caractères).
+- [ANSSI : Recommandations relatives à l'authentification multifacteur et aux mots de passe](https://messervices.cyber.gouv.fr/documents-guides/anssi-guide-authentification_multifacteur_et_mots_de_passe.pdf) — Pour justifier le choix d'une longueur minimale (ex: 14 ou 15 caractères).

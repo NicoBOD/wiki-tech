@@ -273,7 +273,7 @@ ls /etc   # doit afficher tous les fichiers comme avant la suppression
 
 ## Ressources
 
-- [Documentation officielle libvirt — format XML des snapshots](https://libvirt.org/docs/formatdomain.html#snapshots) — Référence des éléments XML utilisés par les snapshots.
+- [Documentation officielle libvirt — format XML des snapshots](https://libvirt.org/formatsnapshot.html) — Référence des éléments XML utilisés par les snapshots.
 - [Documentation Red Hat — Managing virtual machine snapshots with virsh](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/html/configuring_and_managing_virtualization/managing-virtual-machine-snapshots-with-virsh) — Guide de référence complet, applicable à Ubuntu avec libvirt.
-- [Documentation Ubuntu Server — KVM/libvirt virtualization](https://ubuntu.com/server/docs/virtualization) — Installation et gestion de libvirt sous Ubuntu.
-- [Documentation officielle QEMU — qcow2 et snapshots](https://qemu.readthedocs.io/en/latest/system/images.html#snapshot-management) — Format d'image et gestion des snapshots matériels.
+- [Documentation Ubuntu Server — KVM/libvirt virtualisation](https://ubuntu.com/server/docs/how-to/virtualisation/) — Installation et gestion de libvirt sous Ubuntu.
+- [Documentation officielle QEMU — qcow2 et snapshots](https://www.qemu.org/docs/master/system/images.html#vm-snapshots) — Format d'image et gestion des snapshots matériels.

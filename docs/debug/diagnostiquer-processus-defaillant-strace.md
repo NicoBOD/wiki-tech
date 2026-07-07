@@ -133,4 +133,4 @@ Cela se produit lorsque vous essayez de vous attacher à un processus dont vous 
 ## Ressources
 
 - [Manuel de strace (man 1 strace)](https://man7.org/linux/man-pages/man1/strace.1.html) — Documentation officielle du projet.
-- [Red Hat : Troubleshooting with strace](https://www.redhat.com/sysadmin/troubleshooting-with-strace) — Guide pratique d'utilisation orienté administrateur système.
+- [Red Hat : Troubleshooting with strace](https://access.redhat.com/articles/2483) — Guide pratique d'utilisation orienté administrateur système.

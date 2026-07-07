@@ -147,4 +147,4 @@ sudo journalctl -u <service> -e
 ## Ressources
 
 - [Documentation officielle systemd.service](https://www.freedesktop.org/software/systemd/man/systemd.service.html) — Les détails techniques.
-- [Ubuntu Server - Managing Services](https://ubuntu.com/server/docs/service-management) — Guide de gestion des services sous Ubuntu.
+- [Manpage `systemctl(1)`](https://man7.org/linux/man-pages/man1/systemctl.1.html) — Référence complète des commandes systemctl (la page Ubuntu Server dédiée a été retirée de la documentation officielle).

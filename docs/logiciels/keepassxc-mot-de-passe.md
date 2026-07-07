@@ -124,4 +124,4 @@ Pour valider le bon fonctionnement de KeePassXC :
 
 - [Site officiel KeePassXC](https://keepassxc.org/) — Téléchargement et actualités.
 - [Documentation officielle de KeePassXC](https://keepassxc.org/docs/) — Manuel d'utilisation détaillé.
-- [Recommandations de l'ANSSI sur les mots de passe](https://www.cybersecurite.gouv.fr) — Guide des bonnes pratiques pour la sécurité des identifiants.
+- [Recommandations de l'ANSSI sur les mots de passe](https://messervices.cyber.gouv.fr/documents-guides/anssi-guide-authentification_multifacteur_et_mots_de_passe.pdf) — Guide des bonnes pratiques pour la sécurité des identifiants.

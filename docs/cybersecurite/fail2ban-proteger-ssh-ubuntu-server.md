@@ -349,6 +349,6 @@ sudo fail2ban-client status sshd
 
 ## Ressources
 
-- [Fail2ban — How Fail2Ban Works](https://www.fail2ban.org/wiki/index.php/How_Fail2Ban_Works) — Explication officielle du fonctionnement général
+- [Fail2ban — How Fail2Ban Works](https://github.com/fail2ban/fail2ban/wiki/How-Fail2Ban-Works) — Explication officielle du fonctionnement général
 - [Manpage Ubuntu `jail.conf(5)`](https://manpages.ubuntu.com/manpages/noble/man5/jail.conf.5.html) — Référence sur `jail.conf`, `jail.local` et les paramètres des jails
 - [Manpage Ubuntu `fail2ban-client(1)`](https://manpages.ubuntu.com/manpages/noble/man1/fail2ban-client.1.html) — Commandes de contrôle, statut et débannissement

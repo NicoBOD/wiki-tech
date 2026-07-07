@@ -323,6 +323,5 @@ curl -kI https://IP_DU_SERVEUR
 
 ## Ressources
 
-- [Ubuntu Server documentation — Set up a firewall](https://documentation.ubuntu.com/server/how-to/security/firewalls/) — Documentation officielle Ubuntu Server
+- [Ubuntu Server documentation — Set up a firewall](https://documentation.ubuntu.com/server/how-to/security/firewalls/) — Documentation officielle Ubuntu Server, y compris la gestion des profils applicatifs
 - [Manpage `ufw(8)` pour Ubuntu 24.04](https://manpages.ubuntu.com/manpages/noble/man8/ufw.8.html) — Référence des commandes UFW
-- [Manpage `ufw-app(8)` pour Ubuntu 24.04](https://manpages.ubuntu.com/manpages/noble/man8/ufw-app.8.html) — Gestion des profils applicatifs

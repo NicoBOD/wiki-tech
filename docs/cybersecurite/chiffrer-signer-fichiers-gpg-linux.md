@@ -187,7 +187,7 @@ gpg --verify contrat.txt.asc
 ## Ressources
 
 - [Documentation officielle GnuPG](https://gnupg.org/documentation/index.html) — Référence complète
-- [Recommandations de l'ANSSI sur la cryptographie](https://www.ssi.gouv.fr/administration/precautions-elementaires/calculer-la-force-dun-mot-de-passe/) — Bonnes pratiques en matière de sécurité et de taille de clé.
+- [Recommandations de l'ANSSI sur la cryptographie](https://messervices.cyber.gouv.fr/documents-guides/anssi-guide-mecanismes-crypto-3.00.pdf) — Bonnes pratiques en matière de sécurité et de taille de clé.
 
 *[GPG]: GNU Privacy Guard
 *[RSA]: Rivest–Shamir–Adleman (algorithme asymétrique)

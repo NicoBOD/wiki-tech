@@ -161,4 +161,4 @@ En naviguant sur `http://mon-app.local`, vous ne devriez plus voir la page d'acc
 ## Ressources
 
 - [Documentation officielle Nginx : NGINX Reverse Proxy](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/) — Le guide de référence éditeur (en anglais).
-- [Ubuntu Server Guide : Web Servers - Nginx](https://ubuntu.com/server/docs/web-servers-nginx) — Manuel Ubuntu sur Nginx.
+- [Ubuntu Server Guide : Web Servers - Nginx](https://ubuntu.com/server/docs/how-to/web-services/install-nginx/) — Manuel Ubuntu sur Nginx.

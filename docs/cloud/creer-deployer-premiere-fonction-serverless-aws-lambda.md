@@ -113,4 +113,4 @@ Pour que votre fonction soit accessible depuis un navigateur, vous pouvez par la
 ## Ressources
 
 - [Documentation officielle d'AWS Lambda](https://docs.aws.amazon.com/fr_fr/lambda/latest/dg/welcome.html) — Guide du développeur AWS.
-- [Ateliers AWS Skill Builder](https://explore.skillbuilder.aws/) — Pour approfondir ses connaissances sur les architectures Serverless.
+- [Ateliers AWS Skill Builder](https://skillbuilder.aws/) — Pour approfondir ses connaissances sur les architectures Serverless.

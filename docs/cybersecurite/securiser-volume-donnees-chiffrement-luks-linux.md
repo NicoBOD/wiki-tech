@@ -122,4 +122,4 @@ sudo cryptsetup status volume_secret
 
 - [Documentation Ubuntu sur le chiffrement](https://help.ubuntu.com/community/EncryptedFilesystems)
 - [Manuel utilisateur de cryptsetup](https://gitlab.com/cryptsetup/cryptsetup/-/wikis/home)
-- [Recommandations ANSSI sur la cryptographie](https://www.ssi.gouv.fr/entreprise/reglementation/confiance-numerique/le-chiffrement/)
+- [Recommandations ANSSI sur la cryptographie](https://cyber.gouv.fr/nous-connaitre/publications/analyse-de-risque-sectorielle-et-technique/analyse-de-risque-chiffrement-et-cryptographie/)

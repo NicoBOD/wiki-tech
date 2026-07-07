@@ -100,5 +100,5 @@ docker logs -f open-webui
 ## Ressources
 
 - [Dépôt GitHub d'Open WebUI](https://github.com/open-webui/open-webui) — Code source et documentation officielle.
-- [Docker Hub - Open WebUI](https://hub.docker.com/r/ghcr.io/open-webui/open-webui) — Image Docker officielle.
+- [GitHub Container Registry - Open WebUI](https://github.com/open-webui/open-webui/pkgs/container/open-webui) — Image Docker officielle (l'image est publiée sur ghcr.io, pas sur Docker Hub).
 - [Bibliothèque de modèles Ollama](https://ollama.com/library) — Liste des modèles téléchargeables.
