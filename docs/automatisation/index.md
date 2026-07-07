@@ -34,6 +34,7 @@ Ansible, n8n, scripts bash, CI/CD et tâches planifiées (cron/timers).
 
 ## Tâches Planifiées
 
+- [Planifier des tâches récurrentes simplement sous Linux avec cron (crontab)](planifier-taches-recurrentes-linux-cron-crontab.md) — Utiliser l'outil standard pour automatiser l'exécution de scripts à intervalles réguliers.
 - [Planifier un script avec un timer systemd sous Linux](planifier-script-timer-systemd-linux.md) — Remplacer le classique cron par des timers plus flexibles et observables.
 
 ## Workflows & No-Code

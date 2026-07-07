@@ -14,6 +14,7 @@ Notes sur Azure, AWS, GCP, Infrastructure as Code (Terraform, Bicep) et conteneu
 
 ## Amazon Web Services (AWS)
 
+- [Créer et déployer sa première fonction Serverless avec AWS Lambda](creer-deployer-premiere-fonction-serverless-aws-lambda.md) — Création, configuration et exécution de code Python sans serveur.
 - [Sécuriser son compte AWS : les bases d'IAM (Identity and Access Management)](securiser-compte-aws-bases-iam.md) — Protéger le compte racine avec MFA et créer des accès administrateurs délégués.
 - [Créer et configurer sa première machine virtuelle EC2 sur AWS](creer-premiere-machine-virtuelle-ec2-aws.md) — Lancer et configurer une instance Ubuntu EC2, règles de sécurité, et accès SSH sur AWS.
 - [Créer une alerte de facturation sur AWS (AWS Budgets) pour sécuriser ses travaux pratiques](creer-alerte-facturation-aws-budgets.md) — Configurer un budget pour recevoir une notification par email avant que les coûts n'explosent.
@@ -30,3 +31,4 @@ Notes sur Azure, AWS, GCP, Infrastructure as Code (Terraform, Bicep) et conteneu
 
 - [Créer et configurer sa première machine virtuelle sur Microsoft Azure](creer-premiere-machine-virtuelle-azure.md) — Lancer une instance Ubuntu, ouvrir des ports et s'y connecter via Azure CLI.
 - [Déployer un conteneur via Azure Container Instances (ACI)](deployer-conteneur-azure-container-instances-aci.md) — Déployer rapidement une image Docker serverless avec la ligne de commande Azure.
+- [Stocker et partager des fichiers dans Azure Blob Storage](stocker-partager-fichiers-azure-blob-storage.md) — Créer un compte de stockage, uploader et télécharger des blobs, puis générer un lien de partage temporaire avec un jeton SAS.
