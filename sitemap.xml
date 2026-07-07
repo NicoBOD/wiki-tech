@@ -169,6 +169,10 @@
          <lastmod>2026-07-07</lastmod>
     </url>
     <url>
+         <loc>https://wiki.bodaine.fr/cloud/mettre-en-place-surveillance-centralisee-prometheus-grafana-cloud-hybride/</loc>
+         <lastmod>2026-07-07</lastmod>
+    </url>
+    <url>
          <loc>https://wiki.bodaine.fr/cloud/personnaliser-vm-ubuntu-cloud-init-nocloud/</loc>
          <lastmod>2026-07-07</lastmod>
     </url>
@@ -378,6 +382,10 @@
     </url>
     <url>
          <loc>https://wiki.bodaine.fr/logiciels/debuter-postman-tester-api-rest/</loc>
+         <lastmod>2026-07-07</lastmod>
+    </url>
+    <url>
+         <loc>https://wiki.bodaine.fr/logiciels/deployer-gitlab-ce-auto-hebergee-docker-compose-ubuntu-server/</loc>
          <lastmod>2026-07-07</lastmod>
     </url>
     <url>
