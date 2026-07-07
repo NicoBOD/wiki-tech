@@ -217,7 +217,6 @@ nav:
     - Installer Docker Engine et le plugin Docker Compose sur Ubuntu 24.04: logiciels/installer-docker-engine-ubuntu-2404.md
     - Créer et lancer une application multi-conteneurs avec Docker Compose: logiciels/creer-lancer-application-multi-conteneurs-docker-compose.md
     - Installer et configurer Portainer pour gérer ses conteneurs Docker: logiciels/installer-configurer-portainer-docker.md
-    - Déployer une instance GitLab CE auto-hébergée avec Docker Compose sur Ubuntu Server: logiciels/deployer-gitlab-ce-auto-hebergee-docker-compose-ubuntu-server.md
     - "Migration et sécurisation de Moodle sous Docker": logiciels/moodle-custom-docker.md
     - Retirer le bandeau publicitaire du thème Moove de Moodle: logiciels/retirer-banniere-theme-moove-moodle.md
     - Configurer VS Code avec Remote-SSH pour administrer un serveur Linux: logiciels/configurer-vs-code-remote-ssh.md
