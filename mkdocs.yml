@@ -161,6 +161,7 @@ nav:
     - Créer et configurer sa première machine virtuelle sur Microsoft Azure: cloud/creer-premiere-machine-virtuelle-azure.md
     - Déployer un conteneur via Azure Container Instances (ACI): cloud/deployer-conteneur-azure-container-instances-aci.md
     - Stocker et partager des fichiers dans Azure Blob Storage: cloud/stocker-partager-fichiers-azure-blob-storage.md
+    - Synchroniser Google Drive sur deux postes Ubuntu avec rclone bisync et chiffrement Crypt: cloud/synchroniser-google-drive-rclone-bisync-crypt-deux-postes-ubuntu.md
   - Cybersécurité:
     - cybersecurite/index.md
     - "Configurer sudo en toute sécurité avec visudo": cybersecurite/configurer-sudo-visudo.md

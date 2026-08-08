@@ -12,6 +12,10 @@ Notes sur Azure, AWS, GCP, Infrastructure as Code (Terraform, Bicep) et conteneu
 - [Déployer une application Docker sans serveur avec Google Cloud Run](deployer-application-docker-google-cloud-run.md) — Déploiement d'un conteneur avec gcloud, Artifact Registry et scale-to-zero.
 - [Déployer PedagogIA sur Google Cloud Run + MongoDB Atlas](deploy-pedagogia-gcp.md) — Déploiement serverless, gestion stateless et intégration Cloud Storage.
 
+## Stockage & synchronisation de fichiers
+
+- [Synchroniser Google Drive sur deux postes Ubuntu avec rclone bisync et chiffrement Crypt](synchroniser-google-drive-rclone-bisync-crypt-deux-postes-ubuntu.md) — Synchronisation bidirectionnelle chiffrée côté client, Client ID OAuth dédié, automatisation systemd et pièges à éviter.
+
 ## Amazon Web Services (AWS)
 
 - [Créer et déployer sa première fonction Serverless avec AWS Lambda](creer-deployer-premiere-fonction-serverless-aws-lambda.md) — Création, configuration et exécution de code Python sans serveur.
