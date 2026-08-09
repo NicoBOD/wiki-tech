@@ -32,7 +32,7 @@ status: publié
 |-----------|--------|
 | Difficulté | Avancé |
 | OS / Environnement | Ubuntu 24.04 LTS, rclone 1.75.0 |
-| Dernière mise à jour | 2026-08-08 |
+| Dernière mise à jour | 2026-08-09 |
 
 !!! warning "Avertissement préalable"
     `rclone bisync` **supprime et écrase des fichiers des deux côtés**. Une configuration bancale peut détruire des données. Chaque garde-fou décrit ici a une raison d'être : ne les retirez pas pour « simplifier ». Testez toujours sur un jeu de données jetable avant de viser vos vraies données.
@@ -357,9 +357,21 @@ FORCE_RUN="${FORCE_RUN:-0}"
 
 mkdir -p "$LOGDIR" "$WORKDIR"
 
-# --- Garde-fous des machines mobiles --------------------------------------
+# --- Garde-fous ------------------------------------------------------------
 # Une passe sautée n'est PAS un échec : on sort en 0, sinon systemd
 # déclencherait une alerte pour un comportement voulu.
+
+# Au démarrage, le rattrapage du timer et le dispatcher réseau déclenchent des
+# passes AVANT que la session ne déverrouille le trousseau. secret-tool échoue,
+# rclone renvoie "Using --password-command returned: exit status 1" et chaque
+# tentative produit une notification. Voir le piège n°9.
+trousseau_requis_indisponible() {
+  local conf="${RCLONE_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/rclone/rclone.conf}"
+  head -1 "$conf" 2>/dev/null | grep -qi "Encrypted" || return 1   # config en clair : sans objet
+  command -v secret-tool >/dev/null 2>&1 || return 1
+  ! secret-tool lookup service rclone key config >/dev/null 2>&1
+}
+
 connexion_limitee() {
   local m
   m=$(busctl get-property org.freedesktop.NetworkManager /org/freedesktop/NetworkManager \
@@ -382,6 +394,13 @@ batterie_faible() {
   (( n == 0 )) && return 1
   (( total / n < RCLONE_BATTERY_MIN ))
 }
+# Volontairement NON contournable par --force-run : forcer ne ferait qu'échouer,
+# rclone étant incapable de déchiffrer sa configuration sans le trousseau.
+if trousseau_requis_indisponible; then
+  echo "Passe sautée : trousseau verrouillé ou indisponible (session pas encore ouverte ?)."
+  exit 0
+fi
+
 if (( ! FORCE_RUN )); then
   if [[ "${RCLONE_SKIP_ON_METERED:-0}" == "1" ]] && connexion_limitee; then
     echo "Passe sautée : connexion limitée (forcer avec --force-run)."; exit 0
@@ -707,6 +726,32 @@ systemctl --user stop rclone-bisync.timer
 
 Puis supprimer sur **les trois côtés**, relancer un `--resync`, et seulement ensuite redémarrer le timer.
 
+### Piège n°9 — Le trousseau n'est pas encore déverrouillé au démarrage
+
+Celui-ci ne se manifeste qu'au **premier vrai redémarrage**, et il se reproduit à chacun.
+
+!!! failure "Message d'erreur"
+    ```
+    gnome-keyring-daemon: couldn't create system prompt:
+      GDBus.Error:org.freedesktop.DBus.Error.Spawn.ChildExited:
+      Process org.gnome.keyring.SystemPrompter exited with status 1
+    ERROR : Using --password-command returned: exit status 1
+    ```
+
+Au démarrage, deux mécanismes déclenchent des passes **avant** que la session graphique n'ait déverrouillé le trousseau : le rattrapage `Persistent=true` du timer, qui compense la passe manquée pendant l'extinction, et le dispatcher NetworkManager, qui réagit à *chaque* interface qui monte — filaire, VPN, ponts. Sur une machine réelle, cela fait facilement quatre déclenchements dans les deux minutes suivant le démarrage, contre quatre pour le timer sur l'heure entière.
+
+À ce moment-là `secret-tool` ne peut pas ouvrir la collection : elle est verrouillée et le prompteur graphique n'est pas encore disponible. rclone ne peut donc pas déchiffrer sa configuration, le service tombe en échec, et `OnFailure` déclenche une notification à chaque tentative. Le tout se résorbe seul une fois la session ouverte — mais l'utilisateur a déjà reçu une volée d'alertes pour un problème qui n'en est pas un.
+
+!!! tip "Détail savoureux"
+    La toute première notification échoue elle aussi, avec `org.freedesktop.Notifications exited with status 1` : le démon de notification n'est pas davantage démarré que le trousseau.
+
+**Solution** : la fonction `trousseau_requis_indisponible()` du script (étape 8). Si la configuration est chiffrée et que le trousseau ne répond pas, la passe est **sautée avec un code de sortie 0**. systemd la considère comme réussie, aucune alerte n'est levée, et la passe suivante s'exécutera normalement une fois la session ouverte.
+
+Deux choix de conception méritent d'être soulignés. Le garde-fou est **délibérément non contournable** par `--force-run` : forcer ne ferait qu'échouer plus bruyamment, rclone étant de toute façon incapable de déchiffrer sa configuration. Et il ne s'active **que si la configuration est réellement chiffrée** — sur une machine où elle est en clair, il ne doit jamais bloquer quoi que ce soit.
+
+!!! warning "Ne confondez pas avec une vraie panne"
+    Tant que ce garde-fou n'est pas en place, le symptôme visible est un service en échec au démarrage. Il est tentant d'incriminer le réseau, les identifiants OAuth ou la configuration rclone. Le seul indice fiable est `Using --password-command returned: exit status 1` dans les journaux rclone : c'est le trousseau, rien d'autre.
+
 ## Vérification
 
 Une configuration bisync ne se déclare pas fonctionnelle parce qu'elle affiche `OK` une fois. Voici la batterie de tests à passer.
@@ -746,7 +791,14 @@ Pensez à restaurer le témoin ensuite.
 
 **6. La propagation automatique.** Déposez un fichier sur une machine et **ne lancez rien**. Il doit apparaître sur l'autre en deux cycles de timer, soit une trentaine de minutes avec `OnCalendar=*:0/15`.
 
-**7. Après redémarrage.** `systemctl --user list-timers rclone-bisync.timer` doit afficher une prochaine échéance. C'est le point où le déverrouillage du trousseau peut poser problème si vous utilisez la connexion automatique.
+**7. Après redémarrage.** C'est la vérification la plus révélatrice, et celle qu'on oublie le plus souvent. Redémarrez réellement, ouvrez votre session, puis attendez une heure avant d'inspecter :
+
+```bash
+systemctl --user list-timers rclone-bisync.timer; journalctl --user -b -u rclone-bisync.service --no-pager | grep -c Starting; grep -c "password-command" ~/.local/share/rclone/logs/*.log
+```
+
+!!! success "Résultat attendu"
+    Une prochaine échéance affichée, et **zéro** occurrence de `password-command` dans les journaux. Le nombre de déclenchements dépassera celui du timer seul — c'est normal, voir le piège n°9. Ce qui compte est qu'aucun ne se solde par un échec.
 
 ## Aide-mémoire
 
@@ -781,7 +833,9 @@ Pensez à restaurer le témoin ensuite.
 - [ ] Test de conflit provoqué concluant
 - [ ] Test de suppression massive bloqué par `--max-delete`
 - [ ] Notification d'échec vérifiée par un échec réel
-- [ ] Comportement après redémarrage vérifié
+- [ ] Garde-fou trousseau en place dans le script (sinon échecs à chaque démarrage)
+- [ ] Comportement après **redémarrage réel** vérifié, journaux sans `password-command`
+- [ ] Aller-retour création / modification / suppression testé **dans les deux sens**
 
 ## Glossaire
 
