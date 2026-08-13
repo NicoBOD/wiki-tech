@@ -3727,17 +3727,22 @@
 <a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="na">After</span><span class="o">=</span><span class="s">graphical-session.target</span>
 <a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="na">PartOf</span><span class="o">=</span><span class="s">graphical-session.target</span>
 <a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="na">OnFailure</span><span class="o">=</span><span class="s">rclone-notify@%n.service</span>
-<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>
-<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="k">[Service]</span>
-<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="na">Type</span><span class="o">=</span><span class="s">oneshot</span>
-<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="na">EnvironmentFile</span><span class="o">=</span><span class="s">%h/.config/rclone/machine.env</span>
-<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="na">ExecStart</span><span class="o">=</span><span class="s">%h/.local/bin/rclone-bisync.sh</span>
-<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="na">TimeoutStartSec</span><span class="o">=</span><span class="s">3h</span>
-<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="na">Nice</span><span class="o">=</span><span class="s">10</span>
-<a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a><span class="na">IOSchedulingClass</span><span class="o">=</span><span class="s">idle</span>
-<a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a>
-<a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a><span class="k">[Install]</span>
-<a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a><span class="na">WantedBy</span><span class="o">=</span><span class="s">graphical-session.target</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="c1"># Indispensable : systemd limite par défaut à 5 démarrages par tranche de 10 s,</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="c1"># au-delà de quoi l&#39;unité est marquée « start-limit-hit », donc en ÉCHEC, avec</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="c1"># notification. Au démarrage, le dispatcher réseau et le rattrapage du timer</span>
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="c1"># produisent facilement six démarrages en trois secondes. Voir le piège n°9.</span>
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="na">StartLimitIntervalSec</span><span class="o">=</span><span class="s">0</span>
+<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>
+<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="k">[Service]</span>
+<a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a><span class="na">Type</span><span class="o">=</span><span class="s">oneshot</span>
+<a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a><span class="na">EnvironmentFile</span><span class="o">=</span><span class="s">%h/.config/rclone/machine.env</span>
+<a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a><span class="na">ExecStart</span><span class="o">=</span><span class="s">%h/.local/bin/rclone-bisync.sh</span>
+<a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a><span class="na">TimeoutStartSec</span><span class="o">=</span><span class="s">3h</span>
+<a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a><span class="na">Nice</span><span class="o">=</span><span class="s">10</span>
+<a id="__codelineno-13-18" name="__codelineno-13-18" href="#__codelineno-13-18"></a><span class="na">IOSchedulingClass</span><span class="o">=</span><span class="s">idle</span>
+<a id="__codelineno-13-19" name="__codelineno-13-19" href="#__codelineno-13-19"></a>
+<a id="__codelineno-13-20" name="__codelineno-13-20" href="#__codelineno-13-20"></a><span class="k">[Install]</span>
+<a id="__codelineno-13-21" name="__codelineno-13-21" href="#__codelineno-13-21"></a><span class="na">WantedBy</span><span class="o">=</span><span class="s">graphical-session.target</span>
 </code></pre></div>
 <div class="highlight"><span class="filename">~/.config/systemd/user/rclone-bisync.timer</span><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">[Unit]</span>
 <a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="na">Description</span><span class="o">=</span><span class="s">Déclenchement périodique de la synchronisation rclone</span>
@@ -3941,17 +3946,45 @@
 <p class="admonition-title">Ne confondez pas avec une vraie panne</p>
 <p>Tant que ce garde-fou n'est pas en place, le symptôme visible est un service en échec au démarrage. Il est tentant d'incriminer le réseau, les identifiants OAuth ou la configuration rclone. Le seul indice fiable est <code>Using --password-command returned: exit status 1</code> dans les journaux rclone : c'est le trousseau, rien d'autre.</p>
 </div>
+<h4 id="le-piege-dans-le-piege-start-limit-hit">Le piège dans le piège : <code>start-limit-hit</code><a class="headerlink" href="#le-piege-dans-le-piege-start-limit-hit" title="Permanent link">&para;</a></h4>
+<p>Ce correctif en provoque un second si l'on s'arrête là, et le constat est déroutant : le garde-fou <strong>fonctionne</strong>, chaque passe se termine en succès, et pourtant l'unité tombe en échec.</p>
+<div class="admonition failure">
+<p class="admonition-title">Message d'erreur</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>rclone-bisync.sh[2999]: Passe sautée : trousseau verrouillé ou indisponible.
+<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>systemd[2507]: Finished rclone-bisync.service.
+<a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a>…
+<a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a>systemd[2507]: rclone-bisync.service: Start request repeated too quickly.
+<a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a>systemd[2507]: rclone-bisync.service: Failed with result &#39;start-limit-hit&#39;.
+<a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a>systemd[2507]: rclone-bisync.service: Triggering OnFailure= dependencies.
+</code></pre></div>
+</div>
+<p>L'explication tient à une interaction entre deux éléments de cette page. Le dispatcher NetworkManager déclenche une passe <strong>par interface qui monte</strong> — filaire, VPN, ponts — et le rattrapage <code>Persistent=true</code> du timer s'y ajoute : six démarrages en trois secondes sont courants au boot. Tant que chaque passe durait plusieurs secondes, ces déclenchements s'espaçaient naturellement. Depuis que le garde-fou trousseau les fait sortir en quelques <strong>millisecondes</strong>, ils se télescopent et dépassent la limite systemd par défaut de <strong>5 démarrages par tranche de 10 secondes</strong>.</p>
+<p>L'unité est alors marquée <code>start-limit-hit</code>, ce qui compte comme un échec et déclenche <code>OnFailure</code>. Autrement dit : le correctif du piège n°9 recrée exactement la notification qu'il devait supprimer.</p>
+<p><strong>Solution</strong> — une ligne dans la section <code>[Unit]</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="na">StartLimitIntervalSec</span><span class="o">=</span><span class="s">0</span>
+</code></pre></div>
+<p>Pour une tâche ponctuelle et idempotente, ce plafond n'apporte rien : relancer une synchronisation dix fois d'affilée est sans danger, la seule conséquence étant quelques passes inutiles qui se terminent aussitôt.</p>
+<div class="admonition success">
+<p class="admonition-title">Comment vérifier</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>reset-failed<span class="w"> </span>rclone-bisync.service<span class="p">;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>seq<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">8</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>systemctl<span class="w"> </span>--user<span class="w"> </span>start<span class="w"> </span>--no-block<span class="w"> </span>rclone-bisync.service<span class="p">;</span><span class="w"> </span><span class="k">done</span><span class="p">;</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">12</span><span class="p">;</span><span class="w"> </span>systemctl<span class="w"> </span>--user<span class="w"> </span>show<span class="w"> </span>-p<span class="w"> </span>Result<span class="w"> </span>--value<span class="w"> </span>rclone-bisync.service
+</code></pre></div>
+Doit afficher <code>success</code>, et <code>journalctl --user -u rclone-bisync.service | grep start-limit-hit</code> doit rester vide.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">La leçon générale</p>
+<p>Rendre une tâche périodique <strong>plus rapide</strong> peut la faire franchir un seuil de fréquence qu'elle ne rencontrait pas auparavant. Le réflexe, après avoir accéléré un service déclenché par plusieurs sources, est de vérifier ses limites de démarrage — pas seulement son code de sortie.</p>
+</div>
 <h3 id="piege-n10-lechec-isole-qui-nest-pas-une-panne">Piège n°10 — L'échec isolé qui n'est pas une panne<a class="headerlink" href="#piege-n10-lechec-isole-qui-nest-pas-une-panne" title="Permanent link">&para;</a></h3>
 <p>Deux situations produisent une notification d'échec alors que <strong>rien ne va mal</strong>. Elles méritent d'être traitées ensemble, car la réponse est la même : distinguer le transitoire du persistant avant d'alerter.</p>
 <p><strong>Le plantage du binaire.</strong> rclone est un programme Go, et il lui arrive de s'effondrer :</p>
 <div class="admonition failure">
 <p class="admonition-title">Message d'erreur</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>fatal error: unexpected signal during runtime execution
-<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>[signal SIGSEGV: segmentation violation code=0x1 addr=0x77a030cff1c3 pc=0x43e453]
-<a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a>runtime.sweepone()
-<a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a>  runtime/mgcsweep.go:383
-<a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a>github.com/rclone/rclone/backend/overview.GetBackendConfig(...)
-<a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a>github.com/rclone/rclone/fs.Register(...)
+<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>fatal error: unexpected signal during runtime execution
+<a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>[signal SIGSEGV: segmentation violation code=0x1 addr=0x77a030cff1c3 pc=0x43e453]
+<a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a>runtime.sweepone()
+<a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a>  runtime/mgcsweep.go:383
+<a id="__codelineno-34-5" name="__codelineno-34-5" href="#__codelineno-34-5"></a>github.com/rclone/rclone/backend/overview.GetBackendConfig(...)
+<a id="__codelineno-34-6" name="__codelineno-34-6" href="#__codelineno-34-6"></a>github.com/rclone/rclone/fs.Register(...)
 </code></pre></div>
 </div>
 <div class="admonition danger">
@@ -3959,7 +3992,7 @@
 <p>Ce plantage survient pendant l'<strong>initialisation des paquets Go</strong>, donc <strong>avant que rclone n'ouvre son fichier de journal</strong>. Vos logs rclone seront donc parfaitement <strong>vides</strong> pour cet incident. Toute la trace se trouve dans le journal systemd — cherchez-la avec <code>journalctl --user -u rclone-bisync.service</code>, jamais dans <code>~/.local/share/rclone/logs/</code>. Un cas observé en production : une seule occurrence en six jours d'exploitation, sans récidive.</p>
 </div>
 <p><strong>Avant de conclure au hasard, écartez le matériel.</strong> Un <code>SIGSEGV</code> dans le ramasse-miettes évoque une corruption mémoire, ce qui mérite trente secondes de vérification :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>dpkg<span class="w"> </span>-V<span class="w"> </span>rclone<span class="p">;</span><span class="w"> </span>sudo<span class="w"> </span>dmesg<span class="w"> </span>-T<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;edac|mce|machine check|Hardware Error&quot;</span><span class="p">;</span><span class="w"> </span>journalctl<span class="w"> </span>-b<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-ic<span class="w"> </span>segfault
+<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>dpkg<span class="w"> </span>-V<span class="w"> </span>rclone<span class="p">;</span><span class="w"> </span>sudo<span class="w"> </span>dmesg<span class="w"> </span>-T<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;edac|mce|machine check|Hardware Error&quot;</span><span class="p">;</span><span class="w"> </span>journalctl<span class="w"> </span>-b<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-ic<span class="w"> </span>segfault
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu</p>
@@ -3968,8 +4001,8 @@
 <p><strong>La passe concurrente.</strong> Second cas, plus fréquent : lancer une synchronisation à la main pendant qu'une passe automatique tourne déjà.</p>
 <div class="admonition failure">
 <p class="admonition-title">Message d'erreur</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>NOTICE: Failed to bisync: prior lock file found:
-<a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>  ~/.cache/rclone/bisync/…_Clair..gd-clair_Rclone.lck
+<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>NOTICE: Failed to bisync: prior lock file found:
+<a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>  ~/.cache/rclone/bisync/…_Clair..gd-clair_Rclone.lck
 </code></pre></div>
 </div>
 <p>Ce n'est pas une panne mais de la concurrence — d'autant plus probable qu'un premier transfert volumineux peut durer bien plus que l'intervalle du timer. Le verrou expire seul grâce à <code>--max-lock</code> et la passe suivante prend le relais.</p>
@@ -4006,7 +4039,7 @@
 <p>Avec <code>--filter-from</code>, bisync ne mémorise <strong>rien</strong> des filtres employés. Le jour où vous ajoutez une exclusion, les fichiers concernés disparaissent simplement du listage. bisync compare ce listage à celui de la passe précédente et en tire la seule conclusion possible de son point de vue : <strong>ces fichiers ont été supprimés, il faut propager la suppression</strong>.</p>
 <div class="admonition failure">
 <p class="admonition-title">Ce que produit --filter-from après un ajout d'exclusion</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>ERROR : Safety abort: too many deletes (&gt;10%, 4 of 10) on Path1 &quot;…&quot;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>ERROR : Safety abort: too many deletes (&gt;10%, 4 of 10) on Path1 &quot;…&quot;
 </code></pre></div>
 </div>
 <div class="admonition danger">
@@ -4016,8 +4049,8 @@
 <p><strong>La solution tient en un drapeau.</strong> <code>--filters-file</code> enregistre une empreinte MD5 du fichier de filtres dans le répertoire de travail de bisync, et refuse de tourner si elle a changé :</p>
 <div class="admonition success">
 <p class="admonition-title">Ce que produit --filters-file</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>ERROR : Bisync critical error: filters file has changed (must run --resync)
-<a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>ERROR : Bisync aborted. Must run --resync to recover.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>ERROR : Bisync critical error: filters file has changed (must run --resync)
+<a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a>ERROR : Bisync aborted. Must run --resync to recover.
 </code></pre></div>
 </div>
 <p>Aucun fichier n'est touché. Vous relancez avec <code>--resync</code> <strong>en connaissance de cause</strong>, et la nouvelle base de comparaison intègre les filtres à jour.</p>
@@ -4026,14 +4059,14 @@
 <p>Toute modification des filtres impose désormais un <code>--resync</code> sur la machine concernée. C'est le prix de la sécurité, et il est modeste : changer ses filtres reste un événement rare.</p>
 </div>
 <p><strong>Second écueil, dans l'écriture du motif.</strong> Pour exclure un dossier à tous les niveaux de l'arborescence, le réflexe est d'écrire <code>**/</code>. C'est une erreur, vérifiable en trois commandes :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>t/_NOSYNC/x<span class="w"> </span>t/sous/_NOSYNC<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>touch<span class="w"> </span>t/_NOSYNC/a<span class="w"> </span>t/sous/_NOSYNC/b<span class="w"> </span>t/normal<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">printf</span><span class="w"> </span>--<span class="w"> </span><span class="s2">&quot;- **/_NOSYNC/**\n&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>t/f<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>rclone<span class="w"> </span>lsf<span class="w"> </span>-R<span class="w"> </span>--files-only<span class="w"> </span>t<span class="w"> </span>--filter-from<span class="w"> </span>t/f
+<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>t/_NOSYNC/x<span class="w"> </span>t/sous/_NOSYNC<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>touch<span class="w"> </span>t/_NOSYNC/a<span class="w"> </span>t/sous/_NOSYNC/b<span class="w"> </span>t/normal<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">printf</span><span class="w"> </span>--<span class="w"> </span><span class="s2">&quot;- **/_NOSYNC/**\n&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>t/f<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>rclone<span class="w"> </span>lsf<span class="w"> </span>-R<span class="w"> </span>--files-only<span class="w"> </span>t<span class="w"> </span>--filter-from<span class="w"> </span>t/f
 </code></pre></div>
 <div class="admonition failure">
 <p class="admonition-title">Résultat</p>
 <p>Le fichier <code>_NOSYNC/a</code>, situé à la <strong>racine</strong>, est conservé : <code>**/</code> impose au moins un niveau de dossier avant le motif. Le dossier racine passe donc au travers.</p>
 </div>
 <p>Le motif correct est le plus simple — sans préfixe, il s'applique à tous les niveaux <strong>et</strong> écarte le répertoire lui-même :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>- _NOSYNC_laptop/**
+<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>- _NOSYNC_laptop/**
 </code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Un motif à vérifier plutôt qu'à supposer</p>
@@ -4042,7 +4075,7 @@
 <h2 id="verification">Vérification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
 <p>Une configuration bisync ne se déclare pas fonctionnelle parce qu'elle affiche <code>OK</code> une fois. Voici la batterie de tests à passer.</p>
 <p><strong>1. Le chiffrement est-il réel ?</strong> Comparez la vue déchiffrée et la vue brute :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>rclone<span class="w"> </span>lsf<span class="w"> </span>-R<span class="w"> </span>gcrypt:<span class="w"> </span>--password-command<span class="w"> </span><span class="s2">&quot;secret-tool lookup service rclone key config&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--- ce que Google stocke ---&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>rclone<span class="w"> </span>lsf<span class="w"> </span>-R<span class="w"> </span>gd-chiffre:Rclone<span class="w"> </span>--password-command<span class="w"> </span><span class="s2">&quot;secret-tool lookup service rclone key config&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>rclone<span class="w"> </span>lsf<span class="w"> </span>-R<span class="w"> </span>gcrypt:<span class="w"> </span>--password-command<span class="w"> </span><span class="s2">&quot;secret-tool lookup service rclone key config&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--- ce que Google stocke ---&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>rclone<span class="w"> </span>lsf<span class="w"> </span>-R<span class="w"> </span>gd-chiffre:Rclone<span class="w"> </span>--password-command<span class="w"> </span><span class="s2">&quot;secret-tool lookup service rclone key config&quot;</span>
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu</p>
@@ -4055,19 +4088,19 @@
 </div>
 <p><strong>3. Le garde-fou de suppression tient-il ?</strong> Supprimez plus de 10 % des entrées d'une paire et lancez une passe. La passe doit <strong>échouer</strong> et rien ne doit disparaître du côté distant.</p>
 <p><strong>4. Le montage se relève-t-il ?</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>show<span class="w"> </span>-p<span class="w"> </span>MainPID<span class="w"> </span>--value<span class="w"> </span>rclone-mount@gd-clair.service<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-r<span class="w"> </span><span class="nb">kill</span><span class="w"> </span>-9<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">18</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>--user<span class="w"> </span>is-active<span class="w"> </span>rclone-mount@gd-clair.service<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>ls<span class="w"> </span>~/mnt/gd-clair
+<div class="highlight"><pre><span></span><code><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>show<span class="w"> </span>-p<span class="w"> </span>MainPID<span class="w"> </span>--value<span class="w"> </span>rclone-mount@gd-clair.service<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-r<span class="w"> </span><span class="nb">kill</span><span class="w"> </span>-9<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">18</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>--user<span class="w"> </span>is-active<span class="w"> </span>rclone-mount@gd-clair.service<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>ls<span class="w"> </span>~/mnt/gd-clair
 </code></pre></div>
 <div class="admonition danger">
 <p class="admonition-title">Piège de ce test</p>
 <p>N'utilisez pas <code>pgrep -f "rclone mount"</code> pour trouver le PID : le motif correspond aussi à <strong>votre propre ligne de commande</strong>, et vous tuerez votre shell. Passez par <code>systemctl show -p MainPID</code>.</p>
 </div>
 <p><strong>5. L'alerte fonctionne-t-elle vraiment ?</strong> Provoquez un échec réel et vérifiez que <code>OnFailure</code> déclenche :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>mv<span class="w"> </span>/mnt/donnees/GoogleDrive/Chiffre/RCLONE_TEST<span class="w"> </span>/mnt/donnees/GoogleDrive/Chiffre/.masque<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>--user<span class="w"> </span>start<span class="w"> </span>rclone-bisync.service<span class="p">;</span><span class="w"> </span>journalctl<span class="w"> </span>--user<span class="w"> </span>-u<span class="w"> </span><span class="s2">&quot;rclone-notify@*&quot;</span><span class="w"> </span>--since<span class="w"> </span><span class="s2">&quot;2 min ago&quot;</span><span class="w"> </span>--no-pager<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-3
+<div class="highlight"><pre><span></span><code><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a>mv<span class="w"> </span>/mnt/donnees/GoogleDrive/Chiffre/RCLONE_TEST<span class="w"> </span>/mnt/donnees/GoogleDrive/Chiffre/.masque<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>--user<span class="w"> </span>start<span class="w"> </span>rclone-bisync.service<span class="p">;</span><span class="w"> </span>journalctl<span class="w"> </span>--user<span class="w"> </span>-u<span class="w"> </span><span class="s2">&quot;rclone-notify@*&quot;</span><span class="w"> </span>--since<span class="w"> </span><span class="s2">&quot;2 min ago&quot;</span><span class="w"> </span>--no-pager<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-3
 </code></pre></div>
 <p>Pensez à restaurer le témoin ensuite.</p>
 <p><strong>6. La propagation automatique.</strong> Déposez un fichier sur une machine et <strong>ne lancez rien</strong>. Il doit apparaître sur l'autre en deux cycles de timer, soit une trentaine de minutes avec <code>OnCalendar=*:0/15</code>.</p>
 <p><strong>7. Après redémarrage.</strong> C'est la vérification la plus révélatrice, et celle qu'on oublie le plus souvent. Redémarrez réellement, ouvrez votre session, puis attendez une heure avant d'inspecter :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>list-timers<span class="w"> </span>rclone-bisync.timer<span class="p">;</span><span class="w"> </span>journalctl<span class="w"> </span>--user<span class="w"> </span>-b<span class="w"> </span>-u<span class="w"> </span>rclone-bisync.service<span class="w"> </span>--no-pager<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span>Starting<span class="p">;</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;password-command&quot;</span><span class="w"> </span>~/.local/share/rclone/logs/*.log
+<div class="highlight"><pre><span></span><code><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>list-timers<span class="w"> </span>rclone-bisync.timer<span class="p">;</span><span class="w"> </span>journalctl<span class="w"> </span>--user<span class="w"> </span>-b<span class="w"> </span>-u<span class="w"> </span>rclone-bisync.service<span class="w"> </span>--no-pager<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span>Starting<span class="p">;</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;password-command&quot;</span><span class="w"> </span>~/.local/share/rclone/logs/*.log
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu</p>
