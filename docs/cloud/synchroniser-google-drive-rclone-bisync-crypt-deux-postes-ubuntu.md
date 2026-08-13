@@ -162,10 +162,21 @@ Toutes les invocations utiliseront ensuite `--password-command "secret-tool look
 !!! danger "Supprimez toute sauvegarde en clair"
     Si vous aviez copié `rclone.conf` avant de le chiffrer, cette copie contient vos clés en clair et annule tout le bénéfice de l'opération. `shred -u ~/.config/rclone/rclone.conf.sauvegarde`.
 
-### Étape 5 : le fichier de filtres
+### Étape 5 : les fichiers de filtres
+
+Les filtres se répartissent en **deux fichiers**, assemblés par le script avant chaque passe :
+
+| Fichier | Rôle |
+|---|---|
+| `~/.config/rclone/filters.txt` | Règles communes, **identiques** sur les deux postes |
+| `~/.config/rclone/filters-local.txt` | Règles propres à la machine (facultatif) |
+| `~/.cache/rclone/filters-assemble.txt` | Résultat de la concaténation, **généré** — ne pas éditer |
+
+!!! warning "Pourquoi assembler plutôt qu'un seul fichier"
+    `--filters-file` n'accepte **qu'un seul** fichier. Sans cet assemblage, il faudrait maintenir deux fichiers divergents sur les deux machines et reporter à la main chaque règle commune. Ici la partie commune ne diverge jamais.
 
 ```text title="~/.config/rclone/filters.txt"
-# Filtres rclone partagés entre les deux postes.
+# Filtres rclone communs aux deux postes.
 # Syntaxe : "- motif" = exclure. Les motifs {{...}} sont des expressions régulières.
 
 # --- Noms trop longs pour Crypt (limite ~143 caractères par composant) ---
@@ -209,6 +220,27 @@ Toutes les invocations utiliseront ensuite `--password-command "secret-tool look
 - lost+found/**
 - .fuse_hidden*
 ```
+
+Le second fichier ne contient que ce qui distingue la machine. Exemple typique : un poste dont le disque ne peut pas absorber les vidéos et images ISO, alors que l'autre les synchronise normalement.
+
+```text title="~/.config/rclone/filters-local.txt — sur le poste à capacité limitée"
+# Règles propres à CETTE machine.
+#
+# ATTENTION : toute modification ici change l'empreinte des filtres, et bisync
+# refusera de tourner tant qu'un --resync n'aura pas été lancé sur cette machine.
+# C'est voulu — voir le piège n°11.
+
+# Convention : tout dossier nommé _NOSYNC_laptop est ignoré ici, mais reste
+# synchronisé sur l'autre poste et présent sur Google Drive.
+# Le motif porte à TOUS les niveaux et dans les deux zones, répertoire compris.
+- _NOSYNC_laptop/**
+```
+
+Sur l'autre poste, `filters-local.txt` peut être absent, ou ne contenir que des commentaires : le script s'adapte.
+
+!!! tip "Exclure n'est pas rendre inaccessible"
+    Le contenu écarté du miroir reste consultable à la demande via le montage, sans occuper d'espace disque :
+    `systemctl --user enable --now rclone-mount@gd-clair.service`, puis `~/mnt/gd-clair/`. C'est ce qui rend l'exclusion confortable plutôt que frustrante.
 
 !!! tip "Les filtres rclone ignorent la longueur des noms"
     Il n'existe pas d'option « exclure au-delà de N caractères ». Il faut passer par la syntaxe d'expression régulière `{{...}}`. Attention au piège : le motif intuitif `{{^.{144,}$}}` s'applique au **chemin complet** et écarte donc à tort un fichier au nom court situé dans une arborescence profonde. Les deux motifs ci-dessus ont été validés par test : ils portent bien sur le **dernier composant** du chemin.
@@ -331,7 +363,12 @@ MACHINE_ENV="${XDG_CONFIG_HOME:-$HOME/.config}/rclone/machine.env"
 if [[ -r "$MACHINE_ENV" ]]; then set -a; . "$MACHINE_ENV"; set +a; fi
 
 MIRROR_ROOT="${RCLONE_MIRROR_ROOT:?RCLONE_MIRROR_ROOT non défini — voir $MACHINE_ENV}"
-FILTERS="${XDG_CONFIG_HOME:-$HOME/.config}/rclone/filters.txt"
+# Filtres : un fichier commun identique sur les deux postes, plus un complément
+# propre à la machine. bisync n'accepte qu'UN fichier via --filters-file, d'où
+# l'assemblage plus bas. Voir le piège n°11.
+FILTRES_COMMUN="${XDG_CONFIG_HOME:-$HOME/.config}/rclone/filters.txt"
+FILTRES_LOCAL="${XDG_CONFIG_HOME:-$HOME/.config}/rclone/filters-local.txt"
+FILTERS="${XDG_CACHE_HOME:-$HOME/.cache}/rclone/filters-assemble.txt"
 LOGDIR="${XDG_DATA_HOME:-$HOME/.local/share}/rclone/logs"
 WORKDIR="${XDG_CACHE_HOME:-$HOME/.cache}/rclone/bisync"
 PREFLIGHT="$HOME/.local/bin/rclone-bisync-preflight.sh"
@@ -359,7 +396,18 @@ while (( $# )); do
 done
 FORCE_RUN="${FORCE_RUN:-0}"
 
-mkdir -p "$LOGDIR" "$WORKDIR"
+mkdir -p "$LOGDIR" "$WORKDIR" "$(dirname "$FILTERS")"
+
+# Assemblage des filtres, avant tout appel à rclone.
+# « awk 1 » garantit une fin de ligne à chaque fichier : sans quoi la dernière
+# règle du fichier commun et la première du complément local fusionneraient.
+# La sortie DOIT être déterministe : --filters-file en calcule une empreinte et
+# réclamerait un --resync à chaque passe si le contenu variait.
+if [[ -r "$FILTRES_LOCAL" ]]; then
+  awk 1 "$FILTRES_COMMUN" "$FILTRES_LOCAL" > "$FILTERS"
+else
+  awk 1 "$FILTRES_COMMUN" > "$FILTERS"
+fi
 
 # --- Garde-fous ------------------------------------------------------------
 # Une passe sautée n'est PAS un échec : on sort en 0, sinon systemd
@@ -415,7 +463,11 @@ if (( ! FORCE_RUN )); then
 fi
 
 COMMON=(
-  --filter-from "$FILTERS"
+  # --filters-file, et NON --filter-from : c'est le mécanisme propre à bisync,
+  # qui mémorise une empreinte des filtres et REFUSE de tourner s'ils ont changé.
+  # Avec --filter-from, une nouvelle exclusion est interprétée comme une
+  # SUPPRESSION à propager. Voir le piège n°11 : ce n'est pas théorique.
+  --filters-file "$FILTERS"
   --check-access                    # refuse de tourner si RCLONE_TEST manque d'un côté
   --max-delete 10                   # abandonne si plus de 10 % des entrées disparaîtraient
   --conflict-resolve newer          # le plus récent gagne
@@ -826,6 +878,53 @@ Ce n'est pas une panne mais de la concurrence — d'autant plus probable qu'un p
 !!! tip "Pourquoi une seule reprise, et pas trois"
     Un second essai suffit à absorber le bruit. Au-delà, on retarde la détection des vrais problèmes sans rien gagner : un échec déterministe échouera autant de fois qu'on le relancera. La trace « réussie au 2e essai » reste au journal précisément pour qu'un plantage qui deviendrait récurrent ne passe pas inaperçu.
 
+### Piège n°11 — Changer les filtres peut supprimer vos fichiers
+
+C'est le piège le plus dangereux de cette page, et le plus silencieux.
+
+`rclone` propose `--filter-from`, que l'on emploie naturellement. Mais **bisync possède le sien**, `--filters-file`, et la différence n'a rien de cosmétique.
+
+Avec `--filter-from`, bisync ne mémorise **rien** des filtres employés. Le jour où vous ajoutez une exclusion, les fichiers concernés disparaissent simplement du listage. bisync compare ce listage à celui de la passe précédente et en tire la seule conclusion possible de son point de vue : **ces fichiers ont été supprimés, il faut propager la suppression**.
+
+!!! failure "Ce que produit --filter-from après un ajout d'exclusion"
+    ```
+    ERROR : Safety abort: too many deletes (>10%, 4 of 10) on Path1 "…"
+    ```
+
+!!! danger "Pourquoi le garde-fou ne vous sauvera pas"
+    Dans l'exemple ci-dessus, `--max-delete` a bloqué — mais uniquement parce que la proportion atteignait 40 %. Le seuil porte sur un **pourcentage**. Excluez un dossier de trois fichiers dans un miroir qui en compte plusieurs centaines : la proportion reste sous 10 %, aucun garde-fou ne se déclenche, et **les fichiers sont réellement supprimés de Google Drive**. Le miroir local du poste qui exclut est intact, celui de l'autre poste se videra à la passe suivante. Rien dans l'interface ne signale d'anomalie.
+
+**La solution tient en un drapeau.** `--filters-file` enregistre une empreinte MD5 du fichier de filtres dans le répertoire de travail de bisync, et refuse de tourner si elle a changé :
+
+!!! success "Ce que produit --filters-file"
+    ```
+    ERROR : Bisync critical error: filters file has changed (must run --resync)
+    ERROR : Bisync aborted. Must run --resync to recover.
+    ```
+
+Aucun fichier n'est touché. Vous relancez avec `--resync` **en connaissance de cause**, et la nouvelle base de comparaison intègre les filtres à jour.
+
+!!! warning "Conséquence pratique à accepter"
+    Toute modification des filtres impose désormais un `--resync` sur la machine concernée. C'est le prix de la sécurité, et il est modeste : changer ses filtres reste un événement rare.
+
+**Second écueil, dans l'écriture du motif.** Pour exclure un dossier à tous les niveaux de l'arborescence, le réflexe est d'écrire `**/`. C'est une erreur, vérifiable en trois commandes :
+
+```bash
+mkdir -p t/_NOSYNC/x t/sous/_NOSYNC && touch t/_NOSYNC/a t/sous/_NOSYNC/b t/normal && printf -- "- **/_NOSYNC/**\n" > t/f && rclone lsf -R --files-only t --filter-from t/f
+```
+
+!!! failure "Résultat"
+    Le fichier `_NOSYNC/a`, situé à la **racine**, est conservé : `**/` impose au moins un niveau de dossier avant le motif. Le dossier racine passe donc au travers.
+
+Le motif correct est le plus simple — sans préfixe, il s'applique à tous les niveaux **et** écarte le répertoire lui-même :
+
+```text
+- _NOSYNC_laptop/**
+```
+
+!!! tip "Un motif à vérifier plutôt qu'à supposer"
+    C'est le second cas de cette page où la syntaxe des filtres rclone se comporte autrement qu'attendu — voir déjà, à l'étape 5, le motif `{{^.{144,}$}}` qui porte sur le chemin complet et non sur le nom du fichier. Prenez l'habitude de valider tout nouveau motif avec `rclone lsf -R --files-only` sur une arborescence jetable avant de le mettre en production.
+
 ## Vérification
 
 Une configuration bisync ne se déclare pas fonctionnelle parce qu'elle affiche `OK` une fois. Voici la batterie de tests à passer.
@@ -910,6 +1009,8 @@ systemctl --user list-timers rclone-bisync.timer; journalctl --user -b -u rclone
 - [ ] Garde-fou trousseau en place dans le script (sinon échecs à chaque démarrage)
 - [ ] Comportement après **redémarrage réel** vérifié, journaux sans `password-command`
 - [ ] Aller-retour création / modification / suppression testé **dans les deux sens**
+- [ ] `--filters-file` employé, **jamais** `--filter-from` (voir le piège n°11)
+- [ ] Tout nouveau motif de filtre validé sur une arborescence jetable avant mise en production
 
 ## Glossaire
 
