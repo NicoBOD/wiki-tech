@@ -560,6 +560,11 @@ Description=Synchronisation bidirectionnelle rclone vers Google Drive
 After=graphical-session.target
 PartOf=graphical-session.target
 OnFailure=rclone-notify@%n.service
+# Indispensable : systemd limite par défaut à 5 démarrages par tranche de 10 s,
+# au-delà de quoi l'unité est marquée « start-limit-hit », donc en ÉCHEC, avec
+# notification. Au démarrage, le dispatcher réseau et le rattrapage du timer
+# produisent facilement six démarrages en trois secondes. Voir le piège n°9.
+StartLimitIntervalSec=0
 
 [Service]
 Type=oneshot
@@ -828,6 +833,41 @@ Deux choix de conception méritent d'être soulignés. Le garde-fou est **délib
 
 !!! warning "Ne confondez pas avec une vraie panne"
     Tant que ce garde-fou n'est pas en place, le symptôme visible est un service en échec au démarrage. Il est tentant d'incriminer le réseau, les identifiants OAuth ou la configuration rclone. Le seul indice fiable est `Using --password-command returned: exit status 1` dans les journaux rclone : c'est le trousseau, rien d'autre.
+
+#### Le piège dans le piège : `start-limit-hit`
+
+Ce correctif en provoque un second si l'on s'arrête là, et le constat est déroutant : le garde-fou **fonctionne**, chaque passe se termine en succès, et pourtant l'unité tombe en échec.
+
+!!! failure "Message d'erreur"
+    ```
+    rclone-bisync.sh[2999]: Passe sautée : trousseau verrouillé ou indisponible.
+    systemd[2507]: Finished rclone-bisync.service.
+    …
+    systemd[2507]: rclone-bisync.service: Start request repeated too quickly.
+    systemd[2507]: rclone-bisync.service: Failed with result 'start-limit-hit'.
+    systemd[2507]: rclone-bisync.service: Triggering OnFailure= dependencies.
+    ```
+
+L'explication tient à une interaction entre deux éléments de cette page. Le dispatcher NetworkManager déclenche une passe **par interface qui monte** — filaire, VPN, ponts — et le rattrapage `Persistent=true` du timer s'y ajoute : six démarrages en trois secondes sont courants au boot. Tant que chaque passe durait plusieurs secondes, ces déclenchements s'espaçaient naturellement. Depuis que le garde-fou trousseau les fait sortir en quelques **millisecondes**, ils se télescopent et dépassent la limite systemd par défaut de **5 démarrages par tranche de 10 secondes**.
+
+L'unité est alors marquée `start-limit-hit`, ce qui compte comme un échec et déclenche `OnFailure`. Autrement dit : le correctif du piège n°9 recrée exactement la notification qu'il devait supprimer.
+
+**Solution** — une ligne dans la section `[Unit]` :
+
+```ini
+StartLimitIntervalSec=0
+```
+
+Pour une tâche ponctuelle et idempotente, ce plafond n'apporte rien : relancer une synchronisation dix fois d'affilée est sans danger, la seule conséquence étant quelques passes inutiles qui se terminent aussitôt.
+
+!!! success "Comment vérifier"
+    ```bash
+    systemctl --user reset-failed rclone-bisync.service; for i in $(seq 1 8); do systemctl --user start --no-block rclone-bisync.service; done; sleep 12; systemctl --user show -p Result --value rclone-bisync.service
+    ```
+    Doit afficher `success`, et `journalctl --user -u rclone-bisync.service | grep start-limit-hit` doit rester vide.
+
+!!! tip "La leçon générale"
+    Rendre une tâche périodique **plus rapide** peut la faire franchir un seuil de fréquence qu'elle ne rencontrait pas auparavant. Le réflexe, après avoir accéléré un service déclenché par plusieurs sources, est de vérifier ses limites de démarrage — pas seulement son code de sortie.
 
 ### Piège n°10 — L'échec isolé qui n'est pas une panne
 
