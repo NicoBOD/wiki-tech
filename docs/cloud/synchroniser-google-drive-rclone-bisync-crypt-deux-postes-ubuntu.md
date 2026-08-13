@@ -32,7 +32,7 @@ status: publié
 |-----------|--------|
 | Difficulté | Avancé |
 | OS / Environnement | Ubuntu 24.04 LTS, rclone 1.75.0 |
-| Dernière mise à jour | 2026-08-09 |
+| Dernière mise à jour | 2026-08-13 |
 
 !!! warning "Avertissement préalable"
     `rclone bisync` **supprime et écrase des fichiers des deux côtés**. Une configuration bancale peut détruire des données. Chaque garde-fou décrit ici a une raison d'être : ne les retirez pas pour « simplifier ». Testez toujours sur un jeu de données jetable avant de viser vos vraies données.
@@ -336,6 +336,10 @@ LOGDIR="${XDG_DATA_HOME:-$HOME/.local/share}/rclone/logs"
 WORKDIR="${XDG_CACHE_HOME:-$HOME/.cache}/rclone/bisync"
 PREFLIGHT="$HOME/.local/bin/rclone-bisync-preflight.sh"
 
+# Nouvelle tentative avant de déclarer un échec (voir la boucle plus bas et le piège n°10).
+TENTATIVES_MAX="${RCLONE_TENTATIVES_MAX:-2}"
+DELAI_REESSAI="${RCLONE_DELAI_REESSAI:-15}"
+
 # <sous-dossier local>:<remote>
 PAIRS=(
   "Chiffre:gcrypt:"
@@ -463,11 +467,32 @@ for pair in "${PAIRS[@]}"; do
     rc=1; continue
   fi
 
-  if rclone bisync "$local_path" "$remote" "${args[@]}"; then
-    echo "paire $local_sub : OK"
-  else
-    echo "paire $local_sub : ECHEC (voir $log)" >&2; rc=1
-  fi
+  # Une seconde tentative distingue le transitoire du persistant. Voir le piège n°10.
+  tentative=1
+  while :; do
+    if rclone bisync "$local_path" "$remote" "${args[@]}"; then
+      if (( tentative > 1 )); then
+        echo "paire $local_sub : OK (réussie au ${tentative}e essai — échec transitoire absorbé)"
+      else
+        echo "paire $local_sub : OK"
+      fi
+      break
+    fi
+    # Un verrou détenu par une autre passe n'est pas une panne, c'est de la
+    # concurrence : il expire seul et la passe suivante prendra le relais.
+    if tail -5 "$log" 2>/dev/null | grep -q "prior lock file found"; then
+      echo "paire $local_sub : passe déjà en cours ailleurs, on laisse la main."
+      break
+    fi
+    if (( tentative >= TENTATIVES_MAX )); then
+      echo "paire $local_sub : ECHEC après $tentative essais (voir $log)" >&2
+      rc=1
+      break
+    fi
+    echo "paire $local_sub : échec au ${tentative}er essai, nouvelle tentative dans ${DELAI_REESSAI}s" >&2
+    sleep "$DELAI_REESSAI"
+    tentative=$((tentative + 1))
+  done
 done
 exit "$rc"
 ```
@@ -751,6 +776,55 @@ Deux choix de conception méritent d'être soulignés. Le garde-fou est **délib
 
 !!! warning "Ne confondez pas avec une vraie panne"
     Tant que ce garde-fou n'est pas en place, le symptôme visible est un service en échec au démarrage. Il est tentant d'incriminer le réseau, les identifiants OAuth ou la configuration rclone. Le seul indice fiable est `Using --password-command returned: exit status 1` dans les journaux rclone : c'est le trousseau, rien d'autre.
+
+### Piège n°10 — L'échec isolé qui n'est pas une panne
+
+Deux situations produisent une notification d'échec alors que **rien ne va mal**. Elles méritent d'être traitées ensemble, car la réponse est la même : distinguer le transitoire du persistant avant d'alerter.
+
+**Le plantage du binaire.** rclone est un programme Go, et il lui arrive de s'effondrer :
+
+!!! failure "Message d'erreur"
+    ```
+    fatal error: unexpected signal during runtime execution
+    [signal SIGSEGV: segmentation violation code=0x1 addr=0x77a030cff1c3 pc=0x43e453]
+    runtime.sweepone()
+      runtime/mgcsweep.go:383
+    github.com/rclone/rclone/backend/overview.GetBackendConfig(...)
+    github.com/rclone/rclone/fs.Register(...)
+    ```
+
+!!! danger "Le piège du diagnostic"
+    Ce plantage survient pendant l'**initialisation des paquets Go**, donc **avant que rclone n'ouvre son fichier de journal**. Vos logs rclone seront donc parfaitement **vides** pour cet incident. Toute la trace se trouve dans le journal systemd — cherchez-la avec `journalctl --user -u rclone-bisync.service`, jamais dans `~/.local/share/rclone/logs/`. Un cas observé en production : une seule occurrence en six jours d'exploitation, sans récidive.
+
+**Avant de conclure au hasard, écartez le matériel.** Un `SIGSEGV` dans le ramasse-miettes évoque une corruption mémoire, ce qui mérite trente secondes de vérification :
+
+```bash
+dpkg -V rclone; sudo dmesg -T | grep -iE "edac|mce|machine check|Hardware Error"; journalctl -b | grep -ic segfault
+```
+
+!!! success "Résultat attendu"
+    Aucune sortie de `dpkg -V` (binaire conforme au paquet), aucune ligne EDAC ni MCE, et un compte de `segfault` proche de zéro. Attention au comptage : un filtre trop large additionne les lignes d'un *même* incident et les plantages d'autres applications — Chrome en produit régulièrement, sans rapport.
+
+**La passe concurrente.** Second cas, plus fréquent : lancer une synchronisation à la main pendant qu'une passe automatique tourne déjà.
+
+!!! failure "Message d'erreur"
+    ```
+    NOTICE: Failed to bisync: prior lock file found:
+      ~/.cache/rclone/bisync/…_Clair..gd-clair_Rclone.lck
+    ```
+
+Ce n'est pas une panne mais de la concurrence — d'autant plus probable qu'un premier transfert volumineux peut durer bien plus que l'intervalle du timer. Le verrou expire seul grâce à `--max-lock` et la passe suivante prend le relais.
+
+**Solution — la boucle de reprise de l'étape 8.** Elle traite les trois cas séparément :
+
+| Situation | Comportement |
+|---|---|
+| Échec transitoire (plantage, coupure réseau) | Second essai 15 s plus tard ; s'il réussit, **aucune alerte**, mention « réussie au 2e essai » au journal |
+| Verrou détenu par une autre passe | Cède la main immédiatement, **sortie 0**, aucune alerte |
+| Échec déterministe (`too many deletes`, `check-access`) | Échoue à l'identique au second essai → **alerte levée**, avec 15 s de retard |
+
+!!! tip "Pourquoi une seule reprise, et pas trois"
+    Un second essai suffit à absorber le bruit. Au-delà, on retarde la détection des vrais problèmes sans rien gagner : un échec déterministe échouera autant de fois qu'on le relancera. La trace « réussie au 2e essai » reste au journal précisément pour qu'un plantage qui deviendrait récurrent ne passe pas inaperçu.
 
 ## Vérification
 
