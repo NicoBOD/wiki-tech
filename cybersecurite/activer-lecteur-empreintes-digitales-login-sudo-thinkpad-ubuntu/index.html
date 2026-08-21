@@ -2585,7 +2585,7 @@
 <p>L'objectif : utiliser l'empreinte pour <strong>ouvrir/déverrouiller la session</strong> et pour les demandes de mot de passe (<code>sudo</code>, fenêtres de privilège <strong>polkit</strong>). Le lecteur d'empreintes <strong>ne déverrouille pas le disque chiffré (LUKS) au boot</strong> — cela n'intervient qu'après le démarrage, via PAM.</p>
 <div class="admonition note">
 <p class="admonition-title">Identifier son capteur d'abord</p>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>lsusb<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;finger|validity|synaptic|138a|06cb|27c6|goodix|egis&#39;</span>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>lsusb<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>-E<span class="w"> </span><span class="s1">'finger|validity|synaptic|138a|06cb|27c6|goodix|egis'</span>
 </code></pre></div>
 Cette procédure vise le <strong><code>138a:0097</code></strong>. Pour d'autres modèles (ex. <code>138a:0090</code>), la méthode <code>libfprint-2-tod</code> / <code>validity-sensors-tools</code> peut convenir — voir la section <em>Alternative</em>.</p>
 </div>
@@ -2630,16 +2630,16 @@ Cette procédure vise le <strong><code>138a:0097</code></strong>. Pour d'autres 
 <h3 id="etape-2-initialiser-appairer-le-capteur">Étape 2 : Initialiser / appairer le capteur<a class="headerlink" href="#etape-2-initialiser-appairer-le-capteur" title="Permanent link">&para;</a></h3>
 <p>Le service <code>python3-validity</code> gère l'appairage tout seul au démarrage. S'il échoue (capteur dans un état résiduel), forcer un cycle propre :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>stop<span class="w"> </span>python3-validity
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># Reset &quot;propre&quot; via l&#39;implémentation python-validity (le capteur va se ré-énumérer)</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># Reset "propre" via l'implémentation python-validity (le capteur va se ré-énumérer)</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sudo<span class="w"> </span>python3<span class="w"> </span>/usr/share/python-validity/playground/factory-reset.py
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Purger l&#39;éventuel back-off d&#39;échecs</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Purger l'éventuel back-off d'échecs</span>
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>sudo<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>/usr/share/python-validity/backoff
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1"># Attendre ~5 s que le capteur réapparaisse sur l&#39;USB, puis relancer</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1"># Attendre ~5 s que le capteur réapparaisse sur l'USB, puis relancer</span>
 <a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>python3-validity
 </code></pre></div>
 <p>Vérifier que le service est <strong>actif</strong> et sans traceback fatal :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>systemctl<span class="w"> </span>is-active<span class="w"> </span>python3-validity
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>python3-validity<span class="w"> </span>-n<span class="w"> </span><span class="m">30</span><span class="w"> </span>--no-pager<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-viE<span class="w"> </span><span class="s1">&#39;&gt;cmd&gt;|&lt;cmd&lt;&#39;</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>python3-validity<span class="w"> </span>-n<span class="w"> </span><span class="m">30</span><span class="w"> </span>--no-pager<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-viE<span class="w"> </span><span class="s1">'&gt;cmd&gt;|&lt;cmd&lt;'</span>
 </code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Vérifier la présence USB si « No matching devices found »</p>
@@ -2649,7 +2649,7 @@ Cette procédure vise le <strong><code>138a:0097</code></strong>. Pour d'autres 
 puis relancez <code>sudo systemctl restart python3-validity</code>.</p>
 </div>
 <h3 id="etape-3-confirmer-que-le-peripherique-est-vu">Étape 3 : Confirmer que le périphérique est vu<a class="headerlink" href="#etape-3-confirmer-que-le-peripherique-est-vu" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>fprintd-list<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USER</span><span class="s2">&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>fprintd-list<span class="w"> </span><span class="s2">"</span><span class="nv">$USER</span><span class="s2">"</span>
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Attendu</p>
@@ -2664,13 +2664,13 @@ puis relancez <code>sudo systemctl restart python3-validity</code>.</p>
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>fprintd-enroll<span class="w"> </span>-f<span class="w"> </span>left-index-finger<span class="w">   </span><span class="c1"># optionnel : un second doigt</span>
 </code></pre></div>
 <p>Attendu : plusieurs <code>enroll-stage-passed</code> puis <strong><code>enroll-completed</code></strong>. Vérifier :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>fprintd-list<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USER</span><span class="s2">&quot;</span><span class="w">     </span><span class="c1"># doit lister les doigts enrôlés</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>fprintd-list<span class="w"> </span><span class="s2">"</span><span class="nv">$USER</span><span class="s2">"</span><span class="w">     </span><span class="c1"># doit lister les doigts enrôlés</span>
 </code></pre></div>
 <p>Noms de doigts valides : <code>{left,right}-{thumb,index,middle,ring,little}-finger</code>.</p>
 <h3 id="etape-5-activer-lempreinte-dans-pam-login-sudo-polkit">Étape 5 : Activer l'empreinte dans PAM (login, sudo, polkit)<a class="headerlink" href="#etape-5-activer-lempreinte-dans-pam-login-sudo-polkit" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Sauvegarde de sécurité</span>
 <a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>sudo<span class="w"> </span>cp<span class="w"> </span>-a<span class="w"> </span>/etc/pam.d/common-auth<span class="w"> </span>/etc/pam.d/common-auth.bak-<span class="k">$(</span>date<span class="w"> </span>+%F<span class="k">)</span>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c1"># Active le profil fprintd (empreinte &quot;suffisante&quot;, mot de passe conservé)</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c1"># Active le profil fprintd (empreinte "suffisante", mot de passe conservé)</span>
 <a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>sudo<span class="w"> </span>pam-auth-update<span class="w"> </span>--enable<span class="w"> </span>fprintd
 </code></pre></div>
 <p>Le <code>/etc/pam.d/common-auth</code> obtenu ressemble à :</p>
@@ -2684,7 +2684,7 @@ puis relancez <code>sudo systemctl restart python3-validity</code>.</p>
 </div>
 <h3 id="etape-6-souvent-necessaire-autoriser-sudo-a-demander-lempreinte">Étape 6 (souvent nécessaire) : autoriser <code>sudo</code> à demander l'empreinte<a class="headerlink" href="#etape-6-souvent-necessaire-autoriser-sudo-a-demander-lempreinte" title="Permanent link">&para;</a></h3>
 <p>Si <code>sudo</code> est configuré en <strong>NOPASSWD</strong>, il <strong>n'authentifie pas du tout</strong> → aucune empreinte demandée. Vérifier :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-nE<span class="w"> </span><span class="s1">&#39;NOPASSWD&#39;</span><span class="w"> </span>/etc/sudoers<span class="w"> </span>/etc/sudoers.d/*<span class="w"> </span><span class="m">2</span>&gt;/dev/null
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-nE<span class="w"> </span><span class="s1">'NOPASSWD'</span><span class="w"> </span>/etc/sudoers<span class="w"> </span>/etc/sudoers.d/*<span class="w"> </span><span class="m">2</span>&gt;/dev/null
 </code></pre></div>
 <p>Pour que <code>sudo</code> demande l'empreinte (et gagner en sécurité), retirer la règle NOPASSWD <strong>en validant la syntaxe</strong> pour ne jamais casser sudo :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>sudo<span class="w"> </span>cp<span class="w"> </span>-a<span class="w"> </span>/etc/sudoers<span class="w"> </span>/etc/sudoers.bak-<span class="k">$(</span>date<span class="w"> </span>+%F<span class="k">)</span>
@@ -2696,7 +2696,7 @@ puis relancez <code>sudo systemctl restart python3-validity</code>.</p>
 <a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>fprintd-verify<span class="w">           </span><span class="c1"># poser le doigt -&gt; attendu : verify-match</span>
 <a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
 <a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="c1"># sudo : vider le cache puis tester</span>
-<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>sudo<span class="w"> </span>-k<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span><span class="nb">true</span><span class="w">     </span><span class="c1"># -&gt; &quot;Placez votre doigt sur le lecteur d&#39;empreintes&quot;</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>sudo<span class="w"> </span>-k<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span><span class="nb">true</span><span class="w">     </span><span class="c1"># -&gt; "Placez votre doigt sur le lecteur d'empreintes"</span>
 </code></pre></div>
 <ul>
 <li><strong>Session GNOME</strong> : verrouiller (<span class="keys"><kbd class="key-super">Super</kbd><span>+</span><kbd class="key-l">L</kbd></span>) puis poser le doigt → déverrouillage.</li>
@@ -2724,8 +2724,8 @@ puis relancez <code>sudo systemctl restart python3-validity</code>.</p>
 <p>Le service <code>python3-validity</code> est activé au boot et ré-ouvre le capteur déjà appairé ; les empreintes (stockées <strong>sur la puce</strong>) persistent. En cas de non-réponse : <code>sudo systemctl restart python3-validity</code>.</p>
 </div>
 <h2 id="retour-en-arriere">Retour en arrière<a class="headerlink" href="#retour-en-arriere" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Désactiver l&#39;empreinte dans PAM</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>sudo<span class="w"> </span>pam-auth-update<span class="w">    </span><span class="c1"># décocher &quot;Fingerprint authentication&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Désactiver l'empreinte dans PAM</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>sudo<span class="w"> </span>pam-auth-update<span class="w">    </span><span class="c1"># décocher "Fingerprint authentication"</span>
 <a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="c1"># (ou restaurer /etc/pam.d/common-auth.bak-AAAA-MM-JJ)</span>
 <a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>
 <a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="c1"># Revenir à sudo NOPASSWD : sudo visudo, décommenter la ligne</span>

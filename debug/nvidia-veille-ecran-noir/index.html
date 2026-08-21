@@ -2529,7 +2529,7 @@ Cette fiche couvre le diagnostic complet et la correction définitive.</p>
 <h2 id="diagnostic-rapide">Diagnostic rapide<a class="headerlink" href="#diagnostic-rapide" title="Permanent link">&para;</a></h2>
 <h3 id="1-verifier-les-logs-de-la-derniere-veille">1. Vérifier les logs de la dernière veille<a class="headerlink" href="#1-verifier-les-logs-de-la-derniere-veille" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Logs du boot actuel (si le système a été redémarré après le blocage)</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>journalctl<span class="w"> </span>-b<span class="w"> </span>-1<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;nvidia|suspend|resume|PM:|sleep&#39;</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>journalctl<span class="w"> </span>-b<span class="w"> </span>-1<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">'nvidia|suspend|resume|PM:|sleep'</span>
 </code></pre></div>
 <h3 id="2-verifier-letat-dkms">2. Vérifier l'état DKMS<a class="headerlink" href="#2-verifier-letat-dkms" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>dkms<span class="w"> </span>status
@@ -2543,7 +2543,7 @@ Cause probable : headers du noyau manquants.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>systemctl<span class="w"> </span>is-enabled<span class="w"> </span>nvidia-suspend<span class="w"> </span>nvidia-resume<span class="w"> </span>nvidia-hibernate
 </code></pre></div>
 <h3 id="4-verifier-les-parametres-du-driver">4. Vérifier les paramètres du driver<a class="headerlink" href="#4-verifier-les-parametres-du-driver" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>cat<span class="w"> </span>/proc/driver/nvidia/params<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;Preserve|TemporaryFilePath&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>cat<span class="w"> </span>/proc/driver/nvidia/params<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'Preserve|TemporaryFilePath'</span>
 </code></pre></div>
 <h3 id="5-confirmer-que-nvidia-resumeservice-sest-execute-au-dernier-reveil">5. Confirmer que nvidia-resume.service s'est exécuté au dernier réveil<a class="headerlink" href="#5-confirmer-que-nvidia-resumeservice-sest-execute-au-dernier-reveil" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>journalctl<span class="w"> </span>-b<span class="w"> </span>-1<span class="w"> </span>-u<span class="w"> </span>nvidia-suspend.service<span class="w"> </span>-u<span class="w"> </span>nvidia-resume.service<span class="w"> </span>-u<span class="w"> </span>nvidia-display-restore.service
@@ -2573,7 +2573,7 @@ Mais sans ces services, les scripts <code>nvidia-sleep.sh</code> (qui font la sa
 <h3 id="etape-3-creer-un-service-de-restauration-daffichage-filet-de-securite">Étape 3 : Créer un service de restauration d'affichage (filet de sécurité)<a class="headerlink" href="#etape-3-creer-un-service-de-restauration-daffichage-filet-de-securite" title="Permanent link">&para;</a></h3>
 <p>Le script <code>nvidia-sleep.sh</code> bascule sur le VT63 avant le suspend et doit revenir sur le bon VT au resume. Ce <code>chvt</code> échoue parfois silencieusement → écran noir.</p>
 <p>Créer le service :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/systemd/system/nvidia-display-restore.service<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/systemd/system/nvidia-display-restore.service<span class="w"> </span><span class="s">&lt;&lt; 'EOF'</span>
 <a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="s">[Unit]</span>
 <a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="s">Description=Restore display after NVIDIA resume</span>
 <a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="s">After=nvidia-resume.service systemd-suspend.service</span>
@@ -2583,7 +2583,7 @@ Mais sans ces services, les scripts <code>nvidia-sleep.sh</code> (qui font la sa
 <a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="s">[Service]</span>
 <a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="s">Type=oneshot</span>
 <a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="s">ExecStartPre=/bin/sleep 2</span>
-<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="s">ExecStart=/bin/bash -c &#39;echo resume &gt; /proc/driver/nvidia/suspend 2&gt;/dev/null; VT=$(cat /sys/class/tty/tty0/active 2&gt;/dev/null | tr -dc &quot;0-9&quot;); if [ &quot;$VT&quot; = &quot;63&quot; ] || [ -z &quot;$VT&quot; ] || [ &quot;$VT&quot; -gt 7 ]; then chvt 2; fi&#39;</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="s">ExecStart=/bin/bash -c 'echo resume &gt; /proc/driver/nvidia/suspend 2&gt;/dev/null; VT=$(cat /sys/class/tty/tty0/active 2&gt;/dev/null | tr -dc "0-9"); if [ "$VT" = "63" ] || [ -z "$VT" ] || [ "$VT" -gt 7 ]; then chvt 2; fi'</span>
 <a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>
 <a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="s">[Install]</span>
 <a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="s">WantedBy=systemd-suspend.service</span>
@@ -2610,13 +2610,13 @@ pas dans les journaux après un réveil (cf. Diagnostic — étape 5).</p>
 </div>
 <p>Ce drop-in attache <code>nvidia-sleep.sh resume</code> <strong>et la restauration du VT</strong> directement à <code>ExecStartPost</code> de <code>systemd-suspend.service</code>, ce qui garantit leur exécution indépendamment du mécanisme <code>WantedBy</code> (et rend le service de l'Étape 3 redondant).</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/etc/systemd/system/systemd-suspend.service.d/
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/systemd/system/systemd-suspend.service.d/nvidia-resume.conf<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/systemd/system/systemd-suspend.service.d/nvidia-resume.conf<span class="w"> </span><span class="s">&lt;&lt; 'EOF'</span>
 <a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="s">[Service]</span>
 <a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="s"># Restauration VRAM</span>
 <a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="s">ExecStartPost=-/usr/bin/nvidia-sleep.sh resume</span>
 <a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="s"># Restauration du VT — remplace nvidia-display-restore.service (Étape 3)</span>
 <a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="s">ExecStartPost=-/bin/sleep 2</span>
-<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="s">ExecStartPost=-/bin/bash -c &#39;echo resume &gt; /proc/driver/nvidia/suspend 2&gt;/dev/null; VT=$(cat /sys/class/tty/tty0/active 2&gt;/dev/null | tr -dc &quot;0-9&quot;); if [ &quot;$VT&quot; = &quot;63&quot; ] || [ -z &quot;$VT&quot; ] || [ &quot;$VT&quot; -gt 7 ]; then chvt 2; fi&#39;</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="s">ExecStartPost=-/bin/bash -c 'echo resume &gt; /proc/driver/nvidia/suspend 2&gt;/dev/null; VT=$(cat /sys/class/tty/tty0/active 2&gt;/dev/null | tr -dc "0-9"); if [ "$VT" = "63" ] || [ -z "$VT" ] || [ "$VT" -gt 7 ]; then chvt 2; fi'</span>
 <a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="s">EOF</span>
 <a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
 </code></pre></div>
@@ -2638,14 +2638,14 @@ pas dans les journaux après un réveil (cf. Diagnostic — étape 5).</p>
 <p>Cas observé en pratique (2026-05-30) : sans le <code>chvt</code> dans le drop-in, la VRAM est bien restaurée mais l'écran reste sur VT63 → écran noir malgré l'Étape 4 d'origine. C'est pour ça que le drop-in inclut désormais les 3 actions.</p>
 </div>
 <h3 id="etape-5-verifier-la-coherence-de-la-config-modprobe">Étape 5 : Vérifier la cohérence de la config modprobe<a class="headerlink" href="#etape-5-verifier-la-coherence-de-la-config-modprobe" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>grep<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;NVreg_&#39;</span><span class="w"> </span>/etc/modprobe.d/
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>grep<span class="w"> </span>-r<span class="w"> </span><span class="s1">'NVreg_'</span><span class="w"> </span>/etc/modprobe.d/
 </code></pre></div>
 <p>S'assurer que <code>NVreg_TemporaryFilePath</code> pointe vers <code>/var/tmp</code> (et non <code>/var</code> tronqué) :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Fichier généré par le driver :</span>
 <a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>cat<span class="w"> </span>/etc/modprobe.d/nvidia-graphics-drivers-kms.conf
 </code></pre></div>
 <p>Si nécessaire, corriger :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>sudo<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s|NVreg_TemporaryFilePath=/var$|NVreg_TemporaryFilePath=/var/tmp|&#39;</span><span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>sudo<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">'s|NVreg_TemporaryFilePath=/var$|NVreg_TemporaryFilePath=/var/tmp|'</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">  </span>/etc/modprobe.d/nvidia-graphics-drivers-kms.conf
 </code></pre></div>
 <h2 id="verification">Vérification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
@@ -2660,7 +2660,7 @@ pas dans les journaux après un réveil (cf. Diagnostic — étape 5).</p>
 <a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>systemctl<span class="w"> </span>list-dependencies<span class="w"> </span>systemd-suspend.service
 <a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>
 <a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="c1"># Paramètres NVIDIA</span>
-<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>cat<span class="w"> </span>/proc/driver/nvidia/params<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;Preserve|TemporaryFilePath&#39;</span>
+<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>cat<span class="w"> </span>/proc/driver/nvidia/params<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'Preserve|TemporaryFilePath'</span>
 <a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>
 <a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a><span class="c1"># Mode de veille</span>
 <a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a>cat<span class="w"> </span>/sys/power/mem_sleep
@@ -2676,7 +2676,7 @@ pas dans les journaux après un réveil (cf. Diagnostic — étape 5).</p>
 <a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a># /etc/systemd/system/systemd-suspend.service.d/nvidia-resume.conf
 <a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>ExecStartPost=-/usr/bin/nvidia-sleep.sh resume
 <a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>ExecStartPost=-/bin/sleep 2
-<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>ExecStartPost=-/bin/bash -c &#39;echo resume &gt; /proc/driver/nvidia/suspend …; chvt 2; fi&#39;
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>ExecStartPost=-/bin/bash -c 'echo resume &gt; /proc/driver/nvidia/suspend …; chvt 2; fi'
 <a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>
 <a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>systemd-suspend.service
 <a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>├─nvidia-display-restore.service
@@ -2686,7 +2686,7 @@ pas dans les journaux après un réveil (cf. Diagnostic — étape 5).</p>
 <a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a>└─sleep.target
 <a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a>
 <a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a>PreserveVideoMemoryAllocations: 1
-<a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a>TemporaryFilePath: &quot;/var/tmp&quot;
+<a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a>TemporaryFilePath: "/var/tmp"
 <a id="__codelineno-16-21" name="__codelineno-16-21" href="#__codelineno-16-21"></a>
 <a id="__codelineno-16-22" name="__codelineno-16-22" href="#__codelineno-16-22"></a>s2idle [deep]
 </code></pre></div>
@@ -2700,7 +2700,7 @@ pas dans les journaux après un réveil (cf. Diagnostic — étape 5).</p>
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu après réveil</p>
 <p>La sortie doit contenir des lignes mentionnant <code>nvidia-sleep.sh</code> <strong>et</strong> <code>chvt</code> dans les <code>ExecStartPost</code>. Vérification plus directe :
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>systemctl<span class="w"> </span>show<span class="w"> </span>systemd-suspend.service<span class="w"> </span>-p<span class="w"> </span>ExecStartPost<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span><span class="s1">&#39; &#39;</span><span class="w"> </span><span class="s1">&#39;\n&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;nvidia-sleep|chvt&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>systemctl<span class="w"> </span>show<span class="w"> </span>systemd-suspend.service<span class="w"> </span>-p<span class="w"> </span>ExecStartPost<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span><span class="s1">' '</span><span class="w"> </span><span class="s1">'\n'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'nvidia-sleep|chvt'</span>
 </code></pre></div></p>
 </div>
 <div class="admonition tip">

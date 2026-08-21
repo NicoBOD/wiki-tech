@@ -2559,9 +2559,9 @@
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/lab-rsync/restore
 </code></pre></div>
 <p>Ajoutez quelques fichiers de test :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">printf</span><span class="w"> </span><span class="s1">&#39;Bonjour depuis le lab rsync\n&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>~/lab-rsync/source/readme.txt
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">printf</span><span class="w"> </span><span class="s1">&#39;Version 1\n&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>~/lab-rsync/source/docs/inventaire.txt
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nb">printf</span><span class="w"> </span><span class="s1">&#39;192.168.56.21 srv-lab-01\n192.168.56.22 srv-lab-02\n&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>~/lab-rsync/source/docs/hotes.txt
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">printf</span><span class="w"> </span><span class="s1">'Bonjour depuis le lab rsync\n'</span><span class="w"> </span>&gt;<span class="w"> </span>~/lab-rsync/source/readme.txt
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">printf</span><span class="w"> </span><span class="s1">'Version 1\n'</span><span class="w"> </span>&gt;<span class="w"> </span>~/lab-rsync/source/docs/inventaire.txt
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nb">printf</span><span class="w"> </span><span class="s1">'192.168.56.21 srv-lab-01\n192.168.56.22 srv-lab-02\n'</span><span class="w"> </span>&gt;<span class="w"> </span>~/lab-rsync/source/docs/hotes.txt
 </code></pre></div>
 <p>Affichez ensuite le contenu du dossier source :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>find<span class="w"> </span>~/lab-rsync/source<span class="w"> </span>-maxdepth<span class="w"> </span><span class="m">2</span><span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort
@@ -2626,7 +2626,7 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>find<span class="w"> </span>~/lab-rsync/destination-local<span class="w"> </span>-maxdepth<span class="w"> </span><span class="m">2</span><span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort
 </code></pre></div>
 <p>Vous pouvez aussi comparer les deux arborescences :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>diff<span class="w"> </span>-r<span class="w"> </span>~/lab-rsync/source<span class="w"> </span>~/lab-rsync/destination-local<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;copies identiques&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>diff<span class="w"> </span>-r<span class="w"> </span>~/lab-rsync/source<span class="w"> </span>~/lab-rsync/destination-local<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"copies identiques"</span>
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu</p>
@@ -2635,8 +2635,8 @@
 <h3 id="etape-5-rejouer-une-synchronisation-incrementale">Étape 5 : rejouer une synchronisation incrémentale<a class="headerlink" href="#etape-5-rejouer-une-synchronisation-incrementale" title="Permanent link">&para;</a></h3>
 <p>L'intérêt de <code>rsync</code> apparaît vraiment quand la source change.</p>
 <p>Modifiez un fichier existant et ajoutez-en un nouveau :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nb">printf</span><span class="w"> </span><span class="s1">&#39;Version 2\n&#39;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/lab-rsync/source/docs/inventaire.txt
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="nb">printf</span><span class="w"> </span><span class="s1">&#39;Compte-rendu du TP\n&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>~/lab-rsync/source/docs/compte-rendu.txt
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nb">printf</span><span class="w"> </span><span class="s1">'Version 2\n'</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/lab-rsync/source/docs/inventaire.txt
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="nb">printf</span><span class="w"> </span><span class="s1">'Compte-rendu du TP\n'</span><span class="w"> </span>&gt;<span class="w"> </span>~/lab-rsync/source/docs/compte-rendu.txt
 </code></pre></div>
 <p>Relancez une simulation :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>rsync<span class="w"> </span>-av<span class="w"> </span>--dry-run<span class="w"> </span>~/lab-rsync/source/<span class="w"> </span>~/lab-rsync/destination-local/
@@ -2655,7 +2655,7 @@
 </code></pre></div>
 <p>Vérifiez le résultat :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>find<span class="w"> </span>~/lab-rsync/restore<span class="w"> </span>-maxdepth<span class="w"> </span><span class="m">2</span><span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort
-<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>diff<span class="w"> </span>-r<span class="w"> </span>~/lab-rsync/destination-local<span class="w"> </span>~/lab-rsync/restore<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;restauration correcte&quot;</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>diff<span class="w"> </span>-r<span class="w"> </span>~/lab-rsync/destination-local<span class="w"> </span>~/lab-rsync/restore<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"restauration correcte"</span>
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu</p>
@@ -2667,10 +2667,10 @@
 <a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="nv">REMOTE_HOST</span><span class="o">=</span><span class="m">192</span>.168.56.30
 </code></pre></div>
 <p>Testez d'abord l'accès SSH :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>ssh<span class="w"> </span><span class="si">${</span><span class="nv">REMOTE_USER</span><span class="si">}</span>@<span class="si">${</span><span class="nv">REMOTE_HOST</span><span class="si">}</span><span class="w"> </span><span class="s2">&quot;hostname&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>ssh<span class="w"> </span><span class="si">${</span><span class="nv">REMOTE_USER</span><span class="si">}</span>@<span class="si">${</span><span class="nv">REMOTE_HOST</span><span class="si">}</span><span class="w"> </span><span class="s2">"hostname"</span>
 </code></pre></div>
 <p>Si la connexion fonctionne, créez un dossier cible sur la machine distante :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>ssh<span class="w"> </span><span class="si">${</span><span class="nv">REMOTE_USER</span><span class="si">}</span>@<span class="si">${</span><span class="nv">REMOTE_HOST</span><span class="si">}</span><span class="w"> </span><span class="s1">&#39;mkdir -p ~/backup-rsync/source&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>ssh<span class="w"> </span><span class="si">${</span><span class="nv">REMOTE_USER</span><span class="si">}</span>@<span class="si">${</span><span class="nv">REMOTE_HOST</span><span class="si">}</span><span class="w"> </span><span class="s1">'mkdir -p ~/backup-rsync/source'</span>
 </code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Premier test conseillé</p>
@@ -2684,7 +2684,7 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>rsync<span class="w"> </span>-av<span class="w"> </span>-e<span class="w"> </span>ssh<span class="w"> </span>~/lab-rsync/source/<span class="w"> </span><span class="si">${</span><span class="nv">REMOTE_USER</span><span class="si">}</span>@<span class="si">${</span><span class="nv">REMOTE_HOST</span><span class="si">}</span>:~/backup-rsync/source/
 </code></pre></div>
 <p>Vérifiez ensuite la présence des fichiers sur la machine distante :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>ssh<span class="w"> </span><span class="si">${</span><span class="nv">REMOTE_USER</span><span class="si">}</span>@<span class="si">${</span><span class="nv">REMOTE_HOST</span><span class="si">}</span><span class="w"> </span><span class="s1">&#39;find ~/backup-rsync/source -maxdepth 2 -type f | sort&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>ssh<span class="w"> </span><span class="si">${</span><span class="nv">REMOTE_USER</span><span class="si">}</span>@<span class="si">${</span><span class="nv">REMOTE_HOST</span><span class="si">}</span><span class="w"> </span><span class="s1">'find ~/backup-rsync/source -maxdepth 2 -type f | sort'</span>
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu</p>
@@ -2696,8 +2696,8 @@
 <p>Créez un mini labo séparé pour la tester sans danger :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/lab-rsync/delete-demo/source
 <a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/lab-rsync/delete-demo/destination
-<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="nb">printf</span><span class="w"> </span><span class="s1">&#39;fichier utile\n&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>~/lab-rsync/delete-demo/source/fichier-a.txt
-<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="nb">printf</span><span class="w"> </span><span class="s1">&#39;ancien fichier\n&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>~/lab-rsync/delete-demo/destination/obsolete.txt
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="nb">printf</span><span class="w"> </span><span class="s1">'fichier utile\n'</span><span class="w"> </span>&gt;<span class="w"> </span>~/lab-rsync/delete-demo/source/fichier-a.txt
+<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="nb">printf</span><span class="w"> </span><span class="s1">'ancien fichier\n'</span><span class="w"> </span>&gt;<span class="w"> </span>~/lab-rsync/delete-demo/destination/obsolete.txt
 </code></pre></div>
 <p>Simulez d'abord la commande :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>rsync<span class="w"> </span>-av<span class="w"> </span>--dry-run<span class="w"> </span>--delete<span class="w"> </span>~/lab-rsync/delete-demo/source/<span class="w"> </span>~/lab-rsync/delete-demo/destination/
@@ -2757,9 +2757,9 @@
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> vous savez quand utiliser <code>--dry-run</code> et pourquoi <code>--delete</code> demande de la prudence.</li>
 </ul>
 <p>Commandes de contrôle utiles :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>diff<span class="w"> </span>-r<span class="w"> </span>~/lab-rsync/source<span class="w"> </span>~/lab-rsync/destination-local<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;sauvegarde locale OK&quot;</span>
-<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>diff<span class="w"> </span>-r<span class="w"> </span>~/lab-rsync/destination-local<span class="w"> </span>~/lab-rsync/restore<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;restauration OK&quot;</span>
-<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>ssh<span class="w"> </span><span class="si">${</span><span class="nv">REMOTE_USER</span><span class="si">}</span>@<span class="si">${</span><span class="nv">REMOTE_HOST</span><span class="si">}</span><span class="w"> </span><span class="s1">&#39;find ~/backup-rsync/source -maxdepth 2 -type f | sort&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>diff<span class="w"> </span>-r<span class="w"> </span>~/lab-rsync/source<span class="w"> </span>~/lab-rsync/destination-local<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"sauvegarde locale OK"</span>
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>diff<span class="w"> </span>-r<span class="w"> </span>~/lab-rsync/destination-local<span class="w"> </span>~/lab-rsync/restore<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"restauration OK"</span>
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>ssh<span class="w"> </span><span class="si">${</span><span class="nv">REMOTE_USER</span><span class="si">}</span>@<span class="si">${</span><span class="nv">REMOTE_HOST</span><span class="si">}</span><span class="w"> </span><span class="s1">'find ~/backup-rsync/source -maxdepth 2 -type f | sort'</span>
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu</p>

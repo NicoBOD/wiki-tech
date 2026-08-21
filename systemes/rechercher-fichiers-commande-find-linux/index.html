@@ -2361,10 +2361,10 @@ Par défaut, si vous ne spécifiez pas d'action, <code>find</code> affichera sim
 <h3 id="1-rechercher-par-nom-de-fichier">1. Rechercher par nom de fichier<a class="headerlink" href="#1-rechercher-par-nom-de-fichier" title="Permanent link">&para;</a></h3>
 <p>C'est l'utilisation la plus fréquente. On utilise l'option <code>-name</code> (sensible à la casse) ou <code>-iname</code> (insensible à la casse).</p>
 <p>Rechercher un fichier dont on connaît le nom exact dans le dossier <code>/etc</code> :
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>find<span class="w"> </span>/etc<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;passwd&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>find<span class="w"> </span>/etc<span class="w"> </span>-name<span class="w"> </span><span class="s2">"passwd"</span>
 </code></pre></div></p>
 <p>Rechercher tous les fichiers se terminant par <code>.log</code> dans <code>/var/log</code> :
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>find<span class="w"> </span>/var/log<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.log&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>find<span class="w"> </span>/var/log<span class="w"> </span>-name<span class="w"> </span><span class="s2">"*.log"</span>
 </code></pre></div></p>
 <div class="admonition tip">
 <p class="admonition-title">Attention aux guillemets</p>
@@ -2378,7 +2378,7 @@ Par défaut, si vous ne spécifiez pas d'action, <code>find</code> affichera sim
 <li><code>l</code> : lien symbolique (link)</li>
 </ul>
 <p>Lister uniquement les <strong>dossiers</strong> nommés <code>backup</code> dans le répertoire courant (<code>.</code>) :
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>find<span class="w"> </span>.<span class="w"> </span>-type<span class="w"> </span>d<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;backup&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>find<span class="w"> </span>.<span class="w"> </span>-type<span class="w"> </span>d<span class="w"> </span>-name<span class="w"> </span><span class="s2">"backup"</span>
 </code></pre></div></p>
 <h3 id="3-rechercher-par-taille">3. Rechercher par taille<a class="headerlink" href="#3-rechercher-par-taille" title="Permanent link">&para;</a></h3>
 <p>Idéal pour identifier ce qui consomme de l'espace disque. L'option <code>-size</code> permet de spécifier une taille avec un préfixe <code>+</code> (plus grand que) ou <code>-</code> (plus petit que).
@@ -2402,7 +2402,7 @@ Les unités courantes sont <code>k</code> (kilo-octets), <code>M</code> (méga-o
 <p>C'est là que <code>find</code> devient redoutable pour l'automatisation. L'option <code>-exec</code> permet de lancer une commande sur chaque fichier trouvé.
 La syntaxe requiert <code>{}</code> (qui représente le fichier trouvé) et de terminer la commande par <code>\;</code>.</p>
 <p>Trouver et supprimer (<code>rm</code>) tous les fichiers <code>.bak</code> dans le dossier courant :
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>find<span class="w"> </span>.<span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.bak&quot;</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span><span class="o">{}</span><span class="w"> </span><span class="se">\;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>find<span class="w"> </span>.<span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span>-name<span class="w"> </span><span class="s2">"*.bak"</span><span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span><span class="o">{}</span><span class="w"> </span><span class="se">\;</span>
 </code></pre></div></p>
 <p>Changer les permissions (<code>chmod 644</code>) de tous les fichiers d'un répertoire <code>/var/www/html</code> :
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>find<span class="w"> </span>/var/www/html<span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span>-exec<span class="w"> </span>chmod<span class="w"> </span><span class="m">644</span><span class="w"> </span><span class="o">{}</span><span class="w"> </span><span class="se">\;</span>

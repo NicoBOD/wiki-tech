@@ -2433,8 +2433,8 @@
 <p>Lors du premier lancement, le téléchargement peut prendre quelques minutes selon votre connexion.</p>
 <h3 id="etape-4-interagir-avec-le-llm">Étape 4 : Interagir avec le LLM<a class="headerlink" href="#etape-4-interagir-avec-le-llm" title="Permanent link">&para;</a></h3>
 <p>Une fois le modèle chargé, vous arrivez dans un prompt interactif. Vous pouvez y taper vos questions directement :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>&gt;&gt;&gt; Explique-moi ce qu&#39;est un LLM en une phrase simple.
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Un LLM (Grand Modèle de Langage) est un programme d&#39;intelligence artificielle entraîné sur de vastes quantités de texte pour comprendre et générer du langage humain de manière naturelle.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>&gt;&gt;&gt; Explique-moi ce qu'est un LLM en une phrase simple.
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Un LLM (Grand Modèle de Langage) est un programme d'intelligence artificielle entraîné sur de vastes quantités de texte pour comprendre et générer du langage humain de manière naturelle.
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
 <a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>&gt;&gt;&gt; /bye
 </code></pre></div>
@@ -2451,11 +2451,11 @@
 <p>Ollama expose également une API REST locale sur le port <code>11434</code>, ce qui est parfait pour l'intégrer dans vos propres scripts Python ou applications.</p>
 <h3 id="exemple-de-requete-avec-curl">Exemple de requête avec <code>curl</code><a class="headerlink" href="#exemple-de-requete-avec-curl" title="Permanent link">&para;</a></h3>
 <p>Vous pouvez interroger votre modèle local avec une simple requête HTTP :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>curl<span class="w"> </span>http://localhost:11434/api/generate<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="s1">  &quot;model&quot;: &quot;llama3&quot;,</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="s1">  &quot;prompt&quot;: &quot;Pourquoi le ciel est bleu ?&quot;,</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="s1">  &quot;stream&quot;: false</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="s1">}&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>curl<span class="w"> </span>http://localhost:11434/api/generate<span class="w"> </span>-d<span class="w"> </span><span class="s1">'{</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="s1">  "model": "llama3",</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="s1">  "prompt": "Pourquoi le ciel est bleu ?",</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="s1">  "stream": false</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="s1">}'</span>
 </code></pre></div>
 <p>Le retour sera un objet JSON contenant la réponse du modèle générée sur votre propre serveur.</p>
 <h2 id="checklist">Checklist<a class="headerlink" href="#checklist" title="Permanent link">&para;</a></h2>

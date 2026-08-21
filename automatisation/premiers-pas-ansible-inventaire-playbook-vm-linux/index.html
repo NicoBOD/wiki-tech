@@ -2695,7 +2695,7 @@ Puis quittez chaque session avec :</p>
 </div>
 <h3 id="etape-3-creer-une-paire-de-cles-ssh-dediee-au-lab">Étape 3 : créer une paire de clés SSH dédiée au lab<a class="headerlink" href="#etape-3-creer-une-paire-de-cles-ssh-dediee-au-lab" title="Permanent link">&para;</a></h3>
 <p>Pour éviter de saisir le mot de passe SSH à chaque commande, créez une paire de clés dédiée à ce TP :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>ssh-keygen<span class="w"> </span>-t<span class="w"> </span>ed25519<span class="w"> </span>-f<span class="w"> </span>~/.ssh/ansible-lab<span class="w"> </span>-C<span class="w"> </span><span class="s2">&quot;ansible-lab&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>ssh-keygen<span class="w"> </span>-t<span class="w"> </span>ed25519<span class="w"> </span>-f<span class="w"> </span>~/.ssh/ansible-lab<span class="w"> </span>-C<span class="w"> </span><span class="s2">"ansible-lab"</span>
 </code></pre></div>
 <p>Quand la commande vous demande une passphrase, vous pouvez :</p>
 <ul>
@@ -2707,8 +2707,8 @@ Puis quittez chaque session avec :</p>
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>ssh-copy-id<span class="w"> </span>-i<span class="w"> </span>~/.ssh/ansible-lab.pub<span class="w"> </span>formation@192.168.56.22
 </code></pre></div>
 <p>Testez enfin la connexion sans mot de passe SSH :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>ssh<span class="w"> </span>-i<span class="w"> </span>~/.ssh/ansible-lab<span class="w"> </span>formation@192.168.56.21<span class="w"> </span><span class="s2">&quot;hostname&quot;</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>ssh<span class="w"> </span>-i<span class="w"> </span>~/.ssh/ansible-lab<span class="w"> </span>formation@192.168.56.22<span class="w"> </span><span class="s2">&quot;hostname&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>ssh<span class="w"> </span>-i<span class="w"> </span>~/.ssh/ansible-lab<span class="w"> </span>formation@192.168.56.21<span class="w"> </span><span class="s2">"hostname"</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>ssh<span class="w"> </span>-i<span class="w"> </span>~/.ssh/ansible-lab<span class="w"> </span>formation@192.168.56.22<span class="w"> </span><span class="s2">"hostname"</span>
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu</p>
@@ -2782,12 +2782,12 @@ Puis quittez chaque session avec :</p>
 </code></pre></div>
 <p>Exemple de résultat attendu :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>srv-lab-01 | SUCCESS =&gt; {
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>    &quot;changed&quot;: false,
-<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>    &quot;ping&quot;: &quot;pong&quot;
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>    "changed": false,
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>    "ping": "pong"
 <a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>}
 <a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>srv-lab-02 | SUCCESS =&gt; {
-<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>    &quot;changed&quot;: false,
-<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>    &quot;ping&quot;: &quot;pong&quot;
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>    "changed": false,
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>    "ping": "pong"
 <a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>}
 </code></pre></div>
 <div class="admonition note">
@@ -2831,11 +2831,11 @@ Puis quittez chaque session avec :</p>
 <a id="__codelineno-19-19" name="__codelineno-19-19" href="#__codelineno-19-19"></a><span class="w">        </span><span class="nt">dest</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/ansible-lab.txt</span>
 <a id="__codelineno-19-20" name="__codelineno-19-20" href="#__codelineno-19-20"></a><span class="w">        </span><span class="nt">content</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
 <a id="__codelineno-19-21" name="__codelineno-19-21" href="#__codelineno-19-21"></a><span class="w">          </span><span class="no">Ce fichier a été déployé par Ansible.</span>
-<a id="__codelineno-19-22" name="__codelineno-19-22" href="#__codelineno-19-22"></a><span class="w">          </span><span class="no">Hôte d&#39;inventaire : {{ inventory_hostname }}</span>
+<a id="__codelineno-19-22" name="__codelineno-19-22" href="#__codelineno-19-22"></a><span class="w">          </span><span class="no">Hôte d'inventaire : {{ inventory_hostname }}</span>
 <a id="__codelineno-19-23" name="__codelineno-19-23" href="#__codelineno-19-23"></a><span class="w">          </span><span class="no">Adresse cible : {{ ansible_host }}</span>
 <a id="__codelineno-19-24" name="__codelineno-19-24" href="#__codelineno-19-24"></a><span class="w">        </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root</span>
 <a id="__codelineno-19-25" name="__codelineno-19-25" href="#__codelineno-19-25"></a><span class="w">        </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root</span>
-<a id="__codelineno-19-26" name="__codelineno-19-26" href="#__codelineno-19-26"></a><span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;0644&#39;</span>
+<a id="__codelineno-19-26" name="__codelineno-19-26" href="#__codelineno-19-26"></a><span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">'0644'</span>
 </code></pre></div>
 <h3 id="ce-que-fait-ce-playbook">Ce que fait ce playbook<a class="headerlink" href="#ce-que-fait-ce-playbook" title="Permanent link">&para;</a></h3>
 <ul>
@@ -2883,19 +2883,19 @@ Puis quittez chaque session avec :</p>
 </ul>
 <h3 id="etape-10-verifier-ce-qui-a-ete-modifie-sur-les-vm">Étape 10 : vérifier ce qui a été modifié sur les VM<a class="headerlink" href="#etape-10-verifier-ce-qui-a-ete-modifie-sur-les-vm" title="Permanent link">&para;</a></h3>
 <p>Contrôlez d'abord que <code>curl</code> est bien installé :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>ansible<span class="w"> </span>all<span class="w"> </span>-a<span class="w"> </span><span class="s2">&quot;curl --version | head -n 1&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>ansible<span class="w"> </span>all<span class="w"> </span>-a<span class="w"> </span><span class="s2">"curl --version | head -n 1"</span>
 </code></pre></div>
 <p>Vérifiez ensuite le contenu du fichier déployé :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>ansible<span class="w"> </span>all<span class="w"> </span>-a<span class="w"> </span><span class="s2">&quot;cat /etc/ansible-lab.txt&quot;</span><span class="w"> </span>-b
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>ansible<span class="w"> </span>all<span class="w"> </span>-a<span class="w"> </span><span class="s2">"cat /etc/ansible-lab.txt"</span><span class="w"> </span>-b
 </code></pre></div>
 <p>Exemple de contenu attendu :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>Ce fichier a été déployé par Ansible.
-<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>Hôte d&#39;inventaire : srv-lab-01
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>Hôte d'inventaire : srv-lab-01
 <a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>Adresse cible : 192.168.56.21
 </code></pre></div>
 <p>et sur l'autre machine :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>Ce fichier a été déployé par Ansible.
-<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>Hôte d&#39;inventaire : srv-lab-02
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>Hôte d'inventaire : srv-lab-02
 <a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>Adresse cible : 192.168.56.22
 </code></pre></div>
 <h3 id="etape-11-relancer-le-playbook-pour-comprendre-lidempotence">Étape 11 : relancer le playbook pour comprendre l'idempotence<a class="headerlink" href="#etape-11-relancer-le-playbook-pour-comprendre-lidempotence" title="Permanent link">&para;</a></h3>
@@ -2915,8 +2915,8 @@ Si la machine est déjà dans le bon état, Ansible ne refait pas inutilement le
 <a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>ansible-inventory<span class="w"> </span>--graph
 <a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a>ansible<span class="w"> </span>all<span class="w"> </span>-m<span class="w"> </span>ansible.builtin.ping
 <a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a>ansible-playbook<span class="w"> </span>--syntax-check<span class="w"> </span>first-playbook.yml
-<a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a>ansible<span class="w"> </span>all<span class="w"> </span>-a<span class="w"> </span><span class="s2">&quot;dpkg -s curl | grep &#39;^Status&#39;&quot;</span>
-<a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a>ansible<span class="w"> </span>all<span class="w"> </span>-a<span class="w"> </span><span class="s2">&quot;cat /etc/ansible-lab.txt&quot;</span><span class="w"> </span>-b
+<a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a>ansible<span class="w"> </span>all<span class="w"> </span>-a<span class="w"> </span><span class="s2">"dpkg -s curl | grep '^Status'"</span>
+<a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a>ansible<span class="w"> </span>all<span class="w"> </span>-a<span class="w"> </span><span class="s2">"cat /etc/ansible-lab.txt"</span><span class="w"> </span>-b
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu</p>

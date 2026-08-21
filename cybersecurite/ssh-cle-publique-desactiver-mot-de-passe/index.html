@@ -2457,7 +2457,7 @@
 <h3 id="etape-1-generer-une-paire-de-cles-ssh-sur-le-poste-client">Étape 1 : Générer une paire de clés SSH sur le poste client<a class="headerlink" href="#etape-1-generer-une-paire-de-cles-ssh-sur-le-poste-client" title="Permanent link">&para;</a></h3>
 <p>La première étape consiste à créer la paire de clés sur la machine depuis laquelle vous allez vous connecter (votre poste de travail, <strong>pas le serveur</strong>).</p>
 <p>Sur votre poste client, ouvrez un terminal et tapez la commande suivante. Nous utiliserons l'algorithme Ed25519, qui est actuellement la norme recommandée pour sa sécurité et ses performances.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ssh-keygen<span class="w"> </span>-t<span class="w"> </span>ed25519<span class="w"> </span>-C<span class="w"> </span><span class="s2">&quot;votre_email@exemple.com&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ssh-keygen<span class="w"> </span>-t<span class="w"> </span>ed25519<span class="w"> </span>-C<span class="w"> </span><span class="s2">"votre_email@exemple.com"</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Explication des paramètres</p>
@@ -2480,7 +2480,7 @@
 <div class="admonition tip">
 <p class="admonition-title">Alternative pour les utilisateurs Windows sans <code>ssh-copy-id</code></p>
 <p>Si vous êtes sous Windows et que la commande <code>ssh-copy-id</code> n'est pas disponible, vous pouvez utiliser cette commande PowerShell pour faire la même chose :
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">type </span><span class="nv">$env:USERPROFILE</span><span class="p">\.</span><span class="n">ssh</span><span class="p">\</span><span class="n">id_ed25519</span><span class="p">.</span><span class="n">pub</span> <span class="p">|</span> <span class="n">ssh</span> <span class="n">utilisateur</span><span class="nv">@adresse_ip_du_serveur</span> <span class="s2">&quot;mkdir -p ~/.ssh &amp;&amp; cat &gt;&gt; ~/.ssh/authorized_keys &amp;&amp; chmod 700 ~/.ssh &amp;&amp; chmod 600 ~/.ssh/authorized_keys&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">type </span><span class="nv">$env:USERPROFILE</span><span class="p">\.</span><span class="n">ssh</span><span class="p">\</span><span class="n">id_ed25519</span><span class="p">.</span><span class="n">pub</span> <span class="p">|</span> <span class="n">ssh</span> <span class="n">utilisateur</span><span class="nv">@adresse_ip_du_serveur</span> <span class="s2">"mkdir -p ~/.ssh &amp;&amp; cat &gt;&gt; ~/.ssh/authorized_keys &amp;&amp; chmod 700 ~/.ssh &amp;&amp; chmod 600 ~/.ssh/authorized_keys"</span>
 </code></pre></div></p>
 </div>
 <h3 id="etape-3-tester-la-connexion-par-cle">Étape 3 : Tester la connexion par clé<a class="headerlink" href="#etape-3-tester-la-connexion-par-cle" title="Permanent link">&para;</a></h3>

@@ -2496,9 +2496,9 @@
 <a id="__codelineno-0-16" name="__codelineno-0-16"></a>
 <a id="__codelineno-0-17" name="__codelineno-0-17"></a>    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">listes</span><span class="p">):</span>
 <a id="__codelineno-0-18" name="__codelineno-0-18"></a>        <span class="n">resultat</span> <span class="o">=</span> <span class="n">calculer_moyenne</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Moyenne de la liste </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">resultat</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Moyenne de la liste </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">resultat</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <a id="__codelineno-0-20" name="__codelineno-0-20"></a>
-<a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
 <a id="__codelineno-0-22" name="__codelineno-0-22"></a>    <span class="n">main</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
 <p>Si vous exécutez ce script via <code>python3 calcul.py</code>, vous obtiendrez l'erreur suivante :</p>
@@ -2507,11 +2507,11 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Moyenne de la liste 0 : 20.0
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Moyenne de la liste 1 : 10.0
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Traceback (most recent call last):
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  File &quot;calcul.py&quot;, line 22, in &lt;module&gt;
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  File "calcul.py", line 22, in &lt;module&gt;
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    main()
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  File &quot;calcul.py&quot;, line 18, in main
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  File "calcul.py", line 18, in main
 <a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    resultat = calculer_moyenne(data)
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>  File &quot;calcul.py&quot;, line 6, in calculer_moyenne
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>  File "calcul.py", line 6, in calculer_moyenne
 <a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    moyenne = total / compte
 <a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>ZeroDivisionError: division by zero
 </code></pre></div>
@@ -2535,7 +2535,7 @@
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">listes</span><span class="p">):</span>
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>        <span class="nb">breakpoint</span><span class="p">()</span>  <span class="c1"># &lt;-- Le script se mettra en pause ici</span>
 <a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>        <span class="n">resultat</span> <span class="o">=</span> <span class="n">calculer_moyenne</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Moyenne de la liste </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">resultat</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Moyenne de la liste </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">resultat</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># ... [suite du code] ...</span>
 </code></pre></div>
 <p>Lancez maintenant le script normalement :</p>
@@ -2562,7 +2562,7 @@
 <a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a> 18         for index, data in enumerate(listes):
 <a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a> 19             breakpoint()
 <a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a> 20  -&gt;         resultat = calculer_moyenne(data)
-<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a> 21             print(f&quot;Moyenne de la liste {index} : {resultat}&quot;)
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a> 21             print(f"Moyenne de la liste {index} : {resultat}")
 </code></pre></div>
 <em>(La flèche <code>-&gt;</code> indique la ligne qui <strong>va être</strong> exécutée).</em></p>
 <h3 id="inspecter-les-variables-taper-leur-nom-ou-p">Inspecter les variables (Taper leur nom ou <code>p</code>)<a class="headerlink" href="#inspecter-les-variables-taper-leur-nom-ou-p" title="Permanent link">&para;</a></h3>
@@ -2673,14 +2673,14 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>Moyenne de la liste 0 : 20.0
 <a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>Moyenne de la liste 1 : 10.0
 <a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>Traceback (most recent call last):
-<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>  File &quot;/usr/lib/python3.12/pdb.py&quot;, line 1801, in main
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>  File "/usr/lib/python3.12/pdb.py", line 1801, in main
 <a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>    pdb._runscript(mainpyfile)
 <a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>  [...]
-<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>  File &quot;/chemin/vers/calcul.py&quot;, line 6, in calculer_moyenne
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>  File "/chemin/vers/calcul.py", line 6, in calculer_moyenne
 <a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>    moyenne = total / compte
 <a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>ZeroDivisionError: division by zero
 <a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>Uncaught exception. Entering post mortem debugging
-<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>Running &#39;cont&#39; or &#39;step&#39; will restart the program
+<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>Running 'cont' or 'step' will restart the program
 <a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a>&gt; /chemin/vers/calcul.py(6)calculer_moyenne()
 <a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a>-&gt; moyenne = total / compte
 <a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a>(Pdb) 

@@ -2385,7 +2385,7 @@
 <a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>        type filter hook input priority 0; policy accept;
 <a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>
 <a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>        # Accepter le trafic de la boucle locale
-<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>        iif &quot;lo&quot; accept
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>        iif "lo" accept
 <a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>
 <a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>        # Accepter le trafic lié aux connexions établies
 <a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>        ct state established,related accept
@@ -2395,10 +2395,10 @@
 <a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>        type filter hook forward priority 0; policy drop;
 <a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>
 <a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>        # Accepter le trafic sortant depuis le LAN vers le WAN (eth0)
-<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>        iifname &quot;eth1&quot; oifname &quot;eth0&quot; accept
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>        iifname "eth1" oifname "eth0" accept
 <a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>
 <a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a>        # Accepter les retours des connexions déjà établies
-<a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a>        iifname &quot;eth0&quot; oifname &quot;eth1&quot; ct state established,related accept
+<a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a>        iifname "eth0" oifname "eth1" ct state established,related accept
 <a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a>    }
 <a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a>
 <a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a>    chain output {
@@ -2410,8 +2410,8 @@
 <a id="__codelineno-6-32" name="__codelineno-6-32" href="#__codelineno-6-32"></a>    chain postrouting {
 <a id="__codelineno-6-33" name="__codelineno-6-33" href="#__codelineno-6-33"></a>        type nat hook postrouting priority 100; policy accept;
 <a id="__codelineno-6-34" name="__codelineno-6-34" href="#__codelineno-6-34"></a>
-<a id="__codelineno-6-35" name="__codelineno-6-35" href="#__codelineno-6-35"></a>        # Masquerade : cacher le réseau local derrière l&#39;IP publique de l&#39;interface WAN
-<a id="__codelineno-6-36" name="__codelineno-6-36" href="#__codelineno-6-36"></a>        oifname &quot;eth0&quot; masquerade
+<a id="__codelineno-6-35" name="__codelineno-6-35" href="#__codelineno-6-35"></a>        # Masquerade : cacher le réseau local derrière l'IP publique de l'interface WAN
+<a id="__codelineno-6-36" name="__codelineno-6-36" href="#__codelineno-6-36"></a>        oifname "eth0" masquerade
 <a id="__codelineno-6-37" name="__codelineno-6-37" href="#__codelineno-6-37"></a>    }
 <a id="__codelineno-6-38" name="__codelineno-6-38" href="#__codelineno-6-38"></a>}
 </code></pre></div>

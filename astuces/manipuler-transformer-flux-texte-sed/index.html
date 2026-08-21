@@ -2414,7 +2414,7 @@
 <h3 id="etape-2-le-remplacement-simple-substitution">Étape 2 : Le remplacement simple (Substitution)<a class="headerlink" href="#etape-2-le-remplacement-simple-substitution" title="Permanent link">&para;</a></h3>
 <p>L'opération la plus courante avec <code>sed</code> est la commande <code>s</code> (substitution). Sa structure est : <code>s/motif_recherché/motif_de_remplacement/options</code>.</p>
 <p>Testons un changement du port sans modifier le fichier (la sortie s'affiche juste à l'écran) :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sed<span class="w"> </span><span class="s1">&#39;s/8080/443/&#39;</span><span class="w"> </span>server.conf
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sed<span class="w"> </span><span class="s1">'s/8080/443/'</span><span class="w"> </span>server.conf
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Le séparateur <code>/</code></p>
@@ -2422,21 +2422,21 @@
 </div>
 <h3 id="etape-3-remplacement-global-avec-g">Étape 3 : Remplacement global avec <code>g</code><a class="headerlink" href="#etape-3-remplacement-global-avec-g" title="Permanent link">&para;</a></h3>
 <p>Changeons tous les "false" par "true". Si plusieurs "false" étaient sur la même ligne, un <code>sed</code> classique ne changerait que le premier. L'option <code>g</code> (global) corrige ça :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sed<span class="w"> </span><span class="s1">&#39;s/false/true/g&#39;</span><span class="w"> </span>server.conf
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sed<span class="w"> </span><span class="s1">'s/false/true/g'</span><span class="w"> </span>server.conf
 </code></pre></div>
 <h3 id="etape-4-cibler-une-ligne-specifique">Étape 4 : Cibler une ligne spécifique<a class="headerlink" href="#etape-4-cibler-une-ligne-specifique" title="Permanent link">&para;</a></h3>
 <p>Si l'on veut modifier uniquement la ligne contenant "TIMEOUT", on peut ajouter une adresse avant la commande de substitution :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sed<span class="w"> </span><span class="s1">&#39;/TIMEOUT/s/30/60/&#39;</span><span class="w"> </span>server.conf
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sed<span class="w"> </span><span class="s1">'/TIMEOUT/s/30/60/'</span><span class="w"> </span>server.conf
 </code></pre></div>
 <h3 id="etape-5-supprimer-des-lignes-avec-d">Étape 5 : Supprimer des lignes avec <code>d</code><a class="headerlink" href="#etape-5-supprimer-des-lignes-avec-d" title="Permanent link">&para;</a></h3>
 <p>La commande <code>d</code> supprime les lignes qui correspondent au motif. Utile pour nettoyer un fichier de ses commentaires :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Supprime les lignes commençant (^) par un #</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sed<span class="w"> </span><span class="s1">&#39;/^#/d&#39;</span><span class="w"> </span>server.conf
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sed<span class="w"> </span><span class="s1">'/^#/d'</span><span class="w"> </span>server.conf
 </code></pre></div>
 <h3 id="etape-6-appliquer-les-modifications-au-fichier-in-place">Étape 6 : Appliquer les modifications au fichier (In-place)<a class="headerlink" href="#etape-6-appliquer-les-modifications-au-fichier-in-place" title="Permanent link">&para;</a></h3>
 <p>Jusqu'à présent, nos commandes ont juste affiché le résultat dans le terminal. Pour <strong>écraser</strong> le fichier d'origine, on utilise l'option <code>-i</code> (in-place).</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Activation des logs et du mode debug</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s/false/true/g&#39;</span><span class="w"> </span>server.conf
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">'s/false/true/g'</span><span class="w"> </span>server.conf
 </code></pre></div>
 <div class="admonition danger">
 <p class="admonition-title">Attention à l'option <code>-i</code></p>

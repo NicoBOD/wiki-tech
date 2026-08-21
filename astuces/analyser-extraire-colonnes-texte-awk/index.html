@@ -2322,13 +2322,13 @@ Il affecte chaque mot à une variable spéciale :</p>
 </code></pre></div></p>
 <h3 id="etape-2-extraire-des-colonnes-simples">Étape 2 : Extraire des colonnes simples<a class="headerlink" href="#etape-2-extraire-des-colonnes-simples" title="Permanent link">&para;</a></h3>
 <p>Pour afficher uniquement les tailles de fichiers (colonne 5) et leurs noms (colonne 9), on redirige (pipe) la sortie vers <code>awk</code> et on utilise l'instruction <code>print</code> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ls<span class="w"> </span>-l<span class="w"> </span>/var/log<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $5, $9}&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ls<span class="w"> </span>-l<span class="w"> </span>/var/log<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $5, $9}'</span>
 </code></pre></div>
 <p>Le résultat affichera la taille et le nom, séparés par un espace.</p>
 <div class="admonition tip">
 <p class="admonition-title">Ignorer les en-têtes</p>
 <p>Si la première ligne est un en-tête (comme <code>total 1234</code>), on peut dire à <code>awk</code> de l'ignorer grâce à <code>NR</code> (Number of Record), qui contient le numéro de la ligne courante. Pour lire à partir de la ligne 2 :
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ls<span class="w"> </span>-l<span class="w"> </span>/var/log<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;NR &gt; 1 {print $5, $9}&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ls<span class="w"> </span>-l<span class="w"> </span>/var/log<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'NR &gt; 1 {print $5, $9}'</span>
 </code></pre></div></p>
 </div>
 <h3 id="etape-3-filtrer-selon-des-conditions">Étape 3 : Filtrer selon des conditions<a class="headerlink" href="#etape-3-filtrer-selon-des-conditions" title="Permanent link">&para;</a></h3>
@@ -2341,13 +2341,13 @@ Par exemple, comment trouver les partitions utilisant plus de 80% de leur espace
 </code></pre></div></p>
 <p>La colonne contenant le pourcentage d'utilisation est la 5e (<code>$5</code>).</p>
 <p>On peut demander à <code>awk</code> d'enlever le symbole <code>%</code> et de tester si la valeur est supérieure à 80 :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>df<span class="w"> </span>-h<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;NR &gt; 1 { </span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>df<span class="w"> </span>-h<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'NR &gt; 1 { </span>
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="s1">    pourcentage = $5; </span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="s1">    sub(&quot;%&quot;, &quot;&quot;, pourcentage); </span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="s1">    sub("%", "", pourcentage); </span>
 <a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="s1">    if (pourcentage &gt; 80) { </span>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="s1">        print &quot;Alerte espace sur &quot; $1 &quot; (&quot; $5 &quot;)&quot; </span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="s1">        print "Alerte espace sur " $1 " (" $5 ")" </span>
 <a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="s1">    } </span>
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="s1">}&#39;</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="s1">}'</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Explication</p>
@@ -2362,7 +2362,7 @@ Par exemple, comment trouver les partitions utilisant plus de 80% de leur espace
 <p>Parfois, les colonnes ne sont pas séparées par des espaces. Par exemple, le fichier <code>/etc/passwd</code> utilise des deux-points (<code>:</code>).
 Pour dire à <code>awk</code> d'utiliser <code>:</code> comme séparateur, on utilise l'option <code>-F</code>.</p>
 <p>Exemple pour extraire les noms d'utilisateurs (colonne 1) et leurs interpréteurs de commandes (shells, colonne 7) :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>awk<span class="w"> </span>-F<span class="s1">&#39;:&#39;</span><span class="w"> </span><span class="s1">&#39;{print $1 &quot; utilise &quot; $7}&#39;</span><span class="w"> </span>/etc/passwd
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>awk<span class="w"> </span>-F<span class="s1">':'</span><span class="w"> </span><span class="s1">'{print $1 " utilise " $7}'</span><span class="w"> </span>/etc/passwd
 </code></pre></div>
 <h2 id="aide-memoire">Aide-mémoire<a class="headerlink" href="#aide-memoire" title="Permanent link">&para;</a></h2>
 <table>

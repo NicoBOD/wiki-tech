@@ -2541,10 +2541,10 @@
 <h3 id="etape-3-creer-le-compte-de-stockage">Étape 3 : Créer le compte de stockage<a class="headerlink" href="#etape-3-creer-le-compte-de-stockage" title="Permanent link">&para;</a></h3>
 <p>Le compte de stockage doit avoir un <strong>nom globalement unique</strong> (3 à 24 caractères, lettres minuscules et chiffres uniquement) car il apparaîtra dans l'URL des blobs (<code>https://&lt;compte&gt;.blob.core.windows.net</code>).</p>
 <p>Pour ne pas se soucier du nom, on génère un suffixe aléatoire concaténé à un préfixe stable :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nv">STORAGE_NAME</span><span class="o">=</span><span class="s2">&quot;labblobstorage</span><span class="nv">$RANDOM</span><span class="s2">&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nv">STORAGE_NAME</span><span class="o">=</span><span class="s2">"labblobstorage</span><span class="nv">$RANDOM</span><span class="s2">"</span>
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>az<span class="w"> </span>storage<span class="w"> </span>account<span class="w"> </span>create<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span>--name<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$STORAGE_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span>--name<span class="w"> </span><span class="s2">"</span><span class="nv">$STORAGE_NAME</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span>--resource-group<span class="w"> </span>rg-tuto-blob<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span>--location<span class="w"> </span>francecentral<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">  </span>--sku<span class="w"> </span>Standard_LRS<span class="w"> </span><span class="se">\</span>
@@ -2560,7 +2560,7 @@
 <p>Pensez à garder la valeur de <code>$STORAGE_NAME</code> dans votre session. On en aura besoin pour toutes les étapes suivantes. Si vous avez fermé le terminal, retrouvez-la avec :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>az<span class="w"> </span>storage<span class="w"> </span>account<span class="w"> </span>list<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span>--resource-group<span class="w"> </span>rg-tuto-blob<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span>--query<span class="w"> </span><span class="s2">&quot;[].name&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span>--query<span class="w"> </span><span class="s2">"[].name"</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span>--output<span class="w"> </span>tsv
 </code></pre></div>
 </div>
@@ -2568,7 +2568,7 @@
 <p>Un <strong>conteneur</strong> est l'équivalent d'un dossier racine dans le compte de stockage. Les blobs y sont rangés. Créons-en un nommé <code>documents</code>, à accès privé (seul le propriétaire du compte peut lire les blobs — l'accès public sera délégué via un jeton SAS plus loin).</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>az<span class="w"> </span>storage<span class="w"> </span>container<span class="w"> </span>create<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span>--name<span class="w"> </span>documents<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">  </span>--account-name<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$STORAGE_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">  </span>--account-name<span class="w"> </span><span class="s2">"</span><span class="nv">$STORAGE_NAME</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">  </span>--auth-mode<span class="w"> </span>login
 </code></pre></div>
 <div class="admonition note">
@@ -2577,14 +2577,14 @@
 </div>
 <p>Listons les conteneurs pour confirmer :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>az<span class="w"> </span>storage<span class="w"> </span>container<span class="w"> </span>list<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span>--account-name<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$STORAGE_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span>--account-name<span class="w"> </span><span class="s2">"</span><span class="nv">$STORAGE_NAME</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span>--auth-mode<span class="w"> </span>login<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">  </span>--output<span class="w"> </span>table
 </code></pre></div>
 <h3 id="etape-5-uploader-un-fichier-creer-un-blob">Étape 5 : Uploader un fichier (créer un blob)<a class="headerlink" href="#etape-5-uploader-un-fichier-creer-un-blob" title="Permanent link">&para;</a></h3>
 <p>Téléchargeons un fichier de test, puis uploaderons-le dans le conteneur <code>documents</code>. Procurez-vous n'importe quel fichier ; pour ce lab, on génère un simple fichier texte :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Créer un fichier de test local</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>notes.md<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>notes.md<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
 <a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="s"># Notes de travaux pratiques</span>
 <a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="s">- TP Azure Blob Storage</span>
 <a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="s">- Date : 2026-07-06</span>
@@ -2592,7 +2592,7 @@
 </code></pre></div>
 <p>Uploadons ce fichier en tant que blob dans le conteneur :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>az<span class="w"> </span>storage<span class="w"> </span>blob<span class="w"> </span>upload<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span>--account-name<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$STORAGE_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span>--account-name<span class="w"> </span><span class="s2">"</span><span class="nv">$STORAGE_NAME</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span>--container-name<span class="w"> </span>documents<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">  </span>--name<span class="w"> </span>notes.md<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">  </span>--file<span class="w"> </span>notes.md<span class="w"> </span><span class="se">\</span>
@@ -2601,7 +2601,7 @@
 </code></pre></div>
 <p>Vérifions l'inventaire du conteneur :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>az<span class="w"> </span>storage<span class="w"> </span>blob<span class="w"> </span>list<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span>--account-name<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$STORAGE_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span>--account-name<span class="w"> </span><span class="s2">"</span><span class="nv">$STORAGE_NAME</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">  </span>--container-name<span class="w"> </span>documents<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">  </span>--auth-mode<span class="w"> </span>login<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">  </span>--output<span class="w"> </span>table
@@ -2613,7 +2613,7 @@
 <h3 id="etape-6-telecharger-un-blob">Étape 6 : Télécharger un blob<a class="headerlink" href="#etape-6-telecharger-un-blob" title="Permanent link">&para;</a></h3>
 <p>La commande symétrique permet de récupérer un blob vers votre machine locale :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>az<span class="w"> </span>storage<span class="w"> </span>blob<span class="w"> </span>download<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span>--account-name<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$STORAGE_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span>--account-name<span class="w"> </span><span class="s2">"</span><span class="nv">$STORAGE_NAME</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">  </span>--container-name<span class="w"> </span>documents<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">  </span>--name<span class="w"> </span>notes.md<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">  </span>--file<span class="w"> </span>notes-recupere.md<span class="w"> </span><span class="se">\</span>
@@ -2625,11 +2625,11 @@
 <h3 id="etape-7-partager-un-blob-via-un-jeton-sas">Étape 7 : Partager un blob via un jeton SAS<a class="headerlink" href="#etape-7-partager-un-blob-via-un-jeton-sas" title="Permanent link">&para;</a></h3>
 <p>Plutôt que de faire l'erreur de basculer le conteneur en accès public, on génère un <strong>jeton SAS</strong> (Shared Access Signature) : une URL temporaire et signée qui autorise la lecture du fichier pendant une durée limitée, sans partager de clé.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>az<span class="w"> </span>storage<span class="w"> </span>blob<span class="w"> </span>generate-sas<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">  </span>--account-name<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$STORAGE_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">  </span>--account-name<span class="w"> </span><span class="s2">"</span><span class="nv">$STORAGE_NAME</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">  </span>--container-name<span class="w"> </span>documents<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">  </span>--name<span class="w"> </span>notes.md<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">  </span>--permissions<span class="w"> </span>r<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="w">  </span>--expiry<span class="w"> </span><span class="s2">&quot;2026-07-06T23:59:00Z&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="w">  </span>--expiry<span class="w"> </span><span class="s2">"2026-07-06T23:59:00Z"</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="w">  </span>--auth-mode<span class="w"> </span>login<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="w">  </span>--as-user<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="w">  </span>--output<span class="w"> </span>tsv
@@ -2643,24 +2643,24 @@
 <p>La commande renvoie le jeton seul (sans le <code>?</code> initial). Capturons-le dans une variable, puis construisons l'URL complète du blob :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nv">SAS_TOKEN</span><span class="o">=</span><span class="k">$(</span>
 <a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">  </span>az<span class="w"> </span>storage<span class="w"> </span>blob<span class="w"> </span>generate-sas<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">    </span>--account-name<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$STORAGE_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">    </span>--account-name<span class="w"> </span><span class="s2">"</span><span class="nv">$STORAGE_NAME</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">    </span>--container-name<span class="w"> </span>documents<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">    </span>--name<span class="w"> </span>notes.md<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="w">    </span>--permissions<span class="w"> </span>r<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="w">    </span>--expiry<span class="w"> </span><span class="s2">&quot;2026-07-06T23:59:00Z&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="w">    </span>--expiry<span class="w"> </span><span class="s2">"2026-07-06T23:59:00Z"</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="w">    </span>--auth-mode<span class="w"> </span>login<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="w">    </span>--as-user<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="w">    </span>--output<span class="w"> </span>tsv
 <a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="k">)</span>
 <a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>
-<a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a><span class="nv">SHARE_URL</span><span class="o">=</span><span class="s2">&quot;https://</span><span class="nv">$STORAGE_NAME</span><span class="s2">.blob.core.windows.net/documents/notes.md?</span><span class="nv">$SAS_TOKEN</span><span class="s2">&quot;</span>
+<a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a><span class="nv">SHARE_URL</span><span class="o">=</span><span class="s2">"https://</span><span class="nv">$STORAGE_NAME</span><span class="s2">.blob.core.windows.net/documents/notes.md?</span><span class="nv">$SAS_TOKEN</span><span class="s2">"</span>
 <a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a>
-<a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SHARE_URL</span><span class="s2">&quot;</span>
+<a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$SHARE_URL</span><span class="s2">"</span>
 </code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Tester l'URL</p>
 <p>La variable <code>$SHARE_URL</code> contient le lien temporaire. Vous pouvez le coller dans un navigateur, ou tester avec <code>curl</code> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SHARE_URL</span><span class="s2">&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">"</span><span class="nv">$SHARE_URL</span><span class="s2">"</span>
 </code></pre></div>
 <p>Le contenu du fichier <code>notes.md</code> s'affiche. Une fois la date d'expiration passée, la même URL renverra une erreur 403 Forbidden.</p>
 </div>
@@ -2668,13 +2668,13 @@
 <p>Vérifions que le blob est en place et que la lecture via le jeton SAS fonctionne :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Inventaire final du conteneur</span>
 <a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>az<span class="w"> </span>storage<span class="w"> </span>blob<span class="w"> </span>list<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="w">  </span>--account-name<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$STORAGE_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="w">  </span>--account-name<span class="w"> </span><span class="s2">"</span><span class="nv">$STORAGE_NAME</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="w">  </span>--container-name<span class="w"> </span>documents<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="w">  </span>--auth-mode<span class="w"> </span>login<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="w">  </span>--output<span class="w"> </span>table
 <a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>
-<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="c1"># Test de l&#39;URL de partage</span>
-<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>curl<span class="w"> </span>-sI<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SHARE_URL</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-1
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="c1"># Test de l'URL de partage</span>
+<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>curl<span class="w"> </span>-sI<span class="w"> </span><span class="s2">"</span><span class="nv">$SHARE_URL</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-1
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu</p>

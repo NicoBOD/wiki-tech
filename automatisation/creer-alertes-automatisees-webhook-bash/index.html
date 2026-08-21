@@ -2341,19 +2341,19 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Discord</label><label for="__tabbed_2_2">Slack</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">WEBHOOK_URL</span><span class="o">=</span><span class="s2">&quot;VOTRE_URL_ICI&quot;</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">WEBHOOK_URL</span><span class="o">=</span><span class="s2">"VOTRE_URL_ICI"</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">"Content-Type: application/json"</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">     </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">     </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;content&quot;: &quot;⚠️ Alerte : Tâche de sauvegarde terminée avec succès !&quot;}&#39;</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">     </span><span class="s2">&quot;</span><span class="nv">$WEBHOOK_URL</span><span class="s2">&quot;</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">     </span>-d<span class="w"> </span><span class="s1">'{"content": "⚠️ Alerte : Tâche de sauvegarde terminée avec succès !"}'</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">     </span><span class="s2">"</span><span class="nv">$WEBHOOK_URL</span><span class="s2">"</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">WEBHOOK_URL</span><span class="o">=</span><span class="s2">&quot;VOTRE_URL_ICI&quot;</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">WEBHOOK_URL</span><span class="o">=</span><span class="s2">"VOTRE_URL_ICI"</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">"Content-Type: application/json"</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">     </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">     </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;text&quot;: &quot;⚠️ Alerte : Tâche de sauvegarde terminée avec succès !&quot;}&#39;</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">     </span><span class="s2">&quot;</span><span class="nv">$WEBHOOK_URL</span><span class="s2">&quot;</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">     </span>-d<span class="w"> </span><span class="s1">'{"text": "⚠️ Alerte : Tâche de sauvegarde terminée avec succès !"}'</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">     </span><span class="s2">"</span><span class="nv">$WEBHOOK_URL</span><span class="s2">"</span>
 </code></pre></div>
 </div>
 </div>
@@ -2391,27 +2391,27 @@
 <span class="normal"><a href="#__codelineno-2-25">25</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="ch">#!/bin/bash</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2"></a>
 <a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="c1"># Configuration</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="nv">WEBHOOK_URL</span><span class="o">=</span><span class="s2">&quot;https://discord.com/api/webhooks/xxxx/yyyy&quot;</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="nv">WEBHOOK_URL</span><span class="o">=</span><span class="s2">"https://discord.com/api/webhooks/xxxx/yyyy"</span>
 <a id="__codelineno-2-5" name="__codelineno-2-5"></a>
-<a id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="c1"># Fonction d&#39;envoi d&#39;alerte Discord</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="c1"># Fonction d'envoi d'alerte Discord</span>
 <a id="__codelineno-2-7" name="__codelineno-2-7"></a>send_alert<span class="o">()</span><span class="w"> </span><span class="o">{</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8"></a><span class="w">    </span><span class="nb">local</span><span class="w"> </span><span class="nv">message</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8"></a><span class="w">    </span><span class="nb">local</span><span class="w"> </span><span class="nv">message</span><span class="o">=</span><span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span>
 <a id="__codelineno-2-9" name="__codelineno-2-9"></a>
 <a id="__codelineno-2-10" name="__codelineno-2-10"></a><span class="w">    </span><span class="c1"># Envoi de la requête en masquant la sortie standard (-s)</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11"></a><span class="w">    </span>curl<span class="w"> </span>-s<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11"></a><span class="w">    </span>curl<span class="w"> </span>-s<span class="w"> </span>-H<span class="w"> </span><span class="s2">"Content-Type: application/json"</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-2-12" name="__codelineno-2-12"></a><span class="w">         </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-2-13" name="__codelineno-2-13"></a><span class="w">         </span>-d<span class="w"> </span><span class="s2">&quot;{\&quot;content\&quot;: \&quot;</span><span class="nv">$message</span><span class="s2">\&quot;}&quot;</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-2-14" name="__codelineno-2-14"></a><span class="w">         </span><span class="s2">&quot;</span><span class="nv">$WEBHOOK_URL</span><span class="s2">&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/dev/null
+<a id="__codelineno-2-13" name="__codelineno-2-13"></a><span class="w">         </span>-d<span class="w"> </span><span class="s2">"{\"content\": \"</span><span class="nv">$message</span><span class="s2">\"}"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14"></a><span class="w">         </span><span class="s2">"</span><span class="nv">$WEBHOOK_URL</span><span class="s2">"</span><span class="w"> </span>&gt;<span class="w"> </span>/dev/null
 <a id="__codelineno-2-15" name="__codelineno-2-15"></a><span class="o">}</span>
 <a id="__codelineno-2-16" name="__codelineno-2-16"></a>
 <a id="__codelineno-2-17" name="__codelineno-2-17"></a><span class="c1"># Début du script</span>
-<a id="__codelineno-2-18" name="__codelineno-2-18"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Démarrage de la sauvegarde...&quot;</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"Démarrage de la sauvegarde..."</span>
 <a id="__codelineno-2-19" name="__codelineno-2-19"></a><span class="c1"># ... vos commandes de sauvegarde ici ...</span>
 <a id="__codelineno-2-20" name="__codelineno-2-20"></a>
 <a id="__codelineno-2-21" name="__codelineno-2-21"></a><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$?</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
-<a id="__codelineno-2-22" name="__codelineno-2-22"></a><span class="w">    </span>send_alert<span class="w"> </span><span class="s2">&quot;✅ Succès : La sauvegarde quotidienne s&#39;est bien déroulée.&quot;</span>
+<a id="__codelineno-2-22" name="__codelineno-2-22"></a><span class="w">    </span>send_alert<span class="w"> </span><span class="s2">"✅ Succès : La sauvegarde quotidienne s'est bien déroulée."</span>
 <a id="__codelineno-2-23" name="__codelineno-2-23"></a><span class="k">else</span>
-<a id="__codelineno-2-24" name="__codelineno-2-24"></a><span class="w">    </span>send_alert<span class="w"> </span><span class="s2">&quot;❌ Erreur : La sauvegarde quotidienne a échoué sur le serveur </span><span class="k">$(</span>hostname<span class="k">)</span><span class="s2">.&quot;</span>
+<a id="__codelineno-2-24" name="__codelineno-2-24"></a><span class="w">    </span>send_alert<span class="w"> </span><span class="s2">"❌ Erreur : La sauvegarde quotidienne a échoué sur le serveur </span><span class="k">$(</span>hostname<span class="k">)</span><span class="s2">."</span>
 <a id="__codelineno-2-25" name="__codelineno-2-25"></a><span class="k">fi</span>
 </code></pre></div></td></tr></table></div>
 <div class="admonition note">
@@ -2422,23 +2422,23 @@
 <p>Les Webhooks permettent un formatage bien plus riche que du simple texte. Discord supporte par exemple les "Embeds" qui permettent d'ajouter des couleurs, des titres et des champs de données structurés.</p>
 <div class="highlight"><span class="filename">alert-embed.sh</span><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="ch">#!/bin/bash</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nv">WEBHOOK_URL</span><span class="o">=</span><span class="s2">&quot;https://discord.com/api/webhooks/xxxx/yyyy&quot;</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nv">WEBHOOK_URL</span><span class="o">=</span><span class="s2">"https://discord.com/api/webhooks/xxxx/yyyy"</span>
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="nv">SERVER_NAME</span><span class="o">=</span><span class="k">$(</span>hostname<span class="k">)</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="nv">DISK_USAGE</span><span class="o">=</span><span class="k">$(</span>df<span class="w"> </span>-h<span class="w"> </span>/<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;NR==2 {print $5}&#39;</span><span class="k">)</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="nv">DISK_USAGE</span><span class="o">=</span><span class="k">$(</span>df<span class="w"> </span>-h<span class="w"> </span>/<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'NR==2 {print $5}'</span><span class="k">)</span>
 <a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># Construction du payload JSON avec un bloc &#39;embeds&#39;</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># Construction du payload JSON avec un bloc 'embeds'</span>
 <a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1"># Note : la couleur 16711680 correspond au rouge vif (pour une alerte)</span>
 <a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="nv">JSON_PAYLOAD</span><span class="o">=</span><span class="k">$(</span>cat<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
 <a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="s">{</span>
-<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="s">  &quot;embeds&quot;: [{</span>
-<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="s">    &quot;title&quot;: &quot;🚨 Alerte Espace Disque&quot;,</span>
-<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="s">    &quot;description&quot;: &quot;Le serveur **$SERVER_NAME** manque d&#39;espace !&quot;,</span>
-<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="s">    &quot;color&quot;: 16711680,</span>
-<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="s">    &quot;fields&quot;: [</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="s">  "embeds": [{</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="s">    "title": "🚨 Alerte Espace Disque",</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="s">    "description": "Le serveur **$SERVER_NAME** manque d'espace !",</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="s">    "color": 16711680,</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="s">    "fields": [</span>
 <a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="s">      {</span>
-<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="s">        &quot;name&quot;: &quot;Utilisation actuelle de /&quot;,</span>
-<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="s">        &quot;value&quot;: &quot;$DISK_USAGE&quot;,</span>
-<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="s">        &quot;inline&quot;: true</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="s">        "name": "Utilisation actuelle de /",</span>
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="s">        "value": "$DISK_USAGE",</span>
+<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="s">        "inline": true</span>
 <a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="s">      }</span>
 <a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a><span class="s">    ]</span>
 <a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a><span class="s">  }]</span>
@@ -2447,10 +2447,10 @@
 <a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a><span class="k">)</span>
 <a id="__codelineno-3-26" name="__codelineno-3-26" href="#__codelineno-3-26"></a>
 <a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a><span class="c1"># Envoi de la requête</span>
-<a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a>curl<span class="w"> </span>-s<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a>curl<span class="w"> </span>-s<span class="w"> </span>-H<span class="w"> </span><span class="s2">"Content-Type: application/json"</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-3-29" name="__codelineno-3-29" href="#__codelineno-3-29"></a><span class="w">     </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-3-30" name="__codelineno-3-30" href="#__codelineno-3-30"></a><span class="w">     </span>-d<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$JSON_PAYLOAD</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-3-31" name="__codelineno-3-31" href="#__codelineno-3-31"></a><span class="w">     </span><span class="s2">&quot;</span><span class="nv">$WEBHOOK_URL</span><span class="s2">&quot;</span>
+<a id="__codelineno-3-30" name="__codelineno-3-30" href="#__codelineno-3-30"></a><span class="w">     </span>-d<span class="w"> </span><span class="s2">"</span><span class="nv">$JSON_PAYLOAD</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-31" name="__codelineno-3-31" href="#__codelineno-3-31"></a><span class="w">     </span><span class="s2">"</span><span class="nv">$WEBHOOK_URL</span><span class="s2">"</span>
 </code></pre></div>
 <h2 id="verification">Vérification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
 <p>Pour vérifier que tout fonctionne, rendez-vous dans le salon (canal) Slack ou Discord concerné.

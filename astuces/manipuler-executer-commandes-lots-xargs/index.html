@@ -2322,41 +2322,41 @@
 <h2 id="fonctionnement-de-base">Fonctionnement de base<a class="headerlink" href="#fonctionnement-de-base" title="Permanent link">&para;</a></h2>
 <p><code>xargs</code> lit des éléments délimités par des espaces ou des sauts de ligne depuis l'entrée standard, et exécute la commande spécifiée une ou plusieurs fois avec ces éléments comme arguments initiaux.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Exemple basique : passer une liste de mots à la commande echo pour créer des fichiers</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;fichier1 fichier2 fichier3&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>touch
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"fichier1 fichier2 fichier3"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>touch
 </code></pre></div>
 <p>Cette commande crée trois fichiers. C'est l'équivalent de taper <code>touch fichier1 fichier2 fichier3</code>.</p>
 <h2 id="cas-dusage-courants">Cas d'usage courants<a class="headerlink" href="#cas-dusage-courants" title="Permanent link">&para;</a></h2>
 <h3 id="1-traitement-combine-avec-find">1. Traitement combiné avec <code>find</code><a class="headerlink" href="#1-traitement-combine-avec-find" title="Permanent link">&para;</a></h3>
 <p>L'utilisation la plus courante de <code>xargs</code> est le couplage avec la commande <code>find</code> pour agir sur des fichiers trouvés.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Supprimer tous les fichiers .log vieux de plus de 30 jours</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>find<span class="w"> </span>/var/log<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.log&quot;</span><span class="w"> </span>-mtime<span class="w"> </span>+30<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>rm
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>find<span class="w"> </span>/var/log<span class="w"> </span>-name<span class="w"> </span><span class="s2">"*.log"</span><span class="w"> </span>-mtime<span class="w"> </span>+30<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>rm
 </code></pre></div>
 <div class="admonition warning">
 <p class="admonition-title">Espaces dans les noms de fichiers</p>
 <p>Si vos noms de fichiers contiennent des espaces, l'exemple précédent échouera, car <code>xargs</code> considérera chaque mot comme un argument distinct. Utilisez l'option <code>-print0</code> avec <code>find</code> et <code>-0</code> avec <code>xargs</code> pour séparer les éléments par le caractère nul (<code>\0</code>).</p>
 </div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Version robuste (gère les noms avec espaces)</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>find<span class="w"> </span>/var/log<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.log&quot;</span><span class="w"> </span>-mtime<span class="w"> </span>+30<span class="w"> </span>-print0<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-0<span class="w"> </span>rm
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>find<span class="w"> </span>/var/log<span class="w"> </span>-name<span class="w"> </span><span class="s2">"*.log"</span><span class="w"> </span>-mtime<span class="w"> </span>+30<span class="w"> </span>-print0<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-0<span class="w"> </span>rm
 </code></pre></div>
 <h3 id="2-controler-le-nombre-darguments-par-execution">2. Contrôler le nombre d'arguments par exécution<a class="headerlink" href="#2-controler-le-nombre-darguments-par-execution" title="Permanent link">&para;</a></h3>
 <p>Par défaut, <code>xargs</code> tente de passer un maximum d'arguments en une seule fois. L'option <code>-n</code> permet de limiter le nombre d'arguments par exécution.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Afficher les fichiers deux par deux</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;a b c d e f&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="nb">echo</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"a b c d e f"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="nb">echo</span>
 </code></pre></div>
 <h3 id="3-utiliser-un-parametre-de-remplacement-placeholder">3. Utiliser un paramètre de remplacement (placeholder)<a class="headerlink" href="#3-utiliser-un-parametre-de-remplacement-placeholder" title="Permanent link">&para;</a></h3>
 <p>Lorsque la commande requiert que l'argument soit inséré à un endroit précis (et non simplement ajouté à la fin), utilisez l'option <code>-I</code> pour définir un caractère de remplacement, souvent <code>{}</code>.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Copier tous les fichiers .txt vers un dossier de sauvegarde</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.txt&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-I<span class="w"> </span><span class="o">{}</span><span class="w"> </span>cp<span class="w"> </span><span class="o">{}</span><span class="w"> </span>/backup/
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s2">"*.txt"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-I<span class="w"> </span><span class="o">{}</span><span class="w"> </span>cp<span class="w"> </span><span class="o">{}</span><span class="w"> </span>/backup/
 </code></pre></div>
 <h3 id="4-parallelisation-des-taches">4. Parallélisation des tâches<a class="headerlink" href="#4-parallelisation-des-taches" title="Permanent link">&para;</a></h3>
 <p>Pour exécuter plusieurs processus en parallèle, utilisez l'option <code>-P</code>. Cela peut accélérer considérablement les tâches sur les machines multi-cœurs.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Télécharger une liste d&#39;URLs en parallèle (jusqu&#39;à 4 processus)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Télécharger une liste d'URLs en parallèle (jusqu'à 4 processus)</span>
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>cat<span class="w"> </span>urls.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>-P<span class="w"> </span><span class="m">4</span><span class="w"> </span>wget<span class="w"> </span>-q
 </code></pre></div>
 <h2 id="verification-et-execution-sure">Vérification et exécution sûre<a class="headerlink" href="#verification-et-execution-sure" title="Permanent link">&para;</a></h2>
 <p>L'option <code>-p</code> demande une confirmation avant d'exécuter chaque commande. L'option <code>-t</code> affiche la commande sur la sortie standard d'erreur avant de l'exécuter.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Confirmer avant de supprimer</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>find<span class="w"> </span>/tmp<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.tmp&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-p<span class="w"> </span>rm
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>find<span class="w"> </span>/tmp<span class="w"> </span>-name<span class="w"> </span><span class="s2">"*.tmp"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-p<span class="w"> </span>rm
 </code></pre></div>
 <h2 id="aide-memoire">Aide-mémoire<a class="headerlink" href="#aide-memoire" title="Permanent link">&para;</a></h2>
 <table>

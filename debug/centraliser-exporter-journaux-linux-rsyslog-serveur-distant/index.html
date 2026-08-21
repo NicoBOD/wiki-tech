@@ -2489,16 +2489,16 @@
 </code></pre></div>
 <p>Coller :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 1. Charger le module de réception UDP</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>module<span class="o">(</span><span class="nv">load</span><span class="o">=</span><span class="s2">&quot;imudp&quot;</span><span class="o">)</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>input<span class="o">(</span><span class="nv">type</span><span class="o">=</span><span class="s2">&quot;imudp&quot;</span><span class="w"> </span><span class="nv">port</span><span class="o">=</span><span class="s2">&quot;514&quot;</span><span class="o">)</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>module<span class="o">(</span><span class="nv">load</span><span class="o">=</span><span class="s2">"imudp"</span><span class="o">)</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>input<span class="o">(</span><span class="nv">type</span><span class="o">=</span><span class="s2">"imudp"</span><span class="w"> </span><span class="nv">port</span><span class="o">=</span><span class="s2">"514"</span><span class="o">)</span>
 <a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
 <a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># 2. Template : un fichier par hôte source, horodaté</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>template<span class="o">(</span><span class="nv">name</span><span class="o">=</span><span class="s2">&quot;RemotePerHost&quot;</span><span class="w"> </span><span class="nv">type</span><span class="o">=</span><span class="s2">&quot;string&quot;</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">         </span><span class="nv">string</span><span class="o">=</span><span class="s2">&quot;/var/log/remote/%fromhost%/%</span><span class="nv">$year</span><span class="s2">%%</span><span class="nv">$month</span><span class="s2">%%</span><span class="nv">$day</span><span class="s2">%.log&quot;</span><span class="o">)</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>template<span class="o">(</span><span class="nv">name</span><span class="o">=</span><span class="s2">"RemotePerHost"</span><span class="w"> </span><span class="nv">type</span><span class="o">=</span><span class="s2">"string"</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">         </span><span class="nv">string</span><span class="o">=</span><span class="s2">"/var/log/remote/%fromhost%/%</span><span class="nv">$year</span><span class="s2">%%</span><span class="nv">$month</span><span class="s2">%%</span><span class="nv">$day</span><span class="s2">%.log"</span><span class="o">)</span>
 <a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
 <a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># 3. Router les messages reçus du réseau vers le template</span>
-<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="k">if</span><span class="w"> </span><span class="o">(</span><span class="nv">$inputname</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;imudp&quot;</span><span class="o">)</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="o">{</span>
-<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">    </span>action<span class="o">(</span><span class="nv">type</span><span class="o">=</span><span class="s2">&quot;omfile&quot;</span><span class="w"> </span><span class="nv">dynaFile</span><span class="o">=</span><span class="s2">&quot;RemotePerHost&quot;</span><span class="o">)</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="k">if</span><span class="w"> </span><span class="o">(</span><span class="nv">$inputname</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"imudp"</span><span class="o">)</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="o">{</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">    </span>action<span class="o">(</span><span class="nv">type</span><span class="o">=</span><span class="s2">"omfile"</span><span class="w"> </span><span class="nv">dynaFile</span><span class="o">=</span><span class="s2">"RemotePerHost"</span><span class="o">)</span>
 <a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">    </span>stop<span class="w">   </span><span class="c1"># ne pas retomber dans les règles par défaut (syslog)</span>
 <a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="o">}</span>
 </code></pre></div>
@@ -2515,7 +2515,7 @@
 <a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>rsyslog<span class="w"> </span>--no-pager
 </code></pre></div>
 <p>Vérifier que le port 514 écoute :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-lntu<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">&#39;:514&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-lntu<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">':514'</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1"># attendu : udp  UNCONN  ...  0.0.0.0:514  ...</span>
 </code></pre></div>
 <p>Si <code>ufw</code> est actif, ouvrir le port :</p>
@@ -2531,10 +2531,10 @@
 </code></pre></div>
 <p>Coller :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Charger le module de sortie réseau</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>module<span class="o">(</span><span class="nv">load</span><span class="o">=</span><span class="s2">&quot;omudp&quot;</span><span class="o">)</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>module<span class="o">(</span><span class="nv">load</span><span class="o">=</span><span class="s2">"omudp"</span><span class="o">)</span>
 <a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
 <a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># Expedier TOUS les journaux (toutes priorités) vers logs-srv en UDP</span>
-<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>*.*<span class="w"> </span>action<span class="o">(</span><span class="nv">type</span><span class="o">=</span><span class="s2">&quot;omudp&quot;</span><span class="w"> </span><span class="nv">target</span><span class="o">=</span><span class="s2">&quot;192.168.56.20&quot;</span><span class="w"> </span><span class="nv">port</span><span class="o">=</span><span class="s2">&quot;514&quot;</span><span class="o">)</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>*.*<span class="w"> </span>action<span class="o">(</span><span class="nv">type</span><span class="o">=</span><span class="s2">"omudp"</span><span class="w"> </span><span class="nv">target</span><span class="o">=</span><span class="s2">"192.168.56.20"</span><span class="w"> </span><span class="nv">port</span><span class="o">=</span><span class="s2">"514"</span><span class="o">)</span>
 </code></pre></div>
 <blockquote>
 <p><strong>Syntaxe alternative</strong> sans module explicite : <code>*.* @192.168.56.20:514</code> (un seul <code>@</code> = UDP ; <code>@@</code> = TCP). C'est la forme historique, toujours valable.</p>
@@ -2550,11 +2550,11 @@
 </code></pre></div>
 <h3 id="etape-3-emettre-un-message-de-test-et-verifier-la-chaine">Étape 3 : Émettre un message de test et vérifier la chaîne<a class="headerlink" href="#etape-3-emettre-un-message-de-test-et-verifier-la-chaine" title="Permanent link">&para;</a></h3>
 <p>Depuis <code>web-client</code>, générer un message Syslog avec <code>logger</code> (commande fournie par <code>util-linux</code>, déjà installée) :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>logger<span class="w"> </span>-t<span class="w"> </span>LAB_TEST<span class="w"> </span><span class="s2">&quot;salut depuis web-client, test de centralisation&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>logger<span class="w"> </span>-t<span class="w"> </span>LAB_TEST<span class="w"> </span><span class="s2">"salut depuis web-client, test de centralisation"</span>
 </code></pre></div>
 <p>Côté serveur <code>logs-srv</code>, vérifier l'arrivée :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>sudo<span class="w"> </span>ls<span class="w"> </span>/var/log/remote/
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="c1"># attendu : un dossier portant le nom (ou l&#39;IP) de web-client</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="c1"># attendu : un dossier portant le nom (ou l'IP) de web-client</span>
 <a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
 <a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>sudo<span class="w"> </span>find<span class="w"> </span>/var/log/remote/<span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span>-exec<span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="o">{}</span><span class="w"> </span>+
 </code></pre></div>
@@ -2568,14 +2568,14 @@
 <p>Si rien n'arrive, passer à la section « Dépannage » ci-dessous.</p>
 <h3 id="etape-4-filtrer-et-ne-router-que-certaines-priorites">Étape 4 : Filtrer et ne router que certaines priorités<a class="headerlink" href="#etape-4-filtrer-et-ne-router-que-certaines-priorites" title="Permanent link">&para;</a></h3>
 <p>Envoyer <strong>tout</strong> (<code>*.*</code>) est simple mais verbeux. En pratique, on peut vouloir n'expédier que les erreurs et alertes pour économiser la bande passante. Sur le <strong>client</strong>, remplacez la règle <code>20-forward.conf</code> par :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>module<span class="o">(</span><span class="nv">load</span><span class="o">=</span><span class="s2">&quot;omudp&quot;</span><span class="o">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>module<span class="o">(</span><span class="nv">load</span><span class="o">=</span><span class="s2">"omudp"</span><span class="o">)</span>
 <a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="c1"># N&#39;expédier que les priorités WARNING (4) et plus graves (0=emerg ... 3=err)</span>
-<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>*.warning<span class="p">;</span>*.err<span class="p">;</span>*.crit<span class="p">;</span>*.alert<span class="p">;</span>*.emerg<span class="w"> </span>action<span class="o">(</span><span class="nv">type</span><span class="o">=</span><span class="s2">&quot;omudp&quot;</span><span class="w"> </span><span class="nv">target</span><span class="o">=</span><span class="s2">&quot;192.168.56.20&quot;</span><span class="w"> </span><span class="nv">port</span><span class="o">=</span><span class="s2">&quot;514&quot;</span><span class="o">)</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="c1"># N'expédier que les priorités WARNING (4) et plus graves (0=emerg ... 3=err)</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>*.warning<span class="p">;</span>*.err<span class="p">;</span>*.crit<span class="p">;</span>*.alert<span class="p">;</span>*.emerg<span class="w"> </span>action<span class="o">(</span><span class="nv">type</span><span class="o">=</span><span class="s2">"omudp"</span><span class="w"> </span><span class="nv">target</span><span class="o">=</span><span class="s2">"192.168.56.20"</span><span class="w"> </span><span class="nv">port</span><span class="o">=</span><span class="s2">"514"</span><span class="o">)</span>
 </code></pre></div>
 <p>Tester avec deux messages de priorité différente :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>logger<span class="w"> </span>-p<span class="w"> </span>user.info<span class="w"> </span><span class="s2">&quot;INFO — ne doit PAS partir vers le serveur&quot;</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>logger<span class="w"> </span>-p<span class="w"> </span>user.warning<span class="w"> </span><span class="s2">&quot;WARN — doit arriver sur logs-srv&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>logger<span class="w"> </span>-p<span class="w"> </span>user.info<span class="w"> </span><span class="s2">"INFO — ne doit PAS partir vers le serveur"</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>logger<span class="w"> </span>-p<span class="w"> </span>user.warning<span class="w"> </span><span class="s2">"WARN — doit arriver sur logs-srv"</span>
 </code></pre></div>
 <p>Sur <code>logs-srv</code>, seules les lignes de priorité <code>warning</code> et supérieure doivent apparaître dans <code>/var/log/remote/web-client/AAAAMMJJ.log</code>.</p>
 <h3 id="etape-5-garder-une-trace-durable-avec-logrotate">Étape 5 : Garder une trace durable avec logrotate<a class="headerlink" href="#etape-5-garder-une-trace-durable-avec-logrotate" title="Permanent link">&para;</a></h3>

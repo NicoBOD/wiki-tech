@@ -2376,7 +2376,7 @@
 </code></pre></div>
 <h3 id="etape-2-preparation-des-dossiers-a-partager">Étape 2 : Préparation des dossiers à partager<a class="headerlink" href="#etape-2-preparation-des-dossiers-a-partager" title="Permanent link">&para;</a></h3>
 <p>Nous allons créer deux dossiers distincts dans <code>/srv/samba</code> : un pour le partage public et un pour le partage privé.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Créer l&#39;arborescence</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Créer l'arborescence</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/srv/samba/public
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/srv/samba/prive
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
@@ -2405,7 +2405,7 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/samba/smb.conf
 </code></pre></div>
 <p>Ajoutez-y ceci :</p>
-<div class="highlight"><span class="filename">/etc/samba/smb.conf</span><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># [Partage_Public] correspond au nom tel qu&#39;il apparaîtra sur le réseau</span>
+<div class="highlight"><span class="filename">/etc/samba/smb.conf</span><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># [Partage_Public] correspond au nom tel qu'il apparaîtra sur le réseau</span>
 <a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="k">[Partage_Public]</span>
 <a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="na">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/srv/samba/public</span>
 <a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="na">browseable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">yes</span>
@@ -2450,7 +2450,7 @@
 </div>
 <div class="tabbed-block">
 <p>Installez le client Samba (<code>smbclient</code>) sur la machine cliente et testez l'accès :
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># Lister les partages (laissez le mot de passe vide pour le compte &quot;guest&quot;)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># Lister les partages (laissez le mot de passe vide pour le compte "guest")</span>
 <a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>smbclient<span class="w"> </span>-L<span class="w"> </span>//IP_DE_VOTRE_SERVEUR<span class="w"> </span>-U<span class="w"> </span>guest
 <a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
 <a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1"># Se connecter au partage privé</span>

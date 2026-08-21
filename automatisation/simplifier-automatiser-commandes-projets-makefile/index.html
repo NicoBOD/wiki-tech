@@ -2435,13 +2435,13 @@ Pour indiquer que vos cibles ne sont pas des noms de fichiers à générer (mais
 <p>Une excellente pratique consiste à ajouter une cible <code>help</code> pour que n'importe qui puisse lister les commandes disponibles en tapant <code>make help</code>.</p>
 <div class="highlight"><span class="filename">Makefile</span><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">help</span> <span class="n">up</span> <span class="n">down</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c"># Cible par défaut lorsqu&#39;on tape juste &quot;make&quot;</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c"># Cible par défaut lorsqu'on tape juste "make"</span>
 <a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="nv">.DEFAULT_GOAL</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">help</span>
 <a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
 <a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="nf">help</span><span class="o">:</span>
-<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span>@echo<span class="w"> </span><span class="s2">&quot;Commandes disponibles :&quot;</span>
-<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span>@echo<span class="w"> </span><span class="s2">&quot;  make up    - Démarre l&#39;environnement de développement&quot;</span>
-<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span>@echo<span class="w"> </span><span class="s2">&quot;  make down  - Arrête et supprime les conteneurs&quot;</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span>@echo<span class="w"> </span><span class="s2">"Commandes disponibles :"</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span>@echo<span class="w"> </span><span class="s2">"  make up    - Démarre l'environnement de développement"</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span>@echo<span class="w"> </span><span class="s2">"  make down  - Arrête et supprime les conteneurs"</span>
 <a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
 <a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="nf">up</span><span class="o">:</span>
 <a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">    </span>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
@@ -2460,7 +2460,7 @@ Pour indiquer que vos cibles ne sont pas des noms de fichiers à générer (mais
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Commandes disponibles :
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>  make up    - Démarre l&#39;environnement de développement
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>  make up    - Démarre l'environnement de développement
 <a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>  make down  - Arrête et supprime les conteneurs
 </code></pre></div>
 </div>

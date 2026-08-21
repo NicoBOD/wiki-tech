@@ -2369,7 +2369,7 @@
 <h3 id="4-combiner-fzf-avec-dautres-commandes-pipes">4. Combiner fzf avec d'autres commandes (Pipes)<a class="headerlink" href="#4-combiner-fzf-avec-dautres-commandes-pipes" title="Permanent link">&para;</a></h3>
 <p>La vraie puissance de <code>fzf</code> réside dans sa capacité à lire l'entrée standard (stdin). Vous pouvez chainer n'importe quelle commande avec <code>fzf</code>.</p>
 <p><strong>Trouver un processus à tuer :</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ps<span class="w"> </span>aux<span class="w"> </span><span class="p">|</span><span class="w"> </span>fzf<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span><span class="nb">kill</span><span class="w"> </span>-9
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ps<span class="w"> </span>aux<span class="w"> </span><span class="p">|</span><span class="w"> </span>fzf<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $2}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span><span class="nb">kill</span><span class="w"> </span>-9
 </code></pre></div>
 <em>Ici, on liste les processus, on filtre visuellement avec fzf, on extrait le PID (2ème colonne) et on le tue.</em></p>
 <p><strong>Naviguer dans les logs système :</strong>

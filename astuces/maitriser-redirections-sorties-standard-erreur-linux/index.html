@@ -2332,29 +2332,29 @@
 <p>Pour rediriger le résultat d'une commande vers un fichier, on utilise le chevron <code>&gt;</code>. Le chiffre <code>1</code> (pour <code>stdout</code>) est implicite : on peut écrire <code>1&gt;</code> ou simplement <code>&gt;</code>.</p>
 <h3 id="ecraser-ou-creer-un-fichier">Écraser ou créer un fichier<a class="headerlink" href="#ecraser-ou-creer-un-fichier" title="Permanent link">&para;</a></h3>
 <p>L'opérateur <code>&gt;</code> écrase le contenu du fichier s'il existe, ou le crée s'il n'existe pas.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Écrit le résultat de la commande &#39;ls -la&#39; dans un fichier &#39;liste_fichiers.txt&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Écrit le résultat de la commande 'ls -la' dans un fichier 'liste_fichiers.txt'</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>ls<span class="w"> </span>-la<span class="w"> </span>&gt;<span class="w"> </span>liste_fichiers.txt
 </code></pre></div>
 <h3 id="ajouter-a-un-fichier-existant-append">Ajouter à un fichier existant (append)<a class="headerlink" href="#ajouter-a-un-fichier-existant-append" title="Permanent link">&para;</a></h3>
 <p>Si vous souhaitez conserver le contenu d'un fichier et ajouter de nouvelles données à la fin, utilisez le double chevron <code>&gt;&gt;</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Ajoute la date actuelle à la fin du fichier &#39;historique.log&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Ajoute la date actuelle à la fin du fichier 'historique.log'</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>date<span class="w"> </span>&gt;&gt;<span class="w"> </span>historique.log
 </code></pre></div>
 <h2 id="rediriger-la-sortie-derreur-stderr">Rediriger la sortie d'erreur (stderr)<a class="headerlink" href="#rediriger-la-sortie-derreur-stderr" title="Permanent link">&para;</a></h2>
 <p>La redirection des erreurs se fait avec le descripteur <code>2</code> suivi du chevron <code>&gt;</code>. Cela est très pratique pour isoler les messages d'erreur dans un fichier de logs.</p>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Recherche de fichiers (certains dossiers donneront une erreur &#39;Permission denied&#39;)</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># Les erreurs seront écrites dans &#39;erreurs.log&#39;</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>find<span class="w"> </span>/<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;passwd&quot;</span><span class="w"> </span><span class="m">2</span>&gt;<span class="w"> </span>erreurs.log
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Recherche de fichiers (certains dossiers donneront une erreur 'Permission denied')</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># Les erreurs seront écrites dans 'erreurs.log'</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>find<span class="w"> </span>/<span class="w"> </span>-name<span class="w"> </span><span class="s2">"passwd"</span><span class="w"> </span><span class="m">2</span>&gt;<span class="w"> </span>erreurs.log
 </code></pre></div>
 <em>Note : Seuls les messages d'erreur iront dans le fichier, le reste de la recherche (les succès) continuera de s'afficher à l'écran.</em></p>
 <h2 id="combiner-les-redirections-stdout-et-stderr">Combiner les redirections (stdout et stderr)<a class="headerlink" href="#combiner-les-redirections-stdout-et-stderr" title="Permanent link">&para;</a></h2>
 <h3 id="separer-les-resultats-et-les-erreurs">Séparer les résultats et les erreurs<a class="headerlink" href="#separer-les-resultats-et-les-erreurs" title="Permanent link">&para;</a></h3>
 <p>Vous pouvez rediriger les résultats dans un fichier, et les erreurs dans un autre en une seule commande :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>find<span class="w"> </span>/<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;passwd&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>resultats.txt<span class="w"> </span><span class="m">2</span>&gt;<span class="w"> </span>erreurs.log
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>find<span class="w"> </span>/<span class="w"> </span>-name<span class="w"> </span><span class="s2">"passwd"</span><span class="w"> </span>&gt;<span class="w"> </span>resultats.txt<span class="w"> </span><span class="m">2</span>&gt;<span class="w"> </span>erreurs.log
 </code></pre></div>
 <h3 id="regrouper-stdout-et-stderr-dans-le-meme-fichier">Regrouper stdout et stderr dans le même fichier<a class="headerlink" href="#regrouper-stdout-et-stderr-dans-le-meme-fichier" title="Permanent link">&para;</a></h3>
 <p>Parfois, on souhaite garder une trace complète de l'exécution, succès comme erreurs. On utilise alors la syntaxe <code>2&gt;&amp;1</code> (qui signifie "redirige le flux 2 vers le même endroit que le flux 1").</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Redirige d&#39;abord stdout vers log_complet.txt, puis y attache stderr</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Redirige d'abord stdout vers log_complet.txt, puis y attache stderr</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>/opt/scripts/backup.sh<span class="w"> </span>&gt;<span class="w"> </span>log_complet.txt<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
 </code></pre></div>
 <p><strong>Astuce Bash moderne :</strong>
@@ -2364,7 +2364,7 @@ Avec Bash 4+, vous pouvez utiliser le raccourci <code>&amp;&gt;</code> pour tout
 <h2 id="le-trou-noir-devnull">Le trou noir : <code>/dev/null</code><a class="headerlink" href="#le-trou-noir-devnull" title="Permanent link">&para;</a></h2>
 <p><code>/dev/null</code> est un fichier spécial sous Linux qui détruit toutes les données qu'on lui envoie. C'est l'outil idéal pour "faire taire" une commande.</p>
 <p>Ignorer les erreurs gênantes (comme les fameux "Permission non accordée" avec <code>find</code>) :
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>find<span class="w"> </span>/<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;mon_fichier.conf&quot;</span><span class="w"> </span><span class="m">2</span>&gt;<span class="w"> </span>/dev/null
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>find<span class="w"> </span>/<span class="w"> </span>-name<span class="w"> </span><span class="s2">"mon_fichier.conf"</span><span class="w"> </span><span class="m">2</span>&gt;<span class="w"> </span>/dev/null
 </code></pre></div></p>
 <p>Ignorer toute la sortie (pour qu'une commande tourne de manière totalement silencieuse) :
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>apt-get<span class="w"> </span>update<span class="w"> </span><span class="p">&amp;</span>&gt;<span class="w"> </span>/dev/null

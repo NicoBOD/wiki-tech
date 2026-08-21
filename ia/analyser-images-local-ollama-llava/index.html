@@ -2313,7 +2313,7 @@
 <h3 id="etape-2-analyser-une-image-en-ligne-de-commande">Étape 2 : Analyser une image en ligne de commande<a class="headerlink" href="#etape-2-analyser-une-image-en-ligne-de-commande" title="Permanent link">&para;</a></h3>
 <p>Une fois le modèle téléchargé, vous pouvez lui poser une question en incluant simplement le chemin absolu ou relatif de votre image dans le prompt. Ollama détectera automatiquement le fichier, le transformera au format attendu et l'enverra au modèle.</p>
 <p>Exemple :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ollama<span class="w"> </span>run<span class="w"> </span>llava<span class="w"> </span><span class="s2">&quot;Décris-moi cette image en français : /home/user/Images/vacances.jpg&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ollama<span class="w"> </span>run<span class="w"> </span>llava<span class="w"> </span><span class="s2">"Décris-moi cette image en français : /home/user/Images/vacances.jpg"</span>
 </code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Astuce pour les chemins de fichiers</p>
@@ -2324,27 +2324,27 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ollama<span class="w"> </span>run<span class="w"> </span>llava
 </code></pre></div>
 <p>Une fois le prompt <code>&gt;&gt;&gt;</code> affiché, vous pouvez simplement ajouter votre image à vos questions :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>&gt;&gt;&gt; Peux-tu me lister les objets présents sur l&#39;image ./bureau.png ?
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>&gt;&gt;&gt; Peux-tu me lister les objets présents sur l'image ./bureau.png ?
 </code></pre></div>
 <h3 id="etape-4-utiliser-lapi-rest-dollama-avec-une-image">Étape 4 : Utiliser l'API REST d'Ollama avec une image<a class="headerlink" href="#etape-4-utiliser-lapi-rest-dollama-avec-une-image" title="Permanent link">&para;</a></h3>
 <p>Si vous souhaitez automatiser ce processus dans un script (en Python, Bash, etc.), l'API d'Ollama accepte les images. L'image doit cependant être envoyée encodée en <strong>Base64</strong>.</p>
 <p>Voici un exemple avec la commande <code>curl</code> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># On encode d&#39;abord l&#39;image en base64 sans sauts de ligne (-w 0 sur Linux)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># On encode d'abord l'image en base64 sans sauts de ligne (-w 0 sur Linux)</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nv">IMAGE_BASE64</span><span class="o">=</span><span class="k">$(</span>base64<span class="w"> </span>-w<span class="w"> </span><span class="m">0</span><span class="w"> </span>/chemin/vers/image.jpg<span class="k">)</span>
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># On envoie la requête à l&#39;API locale</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>curl<span class="w"> </span>http://localhost:11434/api/generate<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="s1">  &quot;model&quot;: &quot;llava&quot;,</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="s1">  &quot;prompt&quot;: &quot;Que vois-tu sur cette image ? Réponds de façon concise.&quot;,</span>
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="s1">  &quot;images&quot;: [&quot;&#39;</span><span class="s2">&quot;</span><span class="nv">$IMAGE_BASE64</span><span class="s2">&quot;</span><span class="s1">&#39;&quot;],</span>
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="s1">  &quot;stream&quot;: false</span>
-<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="s1">}&#39;</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># On envoie la requête à l'API locale</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>curl<span class="w"> </span>http://localhost:11434/api/generate<span class="w"> </span>-d<span class="w"> </span><span class="s1">'{</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="s1">  "model": "llava",</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="s1">  "prompt": "Que vois-tu sur cette image ? Réponds de façon concise.",</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="s1">  "images": ["'</span><span class="s2">"</span><span class="nv">$IMAGE_BASE64</span><span class="s2">"</span><span class="s1">'"],</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="s1">  "stream": false</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="s1">}'</span>
 </code></pre></div>
 <p>Le retour sera un flux JSON contenant la réponse de l'IA (champ <code>response</code>).</p>
 <h2 id="verification">Vérification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
 <p>Pour valider le bon fonctionnement de l'installation, téléchargez une image arbitraire et testez :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>wget<span class="w"> </span>-O<span class="w"> </span>/tmp/test-image.jpg<span class="w"> </span>https://raw.githubusercontent.com/ollama/ollama/main/docs/images/ollama-logo.png
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>ollama<span class="w"> </span>run<span class="w"> </span>llava<span class="w"> </span><span class="s2">&quot;What is the text on this image? /tmp/test-image.jpg&quot;</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>ollama<span class="w"> </span>run<span class="w"> </span>llava<span class="w"> </span><span class="s2">"What is the text on this image? /tmp/test-image.jpg"</span>
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu</p>

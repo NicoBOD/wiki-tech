@@ -2547,7 +2547,7 @@ On rencontre souvent <code>ens18</code>, <code>ens160</code>, <code>enp1s0</code
 </div>
 <h3 id="etape-2-reperer-le-fichier-netplan-actuel">Étape 2 : repérer le fichier Netplan actuel<a class="headerlink" href="#etape-2-reperer-le-fichier-netplan-actuel" title="Permanent link">&para;</a></h3>
 <p>Affichez les fichiers présents dans <code>/etc/netplan/</code> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>find<span class="w"> </span>/etc/netplan<span class="w"> </span>-maxdepth<span class="w"> </span><span class="m">1</span><span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.yaml&#39;</span><span class="w"> </span>-print
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>find<span class="w"> </span>/etc/netplan<span class="w"> </span>-maxdepth<span class="w"> </span><span class="m">1</span><span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span>-name<span class="w"> </span><span class="s1">'*.yaml'</span><span class="w"> </span>-print
 </code></pre></div>
 <p>Vous verrez souvent un fichier comme :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>/etc/netplan/50-cloud-init.yaml
@@ -2575,7 +2575,7 @@ Cela évite les conflits entre plusieurs fichiers YAML Netplan.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sudo<span class="w"> </span>cp<span class="w"> </span>/etc/netplan/50-cloud-init.yaml<span class="w"> </span>/etc/netplan/50-cloud-init.yaml.bak
 </code></pre></div>
 <p>Vérifiez la présence de la copie :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>find<span class="w"> </span>/etc/netplan<span class="w"> </span>-maxdepth<span class="w"> </span><span class="m">1</span><span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span><span class="se">\(</span><span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.yaml&#39;</span><span class="w"> </span>-o<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.bak&#39;</span><span class="w"> </span><span class="se">\)</span><span class="w"> </span>-print
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>find<span class="w"> </span>/etc/netplan<span class="w"> </span>-maxdepth<span class="w"> </span><span class="m">1</span><span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span><span class="se">\(</span><span class="w"> </span>-name<span class="w"> </span><span class="s1">'*.yaml'</span><span class="w"> </span>-o<span class="w"> </span>-name<span class="w"> </span><span class="s1">'*.bak'</span><span class="w"> </span><span class="se">\)</span><span class="w"> </span>-print
 </code></pre></div>
 <h3 id="etape-4-ecrire-la-configuration-ip-statique">Étape 4 : écrire la configuration IP statique<a class="headerlink" href="#etape-4-ecrire-la-configuration-ip-statique" title="Permanent link">&para;</a></h3>
 <p>Éditez le fichier Netplan avec votre éditeur préféré :</p>

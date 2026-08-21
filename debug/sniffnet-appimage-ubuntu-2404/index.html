@@ -2683,7 +2683,7 @@ pas pour Ubuntu 24.04 Noble (erreur 404).</p>
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>sudo<span class="w"> </span>cp<span class="w"> </span>/usr/lib/x86_64-linux-gnu/libappimage.so.1.0.3.abi1<span class="w"> </span>/tmp/libappimage-noble.so
 <a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>sudo<span class="w"> </span>patchelf<span class="w"> </span>--set-soname<span class="w"> </span>libappimage.so.1.0<span class="w"> </span>/tmp/libappimage-noble.so
 <a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="c1"># 3. Sauvegarder l&#39;ancienne bibliothèque et installer la nouvelle</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="c1"># 3. Sauvegarder l'ancienne bibliothèque et installer la nouvelle</span>
 <a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>sudo<span class="w"> </span>cp<span class="w"> </span>/usr/lib/x86_64-linux-gnu/appimagelauncher/libappimage.so.1.0.3<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">        </span>/usr/lib/x86_64-linux-gnu/appimagelauncher/libappimage.so.1.0.3.backup-bionic
 <a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>sudo<span class="w"> </span>cp<span class="w"> </span>/tmp/libappimage-noble.so<span class="w"> </span><span class="se">\</span>
@@ -2694,7 +2694,7 @@ pas pour Ubuntu 24.04 Noble (erreur 404).</p>
 <a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>restart<span class="w"> </span>appimagelauncherd
 </code></pre></div>
 <h3 id="verification">Vérification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>journalctl<span class="w"> </span>--user<span class="w"> </span>--no-pager<span class="w"> </span>-n<span class="w"> </span><span class="m">20</span><span class="w"> </span>--since<span class="w"> </span><span class="s2">&quot;1 minute ago&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>appimage
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>journalctl<span class="w"> </span>--user<span class="w"> </span>--no-pager<span class="w"> </span>-n<span class="w"> </span><span class="m">20</span><span class="w"> </span>--since<span class="w"> </span><span class="s2">"1 minute ago"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>appimage
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu</p>
@@ -2716,7 +2716,7 @@ lance pas encore — voir Problème 2.</p>
 <a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>(null) options:
 <a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    -o offset=N   offset N bytes into ARCHIVE to mount
 <a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    ...
-<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>Can&#39;t open squashfs image: Bad address
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>Can't open squashfs image: Bad address
 <a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>Cannot mount AppImage, please check your FUSE setup.
 <a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>execv error: No such file or directory
 </code></pre></div>
@@ -2730,7 +2730,7 @@ monte exactement le même squashfs sans problème.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Vérifier que le squashfs lui-même est lisible par le système</span>
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>/tmp/test-mount
 <a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>squashfuse<span class="w"> </span>-o<span class="w"> </span><span class="nv">offset</span><span class="o">=</span><span class="k">$(</span>~/Applications/Sniffnet_*.AppImage<span class="w"> </span>--appimage-offset<span class="k">)</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">           </span>~/Applications/Sniffnet_*.AppImage<span class="w"> </span>/tmp/test-mount<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;OK&quot;</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">           </span>~/Applications/Sniffnet_*.AppImage<span class="w"> </span>/tmp/test-mount<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"OK"</span>
 <a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>ls<span class="w"> </span>/tmp/test-mount/<span class="w">    </span><span class="c1"># doit afficher AppRun, sniffnet.desktop, usr/</span>
 <a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>fusermount3<span class="w"> </span>-u<span class="w"> </span>/tmp/test-mount
 </code></pre></div>
@@ -2738,39 +2738,39 @@ monte exactement le même squashfs sans problème.</p>
 <h3 id="correctif_1">Correctif<a class="headerlink" href="#correctif_1" title="Permanent link">&para;</a></h3>
 <p>Extraire le contenu de l'AppImage de façon permanente avec <code>unsquashfs</code> (qui supporte zstd)
 et créer un wrapper de lancement :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># 1. Identifier l&#39;offset du squashfs</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># 1. Identifier l'offset du squashfs</span>
 <a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="nv">OFFSET</span><span class="o">=</span><span class="k">$(</span>~/Applications/Sniffnet_*.AppImage<span class="w"> </span>--appimage-offset<span class="k">)</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Offset squashfs : </span><span class="nv">$OFFSET</span><span class="s2">&quot;</span><span class="w">   </span><span class="c1"># doit afficher 944632</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"Offset squashfs : </span><span class="nv">$OFFSET</span><span class="s2">"</span><span class="w">   </span><span class="c1"># doit afficher 944632</span>
 <a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
 <a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="c1"># 2. Extraire vers ~/.local/share/sniffnet/</span>
 <a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.local/share/sniffnet
-<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>sudo<span class="w"> </span>unsquashfs<span class="w"> </span>-offset<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$OFFSET</span><span class="s2">&quot;</span><span class="w"> </span>-no-progress<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>sudo<span class="w"> </span>unsquashfs<span class="w"> </span>-offset<span class="w"> </span><span class="s2">"</span><span class="nv">$OFFSET</span><span class="s2">"</span><span class="w"> </span>-no-progress<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">  </span>-dest<span class="w"> </span>~/.local/share/sniffnet<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">  </span>~/Applications/Sniffnet_*.AppImage
 <a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>
-<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="c1"># 3. Corriger l&#39;ownership (unsquashfs tourne en root)</span>
-<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>sudo<span class="w"> </span>chown<span class="w"> </span>-R<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USER</span><span class="s2">:</span><span class="nv">$USER</span><span class="s2">&quot;</span><span class="w"> </span>~/.local/share/sniffnet
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="c1"># 3. Corriger l'ownership (unsquashfs tourne en root)</span>
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>sudo<span class="w"> </span>chown<span class="w"> </span>-R<span class="w"> </span><span class="s2">"</span><span class="nv">$USER</span><span class="s2">:</span><span class="nv">$USER</span><span class="s2">"</span><span class="w"> </span>~/.local/share/sniffnet
 <a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>
 <a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="c1"># 4. Créer le wrapper de lancement</span>
 <a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.local/bin
-<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>~/.local/bin/sniffnet<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>~/.local/bin/sniffnet<span class="w"> </span><span class="s">&lt;&lt; 'EOF'</span>
 <a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a><span class="s">#!/bin/bash</span>
-<a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a><span class="s">APPDIR=&quot;$HOME/.local/share/sniffnet&quot;</span>
-<a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a><span class="s">APPIMAGE=$(echo &quot;$HOME&quot;/Applications/Sniffnet_*.AppImage | head -1)</span>
-<a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a><span class="s">exec &quot;$APPDIR/AppRun&quot; &quot;$@&quot;</span>
+<a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a><span class="s">APPDIR="$HOME/.local/share/sniffnet"</span>
+<a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a><span class="s">APPIMAGE=$(echo "$HOME"/Applications/Sniffnet_*.AppImage | head -1)</span>
+<a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a><span class="s">exec "$APPDIR/AppRun" "$@"</span>
 <a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a><span class="s">EOF</span>
 <a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a>chmod<span class="w"> </span>+x<span class="w"> </span>~/.local/bin/sniffnet
 <a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a>
 <a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a><span class="c1"># 5. Corriger le desktop entry créé par AppImageLauncher</span>
 <a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a><span class="nv">DESKTOP</span><span class="o">=</span><span class="k">$(</span>ls<span class="w"> </span>~/.local/share/applications/appimagekit_*-Sniffnet.desktop<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-1<span class="k">)</span>
-<a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$DESKTOP</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$DESKTOP</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
 <a id="__codelineno-8-27" name="__codelineno-8-27" href="#__codelineno-8-27"></a><span class="w">    </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-8-28" name="__codelineno-8-28" href="#__codelineno-8-28"></a><span class="w">        </span>-e<span class="w"> </span><span class="s2">&quot;s|^Name=.*|Name=Sniffnet|&quot;</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-8-29" name="__codelineno-8-29" href="#__codelineno-8-29"></a><span class="w">        </span>-e<span class="w"> </span><span class="s2">&quot;s|^Exec=.*AppImage.*|Exec=</span><span class="nv">$HOME</span><span class="s2">/.local/bin/sniffnet|&quot;</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-8-30" name="__codelineno-8-30" href="#__codelineno-8-30"></a><span class="w">        </span>-e<span class="w"> </span><span class="s2">&quot;s|^TryExec=.*AppImage.*|TryExec=</span><span class="nv">$HOME</span><span class="s2">/.local/bin/sniffnet|&quot;</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-8-31" name="__codelineno-8-31" href="#__codelineno-8-31"></a><span class="w">        </span><span class="s2">&quot;</span><span class="nv">$DESKTOP</span><span class="s2">&quot;</span>
+<a id="__codelineno-8-28" name="__codelineno-8-28" href="#__codelineno-8-28"></a><span class="w">        </span>-e<span class="w"> </span><span class="s2">"s|^Name=.*|Name=Sniffnet|"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-8-29" name="__codelineno-8-29" href="#__codelineno-8-29"></a><span class="w">        </span>-e<span class="w"> </span><span class="s2">"s|^Exec=.*AppImage.*|Exec=</span><span class="nv">$HOME</span><span class="s2">/.local/bin/sniffnet|"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-8-30" name="__codelineno-8-30" href="#__codelineno-8-30"></a><span class="w">        </span>-e<span class="w"> </span><span class="s2">"s|^TryExec=.*AppImage.*|TryExec=</span><span class="nv">$HOME</span><span class="s2">/.local/bin/sniffnet|"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-8-31" name="__codelineno-8-31" href="#__codelineno-8-31"></a><span class="w">        </span><span class="s2">"</span><span class="nv">$DESKTOP</span><span class="s2">"</span>
 <a id="__codelineno-8-32" name="__codelineno-8-32" href="#__codelineno-8-32"></a><span class="w">    </span>update-desktop-database<span class="w"> </span>~/.local/share/applications/
-<a id="__codelineno-8-33" name="__codelineno-8-33" href="#__codelineno-8-33"></a><span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Desktop entry mis à jour : </span><span class="nv">$DESKTOP</span><span class="s2">&quot;</span>
+<a id="__codelineno-8-33" name="__codelineno-8-33" href="#__codelineno-8-33"></a><span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"Desktop entry mis à jour : </span><span class="nv">$DESKTOP</span><span class="s2">"</span>
 <a id="__codelineno-8-34" name="__codelineno-8-34" href="#__codelineno-8-34"></a><span class="k">fi</span>
 </code></pre></div>
 <h3 id="verification_1">Vérification<a class="headerlink" href="#verification_1" title="Permanent link">&para;</a></h3>
@@ -2798,7 +2798,7 @@ pour lancer toute l'application :</p>
 <a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>getcap<span class="w"> </span>~/.local/share/sniffnet/usr/bin/sniffnet
 <a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="c1"># → /home/user/.local/share/sniffnet/usr/bin/sniffnet cap_net_admin,cap_net_raw=eip</span>
 <a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
-<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="c1"># Lancer et vérifier l&#39;absence d&#39;erreur réseau</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="c1"># Lancer et vérifier l'absence d'erreur réseau</span>
 <a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>~/.local/bin/sniffnet
 </code></pre></div>
 <div class="admonition success">
@@ -2813,41 +2813,41 @@ précédente sera obsolète.</p>
 <h3 id="procedure-de-mise-a-jour">Procédure de mise à jour<a class="headerlink" href="#procedure-de-mise-a-jour" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># 1. Télécharger la nouvelle AppImage dans ~/Downloads/</span>
 <a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="c1"># 2. Placer l&#39;AppImage dans ~/Applications/ pour déclencher l&#39;intégration</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="c1"># 2. Placer l'AppImage dans ~/Applications/ pour déclencher l'intégration</span>
 <a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="c1">#    AppImageLauncher va la renommer et créer le desktop entry automatiquement</span>
 <a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>cp<span class="w"> </span>~/Downloads/Sniffnet_LinuxAppImage_amd64.AppImage<span class="w"> </span>~/Applications/
 <a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>
 <a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="c1"># 3. Récupérer le nom exact du nouveau fichier</span>
 <a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="nv">NEW_APPIMAGE</span><span class="o">=</span><span class="k">$(</span>ls<span class="w"> </span>~/Applications/Sniffnet_*.AppImage<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-1<span class="k">)</span>
-<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Nouvelle AppImage : </span><span class="nv">$NEW_APPIMAGE</span><span class="s2">&quot;</span>
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"Nouvelle AppImage : </span><span class="nv">$NEW_APPIMAGE</span><span class="s2">"</span>
 <a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>
 <a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="c1"># 4. Extraire le nouveau squashfs</span>
-<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="nv">OFFSET</span><span class="o">=</span><span class="k">$(</span><span class="s2">&quot;</span><span class="nv">$NEW_APPIMAGE</span><span class="s2">&quot;</span><span class="w"> </span>--appimage-offset<span class="k">)</span>
+<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="nv">OFFSET</span><span class="o">=</span><span class="k">$(</span><span class="s2">"</span><span class="nv">$NEW_APPIMAGE</span><span class="s2">"</span><span class="w"> </span>--appimage-offset<span class="k">)</span>
 <a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a>rm<span class="w"> </span>-rf<span class="w"> </span>~/.local/share/sniffnet
 <a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.local/share/sniffnet
-<a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a>sudo<span class="w"> </span>unsquashfs<span class="w"> </span>-offset<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$OFFSET</span><span class="s2">&quot;</span><span class="w"> </span>-no-progress<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a><span class="w">  </span>-dest<span class="w"> </span>~/.local/share/sniffnet<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$NEW_APPIMAGE</span><span class="s2">&quot;</span>
-<a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a>sudo<span class="w"> </span>chown<span class="w"> </span>-R<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USER</span><span class="s2">:</span><span class="nv">$USER</span><span class="s2">&quot;</span><span class="w"> </span>~/.local/share/sniffnet
+<a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a>sudo<span class="w"> </span>unsquashfs<span class="w"> </span>-offset<span class="w"> </span><span class="s2">"</span><span class="nv">$OFFSET</span><span class="s2">"</span><span class="w"> </span>-no-progress<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a><span class="w">  </span>-dest<span class="w"> </span>~/.local/share/sniffnet<span class="w"> </span><span class="s2">"</span><span class="nv">$NEW_APPIMAGE</span><span class="s2">"</span>
+<a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a>sudo<span class="w"> </span>chown<span class="w"> </span>-R<span class="w"> </span><span class="s2">"</span><span class="nv">$USER</span><span class="s2">:</span><span class="nv">$USER</span><span class="s2">"</span><span class="w"> </span>~/.local/share/sniffnet
 <a id="__codelineno-13-18" name="__codelineno-13-18" href="#__codelineno-13-18"></a>
 <a id="__codelineno-13-19" name="__codelineno-13-19" href="#__codelineno-13-19"></a><span class="c1"># 5. Réappliquer les capabilities (obligatoire après chaque remplacement du binaire)</span>
 <a id="__codelineno-13-20" name="__codelineno-13-20" href="#__codelineno-13-20"></a>sudo<span class="w"> </span>setcap<span class="w"> </span>cap_net_raw,cap_net_admin<span class="o">=</span>eip<span class="w"> </span>~/.local/share/sniffnet/usr/bin/sniffnet
 <a id="__codelineno-13-21" name="__codelineno-13-21" href="#__codelineno-13-21"></a>
 <a id="__codelineno-13-22" name="__codelineno-13-22" href="#__codelineno-13-22"></a><span class="c1"># 6. Mettre à jour le wrapper</span>
-<a id="__codelineno-13-23" name="__codelineno-13-23" href="#__codelineno-13-23"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>~/.local/bin/sniffnet<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<a id="__codelineno-13-23" name="__codelineno-13-23" href="#__codelineno-13-23"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>~/.local/bin/sniffnet<span class="w"> </span><span class="s">&lt;&lt; 'EOF'</span>
 <a id="__codelineno-13-24" name="__codelineno-13-24" href="#__codelineno-13-24"></a><span class="s">#!/bin/bash</span>
-<a id="__codelineno-13-25" name="__codelineno-13-25" href="#__codelineno-13-25"></a><span class="s">APPDIR=&quot;$HOME/.local/share/sniffnet&quot;</span>
-<a id="__codelineno-13-26" name="__codelineno-13-26" href="#__codelineno-13-26"></a><span class="s">exec &quot;$APPDIR/AppRun&quot; &quot;$@&quot;</span>
+<a id="__codelineno-13-25" name="__codelineno-13-25" href="#__codelineno-13-25"></a><span class="s">APPDIR="$HOME/.local/share/sniffnet"</span>
+<a id="__codelineno-13-26" name="__codelineno-13-26" href="#__codelineno-13-26"></a><span class="s">exec "$APPDIR/AppRun" "$@"</span>
 <a id="__codelineno-13-27" name="__codelineno-13-27" href="#__codelineno-13-27"></a><span class="s">EOF</span>
 <a id="__codelineno-13-28" name="__codelineno-13-28" href="#__codelineno-13-28"></a>chmod<span class="w"> </span>+x<span class="w"> </span>~/.local/bin/sniffnet
 <a id="__codelineno-13-29" name="__codelineno-13-29" href="#__codelineno-13-29"></a>
 <a id="__codelineno-13-30" name="__codelineno-13-30" href="#__codelineno-13-30"></a><span class="c1"># 7. Mettre à jour le desktop entry si AppImageLauncher en a créé un nouveau</span>
 <a id="__codelineno-13-31" name="__codelineno-13-31" href="#__codelineno-13-31"></a><span class="nv">DESKTOP</span><span class="o">=</span><span class="k">$(</span>ls<span class="w"> </span>~/.local/share/applications/appimagekit_*-Sniffnet.desktop<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-1<span class="k">)</span>
-<a id="__codelineno-13-32" name="__codelineno-13-32" href="#__codelineno-13-32"></a><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$DESKTOP</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<a id="__codelineno-13-32" name="__codelineno-13-32" href="#__codelineno-13-32"></a><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$DESKTOP</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
 <a id="__codelineno-13-33" name="__codelineno-13-33" href="#__codelineno-13-33"></a><span class="w">    </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-13-34" name="__codelineno-13-34" href="#__codelineno-13-34"></a><span class="w">        </span>-e<span class="w"> </span><span class="s2">&quot;s|^Name=.*|Name=Sniffnet|&quot;</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-13-35" name="__codelineno-13-35" href="#__codelineno-13-35"></a><span class="w">        </span>-e<span class="w"> </span><span class="s2">&quot;s|^Exec=.*|Exec=</span><span class="nv">$HOME</span><span class="s2">/.local/bin/sniffnet|&quot;</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-13-36" name="__codelineno-13-36" href="#__codelineno-13-36"></a><span class="w">        </span>-e<span class="w"> </span><span class="s2">&quot;s|^TryExec=.*|TryExec=</span><span class="nv">$HOME</span><span class="s2">/.local/bin/sniffnet|&quot;</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-13-37" name="__codelineno-13-37" href="#__codelineno-13-37"></a><span class="w">        </span><span class="s2">&quot;</span><span class="nv">$DESKTOP</span><span class="s2">&quot;</span>
+<a id="__codelineno-13-34" name="__codelineno-13-34" href="#__codelineno-13-34"></a><span class="w">        </span>-e<span class="w"> </span><span class="s2">"s|^Name=.*|Name=Sniffnet|"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-13-35" name="__codelineno-13-35" href="#__codelineno-13-35"></a><span class="w">        </span>-e<span class="w"> </span><span class="s2">"s|^Exec=.*|Exec=</span><span class="nv">$HOME</span><span class="s2">/.local/bin/sniffnet|"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-13-36" name="__codelineno-13-36" href="#__codelineno-13-36"></a><span class="w">        </span>-e<span class="w"> </span><span class="s2">"s|^TryExec=.*|TryExec=</span><span class="nv">$HOME</span><span class="s2">/.local/bin/sniffnet|"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-13-37" name="__codelineno-13-37" href="#__codelineno-13-37"></a><span class="w">        </span><span class="s2">"</span><span class="nv">$DESKTOP</span><span class="s2">"</span>
 <a id="__codelineno-13-38" name="__codelineno-13-38" href="#__codelineno-13-38"></a><span class="w">    </span>update-desktop-database<span class="w"> </span>~/.local/share/applications/
 <a id="__codelineno-13-39" name="__codelineno-13-39" href="#__codelineno-13-39"></a><span class="k">fi</span>
 <a id="__codelineno-13-40" name="__codelineno-13-40" href="#__codelineno-13-40"></a>
@@ -2866,13 +2866,13 @@ disparaissent dès que le fichier est remplacé — même si le nom reste identi
 <p>Si Ubuntu met à jour <code>libappimage1.0abi1t64</code> ou <code>libsquashfuse0</code>, il faudra peut-être
 recréer le correctif du Problème 1 :
 <div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Vérifier que la bibliothèque patchée est toujours valide</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">"</span>
 <a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="s2">import ctypes</span>
-<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="s2">lib = ctypes.CDLL(&#39;/usr/lib/x86_64-linux-gnu/appimagelauncher/libappimage.so.1.0&#39;)</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="s2">lib = ctypes.CDLL('/usr/lib/x86_64-linux-gnu/appimagelauncher/libappimage.so.1.0')</span>
 <a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="s2">result = lib.appimage_shall_not_be_integrated(</span>
-<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="s2">    b&#39;/home/user/Applications/Sniffnet_LinuxAppImage_amd64_*.AppImage&#39;)</span>
-<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="s2">print(&#39;OK&#39; if result == 0 else &#39;KO — relancer le correctif Problème 1&#39;)</span>
-<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="s2">&quot;</span>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="s2">    b'/home/user/Applications/Sniffnet_LinuxAppImage_amd64_*.AppImage')</span>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="s2">print('OK' if result == 0 else 'KO — relancer le correctif Problème 1')</span>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="s2">"</span>
 </code></pre></div></p>
 </div>
 <hr />

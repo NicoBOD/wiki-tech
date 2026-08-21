@@ -2368,10 +2368,10 @@ Entrez et confirmez votre nouveau mot de passe.</p>
 2. Entrez l'IP de votre serveur Pi-hole.</p>
 <h2 id="verification">Vérification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
 <p>Depuis un ordinateur utilisant Pi-hole comme serveur DNS, ouvrez un terminal et testez la résolution d'un domaine bloqué, puis d'un domaine légitime.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Test d&#39;un domaine publicitaire (doit retourner 0.0.0.0 ou échouer)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Test d'un domaine publicitaire (doit retourner 0.0.0.0 ou échouer)</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>nslookup<span class="w"> </span>doubleclick.net
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Test d&#39;un domaine légitime (doit retourner une vraie IP)</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Test d'un domaine légitime (doit retourner une vraie IP)</span>
 <a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>nslookup<span class="w"> </span>wikipedia.org
 </code></pre></div>
 <div class="admonition success">

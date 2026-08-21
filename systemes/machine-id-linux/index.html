@@ -2452,7 +2452,7 @@ Il génère alors immédiatement un nouvel identifiant unique via <code>systemd-
 <h2 id="verification">Vérification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
 <p>Après le premier démarrage du clone, validez que le <code>machine-id</code> a bien été régénéré :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>cat<span class="w"> </span>/etc/machine-id
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;^[0-9a-f]{32}$&#39;</span><span class="w"> </span>/etc/machine-id<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;machine-id valide&quot;</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'^[0-9a-f]{32}$'</span><span class="w"> </span>/etc/machine-id<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"machine-id valide"</span>
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu</p>

@@ -2424,7 +2424,7 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>commande<span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>fichier.log
 </code></pre></div>
 <p><code>tee</code> intercale dans le tuyau (pipe). Il récupère la sortie de <code>commande</code>, l'affiche dans le terminal <strong>et</strong> l'écrit dans <code>fichier.log</code>. Si le fichier n'existe pas, il est créé ; s'il existe, <strong>il est écrasé</strong>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Lister le contenu du répertoire à l&#39;écran et dans une trace</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Lister le contenu du répertoire à l'écran et dans une trace</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>ls<span class="w"> </span>-la<span class="w"> </span>/etc<span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>/tmp/ls-etc.log
 </code></pre></div>
 <p>Vérifiez le contenu du fichier créé :</p>
@@ -2432,38 +2432,38 @@
 </code></pre></div>
 <h3 id="etape-2-ajouter-a-la-fin-dun-fichier-mode-append">Étape 2 : Ajouter à la fin d'un fichier (mode append)<a class="headerlink" href="#etape-2-ajouter-a-la-fin-dun-fichier-mode-append" title="Permanent link">&para;</a></h3>
 <p>Comme pour la redirection <code>&gt;&gt;</code>, l'option <code>-a</code> (append) ajoute les données à la fin du fichier sans l'écraser. C'est indispensable pour tenir un journal cumulatif :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Ajoute la date et l&#39;heure de chaque exécution à un journal</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>date<span class="w"> </span><span class="s2">&quot;+%F %T — exécution du script de sauvegarde&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>-a<span class="w"> </span>/tmp/sauvegarde.log
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Ajoute la date et l'heure de chaque exécution à un journal</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>date<span class="w"> </span><span class="s2">"+%F %T — exécution du script de sauvegarde"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>-a<span class="w"> </span>/tmp/sauvegarde.log
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
 <a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># On relance plus tard : la ligne précédente est conservée</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>date<span class="w"> </span><span class="s2">&quot;+%F %T — seconde exécution&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>-a<span class="w"> </span>/tmp/sauvegarde.log
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>date<span class="w"> </span><span class="s2">"+%F %T — seconde exécution"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>-a<span class="w"> </span>/tmp/sauvegarde.log
 </code></pre></div>
 <h3 id="etape-3-capturer-stderr-en-plus-de-stdout">Étape 3 : Capturer stderr en plus de stdout<a class="headerlink" href="#etape-3-capturer-stderr-en-plus-de-stdout" title="Permanent link">&para;</a></h3>
 <p>Par défaut, <code>tee</code> ne traite que la sortie standard (<code>stdout</code>). Les messages d'erreur (<code>stderr</code>) passent au travers sans être enregistrés. Pour tout capturer, redirigez d'abord <code>stderr</code> vers <code>stdout</code> avec <code>2&gt;&amp;1</code> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># find génère souvent des &quot;Permission denied&quot; sur stderr</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># find génère souvent des "Permission denied" sur stderr</span>
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="c1"># Cette commande affiche ET enregistre succès ET erreurs</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>find<span class="w"> </span>/var/log<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.log&quot;</span><span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>/tmp/find-log-all.txt
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>find<span class="w"> </span>/var/log<span class="w"> </span>-name<span class="w"> </span><span class="s2">"*.log"</span><span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>/tmp/find-log-all.txt
 </code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Raccourci Bash moderne</p>
 <p>Avec Bash 4+ et la plupart des shells récents, <code>|&amp;</code> est un équivalent concis de <code>2&gt;&amp;1 |</code> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>find<span class="w"> </span>/var/log<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.log&quot;</span><span class="w"> </span><span class="p">|&amp;</span><span class="w"> </span>tee<span class="w"> </span>/tmp/find-log-all.txt
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>find<span class="w"> </span>/var/log<span class="w"> </span>-name<span class="w"> </span><span class="s2">"*.log"</span><span class="w"> </span><span class="p">|&amp;</span><span class="w"> </span>tee<span class="w"> </span>/tmp/find-log-all.txt
 </code></pre></div>
 </div>
 <h3 id="etape-4-ecrire-dans-plusieurs-fichiers-en-une-seule-commande">Étape 4 : Écrire dans plusieurs fichiers en une seule commande<a class="headerlink" href="#etape-4-ecrire-dans-plusieurs-fichiers-en-une-seule-commande" title="Permanent link">&para;</a></h3>
 <p><code>tee</code> accepte plusieurs noms de fichiers en arguments et écrit dans <strong>tous</strong> simultanément :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Tracer une commande d&#39;installation dans deux journaux distincts</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Début de l&#39;installation&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>install.log<span class="w"> </span>journal.log
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Tracer une commande d'installation dans deux journaux distincts</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"Début de l'installation"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>install.log<span class="w"> </span>journal.log
 </code></pre></div>
 <p>Utile pour garder une copie locale d'un log tout en alimentant un emplacement réseau (point de montage secondaire, NAS, etc.).</p>
 <h3 id="etape-5-ecrire-dans-un-fichier-root-avec-sudo">Étape 5 : Écrire dans un fichier root avec sudo<a class="headerlink" href="#etape-5-ecrire-dans-un-fichier-root-avec-sudo" title="Permanent link">&para;</a></h3>
 <p>Un cas très fréquent en administration système : on veut écrire <strong>depuis son utilisateur courant</strong> dans un fichier que seul <code>root</code> peut modifier (par exemple <code>/etc/hosts</code> ou un fichier de log système). La redirection <code>&gt;</code> classique ne fonctionne pas car la redirection est exécutée par le shell de l'utilisateur, pas par <code>sudo</code> :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># ❌ NE FONCTIONNE PAS : le shell ouvre le fichier AVANT le sudo</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;127.0.0.1 monsite.local&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>&gt;<span class="w"> </span>/etc/hosts
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"127.0.0.1 monsite.local"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>&gt;<span class="w"> </span>/etc/hosts
 </code></pre></div>
 <p>Avec <code>tee</code>, le programme <code>sudo</code> s'exécute <strong>en premier</strong>, et c'est <code>tee</code> (devenu root) qui ouvre et écrit le fichier :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># ✅ Correct : tee écrit avec les droits root</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;127.0.0.1 monsite.local&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>-a<span class="w"> </span>/etc/hosts
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"127.0.0.1 monsite.local"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>-a<span class="w"> </span>/etc/hosts
 </code></pre></div>
 <div class="admonition warning">
 <p class="admonition-title">Pas d'option -a = écrasement</p>
@@ -2472,22 +2472,22 @@
 <h3 id="etape-6-ne-rien-afficher-a-lecran-mode-silencieux-pour-les-scripts">Étape 6 : Ne rien afficher à l'écran (mode silencieux pour les scripts)<a class="headerlink" href="#etape-6-ne-rien-afficher-a-lecran-mode-silencieux-pour-les-scripts" title="Permanent link">&para;</a></h3>
 <p>Parfois, on veut simplement écrire dans un fichier comme le ferait <code>&gt;</code>, mais en profitant du contournement de droits offert par <code>tee</code>. On redirige alors la sortie de <code>tee</code> vers <code>/dev/null</code> pour la faire disparaître de l'écran :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Écrit dans le log système root sans rien afficher</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Ligne de maintenance&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/var/log/maintenance.log<span class="w"> </span>&gt;<span class="w"> </span>/dev/null
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"Ligne de maintenance"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/var/log/maintenance.log<span class="w"> </span>&gt;<span class="w"> </span>/dev/null
 </code></pre></div>
 <h3 id="etape-7-combiner-tee-avec-un-pipeline-long">Étape 7 : Combiner tee avec un pipeline long<a class="headerlink" href="#etape-7-combiner-tee-avec-un-pipeline-long" title="Permanent link">&para;</a></h3>
 <p><code>tee</code> s'intercale dans n'importe quel pipeline. On peut ainsi tracer une étape intermédiaire tout en continuant à traiter les données :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># 1. Lister les fichiers .conf → 2. (tee) garder une copie → 3. Filtrer avec grep</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>ls<span class="w"> </span>/etc/*.conf<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>/tmp/conf-brut.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;^/etc/net&quot;</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>ls<span class="w"> </span>/etc/*.conf<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>/tmp/conf-brut.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"^/etc/net"</span>
 </code></pre></div>
 <p>Le fichier <code>/tmp/conf-brut.txt</code> contient <strong>la liste complète avant filtrage</strong>, tandis que l'écran n'affiche que le résultat filtré. Très pratique pour déboguer un pipeline qui ne produit pas le résultat attendu.</p>
 <h2 id="verification">Vérification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
 <p>Tapez successivement les commandes ci-dessous dans votre terminal de test :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># 1. Création et écriture</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;première ligne&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>/tmp/test-tee.log
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"première ligne"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>/tmp/test-tee.log
 <a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>cat<span class="w"> </span>/tmp/test-tee.log
 <a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
 <a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="c1"># 2. Ajout</span>
-<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;deuxième ligne&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>-a<span class="w"> </span>/tmp/test-tee.log
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"deuxième ligne"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>-a<span class="w"> </span>/tmp/test-tee.log
 <a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>cat<span class="w"> </span>/tmp/test-tee.log
 <a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>
 <a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="c1"># 3. Capture de stderr</span>

@@ -2345,7 +2345,7 @@
 1. Créer un environnement virtuel Python local (<code>venv</code>).
 2. Télécharger toutes les dépendances lourdes (PyTorch, torchvision, etc.).
 3. Télécharger le modèle de base par défaut (Stable Diffusion v1.5, environ 4 Go) s'il n'y a aucun modèle présent.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Lancement de l&#39;interface</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Lancement de l'interface</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>./webui.sh
 </code></pre></div>
 <div class="admonition warning">
@@ -2362,14 +2362,14 @@
 </code></pre></div></p>
 <p>Modifiez la variable <code>COMMANDLINE_ARGS</code> en fonction de votre configuration matérielle :</p>
 <p><strong>Cas 1 : Accéder à l'interface depuis un autre poste du réseau</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">COMMANDLINE_ARGS</span><span class="o">=</span><span class="s2">&quot;--listen&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">COMMANDLINE_ARGS</span><span class="o">=</span><span class="s2">"--listen"</span>
 </code></pre></div>
 <em>Le serveur écoutera sur <code>0.0.0.0</code>, l'interface sera accessible via <code>http://IP_DE_LA_MACHINE:7860</code>.</em></p>
 <p><strong>Cas 2 : Vous n'avez pas de carte graphique (Génération sur CPU)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">COMMANDLINE_ARGS</span><span class="o">=</span><span class="s2">&quot;--use-cpu all --precision full --no-half --skip-torch-cuda-test&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">COMMANDLINE_ARGS</span><span class="o">=</span><span class="s2">"--use-cpu all --precision full --no-half --skip-torch-cuda-test"</span>
 </code></pre></div></p>
 <p><strong>Cas 3 : Vous avez peu de mémoire vidéo (Moins de 6 Go de VRAM)</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">COMMANDLINE_ARGS</span><span class="o">=</span><span class="s2">&quot;--medvram&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">COMMANDLINE_ARGS</span><span class="o">=</span><span class="s2">"--medvram"</span>
 </code></pre></div></p>
 <h2 id="verification">Vérification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
 <ol>

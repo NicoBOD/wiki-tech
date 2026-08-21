@@ -2522,15 +2522,15 @@
 </code></pre></div>
 <h3 id="etape-3-configurer-le-pare-feu-ufw">Étape 3 : Configurer le pare-feu (UFW)<a class="headerlink" href="#etape-3-configurer-le-pare-feu-ufw" title="Permanent link">&para;</a></h3>
 <p>Si le pare-feu <strong>UFW</strong> est activé, il faut autoriser le trafic HTTPS (port 443).</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Afficher l&#39;état actuel de UFW</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Afficher l'état actuel de UFW</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>ufw<span class="w"> </span>status
 </code></pre></div>
 <p>S'il n'y a pas de règle pour <code>Nginx Full</code> (qui ouvre les ports 80 et 443) :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Autoriser HTTP et HTTPS</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span><span class="s1">&#39;Nginx Full&#39;</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span><span class="s1">'Nginx Full'</span>
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># (Optionnel) Supprimer la règle HTTP simple si vous l&#39;aviez ajoutée</span>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>sudo<span class="w"> </span>ufw<span class="w"> </span>delete<span class="w"> </span>allow<span class="w"> </span><span class="s1">&#39;Nginx HTTP&#39;</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># (Optionnel) Supprimer la règle HTTP simple si vous l'aviez ajoutée</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>sudo<span class="w"> </span>ufw<span class="w"> </span>delete<span class="w"> </span>allow<span class="w"> </span><span class="s1">'Nginx HTTP'</span>
 </code></pre></div>
 <h3 id="etape-4-obtenir-le-certificat-ssl">Étape 4 : Obtenir le certificat SSL<a class="headerlink" href="#etape-4-obtenir-le-certificat-ssl" title="Permanent link">&para;</a></h3>
 <p>Lancez Certbot en utilisant le plugin Nginx. Certbot s'occupera d'obtenir le certificat et de modifier la configuration de Nginx pour l'utiliser.</p>

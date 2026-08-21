@@ -2701,7 +2701,7 @@ Au début du TP, l'état est généralement <code>inactive</code>.</p>
 <h3 id="etape-2-verifier-que-le-service-ssh-est-bien-installe">Étape 2 : vérifier que le service SSH est bien installé<a class="headerlink" href="#etape-2-verifier-que-le-service-ssh-est-bien-installe" title="Permanent link">&para;</a></h3>
 <p>Avant d'ouvrir un port, il faut confirmer que le service existe réellement.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>systemctl<span class="w"> </span>status<span class="w"> </span>ssh<span class="w"> </span>--no-pager
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>ss<span class="w"> </span>-tulpn<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">&#39;:22&#39;</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>ss<span class="w"> </span>-tulpn<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">':22'</span>
 </code></pre></div>
 <p>Si SSH n'est pas encore installé :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>update
@@ -2749,7 +2749,7 @@ C'est plus lisible pour un débutant que de mémoriser tous les ports.</p>
 <h3 id="etape-6-autoriser-http-et-https-pour-un-serveur-web">Étape 6 : autoriser HTTP et HTTPS pour un serveur web<a class="headerlink" href="#etape-6-autoriser-http-et-https-pour-un-serveur-web" title="Permanent link">&para;</a></h3>
 <p>Si la machine héberge un site ou une application web, ouvrez les ports nécessaires.</p>
 <h4 id="cas-1-vous-utilisez-nginx">Cas 1 : vous utilisez Nginx<a class="headerlink" href="#cas-1-vous-utilisez-nginx" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span><span class="s1">&#39;Nginx Full&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span><span class="s1">'Nginx Full'</span>
 </code></pre></div>
 <p>Le profil <code>Nginx Full</code> ouvre :</p>
 <ul>

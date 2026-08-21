@@ -1759,21 +1759,21 @@
 <a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="nt">hostname</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gitlab.exemple.lan</span>
 <a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
 <a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">      </span><span class="nt">GITLAB_OMNIBUS_CONFIG</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">        </span><span class="no">external_url &#39;http://gitlab.exemple.lan&#39;</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">        </span><span class="no">gitlab_rails[&#39;gitlab_shell_ssh_port&#39;] = 2222</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">        </span><span class="no"># Active le mode &quot;minimal&quot; pour les environnements de test</span>
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">        </span><span class="no">puma[&#39;worker_processes&#39;] = 2</span>
-<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">        </span><span class="no">sidekiq[&#39;max_concurrency&#39;] = 5</span>
-<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">        </span><span class="no">prometheus_monitoring[&#39;enable&#39;] = false</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">        </span><span class="no">external_url 'http://gitlab.exemple.lan'</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">        </span><span class="no">gitlab_rails['gitlab_shell_ssh_port'] = 2222</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">        </span><span class="no"># Active le mode "minimal" pour les environnements de test</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">        </span><span class="no">puma['worker_processes'] = 2</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">        </span><span class="no">sidekiq['max_concurrency'] = 5</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">        </span><span class="no">prometheus_monitoring['enable'] = false</span>
 <a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
-<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;80:80&quot;</span><span class="w">     </span><span class="c1"># Interface web HTTP</span>
-<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;443:443&quot;</span><span class="w">   </span><span class="c1"># Interface web HTTPS (futur prise en charge TLS)</span>
-<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;2222:22&quot;</span><span class="w">  </span><span class="c1"># Ports SSH pour les opérations git over SSH</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"80:80"</span><span class="w">     </span><span class="c1"># Interface web HTTP</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"443:443"</span><span class="w">   </span><span class="c1"># Interface web HTTPS (futur prise en charge TLS)</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"2222:22"</span><span class="w">  </span><span class="c1"># Ports SSH pour les opérations git over SSH</span>
 <a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
 <a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/srv/gitlab/config:/etc/gitlab</span>
 <a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/srv/gitlab/logs:/var/log/gitlab</span>
 <a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/srv/gitlab/data:/var/opt/gitlab</span>
-<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="w">    </span><span class="nt">shm_size</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;256m&quot;</span>
+<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="w">    </span><span class="nt">shm_size</span><span class="p">:</span><span class="w"> </span><span class="s">"256m"</span>
 </code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Variable <code>GITLAB_OMNIBUS_CONFIG</code></p>
@@ -1781,7 +1781,7 @@
 </div>
 <h3 id="etape-3-configurer-la-resolution-dns">Étape 3 : Configurer la résolution DNS<a class="headerlink" href="#etape-3-configurer-la-resolution-dns" title="Permanent link">&para;</a></h3>
 <p>Sur le serveur lui-même, vous devez être en mesure de vous connecter au côté web. Si vous ne disposez pas encore d'entrée DNS publique, créez une entrée locale dans le fichier <code>/etc/hosts</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Récupérer l&#39;adresse IP du serveur</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Récupérer l'adresse IP du serveur</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>ip<span class="w"> </span>a<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>inet
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># Ajouter une ligne correspondante vers « 192.168.x.x gitlab.exemple.lan »</span>
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/hosts
@@ -1798,7 +1798,7 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sudo<span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> </span>ps
 </code></pre></div>
 <div class="highlight"><span class="filename">Résultat attendu</span><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>NAME      IMAGE                     COMMAND             SERVICE   STATUS          PORTS
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>gitlab    gitlab/gitlab-ce:latest   &quot;/assets/wrapper&quot;   gitlab    Up (healthy)    0.0.0.0:80-&gt;80/tcp, ...
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>gitlab    gitlab/gitlab-ce:latest   "/assets/wrapper"   gitlab    Up (healthy)    0.0.0.0:80-&gt;80/tcp, ...
 </code></pre></div>
 <h3 id="etape-5-surveiller-le-demarrage">Étape 5 : Surveiller le démarrage<a class="headerlink" href="#etape-5-surveiller-le-demarrage" title="Permanent link">&para;</a></h3>
 <p>Le statut <code>Up</code> ne signifie pas que GitLab est prêt : il faut attendre que tous les services internes soient réellement disponibles. Le script officiel fournit une commande dédiée à cette vérification.</p>
@@ -1858,7 +1858,7 @@
 <h3 id="etape-9-ajouter-sa-cle-ssh-publique">Étape 9 : Ajouter sa clé SSH publique<a class="headerlink" href="#etape-9-ajouter-sa-cle-ssh-publique" title="Permanent link">&para;</a></h3>
 <p>Pour manipuler les dépôts via le protocole SSH, GitLab doit connaître votre clé publique. Si vous n'en avez pas encore sur votre poste client, générez-en une :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Sur le poste client</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>ssh-keygen<span class="w"> </span>-t<span class="w"> </span>ed25519<span class="w"> </span>-C<span class="w"> </span><span class="s2">&quot;mon.email@exemple.lan&quot;</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>ssh-keygen<span class="w"> </span>-t<span class="w"> </span>ed25519<span class="w"> </span>-C<span class="w"> </span><span class="s2">"mon.email@exemple.lan"</span>
 <a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>cat<span class="w"> </span>~/.ssh/id_ed25519.pub
 </code></pre></div>
 <p>Dans l'interface GitLab :</p>
@@ -1889,8 +1889,8 @@
 <p>Clonez enfin votre dépôt fraîchement créé :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>git<span class="w"> </span>clone<span class="w"> </span>git@gitlab.exemple.lan:root/test-gitlab.git
 <a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="nb">cd</span><span class="w"> </span>test-gitlab
-<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;# Mon premier projet sur GitLab auto-hébergé&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>README.md
-<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>git<span class="w"> </span>add<span class="w"> </span>README.md<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;feat: premier commit depuis le clone SSH&quot;</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"# Mon premier projet sur GitLab auto-hébergé"</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>README.md
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>git<span class="w"> </span>add<span class="w"> </span>README.md<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"feat: premier commit depuis le clone SSH"</span>
 <a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>main
 </code></pre></div>
 <p>Le commit doit apparaître dans l'interface web GitLab sous <strong>Code → Commits</strong>.</p>
@@ -1934,8 +1934,8 @@
 <a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="w">  </span>--url<span class="w"> </span>http://gitlab.exemple.lan<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="w">  </span>--token<span class="w"> </span>glrt-XXXXXXXXXXXXXXXX<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a><span class="w">  </span>--executor<span class="w"> </span>docker<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a><span class="w">  </span>--docker-image<span class="w"> </span><span class="s2">&quot;alpine:latest&quot;</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a><span class="w">  </span>--description<span class="w"> </span><span class="s2">&quot;runner-lab-local&quot;</span>
+<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a><span class="w">  </span>--docker-image<span class="w"> </span><span class="s2">"alpine:latest"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a><span class="w">  </span>--description<span class="w"> </span><span class="s2">"runner-lab-local"</span>
 </code></pre></div>
 <p>Vous pouvez ensuite valider l'enregistrement :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>sudo<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>gitlab-runner<span class="w"> </span>gitlab-runner<span class="w"> </span>verify

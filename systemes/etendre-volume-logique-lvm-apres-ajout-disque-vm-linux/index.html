@@ -2556,7 +2556,7 @@ La méthode reste la même, mais soyez encore plus vigilant si vous agrandissez 
 </code></pre></div>
 <p>S’il n’apparaît pas immédiatement, forcez un rescannage SCSI puis recommencez :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">for</span><span class="w"> </span>host<span class="w"> </span><span class="k">in</span><span class="w"> </span>/sys/class/scsi_host/host*<span class="p">;</span><span class="w"> </span><span class="k">do</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;- - -&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$host</span><span class="s2">/scan&quot;</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"- - -"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span><span class="s2">"</span><span class="nv">$host</span><span class="s2">/scan"</span>
 <a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="k">done</span>
 <a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
 <a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>lsblk<span class="w"> </span>-o<span class="w"> </span>NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT
@@ -2568,7 +2568,7 @@ La méthode reste la même, mais soyez encore plus vigilant si vous agrandissez 
 <h3 id="etape-3-preparer-le-nouveau-disque-comme-volume-physique-lvm">Étape 3 : préparer le nouveau disque comme volume physique LVM<a class="headerlink" href="#etape-3-preparer-le-nouveau-disque-comme-volume-physique-lvm" title="Permanent link">&para;</a></h3>
 <p>Dans ce tutoriel, nous utilisons le <strong>disque complet</strong> directement dans LVM.
 C’est la méthode la plus simple pour un TP débutant.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>pvcreate<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$NEW_DISK</span><span class="s2">&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>pvcreate<span class="w"> </span><span class="s2">"</span><span class="nv">$NEW_DISK</span><span class="s2">"</span>
 <a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sudo<span class="w"> </span>pvs
 </code></pre></div>
 <p>Exemple de résultat attendu :</p>
@@ -2585,7 +2585,7 @@ C’est la méthode la plus simple pour un TP débutant.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>sudo<span class="w"> </span>vgs
 </code></pre></div>
 <p>Ajoutez ensuite le nouveau disque au groupe existant :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sudo<span class="w"> </span>vgextend<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$VG_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$NEW_DISK</span><span class="s2">&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sudo<span class="w"> </span>vgextend<span class="w"> </span><span class="s2">"</span><span class="nv">$VG_NAME</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$NEW_DISK</span><span class="s2">"</span>
 <a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>sudo<span class="w"> </span>vgs
 </code></pre></div>
 <p>Pour voir plus clairement l’espace libre disponible après l’extension :</p>
@@ -2598,8 +2598,8 @@ C’est la méthode la plus simple pour un TP débutant.</p>
 <h3 id="etape-5-confirmer-le-volume-logique-et-le-type-de-systeme-de-fichiers">Étape 5 : confirmer le volume logique et le type de système de fichiers<a class="headerlink" href="#etape-5-confirmer-le-volume-logique-et-le-type-de-systeme-de-fichiers" title="Permanent link">&para;</a></h3>
 <p>Avant d’agrandir quoi que ce soit, vérifiez une dernière fois votre cible :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sudo<span class="w"> </span>lvs<span class="w"> </span>-o<span class="w"> </span>lv_name,vg_name,lv_size,lv_path
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>findmnt<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$LV_PATH</span><span class="s2">&quot;</span>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>df<span class="w"> </span>-hT<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$MOUNT_POINT</span><span class="s2">&quot;</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>findmnt<span class="w"> </span><span class="s2">"</span><span class="nv">$LV_PATH</span><span class="s2">"</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>df<span class="w"> </span>-hT<span class="w"> </span><span class="s2">"</span><span class="nv">$MOUNT_POINT</span><span class="s2">"</span>
 </code></pre></div>
 <p>Vous devez confirmer les éléments suivants :</p>
 <ul>
@@ -2615,10 +2615,10 @@ C’est la méthode la plus simple pour un TP débutant.</p>
 <li>consommer tout l’espace libre du groupe de volumes.</li>
 </ul>
 <h4 id="option-a-ajouter-une-taille-precise">Option A : ajouter une taille précise<a class="headerlink" href="#option-a-ajouter-une-taille-precise" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>sudo<span class="w"> </span>lvextend<span class="w"> </span>-L<span class="w"> </span>+5G<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$LV_PATH</span><span class="s2">&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>sudo<span class="w"> </span>lvextend<span class="w"> </span>-L<span class="w"> </span>+5G<span class="w"> </span><span class="s2">"</span><span class="nv">$LV_PATH</span><span class="s2">"</span>
 </code></pre></div>
 <h4 id="option-b-utiliser-tout-lespace-libre-du-groupe-de-volumes">Option B : utiliser tout l’espace libre du groupe de volumes<a class="headerlink" href="#option-b-utiliser-tout-lespace-libre-du-groupe-de-volumes" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>sudo<span class="w"> </span>lvextend<span class="w"> </span>-l<span class="w"> </span>+100%FREE<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$LV_PATH</span><span class="s2">&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>sudo<span class="w"> </span>lvextend<span class="w"> </span>-l<span class="w"> </span>+100%FREE<span class="w"> </span><span class="s2">"</span><span class="nv">$LV_PATH</span><span class="s2">"</span>
 </code></pre></div>
 <p>Dans ce TP, nous retenons l’option <strong>B</strong>, simple et parlante pour un lab.</p>
 <p>Vérifiez ensuite la nouvelle taille du volume logique :</p>
@@ -2631,11 +2631,11 @@ C’est la méthode la plus simple pour un TP débutant.</p>
 <h3 id="etape-7-agrandir-le-systeme-de-fichiers">Étape 7 : agrandir le système de fichiers<a class="headerlink" href="#etape-7-agrandir-le-systeme-de-fichiers" title="Permanent link">&para;</a></h3>
 <p>Le choix dépend du système de fichiers utilisé.</p>
 <h4 id="cas-1-le-volume-est-en-ext4">Cas 1 : le volume est en <code>ext4</code><a class="headerlink" href="#cas-1-le-volume-est-en-ext4" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>sudo<span class="w"> </span>resize2fs<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$LV_PATH</span><span class="s2">&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>sudo<span class="w"> </span>resize2fs<span class="w"> </span><span class="s2">"</span><span class="nv">$LV_PATH</span><span class="s2">"</span>
 </code></pre></div>
 <h4 id="cas-2-le-volume-est-en-xfs">Cas 2 : le volume est en <code>xfs</code><a class="headerlink" href="#cas-2-le-volume-est-en-xfs" title="Permanent link">&para;</a></h4>
 <p>Avec XFS, la commande s’exécute sur le <strong>point de montage</strong> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>sudo<span class="w"> </span>xfs_growfs<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$MOUNT_POINT</span><span class="s2">&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>sudo<span class="w"> </span>xfs_growfs<span class="w"> </span><span class="s2">"</span><span class="nv">$MOUNT_POINT</span><span class="s2">"</span>
 </code></pre></div>
 <div class="admonition warning">
 <p class="admonition-title">Erreur classique</p>
@@ -2647,7 +2647,7 @@ C’est la méthode la plus simple pour un TP débutant.</p>
 <a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>sudo<span class="w"> </span>pvs
 <a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>sudo<span class="w"> </span>vgs<span class="w"> </span>-o<span class="w"> </span>vg_name,vg_size,vg_free
 <a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>sudo<span class="w"> </span>lvs<span class="w"> </span>-o<span class="w"> </span>lv_name,vg_name,lv_size,lv_path
-<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>df<span class="w"> </span>-hT<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$MOUNT_POINT</span><span class="s2">&quot;</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>df<span class="w"> </span>-hT<span class="w"> </span><span class="s2">"</span><span class="nv">$MOUNT_POINT</span><span class="s2">"</span>
 </code></pre></div>
 <p>Exemple de logique attendue :</p>
 <ul>
@@ -2667,7 +2667,7 @@ C’est la méthode la plus simple pour un TP débutant.</p>
 </ul>
 <p>Commande de contrôle final :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>sudo<span class="w"> </span>lvs<span class="w"> </span>-o<span class="w"> </span>lv_name,vg_name,lv_size,lv_path
-<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>df<span class="w"> </span>-hT<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$MOUNT_POINT</span><span class="s2">&quot;</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>df<span class="w"> </span>-hT<span class="w"> </span><span class="s2">"</span><span class="nv">$MOUNT_POINT</span><span class="s2">"</span>
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu</p>

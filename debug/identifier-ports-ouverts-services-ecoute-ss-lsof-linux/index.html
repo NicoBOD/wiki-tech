@@ -2618,10 +2618,10 @@
 </ul>
 <p>Exemple de sortie :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Netid State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>udp   UNCONN 0      0      127.0.0.53:53   0.0.0.0:*    users:((&quot;systemd-resolve&quot;,pid=632,fd=16))
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>tcp   LISTEN 0      128    0.0.0.0:22      0.0.0.0:*    users:((&quot;sshd&quot;,pid=812,fd=3))
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>tcp   LISTEN 0      511    0.0.0.0:80      0.0.0.0:*    users:((&quot;nginx&quot;,pid=1104,fd=5))
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>tcp   LISTEN 0      4096   127.0.0.1:8000  0.0.0.0:*    users:((&quot;python3&quot;,pid=2541,fd=3))
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>udp   UNCONN 0      0      127.0.0.53:53   0.0.0.0:*    users:(("systemd-resolve",pid=632,fd=16))
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>tcp   LISTEN 0      128    0.0.0.0:22      0.0.0.0:*    users:(("sshd",pid=812,fd=3))
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>tcp   LISTEN 0      511    0.0.0.0:80      0.0.0.0:*    users:(("nginx",pid=1104,fd=5))
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>tcp   LISTEN 0      4096   127.0.0.1:8000  0.0.0.0:*    users:(("python3",pid=2541,fd=3))
 </code></pre></div>
 <h3 id="etape-3-interpreter-correctement-ladresse-decoute">Étape 3 : interpréter correctement l’adresse d’écoute<a class="headerlink" href="#etape-3-interpreter-correctement-ladresse-decoute" title="Permanent link">&para;</a></h3>
 <p>La colonne <code>Local Address:Port</code> est essentielle.</p>
@@ -2637,13 +2637,13 @@
 <h3 id="etape-4-filtrer-un-port-precis-avec-ss">Étape 4 : filtrer un port précis avec <code>ss</code><a class="headerlink" href="#etape-4-filtrer-un-port-precis-avec-ss" title="Permanent link">&para;</a></h3>
 <p>Pour vérifier rapidement si un port donné est utilisé, filtrez la sortie.</p>
 <h4 id="verifier-le-port-ssh">Vérifier le port SSH<a class="headerlink" href="#verifier-le-port-ssh" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-tulpn<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">&#39;:22&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-tulpn<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">':22'</span>
 </code></pre></div>
 <h4 id="verifier-un-port-web">Vérifier un port web<a class="headerlink" href="#verifier-un-port-web" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-tulpn<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">&#39;:80\|:443&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-tulpn<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">':80\|:443'</span>
 </code></pre></div>
 <h4 id="verifier-un-port-de-lab">Vérifier un port de lab<a class="headerlink" href="#verifier-un-port-de-lab" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-tulpn<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">&#39;:8000&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-tulpn<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">':8000'</span>
 </code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Bon réflexe</p>
@@ -2684,11 +2684,11 @@
 </code></pre></div>
 <p>Le terminal reste occupé : c’est normal, le serveur tourne au premier plan.</p>
 <p>Dans un deuxième terminal, vérifiez ce qui écoute :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-ltnp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">&#39;:8000&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-ltnp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">':8000'</span>
 <a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>sudo<span class="w"> </span>lsof<span class="w"> </span>-iTCP:8000<span class="w"> </span>-sTCP:LISTEN<span class="w"> </span>-P<span class="w"> </span>-n
 </code></pre></div>
 <p>Résultat attendu :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>LISTEN 0 5 127.0.0.1:8000 0.0.0.0:* users:((&quot;python3&quot;,pid=2541,fd=3))
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>LISTEN 0 5 127.0.0.1:8000 0.0.0.0:* users:(("python3",pid=2541,fd=3))
 </code></pre></div>
 <p>Puis testez localement :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>curl<span class="w"> </span>http://127.0.0.1:8000
@@ -2703,10 +2703,10 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>python3<span class="w"> </span>-m<span class="w"> </span>http.server<span class="w"> </span><span class="m">8000</span><span class="w"> </span>--bind<span class="w"> </span><span class="m">0</span>.0.0.0
 </code></pre></div>
 <p>Vérifiez à nouveau :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-ltnp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">&#39;:8000&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-ltnp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">':8000'</span>
 </code></pre></div>
 <p>Vous devez voir quelque chose comme :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>LISTEN 0 5 0.0.0.0:8000 0.0.0.0:* users:((&quot;python3&quot;,pid=2610,fd=3))
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>LISTEN 0 5 0.0.0.0:8000 0.0.0.0:* users:(("python3",pid=2610,fd=3))
 </code></pre></div>
 <p>Cette fois, si le pare-feu le permet et si le réseau est correct, le service peut être joint depuis une autre machine.</p>
 <h3 id="etape-8-croiser-le-diagnostic-avec-systemctl">Étape 8 : croiser le diagnostic avec <code>systemctl</code><a class="headerlink" href="#etape-8-croiser-le-diagnostic-avec-systemctl" title="Permanent link">&para;</a></h3>

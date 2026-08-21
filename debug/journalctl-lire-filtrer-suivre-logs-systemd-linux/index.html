@@ -2379,16 +2379,16 @@
 <h3 id="etape-4-filtrer-par-date-et-heure">Étape 4 : Filtrer par date et heure<a class="headerlink" href="#etape-4-filtrer-par-date-et-heure" title="Permanent link">&para;</a></h3>
 <p>Si vous savez qu'un incident s'est produit à une heure précise, vous pouvez restreindre l'affichage pour éviter d'être noyé dans les informations :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Les logs depuis ce matin</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>--since<span class="w"> </span><span class="s2">&quot;today&quot;</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>--since<span class="w"> </span><span class="s2">"today"</span>
 <a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Les logs d&#39;hier</span>
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>--since<span class="w"> </span><span class="s2">&quot;yesterday&quot;</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Les logs d'hier</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>--since<span class="w"> </span><span class="s2">"yesterday"</span>
 <a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
 <a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1"># Entre deux dates ou heures précises</span>
-<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>--since<span class="w"> </span><span class="s2">&quot;2026-06-02 08:00:00&quot;</span><span class="w"> </span>--until<span class="w"> </span><span class="s2">&quot;2026-06-02 09:30:00&quot;</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>--since<span class="w"> </span><span class="s2">"2026-06-02 08:00:00"</span><span class="w"> </span>--until<span class="w"> </span><span class="s2">"2026-06-02 09:30:00"</span>
 <a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
 <a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="c1"># Les logs depuis 1 heure</span>
-<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>--since<span class="w"> </span><span class="s2">&quot;1 hour ago&quot;</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>--since<span class="w"> </span><span class="s2">"1 hour ago"</span>
 </code></pre></div>
 <h3 id="etape-5-filtrer-par-niveau-de-priorite">Étape 5 : Filtrer par niveau de priorité<a class="headerlink" href="#etape-5-filtrer-par-niveau-de-priorite" title="Permanent link">&para;</a></h3>
 <p><code>journald</code> classe les messages selon la même échelle de priorité que Syslog (de 0 à 7). Pour ne voir que les erreurs (<code>err</code> = 3) ou pire (critique, alerte, urgence) :</p>

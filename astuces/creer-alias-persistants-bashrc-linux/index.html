@@ -2273,7 +2273,7 @@
 <h3 id="etape-1-tester-un-alias-temporaire">Étape 1 : Tester un alias temporaire<a class="headerlink" href="#etape-1-tester-un-alias-temporaire" title="Permanent link">&para;</a></h3>
 <p>Avant de rendre un alias permanent, vous pouvez le tester dans votre session actuelle. 
 Essayez par exemple de créer un raccourci <code>ll</code> pour la commande affichant le contenu d'un dossier en détail avec la taille lisible par un humain :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">ll</span><span class="o">=</span><span class="s2">&quot;ls -lah&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">ll</span><span class="o">=</span><span class="s2">"ls -lah"</span>
 </code></pre></div>
 <p>Tapez ensuite <code>ll</code> et validez. Vous devriez voir le contenu du répertoire courant s'afficher. Dès la fermeture du terminal, cet alias sera toutefois oublié.</p>
 <h3 id="etape-2-editer-le-fichier-bashrc-ou-bash_aliases">Étape 2 : Éditer le fichier <code>.bashrc</code> ou <code>.bash_aliases</code><a class="headerlink" href="#etape-2-editer-le-fichier-bashrc-ou-bash_aliases" title="Permanent link">&para;</a></h3>
@@ -2301,22 +2301,22 @@ Sur de nombreuses distributions (comme Ubuntu), le fichier <code>~/.bashrc</code
 <span class="normal"><a href="#__codelineno-2-15">15</a></span>
 <span class="normal"><a href="#__codelineno-2-16">16</a></span>
 <span class="normal"><a href="#__codelineno-2-17">17</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="c1"># Navigation rapide</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="nb">alias</span><span class="w"> </span>..<span class="o">=</span><span class="s2">&quot;cd ..&quot;</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="nb">alias</span><span class="w"> </span>...<span class="o">=</span><span class="s2">&quot;cd ../..&quot;</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="nb">alias</span><span class="w"> </span>..<span class="o">=</span><span class="s2">"cd .."</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="nb">alias</span><span class="w"> </span>...<span class="o">=</span><span class="s2">"cd ../.."</span>
 <a id="__codelineno-2-4" name="__codelineno-2-4"></a>
 <a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="c1"># Gestion des paquets (Debian/Ubuntu)</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">maj</span><span class="o">=</span><span class="s2">&quot;sudo apt update &amp;&amp; sudo apt upgrade -y&quot;</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">install</span><span class="o">=</span><span class="s2">&quot;sudo apt install&quot;</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">maj</span><span class="o">=</span><span class="s2">"sudo apt update &amp;&amp; sudo apt upgrade -y"</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">install</span><span class="o">=</span><span class="s2">"sudo apt install"</span>
 <a id="__codelineno-2-8" name="__codelineno-2-8"></a>
 <a id="__codelineno-2-9" name="__codelineno-2-9"></a><span class="c1"># Confort visuel et détails</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">ll</span><span class="o">=</span><span class="s2">&quot;ls -lah --color=auto&quot;</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">df</span><span class="o">=</span><span class="s2">&quot;df -h&quot;</span><span class="w"> </span><span class="c1"># Espace disque en format humain (Go, Mo)</span>
-<a id="__codelineno-2-12" name="__codelineno-2-12"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">free</span><span class="o">=</span><span class="s2">&quot;free -h&quot;</span><span class="w"> </span><span class="c1"># Mémoire RAM en format humain</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">ll</span><span class="o">=</span><span class="s2">"ls -lah --color=auto"</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">df</span><span class="o">=</span><span class="s2">"df -h"</span><span class="w"> </span><span class="c1"># Espace disque en format humain (Go, Mo)</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">free</span><span class="o">=</span><span class="s2">"free -h"</span><span class="w"> </span><span class="c1"># Mémoire RAM en format humain</span>
 <a id="__codelineno-2-13" name="__codelineno-2-13"></a>
 <a id="__codelineno-2-14" name="__codelineno-2-14"></a><span class="c1"># Sécurité : confirmation avant écrasement ou suppression</span>
-<a id="__codelineno-2-15" name="__codelineno-2-15"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">rm</span><span class="o">=</span><span class="s2">&quot;rm -i&quot;</span>
-<a id="__codelineno-2-16" name="__codelineno-2-16"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">cp</span><span class="o">=</span><span class="s2">&quot;cp -i&quot;</span>
-<a id="__codelineno-2-17" name="__codelineno-2-17"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">mv</span><span class="o">=</span><span class="s2">&quot;mv -i&quot;</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">rm</span><span class="o">=</span><span class="s2">"rm -i"</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">cp</span><span class="o">=</span><span class="s2">"cp -i"</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">mv</span><span class="o">=</span><span class="s2">"mv -i"</span>
 </code></pre></div></td></tr></table></div>
 <p>Enregistrez les modifications (avec <code>nano</code>, tapez <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-o">O</kbd></span>, puis <span class="keys"><kbd class="key-enter">Enter</kbd></span>, puis <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-x">X</kbd></span>).</p>
 <h3 id="etape-4-appliquer-les-changements">Étape 4 : Appliquer les changements<a class="headerlink" href="#etape-4-appliquer-les-changements" title="Permanent link">&para;</a></h3>

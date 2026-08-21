@@ -2455,7 +2455,7 @@
 </div>
 <h3 id="3-filtrer-par-adresse-ip">3. Filtrer par adresse IP<a class="headerlink" href="#3-filtrer-par-adresse-ip" title="Permanent link">&para;</a></h3>
 <p>Dans la majorité des cas, vous ne voulez capturer que le trafic concernant une machine spécifique.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Capturer les échanges depuis et vers l&#39;IP 192.168.1.10</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Capturer les échanges depuis et vers l'IP 192.168.1.10</span>
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-i<span class="w"> </span>eth0<span class="w"> </span>host<span class="w"> </span><span class="m">192</span>.168.1.10
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
 <a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># Capturer uniquement les paquets DONT la source est 192.168.1.10</span>
@@ -2474,28 +2474,28 @@
 </code></pre></div>
 <h3 id="5-combiner-des-filtres-expressions-booleennes">5. Combiner des filtres (Expressions booléennes)<a class="headerlink" href="#5-combiner-des-filtres-expressions-booleennes" title="Permanent link">&para;</a></h3>
 <p>Vous pouvez utiliser <code>and</code> (<code>&amp;&amp;</code>), <code>or</code> (<code>||</code>) et <code>not</code> (<code>!</code>) pour affiner votre filtre. Pensez à utiliser des guillemets pour éviter que le terminal n'interprète certains caractères spéciaux.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Trafic sur le port 80 OU 443 vers/depuis l&#39;IP cible</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-i<span class="w"> </span>eth0<span class="w"> </span><span class="s2">&quot;host 192.168.1.50 and (port 80 or port 443)&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Trafic sur le port 80 OU 443 vers/depuis l'IP cible</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-i<span class="w"> </span>eth0<span class="w"> </span><span class="s2">"host 192.168.1.50 and (port 80 or port 443)"</span>
 <a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
 <a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Tout le trafic SAUF le SSH (utile pour ne pas noyer la capture avec votre propre connexion distante)</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-i<span class="w"> </span>eth0<span class="w"> </span><span class="s2">&quot;not port 22&quot;</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-i<span class="w"> </span>eth0<span class="w"> </span><span class="s2">"not port 22"</span>
 </code></pre></div>
 <h3 id="6-rendre-la-sortie-lisible-et-detaillee">6. Rendre la sortie lisible et détaillée<a class="headerlink" href="#6-rendre-la-sortie-lisible-et-detaillee" title="Permanent link">&para;</a></h3>
 <p>Par défaut, <code>tcpdump</code> essaie de résoudre les noms d'hôtes (DNS) et les noms de ports. Cela peut ralentir l'affichage et encombrer l'écran.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># L&#39;option -n désactive la résolution DNS (affiche les IP)</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1"># L&#39;option -nn désactive la résolution des ports (affiche les numéros)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># L'option -n désactive la résolution DNS (affiche les IP)</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1"># L'option -nn désactive la résolution des ports (affiche les numéros)</span>
 <a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-i<span class="w"> </span>eth0<span class="w"> </span>-nn
 </code></pre></div>
 <p>Pour voir le contenu détaillé des paquets :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># -v, -vv, ou -vvv pour augmenter le niveau de verbosité (détails des en-têtes)</span>
 <a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-i<span class="w"> </span>eth0<span class="w"> </span>-vv
 <a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># -X affiche à la fois l&#39;en-tête et le contenu (payload) du paquet en hexadécimal et en ASCII</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># -X affiche à la fois l'en-tête et le contenu (payload) du paquet en hexadécimal et en ASCII</span>
 <a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-i<span class="w"> </span>eth0<span class="w"> </span>-X<span class="w"> </span>port<span class="w"> </span><span class="m">80</span>
 </code></pre></div>
 <h3 id="7-sauvegarder-la-capture-dans-un-fichier-pcap">7. Sauvegarder la capture dans un fichier (.pcap)<a class="headerlink" href="#7-sauvegarder-la-capture-dans-un-fichier-pcap" title="Permanent link">&para;</a></h3>
 <p>Si le trafic est trop dense pour une lecture en temps réel ou si vous souhaitez l'analyser confortablement plus tard avec Wireshark sur une machine graphique :</p>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># L&#39;option -w redirige la capture vers un fichier</span>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># L'option -w redirige la capture vers un fichier</span>
 <a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-i<span class="w"> </span>eth0<span class="w"> </span>-w<span class="w"> </span>/tmp/capture_reseau.pcap
 </code></pre></div>
 <em>(Aucune sortie ne s'affichera à l'écran pendant l'enregistrement)</em></p>

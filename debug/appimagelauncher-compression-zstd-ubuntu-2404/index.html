@@ -2605,31 +2605,31 @@ provoque l'échec.</p>
 de bureau générés et aucun raccourci n'est créé dans le lanceur GNOME.</p>
 <h2 id="diagnostic">Diagnostic<a class="headerlink" href="#diagnostic" title="Permanent link">&para;</a></h2>
 <h3 id="1-confirmer-lerreur-dans-les-journaux">1. Confirmer l'erreur dans les journaux<a class="headerlink" href="#1-confirmer-lerreur-dans-les-journaux" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>journalctl<span class="w"> </span>--user<span class="w"> </span>--no-pager<span class="w"> </span>-n<span class="w"> </span><span class="m">50</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;appimage\|squashfs\|compression&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>journalctl<span class="w"> </span>--user<span class="w"> </span>--no-pager<span class="w"> </span>-n<span class="w"> </span><span class="m">50</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">"appimage\|squashfs\|compression"</span>
 </code></pre></div>
 <h3 id="2-verifier-la-version-installee-et-le-ppa">2. Vérifier la version installée et le PPA<a class="headerlink" href="#2-verifier-la-version-installee-et-le-ppa" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>dpkg<span class="w"> </span>-l<span class="w"> </span>appimagelauncher
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># Version attendue : 2.2.0-travis995~0f91801+bionic  ← compilée pour Ubuntu 18.04</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Vérifier que le PPA n&#39;existe pas pour noble</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Vérifier que le PPA n'existe pas pour noble</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>cat<span class="w"> </span>/etc/apt/sources.list.d/appimagelauncher-team-ubuntu-stable-noble.sources<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;Enabled&quot;</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"Enabled"</span>
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Enabled: no  →  le PPA est configuré mais désactivé (ou renvoie 404 si activé)</span>
 </code></pre></div>
 <h3 id="3-identifier-la-compression-de-lappimage-problematique">3. Identifier la compression de l'AppImage problématique<a class="headerlink" href="#3-identifier-la-compression-de-lappimage-problematique" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">"</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="s2">import struct</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="s2">with open(&#39;/chemin/vers/MonApp.AppImage&#39;, &#39;rb&#39;) as f:</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="s2">with open('/chemin/vers/MonApp.AppImage', 'rb') as f:</span>
 <a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="s2">    data = f.read(1100000)</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="s2"># Chercher tous les superblocks squashfs (magic &#39;hsqs&#39;)</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="s2"># Chercher tous les superblocks squashfs (magic 'hsqs')</span>
 <a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="s2">import re</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="s2">for m in re.finditer(b&#39;hsqs&#39;, data):</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="s2">for m in re.finditer(b'hsqs', data):</span>
 <a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="s2">    pos = m.start()</span>
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="s2">    inodes, mtime, bsize, frags = struct.unpack_from(&#39;&lt;IIII&#39;, data, pos + 4)</span>
-<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="s2">    comp = struct.unpack_from(&#39;&lt;H&#39;, data, pos + 20)[0]</span>
-<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="s2">    comps = {0:&#39;none&#39;, 1:&#39;gzip&#39;, 2:&#39;lzma&#39;, 3:&#39;lzo&#39;, 4:&#39;xz&#39;, 5:&#39;lz4&#39;, 6:&#39;zstd&#39;}</span>
-<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="s2">    print(f&#39;Offset 0x{pos:x}: {inodes} inodes, compression={comp} ({comps.get(comp,\&quot;?\&quot;)})&#39; )</span>
-<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="s2">&quot;</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="s2">    inodes, mtime, bsize, frags = struct.unpack_from('&lt;IIII', data, pos + 4)</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="s2">    comp = struct.unpack_from('&lt;H', data, pos + 20)[0]</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="s2">    comps = {0:'none', 1:'gzip', 2:'lzma', 3:'lzo', 4:'xz', 5:'lz4', 6:'zstd'}</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="s2">    print(f'Offset 0x{pos:x}: {inodes} inodes, compression={comp} ({comps.get(comp,\"?\")})' )</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="s2">"</span>
 </code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Interpréter le résultat</p>
@@ -2638,8 +2638,8 @@ cohérent (&gt; 1) correspond au vrai superblock. <code>compression=6</code> con
 </div>
 <h3 id="4-confirmer-que-la-bibliotheque-bundlee-est-le-coupable">4. Confirmer que la bibliothèque bundlée est le coupable<a class="headerlink" href="#4-confirmer-que-la-bibliotheque-bundlee-est-le-coupable" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>strings<span class="w"> </span>/usr/lib/x86_64-linux-gnu/appimagelauncher/libappimage.so.1.0<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;supports only&quot;</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># Résultat : &quot;this version supports only&quot;  →  ancienne bibliothèque sans zstd</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">"supports only"</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># Résultat : "this version supports only"  →  ancienne bibliothèque sans zstd</span>
 </code></pre></div>
 <h2 id="solution">Solution<a class="headerlink" href="#solution" title="Permanent link">&para;</a></h2>
 <p>La correction remplace uniquement la bibliothèque interne d'AppImageLauncher par la version
@@ -2662,7 +2662,7 @@ s'appelle <code>libappimage.so.1.0abi1</code>. Il faut corriger ce soname :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Copier la bibliothèque système</span>
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>cp<span class="w"> </span>/usr/lib/x86_64-linux-gnu/libappimage.so.1.0.3.abi1<span class="w"> </span>/tmp/libappimage-noble.so
 <a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Changer le soname pour correspondre à ce qu&#39;attend AppImageLauncher</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Changer le soname pour correspondre à ce qu'attend AppImageLauncher</span>
 <a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>sudo<span class="w"> </span>patchelf<span class="w"> </span>--set-soname<span class="w"> </span>libappimage.so.1.0<span class="w"> </span>/tmp/libappimage-noble.so
 <a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
 <a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="c1"># Vérifier</span>
@@ -2670,7 +2670,7 @@ s'appelle <code>libappimage.so.1.0abi1</code>. Il faut corriger ce soname :</p>
 <a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="c1"># SONAME : [libappimage.so.1.0]  ← correct</span>
 </code></pre></div>
 <h3 id="etape-3-sauvegarder-lancienne-bibliotheque-et-installer-la-nouvelle">Étape 3 : Sauvegarder l'ancienne bibliothèque et installer la nouvelle<a class="headerlink" href="#etape-3-sauvegarder-lancienne-bibliotheque-et-installer-la-nouvelle" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Sauvegarder l&#39;ancienne (8 Mo — tout est bundlé dedans)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Sauvegarder l'ancienne (8 Mo — tout est bundlé dedans)</span>
 <a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sudo<span class="w"> </span>cp<span class="w"> </span>/usr/lib/x86_64-linux-gnu/appimagelauncher/libappimage.so.1.0.3<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">        </span>/usr/lib/x86_64-linux-gnu/appimagelauncher/libappimage.so.1.0.3.backup-bionic
 <a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
@@ -2686,17 +2686,17 @@ s'appelle <code>libappimage.so.1.0abi1</code>. Il faut corriger ce soname :</p>
 </code></pre></div>
 <h2 id="verification">Vérification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
 <h3 id="tester-la-bibliotheque-directement">Tester la bibliothèque directement<a class="headerlink" href="#tester-la-bibliotheque-directement" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">"</span>
 <a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="s2">import ctypes</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="s2">lib = ctypes.CDLL(&#39;/usr/lib/x86_64-linux-gnu/appimagelauncher/libappimage.so.1.0&#39;)</span>
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="s2">appimage = &#39;/chemin/vers/MonApp.AppImage&#39;</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="s2">lib = ctypes.CDLL('/usr/lib/x86_64-linux-gnu/appimagelauncher/libappimage.so.1.0')</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="s2">appimage = '/chemin/vers/MonApp.AppImage'</span>
 <a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="s2">result = lib.appimage_shall_not_be_integrated(appimage.encode())</span>
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="s2">print(f&#39;shall_not_be_integrated = {result}&#39;)</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="s2">print(f'shall_not_be_integrated = {result}')</span>
 <a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="s2"># 0 = OK (intégration autorisée)  /  -1 = erreur (compression non supportée)</span>
 <a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="s2">result2 = lib.appimage_get_type(appimage.encode())</span>
-<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="s2">print(f&#39;type = {result2}&#39;)</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="s2">print(f'type = {result2}')</span>
 <a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="s2"># 2 = AppImage Type 2 (correct)</span>
-<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="s2">&quot;</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="s2">"</span>
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu</p>
@@ -2705,7 +2705,7 @@ s'appelle <code>libappimage.so.1.0abi1</code>. Il faut corriger ce soname :</p>
 </code></pre></div>
 </div>
 <h3 id="verifier-lintegration-dans-les-journaux">Vérifier l'intégration dans les journaux<a class="headerlink" href="#verifier-lintegration-dans-les-journaux" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>journalctl<span class="w"> </span>--user<span class="w"> </span>--no-pager<span class="w"> </span>-n<span class="w"> </span><span class="m">40</span><span class="w"> </span>--since<span class="w"> </span><span class="s2">&quot;1 minute ago&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>appimage
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>journalctl<span class="w"> </span>--user<span class="w"> </span>--no-pager<span class="w"> </span>-n<span class="w"> </span><span class="m">40</span><span class="w"> </span>--since<span class="w"> </span><span class="s2">"1 minute ago"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>appimage
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu</p>

@@ -2487,14 +2487,14 @@
 <p>Le chiffrement symétrique utilise <strong>un seul et même mot de passe</strong> pour chiffrer et déchiffrer. C'est pratique pour protéger rapidement un fichier sans avoir besoin de générer de clés.</p>
 <p><strong>1. Chiffrer un fichier :</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Créez un fichier de test</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Mes secrets industriels&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>secret.txt
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"Mes secrets industriels"</span><span class="w"> </span>&gt;<span class="w"> </span>secret.txt
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Chiffrez le fichier (l&#39;option -c signifie &quot;symmetric&quot;)</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Chiffrez le fichier (l'option -c signifie "symmetric")</span>
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>gpg<span class="w"> </span>-c<span class="w"> </span>secret.txt
 </code></pre></div>
 <p><abbr title="GNU Privacy Guard">GPG</abbr> vous demandera de saisir et de confirmer un mot de passe. Le résultat est un nouveau fichier nommé <code>secret.txt.gpg</code>. Vous pouvez maintenant supprimer l'original de façon sécurisée (avec <code>shred</code> par exemple).</p>
 <p><strong>2. Déchiffrer un fichier :</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Déchiffrer le fichier et l&#39;afficher (ou le sauvegarder)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Déchiffrer le fichier et l'afficher (ou le sauvegarder)</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>gpg<span class="w"> </span>-d<span class="w"> </span>secret.txt.gpg<span class="w"> </span>&gt;<span class="w"> </span>secret_dechiffre.txt
 </code></pre></div>
 <h3 id="etape-3-generer-une-paire-de-cles-asymetrique">Étape 3 : Générer une paire de clés (asymétrique)<a class="headerlink" href="#etape-3-generer-une-paire-de-cles-asymetrique" title="Permanent link">&para;</a></h3>
@@ -2518,7 +2518,7 @@
 <h3 id="etape-4-exporter-et-importer-une-cle-publique">Étape 4 : Exporter et importer une clé publique<a class="headerlink" href="#etape-4-exporter-et-importer-une-cle-publique" title="Permanent link">&para;</a></h3>
 <p>Pour que quelqu'un puisse vous envoyer un fichier chiffré, il lui faut votre clé publique.</p>
 <p><strong>1. Exporter votre clé publique :</strong></p>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Remplacez l&#39;email par celui utilisé lors de la génération</span>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Remplacez l'email par celui utilisé lors de la génération</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>gpg<span class="w"> </span>--armor<span class="w"> </span>--export<span class="w"> </span>votre.email@domaine.com<span class="w"> </span>&gt;<span class="w"> </span>ma_cle_publique.asc
 </code></pre></div>
 Le fichier <code>.asc</code> peut être partagé en toute sécurité.</p>
@@ -2528,7 +2528,7 @@ Le fichier <code>.asc</code> peut être partagé en toute sécurité.</p>
 <h3 id="etape-5-chiffrer-et-dechiffrer-en-asymetrique">Étape 5 : Chiffrer et déchiffrer en asymétrique<a class="headerlink" href="#etape-5-chiffrer-et-dechiffrer-en-asymetrique" title="Permanent link">&para;</a></h3>
 <p>Maintenant que vous avez la clé publique d'un destinataire (ou la vôtre), vous pouvez chiffrer un fichier de façon asymétrique.</p>
 <p><strong>1. Chiffrer pour un destinataire :</strong></p>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># L&#39;option -e (encrypt) et -r (recipient)</span>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># L'option -e (encrypt) et -r (recipient)</span>
 <a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>gpg<span class="w"> </span>-e<span class="w"> </span>-r<span class="w"> </span>email.destinataire@domaine.com<span class="w"> </span>document.pdf
 </code></pre></div>
 Cela produit un fichier <code>document.pdf.gpg</code>. Seul le détenteur de la clé privée associée pourra le lire.</p>

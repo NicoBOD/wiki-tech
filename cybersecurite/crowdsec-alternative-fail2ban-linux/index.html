@@ -2509,11 +2509,11 @@
 <p>Vous verrez <code>crowdsec-firewall-bouncer</code> avec la mention <code>valid</code> (✅), ce qui confirme que le composant de blocage est connecté au composant de détection.</p>
 </div>
 <p>Pour un test plus direct, vous pouvez bannir manuellement une IP (par exemple <code>1.2.3.4</code>) puis l'enlever :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Banni l&#39;IP</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Banni l'IP</span>
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>cscli<span class="w"> </span>decisions<span class="w"> </span>add<span class="w"> </span>-i<span class="w"> </span><span class="m">1</span>.2.3.4
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="c1"># Vérifie qu&#39;elle est listée</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="c1"># Vérifie qu'elle est listée</span>
 <a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>sudo<span class="w"> </span>cscli<span class="w"> </span>decisions<span class="w"> </span>list
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1"># Débanni l&#39;IP</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1"># Débanni l'IP</span>
 <a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>sudo<span class="w"> </span>cscli<span class="w"> </span>decisions<span class="w"> </span>delete<span class="w"> </span>-i<span class="w"> </span><span class="m">1</span>.2.3.4
 </code></pre></div>
 <h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>

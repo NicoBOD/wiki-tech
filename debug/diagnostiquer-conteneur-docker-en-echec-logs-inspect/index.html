@@ -2350,7 +2350,7 @@
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>docker<span class="w"> </span>logs<span class="w"> </span>&lt;nom_ou_id_du_conteneur&gt;
 </code></pre></div>
 <p>Pour faciliter la lecture, surtout si le conteneur a généré beaucoup de logs, vous pouvez filtrer la sortie :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># N&#39;afficher que les 50 dernières lignes</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># N'afficher que les 50 dernières lignes</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>docker<span class="w"> </span>logs<span class="w"> </span>--tail<span class="w"> </span><span class="m">50</span><span class="w"> </span>&lt;nom_ou_id_du_conteneur&gt;
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Suivre les logs en temps réel (utile si le conteneur tourne encore ou redémarre en boucle)</span>
@@ -2370,16 +2370,16 @@
 </code></pre></div>
 <p>Le retour étant très verbeux, utilisez l'outil <code>jq</code> ou le formatage Go-template natif de Docker pour cibler des informations précises.</p>
 <p><strong>Vérifier le code de sortie exact et la raison de l'arrêt (OOMKilled) :</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span>inspect<span class="w"> </span>-f<span class="w"> </span><span class="s1">&#39;{{.State.Status}} (ExitCode: {{.State.ExitCode}})&#39;</span><span class="w"> </span>&lt;nom_ou_id_du_conteneur&gt;
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>docker<span class="w"> </span>inspect<span class="w"> </span>-f<span class="w"> </span><span class="s1">&#39;OOMKilled: {{.State.OOMKilled}}&#39;</span><span class="w"> </span>&lt;nom_ou_id_du_conteneur&gt;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span>inspect<span class="w"> </span>-f<span class="w"> </span><span class="s1">'{{.State.Status}} (ExitCode: {{.State.ExitCode}})'</span><span class="w"> </span>&lt;nom_ou_id_du_conteneur&gt;
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>docker<span class="w"> </span>inspect<span class="w"> </span>-f<span class="w"> </span><span class="s1">'OOMKilled: {{.State.OOMKilled}}'</span><span class="w"> </span>&lt;nom_ou_id_du_conteneur&gt;
 </code></pre></div>
 Si <code>OOMKilled</code> est <code>true</code>, le conteneur a consommé plus de mémoire vive que ce qui lui était alloué et a été arrêté par le noyau Linux.</p>
 <p><strong>Vérifier les variables d'environnement :</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>docker<span class="w"> </span>inspect<span class="w"> </span>-f<span class="w"> </span><span class="s1">&#39;{{range .Config.Env}}{{println .}}{{end}}&#39;</span><span class="w"> </span>&lt;nom_ou_id_du_conteneur&gt;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>docker<span class="w"> </span>inspect<span class="w"> </span>-f<span class="w"> </span><span class="s1">'{{range .Config.Env}}{{println .}}{{end}}'</span><span class="w"> </span>&lt;nom_ou_id_du_conteneur&gt;
 </code></pre></div>
 Une variable mal orthographiée ou manquante est l'une des causes les plus fréquentes d'échec au démarrage.</p>
 <p><strong>Vérifier les chemins des volumes montés (Bind Mounts) :</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span>inspect<span class="w"> </span>-f<span class="w"> </span><span class="s1">&#39;{{range .Mounts}}Source: {{.Source}} -&gt; Dest: {{.Destination}}{{println}}{{end}}&#39;</span><span class="w"> </span>&lt;nom_ou_id_du_conteneur&gt;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span>inspect<span class="w"> </span>-f<span class="w"> </span><span class="s1">'{{range .Mounts}}Source: {{.Source}} -&gt; Dest: {{.Destination}}{{println}}{{end}}'</span><span class="w"> </span>&lt;nom_ou_id_du_conteneur&gt;
 </code></pre></div>
 Assurez-vous que les dossiers hôtes ciblés existent et que le conteneur dispose des permissions nécessaires pour y lire/écrire.</p>
 <h3 id="etape-4-ouvrir-un-shell-temporaire-pour-linvestigation">Étape 4 : Ouvrir un shell temporaire pour l'investigation<a class="headerlink" href="#etape-4-ouvrir-un-shell-temporaire-pour-linvestigation" title="Permanent link">&para;</a></h3>

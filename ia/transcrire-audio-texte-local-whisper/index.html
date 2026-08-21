@@ -2343,7 +2343,7 @@
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Création du dossier du projet</span>
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>mkdir<span class="w"> </span>~/whisper-local<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/whisper-local
 <a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># Création et activation de l&#39;environnement virtuel</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># Création et activation de l'environnement virtuel</span>
 <a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>whisper-env
 <a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="nb">source</span><span class="w"> </span>whisper-env/bin/activate
 </code></pre></div>
@@ -2399,23 +2399,23 @@
 <span class="normal"><a href="#__codelineno-9-18">18</a></span>
 <span class="normal"><a href="#__codelineno-9-19">19</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">whisper</span>
 <a id="__codelineno-9-2" name="__codelineno-9-2"></a>
-<a id="__codelineno-9-3" name="__codelineno-9-3"></a><span class="c1"># 1. Charger le modèle (ex: &quot;base&quot;, &quot;small&quot;, &quot;medium&quot;, &quot;large&quot;)</span>
-<a id="__codelineno-9-4" name="__codelineno-9-4"></a><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Chargement du modèle...&quot;</span><span class="p">)</span>
-<a id="__codelineno-9-5" name="__codelineno-9-5"></a><span class="n">model</span> <span class="o">=</span> <span class="n">whisper</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;small&quot;</span><span class="p">)</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3"></a><span class="c1"># 1. Charger le modèle (ex: "base", "small", "medium", "large")</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Chargement du modèle..."</span><span class="p">)</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5"></a><span class="n">model</span> <span class="o">=</span> <span class="n">whisper</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="s2">"small"</span><span class="p">)</span>
 <a id="__codelineno-9-6" name="__codelineno-9-6"></a>
 <a id="__codelineno-9-7" name="__codelineno-9-7"></a><span class="c1"># 2. Lancer la transcription</span>
-<a id="__codelineno-9-8" name="__codelineno-9-8"></a><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Transcription en cours...&quot;</span><span class="p">)</span>
-<a id="__codelineno-9-9" name="__codelineno-9-9"></a><span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transcribe</span><span class="p">(</span><span class="s2">&quot;interview.mp3&quot;</span><span class="p">)</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Transcription en cours..."</span><span class="p">)</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9"></a><span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transcribe</span><span class="p">(</span><span class="s2">"interview.mp3"</span><span class="p">)</span>
 <a id="__codelineno-9-10" name="__codelineno-9-10"></a>
 <a id="__codelineno-9-11" name="__codelineno-9-11"></a><span class="c1"># 3. Afficher et sauvegarder le résultat</span>
-<a id="__codelineno-9-12" name="__codelineno-9-12"></a><span class="n">texte_transcrit</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span>
-<a id="__codelineno-9-13" name="__codelineno-9-13"></a><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Résultat :&quot;</span><span class="p">)</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12"></a><span class="n">texte_transcrit</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">"text"</span><span class="p">]</span>
+<a id="__codelineno-9-13" name="__codelineno-9-13"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Résultat :"</span><span class="p">)</span>
 <a id="__codelineno-9-14" name="__codelineno-9-14"></a><span class="nb">print</span><span class="p">(</span><span class="n">texte_transcrit</span><span class="p">)</span>
 <a id="__codelineno-9-15" name="__codelineno-9-15"></a>
-<a id="__codelineno-9-16" name="__codelineno-9-16"></a><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;transcription.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<a id="__codelineno-9-16" name="__codelineno-9-16"></a><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"transcription.txt"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
 <a id="__codelineno-9-17" name="__codelineno-9-17"></a>    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">texte_transcrit</span><span class="p">)</span>
 <a id="__codelineno-9-18" name="__codelineno-9-18"></a>
-<a id="__codelineno-9-19" name="__codelineno-9-19"></a><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Le texte a été sauvegardé dans transcription.txt.&quot;</span><span class="p">)</span>
+<a id="__codelineno-9-19" name="__codelineno-9-19"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Le texte a été sauvegardé dans transcription.txt."</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
 <p>Exécutez-le avec :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>python<span class="w"> </span>transcrire.py

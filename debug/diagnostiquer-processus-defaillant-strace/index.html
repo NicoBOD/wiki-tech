@@ -2400,8 +2400,8 @@
 </code></pre></div>
 <p>La sortie peut être très verbeuse, car le système doit charger de nombreuses bibliothèques partagées avant même d'exécuter l'action. Observez particulièrement les dernières lignes :</p>
 <p><div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>...
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>openat(AT_FDCWD, &quot;fichier_inexistant.txt&quot;, O_RDONLY) = -1 ENOENT (No such file or directory)
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>write(2, &quot;cat: fichier_inexistant.txt: No &quot;..., 52cat: fichier_inexistant.txt: No such file or directory
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>openat(AT_FDCWD, "fichier_inexistant.txt", O_RDONLY) = -1 ENOENT (No such file or directory)
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>write(2, "cat: fichier_inexistant.txt: No "..., 52cat: fichier_inexistant.txt: No such file or directory
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>) = 52
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>close(1)                                = 0
 <a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>close(2)                                = 0

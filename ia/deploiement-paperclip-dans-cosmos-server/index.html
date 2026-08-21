@@ -2962,7 +2962,7 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Internet
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    │
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    ▼ HTTPS (443)
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Cosmos Server (systemd, ports 80/443 sur l&#39;hôte)
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Cosmos Server (systemd, ports 80/443 sur l'hôte)
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    │
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    │ http://localhost:3100
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    ▼
@@ -2992,7 +2992,7 @@
 <p class="admonition-title">Vérifier que le DNS est propagé</p>
 <p>Avant de commencer, vérifiez que votre enregistrement DNS est actif :
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>dig<span class="w"> </span>+short<span class="w"> </span>paperclip.tutotech.org
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># Doit retourner l&#39;IP publique de votre VM</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># Doit retourner l'IP publique de votre VM</span>
 </code></pre></div></p>
 </div>
 <hr />
@@ -3003,7 +3003,7 @@
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>systemctl<span class="w"> </span>status<span class="w"> </span>CosmosCloud
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Lister les conteneurs actifs</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>docker<span class="w"> </span>ps<span class="w"> </span>--format<span class="w"> </span><span class="s2">&quot;table {{.Names}}\t{{.Image}}\t{{.Ports}}\t{{.Status}}&quot;</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>docker<span class="w"> </span>ps<span class="w"> </span>--format<span class="w"> </span><span class="s2">"table {{.Names}}\t{{.Image}}\t{{.Ports}}\t{{.Status}}"</span>
 <a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
 <a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># Lister les réseaux Docker</span>
 <a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>docker<span class="w"> </span>network<span class="w"> </span>ls
@@ -3044,7 +3044,7 @@
 <a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="c1"># Ne jamais le committer dans un dépôt Git.</span>
 <a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="c1"># ============================================================</span>
 <a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>
-<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="c1"># Secret d&#39;authentification (généré avec openssl rand -hex 32)</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="c1"># Secret d'authentification (généré avec openssl rand -hex 32)</span>
 <a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="na">BETTER_AUTH_SECRET</span><span class="o">=</span><span class="s">&lt;votre_secret_64_chars&gt;</span>
 <a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
 <a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="c1"># Mot de passe PostgreSQL interne (généré avec openssl rand -hex 16)</span>
@@ -3119,35 +3119,35 @@
 <a id="__codelineno-9-7" name="__codelineno-9-7"></a><span class="w">      </span><span class="nt">POSTGRES_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_PASSWORD}</span>
 <a id="__codelineno-9-8" name="__codelineno-9-8"></a><span class="w">      </span><span class="nt">POSTGRES_DB</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">paperclip</span>
 <a id="__codelineno-9-9" name="__codelineno-9-9"></a><span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
-<a id="__codelineno-9-10" name="__codelineno-9-10"></a><span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;CMD-SHELL&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;pg_isready</span><span class="nv"> </span><span class="s">-U</span><span class="nv"> </span><span class="s">paperclip</span><span class="nv"> </span><span class="s">-d</span><span class="nv"> </span><span class="s">paperclip&quot;</span><span class="p p-Indicator">]</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10"></a><span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"CMD-SHELL"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"pg_isready</span><span class="nv"> </span><span class="s">-U</span><span class="nv"> </span><span class="s">paperclip</span><span class="nv"> </span><span class="s">-d</span><span class="nv"> </span><span class="s">paperclip"</span><span class="p p-Indicator">]</span>
 <a id="__codelineno-9-11" name="__codelineno-9-11"></a><span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2s</span>
 <a id="__codelineno-9-12" name="__codelineno-9-12"></a><span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5s</span>
 <a id="__codelineno-9-13" name="__codelineno-9-13"></a><span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
 <a id="__codelineno-9-14" name="__codelineno-9-14"></a><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
 <a id="__codelineno-9-15" name="__codelineno-9-15"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pgdata:/var/lib/postgresql/data</span>
-<a id="__codelineno-9-16" name="__codelineno-9-16"></a><span class="w">    </span><span class="c1"># PostgreSQL n&#39;est PAS exposé à l&#39;hôte — réseau Docker interne uniquement</span>
+<a id="__codelineno-9-16" name="__codelineno-9-16"></a><span class="w">    </span><span class="c1"># PostgreSQL n'est PAS exposé à l'hôte — réseau Docker interne uniquement</span>
 <a id="__codelineno-9-17" name="__codelineno-9-17"></a>
 <a id="__codelineno-9-18" name="__codelineno-9-18"></a><span class="w">  </span><span class="nt">server</span><span class="p">:</span>
 <a id="__codelineno-9-19" name="__codelineno-9-19"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/paperclipai/paperclip:latest</span>
 <a id="__codelineno-9-20" name="__codelineno-9-20"></a><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
 <a id="__codelineno-9-21" name="__codelineno-9-21"></a><span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
 <a id="__codelineno-9-22" name="__codelineno-9-22"></a><span class="w">      </span><span class="c1"># Exposé uniquement sur localhost : Cosmos (service natif) peut y accéder,</span>
-<a id="__codelineno-9-23" name="__codelineno-9-23"></a><span class="w">      </span><span class="c1"># mais le port n&#39;est pas accessible depuis l&#39;extérieur directement.</span>
-<a id="__codelineno-9-24" name="__codelineno-9-24"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;127.0.0.1:3100:3100&quot;</span>
+<a id="__codelineno-9-23" name="__codelineno-9-23"></a><span class="w">      </span><span class="c1"># mais le port n'est pas accessible depuis l'extérieur directement.</span>
+<a id="__codelineno-9-24" name="__codelineno-9-24"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"127.0.0.1:3100:3100"</span>
 <a id="__codelineno-9-25" name="__codelineno-9-25"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
 <a id="__codelineno-9-26" name="__codelineno-9-26"></a><span class="w">      </span><span class="nt">DATABASE_URL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres://paperclip:${POSTGRES_PASSWORD}@db:5432/paperclip</span>
-<a id="__codelineno-9-27" name="__codelineno-9-27"></a><span class="w">      </span><span class="nt">PORT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3100&quot;</span>
-<a id="__codelineno-9-28" name="__codelineno-9-28"></a><span class="w">      </span><span class="nt">HOST</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0.0.0.0&quot;</span>
-<a id="__codelineno-9-29" name="__codelineno-9-29"></a><span class="w">      </span><span class="nt">SERVE_UI</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
-<a id="__codelineno-9-30" name="__codelineno-9-30"></a><span class="w">      </span><span class="nt">PAPERCLIP_DEPLOYMENT_MODE</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;authenticated&quot;</span>
-<a id="__codelineno-9-31" name="__codelineno-9-31"></a><span class="w">      </span><span class="nt">PAPERCLIP_DEPLOYMENT_EXPOSURE</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;private&quot;</span>
-<a id="__codelineno-9-32" name="__codelineno-9-32"></a><span class="w">      </span><span class="nt">PAPERCLIP_PUBLIC_URL</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://paperclip.tutotech.org&quot;</span><span class="w">  </span><span class="c1"># ← Adapter à votre domaine</span>
-<a id="__codelineno-9-33" name="__codelineno-9-33"></a><span class="w">      </span><span class="nt">BETTER_AUTH_SECRET</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${BETTER_AUTH_SECRET}&quot;</span>
-<a id="__codelineno-9-34" name="__codelineno-9-34"></a><span class="w">      </span><span class="nt">OPENAI_API_KEY</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${OPENAI_API_KEY:-}&quot;</span>
-<a id="__codelineno-9-35" name="__codelineno-9-35"></a><span class="w">      </span><span class="nt">ANTHROPIC_API_KEY</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${ANTHROPIC_API_KEY:-}&quot;</span>
+<a id="__codelineno-9-27" name="__codelineno-9-27"></a><span class="w">      </span><span class="nt">PORT</span><span class="p">:</span><span class="w"> </span><span class="s">"3100"</span>
+<a id="__codelineno-9-28" name="__codelineno-9-28"></a><span class="w">      </span><span class="nt">HOST</span><span class="p">:</span><span class="w"> </span><span class="s">"0.0.0.0"</span>
+<a id="__codelineno-9-29" name="__codelineno-9-29"></a><span class="w">      </span><span class="nt">SERVE_UI</span><span class="p">:</span><span class="w"> </span><span class="s">"true"</span>
+<a id="__codelineno-9-30" name="__codelineno-9-30"></a><span class="w">      </span><span class="nt">PAPERCLIP_DEPLOYMENT_MODE</span><span class="p">:</span><span class="w"> </span><span class="s">"authenticated"</span>
+<a id="__codelineno-9-31" name="__codelineno-9-31"></a><span class="w">      </span><span class="nt">PAPERCLIP_DEPLOYMENT_EXPOSURE</span><span class="p">:</span><span class="w"> </span><span class="s">"private"</span>
+<a id="__codelineno-9-32" name="__codelineno-9-32"></a><span class="w">      </span><span class="nt">PAPERCLIP_PUBLIC_URL</span><span class="p">:</span><span class="w"> </span><span class="s">"https://paperclip.tutotech.org"</span><span class="w">  </span><span class="c1"># ← Adapter à votre domaine</span>
+<a id="__codelineno-9-33" name="__codelineno-9-33"></a><span class="w">      </span><span class="nt">BETTER_AUTH_SECRET</span><span class="p">:</span><span class="w"> </span><span class="s">"${BETTER_AUTH_SECRET}"</span>
+<a id="__codelineno-9-34" name="__codelineno-9-34"></a><span class="w">      </span><span class="nt">OPENAI_API_KEY</span><span class="p">:</span><span class="w"> </span><span class="s">"${OPENAI_API_KEY:-}"</span>
+<a id="__codelineno-9-35" name="__codelineno-9-35"></a><span class="w">      </span><span class="nt">ANTHROPIC_API_KEY</span><span class="p">:</span><span class="w"> </span><span class="s">"${ANTHROPIC_API_KEY:-}"</span>
 <a id="__codelineno-9-36" name="__codelineno-9-36"></a><span class="w">      </span><span class="c1"># Stocke le token OAuth Claude CLI dans le volume persistant /paperclip</span>
 <a id="__codelineno-9-37" name="__codelineno-9-37"></a><span class="w">      </span><span class="c1"># Sans cette variable, le token est perdu à chaque recréation du conteneur</span>
-<a id="__codelineno-9-38" name="__codelineno-9-38"></a><span class="w">      </span><span class="nt">CLAUDE_CONFIG_DIR</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/paperclip/.claude-config&quot;</span>
+<a id="__codelineno-9-38" name="__codelineno-9-38"></a><span class="w">      </span><span class="nt">CLAUDE_CONFIG_DIR</span><span class="p">:</span><span class="w"> </span><span class="s">"/paperclip/.claude-config"</span>
 <a id="__codelineno-9-39" name="__codelineno-9-39"></a><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
 <a id="__codelineno-9-40" name="__codelineno-9-40"></a>
 <a id="__codelineno-9-41" name="__codelineno-9-41"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">paperclip-data:/paperclip</span>
@@ -3236,7 +3236,7 @@
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu dans les logs</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>[INFO] Using external PostgreSQL via DATABASE_URL/config
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>[INFO] Authenticated mode auth origin configuration {&quot;authPublicBaseUrl&quot;:&quot;https://paperclip.tutotech.org&quot;...}
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>[INFO] Authenticated mode auth origin configuration {"authPublicBaseUrl":"https://paperclip.tutotech.org"...}
 <a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>[INFO] Server listening on 0.0.0.0:3100
 </code></pre></div>
 </div>
@@ -3250,12 +3250,12 @@
 <div class="admonition tip">
 <p class="admonition-title">En cas de redéploiement</p>
 <p>Si vous redéployez Paperclip sur un serveur où Cosmos était déjà configuré pour ce domaine, vérifiez si la route existe avant de lancer le script :</p>
-<div class="highlight"><pre><span></span><code>sudo python3 -c &quot;
+<div class="highlight"><pre><span></span><code>sudo python3 -c "
 import json
-c = json.load(open(&#39;/var/lib/cosmos/cosmos.config.json&#39;))
-routes = c[&#39;HTTPConfig&#39;][&#39;ProxyConfig&#39;][&#39;Routes&#39;]
-for r in routes: print(r[&#39;Name&#39;], &#39;-&gt;&#39;, r[&#39;Target&#39;])
-&quot;
+c = json.load(open('/var/lib/cosmos/cosmos.config.json'))
+routes = c['HTTPConfig']['ProxyConfig']['Routes']
+for r in routes: print(r['Name'], '-&gt;', r['Target'])
+"
 </code></pre></div>
 <p>Si la ligne <code>paperclip -&gt; http://localhost:3100</code> apparaît, <strong>passez directement à l'Étape 8</strong> — la route et le certificat Let's Encrypt sont encore valides.</p>
 </div>
@@ -3265,53 +3265,53 @@ for r in routes: print(r[&#39;Name&#39;], &#39;-&gt;&#39;, r[&#39;Target&#39;])
 </code></pre></div>
 <h4 id="72-injecter-la-route-paperclip">7.2 — Injecter la route Paperclip<a class="headerlink" href="#72-injecter-la-route-paperclip" title="Permanent link">&para;</a></h4>
 <p>Le script Python suivant lit le fichier de config, ajoute la route si elle n'existe pas, et réécrit le fichier en JSON valide.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>sudo<span class="w"> </span>python3<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt; &#39;PYEOF&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>sudo<span class="w"> </span>python3<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt; 'PYEOF'</span>
 <a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="s">import json</span>
 <a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
-<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="s">config_path = &quot;/var/lib/cosmos/cosmos.config.json&quot;</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="s">config_path = "/var/lib/cosmos/cosmos.config.json"</span>
 <a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>
-<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="s">with open(config_path, &quot;r&quot;) as f:</span>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="s">with open(config_path, "r") as f:</span>
 <a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="s">    config = json.load(f)</span>
 <a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>
 <a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="s">paperclip_route = {</span>
-<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="s">    &quot;Name&quot;: &quot;paperclip&quot;,                          # Nom unique de la route</span>
-<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="s">    &quot;Description&quot;: &quot;Paperclip AI Platform&quot;,</span>
-<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a><span class="s">    &quot;UseHost&quot;: True,                              # Matcher sur le nom d&#39;hôte</span>
-<a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a><span class="s">    &quot;Host&quot;: &quot;paperclip.tutotech.org&quot;,             # ← Adapter à votre domaine</span>
-<a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a><span class="s">    &quot;UsePathPrefix&quot;: False,</span>
-<a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a><span class="s">    &quot;PathPrefix&quot;: &quot;&quot;,</span>
-<a id="__codelineno-15-16" name="__codelineno-15-16" href="#__codelineno-15-16"></a><span class="s">    &quot;Target&quot;: &quot;http://localhost:3100&quot;,            # Cible du proxy</span>
-<a id="__codelineno-15-17" name="__codelineno-15-17" href="#__codelineno-15-17"></a><span class="s">    &quot;Mode&quot;: &quot;PROXY&quot;,                              # Mode proxy HTTP</span>
-<a id="__codelineno-15-18" name="__codelineno-15-18" href="#__codelineno-15-18"></a><span class="s">    &quot;SmartShield&quot;: {&quot;Enabled&quot;: False},</span>
-<a id="__codelineno-15-19" name="__codelineno-15-19" href="#__codelineno-15-19"></a><span class="s">    &quot;AuthEnabled&quot;: False,                         # Pas d&#39;auth supplémentaire (Paperclip gère lui-même)</span>
-<a id="__codelineno-15-20" name="__codelineno-15-20" href="#__codelineno-15-20"></a><span class="s">    &quot;AdminOnly&quot;: False,</span>
-<a id="__codelineno-15-21" name="__codelineno-15-21" href="#__codelineno-15-21"></a><span class="s">    &quot;Disabled&quot;: False,</span>
-<a id="__codelineno-15-22" name="__codelineno-15-22" href="#__codelineno-15-22"></a><span class="s">    &quot;Timeout&quot;: 0,</span>
-<a id="__codelineno-15-23" name="__codelineno-15-23" href="#__codelineno-15-23"></a><span class="s">    &quot;ThrottlePerMinute&quot;: 0,</span>
-<a id="__codelineno-15-24" name="__codelineno-15-24" href="#__codelineno-15-24"></a><span class="s">    &quot;CORSOrigin&quot;: &quot;&quot;,</span>
-<a id="__codelineno-15-25" name="__codelineno-15-25" href="#__codelineno-15-25"></a><span class="s">    &quot;BlockCommonBots&quot;: False,</span>
-<a id="__codelineno-15-26" name="__codelineno-15-26" href="#__codelineno-15-26"></a><span class="s">    &quot;BlockAPIAbuse&quot;: False,</span>
-<a id="__codelineno-15-27" name="__codelineno-15-27" href="#__codelineno-15-27"></a><span class="s">    &quot;AcceptInsecureHTTPSTarget&quot;: False,</span>
-<a id="__codelineno-15-28" name="__codelineno-15-28" href="#__codelineno-15-28"></a><span class="s">    &quot;HideFromDashboard&quot;: False,</span>
-<a id="__codelineno-15-29" name="__codelineno-15-29" href="#__codelineno-15-29"></a><span class="s">    &quot;DisableHeaderHardening&quot;: False</span>
+<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="s">    "Name": "paperclip",                          # Nom unique de la route</span>
+<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="s">    "Description": "Paperclip AI Platform",</span>
+<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a><span class="s">    "UseHost": True,                              # Matcher sur le nom d'hôte</span>
+<a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a><span class="s">    "Host": "paperclip.tutotech.org",             # ← Adapter à votre domaine</span>
+<a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a><span class="s">    "UsePathPrefix": False,</span>
+<a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a><span class="s">    "PathPrefix": "",</span>
+<a id="__codelineno-15-16" name="__codelineno-15-16" href="#__codelineno-15-16"></a><span class="s">    "Target": "http://localhost:3100",            # Cible du proxy</span>
+<a id="__codelineno-15-17" name="__codelineno-15-17" href="#__codelineno-15-17"></a><span class="s">    "Mode": "PROXY",                              # Mode proxy HTTP</span>
+<a id="__codelineno-15-18" name="__codelineno-15-18" href="#__codelineno-15-18"></a><span class="s">    "SmartShield": {"Enabled": False},</span>
+<a id="__codelineno-15-19" name="__codelineno-15-19" href="#__codelineno-15-19"></a><span class="s">    "AuthEnabled": False,                         # Pas d'auth supplémentaire (Paperclip gère lui-même)</span>
+<a id="__codelineno-15-20" name="__codelineno-15-20" href="#__codelineno-15-20"></a><span class="s">    "AdminOnly": False,</span>
+<a id="__codelineno-15-21" name="__codelineno-15-21" href="#__codelineno-15-21"></a><span class="s">    "Disabled": False,</span>
+<a id="__codelineno-15-22" name="__codelineno-15-22" href="#__codelineno-15-22"></a><span class="s">    "Timeout": 0,</span>
+<a id="__codelineno-15-23" name="__codelineno-15-23" href="#__codelineno-15-23"></a><span class="s">    "ThrottlePerMinute": 0,</span>
+<a id="__codelineno-15-24" name="__codelineno-15-24" href="#__codelineno-15-24"></a><span class="s">    "CORSOrigin": "",</span>
+<a id="__codelineno-15-25" name="__codelineno-15-25" href="#__codelineno-15-25"></a><span class="s">    "BlockCommonBots": False,</span>
+<a id="__codelineno-15-26" name="__codelineno-15-26" href="#__codelineno-15-26"></a><span class="s">    "BlockAPIAbuse": False,</span>
+<a id="__codelineno-15-27" name="__codelineno-15-27" href="#__codelineno-15-27"></a><span class="s">    "AcceptInsecureHTTPSTarget": False,</span>
+<a id="__codelineno-15-28" name="__codelineno-15-28" href="#__codelineno-15-28"></a><span class="s">    "HideFromDashboard": False,</span>
+<a id="__codelineno-15-29" name="__codelineno-15-29" href="#__codelineno-15-29"></a><span class="s">    "DisableHeaderHardening": False</span>
 <a id="__codelineno-15-30" name="__codelineno-15-30" href="#__codelineno-15-30"></a><span class="s">}</span>
 <a id="__codelineno-15-31" name="__codelineno-15-31" href="#__codelineno-15-31"></a>
-<a id="__codelineno-15-32" name="__codelineno-15-32" href="#__codelineno-15-32"></a><span class="s">routes = config[&quot;HTTPConfig&quot;][&quot;ProxyConfig&quot;][&quot;Routes&quot;]</span>
-<a id="__codelineno-15-33" name="__codelineno-15-33" href="#__codelineno-15-33"></a><span class="s">existing = [r for r in routes if r.get(&quot;Name&quot;) == &quot;paperclip&quot;]</span>
+<a id="__codelineno-15-32" name="__codelineno-15-32" href="#__codelineno-15-32"></a><span class="s">routes = config["HTTPConfig"]["ProxyConfig"]["Routes"]</span>
+<a id="__codelineno-15-33" name="__codelineno-15-33" href="#__codelineno-15-33"></a><span class="s">existing = [r for r in routes if r.get("Name") == "paperclip"]</span>
 <a id="__codelineno-15-34" name="__codelineno-15-34" href="#__codelineno-15-34"></a>
 <a id="__codelineno-15-35" name="__codelineno-15-35" href="#__codelineno-15-35"></a><span class="s">if existing:</span>
-<a id="__codelineno-15-36" name="__codelineno-15-36" href="#__codelineno-15-36"></a><span class="s">    print(&quot;Route &#39;paperclip&#39; existe déjà.&quot;)</span>
+<a id="__codelineno-15-36" name="__codelineno-15-36" href="#__codelineno-15-36"></a><span class="s">    print("Route 'paperclip' existe déjà.")</span>
 <a id="__codelineno-15-37" name="__codelineno-15-37" href="#__codelineno-15-37"></a><span class="s">else:</span>
 <a id="__codelineno-15-38" name="__codelineno-15-38" href="#__codelineno-15-38"></a><span class="s">    routes.append(paperclip_route)</span>
-<a id="__codelineno-15-39" name="__codelineno-15-39" href="#__codelineno-15-39"></a><span class="s">    with open(config_path, &quot;w&quot;) as f:</span>
+<a id="__codelineno-15-39" name="__codelineno-15-39" href="#__codelineno-15-39"></a><span class="s">    with open(config_path, "w") as f:</span>
 <a id="__codelineno-15-40" name="__codelineno-15-40" href="#__codelineno-15-40"></a><span class="s">        json.dump(config, f, indent=4)</span>
-<a id="__codelineno-15-41" name="__codelineno-15-41" href="#__codelineno-15-41"></a><span class="s">    print(&quot;Route &#39;paperclip&#39; ajoutée avec succès.&quot;)</span>
+<a id="__codelineno-15-41" name="__codelineno-15-41" href="#__codelineno-15-41"></a><span class="s">    print("Route 'paperclip' ajoutée avec succès.")</span>
 <a id="__codelineno-15-42" name="__codelineno-15-42" href="#__codelineno-15-42"></a>
 <a id="__codelineno-15-43" name="__codelineno-15-43" href="#__codelineno-15-43"></a><span class="s"># Vérification</span>
-<a id="__codelineno-15-44" name="__codelineno-15-44" href="#__codelineno-15-44"></a><span class="s">with open(config_path, &quot;r&quot;) as f:</span>
+<a id="__codelineno-15-44" name="__codelineno-15-44" href="#__codelineno-15-44"></a><span class="s">with open(config_path, "r") as f:</span>
 <a id="__codelineno-15-45" name="__codelineno-15-45" href="#__codelineno-15-45"></a><span class="s">    verify = json.load(f)</span>
-<a id="__codelineno-15-46" name="__codelineno-15-46" href="#__codelineno-15-46"></a><span class="s">for r in verify[&quot;HTTPConfig&quot;][&quot;ProxyConfig&quot;][&quot;Routes&quot;]:</span>
-<a id="__codelineno-15-47" name="__codelineno-15-47" href="#__codelineno-15-47"></a><span class="s">    print(f&quot;  Route: {r[&#39;Name&#39;]} → {r[&#39;Target&#39;]}&quot;)</span>
+<a id="__codelineno-15-46" name="__codelineno-15-46" href="#__codelineno-15-46"></a><span class="s">for r in verify["HTTPConfig"]["ProxyConfig"]["Routes"]:</span>
+<a id="__codelineno-15-47" name="__codelineno-15-47" href="#__codelineno-15-47"></a><span class="s">    print(f"  Route: {r['Name']} → {r['Target']}")</span>
 <a id="__codelineno-15-48" name="__codelineno-15-48" href="#__codelineno-15-48"></a><span class="s">PYEOF</span>
 </code></pre></div>
 <div class="admonition note">
@@ -3357,47 +3357,47 @@ for r in routes: print(r[&#39;Name&#39;], &#39;-&gt;&#39;, r[&#39;Target&#39;])
 <p>Par défaut, <code>onboard --yes</code> crée une configuration en mode <code>local_trusted</code> (adapté pour un usage local) alors que nous avons besoin du mode <code>authenticated</code> (pour une exposition Internet). De plus, certains champs de la section <code>auth</code> sont absents ou incorrects. Il faut corriger ces valeurs manuellement.</p>
 </div>
 <p>Trouvez le volume Docker sur l'hôte :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>docker<span class="w"> </span>volume<span class="w"> </span>inspect<span class="w"> </span>paperclip_paperclip-data<span class="w"> </span>--format<span class="w"> </span><span class="s1">&#39;{{.Mountpoint}}&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>docker<span class="w"> </span>volume<span class="w"> </span>inspect<span class="w"> </span>paperclip_paperclip-data<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Mountpoint}}'</span>
 <a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="c1"># Retourne généralement : /var/lib/docker/volumes/paperclip_paperclip-data/_data</span>
 </code></pre></div>
 <p>Corrigez le fichier de configuration :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>sudo<span class="w"> </span>python3<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt; &#39;PYEOF&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>sudo<span class="w"> </span>python3<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt; 'PYEOF'</span>
 <a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="s">import json</span>
 <a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>
-<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="s">path = &quot;/var/lib/docker/volumes/paperclip_paperclip-data/_data/instances/default/config.json&quot;</span>
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="s">path = "/var/lib/docker/volumes/paperclip_paperclip-data/_data/instances/default/config.json"</span>
 <a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>
 <a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="s">with open(path) as f:</span>
 <a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a><span class="s">    c = json.load(f)</span>
 <a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>
 <a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a><span class="s"># Correction 1 : mode de déploiement</span>
-<a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a><span class="s">c[&#39;server&#39;][&#39;deploymentMode&#39;] = &#39;authenticated&#39;</span>
+<a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a><span class="s">c['server']['deploymentMode'] = 'authenticated'</span>
 <a id="__codelineno-22-11" name="__codelineno-22-11" href="#__codelineno-22-11"></a>
 <a id="__codelineno-22-12" name="__codelineno-22-12" href="#__codelineno-22-12"></a><span class="s"># Correction 2 : bind sur toutes les interfaces (nécessaire pour Docker)</span>
-<a id="__codelineno-22-13" name="__codelineno-22-13" href="#__codelineno-22-13"></a><span class="s"># Valeurs acceptées : &#39;loopback&#39; | &#39;lan&#39; | &#39;tailnet&#39; | &#39;custom&#39;</span>
-<a id="__codelineno-22-14" name="__codelineno-22-14" href="#__codelineno-22-14"></a><span class="s"># &#39;lan&#39; = 0.0.0.0 (toutes interfaces), ce qui est nécessaire pour que</span>
+<a id="__codelineno-22-13" name="__codelineno-22-13" href="#__codelineno-22-13"></a><span class="s"># Valeurs acceptées : 'loopback' | 'lan' | 'tailnet' | 'custom'</span>
+<a id="__codelineno-22-14" name="__codelineno-22-14" href="#__codelineno-22-14"></a><span class="s"># 'lan' = 0.0.0.0 (toutes interfaces), ce qui est nécessaire pour que</span>
 <a id="__codelineno-22-15" name="__codelineno-22-15" href="#__codelineno-22-15"></a><span class="s"># Docker puisse router le trafic vers le conteneur</span>
-<a id="__codelineno-22-16" name="__codelineno-22-16" href="#__codelineno-22-16"></a><span class="s">c[&#39;server&#39;][&#39;bind&#39;] = &#39;lan&#39;</span>
-<a id="__codelineno-22-17" name="__codelineno-22-17" href="#__codelineno-22-17"></a><span class="s">c[&#39;server&#39;][&#39;host&#39;] = &#39;0.0.0.0&#39;</span>
+<a id="__codelineno-22-16" name="__codelineno-22-16" href="#__codelineno-22-16"></a><span class="s">c['server']['bind'] = 'lan'</span>
+<a id="__codelineno-22-17" name="__codelineno-22-17" href="#__codelineno-22-17"></a><span class="s">c['server']['host'] = '0.0.0.0'</span>
 <a id="__codelineno-22-18" name="__codelineno-22-18" href="#__codelineno-22-18"></a>
 <a id="__codelineno-22-19" name="__codelineno-22-19" href="#__codelineno-22-19"></a><span class="s"># Correction 3 : URL publique dans la section server</span>
-<a id="__codelineno-22-20" name="__codelineno-22-20" href="#__codelineno-22-20"></a><span class="s">c[&#39;server&#39;][&#39;publicUrl&#39;] = &#39;https://paperclip.tutotech.org&#39;  # ← Adapter</span>
-<a id="__codelineno-22-21" name="__codelineno-22-21" href="#__codelineno-22-21"></a><span class="s">c[&#39;server&#39;][&#39;allowedHostnames&#39;] = [&#39;paperclip.tutotech.org&#39;]  # ← Adapter</span>
+<a id="__codelineno-22-20" name="__codelineno-22-20" href="#__codelineno-22-20"></a><span class="s">c['server']['publicUrl'] = 'https://paperclip.tutotech.org'  # ← Adapter</span>
+<a id="__codelineno-22-21" name="__codelineno-22-21" href="#__codelineno-22-21"></a><span class="s">c['server']['allowedHostnames'] = ['paperclip.tutotech.org']  # ← Adapter</span>
 <a id="__codelineno-22-22" name="__codelineno-22-22" href="#__codelineno-22-22"></a>
 <a id="__codelineno-22-23" name="__codelineno-22-23" href="#__codelineno-22-23"></a><span class="s"># Correction 4 : configuration auth</span>
-<a id="__codelineno-22-24" name="__codelineno-22-24" href="#__codelineno-22-24"></a><span class="s"># &#39;explicit&#39; = utiliser l&#39;URL ci-dessous pour les cookies et redirections</span>
-<a id="__codelineno-22-25" name="__codelineno-22-25" href="#__codelineno-22-25"></a><span class="s">c[&#39;auth&#39;][&#39;baseUrlMode&#39;] = &#39;explicit&#39;</span>
-<a id="__codelineno-22-26" name="__codelineno-22-26" href="#__codelineno-22-26"></a><span class="s">c[&#39;auth&#39;][&#39;publicBaseUrl&#39;] = &#39;https://paperclip.tutotech.org&#39;  # ← Adapter</span>
-<a id="__codelineno-22-27" name="__codelineno-22-27" href="#__codelineno-22-27"></a><span class="s">c[&#39;auth&#39;].pop(&#39;baseUrl&#39;, None)  # Supprimer l&#39;ancienne clé incorrecte si présente</span>
+<a id="__codelineno-22-24" name="__codelineno-22-24" href="#__codelineno-22-24"></a><span class="s"># 'explicit' = utiliser l'URL ci-dessous pour les cookies et redirections</span>
+<a id="__codelineno-22-25" name="__codelineno-22-25" href="#__codelineno-22-25"></a><span class="s">c['auth']['baseUrlMode'] = 'explicit'</span>
+<a id="__codelineno-22-26" name="__codelineno-22-26" href="#__codelineno-22-26"></a><span class="s">c['auth']['publicBaseUrl'] = 'https://paperclip.tutotech.org'  # ← Adapter</span>
+<a id="__codelineno-22-27" name="__codelineno-22-27" href="#__codelineno-22-27"></a><span class="s">c['auth'].pop('baseUrl', None)  # Supprimer l'ancienne clé incorrecte si présente</span>
 <a id="__codelineno-22-28" name="__codelineno-22-28" href="#__codelineno-22-28"></a>
-<a id="__codelineno-22-29" name="__codelineno-22-29" href="#__codelineno-22-29"></a><span class="s">with open(path, &#39;w&#39;) as f:</span>
+<a id="__codelineno-22-29" name="__codelineno-22-29" href="#__codelineno-22-29"></a><span class="s">with open(path, 'w') as f:</span>
 <a id="__codelineno-22-30" name="__codelineno-22-30" href="#__codelineno-22-30"></a><span class="s">    json.dump(c, f, indent=2)</span>
 <a id="__codelineno-22-31" name="__codelineno-22-31" href="#__codelineno-22-31"></a>
-<a id="__codelineno-22-32" name="__codelineno-22-32" href="#__codelineno-22-32"></a><span class="s">print(&quot;Configuration corrigée :&quot;)</span>
-<a id="__codelineno-22-33" name="__codelineno-22-33" href="#__codelineno-22-33"></a><span class="s">print(f&quot;  deploymentMode : {c[&#39;server&#39;][&#39;deploymentMode&#39;]}&quot;)</span>
-<a id="__codelineno-22-34" name="__codelineno-22-34" href="#__codelineno-22-34"></a><span class="s">print(f&quot;  bind           : {c[&#39;server&#39;][&#39;bind&#39;]}&quot;)</span>
-<a id="__codelineno-22-35" name="__codelineno-22-35" href="#__codelineno-22-35"></a><span class="s">print(f&quot;  publicUrl      : {c[&#39;server&#39;][&#39;publicUrl&#39;]}&quot;)</span>
-<a id="__codelineno-22-36" name="__codelineno-22-36" href="#__codelineno-22-36"></a><span class="s">print(f&quot;  auth.mode      : {c[&#39;auth&#39;][&#39;baseUrlMode&#39;]}&quot;)</span>
-<a id="__codelineno-22-37" name="__codelineno-22-37" href="#__codelineno-22-37"></a><span class="s">print(f&quot;  auth.publicUrl : {c[&#39;auth&#39;][&#39;publicBaseUrl&#39;]}&quot;)</span>
+<a id="__codelineno-22-32" name="__codelineno-22-32" href="#__codelineno-22-32"></a><span class="s">print("Configuration corrigée :")</span>
+<a id="__codelineno-22-33" name="__codelineno-22-33" href="#__codelineno-22-33"></a><span class="s">print(f"  deploymentMode : {c['server']['deploymentMode']}")</span>
+<a id="__codelineno-22-34" name="__codelineno-22-34" href="#__codelineno-22-34"></a><span class="s">print(f"  bind           : {c['server']['bind']}")</span>
+<a id="__codelineno-22-35" name="__codelineno-22-35" href="#__codelineno-22-35"></a><span class="s">print(f"  publicUrl      : {c['server']['publicUrl']}")</span>
+<a id="__codelineno-22-36" name="__codelineno-22-36" href="#__codelineno-22-36"></a><span class="s">print(f"  auth.mode      : {c['auth']['baseUrlMode']}")</span>
+<a id="__codelineno-22-37" name="__codelineno-22-37" href="#__codelineno-22-37"></a><span class="s">print(f"  auth.publicUrl : {c['auth']['publicBaseUrl']}")</span>
 <a id="__codelineno-22-38" name="__codelineno-22-38" href="#__codelineno-22-38"></a><span class="s">PYEOF</span>
 </code></pre></div>
 <h4 id="83-corriger-les-permissions">8.3 — Corriger les permissions<a class="headerlink" href="#83-corriger-les-permissions" title="Permanent link">&para;</a></h4>
@@ -3416,7 +3416,7 @@ for r in routes: print(r[&#39;Name&#39;], &#39;-&gt;&#39;, r[&#39;Target&#39;])
 <p class="admonition-title">Résultat attendu</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>[INFO] Using external PostgreSQL via DATABASE_URL/config
 <a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>[INFO] Authenticated mode auth origin configuration
-<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>       {&quot;authBaseUrlMode&quot;:&quot;explicit&quot;,&quot;authPublicBaseUrl&quot;:&quot;https://paperclip.tutotech.org&quot;...}
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>       {"authBaseUrlMode":"explicit","authPublicBaseUrl":"https://paperclip.tutotech.org"...}
 <a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a>[INFO] Server listening on 0.0.0.0:3100
 </code></pre></div>
 </div>
@@ -3479,7 +3479,7 @@ for r in routes: print(r[&#39;Name&#39;], &#39;-&gt;&#39;, r[&#39;Target&#39;])
 <p>Vérifiez que votre <code>docker-compose.yml</code> contient bien cette ligne dans la section <code>environment</code> du service <code>server</code> :</p>
 <div class="highlight"><span class="filename">docker-compose.yml (extrait)</span><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="nt">environment</span><span class="p">:</span>
 <a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="w">  </span><span class="c1"># ...autres variables...</span>
-<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="w">  </span><span class="nt">CLAUDE_CONFIG_DIR</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/paperclip/.claude-config&quot;</span>
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="w">  </span><span class="nt">CLAUDE_CONFIG_DIR</span><span class="p">:</span><span class="w"> </span><span class="s">"/paperclip/.claude-config"</span>
 </code></pre></div>
 <h2 id="problemes-rencontres">Problèmes rencontrés<a class="headerlink" href="#problemes-rencontres" title="Permanent link">&para;</a></h2>
 <h3 id="probleme-1-onboard-yes-genere-un-mode-local_trusted">Problème 1 : <code>onboard --yes</code> génère un mode <code>local_trusted</code><a class="headerlink" href="#probleme-1-onboard-yes-genere-un-mode-local_trusted" title="Permanent link">&para;</a></h3>
@@ -3496,7 +3496,7 @@ for r in routes: print(r[&#39;Name&#39;], &#39;-&gt;&#39;, r[&#39;Target&#39;])
 <div class="admonition failure">
 <p class="admonition-title">Message d'erreur</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>Invalid config at /paperclip/instances/default/config.json:
-<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>server.bind: Invalid enum value. Expected &#39;loopback&#39; | &#39;lan&#39; | &#39;tailnet&#39; | &#39;custom&#39;, received &#39;all&#39;
+<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>server.bind: Invalid enum value. Expected 'loopback' | 'lan' | 'tailnet' | 'custom', received 'all'
 </code></pre></div>
 </div>
 <p><strong>Cause :</strong> La valeur <code>"all"</code> n'est pas acceptée pour <code>server.bind</code>.</p>
@@ -3514,7 +3514,7 @@ for r in routes: print(r[&#39;Name&#39;], &#39;-&gt;&#39;, r[&#39;Target&#39;])
 <h3 id="probleme-4-permission-denied-sur-env">Problème 4 : Permission denied sur <code>.env</code><a class="headerlink" href="#probleme-4-permission-denied-sur-env" title="Permanent link">&para;</a></h3>
 <div class="admonition failure">
 <p class="admonition-title">Message d'erreur</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>Error: EACCES: permission denied, open &#39;/paperclip/instances/default/.env&#39;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>Error: EACCES: permission denied, open '/paperclip/instances/default/.env'
 </code></pre></div>
 </div>
 <p><strong>Cause :</strong> La commande <code>onboard</code> s'exécute en <code>root</code> dans le conteneur et crée des fichiers avec <code>owner: root</code>. Mais le serveur Paperclip tourne en tant qu'utilisateur <code>node</code> (uid 1000) qui n'a pas accès aux fichiers root.</p>
@@ -3548,7 +3548,7 @@ for r in routes: print(r[&#39;Name&#39;], &#39;-&gt;&#39;, r[&#39;Target&#39;])
 </code></pre></div>
 </div>
 <h3 id="verifier-les-logs-cosmos-pour-le-routing">Vérifier les logs Cosmos pour le routing<a class="headerlink" href="#verifier-les-logs-cosmos-pour-le-routing" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>CosmosCloud<span class="w"> </span>--since<span class="w"> </span><span class="s2">&quot;5 minutes ago&quot;</span><span class="w"> </span>--no-pager<span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>CosmosCloud<span class="w"> </span>--since<span class="w"> </span><span class="s2">"5 minutes ago"</span><span class="w"> </span>--no-pager<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a><span class="w">    </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>paperclip
 </code></pre></div>
 <div class="admonition success">
@@ -3619,7 +3619,7 @@ for r in routes: print(r[&#39;Name&#39;], &#39;-&gt;&#39;, r[&#39;Target&#39;])
 <a id="__codelineno-44-3" name="__codelineno-44-3" href="#__codelineno-44-3"></a><span class="c1"># 1. Démarrer la stack</span>
 <a id="__codelineno-44-4" name="__codelineno-44-4" href="#__codelineno-44-4"></a>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
 <a id="__codelineno-44-5" name="__codelineno-44-5" href="#__codelineno-44-5"></a>
-<a id="__codelineno-44-6" name="__codelineno-44-6" href="#__codelineno-44-6"></a><span class="c1"># 2. Lancer l&#39;onboarding (génère master key + config.json)</span>
+<a id="__codelineno-44-6" name="__codelineno-44-6" href="#__codelineno-44-6"></a><span class="c1"># 2. Lancer l'onboarding (génère master key + config.json)</span>
 <a id="__codelineno-44-7" name="__codelineno-44-7" href="#__codelineno-44-7"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>paperclip-server-1<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-44-8" name="__codelineno-44-8" href="#__codelineno-44-8"></a><span class="w">    </span>node<span class="w"> </span>cli/node_modules/tsx/dist/cli.mjs<span class="w"> </span>cli/src/index.ts<span class="w"> </span>onboard<span class="w"> </span>--yes
 <a id="__codelineno-44-9" name="__codelineno-44-9" href="#__codelineno-44-9"></a>
@@ -3627,20 +3627,20 @@ for r in routes: print(r[&#39;Name&#39;], &#39;-&gt;&#39;, r[&#39;Target&#39;])
 <a id="__codelineno-44-11" name="__codelineno-44-11" href="#__codelineno-44-11"></a>sudo<span class="w"> </span>ls<span class="w"> </span>/var/lib/docker/volumes/paperclip_paperclip-data/_data/instances/default/
 <a id="__codelineno-44-12" name="__codelineno-44-12" href="#__codelineno-44-12"></a>
 <a id="__codelineno-44-13" name="__codelineno-44-13" href="#__codelineno-44-13"></a><span class="c1"># 4. Corriger config.json (authenticated, lan, publicUrl, auth)</span>
-<a id="__codelineno-44-14" name="__codelineno-44-14" href="#__codelineno-44-14"></a>sudo<span class="w"> </span>python3<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt; &#39;PYEOF&#39;</span>
+<a id="__codelineno-44-14" name="__codelineno-44-14" href="#__codelineno-44-14"></a>sudo<span class="w"> </span>python3<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt; 'PYEOF'</span>
 <a id="__codelineno-44-15" name="__codelineno-44-15" href="#__codelineno-44-15"></a><span class="s">import json</span>
-<a id="__codelineno-44-16" name="__codelineno-44-16" href="#__codelineno-44-16"></a><span class="s">path = &quot;/var/lib/docker/volumes/paperclip_paperclip-data/_data/instances/default/config.json&quot;</span>
+<a id="__codelineno-44-16" name="__codelineno-44-16" href="#__codelineno-44-16"></a><span class="s">path = "/var/lib/docker/volumes/paperclip_paperclip-data/_data/instances/default/config.json"</span>
 <a id="__codelineno-44-17" name="__codelineno-44-17" href="#__codelineno-44-17"></a><span class="s">with open(path) as f: c = json.load(f)</span>
-<a id="__codelineno-44-18" name="__codelineno-44-18" href="#__codelineno-44-18"></a><span class="s">c[&#39;server&#39;][&#39;deploymentMode&#39;] = &#39;authenticated&#39;</span>
-<a id="__codelineno-44-19" name="__codelineno-44-19" href="#__codelineno-44-19"></a><span class="s">c[&#39;server&#39;][&#39;bind&#39;] = &#39;lan&#39;</span>
-<a id="__codelineno-44-20" name="__codelineno-44-20" href="#__codelineno-44-20"></a><span class="s">c[&#39;server&#39;][&#39;host&#39;] = &#39;0.0.0.0&#39;</span>
-<a id="__codelineno-44-21" name="__codelineno-44-21" href="#__codelineno-44-21"></a><span class="s">c[&#39;server&#39;][&#39;publicUrl&#39;] = &#39;https://paperclip.tutotech.org&#39;</span>
-<a id="__codelineno-44-22" name="__codelineno-44-22" href="#__codelineno-44-22"></a><span class="s">c[&#39;server&#39;][&#39;allowedHostnames&#39;] = [&#39;paperclip.tutotech.org&#39;]</span>
-<a id="__codelineno-44-23" name="__codelineno-44-23" href="#__codelineno-44-23"></a><span class="s">c[&#39;auth&#39;][&#39;baseUrlMode&#39;] = &#39;explicit&#39;</span>
-<a id="__codelineno-44-24" name="__codelineno-44-24" href="#__codelineno-44-24"></a><span class="s">c[&#39;auth&#39;][&#39;publicBaseUrl&#39;] = &#39;https://paperclip.tutotech.org&#39;</span>
-<a id="__codelineno-44-25" name="__codelineno-44-25" href="#__codelineno-44-25"></a><span class="s">c[&#39;auth&#39;].pop(&#39;baseUrl&#39;, None)</span>
-<a id="__codelineno-44-26" name="__codelineno-44-26" href="#__codelineno-44-26"></a><span class="s">with open(path, &#39;w&#39;) as f: json.dump(c, f, indent=2)</span>
-<a id="__codelineno-44-27" name="__codelineno-44-27" href="#__codelineno-44-27"></a><span class="s">print(&quot;config.json corrigé ✓&quot;)</span>
+<a id="__codelineno-44-18" name="__codelineno-44-18" href="#__codelineno-44-18"></a><span class="s">c['server']['deploymentMode'] = 'authenticated'</span>
+<a id="__codelineno-44-19" name="__codelineno-44-19" href="#__codelineno-44-19"></a><span class="s">c['server']['bind'] = 'lan'</span>
+<a id="__codelineno-44-20" name="__codelineno-44-20" href="#__codelineno-44-20"></a><span class="s">c['server']['host'] = '0.0.0.0'</span>
+<a id="__codelineno-44-21" name="__codelineno-44-21" href="#__codelineno-44-21"></a><span class="s">c['server']['publicUrl'] = 'https://paperclip.tutotech.org'</span>
+<a id="__codelineno-44-22" name="__codelineno-44-22" href="#__codelineno-44-22"></a><span class="s">c['server']['allowedHostnames'] = ['paperclip.tutotech.org']</span>
+<a id="__codelineno-44-23" name="__codelineno-44-23" href="#__codelineno-44-23"></a><span class="s">c['auth']['baseUrlMode'] = 'explicit'</span>
+<a id="__codelineno-44-24" name="__codelineno-44-24" href="#__codelineno-44-24"></a><span class="s">c['auth']['publicBaseUrl'] = 'https://paperclip.tutotech.org'</span>
+<a id="__codelineno-44-25" name="__codelineno-44-25" href="#__codelineno-44-25"></a><span class="s">c['auth'].pop('baseUrl', None)</span>
+<a id="__codelineno-44-26" name="__codelineno-44-26" href="#__codelineno-44-26"></a><span class="s">with open(path, 'w') as f: json.dump(c, f, indent=2)</span>
+<a id="__codelineno-44-27" name="__codelineno-44-27" href="#__codelineno-44-27"></a><span class="s">print("config.json corrigé ✓")</span>
 <a id="__codelineno-44-28" name="__codelineno-44-28" href="#__codelineno-44-28"></a><span class="s">PYEOF</span>
 <a id="__codelineno-44-29" name="__codelineno-44-29" href="#__codelineno-44-29"></a>
 <a id="__codelineno-44-30" name="__codelineno-44-30" href="#__codelineno-44-30"></a><span class="c1"># 5. Corriger les permissions</span>
@@ -3650,7 +3650,7 @@ for r in routes: print(r[&#39;Name&#39;], &#39;-&gt;&#39;, r[&#39;Target&#39;])
 <a id="__codelineno-44-34" name="__codelineno-44-34" href="#__codelineno-44-34"></a><span class="c1"># 6. Redémarrer le serveur</span>
 <a id="__codelineno-44-35" name="__codelineno-44-35" href="#__codelineno-44-35"></a>docker<span class="w"> </span>compose<span class="w"> </span>restart<span class="w"> </span>server
 <a id="__codelineno-44-36" name="__codelineno-44-36" href="#__codelineno-44-36"></a>
-<a id="__codelineno-44-37" name="__codelineno-44-37" href="#__codelineno-44-37"></a><span class="c1"># 7. Générer l&#39;invitation admin</span>
+<a id="__codelineno-44-37" name="__codelineno-44-37" href="#__codelineno-44-37"></a><span class="c1"># 7. Générer l'invitation admin</span>
 <a id="__codelineno-44-38" name="__codelineno-44-38" href="#__codelineno-44-38"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>paperclip-server-1<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-44-39" name="__codelineno-44-39" href="#__codelineno-44-39"></a><span class="w">    </span>node<span class="w"> </span>cli/node_modules/tsx/dist/cli.mjs<span class="w"> </span>cli/src/index.ts<span class="w"> </span>auth<span class="w"> </span>bootstrap-ceo
 </code></pre></div>
