@@ -373,6 +373,10 @@ LOGDIR="${XDG_DATA_HOME:-$HOME/.local/share}/rclone/logs"
 WORKDIR="${XDG_CACHE_HOME:-$HOME/.cache}/rclone/bisync"
 PREFLIGHT="$HOME/.local/bin/rclone-bisync-preflight.sh"
 
+# État de la déduplication des notifications, partagé avec rclone-notify.sh :
+# un fichier « echec-<paire> » par paire en échec déterministe. Voir le piège n°13.
+ETAT_NOTIFY="${RCLONE_NOTIFY_STATE_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/rclone/notify}"
+
 # Nouvelle tentative avant de déclarer un échec (voir la boucle plus bas et le piège n°10).
 TENTATIVES_MAX="${RCLONE_TENTATIVES_MAX:-2}"
 DELAI_REESSAI="${RCLONE_DELAI_REESSAI:-15}"
@@ -400,7 +404,7 @@ done
 FORCE_RUN="${FORCE_RUN:-0}"
 AUTORISER_SUPPR="${AUTORISER_SUPPR:-0}"
 
-mkdir -p "$LOGDIR" "$WORKDIR" "$(dirname "$FILTERS")"
+mkdir -p "$LOGDIR" "$WORKDIR" "$(dirname "$FILTERS")" "$ETAT_NOTIFY"
 
 # Assemblage des filtres, avant tout appel à rclone.
 # « awk 1 » garantit une fin de ligne à chaque fichier : sans quoi la dernière
@@ -412,6 +416,25 @@ if [[ -r "$FILTRES_LOCAL" ]]; then
 else
   awk 1 "$FILTRES_COMMUN" > "$FILTERS"
 fi
+
+# Motif canonique d'un échec, pour la signature de déduplication (piège n°13).
+# Les cinq cas nommés sont les échecs déterministes connus. Le repli hache la
+# dernière ligne d'erreur : deux problèmes inconnus DIFFÉRENTS doivent produire
+# deux signatures différentes, sinon le second serait masqué par le premier.
+motif_echec() {
+  local t
+  t=$(tail -40 "$1" 2>/dev/null)
+  case "$t" in
+    *"too many deletes"*)                 echo "too_many_deletes" ;;
+    *"all files were changed"*)            echo "all_files_changed" ;;
+    *"filters file has changed"*)          echo "filtres_modifies" ;;
+    *"filters file md5 hash not found"*)   echo "filtres_empreinte_absente" ;;
+    *"Access test failed"*)                echo "check_access" ;;
+    *"couldn't connect"*|*"dial tcp"*|*"no route to host"*) echo "reseau" ;;
+    *) printf 'autre_%s\n' "$(printf '%s' "$t" | grep -oE 'ERROR *: .*' | tail -1 \
+                               | md5sum | cut -c1-8)" ;;
+  esac
+}
 
 # --- Garde-fous ------------------------------------------------------------
 # Une passe sautée n'est PAS un échec : on sort en 0, sinon systemd
@@ -538,6 +561,9 @@ for pair in "${PAIRS[@]}"; do
       else
         echo "paire $local_sub : OK"
       fi
+      # La paire repasse : sa signature disparaît, de sorte qu'un même problème
+      # réapparaissant plus tard donnera bien lieu à une nouvelle alerte.
+      rm -f "$ETAT_NOTIFY/echec-$local_sub"
       break
     fi
     # Un verrou détenu par une autre passe n'est pas une panne, c'est de la
@@ -548,6 +574,10 @@ for pair in "${PAIRS[@]}"; do
     fi
     if (( tentative >= TENTATIVES_MAX )); then
       echo "paire $local_sub : ECHEC après $tentative essais (voir $log)" >&2
+      # Signature à destination de rclone-notify.sh. Le code de sortie reste non
+      # nul : le dédoublonnage tait la notification, jamais l'échec lui-même, qui
+      # doit rester visible dans « systemctl --user status ».
+      printf '%s\n' "$(motif_echec "$log")" > "$ETAT_NOTIFY/echec-$local_sub"
       rc=1
       break
     fi
@@ -556,6 +586,15 @@ for pair in "${PAIRS[@]}"; do
     tentative=$((tentative + 1))
   done
 done
+
+# Plus aucune paire en échec : on oublie la dernière signature notifiée, pour
+# qu'un problème identique réapparaissant plus tard réalerte bien. Le test porte
+# sur les fichiers restants et non sur $rc, afin que « --only <paire> » ne purge
+# pas l'état d'une paire qu'il n'a pas traitée. Voir le piège n°13.
+if ! compgen -G "$ETAT_NOTIFY/echec-*" >/dev/null; then
+  rm -f "$ETAT_NOTIFY/notifie"
+fi
+
 exit "$rc"
 ```
 
@@ -610,16 +649,88 @@ WantedBy=timers.target
 !!! note "Le rôle de RandomizedDelaySec"
     Sans ce décalage, les deux machines taperaient l'API Drive à la même seconde. `Persistent=true` rattrape par ailleurs la passe manquée si la machine était éteinte.
 
+La notification ne passe pas directement par `notify-send` : deux garde-fous s'interposent, un échec déterministe se répétant à chaque passe et l'urgence `critical` ne respectant pas le mode « Ne pas déranger ». Voir le piège n°13.
+
+```bash title="~/.local/bin/rclone-notify.sh" linenums="1"
+#!/usr/bin/env bash
+# Émission des notifications d'échec rclone, avec deux garde-fous (piège n°13) :
+#   1. déduplication — une seule alerte par signature d'échec ;
+#   2. respect du mode « Ne pas déranger » de GNOME.
+# Appelé par rclone-notify@.service. Sort toujours en 0 : un défaut de
+# notification ne doit pas se transformer en second échec systemd.
+#
+# Usage : rclone-notify.sh <unité-en-échec>
+set -uo pipefail
+
+UNITE="${1:-unité inconnue}"
+ETAT="${RCLONE_NOTIFY_STATE_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/rclone/notify}"
+NOTIFIE="$ETAT/notifie"
+mkdir -p "$ETAT" || exit 0
+
+# Signature de l'échec courant. Le script de synchronisation dépose un fichier
+# « echec-<paire> » par paire en échec déterministe et le retire dès qu'elle
+# repasse ; la signature est la concaténation ordonnée de ces fichiers. Elle
+# change donc dès qu'une paire s'ajoute, disparaît, ou change de motif d'erreur.
+# Repli sur le nom de l'unité pour les échecs qui ne viennent pas du script
+# (rclone-mount@ notamment), lesquels ne déposent aucun fichier de paire.
+signature() {
+  local s f
+  s=$(cd "$ETAT" 2>/dev/null && for f in echec-*; do
+        [ -e "$f" ] || continue
+        printf '%s=%s\n' "${f#echec-}" "$(cat "$f" 2>/dev/null)"
+      done | LC_ALL=C sort)
+  if [ -n "$s" ]; then printf '%s\n' "$s"; else printf 'unite=%s\n' "$UNITE"; fi
+}
+
+# GNOME expose le mode par org.gnome.desktop.notifications show-banners.
+# Absence de gsettings (session non GNOME) = pas de mode à respecter.
+ne_pas_deranger() {
+  command -v gsettings >/dev/null 2>&1 || return 1
+  [ "$(gsettings get org.gnome.desktop.notifications show-banners 2>/dev/null)" = "false" ]
+}
+
+en_ligne() { printf '%s' "$1" | tr '\n' ' ' | sed 's/ *$//'; }
+
+SIG="$(signature)"
+PRECEDENTE="$(cat "$NOTIFIE" 2>/dev/null || true)"
+
+if [ "$SIG" = "$PRECEDENTE" ]; then
+  echo "Notification supprimée : signature inchangée depuis la dernière alerte."
+  echo "  signature : $(en_ligne "$SIG")"
+  exit 0
+fi
+
+# Ne PAS marquer la signature ici : l'alerte n'est pas annulée, seulement
+# différée, et repartira à la première passe en échec après la levée du mode.
+if ne_pas_deranger; then
+  echo "Notification différée : « Ne pas déranger » actif."
+  echo "  signature : $(en_ligne "$SIG")"
+  echo "  Signature NON marquée : l'alerte repartira à la première passe en"
+  echo "  échec après la levée du mode."
+  exit 0
+fi
+
+notify-send --urgency=critical --icon=dialog-error \
+  "rclone : échec de $UNITE" \
+  "$(en_ligne "$SIG")\nDétail : journalctl --user -u $UNITE -n 50\nLogs : ~/.local/share/rclone/logs/" \
+  || { echo "notify-send a échoué (démon de notification pas encore prêt ?)." ; exit 0; }
+
+printf '%s\n' "$SIG" > "$NOTIFIE"
+echo "Notification émise. Signature : $(en_ligne "$SIG")"
+exit 0
+```
+
 ```ini title="~/.config/systemd/user/rclone-notify@.service"
 [Unit]
 Description=Notification d'échec pour %i
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/notify-send --urgency=critical --icon=dialog-error \
-    "rclone : échec de %i" \
-    "Détail : journalctl --user -u %i -n 50"
+ExecStart=%h/.local/bin/rclone-notify.sh %i
 ```
+
+!!! warning "Le script doit rester en dehors de `OnFailure=`"
+    Il est tentant de supprimer `OnFailure=` pour faire taire les alertes répétées. Ce serait perdre aussi la **première**, la seule qui apporte une information. C'est la déduplication qui doit filtrer, pas la suppression de l'alerte.
 
 ```ini title="~/.config/systemd/user/rclone-mount@.service"
 [Unit]
@@ -1015,7 +1126,7 @@ Celui-ci se produira au premier rangement que vous ferez, et le message affole �
 
 **bisync ne sait pas reconnaître un déplacement.** Il ne dispose pas de `--track-renames` : déplacer un dossier dans un sous-dossier lui apparaît comme autant de suppressions à l'ancien emplacement, suivies d'autant de créations au nouveau. La signature est reconnaissable au premier coup d'œil — un nombre de créations presque égal au nombre de suppressions, et aucune modification.
 
-Regrouper deux dossiers sous un parent commun a suffi, dans un cas réel, à produire 30 suppressions sur 37 entrées, soit 81 %. Le garde-fou bloque, et la notification revient à chaque passe jusqu'à intervention.
+Regrouper deux dossiers sous un parent commun a suffi, dans un cas réel, à produire 30 suppressions sur 37 entrées, soit 81 %. Le garde-fou bloque et l'alerte revient jusqu'à intervention — une seule fois si vous avez mis en place la déduplication du piège n°13, à chaque passe sinon.
 
 !!! success "La bonne nouvelle"
     **Rien n'est perdu, et rien n'a été propagé.** C'est précisément le rôle du garde-fou. Vérifiez-le en comparant les compteurs : un déplacement laisse le nombre de fichiers et le volume total inchangés de part et d'autre.
@@ -1043,6 +1154,66 @@ Mais mesurez le coût : bisync supprimera les anciens chemins et **réenverra** 
 
 !!! danger "Ne débloquez jamais sans avoir lu la liste"
     `--autoriser-suppressions` désactive la seule protection qui vous sépare d'une propagation destructive. Le `--dry-run` préalable n'est pas une formalité : c'est le dernier moment où une vraie fausse manipulation — un dossier supprimé par erreur, un disque à moitié monté — se distingue encore d'un simple rangement.
+
+### Piège n°13 — L'alerte qui se répète, et qui ignore « Ne pas déranger »
+
+Deux défauts de la couche de notification, distincts mais indissociables : ils se corrigent dans le même script, et le second ne se remarque qu'une fois le premier traité.
+
+**Premier défaut — un échec déterministe alerte à chaque passe.** Les pièges n°3, n°11 et n°12 produisent tous un blocage qui persiste jusqu'à intervention. Avec un timer toutes les quinze minutes, cela fait quatre notifications par heure, rigoureusement identiques, dont aucune n'apporte plus que la première.
+
+Un cas réel : un regroupement de dossiers (piège n°12) a produit **onze alertes identiques** pour un seul incident — sept dans la soirée, puis quatre de plus au redémarrage trois jours plus tard, le blocage ayant traversé l'extinction intact. Le compteur affiché était le même à l'unité près, ce qui a d'abord fait croire à une récidive alors qu'il ne s'était rien passé entre-temps.
+
+!!! failure "Ce que reçoit l'utilisateur"
+    ```
+    20:48  rclone : échec de rclone-bisync.service
+    21:01  rclone : échec de rclone-bisync.service
+    21:16  rclone : échec de rclone-bisync.service
+    21:31  rclone : échec de rclone-bisync.service
+    ```
+
+**La solution n'est pas d'espacer les alertes mais de les indexer sur le problème.** Le script de synchronisation dépose, pour chaque paire en échec déterministe, un fichier nommé d'après la paire et contenant un motif canonique — `too_many_deletes`, `check_access`, `filtres_modifies`… La concaténation ordonnée de ces fichiers forme une **signature**, et une alerte n'est émise que si elle diffère de la dernière notifiée.
+
+| Événement | Alerte émise |
+|---|---|
+| Premier échec | oui |
+| Même échec aux passes suivantes | non |
+| Un autre motif d'erreur apparaît | oui |
+| Une seconde paire tombe en échec | oui |
+| Le problème disparaît puis revient | oui |
+
+Deux points de conception méritent d'être soulignés. Le motif de repli, pour un échec non reconnu, intègre une empreinte de la dernière ligne d'erreur : sans cela, deux problèmes inconnus **différents** partageraient une même signature et le second serait masqué par la déduplication du premier. Et le code de sortie du script reste non nul — **le dédoublonnage tait la notification, jamais l'échec**, qui demeure visible dans `systemctl --user status`.
+
+**Second défaut — l'urgence `critical` et le mode « Ne pas déranger ».** Constaté en exploitation sur les deux machines : les notifications continuaient de s'afficher alors que le mode était actif. GNOME réserve un traitement particulier à l'urgence `critical`, afin que les alertes importantes ne soient pas escamotées — choix défendable en général, indésirable ici.
+
+!!! tip "Pourquoi ne pas simplement baisser l'urgence"
+    Passer en `--urgency=normal` laisse GNOME décider, mais coûte la propriété la plus utile de `critical` : la notification reste affichée jusqu'à ce qu'on la ferme, au lieu de s'effacer au bout de quelques secondes. Pour une alerte qu'on peut manquer en s'absentant, c'est une régression.
+
+La solution consiste à lire le réglage soi-même et à se taire, sans rien perdre :
+
+```bash
+gsettings get org.gnome.desktop.notifications show-banners   # false = mode actif
+```
+
+Le détail qui compte : quand le mode est actif, le script **ne marque pas** la signature comme notifiée. L'alerte est différée, pas annulée — elle repart à la première passe en échec après la levée du mode. Et si le problème s'est résolu entre-temps, vous n'êtes pas dérangé pour rien.
+
+!!! note "`gsettings` fonctionne bien depuis une unité `--user`"
+    C'était le vrai risque de ce correctif : `gsettings` a besoin du bus de session, et une unité systemd `--user` pouvait ne pas y avoir accès. Vérifié sur deux machines, il y accède. Sur une session non GNOME, l'absence de `gsettings` est traitée comme « pas de mode à respecter » et les alertes passent normalement.
+
+!!! example "Comment vérifier"
+    ```bash
+    ETAT=~/.local/state/rclone/notify; mkdir -p "$ETAT"
+    printf 'test\n' > "$ETAT/echec-ZoneTest"
+    systemctl --user start rclone-notify@test.service          # doit ÉMETTRE
+    systemctl --user start rclone-notify@test.service          # doit SUPPRIMER
+    gsettings set org.gnome.desktop.notifications show-banners false
+    printf 'test2\n' > "$ETAT/echec-ZoneTest"
+    systemctl --user start rclone-notify@test.service          # doit DIFFÉRER
+    gsettings set org.gnome.desktop.notifications show-banners true
+    systemctl --user start rclone-notify@test.service          # doit ÉMETTRE
+    journalctl --user -u 'rclone-notify@test.service' -n 20 --no-pager
+    rm -f "$ETAT/echec-ZoneTest" "$ETAT/notifie"
+    ```
+    Les quatre verdicts apparaissent en clair dans le journal. Pensez à retirer les fichiers de test : une signature oubliée empêcherait la purge automatique.
 
 ## Vérification
 
@@ -1079,7 +1250,10 @@ systemctl --user show -p MainPID --value rclone-mount@gd-clair.service | xargs -
 mv /mnt/donnees/GoogleDrive/Chiffre/RCLONE_TEST /mnt/donnees/GoogleDrive/Chiffre/.masque && systemctl --user start rclone-bisync.service; journalctl --user -u "rclone-notify@*" --since "2 min ago" --no-pager | tail -3
 ```
 
-Pensez à restaurer le témoin ensuite.
+Pensez à restaurer le témoin ensuite : le prochain passage rétablira l'état de lui-même, la paire repassant au vert.
+
+!!! warning "Ne relancez pas ce test deux fois de suite"
+    Avec la déduplication du piège n°13, la seconde exécution ne notifiera **rien** — la signature n'a pas changé — et l'on croirait l'alerte cassée. Le journal de `rclone-notify@` tranche : il dit explicitement « émise », « supprimée » ou « différée ».
 
 **6. La propagation automatique.** Déposez un fichier sur une machine et **ne lancez rien**. Il doit apparaître sur l'autre en deux cycles de timer, soit une trentaine de minutes avec `OnCalendar=*:0/15`.
 
@@ -1104,6 +1278,8 @@ systemctl --user list-timers rclone-bisync.timer; journalctl --user -b -u rclone
 | `rclone-bisync.sh --autoriser-suppressions` | Contourne `--max-delete` pour une passe, après un déplacement (piège n°12) |
 | `systemctl --user list-timers rclone-bisync.timer` | Prochaine et dernière exécution |
 | `journalctl --user -u rclone-bisync.service -n 50` | Journal de la dernière passe |
+| `journalctl --user -u "rclone-notify@*" -n 20` | Pourquoi une alerte a été émise, supprimée ou différée |
+| `ls ~/.local/state/rclone/notify/` | Signatures d'échec en cours ; vide = rien en échec |
 | `systemctl --user start rclone-mount@gd-clair.service` | Monte un remote à la demande |
 | `rclone lsf -R gcrypt:` | Vue déchiffrée du contenu distant |
 | `rclone lsf -R gd-chiffre:Rclone` | Vue brute, telle que Google la stocke |
@@ -1131,6 +1307,7 @@ systemctl --user list-timers rclone-bisync.timer; journalctl --user -b -u rclone
 - [ ] Aller-retour création / modification / suppression testé **dans les deux sens**
 - [ ] `--filters-file` employé, **jamais** `--filter-from` (voir le piège n°11)
 - [ ] Tout nouveau motif de filtre validé sur une arborescence jetable avant mise en production
+- [ ] Alertes dédoublonnées et respectant « Ne pas déranger », vérifiées par les quatre verdicts du piège n°13
 
 ## Glossaire
 
