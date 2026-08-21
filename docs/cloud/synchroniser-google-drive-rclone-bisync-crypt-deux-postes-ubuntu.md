@@ -32,7 +32,7 @@ status: publié
 |-----------|--------|
 | Difficulté | Avancé |
 | OS / Environnement | Ubuntu 24.04 LTS, rclone 1.75.0 |
-| Dernière mise à jour | 2026-08-21 |
+| Dernière mise à jour | 2026-08-22 |
 
 !!! warning "Avertissement préalable"
     `rclone bisync` **supprime et écrase des fichiers des deux côtés**. Une configuration bancale peut détruire des données. Chaque garde-fou décrit ici a une raison d'être : ne les retirez pas pour « simplifier ». Testez toujours sur un jeu de données jetable avant de viser vos vraies données.
@@ -458,6 +458,44 @@ motif_echec() {
   esac
 }
 
+# Suivi des déplacements. bisync prend en charge --track-renames depuis rclone
+# 1.66 (doc rclone, section « Renamed directories ») : sans lui, déplacer un
+# dossier fait supprimer puis réenvoyer tous ses fichiers. Vérifié par test :
+# 40 Kio re-transférés sans le drapeau, « Server Side Moves: 10 » et 0 octet
+# avec. Voir le piège n°12.
+#
+# La stratégie dépend des empreintes exposées par le remote :
+#   Clair   — gd-clair expose md5/sha1/sha256, donc la stratégie « hash » par
+#             défaut : appariement par CONTENU, aucun faux positif possible.
+#             Actif en permanence.
+#   Chiffre — gcrypt n'expose AUCUNE empreinte, et rclone refuse alors le
+#             drapeau (« do not have a common hash »). Seule « modtime,leaf »
+#             fonctionne, mais elle apparie sur nom de base + date : deux
+#             fichiers de même nom, même date ET même taille pour un contenu
+#             différent seraient confondus, et bisync comparant sur taille+date
+#             faute d'empreinte, l'erreur passerait inaperçue. On ne l'active
+#             donc QUE sur --autoriser-suppressions, c'est-à-dire au moment où
+#             l'on réorganise volontairement, après un --dry-run.
+#
+# Jamais avec --resync : rclone y ignore le drapeau (il ne fonctionne qu'avec
+# sync, pas copy) en écrivant deux lignes ERROR inutiles au journal.
+#
+# À savoir : le drapeau supprime le re-transfert, PAS le blocage. --max-delete
+# compte toujours les fichiers déplacés comme supprimés, sa vérification ayant
+# lieu AVANT la détection de renommage. Un gros déplacement réclame donc encore
+# --autoriser-suppressions, sur les DEUX machines — mais il ne coûte plus rien.
+suivi_deplacements() {   # remplit SUIVI pour la paire $1
+  SUIVI=()
+  (( RESYNC )) && return 0
+  case "$1" in
+    Clair)
+      SUIVI=(--track-renames) ;;
+    Chiffre)
+      (( AUTORISER_SUPPR )) && SUIVI=(--track-renames --track-renames-strategy modtime,leaf) ;;
+  esac
+  return 0
+}
+
 # --- Garde-fous propres aux machines mobiles -------------------------------
 # Activés uniquement si machine.env les déclare. Une passe sautée n'est PAS un
 # échec : on sort en 0, sinon systemd déclencherait une notification d'alerte
@@ -585,7 +623,8 @@ for pair in "${PAIRS[@]}"; do
   # 2. Refus explicite de resynchroniser sans demande. Un --resync automatique
   #    après perte de l'état bisync réécrirait les deux côtés : jamais implicite.
   state_present=$(find "$WORKDIR" -maxdepth 1 -name "*$local_sub*" -print -quit 2>/dev/null)
-  args=("${COMMON[@]}" "${EXTRA[@]}" --log-file "$log")
+  suivi_deplacements "$local_sub"
+  args=("${COMMON[@]}" "${EXTRA[@]}" "${SUIVI[@]}" --log-file "$log")
 
   # Déblocage explicite du garde-fou de suppressions, pour cette exécution.
   if (( AUTORISER_SUPPR )); then
@@ -1197,16 +1236,58 @@ Celui-ci se produira au premier rangement que vous ferez, et le message affole �
     ERROR : Safety abort: too many deletes (>10%, 30 of 37) on Path1 "…"
     ```
 
-**bisync ne sait pas reconnaître un déplacement.** Il ne dispose pas de `--track-renames` : déplacer un dossier dans un sous-dossier lui apparaît comme autant de suppressions à l'ancien emplacement, suivies d'autant de créations au nouveau. La signature est reconnaissable au premier coup d'œil — un nombre de créations presque égal au nombre de suppressions, et aucune modification.
+**bisync voit un déplacement comme une suppression suivie d'une création.** Déplacer un dossier dans un sous-dossier lui apparaît comme autant de suppressions à l'ancien emplacement, suivies d'autant de créations au nouveau. La signature est reconnaissable au premier coup d'œil — un nombre de créations presque égal au nombre de suppressions, et aucune modification.
 
 Regrouper deux dossiers sous un parent commun a suffi, dans un cas réel, à produire 30 suppressions sur 37 entrées, soit 81 %. Le garde-fou bloque et l'alerte revient jusqu'à intervention — une seule fois si vous avez mis en place la déduplication du piège n°13, à chaque passe sinon.
 
 !!! success "La bonne nouvelle"
     **Rien n'est perdu, et rien n'a été propagé.** C'est précisément le rôle du garde-fou. Vérifiez-le en comparant les compteurs : un déplacement laisse le nombre de fichiers et le volume total inchangés de part et d'autre.
 
-**Deux façons de débloquer, selon le volume concerné.**
+#### bisync sait suivre les déplacements — mais cela ne lève pas le blocage
 
-*Pour plusieurs gigaoctets — reproduire le déplacement partout.* Google Drive sait déplacer un répertoire côté serveur, donc sans aucun transfert :
+Contrairement à une idée répandue, que cette page a elle-même propagée, **`--track-renames` est pris en charge par bisync depuis rclone v1.66**. La section « Renamed directories » de la documentation officielle le recommande explicitement. Mesuré sur une arborescence jetable, un dossier de dix fichiers déplacé sous un parent :
+
+| Configuration | Résultat |
+|---|---|
+| sans `--track-renames` | 40 Kio re-transférés, 10 supprimés, 10 renvoyés |
+| avec `--track-renames` | `Transferred: 0 B`, `Deleted: 0 (files)`, `Renamed: 10`, `Server Side Moves: 10` |
+
+!!! warning "Le drapeau supprime le transfert, pas l'abandon"
+    `--max-delete` compte toujours les fichiers déplacés comme supprimés : sa vérification a lieu **avant** la détection de renommage. Avec `--track-renames` actif on obtient encore `Safety abort: too many deletes (>10%, 11 of 13)`. C'est documenté en amont, et vérifié par test. Vous devrez donc toujours débloquer une fois — mais le déblocage ne coûte plus rien.
+
+**La stratégie d'appariement dépend des empreintes disponibles.** Relevez-les avant de choisir :
+
+```bash
+rclone backend features gd-clair: | grep -i hashes
+```
+
+Un remote Drive expose `md5`, `sha1` et `sha256` : la stratégie `hash` par défaut convient, et elle apparie par **contenu** — aucun faux positif possible. Un remote `crypt` n'expose en revanche **aucune** empreinte, et rclone refuse alors le drapeau :
+
+!!! failure "Message d'erreur sur un remote chiffré"
+    ```
+    ERROR : Encrypted drive 'gcrypt:': Ignoring --track-renames as the source and destination do not have a common hash
+    ```
+
+Seule `--track-renames-strategy modtime,leaf` fonctionne sur une zone chiffrée, et elle apparie sur le nom de base plus la date. D'où un arbitrage à faire consciemment.
+
+!!! danger "Le compromis de la zone chiffrée"
+    `modtime,leaf` peut confondre deux fichiers portant le même nom de base, la même date **et** la même taille pour un contenu différent. Comme bisync compare sur taille + date faute d'empreinte, l'erreur passerait inaperçue. La configuration retenue ici : `--track-renames` en permanent sur la zone claire, et `modtime,leaf` sur la zone chiffrée **uniquement** pendant `--autoriser-suppressions` — c'est-à-dire au moment où l'on réorganise volontairement, après avoir lu un `--dry-run`. Voir la fonction `suivi_deplacements()` de l'étape 8.
+
+!!! note "Jamais avec `--resync`"
+    `--track-renames` ne fonctionne qu'avec `sync`, pas `copy`. Un `--resync` l'ignore en écrivant deux lignes `ERROR : … Ignoring --track-renames as it doesn't work with copy or move, only sync`, sort néanmoins en 0 et se déroule normalement. Le script l'omet donc explicitement lors d'un amorçage, pour ne pas polluer le journal.
+
+**La procédure de déblocage, une fois le suivi en place.** Vérifiez, puis autorisez :
+
+```bash
+rclone-bisync.sh --dry-run && rclone-bisync.sh --autoriser-suppressions
+```
+
+Puis la même chose sur la seconde machine, qui abandonne aussi de son côté. Vérifié : elle bloque sur Path2, puis effectue ses déplacements côté serveur pour 0 octet et converge. Aucun `--resync` n'est nécessaire, quel que soit le volume.
+
+!!! danger "Ne débloquez jamais sans avoir lu la liste"
+    `--autoriser-suppressions` désactive la seule protection qui vous sépare d'une propagation destructive. Le `--dry-run` préalable n'est pas une formalité : c'est le dernier moment où une vraie fausse manipulation — un dossier supprimé par erreur, un disque à moitié monté — se distingue encore d'un simple rangement.
+
+**L'alternative qui ne désactive aucun garde-fou.** Reproduire le déplacement côté serveur, puis re-baser. Plus long à taper, mais `--max-delete` reste actif de bout en bout :
 
 ```bash
 rclone move "gd-clair:Rclone/MonDossier" "gd-clair:Rclone/Parent/MonDossier" --delete-empty-src-dirs
@@ -1217,16 +1298,15 @@ Puis le même `mv` en local sur l'autre machine, et un `--resync` sur les deux. 
 !!! tip "Vérifiez d'abord que ce sera bien côté serveur"
     Un `--dry-run` doit annoncer `Skipped server-side directory move as --dry-run is set`. Si rclone parle de copie, c'est que la source et la destination ne sont pas sur le même remote, et vous transféreriez les données pour rien.
 
-*Pour un volume modeste — laisser bisync faire.* L'option `--autoriser-suppressions` du script (étape 8) passe `--force` à rclone pour une seule exécution :
-
-```bash
-rclone-bisync.sh --dry-run && rclone-bisync.sh --autoriser-suppressions
-```
-
-Mais mesurez le coût : bisync supprimera les anciens chemins et **réenverra** les fichiers depuis le miroir local. Six gigaoctets déplacés représentent six gigaoctets d'envoi, puis autant de téléchargement sur l'autre machine.
-
-!!! danger "Ne débloquez jamais sans avoir lu la liste"
-    `--autoriser-suppressions` désactive la seule protection qui vous sépare d'une propagation destructive. Le `--dry-run` préalable n'est pas une formalité : c'est le dernier moment où une vraie fausse manipulation — un dossier supprimé par erreur, un disque à moitié monté — se distingue encore d'un simple rangement.
+!!! example "Comment vérifier le suivi des déplacements"
+    Sur une arborescence jetable, jamais sur vos vraies données :
+    ```bash
+    mkdir -p t/p1/Dossier t/p2 && for i in $(seq 1 10); do echo $i > t/p1/Dossier/f$i.txt; done
+    echo x > t/p1/a.txt && rclone bisync t/p1 t/p2 --resync --create-empty-src-dirs -q
+    mkdir -p t/p1/Parent && mv t/p1/Dossier t/p1/Parent/Dossier
+    rclone bisync t/p1 t/p2 --create-empty-src-dirs --max-delete 90 --track-renames -v --stats 0
+    ```
+    Le journal doit montrer des lignes `Moved (server-side)` et un bilan `Transferred: 0 B` avec `Server Side Moves: 10`. Sans le drapeau, la même séquence transfère les dix fichiers.
 
 ### Piège n°13 — L'alerte qui se répète, et qui ignore « Ne pas déranger »
 
@@ -1381,6 +1461,7 @@ systemctl --user list-timers rclone-bisync.timer; journalctl --user -b -u rclone
 - [ ] `--filters-file` employé, **jamais** `--filter-from` (voir le piège n°11)
 - [ ] Tout nouveau motif de filtre validé sur une arborescence jetable avant mise en production
 - [ ] Alertes dédoublonnées et respectant « Ne pas déranger », vérifiées par les quatre verdicts du piège n°13
+- [ ] `--track-renames` actif, avec une stratégie adaptée aux empreintes de chaque remote (piège n°12)
 
 ## Glossaire
 
