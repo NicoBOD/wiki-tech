@@ -352,20 +352,25 @@ exit "$rc"
 ```bash title="~/.local/bin/rclone-bisync.sh" linenums="1"
 #!/usr/bin/env bash
 # Passe bisync des deux paires (chiffrée + claire).
-#   rclone-bisync.sh                  → passe normale
-#   rclone-bisync.sh --resync         → amorçage initial
-#   rclone-bisync.sh --dry-run        → simulation
-#   rclone-bisync.sh --only Chiffre   → une seule paire
-#   rclone-bisync.sh --force-run      → ignore les garde-fous mobiles
+# Appelé par rclone-bisync.service. Utilisable à la main pour déboguer.
+#
+# Usage :
+#   rclone-bisync.sh              → passe normale (refuse si l'état bisync est absent)
+#   rclone-bisync.sh --resync     → amorçage initial, à ne lancer qu'une fois par paire
+#   rclone-bisync.sh --dry-run    → simulation, n'écrit rien
 set -uo pipefail
 
+# Paramètres propres à la machine. En exécution manuelle, on lit le même fichier
+# que systemd, pour que ligne de commande et service se comportent identiquement.
 MACHINE_ENV="${XDG_CONFIG_HOME:-$HOME/.config}/rclone/machine.env"
-if [[ -r "$MACHINE_ENV" ]]; then set -a; . "$MACHINE_ENV"; set +a; fi
+if [[ -r "$MACHINE_ENV" ]]; then
+  set -a; . "$MACHINE_ENV"; set +a
+fi
 
 MIRROR_ROOT="${RCLONE_MIRROR_ROOT:?RCLONE_MIRROR_ROOT non défini — voir $MACHINE_ENV}"
 # Filtres : un fichier commun identique sur les deux postes, plus un complément
 # propre à la machine. bisync n'accepte qu'UN fichier via --filters-file, d'où
-# l'assemblage plus bas. Voir le piège n°11.
+# l'assemblage ci-dessous.
 FILTRES_COMMUN="${XDG_CONFIG_HOME:-$HOME/.config}/rclone/filters.txt"
 FILTRES_LOCAL="${XDG_CONFIG_HOME:-$HOME/.config}/rclone/filters-local.txt"
 FILTERS="${XDG_CACHE_HOME:-$HOME/.cache}/rclone/filters-assemble.txt"
@@ -373,31 +378,45 @@ LOGDIR="${XDG_DATA_HOME:-$HOME/.local/share}/rclone/logs"
 WORKDIR="${XDG_CACHE_HOME:-$HOME/.cache}/rclone/bisync"
 PREFLIGHT="$HOME/.local/bin/rclone-bisync-preflight.sh"
 
-# État de la déduplication des notifications, partagé avec rclone-notify.sh :
-# un fichier « echec-<paire> » par paire en échec déterministe. Voir le piège n°13.
+# État de la déduplication des notifications, partagé avec rclone-notify.sh.
+# Un fichier « echec-<paire> » par paire en échec déterministe, contenant le
+# motif canonique de l'échec. rclone-notify.sh en dérive la signature et
+# n'alerte qu'une fois par signature. Voir le piège n°13.
 ETAT_NOTIFY="${RCLONE_NOTIFY_STATE_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/rclone/notify}"
 
-# Nouvelle tentative avant de déclarer un échec (voir la boucle plus bas et le piège n°10).
+# Nouvelle tentative avant de déclarer un échec (voir la boucle plus bas).
 TENTATIVES_MAX="${RCLONE_TENTATIVES_MAX:-2}"
 DELAI_REESSAI="${RCLONE_DELAI_REESSAI:-15}"
 
-# <sous-dossier local>:<remote>
+# Paires : <sous-dossier local>:<remote>
+# La paire claire vise un sous-dossier dédié, pas la racine du Drive en clair :
+# celui-ci peut déjà contenir des ressources qu'on ne veut ni rapatrier ni piloter.
 PAIRS=(
   "Chiffre:gcrypt:"
   "Clair:gd-clair:Rclone"
 )
 
-EXTRA=(); RESYNC=0; ONLY=""
+EXTRA=()
+RESYNC=0
+ONLY=""
 while (( $# )); do
   case "$1" in
-    --resync)    RESYNC=1 ;;
-    --dry-run)   EXTRA+=(--dry-run) ;;
-    --only)      ONLY="${2:?--only attend un nom de paire}"; shift ;;
+    --resync)  RESYNC=1 ;;
+    --dry-run) EXTRA+=(--dry-run) ;;
+    # Re-baser une seule paire sans toucher à l'autre. Utile après un
+    # "Safety abort: all files were changed", fréquent tant qu'une paire ne
+    # contient qu'un ou deux fichiers : le moindre changement y vaut 100 %.
+    --only)    ONLY="${2:?--only attend un nom de paire (Chiffre ou Clair)}"; shift ;;
+    # Passe outre les garde-fous connexion limitée / batterie faible.
     --force-run) FORCE_RUN=1 ;;
-    # Contourne --max-delete pour UNE exécution. Usage prévu : après avoir
-    # déplacé ou renommé des dossiers. Voir le piège n°12.
+    # Contourne --max-delete pour UNE exécution, en passant --force à rclone.
+    # Usage prévu : après avoir déplacé ou renommé des dossiers. bisync ne sait
+    # pas détecter les déplacements : il les voit comme des suppressions massives
+    # suivies de créations — « 31 new, 30 deleted » pour un simple regroupement
+    # dans un sous-dossier — et le garde-fou bloque. Voir le piège n°12.
+    # À n'employer qu'après avoir vérifié en --dry-run ce qui va disparaître.
     --autoriser-suppressions) AUTORISER_SUPPR=1 ;;
-    *) echo "option inconnue : $1" >&2; exit 64 ;;
+    *)         echo "option inconnue : $1" >&2; exit 64 ;;
   esac
   shift
 done
@@ -410,40 +429,46 @@ mkdir -p "$LOGDIR" "$WORKDIR" "$(dirname "$FILTERS")" "$ETAT_NOTIFY"
 # « awk 1 » garantit une fin de ligne à chaque fichier : sans quoi la dernière
 # règle du fichier commun et la première du complément local fusionneraient.
 # La sortie DOIT être déterministe : --filters-file en calcule une empreinte et
-# réclamerait un --resync à chaque passe si le contenu variait.
+# réclamerait un --resync à chaque passe si le contenu variait d'une fois sur
+# l'autre. Concaténer deux fichiers stables l'est.
 if [[ -r "$FILTRES_LOCAL" ]]; then
   awk 1 "$FILTRES_COMMUN" "$FILTRES_LOCAL" > "$FILTERS"
 else
   awk 1 "$FILTRES_COMMUN" > "$FILTERS"
 fi
 
-# Motif canonique d'un échec, pour la signature de déduplication (piège n°13).
-# Les cinq cas nommés sont les échecs déterministes connus. Le repli hache la
-# dernière ligne d'erreur : deux problèmes inconnus DIFFÉRENTS doivent produire
-# deux signatures différentes, sinon le second serait masqué par le premier.
+# Motif canonique d'un échec, pour la signature de déduplication.
+# Les cinq cas nommés sont les échecs déterministes connus ; leurs chaînes ont
+# été relevées dans le binaire rclone 1.75.0, pas devinées.
+# Le repli hache la dernière ligne d'erreur : deux problèmes inconnus DIFFÉRENTS
+# doivent produire deux signatures différentes, sinon le second serait masqué
+# par le dédoublonnage du premier.
 motif_echec() {
   local t
   t=$(tail -40 "$1" 2>/dev/null)
   case "$t" in
-    *"too many deletes"*)                 echo "too_many_deletes" ;;
-    *"all files were changed"*)            echo "all_files_changed" ;;
-    *"filters file has changed"*)          echo "filtres_modifies" ;;
-    *"filters file md5 hash not found"*)   echo "filtres_empreinte_absente" ;;
-    *"Access test failed"*)                echo "check_access" ;;
+    *"too many deletes"*)                echo "too_many_deletes" ;;
+    *"all files were changed"*)           echo "all_files_changed" ;;
+    *"filters file has changed"*)         echo "filtres_modifies" ;;
+    *"filters file md5 hash not found"*)  echo "filtres_empreinte_absente" ;;
+    *"Access test failed"*)               echo "check_access" ;;
     *"couldn't connect"*|*"dial tcp"*|*"no route to host"*) echo "reseau" ;;
     *) printf 'autre_%s\n' "$(printf '%s' "$t" | grep -oE 'ERROR *: .*' | tail -1 \
                                | md5sum | cut -c1-8)" ;;
   esac
 }
 
-# --- Garde-fous ------------------------------------------------------------
-# Une passe sautée n'est PAS un échec : on sort en 0, sinon systemd
-# déclencherait une alerte pour un comportement voulu.
+# --- Garde-fous propres aux machines mobiles -------------------------------
+# Activés uniquement si machine.env les déclare. Une passe sautée n'est PAS un
+# échec : on sort en 0, sinon systemd déclencherait une notification d'alerte
+# pour un comportement voulu.
 
-# Au démarrage, le rattrapage du timer et le dispatcher réseau déclenchent des
-# passes AVANT que la session ne déverrouille le trousseau. secret-tool échoue,
-# rclone renvoie "Using --password-command returned: exit status 1" et chaque
-# tentative produit une notification. Voir le piège n°9.
+# Au démarrage, le timer (Persistent=true) et le dispatcher réseau déclenchent des
+# passes AVANT que la session ne soit déverrouillée. Le trousseau est alors
+# inaccessible : secret-tool échoue, rclone renvoie
+#   ERROR : Using --password-command returned: exit status 1
+# et chaque tentative produit une notification d'échec. Ce n'est pas une panne,
+# seulement une passe prématurée : on la saute proprement, sans lever d'alerte.
 trousseau_requis_indisponible() {
   local conf="${RCLONE_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/rclone/rclone.conf}"
   head -1 "$conf" 2>/dev/null | grep -qi "Encrypted" || return 1   # config en clair : sans objet
@@ -452,17 +477,21 @@ trousseau_requis_indisponible() {
 }
 
 connexion_limitee() {
+  # NetworkManager, état global. Enum : 1=oui, 2=non, 3=oui (deviné), 4=non (deviné).
   local m
   m=$(busctl get-property org.freedesktop.NetworkManager /org/freedesktop/NetworkManager \
         org.freedesktop.NetworkManager Metered 2>/dev/null | awk '{print $2}')
-  [[ "$m" == "1" || "$m" == "3" ]]   # 1=oui, 3=oui (deviné)
+  [[ "$m" == "1" || "$m" == "3" ]]
 }
+
 batterie_faible() {
+  # Sur secteur : jamais faible, quel que soit le niveau.
   local ac
-  for ac in /sys/class/power_supply/*/online; do
+  for ac in /sys/class/power_supply/A{C,DP}*/online /sys/class/power_supply/*/online; do
     [[ -r "$ac" ]] || continue
-    [[ "$(cat "$ac" 2>/dev/null)" == "1" ]] && return 1   # sur secteur
+    [[ "$(cat "$ac" 2>/dev/null)" == "1" ]] && return 1
   done
+  # Moyenne sur toutes les batteries présentes (ce portable en a deux).
   local total=0 n=0 c b
   for b in /sys/class/power_supply/*/; do
     [[ "$(cat "$b/type" 2>/dev/null)" == "Battery" ]] || continue
@@ -470,9 +499,10 @@ batterie_faible() {
     [[ "$c" =~ ^[0-9]+$ ]] || continue
     total=$((total + c)); n=$((n + 1))
   done
-  (( n == 0 )) && return 1
+  (( n == 0 )) && return 1          # pas de batterie : machine fixe
   (( total / n < RCLONE_BATTERY_MIN ))
 }
+
 # Volontairement NON contournable par --force-run : forcer ne ferait qu'échouer,
 # rclone étant incapable de déchiffrer sa configuration sans le trousseau.
 if trousseau_requis_indisponible; then
@@ -482,30 +512,38 @@ fi
 
 if (( ! FORCE_RUN )); then
   if [[ "${RCLONE_SKIP_ON_METERED:-0}" == "1" ]] && connexion_limitee; then
-    echo "Passe sautée : connexion limitée (forcer avec --force-run)."; exit 0
+    echo "Passe sautée : connexion limitée (forcer avec --force-run)."
+    exit 0
   fi
   if [[ -n "${RCLONE_BATTERY_MIN:-}" ]] && (( RCLONE_BATTERY_MIN > 0 )) && batterie_faible; then
-    echo "Passe sautée : batterie sous ${RCLONE_BATTERY_MIN}% et débranché."; exit 0
+    echo "Passe sautée : batterie sous ${RCLONE_BATTERY_MIN}% et machine débranchée (forcer avec --force-run)."
+    exit 0
   fi
 fi
 
+# Garde-fous rclone. Chacun est justifié dans la section « Pièges rencontrés ».
 COMMON=(
   # --filters-file, et NON --filter-from : c'est le mécanisme propre à bisync,
-  # qui mémorise une empreinte des filtres et REFUSE de tourner s'ils ont changé.
-  # Avec --filter-from, une nouvelle exclusion est interprétée comme une
-  # SUPPRESSION à propager. Voir le piège n°11 : ce n'est pas théorique.
+  # qui mémorise une empreinte des filtres et REFUSE de tourner s'ils ont changé,
+  # en exigeant un --resync. Vérifié par test : avec --filter-from, ajouter une
+  # exclusion fait interpréter les fichiers concernés comme des SUPPRESSIONS à
+  # propager. Sur un miroir volumineux, la proportion reste sous --max-delete et
+  # les fichiers disparaissent réellement de Google Drive. Voir le piège n°11.
   --filters-file "$FILTERS"
   --check-access                    # refuse de tourner si RCLONE_TEST manque d'un côté
-  --max-delete 10                   # abandonne si plus de 10 % des entrées disparaîtraient
-  --conflict-resolve newer          # le plus récent gagne
-  --conflict-loser num              # ... et le perdant est conservé, suffixé
+  --max-delete 10                   # abandonne si plus de 10 % des fichiers disparaîtraient
+  --conflict-resolve newer          # en cas de conflit, la version la plus récente gagne
+  --conflict-loser num              # ... et la perdante est conservée, suffixée
   --conflict-suffix conflict
   --resilient                       # tolère les erreurs transitoires
-  --recover                         # reprend après une interruption
-  --max-lock 15m                    # sans quoi les verrous n'expirent JAMAIS
-  --create-empty-src-dirs           # sinon les dossiers vides ne remontent pas
+  --recover                         # reprend proprement après une interruption
+  # Sans ceci les verrous n'expirent JAMAIS : une veille ou un plantage en pleine
+  # passe laisserait un verrou définitif. Le verrou est LOCAL
+  # (~/.cache/rclone/bisync/*.lck) : il ne bloque que cette machine, pas les deux.
+  --max-lock 15m
+  --create-empty-src-dirs           # sans quoi l'arborescence de dossiers vides ne remonte pas
   --drive-skip-gdocs                # les Docs natifs n'ont pas de taille stable
-  --fast-list                       # une seule liste récursive : moins d'appels API
+  --fast-list                       # une seule liste récursive : divise les appels API
   --tpslimit 10                     # Drive limite la création de fichiers
   --tpslimit-burst 20
   --transfers "${RCLONE_TRANSFERS:-8}"
@@ -514,24 +552,38 @@ COMMON=(
   --workdir "$WORKDIR"
   --log-level INFO
 )
+
+# La config est chiffrée : le mot de passe vient du trousseau.
 if command -v secret-tool >/dev/null 2>&1; then
   COMMON+=(--password-command "secret-tool lookup service rclone key config")
 fi
 
 rc=0
 for pair in "${PAIRS[@]}"; do
-  local_sub="${pair%%:*}"; remote="${pair#*:}"
-  [[ -n "$ONLY" && "$ONLY" != "$local_sub" ]] && continue
+  local_sub="${pair%%:*}"
+  remote="${pair#*:}"
+
+  if [[ -n "$ONLY" && "$ONLY" != "$local_sub" ]]; then
+    continue
+  fi
   local_path="$MIRROR_ROOT/$local_sub"
   log="$LOGDIR/bisync-$local_sub.log"
+
   echo "=== paire $local_sub ↔ $remote ==="
 
+  # 1. Audit pre-flight : bloque sur anomalie, avertit sur exclusion silencieuse.
   if ! "$PREFLIGHT" "$local_path"; then
     pf=$?
-    if (( pf == 1 )); then echo "pre-flight BLOQUANT — paire ignorée." >&2; rc=1; continue; fi
+    if (( pf == 1 )); then
+      echo "pre-flight BLOQUANT pour $local_sub — paire ignorée." >&2
+      rc=1
+      continue
+    fi
     echo "pre-flight : avertissements, on continue."
   fi
 
+  # 2. Refus explicite de resynchroniser sans demande. Un --resync automatique
+  #    après perte de l'état bisync réécrirait les deux côtés : jamais implicite.
   state_present=$(find "$WORKDIR" -maxdepth 1 -name "*$local_sub*" -print -quit 2>/dev/null)
   args=("${COMMON[@]}" "${EXTRA[@]}" --log-file "$log")
 
@@ -541,18 +593,37 @@ for pair in "${PAIRS[@]}"; do
     args+=(--force)
   fi
 
-  # Corbeille locale. PAS de --suffix ici : voir le piège n°4.
-  [[ -n "${RCLONE_BACKUP_ROOT:-}" ]] && args+=(--backup-dir1 "$RCLONE_BACKUP_ROOT/$local_sub")
-
+  # Corbeille locale : un fichier écrasé ou supprimé côté local y est déplacé
+  # au lieu d'être perdu. Le côté Drive est déjà couvert par la corbeille des
+  # Drive partagés (30 jours) ; c'est le côté local qui était à découvert.
+  #
+  # PAS de --suffix ici, malgré la tentation d'horodater les copies de secours :
+  # --suffix est un drapeau GLOBAL. Faute de --backup-dir2, rclone l'applique
+  # aussi au côté Drive et y RENOMME les fichiers au lieu de les supprimer.
+  # Conséquences constatées : --max-delete n'a plus rien à compter et ne protège
+  # plus, et l'arborescence Drive se remplit de copies suffixées. Piège n°4.
+  # Un --backup-dir2 exigerait un second remote crypt hors de gcrypt: — non
+  # justifié tant que la corbeille Drive couvre 30 jours.
+  if [[ -n "${RCLONE_BACKUP_ROOT:-}" ]]; then
+    args+=(--backup-dir1 "$RCLONE_BACKUP_ROOT/$local_sub")
+  fi
   if (( RESYNC )); then
-    echo "AMORÇAGE (--resync) demandé explicitement."; args+=(--resync)
+    echo "AMORÇAGE (--resync) demandé explicitement."
+    args+=(--resync)
   elif [[ -z "$state_present" ]]; then
     echo "ERREUR : aucun état bisync pour $local_sub." >&2
     echo "         Premier lancement ? Utilise : $0 --resync" >&2
-    rc=1; continue
+    rc=1
+    continue
   fi
 
-  # Une seconde tentative distingue le transitoire du persistant. Voir le piège n°10.
+  # Une seconde tentative distingue le transitoire du persistant.
+  # Motivation : le binaire rclone s'est effondré une fois sur un SIGSEGV pendant
+  # sa propre initialisation, avant même d'ouvrir son fichier de log. Incident
+  # unique, sans cause matérielle, réparé de lui-même à la passe suivante — mais
+  # il avait déclenché une notification d'échec pour rien. Voir le piège n°10.
+  # Les échecs déterministes (too many deletes, check-access) échouent à
+  # l'identique au second essai : l'alerte est bien levée, avec 15 s de retard.
   tentative=1
   while :; do
     if rclone bisync "$local_path" "$remote" "${args[@]}"; then
@@ -561,22 +632,24 @@ for pair in "${PAIRS[@]}"; do
       else
         echo "paire $local_sub : OK"
       fi
-      # La paire repasse : sa signature disparaît, de sorte qu'un même problème
-      # réapparaissant plus tard donnera bien lieu à une nouvelle alerte.
+      # La paire repasse : sa signature d'échec disparaît, de sorte qu'un même
+      # problème réapparaissant plus tard donnera bien lieu à une alerte.
       rm -f "$ETAT_NOTIFY/echec-$local_sub"
       break
     fi
-    # Un verrou détenu par une autre passe n'est pas une panne, c'est de la
-    # concurrence : il expire seul et la passe suivante prendra le relais.
+    # Un verrou détenu par une autre passe n'est pas une panne : c'est de la
+    # concurrence. Cas vécu — une passe manuelle lancée pendant qu'une
+    # passe automatique téléchargeait 3 Go. Le verrou expire seul (--max-lock),
+    # la passe suivante prendra le relais : inutile d'alerter.
     if tail -5 "$log" 2>/dev/null | grep -q "prior lock file found"; then
       echo "paire $local_sub : passe déjà en cours ailleurs, on laisse la main."
       break
     fi
     if (( tentative >= TENTATIVES_MAX )); then
       echo "paire $local_sub : ECHEC après $tentative essais (voir $log)" >&2
-      # Signature à destination de rclone-notify.sh. Le code de sortie reste non
-      # nul : le dédoublonnage tait la notification, jamais l'échec lui-même, qui
-      # doit rester visible dans « systemctl --user status ».
+      # Signature à destination de rclone-notify.sh. Le code de sortie reste
+      # non nul : le dédoublonnage tait la notification, jamais l'échec lui-même,
+      # qui doit rester visible dans « systemctl --user status ».
       printf '%s\n' "$(motif_echec "$log")" > "$ETAT_NOTIFY/echec-$local_sub"
       rc=1
       break
@@ -590,7 +663,7 @@ done
 # Plus aucune paire en échec : on oublie la dernière signature notifiée, pour
 # qu'un problème identique réapparaissant plus tard réalerte bien. Le test porte
 # sur les fichiers restants et non sur $rc, afin que « --only <paire> » ne purge
-# pas l'état d'une paire qu'il n'a pas traitée. Voir le piège n°13.
+# pas l'état d'une paire qu'il n'a pas traitée.
 if ! compgen -G "$ETAT_NOTIFY/echec-*" >/dev/null; then
   rm -f "$ETAT_NOTIFY/notifie"
 fi
