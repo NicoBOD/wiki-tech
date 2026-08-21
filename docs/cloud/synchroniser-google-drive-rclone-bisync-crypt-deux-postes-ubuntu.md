@@ -32,7 +32,7 @@ status: publié
 |-----------|--------|
 | Difficulté | Avancé |
 | OS / Environnement | Ubuntu 24.04 LTS, rclone 1.75.0 |
-| Dernière mise à jour | 2026-08-13 |
+| Dernière mise à jour | 2026-08-21 |
 
 !!! warning "Avertissement préalable"
     `rclone bisync` **supprime et écrase des fichiers des deux côtés**. Une configuration bancale peut détruire des données. Chaque garde-fou décrit ici a une raison d'être : ne les retirez pas pour « simplifier ». Testez toujours sur un jeu de données jetable avant de viser vos vraies données.
@@ -390,11 +390,15 @@ while (( $# )); do
     --dry-run)   EXTRA+=(--dry-run) ;;
     --only)      ONLY="${2:?--only attend un nom de paire}"; shift ;;
     --force-run) FORCE_RUN=1 ;;
+    # Contourne --max-delete pour UNE exécution. Usage prévu : après avoir
+    # déplacé ou renommé des dossiers. Voir le piège n°12.
+    --autoriser-suppressions) AUTORISER_SUPPR=1 ;;
     *) echo "option inconnue : $1" >&2; exit 64 ;;
   esac
   shift
 done
 FORCE_RUN="${FORCE_RUN:-0}"
+AUTORISER_SUPPR="${AUTORISER_SUPPR:-0}"
 
 mkdir -p "$LOGDIR" "$WORKDIR" "$(dirname "$FILTERS")"
 
@@ -508,6 +512,12 @@ for pair in "${PAIRS[@]}"; do
   state_present=$(find "$WORKDIR" -maxdepth 1 -name "*$local_sub*" -print -quit 2>/dev/null)
   args=("${COMMON[@]}" "${EXTRA[@]}" --log-file "$log")
 
+  # Déblocage explicite du garde-fou de suppressions, pour cette exécution.
+  if (( AUTORISER_SUPPR )); then
+    echo "ATTENTION : --max-delete contourné pour cette passe ($local_sub)." >&2
+    args+=(--force)
+  fi
+
   # Corbeille locale. PAS de --suffix ici : voir le piège n°4.
   [[ -n "${RCLONE_BACKUP_ROOT:-}" ]] && args+=(--backup-dir1 "$RCLONE_BACKUP_ROOT/$local_sub")
 
@@ -568,6 +578,10 @@ StartLimitIntervalSec=0
 
 [Service]
 Type=oneshot
+# PartOf=graphical-session.target fait arrêter le service à la fin de session.
+# Sans cette ligne, cet arrêt ORDONNÉ compte comme un échec
+# (code=killed, status=15/TERM → result 'signal') et notifie. Voir le piège n°10.
+SuccessExitStatus=SIGTERM
 EnvironmentFile=%h/.config/rclone/machine.env
 ExecStart=%h/.local/bin/rclone-bisync.sh
 TimeoutStartSec=3h
@@ -918,6 +932,30 @@ Ce n'est pas une panne mais de la concurrence — d'autant plus probable qu'un p
 !!! tip "Pourquoi une seule reprise, et pas trois"
     Un second essai suffit à absorber le bruit. Au-delà, on retarde la détection des vrais problèmes sans rien gagner : un échec déterministe échouera autant de fois qu'on le relancera. La trace « réussie au 2e essai » reste au journal précisément pour qu'un plantage qui deviendrait récurrent ne passe pas inaperçu.
 
+**Troisième cas : l'arrêt en fin de session.** Celui-ci ne se déclenche que si une passe tourne au moment où vous fermez votre session ou éteignez la machine.
+
+!!! failure "Message d'erreur"
+    ```
+    rclone-bisync.service: Main process exited, code=killed, status=15/TERM
+    rclone-bisync.service: Failed with result 'signal'.
+    rclone-bisync.service: Stopped rclone-bisync.service.
+    rclone-bisync.service: Triggering OnFailure= dependencies.
+    ```
+
+La cause est la directive `PartOf=graphical-session.target` de l'unité : elle fait arrêter le service quand la session s'achève, ce qui est le comportement voulu — on ne veut pas d'une synchronisation qui continue après la déconnexion. Mais systemd compte cette terminaison par signal comme un **échec**, et déclenche donc une notification pour un arrêt parfaitement ordonné.
+
+**Solution** — une ligne dans la section `[Service]` :
+
+```ini
+SuccessExitStatus=SIGTERM
+```
+
+!!! success "Comment vérifier"
+    ```bash
+    systemctl --user start --no-block rclone-bisync.service; sleep 1; systemctl --user stop rclone-bisync.service; sleep 2; systemctl --user show -p Result --value rclone-bisync.service
+    ```
+    Doit afficher `success`. Sans le correctif, la même séquence donne `signal` et une notification.
+
 ### Piège n°11 — Changer les filtres peut supprimer vos fichiers
 
 C'est le piège le plus dangereux de cette page, et le plus silencieux.
@@ -964,6 +1002,47 @@ Le motif correct est le plus simple — sans préfixe, il s'applique à tous les
 
 !!! tip "Un motif à vérifier plutôt qu'à supposer"
     C'est le second cas de cette page où la syntaxe des filtres rclone se comporte autrement qu'attendu — voir déjà, à l'étape 5, le motif `{{^.{144,}$}}` qui porte sur le chemin complet et non sur le nom du fichier. Prenez l'habitude de valider tout nouveau motif avec `rclone lsf -R --files-only` sur une arborescence jetable avant de le mettre en production.
+
+### Piège n°12 — Déplacer des dossiers bloque la synchronisation
+
+Celui-ci se produira au premier rangement que vous ferez, et le message affole à tort.
+
+!!! failure "Message d'erreur"
+    ```
+    Path1:   61 changes:   31 new,    0 modified,   30 deleted
+    ERROR : Safety abort: too many deletes (>10%, 30 of 37) on Path1 "…"
+    ```
+
+**bisync ne sait pas reconnaître un déplacement.** Il ne dispose pas de `--track-renames` : déplacer un dossier dans un sous-dossier lui apparaît comme autant de suppressions à l'ancien emplacement, suivies d'autant de créations au nouveau. La signature est reconnaissable au premier coup d'œil — un nombre de créations presque égal au nombre de suppressions, et aucune modification.
+
+Regrouper deux dossiers sous un parent commun a suffi, dans un cas réel, à produire 30 suppressions sur 37 entrées, soit 81 %. Le garde-fou bloque, et la notification revient à chaque passe jusqu'à intervention.
+
+!!! success "La bonne nouvelle"
+    **Rien n'est perdu, et rien n'a été propagé.** C'est précisément le rôle du garde-fou. Vérifiez-le en comparant les compteurs : un déplacement laisse le nombre de fichiers et le volume total inchangés de part et d'autre.
+
+**Deux façons de débloquer, selon le volume concerné.**
+
+*Pour plusieurs gigaoctets — reproduire le déplacement partout.* Google Drive sait déplacer un répertoire côté serveur, donc sans aucun transfert :
+
+```bash
+rclone move "gd-clair:Rclone/MonDossier" "gd-clair:Rclone/Parent/MonDossier" --delete-empty-src-dirs
+```
+
+Puis le même `mv` en local sur l'autre machine, et un `--resync` sur les deux. Dans un cas réel portant sur 6 Go, l'opération a pris 8 secondes et la re-base a rapporté `Transferred: 0 B`.
+
+!!! tip "Vérifiez d'abord que ce sera bien côté serveur"
+    Un `--dry-run` doit annoncer `Skipped server-side directory move as --dry-run is set`. Si rclone parle de copie, c'est que la source et la destination ne sont pas sur le même remote, et vous transféreriez les données pour rien.
+
+*Pour un volume modeste — laisser bisync faire.* L'option `--autoriser-suppressions` du script (étape 8) passe `--force` à rclone pour une seule exécution :
+
+```bash
+rclone-bisync.sh --dry-run && rclone-bisync.sh --autoriser-suppressions
+```
+
+Mais mesurez le coût : bisync supprimera les anciens chemins et **réenverra** les fichiers depuis le miroir local. Six gigaoctets déplacés représentent six gigaoctets d'envoi, puis autant de téléchargement sur l'autre machine.
+
+!!! danger "Ne débloquez jamais sans avoir lu la liste"
+    `--autoriser-suppressions` désactive la seule protection qui vous sépare d'une propagation destructive. Le `--dry-run` préalable n'est pas une formalité : c'est le dernier moment où une vraie fausse manipulation — un dossier supprimé par erreur, un disque à moitié monté — se distingue encore d'un simple rangement.
 
 ## Vérification
 
@@ -1022,6 +1101,7 @@ systemctl --user list-timers rclone-bisync.timer; journalctl --user -b -u rclone
 | `rclone-bisync.sh --resync` | Amorçage / re-base (à utiliser sciemment) |
 | `rclone-bisync.sh --only Chiffre` | Traite une seule paire |
 | `rclone-bisync.sh --force-run` | Ignore les garde-fous batterie et connexion limitée |
+| `rclone-bisync.sh --autoriser-suppressions` | Contourne `--max-delete` pour une passe, après un déplacement (piège n°12) |
 | `systemctl --user list-timers rclone-bisync.timer` | Prochaine et dernière exécution |
 | `journalctl --user -u rclone-bisync.service -n 50` | Journal de la dernière passe |
 | `systemctl --user start rclone-mount@gd-clair.service` | Monte un remote à la demande |
