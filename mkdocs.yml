@@ -163,6 +163,8 @@ nav:
     - Déployer un conteneur via Azure Container Instances (ACI): cloud/deployer-conteneur-azure-container-instances-aci.md
     - Stocker et partager des fichiers dans Azure Blob Storage: cloud/stocker-partager-fichiers-azure-blob-storage.md
     - Synchroniser Google Drive sur deux postes Ubuntu avec rclone bisync et chiffrement Crypt: cloud/synchroniser-google-drive-rclone-bisync-crypt-deux-postes-ubuntu.md
+    - Déployer un stockage objet S3-compatible avec MinIO en auto-hébergé: cloud/mettre-en-place-minio-stockage-objet-s3-compatible-auto-heberge.md
+    - Mettre en place une surveillance centralisée avec Prometheus et Grafana pour infrastructure cloud hybride: cloud/mettre-en-place-surveillance-centralisee-prometheus-grafana-cloud-hybride.md
   - Cybersécurité:
     - cybersecurite/index.md
     - "Configurer sudo en toute sécurité avec visudo": cybersecurite/configurer-sudo-visudo.md
@@ -226,6 +228,7 @@ nav:
     - "Installer et configurer Windows Terminal pour unifier ses environnements CLI (PowerShell, WSL, SSH)": logiciels/installer-configurer-windows-terminal.md
     - "Découvrir et utiliser MobaXterm pour l'administration distante": logiciels/utiliser-mobaxterm-administration-distante.md
     - "Obsidian : Créer et organiser sa propre base de connaissances technique en Markdown": logiciels/obsidian-base-connaissances-technique-markdown.md
+    - Déployer une instance GitLab CE auto-hébergée avec Docker Compose sur Ubuntu Server: logiciels/deployer-gitlab-ce-auto-hebergee-docker-compose-ubuntu-server.md
   - Debug:
     - debug/index.md
     - Diagnostiquer une erreur 502/504 Bad Gateway sur un serveur web: debug/diagnostiquer-erreur-502-504-bad-gateway-serveur-web.md
