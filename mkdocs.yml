@@ -129,6 +129,7 @@ nav:
     - "Gérer les services Linux avec systemctl : l'essentiel pour l'administration": systemes/gerer-services-linux-systemctl-essentiel.md
     - Comprendre et gérer les permissions sous Linux (chmod, chown): systemes/gerer-permissions-fichiers-chmod-chown-linux.md
     - Maintenir ses sessions terminal à distance avec tmux sous Linux: systemes/tmux-maintenir-sessions-terminal-distance.md
+    - Installer une interface graphique légère (LXQt ou XFCE) sur Debian 13: systemes/installer-interface-graphique-legere-debian-13.md
   - Réseaux:
     - reseaux/index.md
     - Bloquer les requêtes malveillantes et publicités avec Pi-hole: reseaux/installer-configurer-pi-hole-reseau-local.md
