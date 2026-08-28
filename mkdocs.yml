@@ -85,7 +85,7 @@ theme:
 plugins:
   - search:
       lang: fr
-      separator: '[\s\-,:!=\[\]()"/]+|(?<!\b)(?=[A-Z][a-z])|\.(\!\d)|&[lg]t;'
+      separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
   - tags
   # Métadonnées par dossier via .meta.yml (réduit la duplication)
   - meta
