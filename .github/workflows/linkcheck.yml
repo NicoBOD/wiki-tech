@@ -35,12 +35,17 @@ jobs:
           # --exclude gnu.org : le serveur de la FSF bloque/limite les requêtes
           # depuis les runners GitHub Actions (timeouts systématiques), alors
           # que les pages sont bien accessibles pour un humain.
+          # --exclude pkgs/container : les pages de packages GitHub (ghcr.io)
+          # renvoient parfois 502 aux requêtes automatisées des runners CI
+          # (cf. issues #28, #31), alors qu'elles sont bien accessibles pour
+          # un humain.
           args: >-
             --no-progress
             --max-retries 2
             --accept 200..=299,403,429,999
             --exclude-all-private
             --exclude 'gnu\.org'
+            --exclude 'github\.com/.+/pkgs/container/'
             'docs/**/*.md'
             'README.md'
           # N'échoue pas le job : le résultat est remonté via une issue.
