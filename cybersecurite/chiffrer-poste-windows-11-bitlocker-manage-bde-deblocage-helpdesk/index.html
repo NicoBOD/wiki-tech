@@ -1,0 +1,4245 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation">
+      
+      
+        <meta name="author" content="Nicolas BODAINE">
+      
+      
+        <link rel="canonical" href="https://wiki.bodaine.fr/cybersecurite/chiffrer-poste-windows-11-bitlocker-manage-bde-deblocage-helpdesk/">
+      
+      
+        <link rel="prev" href="../analyser-wifi-mode-moniteur-injection-aircrack-ng/">
+      
+      
+        <link rel="next" href="../../ia/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Chiffrer un poste Windows 11 Pro avec BitLocker : disque système, BitLocker To Go, manage-bde et déblocage helpdesk - Wiki Tech — NicoBOD</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        
+        <link rel="stylesheet" href="../../assets/external/fonts.googleapis.com/css.56f7ac64.css">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+    
+    
+      
+    
+    
+
+    <!-- SEO -->
+    <meta name="author" content="Nicolas BODAINE">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph : compléments non gérés par le plugin social.     -->
+    <!-- og:type/title/description/image/url sont posés par social.   -->
+    <meta property="og:site_name" content="Wiki Tech — NicoBOD">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card : la grande image et l'image elle-même sont      -->
+    <!-- héritées des balises og:image générées par le plugin social.  -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Chiffrer un poste Windows 11 Pro avec BitLocker : disque système, BitLocker To Go, manage-bde et déblocage helpdesk — Wiki Tech — NicoBOD">
+    <meta name="twitter:description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation">
+  
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chiffrer-un-poste-windows-11-pro-avec-bitlocker-disque-systeme-bitlocker-to-go-manage-bde-et-deblocage-helpdesk" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../.." title="Wiki Tech — NicoBOD" class="md-header__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wiki Tech — NicoBOD
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chiffrer un poste Windows 11 Pro avec BitLocker : disque système, BitLocker To Go, manage-bde et déblocage helpdesk
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer en mode clair"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer en mode clair" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Passer en mode sombre"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer en mode sombre" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Revenir au thème système"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Revenir au thème système" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Partager" aria-label="Partager" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../systemes/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h16v10H4m16 2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4c-1.11 0-2 .89-2 2v10a2 2 0 0 0 2 2H0v2h24v-2z"/></svg>
+    
+  
+  Systèmes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reseaux/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v2h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+    
+  
+  Réseaux
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../cloud/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 20q-2.28 0-3.89-1.57Q1 16.85 1 14.58q0-1.95 1.17-3.48 1.18-1.53 3.08-1.95.63-2.3 2.5-3.72Q9.63 4 12 4q2.93 0 4.96 2.04Q19 8.07 19 11q1.73.2 2.86 1.5 1.14 1.28 1.14 3 0 1.88-1.31 3.19T18.5 20Z"/></svg>
+    
+  
+  Cloud
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12h7c-.53 4.11-3.28 7.78-7 8.92zH5V6.3l7-3.11M12 1 3 5v6c0 5.55 3.84 10.73 9 12 5.16-1.27 9-6.45 9-12V5z"/></svg>
+    
+  
+  Cybersécurité
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../ia/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/></svg>
+    
+  
+  IA
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../automatisation/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+    
+  
+  Automatisation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../logiciels/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m0 5H3V4h18z"/></svg>
+    
+  
+  Logiciels
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../debug/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 12h-4v-2h4m0 6h-4v-2h4m6-6h-2.81a6 6 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6 6 0 0 0-2.83 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20z"/></svg>
+    
+  
+  Debug
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../astuces/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+    
+  
+  Astuces
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../tags/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tags
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Wiki Tech — NicoBOD" class="md-nav__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../assets/logo.svg" alt="logo">
+
+    </a>
+    Wiki Tech — NicoBOD
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../systemes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Systèmes
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../reseaux/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Réseaux
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12h7c-.53 4.11-3.28 7.78-7 8.92zH5V6.3l7-3.11M12 1 3 5v6c0 5.55 3.84 10.73 9 12 5.16-1.27 9-6.45 9-12V5z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cybersécurité
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cybersécurité
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configurer-sudo-visudo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configurer sudo en toute sécurité avec visudo
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../renforcer-politique-mots-de-passe-pam-pwquality-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Renforcer la politique de mots de passe sous Linux avec pam_pwquality
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssh-mfa-google-authenticator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sécuriser SSH avec l'authentification double facteur (MFA) via Google Authenticator
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fail2ban-proteger-ssh-ubuntu-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installer et configurer Fail2ban pour protéger SSH sur Ubuntu Server 24.04
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crowdsec-alternative-fail2ban-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Protéger un serveur Linux avec CrowdSec : l'alternative collaborative à Fail2ban
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ufw-ubuntu-server-premieres-regles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UFW sur Ubuntu Server — ouvrir seulement SSH, HTTP et HTTPS
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../certbot-nginx-https-lets-encrypt-ubuntu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sécuriser un serveur web Nginx avec Let's Encrypt et Certbot sur Ubuntu Server
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssh-cle-publique-desactiver-mot-de-passe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configurer l’accès SSH par clé et désactiver l’authentification par mot de passe sur Ubuntu Server
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lynis-audit-securite-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Auditer la sécurité de son serveur Linux avec Lynis
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cartographier-analyser-ports-reseau-nmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cartographier et analyser les ports d'un réseau avec Nmap
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../securiser-volume-donnees-chiffrement-luks-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sécuriser un volume de données avec le chiffrement LUKS sous Linux
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dechiffrer-automatiquement-luks-tpm2-clevis-secure-boot-ubuntu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Déverrouiller automatiquement LUKS au démarrage avec le TPM2 et Clevis (Ubuntu 24.04)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../renforcer-securite-service-apparmor-ubuntu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Renforcer la sécurité d'un service avec AppArmor sous Ubuntu
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../activer-lecteur-empreintes-digitales-login-sudo-thinkpad-ubuntu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Activer le lecteur d'empreintes digitales (login + sudo) sur ThinkPad sous Ubuntu 24.04
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chiffrer-signer-fichiers-gpg-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chiffrer et signer des fichiers avec GPG sous Linux
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analyser-wifi-mode-moniteur-injection-aircrack-ng/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analyser son réseau Wi-Fi en mode moniteur et tester l'injection avec Aircrack-ng
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chiffrer un poste Windows 11 Pro avec BitLocker : disque système, BitLocker To Go, manage-bde et déblocage helpdesk
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chiffrer un poste Windows 11 Pro avec BitLocker : disque système, BitLocker To Go, manage-bde et déblocage helpdesk
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#contexte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contexte
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Contexte">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-quoi-sert-le-chiffrement-de-disque" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        À quoi sert le chiffrement de disque
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#les-trois-secrets-a-ne-jamais-confondre" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Les trois secrets à ne jamais confondre
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#le-role-de-la-puce-tpm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Le rôle de la puce TPM
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prérequis
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prérequis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verifier-lenvironnement-en-4-commandes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vérifier l'environnement en 4 commandes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-1-chiffrer-le-lecteur-systeme-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 1 — Chiffrer le lecteur système C:
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Partie 1 — Chiffrer le lecteur système C:">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#etape-1-ouvrir-la-console-bitlocker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 1 : ouvrir la console BitLocker
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-2-lancer-lassistant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 2 : lancer l'assistant
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-3-sauvegarder-la-cle-de-recuperation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 3 : sauvegarder la clé de récupération ⚠️
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-4-choisir-letendue-du-chiffrement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 4 : choisir l'étendue du chiffrement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-5-choisir-le-mode-de-chiffrement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 5 : choisir le mode de chiffrement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-6-executer-le-test-systeme" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 6 : exécuter le test système
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-7-suivre-lavancement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 7 : suivre l'avancement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#critere-de-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Critère de validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-2-securiser-une-cle-usb-avec-bitlocker-to-go" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 2 — Sécuriser une clé USB avec BitLocker To Go
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Partie 2 — Sécuriser une clé USB avec BitLocker To Go">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#etape-1-lancer-lassistant-depuis-lexplorateur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 1 : lancer l'assistant depuis l'Explorateur
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-2-definir-le-mot-de-passe-de-deverrouillage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 2 : définir le mot de passe de déverrouillage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-3-exporter-la-cle-de-recuperation-dans-un-fichier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 3 : exporter la clé de récupération dans un fichier
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-4-etendue-et-mode-de-chiffrement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 4 : étendue et mode de chiffrement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-5-test-pratique-de-deverrouillage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 5 : test pratique de déverrouillage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#critere-de-validation_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Critère de validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-3-administration-en-ligne-de-commande-avec-manage-bde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 3 — Administration en ligne de commande avec manage-bde
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Partie 3 — Administration en ligne de commande avec manage-bde">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ouvrir-une-invite-de-commandes-en-administrateur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ouvrir une invite de commandes en administrateur
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-manage-bde-status-letat-des-lieux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. manage-bde -status — l'état des lieux
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-manage-bde-protectors-disable-suspendre-temporairement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. manage-bde -protectors -disable — suspendre temporairement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-manage-bde-protectors-enable-reprendre-la-protection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. manage-bde -protectors -enable — reprendre la protection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-manage-bde-protectors-get-extraire-la-cle-de-recuperation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. manage-bde -protectors -get — extraire la clé de récupération
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#les-equivalents-powershell" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Les équivalents PowerShell
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-4-scenario-helpdesk-debloquer-un-utilisateur-sur-lecran-de-recuperation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 4 — Scénario helpdesk : débloquer un utilisateur sur l'écran de récupération
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Partie 4 — Scénario helpdesk : débloquer un utilisateur sur l&#39;écran de récupération">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mise-en-situation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mise en situation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comprendre-la-cause-avant-de-raccrocher" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comprendre la cause avant de raccrocher
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#procedure-de-support-niveau-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Procédure de support niveau 1
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification-globale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vérification globale
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aide-memoire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aide-mémoire
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#erreurs-courantes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Erreurs courantes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glossaire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Glossaire
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../ia/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IA
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../automatisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automatisation
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../logiciels/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logiciels
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../debug/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../astuces/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Astuces
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tags/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.5 7A1.5 1.5 0 0 1 4 5.5 1.5 1.5 0 0 1 5.5 4 1.5 1.5 0 0 1 7 5.5 1.5 1.5 0 0 1 5.5 7m15.91 4.58-9-9C12.05 2.22 11.55 2 11 2H4c-1.11 0-2 .89-2 2v7c0 .55.22 1.05.59 1.41l8.99 9c.37.36.87.59 1.42.59s1.05-.23 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.56-.23-1.06-.59-1.42"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#contexte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contexte
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Contexte">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-quoi-sert-le-chiffrement-de-disque" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        À quoi sert le chiffrement de disque
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#les-trois-secrets-a-ne-jamais-confondre" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Les trois secrets à ne jamais confondre
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#le-role-de-la-puce-tpm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Le rôle de la puce TPM
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prérequis
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prérequis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verifier-lenvironnement-en-4-commandes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vérifier l'environnement en 4 commandes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-1-chiffrer-le-lecteur-systeme-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 1 — Chiffrer le lecteur système C:
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Partie 1 — Chiffrer le lecteur système C:">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#etape-1-ouvrir-la-console-bitlocker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 1 : ouvrir la console BitLocker
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-2-lancer-lassistant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 2 : lancer l'assistant
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-3-sauvegarder-la-cle-de-recuperation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 3 : sauvegarder la clé de récupération ⚠️
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-4-choisir-letendue-du-chiffrement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 4 : choisir l'étendue du chiffrement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-5-choisir-le-mode-de-chiffrement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 5 : choisir le mode de chiffrement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-6-executer-le-test-systeme" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 6 : exécuter le test système
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-7-suivre-lavancement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 7 : suivre l'avancement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#critere-de-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Critère de validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-2-securiser-une-cle-usb-avec-bitlocker-to-go" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 2 — Sécuriser une clé USB avec BitLocker To Go
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Partie 2 — Sécuriser une clé USB avec BitLocker To Go">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#etape-1-lancer-lassistant-depuis-lexplorateur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 1 : lancer l'assistant depuis l'Explorateur
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-2-definir-le-mot-de-passe-de-deverrouillage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 2 : définir le mot de passe de déverrouillage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-3-exporter-la-cle-de-recuperation-dans-un-fichier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 3 : exporter la clé de récupération dans un fichier
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-4-etendue-et-mode-de-chiffrement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 4 : étendue et mode de chiffrement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-5-test-pratique-de-deverrouillage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 5 : test pratique de déverrouillage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#critere-de-validation_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Critère de validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-3-administration-en-ligne-de-commande-avec-manage-bde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 3 — Administration en ligne de commande avec manage-bde
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Partie 3 — Administration en ligne de commande avec manage-bde">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ouvrir-une-invite-de-commandes-en-administrateur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ouvrir une invite de commandes en administrateur
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-manage-bde-status-letat-des-lieux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. manage-bde -status — l'état des lieux
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-manage-bde-protectors-disable-suspendre-temporairement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. manage-bde -protectors -disable — suspendre temporairement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-manage-bde-protectors-enable-reprendre-la-protection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. manage-bde -protectors -enable — reprendre la protection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-manage-bde-protectors-get-extraire-la-cle-de-recuperation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. manage-bde -protectors -get — extraire la clé de récupération
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#les-equivalents-powershell" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Les équivalents PowerShell
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-4-scenario-helpdesk-debloquer-un-utilisateur-sur-lecran-de-recuperation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 4 — Scénario helpdesk : débloquer un utilisateur sur l'écran de récupération
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Partie 4 — Scénario helpdesk : débloquer un utilisateur sur l&#39;écran de récupération">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mise-en-situation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mise en situation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comprendre-la-cause-avant-de-raccrocher" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comprendre la cause avant de raccrocher
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#procedure-de-support-niveau-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Procédure de support niveau 1
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification-globale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vérification globale
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aide-memoire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aide-mémoire
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#erreurs-courantes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Erreurs courantes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glossaire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Glossaire
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Cybersécurité
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:bitlocker" class="md-tag">bitlocker</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:chiffrement" class="md-tag">chiffrement</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:helpdesk" class="md-tag">helpdesk</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:manage-bde" class="md-tag">manage-bde</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:securite" class="md-tag">securite</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:tpm" class="md-tag">tpm</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:windows" class="md-tag">windows</a>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/NicoBOD/wiki-tech/edit/main/docs/cybersecurite/chiffrer-poste-windows-11-bitlocker-manage-bde-deblocage-helpdesk.md" title="Editer cette page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/NicoBOD/wiki-tech/raw/main/docs/cybersecurite/chiffrer-poste-windows-11-bitlocker-manage-bde-deblocage-helpdesk.md" title="Consulter la source de cette page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<h1 id="chiffrer-un-poste-windows-11-pro-avec-bitlocker-disque-systeme-bitlocker-to-go-manage-bde-et-deblocage-helpdesk">Chiffrer un poste Windows 11 Pro avec BitLocker : disque système, BitLocker To Go, manage-bde et déblocage helpdesk<a class="headerlink" href="#chiffrer-un-poste-windows-11-pro-avec-bitlocker-disque-systeme-bitlocker-to-go-manage-bde-et-deblocage-helpdesk" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Résumé</p>
+<p>Prise en main complète de <strong>BitLocker</strong> sur un poste Windows 11 Pro, du clic dans le Panneau de configuration jusqu'au dépannage d'un utilisateur bloqué sur l'écran de récupération. Au programme : chiffrement du lecteur système <code>C:</code>, sécurisation d'une clé USB avec <strong>BitLocker To Go</strong>, administration en ligne de commande avec <strong><code>manage-bde</code></strong> (état, suspension pour une mise à jour de BIOS, reprise, extraction de la clé de récupération), et une <strong>procédure helpdesk de niveau 1</strong> pour débloquer un poste qui réclame ses 48 chiffres.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Propriété</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Difficulté</td>
+<td>Intermédiaire</td>
+</tr>
+<tr>
+<td>OS / Environnement</td>
+<td>Windows 11 Pro 24H2 / 25H2 (physique ou VM avec <abbr title="Trusted Platform Module">TPM</abbr> virtuel)</td>
+</tr>
+<tr>
+<td>Édition requise</td>
+<td>Pro, Entreprise ou Éducation — <strong>pas</strong> Famille</td>
+</tr>
+<tr>
+<td>Matériel</td>
+<td><abbr title="Trusted Platform Module">TPM</abbr> 2.0 + démarrage <abbr title="Unified Extensible Firmware Interface">UEFI</abbr> + une clé USB de test</td>
+</tr>
+<tr>
+<td>Dernière mise à jour</td>
+<td>2026-09-01</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition danger">
+<p class="admonition-title">Règle numéro un : pas de clé de récupération = pas de données</p>
+<p>BitLocker fait exactement ce qu'on lui demande : rendre les données <strong>illisibles</strong> sans le bon secret. Si vous perdez à la fois le mot de passe/PIN <strong>et</strong> la clé de récupération à 48 chiffres, <strong>personne</strong> — ni vous, ni Microsoft, ni un logiciel de récupération — ne pourra relire le disque. Avant de cliquer sur « Activer BitLocker », sachez déjà <strong>où</strong> la clé de récupération sera stockée.</p>
+</div>
+<hr />
+<h2 id="contexte">Contexte<a class="headerlink" href="#contexte" title="Permanent link">&para;</a></h2>
+<h3 id="a-quoi-sert-le-chiffrement-de-disque">À quoi sert le chiffrement de disque<a class="headerlink" href="#a-quoi-sert-le-chiffrement-de-disque" title="Permanent link">&para;</a></h3>
+<p>Un mot de passe de session Windows protège <strong>l'ouverture de session</strong>, pas les données. Si on extrait le disque d'un portable volé pour le brancher sur une autre machine, les fichiers sont lisibles immédiatement. Le chiffrement de disque, dit <strong>chiffrement au repos</strong> (<em>data at rest</em>), déplace la protection sur le support lui‑même : sans la clé, le contenu du disque n'est qu'une suite d'octets aléatoires.</p>
+<p>C'est l'équivalent Windows de ce que fait <strong>LUKS</strong> sous Linux (voir l'article connexe en fin de page).</p>
+<h3 id="les-trois-secrets-a-ne-jamais-confondre">Les trois secrets à ne jamais confondre<a class="headerlink" href="#les-trois-secrets-a-ne-jamais-confondre" title="Permanent link">&para;</a></h3>
+<p>C'est <strong>la</strong> source de confusion au support niveau 1. Prenez cinq minutes pour l'assimiler :</p>
+<table>
+<thead>
+<tr>
+<th>Secret</th>
+<th>À quoi ça ressemble</th>
+<th>Qui le connaît</th>
+<th>Quand est-il demandé</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Mot de passe de session</strong></td>
+<td>Le mot de passe Windows habituel</td>
+<td>L'utilisateur</td>
+<td>À l'ouverture de session, <strong>après</strong> le démarrage</td>
+</tr>
+<tr>
+<td><strong>Mot de passe / PIN de déverrouillage</strong></td>
+<td>Ce que l'utilisateur choisit (BitLocker To Go, ou PIN de démarrage)</td>
+<td>L'utilisateur</td>
+<td>Au quotidien, pour ouvrir le lecteur</td>
+</tr>
+<tr>
+<td><strong>Clé de récupération</strong></td>
+<td><strong>48 chiffres</strong>, en 8 blocs de 6 : <code>123456-654321-…</code></td>
+<td>Le service IT / le compte Microsoft</td>
+<td><strong>Uniquement</strong> en cas de problème (secours)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">L'ID de clé n'est pas la clé</p>
+<p>L'écran de récupération affiche aussi un <strong>ID de la clé de récupération</strong> (8 caractères hexadécimaux du type <code>8F3C1A2B</code>). C'est un <strong>identifiant public</strong>, non secret : il sert juste à savoir <strong>quelle</strong> clé chercher dans le coffre quand on en gère des centaines. Le taper dans le champ ne déverrouillera rien.</p>
+</div>
+<h3 id="le-role-de-la-puce-tpm">Le rôle de la puce <abbr title="Trusted Platform Module">TPM</abbr><a class="headerlink" href="#le-role-de-la-puce-tpm" title="Permanent link">&para;</a></h3>
+<p>Sur un poste correctement équipé, l'utilisateur ne saisit <strong>rien</strong> au démarrage : le disque se déverrouille tout seul. Ce n'est pas de la magie, c'est le <strong><abbr title="Trusted Platform Module">TPM</abbr></strong>.</p>
+<p>Le <abbr title="Trusted Platform Module">TPM</abbr> est un petit coprocesseur sécurisé soudé à la carte mère (ou intégré au CPU : <em>Intel PTT</em>, <em>AMD fTPM</em>). Il <strong>scelle</strong> la clé de chiffrement et ne la libère que si l'état de démarrage mesuré correspond à celui enregistré lors du chiffrement (firmware, Secure Boot, bootloader). Concrètement :</p>
+<ul>
+<li>démarrage normal → le <abbr title="Trusted Platform Module">TPM</abbr> libère la clé → Windows démarre sans rien demander ;</li>
+<li>démarrage anormal (BIOS modifié, disque déplacé dans une autre machine, Secure Boot désactivé…) → le <abbr title="Trusted Platform Module">TPM</abbr> <strong>refuse</strong> → BitLocker bascule en <strong>mode récupération</strong> et réclame les 48 chiffres.</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Pourquoi c'est une bonne chose</p>
+<p>Ce comportement « paranoïaque » est une <strong>fonctionnalité</strong>, pas un bug. Le passage en récupération signifie que quelque chose a changé dans la chaîne de démarrage — et c'est exactement le scénario contre lequel BitLocker protège.</p>
+</div>
+<hr />
+<h2 id="prerequis">Prérequis<a class="headerlink" href="#prerequis" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Windows 11 Pro / Entreprise / Éducation</strong> (ou Windows 10 Pro). L'édition <strong>Famille</strong> ne propose que le <em>Chiffrement de l'appareil</em>, sans gestion fine ni BitLocker To Go.</li>
+<li>Un <strong>compte administrateur local</strong> sur le poste.</li>
+<li>Un <strong><abbr title="Trusted Platform Module">TPM</abbr> 2.0</strong> activé dans l'<abbr title="Unified Extensible Firmware Interface">UEFI</abbr> et un démarrage en mode <strong><abbr title="Unified Extensible Firmware Interface">UEFI</abbr></strong> (pas Legacy/CSM).</li>
+<li>Une <strong>clé USB de test</strong>, dont le contenu peut être perdu.</li>
+<li>Un <strong>support externe</strong> (autre clé USB, partage réseau, gestionnaire de mots de passe) pour y déposer les clés de récupération.</li>
+<li><strong>20 à 60 minutes</strong> de chiffrement en tâche de fond pour <code>C:</code> (variable selon le disque et l'option choisie).</li>
+</ul>
+<h3 id="verifier-lenvironnement-en-4-commandes">Vérifier l'environnement en 4 commandes<a class="headerlink" href="#verifier-lenvironnement-en-4-commandes" title="Permanent link">&para;</a></h3>
+<p>Ouvrez <strong>PowerShell en administrateur</strong> (<span class="keys"><kbd class="key-windows">Win</kbd><span>+</span><kbd class="key-x">X</kbd></span> puis <em>Terminal (Admin)</em>) :</p>
+<div class="highlight"><span class="filename">Contrôles préalables</span><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">winver</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">Get-Tpm</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nb">Confirm-SecureBootUEFI</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">manage-bde</span> <span class="n">-status</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Commande</th>
+<th>Ce qu'on vérifie</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>winver</code></td>
+<td>L'édition et la version, par exemple <em>Windows 11 Pro 25H2</em>. Si vous lisez « Famille », inutile d'aller plus loin.</td>
+</tr>
+<tr>
+<td><code>Get-Tpm</code></td>
+<td><code>TpmPresent : True</code> et <code>TpmReady : True</code> sont attendus. Équivalent graphique : <span class="keys"><kbd class="key-windows">Win</kbd><span>+</span><kbd class="key-r">R</kbd></span> → <code>tpm.msc</code>.</td>
+</tr>
+<tr>
+<td><code>Confirm-SecureBootUEFI</code></td>
+<td>Renvoie <code>True</code> si Secure Boot est actif. Une <strong>erreur</strong> signifie que la machine démarre en mode Legacy/BIOS.</td>
+</tr>
+<tr>
+<td><code>manage-bde -status</code></td>
+<td>Dresse l'état BitLocker de <strong>tous</strong> les volumes de la machine.</td>
+</tr>
+</tbody>
+</table>
+<details class="note">
+<summary>Cas particulier : machine virtuelle sans <abbr title="Trusted Platform Module">TPM</abbr></summary>
+<p>Pour un lab, deux options.</p>
+<p><strong>Option A — ajouter un <abbr title="Trusted Platform Module">TPM</abbr> virtuel</strong> (recommandé, c'est le scénario réaliste) :</p>
+<table>
+<thead>
+<tr>
+<th>Hyperviseur</th>
+<th>Où l'activer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hyper‑V</td>
+<td>VM de <strong>génération 2</strong> → <em>Paramètres</em> → <em>Sécurité</em> → cocher <em>Activer le module de plateforme sécurisée</em></td>
+</tr>
+<tr>
+<td>VMware Workstation / ESXi</td>
+<td>La VM doit d'abord être <strong>chiffrée</strong>, puis <em>Ajouter un périphérique</em> → <em>Trusted Platform Module</em></td>
+</tr>
+<tr>
+<td>VirtualBox 7.x</td>
+<td><em>Configuration</em> → <em>Système</em> → <em><abbr title="Trusted Platform Module">TPM</abbr> : v2.0</em></td>
+</tr>
+<tr>
+<td>Proxmox VE</td>
+<td><em>Hardware</em> → <em>Add</em> → <em><abbr title="Trusted Platform Module">TPM</abbr> State</em> (v2.0), machine type <strong>q35</strong> + <strong>OVMF/<abbr title="Unified Extensible Firmware Interface">UEFI</abbr></strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Option B — autoriser BitLocker sans <abbr title="Trusted Platform Module">TPM</abbr></strong> (dégradé : impose la saisie d'un mot de passe ou d'une clé USB à chaque démarrage) :</p>
+<p><span class="keys"><kbd class="key-windows">Win</kbd><span>+</span><kbd class="key-r">R</kbd></span> → <code>gpedit.msc</code> → <em>Configuration ordinateur</em> → <em>Modèles d'administration</em> → <em>Composants Windows</em> → <em>Chiffrement de lecteur BitLocker</em> → <em>Lecteurs du système d'exploitation</em> → <strong>Exiger une authentification supplémentaire au démarrage</strong> → <strong>Activé</strong> → cocher <em>Autoriser BitLocker sans un <abbr title="Trusted Platform Module">TPM</abbr> compatible</em>. Puis <code>gpupdate /force</code>.</p>
+</details>
+<div class="admonition note">
+<p class="admonition-title">BitLocker ≠ Chiffrement de l'appareil</p>
+<p>Depuis Windows 11 24H2, beaucoup de postes récents sortent d'usine avec le <strong>Chiffrement automatique de l'appareil</strong> (<em>Auto‑DE</em>) déjà actif, la clé étant sauvegardée dans le compte Microsoft de l'utilisateur. C'est le même moteur cryptographique, mais sans les options de gestion. Si <code>manage-bde -status</code> indique déjà <code>Protection activée</code> alors que vous n'avez rien fait, c'est ça — et la clé est sur <code>https://aka.ms/myrecoverykey</code>.</p>
+</div>
+<hr />
+<h2 id="partie-1-chiffrer-le-lecteur-systeme-c">Partie 1 — Chiffrer le lecteur système <code>C:</code><a class="headerlink" href="#partie-1-chiffrer-le-lecteur-systeme-c" title="Permanent link">&para;</a></h2>
+<h3 id="etape-1-ouvrir-la-console-bitlocker">Étape 1 : ouvrir la console BitLocker<a class="headerlink" href="#etape-1-ouvrir-la-console-bitlocker" title="Permanent link">&para;</a></h3>
+<p>Menu <strong>Démarrer</strong> → tapez <code>BitLocker</code> → <strong>Gérer BitLocker</strong>.</p>
+<p>Chemins équivalents :</p>
+<ul>
+<li><span class="keys"><kbd class="key-windows">Win</kbd><span>+</span><kbd class="key-r">R</kbd></span> → <code>control /name Microsoft.BitLockerDriveEncryption</code></li>
+<li><em>Panneau de configuration</em> → <em>Système et sécurité</em> → <em>Chiffrement de lecteur BitLocker</em></li>
+<li><em>Paramètres</em> → <em>Confidentialité et sécurité</em> → <em>Chiffrement de lecteur BitLocker</em></li>
+</ul>
+<p>La console liste les volumes en trois familles : <strong>Lecteur du système d'exploitation</strong>, <strong>Lecteurs de données fixes</strong>, <strong>Lecteurs de données amovibles</strong>.</p>
+<div class="admonition failure">
+<p class="admonition-title">L'entrée « Gérer BitLocker » n'existe pas</p>
+<p>Vous êtes sur <strong>Windows 11 Famille</strong>. Vérifiez avec <code>winver</code>. Seule une mise à niveau vers l'édition Pro débloque BitLocker.</p>
+</div>
+<h3 id="etape-2-lancer-lassistant">Étape 2 : lancer l'assistant<a class="headerlink" href="#etape-2-lancer-lassistant" title="Permanent link">&para;</a></h3>
+<p>Sous <strong>Lecteur du système d'exploitation (C:)</strong>, cliquez sur <strong>Activer BitLocker</strong>. Windows contrôle le <abbr title="Trusted Platform Module">TPM</abbr>, l'espace disque et la présence de la partition système, puis démarre l'assistant.</p>
+<h3 id="etape-3-sauvegarder-la-cle-de-recuperation">Étape 3 : sauvegarder la clé de récupération ⚠️<a class="headerlink" href="#etape-3-sauvegarder-la-cle-de-recuperation" title="Permanent link">&para;</a></h3>
+<p>L'assistant propose plusieurs destinations. <strong>C'est l'étape la plus importante du tutoriel.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Option proposée</th>
+<th>Usage recommandé</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Enregistrer dans votre compte Microsoft</strong></td>
+<td>Poste personnel — récupérable depuis n'importe quel navigateur</td>
+</tr>
+<tr>
+<td><strong>Enregistrer sur une clé USB</strong></td>
+<td>Poste hors domaine, lab, machine isolée</td>
+</tr>
+<tr>
+<td><strong>Enregistrer dans un fichier</strong></td>
+<td>Fichier <code>.txt</code> déposé sur un <strong>autre</strong> volume, un partage réseau ou un coffre de mots de passe</td>
+</tr>
+<tr>
+<td><strong>Imprimer la clé de récupération</strong></td>
+<td>Archivage papier en coffre — le grand classique en entreprise</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition danger">
+<p class="admonition-title">La règle d'or : jamais sur le volume en cours de chiffrement</p>
+<p>Enregistrer la clé de <code>C:</code> <strong>sur <code>C:</code></strong> revient à laisser la clé de la maison à l'intérieur de la maison. Le jour où le poste réclame la clé, le disque est <strong>verrouillé</strong> : le fichier existe toujours, mais il est illisible. Windows refuse d'ailleurs explicitement cette destination — ne cherchez pas à contourner par un dossier synchronisé qui pointe vers <code>C:</code>.</p>
+<p><strong>Bonne pratique : deux emplacements distincts</strong>, par exemple le compte Microsoft (ou l'AD) <strong>et</strong> une impression / un fichier hors ligne.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">En entreprise</p>
+<p>La clé est normalement <strong>remontée automatiquement</strong> dans <strong>Active Directory (<abbr title="Active Directory Domain Services">AD DS</abbr>)</strong> ou <strong>Microsoft Entra ID / Intune</strong> par stratégie de groupe. Cela évite de dépendre de l'utilisateur — c'est précisément ce qui rend le scénario helpdesk de la partie 4 tenable à l'échelle d'un parc.</p>
+</div>
+<h3 id="etape-4-choisir-letendue-du-chiffrement">Étape 4 : choisir l'étendue du chiffrement<a class="headerlink" href="#etape-4-choisir-letendue-du-chiffrement" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Quand la choisir</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Chiffrer uniquement l'espace disque utilisé</strong></td>
+<td>Poste <strong>neuf</strong> ou fraîchement réinstallé. Rapide (quelques minutes).</td>
+</tr>
+<tr>
+<td><strong>Chiffrer tout le lecteur</strong></td>
+<td>Poste <strong>déjà utilisé</strong>. Plus lent, mais écrase aussi les résidus de fichiers supprimés dans l'espace libre.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Le piège du « espace utilisé » sur un poste ancien</p>
+<p>Un fichier supprimé n'est pas effacé, seulement déréférencé. Sur une machine en service depuis deux ans, l'espace « libre » contient encore des fragments de documents en clair. Sur un poste existant, prenez <strong>Chiffrer tout le lecteur</strong>.</p>
+</div>
+<h3 id="etape-5-choisir-le-mode-de-chiffrement">Étape 5 : choisir le mode de chiffrement<a class="headerlink" href="#etape-5-choisir-le-mode-de-chiffrement" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Algorithme</th>
+<th>À utiliser pour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Nouveau mode de chiffrement</strong></td>
+<td><abbr title="XEX-based Tweaked codebook mode with ciphertext Stealing">XTS</abbr>‑<abbr title="Advanced Encryption Standard">AES</abbr> 128</td>
+<td>Disques <strong>internes</strong> — plus performant et plus robuste</td>
+</tr>
+<tr>
+<td><strong>Mode compatible</strong></td>
+<td><abbr title="Advanced Encryption Standard">AES</abbr>‑CBC 128</td>
+<td>Supports <strong>amovibles</strong> destinés à être lus sur d'anciennes machines</td>
+</tr>
+</tbody>
+</table>
+<p>Pour <code>C:</code>, choisissez <strong>Nouveau mode de chiffrement</strong>.</p>
+<h3 id="etape-6-executer-le-test-systeme">Étape 6 : exécuter le test système<a class="headerlink" href="#etape-6-executer-le-test-systeme" title="Permanent link">&para;</a></h3>
+<p>Cochez <strong>Exécuter le test système BitLocker</strong>, puis <strong>Continuer</strong> et <strong>Redémarrer maintenant</strong>.</p>
+<div class="admonition question">
+<p class="admonition-title">À quoi sert ce test ?</p>
+<p>Avant de chiffrer un seul octet, Windows fait une <strong>répétition générale</strong> : il redémarre et vérifie que le <abbr title="Trusted Platform Module">TPM</abbr> libère bien la clé et que le disque est lisible. Si ce test échoue, BitLocker <strong>annule</strong> l'opération — le disque est encore en clair, donc rien n'est perdu. Sauter ce test, c'est risquer de découvrir un problème de firmware <strong>après</strong> avoir chiffré 200 Go.</p>
+</div>
+<h3 id="etape-7-suivre-lavancement">Étape 7 : suivre l'avancement<a class="headerlink" href="#etape-7-suivre-lavancement" title="Permanent link">&para;</a></h3>
+<p>Au redémarrage, la session s'ouvre normalement et le chiffrement démarre <strong>en tâche de fond</strong>. Vous pouvez travailler pendant ce temps.</p>
+<ul>
+<li>Icône <strong>BitLocker</strong> dans la zone de notification → double‑clic pour la barre de progression.</li>
+<li>Ou en ligne de commande : <code>manage-bde -status C:</code> (voir partie 3).</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Le poste peut être éteint pendant le chiffrement</p>
+<p>L'opération est reprise automatiquement au démarrage suivant. Évitez tout de même une coupure de courant brutale ; sur un portable, laissez‑le sur secteur.</p>
+</div>
+<h3 id="critere-de-validation">Critère de validation<a class="headerlink" href="#critere-de-validation" title="Permanent link">&para;</a></h3>
+<p>Ouvrez l'<strong>Explorateur de fichiers</strong> (<span class="keys"><kbd class="key-windows">Win</kbd><span>+</span><kbd class="key-e">E</kbd></span>) → <strong>Ce PC</strong>, et regardez la vignette du lecteur <code>C:</code> :</p>
+<table>
+<thead>
+<tr>
+<th>Ce que vous voyez sur l'icône</th>
+<th>Signification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Cadenas gris ouvert</strong></td>
+<td>Lecteur chiffré et <strong>déverrouillé</strong> — état normal de <code>C:</code> en session ✅</td>
+</tr>
+<tr>
+<td><strong>Cadenas doré fermé</strong></td>
+<td>Lecteur chiffré et <strong>verrouillé</strong> — il faut un secret pour y accéder</td>
+</tr>
+<tr>
+<td><strong>Cadenas avec un point d'exclamation</strong></td>
+<td>Chiffrement en cours <strong>ou</strong> protection <strong>suspendue</strong> ⚠️</td>
+</tr>
+<tr>
+<td><strong>Aucun cadenas</strong></td>
+<td>Lecteur <strong>non chiffré</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Contrôle en ligne de commande (la référence, sans ambiguïté) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="go">manage-bde -status C:</span>
+</code></pre></div>
+<div class="admonition success">
+<p class="admonition-title">Résultat attendu</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>    État de la conversion :         Complètement chiffré
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    Pourcentage chiffré :           100,0%
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    Méthode de chiffrement :        XTS-AES 128
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    État de la protection :         Protection activée
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    État du verrou :                Déverrouillé
+</code></pre></div>
+Les deux lignes qui comptent sont <strong>Complètement chiffré</strong> et <strong>Protection activée</strong>.</p>
+</div>
+<hr />
+<h2 id="partie-2-securiser-une-cle-usb-avec-bitlocker-to-go">Partie 2 — Sécuriser une clé USB avec BitLocker To Go<a class="headerlink" href="#partie-2-securiser-une-cle-usb-avec-bitlocker-to-go" title="Permanent link">&para;</a></h2>
+<p><strong>BitLocker To Go</strong> est la déclinaison de BitLocker pour les supports amovibles. La grande différence avec <code>C:</code> : il n'y a pas de <abbr title="Trusted Platform Module">TPM</abbr> en face, donc le déverrouillage repose sur un <strong>mot de passe</strong> (ou une carte à puce) — puisque la clé doit pouvoir être lue sur n'importe quel poste.</p>
+<div class="admonition warning">
+<p class="admonition-title">Sauvegardez la clé USB avant de commencer</p>
+<p>Le chiffrement d'un support déjà rempli est possible sans perte, mais toute manipulation sur une clé USB peut mal tourner. Utilisez une <strong>clé de test</strong> vide, comme prévu dans les prérequis.</p>
+</div>
+<h3 id="etape-1-lancer-lassistant-depuis-lexplorateur">Étape 1 : lancer l'assistant depuis l'Explorateur<a class="headerlink" href="#etape-1-lancer-lassistant-depuis-lexplorateur" title="Permanent link">&para;</a></h3>
+<p>Branchez la clé USB, puis dans l'Explorateur : <strong>clic droit</strong> sur le lecteur (ex. <code>E:</code>) → <strong>Afficher plus d'options</strong> → <strong>Activer BitLocker</strong>.</p>
+<div class="admonition note">
+<p class="admonition-title">Le menu contextuel de Windows 11</p>
+<p>Le menu court de Windows 11 masque la plupart des entrées héritées. <strong>Afficher plus d'options</strong> (ou <span class="keys"><kbd class="key-shift">Shift</kbd><span>+</span><kbd class="key-f10">F10</kbd></span>) ouvre le menu complet. Alternative sans menu contextuel : <em>Panneau de configuration</em> → <em>Chiffrement de lecteur BitLocker</em> → section <strong>Lecteurs de données amovibles</strong>.</p>
+</div>
+<h3 id="etape-2-definir-le-mot-de-passe-de-deverrouillage">Étape 2 : définir le mot de passe de déverrouillage<a class="headerlink" href="#etape-2-definir-le-mot-de-passe-de-deverrouillage" title="Permanent link">&para;</a></h3>
+<p>Cochez <strong>Utiliser un mot de passe pour déverrouiller le lecteur</strong> et saisissez‑le deux fois.</p>
+<div class="admonition tip">
+<p class="admonition-title">Choisir un bon mot de passe</p>
+<p>Il sera tapé à la main, souvent sur un poste qui n'est pas le sien. Visez une <strong>phrase de passe</strong> longue et mémorisable plutôt qu'une bouillie de symboles. Et <strong>stockez‑la dans un gestionnaire de mots de passe</strong> — ce n'est pas parce qu'il existe une clé de récupération qu'il faut compter dessus au quotidien.</p>
+</div>
+<h3 id="etape-3-exporter-la-cle-de-recuperation-dans-un-fichier">Étape 3 : exporter la clé de récupération dans un fichier<a class="headerlink" href="#etape-3-exporter-la-cle-de-recuperation-dans-un-fichier" title="Permanent link">&para;</a></h3>
+<p>Choisissez <strong>Enregistrer dans un fichier</strong>, puis une destination qui <strong>n'est pas la clé USB en cours de chiffrement</strong>.</p>
+<p>Windows produit un fichier nommé <code>Clé de récupération BitLocker &lt;ID&gt;.txt</code> contenant :</p>
+<div class="highlight"><span class="filename">Clé de récupération BitLocker 8F3C1A2B.txt</span><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Clé de récupération BitLocker
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>Pour vérifier que la clé de récupération est correcte, comparez le début
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>de l'identificateur ci-dessous avec la valeur affichée sur votre PC.
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>Identificateur :
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    8F3C1A2B-4D5E-4F60-9A7B-1C2D3E4F5A6B
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>Clé de récupération :
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    123456-654321-112233-445566-778899-009988-776655-443322
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Anatomie du fichier — à comprendre maintenant, ça servira en partie 4</p>
+<ul>
+<li>L'<strong>identificateur</strong> commence par <code>8F3C1A2B</code> : ce sont les <strong>8 caractères</strong> que l'écran de récupération affichera.</li>
+<li>La <strong>clé de récupération</strong> est la suite de <strong>48 chiffres</strong>, en 8 blocs de 6.</li>
+<li>Un même parc contient des dizaines de fichiers comme celui‑ci : l'identificateur est ce qui permet de retrouver le bon.</li>
+</ul>
+</div>
+<h3 id="etape-4-etendue-et-mode-de-chiffrement">Étape 4 : étendue et mode de chiffrement<a class="headerlink" href="#etape-4-etendue-et-mode-de-chiffrement" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Étendue</strong> : « espace utilisé » sur une clé neuve, « tout le lecteur » sur une clé ayant déjà servi.</li>
+<li><strong>Mode</strong> : choisissez le <strong>mode compatible</strong> (<abbr title="Advanced Encryption Standard">AES</abbr>‑CBC). Le « nouveau mode » (<abbr title="XEX-based Tweaked codebook mode with ciphertext Stealing">XTS</abbr>‑<abbr title="Advanced Encryption Standard">AES</abbr>) n'est pas lisible par les versions de Windows antérieures à 1511 — pénalisant pour un support nomade.</li>
+</ul>
+<p>Cliquez sur <strong>Démarrer le chiffrement</strong>. Le temps dépend de la taille et de la vitesse du support (comptez plusieurs minutes pour une clé USB 2.0).</p>
+<h3 id="etape-5-test-pratique-de-deverrouillage">Étape 5 : test pratique de déverrouillage<a class="headerlink" href="#etape-5-test-pratique-de-deverrouillage" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Éjectez proprement</strong> la clé (zone de notification → <em>Retirer le périphérique en toute sécurité</em>).</li>
+<li><strong>Rebranchez‑la</strong>.</li>
+<li>Dans l'Explorateur, le lecteur affiche désormais un <strong>cadenas doré fermé</strong> 🔒 et son contenu est inaccessible.</li>
+<li><strong>Double‑cliquez</strong> dessus : Windows ouvre la fenêtre <em>Déverrouiller le lecteur</em>.</li>
+<li>Saisissez le <strong>mot de passe</strong> → <strong>Déverrouiller</strong>.</li>
+<li>Le cadenas passe au <strong>gris ouvert</strong> 🔓 et le contenu apparaît.</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">La case « Déverrouiller automatiquement sur ce PC »</p>
+<p>Pratique sur <strong>votre</strong> poste, dangereuse ailleurs : elle mémorise la clé dans le registre de la machine, et n'importe qui utilisant ce poste ouvrira la clé USB sans mot de passe. À réserver à un poste de confiance. Pour faire le ménage : <code>manage-bde -autounlock -clearallkeys C:</code>.</p>
+</div>
+<h3 id="critere-de-validation_1">Critère de validation<a class="headerlink" href="#critere-de-validation_1" title="Permanent link">&para;</a></h3>
+<p>Sur le lecteur déverrouillé :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="s2">"test BitLocker To Go"</span> <span class="p">|</span> <span class="nb">Out-File</span> <span class="n">E</span><span class="p">:\</span><span class="n">test</span><span class="p">.</span><span class="n">txt</span>   <span class="c"># écriture</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nb">Get-Content</span> <span class="n">E</span><span class="p">:\</span><span class="n">test</span><span class="p">.</span><span class="n">txt</span>                          <span class="c"># lecture</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="nb">Remove-Item</span> <span class="n">E</span><span class="p">:\</span><span class="n">test</span><span class="p">.</span><span class="n">txt</span>                          <span class="c"># nettoyage</span>
+</code></pre></div>
+<div class="admonition success">
+<p class="admonition-title">Résultat attendu</p>
+<p>Le fichier se crée, se relit et se supprime sans erreur : le volume est bien monté en lecture/écriture. Vérification de l'état :</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="go">manage-bde -status E:</span>
+</code></pre></div>
+→ <code>État de la conversion : Complètement chiffré</code>, <code>État du verrou : Déverrouillé</code>, <code>Méthode de chiffrement : AES-CBC 128</code>.</p>
+<p>Le chiffrement est <strong>transparent</strong> : les applications lisent et écrivent normalement, le déchiffrement se fait à la volée en mémoire.</p>
+</div>
+<hr />
+<h2 id="partie-3-administration-en-ligne-de-commande-avec-manage-bde">Partie 3 — Administration en ligne de commande avec <code>manage-bde</code><a class="headerlink" href="#partie-3-administration-en-ligne-de-commande-avec-manage-bde" title="Permanent link">&para;</a></h2>
+<p>L'interface graphique convient au poste unitaire. Dès qu'il s'agit de scripter, de dépanner à distance ou de documenter un incident, <code>manage-bde</code> est l'outil de référence — il est présent sur <strong>toutes</strong> les installations Windows, sans rien à installer.</p>
+<h3 id="ouvrir-une-invite-de-commandes-en-administrateur">Ouvrir une invite de commandes en administrateur<a class="headerlink" href="#ouvrir-une-invite-de-commandes-en-administrateur" title="Permanent link">&para;</a></h3>
+<div class="admonition danger">
+<p class="admonition-title">Sans élévation, rien ne fonctionne</p>
+<p><code>manage-bde</code> en mode utilisateur renvoie <code>ERREUR : Accès refusé</code> ou <code>FVE_E_NOT_ADMIN</code>. Vérifiez que le titre de la fenêtre contient bien <strong>Administrateur</strong>.</p>
+</div>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Invite de commandes</label><label for="__tabbed_1_2">PowerShell</label><label for="__tabbed_1_3">Raccourci clavier</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><span class="keys"><kbd class="key-windows">Win</kbd><span>+</span><kbd class="key-x">X</kbd></span> → <strong>Terminal (Admin)</strong> → onglet <strong>Invite de commandes</strong>.</p>
+<p>Ou : Démarrer → <code>cmd</code> → clic droit sur <em>Invite de commandes</em> → <strong>Exécuter en tant qu'administrateur</strong>.</p>
+</div>
+<div class="tabbed-block">
+<p><span class="keys"><kbd class="key-windows">Win</kbd><span>+</span><kbd class="key-x">X</kbd></span> → <strong>Terminal (Admin)</strong> (PowerShell est l'onglet par défaut).</p>
+<p><code>manage-bde</code> fonctionne à l'identique dans PowerShell, qui dispose en plus de son propre module <code>BitLocker</code>.</p>
+</div>
+<div class="tabbed-block">
+<p><span class="keys"><kbd class="key-windows">Win</kbd><span>+</span><kbd class="key-r">R</kbd></span> → tapez <code>cmd</code> → validez avec <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-shift">Shift</kbd><span>+</span><kbd class="key-enter">Enter</kbd></span> (élévation directe).</p>
+</div>
+</div>
+</div>
+<hr />
+<h3 id="1-manage-bde-status-letat-des-lieux">1. <code>manage-bde -status</code> — l'état des lieux<a class="headerlink" href="#1-manage-bde-status-letat-des-lieux" title="Permanent link">&para;</a></h3>
+<div class="highlight"><span class="filename">Consulter l&#x27;état du lecteur système</span><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="go">manage-bde -status C:</span>
+</code></pre></div>
+<p>Sans lettre de lecteur, la commande balaie <strong>tous</strong> les volumes de la machine — le réflexe à avoir en début de diagnostic.</p>
+<div class="highlight"><span class="filename">Sortie type (chiffrement en cours)</span><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Chiffrement de lecteur BitLocker : outil de configuration version 10.0.26100
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>Copyright (C) 2013 Microsoft Corporation. Tous droits réservés.
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>Volume C: [Windows]
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>[Volume du système d'exploitation]
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    Taille :                        237,25 Go
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    Version de BitLocker :          2.0
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>    État de la conversion :         Chiffrement en cours
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>    Pourcentage chiffré :           37,4%
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>    Méthode de chiffrement :        XTS-AES 128
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>    État de la protection :         Protection désactivée
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>    État du verrou :                Déverrouillé
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>    Champ d'identification :        Inconnu
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>    Protecteurs de clé :
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>        TPM
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>        Mot de passe numérique
+</code></pre></div>
+<p><strong>Comment lire cette sortie :</strong></p>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Interprétation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>État de la conversion</strong></td>
+<td>Où en est l'opération : <code>Complètement déchiffré</code>, <code>Chiffrement en cours</code>, <code>Complètement chiffré</code>, <code>Déchiffrement en cours</code>.</td>
+</tr>
+<tr>
+<td><strong>Pourcentage chiffré</strong></td>
+<td>Avancement. Utile pour estimer le temps restant.</td>
+</tr>
+<tr>
+<td><strong>Méthode de chiffrement</strong></td>
+<td><code>XTS-AES 128</code> (défaut interne), <code>AES-CBC 128</code> (mode compatible / amovible).</td>
+</tr>
+<tr>
+<td><strong>État de la protection</strong></td>
+<td><strong>Le champ le plus important.</strong> <code>Protection activée</code> = les protecteurs sont réellement appliqués. <code>Protection désactivée</code> = la clé est disponible <strong>en clair</strong> sur le disque.</td>
+</tr>
+<tr>
+<td><strong>État du verrou</strong></td>
+<td><code>Déverrouillé</code> = le volume est lisible maintenant. <code>Verrouillé</code> = il faut fournir un secret.</td>
+</tr>
+<tr>
+<td><strong>Protecteurs de clé</strong></td>
+<td>La liste des moyens d'ouvrir le volume : <code>TPM</code>, <code>Mot de passe numérique</code> (= la clé de récupération), <code>Mot de passe</code>, <code>Clé externe</code>, <code>TPM+PIN</code>…</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi « Protection désactivée » alors que le chiffrement tourne ?</p>
+<p>Ce n'est <strong>pas</strong> une anomalie. Tant que le chiffrement n'est pas terminé, BitLocker conserve la clé accessible pour pouvoir reprendre le travail après un redémarrage. La protection ne s'arme (<em>clé claire</em> retirée) qu'à <strong>100 %</strong>. Attendez la fin avant de vous inquiéter.</p>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">Le piège de l'audit</p>
+<p><code>Complètement chiffré</code> <strong>+</strong> <code>Protection désactivée</code> = disque chiffré mais <strong>ouvert à quiconque</strong>. C'est l'état d'une protection <strong>suspendue</strong> (voir ci‑dessous) qu'on aurait oublié de reprendre. Sur un audit de parc, c'est exactement ce couple qu'il faut traquer.</p>
+</div>
+<hr />
+<h3 id="2-manage-bde-protectors-disable-suspendre-temporairement">2. <code>manage-bde -protectors -disable</code> — suspendre temporairement<a class="headerlink" href="#2-manage-bde-protectors-disable-suspendre-temporairement" title="Permanent link">&para;</a></h3>
+<div class="highlight"><span class="filename">Suspendre la protection sur C:</span><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="go">manage-bde -protectors -disable C:</span>
+</code></pre></div>
+<p><strong>Cas d'usage typique :</strong> mise à jour du <strong>BIOS/<abbr title="Unified Extensible Firmware Interface">UEFI</abbr></strong>, changement de configuration Secure Boot, remplacement d'un composant, déploiement d'une image ou d'un correctif qui touche au démarrage.</p>
+<div class="admonition question">
+<p class="admonition-title">Que fait exactement cette commande ?</p>
+<p>Elle <strong>ne déchiffre rien</strong> et <strong>ne supprime aucun protecteur</strong>. Elle ajoute simplement une <strong>clé en clair</strong> (<em>clear key</em>) sur le volume, ce qui permet à Windows de démarrer sans consulter le <abbr title="Trusted Platform Module">TPM</abbr>. Les nouvelles données restent chiffrées.</p>
+<p>Pourquoi c'est indispensable avant une mise à jour de firmware ? Parce que flasher le BIOS <strong>modifie les mesures du <abbr title="Trusted Platform Module">TPM</abbr></strong>. Sans suspension, le <abbr title="Trusted Platform Module">TPM</abbr> refuserait de libérer la clé au redémarrage suivant et le poste réclamerait ses 48 chiffres — le fameux « l'utilisateur a mis à jour son BIOS et il est bloqué ». La suspension revient à prévenir BitLocker : <em>« attends‑toi à un changement, ne panique pas »</em>.</p>
+</div>
+<p>Contrôler le nombre de redémarrages avant reprise automatique :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="go">manage-bde -protectors -disable C: -RebootCount 3</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Valeur</th>
+<th>Comportement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>(omise)</em></td>
+<td>Protection reprise au <strong>prochain</strong> démarrage (équivaut à <code>1</code>).</td>
+</tr>
+<tr>
+<td><code>1</code> à <code>15</code></td>
+<td>Nombre de redémarrages avant reprise automatique. <code>3</code> couvre confortablement un flash de BIOS.</td>
+</tr>
+<tr>
+<td><code>0</code></td>
+<td>Suspension <strong>indéfinie</strong> jusqu'à un <code>-enable</code> explicite. ⚠️</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition danger">
+<p class="admonition-title"><code>-RebootCount 0</code> : à manier avec précaution</p>
+<p>Le poste reste chiffré mais <strong>sans protection</strong>, indéfiniment, même s'il est volé. À réserver aux opérations longues et supervisées — et à ne jamais laisser traîner. Le compteur automatique est un excellent filet de sécurité : privilégiez‑le.</p>
+</div>
+<p>Vérification immédiate :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="go">manage-bde -status C:</span>
+</code></pre></div>
+<div class="admonition success">
+<p class="admonition-title">Résultat attendu après suspension</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>    État de la conversion :         Complètement chiffré
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>    État de la protection :         Protection désactivée
+</code></pre></div>
+Dans l'Explorateur, l'icône du lecteur affiche un <strong>cadenas avec un point d'exclamation</strong>. Un protecteur supplémentaire de type <em>clé claire</em> (<strong>Clear Key</strong>) apparaît dans <code>-protectors -get</code>.</p>
+</div>
+<hr />
+<h3 id="3-manage-bde-protectors-enable-reprendre-la-protection">3. <code>manage-bde -protectors -enable</code> — reprendre la protection<a class="headerlink" href="#3-manage-bde-protectors-enable-reprendre-la-protection" title="Permanent link">&para;</a></h3>
+<div class="highlight"><span class="filename">Réactiver la protection</span><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="go">manage-bde -protectors -enable C:</span>
+</code></pre></div>
+<p>À exécuter <strong>immédiatement après</strong> l'opération de maintenance. La commande retire la clé en clair et réarme l'ensemble des protecteurs (<abbr title="Trusted Platform Module">TPM</abbr>, PIN, mot de passe numérique).</p>
+<div class="admonition tip">
+<p class="admonition-title">Le réflexe à prendre</p>
+<p><code>-disable</code> et <code>-enable</code> vont <strong>par paire</strong>, dans la même intervention. Beaucoup d'incidents de sécurité en parc viennent d'un <code>-disable</code> posé « le temps de tester » et jamais repris. Si vous scriptez une maintenance, mettez le <code>-enable</code> dans le bloc de fin, y compris en cas d'erreur.</p>
+</div>
+<p>Contrôle :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="go">manage-bde -status C: | findstr /C:"protection"</span>
+</code></pre></div>
+<div class="admonition success">
+<p class="admonition-title">Résultat attendu</p>
+<p><code>État de la protection : Protection activée</code>, et l'icône de <code>C:</code> redevient un <strong>cadenas gris ouvert</strong>.</p>
+</div>
+<hr />
+<h3 id="4-manage-bde-protectors-get-extraire-la-cle-de-recuperation">4. <code>manage-bde -protectors -get</code> — extraire la clé de récupération<a class="headerlink" href="#4-manage-bde-protectors-get-extraire-la-cle-de-recuperation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><span class="filename">Lister tous les protecteurs de C:</span><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="go">manage-bde -protectors -get C:</span>
+</code></pre></div>
+<div class="highlight"><span class="filename">Sortie type</span><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>Volume C: [Windows]
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>Tous les protecteurs de clé
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>    TPM :
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>      ID : {A1B2C3D4-E5F6-4789-A0B1-C2D3E4F5A6B7}
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>      Profil de validation PCR :
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>        7, 11
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>    Mot de passe numérique :
+<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a>      ID : {8F3C1A2B-4D5E-4F60-9A7B-1C2D3E4F5A6B}
+<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>      Mot de passe :
+<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>        123456-654321-112233-445566-778899-009988-776655-443322
+</code></pre></div>
+<p><strong>Ce qu'il faut retenir de cette sortie :</strong></p>
+<ul>
+<li><code>Mot de passe numérique</code> est le nom interne de la <strong>clé de récupération</strong>.</li>
+<li>Son <strong>ID</strong> commence par <code>8F3C1A2B</code> : ce sont les 8 caractères que l'écran de récupération affiche.</li>
+<li><code>Mot de passe :</code> est la clé à <strong>48 chiffres</strong> proprement dite.</li>
+</ul>
+<p>Filtrer pour n'obtenir que la clé de récupération :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="go">manage-bde -protectors -get C: -Type RecoveryPassword</span>
+</code></pre></div>
+<p>Exporter vers un fichier — <strong>sur un autre volume que celui concerné</strong> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="go">manage-bde -protectors -get C: -Type RecoveryPassword &gt; E:\cle-recuperation-PC01.txt</span>
+</code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">Une clé de récupération est un secret de niveau maximal</p>
+<p>Quiconque possède ces 48 chiffres <strong>et</strong> un accès physique au disque lit toutes les données. Ne la laissez pas dans <code>C:\temp</code>, ne l'envoyez pas par messagerie instantanée, ne la collez pas dans un ticket public. Destination correcte : coffre‑fort de mots de passe, <abbr title="Active Directory Domain Services">AD DS</abbr> / Entra ID, ou papier en armoire forte.</p>
+</div>
+<p>Sauvegarder la clé dans l'annuaire (poste joint au domaine) :</p>
+<div class="highlight"><span class="filename">Vers Active Directory</span><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="go">manage-bde -protectors -adbackup C: -id {8F3C1A2B-4D5E-4F60-9A7B-1C2D3E4F5A6B}</span>
+</code></pre></div>
+<div class="highlight"><span class="filename">Vers Microsoft Entra ID</span><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="go">manage-bde -protectors -aadbackup C: -id {8F3C1A2B-4D5E-4F60-9A7B-1C2D3E4F5A6B}</span>
+</code></pre></div>
+<hr />
+<h3 id="les-equivalents-powershell">Les équivalents PowerShell<a class="headerlink" href="#les-equivalents-powershell" title="Permanent link">&para;</a></h3>
+<p>Le module <code>BitLocker</code> renvoie des <strong>objets</strong> exploitables en script, là où <code>manage-bde</code> produit du texte à parser.</p>
+<table>
+<thead>
+<tr>
+<th>Objectif</th>
+<th><code>manage-bde</code></th>
+<th>PowerShell</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>État d'un volume</td>
+<td><code>manage-bde -status C:</code></td>
+<td><code>Get-BitLockerVolume -MountPoint C:</code></td>
+</tr>
+<tr>
+<td>Suspendre</td>
+<td><code>manage-bde -protectors -disable C: -rc 3</code></td>
+<td><code>Suspend-BitLocker -MountPoint C: -RebootCount 3</code></td>
+</tr>
+<tr>
+<td>Reprendre</td>
+<td><code>manage-bde -protectors -enable C:</code></td>
+<td><code>Resume-BitLocker -MountPoint C:</code></td>
+</tr>
+<tr>
+<td>Lister les protecteurs</td>
+<td><code>manage-bde -protectors -get C:</code></td>
+<td><code>(Get-BitLockerVolume -MountPoint C:).KeyProtector</code></td>
+</tr>
+<tr>
+<td>Déverrouiller</td>
+<td><code>manage-bde -unlock E: -Password</code></td>
+<td><code>Unlock-BitLocker -MountPoint E: -Password (Read-Host -AsSecureString)</code></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><span class="filename">Audit rapide de tous les volumes</span><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="nb">Get-BitLockerVolume</span> <span class="p">|</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>    <span class="nb">Select-Object</span> <span class="n">MountPoint</span><span class="p">,</span> <span class="n">VolumeStatus</span><span class="p">,</span> <span class="n">ProtectionStatus</span><span class="p">,</span> <span class="n">EncryptionPercentage</span><span class="p">,</span> <span class="n">EncryptionMethod</span> <span class="p">|</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>    <span class="nb">Format-Table</span> <span class="n">-AutoSize</span>
+</code></pre></div>
+<div class="highlight"><span class="filename">Extraire uniquement les clés de récupération</span><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="nb">Get-BitLockerVolume</span> <span class="p">|</span> <span class="k">ForEach</span><span class="n">-Object</span> <span class="p">{</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>    <span class="nv">$_</span><span class="p">.</span><span class="n">KeyProtector</span> <span class="p">|</span>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>        <span class="nb">Where-Object</span> <span class="n">KeyProtectorType</span> <span class="o">-eq</span> <span class="s1">'RecoveryPassword'</span> <span class="p">|</span>
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>        <span class="nb">Select-Object</span> <span class="p">@{</span><span class="n">n</span><span class="p">=</span><span class="s1">'Lecteur'</span><span class="p">;</span><span class="n">e</span><span class="p">={</span><span class="nv">$_</span><span class="p">.</span><span class="n">MountPoint</span><span class="p">}},</span> <span class="n">KeyProtectorId</span><span class="p">,</span> <span class="n">RecoveryPassword</span>
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="partie-4-scenario-helpdesk-debloquer-un-utilisateur-sur-lecran-de-recuperation">Partie 4 — Scénario helpdesk : débloquer un utilisateur sur l'écran de récupération<a class="headerlink" href="#partie-4-scenario-helpdesk-debloquer-un-utilisateur-sur-lecran-de-recuperation" title="Permanent link">&para;</a></h2>
+<h3 id="mise-en-situation">Mise en situation<a class="headerlink" href="#mise-en-situation" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p><em>Lundi matin, 8 h 42. Un utilisateur appelle : « Mon PC ne démarre plus, il y a un écran bleu qui me demande une clé de récupération. Je n'ai jamais vu ça. »</em></p>
+</blockquote>
+<p>Le poste s'est arrêté <strong>avant</strong> Windows, sur l'écran <strong>Récupération BitLocker</strong>. Il affiche un pavé de texte, un champ de saisie, et un <strong>ID de la clé de récupération</strong>.</p>
+<div class="admonition note">
+<p class="admonition-title">Bleu ou noir ?</p>
+<p>Historiquement bleu, cet écran peut apparaître <strong>noir</strong> selon la version de Windows 11 et la charte de l'OEM. Le contenu, lui, ne change pas : titre <em>Récupération BitLocker</em>, ID de clé, champ de saisie. Ce n'est <strong>pas</strong> un écran bleu d'erreur (BSOD) : la machine n'a pas planté, elle demande une autorisation.</p>
+</div>
+<h3 id="comprendre-la-cause-avant-de-raccrocher">Comprendre la cause avant de raccrocher<a class="headerlink" href="#comprendre-la-cause-avant-de-raccrocher" title="Permanent link">&para;</a></h3>
+<p>BitLocker ne réclame la clé de récupération que si l'état de démarrage a changé. Les causes fréquentes :</p>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Fréquence</th>
+<th>Indice à demander à l'utilisateur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mise à jour du <strong>BIOS/<abbr title="Unified Extensible Firmware Interface">UEFI</abbr></strong> sans suspension préalable</td>
+<td>⭐⭐⭐</td>
+<td>« Une fenêtre de mise à jour Dell/HP/Lenovo hier ? »</td>
+</tr>
+<tr>
+<td><strong>Secure Boot</strong> désactivé ou ordre de démarrage modifié</td>
+<td>⭐⭐⭐</td>
+<td>« Vous êtes allé dans le BIOS ? Branché une clé USB bootable ? »</td>
+</tr>
+<tr>
+<td><strong>Périphérique</strong> ajouté/retiré (station d'accueil, carte, disque)</td>
+<td>⭐⭐</td>
+<td>« Un nouveau matériel branché ? »</td>
+</tr>
+<tr>
+<td>Mise à jour Windows touchant au démarrage</td>
+<td>⭐⭐</td>
+<td>« Le PC a redémarré tout seul cette nuit ? »</td>
+</tr>
+<tr>
+<td><strong><abbr title="Trusted Platform Module">TPM</abbr> réinitialisé</strong> ou pile CMOS morte</td>
+<td>⭐</td>
+<td>« L'heure du PC est‑elle correcte ? »</td>
+</tr>
+<tr>
+<td>Disque déplacé dans une <strong>autre machine</strong></td>
+<td>⭐</td>
+<td>À croiser avec l'inventaire — ou avec un vol</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Un doute légitime avant de donner la clé</p>
+<p>Si le contexte ne colle pas (poste déclaré volé, appel d'un numéro inconnu, utilisateur qui ne sait pas dire ce qui a changé), <strong>vérifiez l'identité de l'appelant</strong> avant de communiquer 48 chiffres. Une clé de récupération dictée au téléphone à la mauvaise personne annule tout le bénéfice du chiffrement.</p>
+</div>
+<hr />
+<h3 id="procedure-de-support-niveau-1">Procédure de support niveau 1<a class="headerlink" href="#procedure-de-support-niveau-1" title="Permanent link">&para;</a></h3>
+<h4 id="etape-1-faire-lire-lid-de-la-cle-de-recuperation">Étape 1 : faire lire l'ID de la clé de récupération<a class="headerlink" href="#etape-1-faire-lire-lid-de-la-cle-de-recuperation" title="Permanent link">&para;</a></h4>
+<p>L'écran affiche une ligne du type :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>ID de la clé de récupération : 8F3C1A2B
+</code></pre></div>
+<p>Formulation à utiliser au téléphone :</p>
+<blockquote>
+<p><em>« Sur l'écran, cherchez la ligne "ID de la clé de récupération". Lisez‑moi les 8 caractères, lettre par lettre — dites‑moi "B comme Bernard" pour les lettres, s'il vous plaît. »</em></p>
+</blockquote>
+<div class="admonition tip">
+<p class="admonition-title">Astuce terrain</p>
+<p>Demandez plutôt une <strong>photo de l'écran</strong> envoyée par SMS ou messagerie. C'est plus rapide et cela élimine les erreurs de lecture entre <code>0</code>/<code>O</code>, <code>1</code>/<code>I</code>, <code>B</code>/<code>8</code>. Certaines versions récentes affichent aussi un <strong>QR code</strong> pointant vers la page d'aide Microsoft.</p>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">Ne cherchez pas à saisir cet ID</p>
+<p>Encore une fois : l'ID <strong>n'ouvre rien</strong>. C'est une référence de catalogue, pas un secret.</p>
+</div>
+<h4 id="etape-2-retrouver-la-cle-correspondante">Étape 2 : retrouver la clé correspondante<a class="headerlink" href="#etape-2-retrouver-la-cle-correspondante" title="Permanent link">&para;</a></h4>
+<p>Cherchez, dans l'ordre de ce dont vous disposez :</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:4"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><input id="__tabbed_2_4" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Fichier / document de sauvegarde</label><label for="__tabbed_2_2">Active Directory</label><label for="__tabbed_2_3">Intune / Entra ID</label><label for="__tabbed_2_4">Compte Microsoft (poste personnel)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Les fichiers exportés s'appellent <code>Clé de récupération BitLocker &lt;ID&gt;.txt</code>. Cherchez <code>8F3C1A2B</code> dans le nom <strong>ou</strong> dans le contenu :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="nb">Select-String</span> <span class="n">-Path</span> <span class="s2">"\\serveur\cles-bitlocker\*.txt"</span> <span class="n">-Pattern</span> <span class="s2">"8F3C1A2B"</span> <span class="n">-Context</span> <span class="n">0</span><span class="p">,</span><span class="n">4</span>
+</code></pre></div>
+<p>Contrôlez que le bloc <code>Identificateur :</code> commence bien par les 8 caractères lus par l'utilisateur.</p>
+</div>
+<div class="tabbed-block">
+<p><em>Utilisateurs et ordinateurs Active Directory</em> → activez <em>Fonctionnalités avancées</em> → propriétés de l'objet ordinateur → onglet <strong>Récupération BitLocker</strong>.</p>
+<p>Ou en PowerShell :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="nb">Get-ADObject</span> <span class="n">-Filter</span> <span class="s2">"objectClass -eq 'msFVE-RecoveryInformation'"</span> <span class="p">`</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>    <span class="n">-SearchBase</span> <span class="p">(</span><span class="nb">Get-ADComputer</span> <span class="n">PC01</span><span class="p">).</span><span class="n">DistinguishedName</span> <span class="p">`</span>
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>    <span class="n">-Properties</span> <span class="n">msFVE-RecoveryPassword</span><span class="p">,</span> <span class="n">Name</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p><em>Microsoft Intune</em> → <em>Appareils</em> → sélectionner le poste → <strong>Clés de récupération</strong>.</p>
+<p>Côté portail utilisateur : <code>https://myaccount.microsoft.com/device-list</code>.</p>
+</div>
+<div class="tabbed-block">
+<p>Depuis un autre appareil : <code>https://aka.ms/myrecoverykey</code>. Les clés y sont listées <strong>avec leur ID</strong> — d'où l'intérêt de l'étape 1.</p>
+</div>
+</div>
+</div>
+<div class="admonition failure">
+<p class="admonition-title">Aucune clé ne correspond</p>
+<p>Si l'ID affiché n'existe nulle part, la clé n'a <strong>jamais</strong> été sauvegardée (chiffrement activé manuellement sans dépôt, ou hors périmètre de gestion). Il n'existe alors <strong>aucune solution technique</strong> : les données sont perdues. La seule issue est la réinstallation du poste après effacement. Faites remonter l'incident — c'est un défaut de procédure, pas un défaut de l'utilisateur.</p>
+</div>
+<h4 id="etape-3-guider-la-saisie-au-clavier">Étape 3 : guider la saisie au clavier<a class="headerlink" href="#etape-3-guider-la-saisie-au-clavier" title="Permanent link">&para;</a></h4>
+<p>C'est ici que le support de niveau 1 gagne (ou perd) dix minutes.</p>
+<div class="admonition warning">
+<p class="admonition-title">Les quatre pièges classiques du clavier en pré‑démarrage</p>
+<ol>
+<li><strong>Le pavé numérique ne répond pas.</strong> L'environnement de pré‑démarrage n'active pas toujours le <strong>Verr. Num.</strong> Faites appuyer sur <span class="keys"><kbd class="key-num-lock">Num Lock</kbd></span> (le voyant doit s'allumer) ou, plus sûr, faites utiliser la <strong>rangée de chiffres au‑dessus des lettres</strong>.</li>
+<li><strong>Sur certains firmwares, seules les touches <span class="keys"><kbd class="key-f1">F1</kbd></span> à <span class="keys"><kbd class="key-f10">F10</kbd></span> fonctionnent</strong> : <span class="keys"><kbd class="key-f1">F1</kbd></span> à <span class="keys"><kbd class="key-f9">F9</kbd></span> pour les chiffres <code>1</code> à <code>9</code>, et <span class="keys"><kbd class="key-f10">F10</kbd></span> pour le <code>0</code>. C'est un vestige des claviers pré‑boot ; à tenter si aucune touche numérique ne donne rien.</li>
+<li><strong>Ne pas taper les tirets.</strong> La clé est composée <strong>uniquement de chiffres</strong>. Le curseur saute automatiquement au bloc suivant tous les 6 chiffres.</li>
+<li><strong>La disposition du clavier est souvent QWERTY/US</strong>, mais comme la clé ne contient que des chiffres, cela n'a d'impact que sur la rangée du haut d'un clavier AZERTY — d'où l'intérêt du pavé numérique une fois <span class="keys"><kbd class="key-num-lock">Num Lock</kbd></span> activé.</li>
+</ol>
+<p>Dictée : annoncez <strong>par blocs de 6 chiffres</strong>, en marquant une pause entre chaque bloc, et faites relire le bloc avant de passer au suivant.</p>
+</div>
+<p>Une fois les 48 chiffres saisis : <span class="keys"><kbd class="key-enter">Enter</kbd></span>.</p>
+<h4 id="etape-4-deverrouillage-et-retour-au-bureau">Étape 4 : déverrouillage et retour au bureau<a class="headerlink" href="#etape-4-deverrouillage-et-retour-au-bureau" title="Permanent link">&para;</a></h4>
+<p>Le poste poursuit son démarrage et arrive à l'écran d'ouverture de session Windows. L'utilisateur saisit son mot de passe de session <strong>habituel</strong> — celui‑ci n'a jamais changé.</p>
+<div class="admonition success">
+<p class="admonition-title">Critère de réussite</p>
+<p>Retour au bureau Windows. Contrôle final en invite de commandes administrateur :</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="go">manage-bde -status C:</span>
+</code></pre></div>
+→ <code>État de la protection : Protection activée</code> et <code>État du verrou : Déverrouillé</code>. Le poste est protégé <strong>et</strong> utilisable.</p>
+</div>
+<h4 id="etape-5-ne-pas-sarreter-la">Étape 5 : ne pas s'arrêter là<a class="headerlink" href="#etape-5-ne-pas-sarreter-la" title="Permanent link">&para;</a></h4>
+<p>Un déblocage n'est pas une résolution : si la cause persiste, l'écran reviendra au prochain démarrage.</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Identifier la cause racine</strong> (journal <em>Observateur d'événements</em> → <code>Journaux des applications et des services</code> → <code>Microsoft</code> → <code>Windows</code> → <code>BitLocker-API</code> → <strong>Management</strong>).</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Terminer proprement l'opération</strong> qui a déclenché la récupération (finir le flash BIOS, réactiver Secure Boot, remettre l'ordre de démarrage d'origine).</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Vérifier que la clé est bien sauvegardée</strong> et, si ce n'était pas le cas, la déposer dans le coffre : <code>manage-bde -protectors -adbackup C: -id {…}</code>.</li>
+<li class="task-list-item">
+<p><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Régénérer une clé de récupération</strong> si les 48 chiffres ont été dictés par téléphone ou transmis par un canal non maîtrisé :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="go">manage-bde -protectors -delete C: -type RecoveryPassword</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="go">manage-bde -protectors -add C: -RecoveryPassword</span>
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a><span class="go">manage-bde -protectors -get C: -type RecoveryPassword</span>
+</code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">Ordre impératif</p>
+<p>Générez et <strong>notez</strong> la nouvelle clé avant de considérer l'ancienne comme périmée. Ne supprimez jamais <strong>tous</strong> les protecteurs d'un volume : à la suppression du dernier, BitLocker se désactive et le volume se déchiffre intégralement.</p>
+</div>
+</li>
+<li class="task-list-item">
+<p><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Documenter le ticket</strong> avec l'ID de clé (jamais la clé elle‑même) et la cause identifiée.</p>
+</li>
+</ul>
+<hr />
+<h2 id="verification-globale">Vérification globale<a class="headerlink" href="#verification-globale" title="Permanent link">&para;</a></h2>
+<p>Checklist de fin d'atelier :</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <code>C:</code> chiffré : <code>manage-bde -status C:</code> → <code>Complètement chiffré</code> + <code>Protection activée</code>.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Clé de récupération de <code>C:</code> sauvegardée <strong>hors du disque</strong> et retrouvable par son ID.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Clé USB chiffrée avec BitLocker To Go, cadenas doré fermé après reconnexion.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Déverrouillage de la clé USB par mot de passe, lecture <strong>et</strong> écriture validées.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Cycle <code>-protectors -disable</code> → <code>-enable</code> maîtrisé, avec contrôle de l'état à chaque étape.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Extraction de l'ID et du mot de passe de récupération avec <code>-protectors -get</code>.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Correspondance comprise entre les <strong>8 caractères</strong> de l'écran de récupération et l'<code>Identificateur</code> du fichier de sauvegarde.</li>
+</ul>
+<hr />
+<h2 id="aide-memoire">Aide-mémoire<a class="headerlink" href="#aide-memoire" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Commande</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>manage-bde -status</code></td>
+<td>État de <strong>tous</strong> les volumes</td>
+</tr>
+<tr>
+<td><code>manage-bde -status C:</code></td>
+<td>État d'un volume précis</td>
+</tr>
+<tr>
+<td><code>manage-bde -on C: -RecoveryPassword</code></td>
+<td>Activer BitLocker + générer une clé de récupération</td>
+</tr>
+<tr>
+<td><code>manage-bde -on E: -Password</code></td>
+<td>Activer BitLocker To Go avec mot de passe</td>
+</tr>
+<tr>
+<td><code>manage-bde -off C:</code></td>
+<td><strong>Déchiffrer</strong> le volume et désactiver BitLocker (long)</td>
+</tr>
+<tr>
+<td><code>manage-bde -pause C:</code> / <code>-resume C:</code></td>
+<td>Mettre en pause / reprendre la <strong>conversion</strong> en cours</td>
+</tr>
+<tr>
+<td><code>manage-bde -protectors -get C:</code></td>
+<td>Lister tous les protecteurs (ID + clé de récupération)</td>
+</tr>
+<tr>
+<td><code>manage-bde -protectors -get C: -Type RecoveryPassword</code></td>
+<td>N'afficher que la clé de récupération</td>
+</tr>
+<tr>
+<td><code>manage-bde -protectors -disable C: -rc 3</code></td>
+<td><strong>Suspendre</strong> la protection pour 3 redémarrages</td>
+</tr>
+<tr>
+<td><code>manage-bde -protectors -enable C:</code></td>
+<td><strong>Reprendre</strong> la protection</td>
+</tr>
+<tr>
+<td><code>manage-bde -protectors -add C: -RecoveryPassword</code></td>
+<td>Ajouter une nouvelle clé de récupération</td>
+</tr>
+<tr>
+<td><code>manage-bde -protectors -add C: -TPMAndPIN</code></td>
+<td>Exiger un PIN au démarrage (en plus du <abbr title="Trusted Platform Module">TPM</abbr>)</td>
+</tr>
+<tr>
+<td><code>manage-bde -protectors -adbackup C: -id {GUID}</code></td>
+<td>Sauvegarder la clé dans Active Directory</td>
+</tr>
+<tr>
+<td><code>manage-bde -unlock E: -RecoveryPassword &lt;48 chiffres&gt;</code></td>
+<td>Déverrouiller avec la clé de récupération</td>
+</tr>
+<tr>
+<td><code>manage-bde -unlock E: -Password</code></td>
+<td>Déverrouiller par mot de passe (saisie interactive)</td>
+</tr>
+<tr>
+<td><code>manage-bde -lock E:</code></td>
+<td>Reverrouiller un volume de données</td>
+</tr>
+<tr>
+<td><code>manage-bde -autounlock -clearallkeys C:</code></td>
+<td>Supprimer les déverrouillages automatiques mémorisés</td>
+</tr>
+<tr>
+<td><code>manage-bde -changepin C:</code></td>
+<td>Modifier le PIN de démarrage</td>
+</tr>
+<tr>
+<td><code>repair-bde &lt;source&gt; &lt;cible&gt; -rp &lt;48 chiffres&gt;</code></td>
+<td>Récupérer les données d'un volume endommagé</td>
+</tr>
+<tr>
+<td><code>tpm.msc</code> / <code>Get-Tpm</code></td>
+<td>État du module <abbr title="Trusted Platform Module">TPM</abbr></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="erreurs-courantes">Erreurs courantes<a class="headerlink" href="#erreurs-courantes" title="Permanent link">&para;</a></h2>
+<div class="admonition failure">
+<p class="admonition-title"><code>ERREUR : Accès refusé</code> (FVE_E_NOT_ADMIN)</p>
+<p>L'invite de commandes n'est pas élevée. Relancez‑la via <span class="keys"><kbd class="key-windows">Win</kbd><span>+</span><kbd class="key-x">X</kbd></span> → <em>Terminal (Admin)</em>.</p>
+</div>
+<div class="admonition failure">
+<p class="admonition-title"><code>Ce périphérique ne peut pas utiliser un module de plateforme sécurisée</code></p>
+<p>Pas de <abbr title="Trusted Platform Module">TPM</abbr> détecté, ou <abbr title="Trusted Platform Module">TPM</abbr> désactivé dans l'<abbr title="Unified Extensible Firmware Interface">UEFI</abbr>. Vérifiez avec <code>tpm.msc</code>, activez <em>Intel PTT</em> / <em>AMD fTPM</em> dans le firmware, ou appliquez la stratégie <em>Autoriser BitLocker sans un <abbr title="Trusted Platform Module">TPM</abbr> compatible</em> (voir Prérequis).</p>
+</div>
+<div class="admonition failure">
+<p class="admonition-title">L'assistant refuse d'enregistrer la clé à l'emplacement choisi</p>
+<p>Vous tentez de la sauvegarder <strong>sur le volume en cours de chiffrement</strong>. C'est un garde‑fou, pas un bug : choisissez un autre support.</p>
+</div>
+<div class="admonition failure">
+<p class="admonition-title">Le lecteur est utilisé par un autre programme</p>
+<p>Fermez toutes les fenêtres de l'Explorateur, les fichiers ouverts et les antivirus qui scannent le support, puis relancez. Sur une clé USB, un <code>chkdsk E: /f</code> préalable règle souvent le problème.</p>
+</div>
+<div class="admonition failure">
+<p class="admonition-title">Le poste demande la clé de récupération à chaque démarrage</p>
+<p>La suspension n'a pas été reprise, ou la cause racine persiste (Secure Boot instable, firmware à jour non appliqué). Déverrouillez, puis :</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="go">manage-bde -protectors -disable C: -rc 1</span>
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="go">shutdown /r /t 0</span>
+</code></pre></div>
+Après le redémarrage, la protection se réarme sur les <strong>nouvelles</strong> mesures du <abbr title="Trusted Platform Module">TPM</abbr>. Consultez le journal <code>BitLocker-API/Management</code> pour identifier le <abbr title="Platform Configuration Register">PCR</abbr> fautif.</p>
+</div>
+<div class="admonition failure">
+<p class="admonition-title">Windows Famille : impossible de créer une clé USB BitLocker To Go</p>
+<p>L'édition Famille peut <strong>lire et écrire</strong> sur un support chiffré (après déverrouillage) mais <strong>ne peut pas en créer</strong>. Effectuez le chiffrement depuis un poste Pro.</p>
+</div>
+<hr />
+<h2 id="glossaire">Glossaire<a class="headerlink" href="#glossaire" title="Permanent link">&para;</a></h2>
+<dl>
+<dt>BitLocker</dt>
+<dd>Fonctionnalité de chiffrement de volume intégrée à Windows (éditions Pro, Entreprise, Éducation). Elle chiffre le volume entier, de façon transparente pour les applications.</dd>
+<dt>BitLocker To Go</dt>
+<dd>Déclinaison de BitLocker pour les <strong>supports amovibles</strong> (clés USB, disques externes). Le déverrouillage repose sur un mot de passe ou une carte à puce, puisqu'aucun <abbr title="Trusted Platform Module">TPM</abbr> n'est disponible en face.</dd>
+<dt><abbr title="Trusted Platform Module">TPM</abbr></dt>
+<dd><em>Trusted Platform Module</em> — coprocesseur sécurisé qui <strong>scelle</strong> la clé de chiffrement et ne la libère que si l'état de démarrage mesuré correspond à l'état enregistré. Version 2.0 requise par Windows 11.</dd>
+<dt><abbr title="Platform Configuration Register">PCR</abbr></dt>
+<dd><em>Platform Configuration Register</em> — registre du <abbr title="Trusted Platform Module">TPM</abbr> contenant l'empreinte d'un aspect du démarrage. BitLocker s'appuie par défaut sur les <abbr title="Platform Configuration Register">PCR</abbr> 7 (état Secure Boot) et 11 (état BitLocker).</dd>
+<dt>Protecteur de clé</dt>
+<dd>Mécanisme autorisé à déverrouiller le volume : <code>TPM</code>, <code>TPM+PIN</code>, <code>Mot de passe</code>, <code>Clé externe</code> (fichier <code>.bek</code> sur USB), <code>Mot de passe numérique</code> (clé de récupération). Un volume en possède généralement plusieurs.</dd>
+<dt>Mot de passe numérique</dt>
+<dd>Nom interne de la <strong>clé de récupération</strong> à 48 chiffres dans les sorties de <code>manage-bde</code>.</dd>
+<dt>Clé de récupération</dt>
+<dd>Secret de secours de <strong>48 chiffres</strong> (8 blocs de 6), généré à l'activation du chiffrement et associé à un <strong>identificateur</strong> public. Dernier recours quand le déverrouillage normal échoue.</dd>
+<dt>ID de la clé de récupération</dt>
+<dd><abbr title="Globally Unique Identifier">GUID</abbr> <strong>non secret</strong> identifiant une clé de récupération. Ses 8 premiers caractères s'affichent sur l'écran de récupération pour retrouver la bonne clé dans un coffre.</dd>
+<dt>Clé claire (<em>clear key</em>)</dt>
+<dd>Protecteur temporaire ajouté lors d'une <strong>suspension</strong> : la clé de chiffrement est stockée en clair sur le volume, ce qui permet de démarrer sans consulter le <abbr title="Trusted Platform Module">TPM</abbr>. Retirée par <code>-protectors -enable</code>.</dd>
+<dt><abbr title="XEX-based Tweaked codebook mode with ciphertext Stealing">XTS</abbr>‑<abbr title="Advanced Encryption Standard">AES</abbr></dt>
+<dd>Mode de chiffrement par blocs conçu pour le stockage, utilisé par défaut par BitLocker depuis Windows 10 1511 sur les disques internes. <abbr title="Advanced Encryption Standard">AES</abbr>‑CBC reste employé en <em>mode compatible</em> pour les supports amovibles.</dd>
+<dt>Chiffrement au repos</dt>
+<dd>Protection des données <strong>stockées</strong> sur un support, par opposition au chiffrement en transit (TLS, VPN).</dd>
+</dl>
+<hr />
+<h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://learn.microsoft.com/fr-fr/windows/security/operating-system-security/data-protection/bitlocker/">BitLocker — documentation Microsoft Learn</a> — référence officielle (architecture, stratégies, déploiement).</li>
+<li><a href="https://learn.microsoft.com/fr-fr/windows-server/administration/windows-commands/manage-bde">Référence de la commande <code>manage-bde</code></a> — syntaxe complète de tous les sous‑ensembles.</li>
+<li><a href="https://learn.microsoft.com/fr-fr/windows-server/administration/windows-commands/manage-bde-protectors"><code>manage-bde protectors</code></a> — détail de <code>-get</code>, <code>-add</code>, <code>-disable</code>, <code>-enable</code>, <code>-adbackup</code>.</li>
+<li><a href="https://learn.microsoft.com/fr-fr/windows/security/operating-system-security/data-protection/bitlocker/recovery-overview">Guide de récupération BitLocker</a> — causes de passage en récupération et procédures de déblocage.</li>
+<li><a href="https://learn.microsoft.com/fr-fr/powershell/module/bitlocker/">Module PowerShell BitLocker</a> — cmdlets <code>Get-BitLockerVolume</code>, <code>Suspend-BitLocker</code>, <code>Unlock-BitLocker</code>…</li>
+<li><a href="https://aka.ms/myrecoverykey">Retrouver sa clé de récupération (compte Microsoft)</a> — portail à donner à un utilisateur en poste personnel.</li>
+<li><a href="https://cyber.gouv.fr/">Recommandations de l'ANSSI</a> — bonnes pratiques de chiffrement des postes nomades.</li>
+<li>Article connexe du wiki : <a href="../securiser-volume-donnees-chiffrement-luks-linux/">Sécuriser un volume de données avec le chiffrement LUKS sous Linux</a> — l'équivalent côté Linux.</li>
+<li>Article connexe du wiki : <a href="../dechiffrer-automatiquement-luks-tpm2-clevis-secure-boot-ubuntu/">Déverrouiller automatiquement LUKS au démarrage avec le TPM2 et Clevis</a> — le même rôle du <abbr title="Trusted Platform Module">TPM</abbr>, vu depuis Ubuntu.</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../analyser-wifi-mode-moniteur-injection-aircrack-ng/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: Analyser son réseau Wi-Fi en mode moniteur et tester l&#39;injection avec Aircrack-ng">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                Analyser son réseau Wi-Fi en mode moniteur et tester l'injection avec Aircrack-ng
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../ia/" class="md-footer__link md-footer__link--next" aria-label="Suivant: Intelligence Artificielle">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                Intelligence Artificielle
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      <a href="/mentions-legales/">Mentions légales</a>
+
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/bodaine" target="_blank" rel="noopener" title="Nicolas BODAINE sur LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://github.com/NicoBOD" target="_blank" rel="noopener" title="NicoBOD sur GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://nicolas.bodaine.fr" target="_blank" rel="noopener" title="Portfolio de Nicolas BODAINE" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="/feed_rss_created.xml" target="_blank" rel="noopener" title="Flux RSS des derniers articles" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 64c0-17.7 14.3-32 32-32 229.8 0 416 186.2 416 416 0 17.7-14.3 32-32 32s-32-14.3-32-32C384 253.6 226.4 96 32 96 14.3 96 0 81.7 0 64m0 352a64 64 0 1 1 128 0 64 64 0 1 1-128 0m32-256c159.1 0 288 128.9 288 288 0 17.7-14.3 32-32 32s-32-14.3-32-32c0-123.7-100.3-224-224-224-17.7 0-32-14.3-32-32s14.3-32 32-32"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.path", "navigation.indexes", "navigation.prune", "navigation.footer", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "content.action.view", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
