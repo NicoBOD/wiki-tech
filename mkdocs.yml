@@ -85,7 +85,7 @@ theme:
 plugins:
   - search:
       lang: fr
-      separator: '[\s\-,:!=\[\]()"/]+|(?<!\b)(?=[A-Z][a-z])|\.(\!\d)|&[lg]t;'
+      separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
   - tags
   # Métadonnées par dossier via .meta.yml (réduit la duplication)
   - meta
@@ -129,6 +129,7 @@ nav:
     - "Gérer les services Linux avec systemctl : l'essentiel pour l'administration": systemes/gerer-services-linux-systemctl-essentiel.md
     - Comprendre et gérer les permissions sous Linux (chmod, chown): systemes/gerer-permissions-fichiers-chmod-chown-linux.md
     - Maintenir ses sessions terminal à distance avec tmux sous Linux: systemes/tmux-maintenir-sessions-terminal-distance.md
+    - Installer une interface graphique légère (LXQt ou XFCE) sur Debian 13: systemes/installer-interface-graphique-legere-debian-13.md
   - Réseaux:
     - reseaux/index.md
     - Bloquer les requêtes malveillantes et publicités avec Pi-hole: reseaux/installer-configurer-pi-hole-reseau-local.md
@@ -161,6 +162,9 @@ nav:
     - Créer et configurer sa première machine virtuelle sur Microsoft Azure: cloud/creer-premiere-machine-virtuelle-azure.md
     - Déployer un conteneur via Azure Container Instances (ACI): cloud/deployer-conteneur-azure-container-instances-aci.md
     - Stocker et partager des fichiers dans Azure Blob Storage: cloud/stocker-partager-fichiers-azure-blob-storage.md
+    - Synchroniser Google Drive sur deux postes Ubuntu avec rclone bisync et chiffrement Crypt: cloud/synchroniser-google-drive-rclone-bisync-crypt-deux-postes-ubuntu.md
+    - Déployer un stockage objet S3-compatible avec MinIO en auto-hébergé: cloud/mettre-en-place-minio-stockage-objet-s3-compatible-auto-heberge.md
+    - Mettre en place une surveillance centralisée avec Prometheus et Grafana pour infrastructure cloud hybride: cloud/mettre-en-place-surveillance-centralisee-prometheus-grafana-cloud-hybride.md
   - Cybersécurité:
     - cybersecurite/index.md
     - "Configurer sudo en toute sécurité avec visudo": cybersecurite/configurer-sudo-visudo.md
@@ -179,6 +183,7 @@ nav:
     - "Activer le lecteur d'empreintes digitales (login + sudo) sur ThinkPad sous Ubuntu 24.04": cybersecurite/activer-lecteur-empreintes-digitales-login-sudo-thinkpad-ubuntu.md
     - Chiffrer et signer des fichiers avec GPG sous Linux: cybersecurite/chiffrer-signer-fichiers-gpg-linux.md
     - "Analyser son réseau Wi-Fi en mode moniteur et tester l'injection avec Aircrack-ng": cybersecurite/analyser-wifi-mode-moniteur-injection-aircrack-ng.md
+    - "Chiffrer un poste Windows 11 Pro avec BitLocker : disque système, BitLocker To Go, manage-bde et déblocage helpdesk": cybersecurite/chiffrer-poste-windows-11-bitlocker-manage-bde-deblocage-helpdesk.md
   - IA:
     - ia/index.md
     - "Déployer Tabby en local : l'alternative open source à GitHub Copilot": ia/deployer-tabby-local-alternative-github-copilot.md
@@ -224,6 +229,7 @@ nav:
     - "Installer et configurer Windows Terminal pour unifier ses environnements CLI (PowerShell, WSL, SSH)": logiciels/installer-configurer-windows-terminal.md
     - "Découvrir et utiliser MobaXterm pour l'administration distante": logiciels/utiliser-mobaxterm-administration-distante.md
     - "Obsidian : Créer et organiser sa propre base de connaissances technique en Markdown": logiciels/obsidian-base-connaissances-technique-markdown.md
+    - Déployer une instance GitLab CE auto-hébergée avec Docker Compose sur Ubuntu Server: logiciels/deployer-gitlab-ce-auto-hebergee-docker-compose-ubuntu-server.md
   - Debug:
     - debug/index.md
     - Diagnostiquer une erreur 502/504 Bad Gateway sur un serveur web: debug/diagnostiquer-erreur-502-504-bad-gateway-serveur-web.md

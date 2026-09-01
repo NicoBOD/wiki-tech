@@ -24,6 +24,7 @@ Protection des serveurs, pare-feu, certificats SSL et bonnes pratiques de durcis
 - [Sécuriser un volume de données avec le chiffrement LUKS sous Linux](securiser-volume-donnees-chiffrement-luks-linux.md) — Protéger les données au repos en chiffrant un disque ou une partition.
 - [Déverrouiller automatiquement LUKS au démarrage avec le TPM2 et Clevis (Ubuntu 24.04)](dechiffrer-automatiquement-luks-tpm2-clevis-secure-boot-ubuntu.md) — Ne plus saisir sa phrase de passe au boot en déléguant le déverrouillage au TPM, de façon sûre et réversible.
 - [Chiffrer et signer des fichiers avec GPG sous Linux](chiffrer-signer-fichiers-gpg-linux.md) — Garantir la confidentialité et l'authenticité de vos fichiers locaux et échangés.
+- [Chiffrer un poste Windows 11 Pro avec BitLocker : disque système, BitLocker To Go, manage-bde et déblocage helpdesk](chiffrer-poste-windows-11-bitlocker-manage-bde-deblocage-helpdesk.md) — Chiffrer `C:` et une clé USB, piloter BitLocker en ligne de commande et débloquer un poste coincé sur l'écran de récupération.
 
 ## Audit & Conformité
 

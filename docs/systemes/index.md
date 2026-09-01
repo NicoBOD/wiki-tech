@@ -12,6 +12,7 @@ Administration système, stockage, sécurité locale et gestion des utilisateurs
 - [Gérer les services Linux avec systemctl : l'essentiel pour l'administration](gerer-services-linux-systemctl-essentiel.md) — Maîtriser le démarrage, l'arrêt et l'état des daemons via systemd.
 - [Comprendre et gérer le `machine-id` sous Linux](machine-id-linux.md) — Découvrir à quoi sert cet identifiant unique et comment le regénérer proprement.
 - [Maintenir ses sessions terminal à distance avec tmux sous Linux](tmux-maintenir-sessions-terminal-distance.md) — Ne plus perdre son travail en cas de coupure réseau grâce aux multiplexeurs.
+- [Installer une interface graphique légère (LXQt ou XFCE) sur Debian 13](installer-interface-graphique-legere-debian-13.md) — Ajouter Xorg, LightDM et un bureau sobre en ressources sur un serveur sans environnement graphique.
 
 ## Gestion des Fichiers & Permissions
 

@@ -6,7 +6,7 @@
 mkdocs-material[imaging]>=9.7.7,<10
 
 # Date de dernière mise à jour automatique depuis l'historique Git
-mkdocs-git-revision-date-localized-plugin>=1.5.3
+mkdocs-git-revision-date-localized-plugin>=1.5.4
 
 # Flux RSS des derniers articles
 mkdocs-rss-plugin>=1.19.0

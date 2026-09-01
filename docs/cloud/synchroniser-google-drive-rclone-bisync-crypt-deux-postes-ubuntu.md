@@ -1,0 +1,1489 @@
+---
+title: "Synchroniser Google Drive sur deux postes Ubuntu avec rclone bisync et chiffrement Crypt"
+date: 2026-08-08
+author: Nicolas BODAINE
+tags:
+  - rclone
+  - google-drive
+  - chiffrement
+  - bisync
+  - systemd
+  - sauvegarde
+  - cloud
+difficulty: avancé
+os: Ubuntu 24.04
+status: publié
+---
+
+<!-- ============================================================ -->
+<!-- ⚠️ RAPPEL IMPORTANT :                                          -->
+<!-- Pensez TOUJOURS à ajouter une entrée dans le fichier d'index  -->
+<!-- (index.md) du dossier correspondant (ex: docs/cloud/index.md) -->
+<!-- afin de référencer ce nouvel article et permettre aux         -->
+<!-- visiteurs de le trouver et de cliquer dessus !                -->
+<!-- ============================================================ -->
+
+# Synchroniser Google Drive sur deux postes Ubuntu avec rclone bisync et chiffrement Crypt
+
+!!! abstract "Résumé"
+    Mise en place complète d'une synchronisation **bidirectionnelle** entre deux postes Ubuntu et des **Drive partagés Google Workspace**, avec une zone **chiffrée côté client** (rclone Crypt) et une zone en clair. Couvre la création d'un **Client ID OAuth dédié**, le chiffrement du fichier de configuration adossé au **trousseau GNOME**, les **services systemd** d'automatisation, et surtout les **pièges rencontrés en conditions réelles** — dont plusieurs ne se révèlent qu'au test et peuvent coûter des données.
+
+| Propriété | Valeur |
+|-----------|--------|
+| Difficulté | Avancé |
+| OS / Environnement | Ubuntu 24.04 LTS, rclone 1.75.0 |
+| Dernière mise à jour | 2026-08-22 |
+
+!!! warning "Avertissement préalable"
+    `rclone bisync` **supprime et écrase des fichiers des deux côtés**. Une configuration bancale peut détruire des données. Chaque garde-fou décrit ici a une raison d'être : ne les retirez pas pour « simplifier ». Testez toujours sur un jeu de données jetable avant de viser vos vraies données.
+
+## Contexte
+
+Le besoin : accéder aux mêmes fichiers depuis un poste fixe et un portable, avec un **accès hors ligne réel** sur les deux, tout en stockant sur des Drive partagés Google Workspace. Une partie des données est sensible et ne doit **jamais** être lisible par Google ; le reste doit rester consultable depuis l'interface web Drive et l'application mobile.
+
+Trois décisions structurent tout le reste :
+
+- **`bisync` plutôt que `mount`** : un montage réseau ne donne pas d'accès hors ligne. bisync maintient un miroir local complet, synchronisé dans les deux sens. Un montage reste utile **en complément**, pour consulter à la demande ce qui n'est pas dans le miroir.
+- **Deux Drive partagés distincts**, un chiffré et un clair, plutôt que deux dossiers dans le même. Les quotas d'éléments et les droits de partage sont ainsi indépendants, et on ne dépose pas un fichier en clair dans la zone chiffrée par erreur.
+- **Un Client ID OAuth personnel**. Sans lui, on partage le quota d'API public de rclone avec le monde entier et on récolte des erreurs `403 rate limit`.
+
+## Prérequis
+
+- Deux postes Ubuntu 24.04 avec session **GNOME** (le trousseau est utilisé pour le déverrouillage automatique).
+- Un compte **Google Workspace administrateur**, capable de créer des Drive partagés et un projet Google Cloud dans l'organisation.
+- Un espace disque local suffisant pour le miroir : bisync stocke une **copie complète en clair** sur chaque machine.
+- Un gestionnaire de mots de passe pour conserver les clés Crypt (KeePassXC, Bitwarden…).
+- Notions de `systemd --user`, de `git`, et à l'aise en ligne de commande.
+
+!!! danger "Le point de non-retour"
+    Le mot de passe **et** le sel (`password2`) du remote Crypt sont les **seules** choses qui permettent de relire vos données. Aucune sauvegarde du fichier de configuration ne les remplace si vous les perdez. Notez-les dans votre gestionnaire de mots de passe **au moment où l'assistant les affiche** : il ne les remontrera pas.
+
+## Architecture retenue
+
+| Élément | Choix | Pourquoi |
+|---|---|---|
+| Mode de synchro | `bisync` sur les deux postes | Seul mode offrant un accès hors ligne modifiable |
+| Point de rencontre | Google Drive | Les deux postes ne se parlent pas directement : Drive est le pivot |
+| Zone chiffrée | Remote `crypt` sur un **sous-dossier** | Voir le piège n°1 |
+| Noms de fichiers | `filename_encryption = standard` | Masque aussi l'arborescence, au prix de la lisibilité côté web |
+| Configuration | Chiffrée + trousseau GNOME | Les clés Crypt ne traînent pas en clair |
+| Automatisation | `systemd --user` + timer | Le trousseau impose une session utilisateur, donc pas de service *system* |
+| Conflits | Le plus récent gagne, perdant conservé | Aucune perte silencieuse |
+
+```
+   PC FIXE                      GOOGLE DRIVE                    PC PORTABLE
+┌──────────────┐          ┌────────────────────┐          ┌──────────────┐
+│ Miroir/      │          │ DRIVE-CHIFFRE      │          │ Miroir/      │
+│  Chiffre/  ──┼─ bisync ─┤  Rclone/ (opaque)  ├─ bisync ─┼── Chiffre/   │
+│  Clair/    ──┼─ bisync ─┤ DRIVE-CLAIR        ├─ bisync ─┼── Clair/     │
+└──────────────┘          │  Rclone/ (lisible) │          └──────────────┘
+   timer 15 min           └────────────────────┘             timer 15 min
+```
+
+!!! note "Convention de nommage dans cet article"
+    Les identifiants, chemins et mots de passe ci-dessous sont **fictifs**. Remplacez-les par les vôtres :
+    `0AXXXXXXXXXXXXXXXXX` et `0AYYYYYYYYYYYYYYYYY` (ID de Drive partagés), `/mnt/donnees` (disque du miroir), `/mnt/nvme` (disque du cache), `192.168.1.42` (IP du portable).
+
+## Procédure
+
+### Étape 1 : installer rclone en version récente
+
+La version des dépôts Ubuntu 24.04 est **1.60.1**, datée de 2022. Les garde-fous essentiels de bisync (`--resilient`, `--recover`, `--conflict-resolve`, `--max-lock`) n'apparaissent qu'à partir de la **1.66**. Cette mise à niveau n'est pas un confort, c'est un prérequis.
+
+!!! tip "Il n'existe pas de dépôt apt officiel rclone"
+    Contrairement à une idée répandue, le projet ne publie pas de dépôt apt. La méthode propre est le paquet `.deb` officiel, qui reste géré par dpkg et peut être figé.
+
+```bash
+cd /tmp && curl -fsSL -O https://downloads.rclone.org/v1.75.0/rclone-v1.75.0-linux-amd64.deb && curl -fsSL -O https://downloads.rclone.org/v1.75.0/SHA256SUMS
+```
+
+Vérifiez l'empreinte **et** la signature avant d'installer, dans un trousseau GPG jetable pour ne pas polluer le vôtre :
+
+```bash
+cd /tmp && sha256sum -c --ignore-missing SHA256SUMS 2>/dev/null | grep rclone && export GNUPGHOME=$(mktemp -d) && curl -fsSL https://rclone.org/KEYS | gpg --quiet --import && gpg --verify SHA256SUMS
+```
+
+!!! success "Résultat attendu"
+    `rclone-v1.75.0-linux-amd64.deb: Réussi` puis `Bonne signature de « Nick Craig-Wood »`. L'avertissement « cette clef n'est pas certifiée » est normal : il signale seulement que la clé n'est pas dans votre réseau de confiance, pas que la signature est invalide. L'empreinte de la clé de release est `FBF7 37EC E9F8 AB18 604B D2AC 9393 5E02 FF3B 54FA`.
+
+```bash
+sudo apt install -y /tmp/rclone-v1.75.0-linux-amd64.deb && sudo apt-mark hold rclone
+```
+
+Le `hold` empêche `apt upgrade` de vous ramener en 1.60. Pour les mises à jour ultérieures : `rclone selfupdate --package deb`.
+
+### Étape 2 : créer un Client ID OAuth dédié
+
+Dans la [console Google Cloud](https://console.cloud.google.com/) :
+
+1. **Créer le projet** — le champ *Organisation* doit afficher votre domaine Workspace, pas « Aucune organisation ». C'est ce qui conditionne l'étape 3.
+2. **Activer l'API Drive** — bibliothèque d'API, rechercher *Google Drive API*, activer.
+3. **Écran de consentement** — section *Google Auth Platform* (ex-« écran de consentement OAuth »). Choisir **Interne**.
+4. **Identifiants** — créer un client OAuth de type **Application de bureau** (surtout pas « Application Web »).
+5. **Créer les deux Drive partagés** depuis `drive.google.com`. L'identifiant est la portion d'URL après `/folders/`, il commence par `0A`.
+
+!!! warning "Interne ou Externe : la différence qui casse tout"
+    En mode **Externe / Testing**, le jeton de rafraîchissement OAuth **expire au bout de 7 jours**. Toute automatisation systemd s'arrête donc chaque semaine en réclamant une réautorisation manuelle. En **Interne**, pas d'expiration, pas de vérification Google, et l'application reste cantonnée à votre domaine. C'est le seul choix viable pour du service automatisé.
+
+### Étape 3 : créer les remotes
+
+Utilisez l'assistant **interactif**. En passant par `rclone config create`, votre *client secret* et vos clés Crypt atterriraient dans l'historique du shell.
+
+```bash
+rclone config
+```
+
+**Remote 1 — `gd-chiffre`** : `n` → nom `gd-chiffre` → stockage `drive` → *client\_id* et *client\_secret* → *scope* `1` (accès complet) → *service\_account\_file* vide → *Edit advanced config* `n` → *Use web browser* `y` → **_Configure this as a Shared Drive (Team Drive)_ : `y`**, puis choisir le Drive chiffré dans la liste proposée.
+
+**Remote 2 — `gcrypt`** : `n` → nom `gcrypt` → stockage `crypt` → **remote : `gd-chiffre:Rclone`** → `filename_encryption` : `1` (standard) → `directory_name_encryption` : `1` (true) → mot de passe : `g` (générer) → **256 bits** → sel (`password2`) : `g`, 256 bits également.
+
+**Remote 3 — `gd-clair`** : identique au remote 1, en sélectionnant l'autre Drive partagé.
+
+!!! question "Pourquoi 256 bits et pas 1024 ?"
+    L'assistant propose jusqu'à 1024 bits, mais rclone ne se sert **jamais** de ce mot de passe comme clé. Il le passe, avec le sel, dans une fonction de dérivation (scrypt) qui produit une quantité **fixe** de matériel de clé : 256 bits pour les données, 256 pour les noms de fichiers. Au-delà, l'entropie supplémentaire n'a nulle part où aller. Mesures faites sur 200 Mo chiffrés : 371 ms en 128 bits contre 370 ms en 1024 — aucun écart. Le seul effet réel de 1024 bits est un mot de passe de **171 caractères** au lieu de 43, à retranscrire sans erreur le jour où vous reconstruirez la configuration à la main. 256 bits est le point d'équilibre.
+
+### Étape 4 : chiffrer la configuration et l'adosser au trousseau
+
+```bash
+rclone config encryption set
+```
+
+Puis, **avec exactement le même mot de passe** :
+
+```bash
+secret-tool store --label='rclone config' service rclone key config
+```
+
+Toutes les invocations utiliseront ensuite `--password-command "secret-tool lookup service rclone key config"`.
+
+!!! warning "Le paquet libsecret-tools n'est pas installé par défaut"
+    Le démon `gnome-keyring-daemon` (le coffre) est présent sur Ubuntu Desktop, mais `secret-tool` (le client en ligne de commande qui l'interroge) ne l'est pas. Sans lui, `--password-command` n'a rien à appeler : `sudo apt install -y libsecret-tools`.
+
+!!! danger "Supprimez toute sauvegarde en clair"
+    Si vous aviez copié `rclone.conf` avant de le chiffrer, cette copie contient vos clés en clair et annule tout le bénéfice de l'opération. `shred -u ~/.config/rclone/rclone.conf.sauvegarde`.
+
+### Étape 5 : les fichiers de filtres
+
+Les filtres se répartissent en **deux fichiers**, assemblés par le script avant chaque passe :
+
+| Fichier | Rôle |
+|---|---|
+| `~/.config/rclone/filters.txt` | Règles communes, **identiques** sur les deux postes |
+| `~/.config/rclone/filters-local.txt` | Règles propres à la machine (facultatif) |
+| `~/.cache/rclone/filters-assemble.txt` | Résultat de la concaténation, **généré** — ne pas éditer |
+
+!!! warning "Pourquoi assembler plutôt qu'un seul fichier"
+    `--filters-file` n'accepte **qu'un seul** fichier. Sans cet assemblage, il faudrait maintenir deux fichiers divergents sur les deux machines et reporter à la main chaque règle commune. Ici la partie commune ne diverge jamais.
+
+```text title="~/.config/rclone/filters.txt"
+# Filtres rclone communs aux deux postes.
+# Syntaxe : "- motif" = exclure. Les motifs {{...}} sont des expressions régulières.
+
+# --- Noms trop longs pour Crypt (limite ~143 caractères par composant) ---
+- {{[^/]{144,}$}}
+- {{[^/]{144,}}}/**
+
+# --- Garde-fou anti-collision avec d'autres agents de synchronisation ---
+- .SynologyWorkingDirectory/**
+- @eaDir/**
+- .dropbox
+- .dropbox.cache/**
+- desktop.ini
+- Thumbs.db
+- .DS_Store
+
+# --- Coffres chiffrés gérés par un autre outil (Cryptomator, VeraCrypt…) ---
+- masterkey.cryptomator
+- masterkey.cryptomator.bkup
+- vault.cryptomator
+
+# --- Caches et environnements reconstructibles ---
+- .cache/**
+- node_modules/**
+- .venv/**
+- venv/**
+- __pycache__/**
+- .mypy_cache/**
+- .pytest_cache/**
+- target/debug/**
+- target/release/**
+
+# --- Fichiers temporaires, verrous, corbeilles ---
+- .~lock.*
+- ~$*
+- .goutputstream*
+- *.partial
+- *.crdownload
+- *.tmp
+- *.swp
+- .Trash-*/**
+- lost+found/**
+- .fuse_hidden*
+```
+
+Le second fichier ne contient que ce qui distingue la machine. Exemple typique : un poste dont le disque ne peut pas absorber les vidéos et images ISO, alors que l'autre les synchronise normalement.
+
+```text title="~/.config/rclone/filters-local.txt — sur le poste à capacité limitée"
+# Règles propres à CETTE machine.
+#
+# ATTENTION : toute modification ici change l'empreinte des filtres, et bisync
+# refusera de tourner tant qu'un --resync n'aura pas été lancé sur cette machine.
+# C'est voulu — voir le piège n°11.
+
+# Convention : tout dossier nommé _NOSYNC_laptop est ignoré ici, mais reste
+# synchronisé sur l'autre poste et présent sur Google Drive.
+# Le motif porte à TOUS les niveaux et dans les deux zones, répertoire compris.
+- _NOSYNC_laptop/**
+```
+
+Sur l'autre poste, `filters-local.txt` peut être absent, ou ne contenir que des commentaires : le script s'adapte.
+
+!!! tip "Exclure n'est pas rendre inaccessible"
+    Le contenu écarté du miroir reste consultable à la demande via le montage, sans occuper d'espace disque :
+    `systemctl --user enable --now rclone-mount@gd-clair.service`, puis `~/mnt/gd-clair/`. C'est ce qui rend l'exclusion confortable plutôt que frustrante.
+
+!!! tip "Les filtres rclone ignorent la longueur des noms"
+    Il n'existe pas d'option « exclure au-delà de N caractères ». Il faut passer par la syntaxe d'expression régulière `{{...}}`. Attention au piège : le motif intuitif `{{^.{144,}$}}` s'applique au **chemin complet** et écarte donc à tort un fichier au nom court situé dans une arborescence profonde. Les deux motifs ci-dessus ont été validés par test : ils portent bien sur le **dernier composant** du chemin.
+
+### Étape 6 : les paramètres propres à chaque machine
+
+Un seul fichier diffère entre les deux postes. Scripts et unités systemd sont rigoureusement identiques.
+
+```bash title="~/.config/rclone/machine.env — poste fixe"
+RCLONE_MIRROR_ROOT=/mnt/donnees/GoogleDrive
+RCLONE_CACHE_DIR=/mnt/nvme/rclone-cache
+RCLONE_VFS_CACHE_MAX_SIZE=60G
+RCLONE_TRANSFERS=8
+RCLONE_CHECKERS=16
+RCLONE_BACKUP_ROOT=/mnt/donnees/GoogleDrive-corbeille
+```
+
+```bash title="~/.config/rclone/machine.env — portable"
+RCLONE_MIRROR_ROOT=/home/user/GoogleDrive
+RCLONE_CACHE_DIR=/home/user/.cache/rclone/vfs
+RCLONE_VFS_CACHE_MAX_SIZE=30G
+RCLONE_TRANSFERS=4
+RCLONE_CHECKERS=8
+RCLONE_BACKUP_ROOT=/home/user/GoogleDrive-corbeille
+# Garde-fous propres à une machine mobile
+RCLONE_SKIP_ON_METERED=1
+RCLONE_BATTERY_MIN=30
+```
+
+!!! danger "N'utilisez jamais un support amovible pour le miroir"
+    Carte SD, clé USB, disque externe : leur retrait en cours de passe fait interpréter l'absence des fichiers comme des **suppressions à propager sur Drive**. Le garde-fou `--max-delete` bloquerait, mais mieux vaut ne pas créer la situation.
+
+### Étape 7 : l'audit pre-flight
+
+Ce script tourne avant chaque passe. Il recense ce que les filtres écarteront **silencieusement** et détecte les recouvrements avec d'autres outils de synchronisation.
+
+```bash title="~/.local/bin/rclone-bisync-preflight.sh" linenums="1"
+#!/usr/bin/env bash
+# Audit pre-flight du miroir rclone bisync.
+# Usage : rclone-bisync-preflight.sh <racine-du-miroir>
+# Sortie : 0 = rien à signaler, 1 = anomalie bloquante, 2 = avertissements
+set -uo pipefail
+
+MIRROR="${1:?usage: $0 <racine-du-miroir>}"
+LOGDIR="${XDG_DATA_HOME:-$HOME/.local/share}/rclone/logs"
+REPORT="$LOGDIR/preflight-$(basename "$MIRROR").txt"
+MAXLEN=143   # limite Crypt avec filename_encryption = standard
+
+mkdir -p "$LOGDIR"
+rc=0
+{ echo "Audit pre-flight — $MIRROR"; echo "Démarré : $(date -Is)"; echo; } > "$REPORT"
+
+if [[ ! -d "$MIRROR" ]]; then
+  echo "BLOQUANT : le miroir $MIRROR n'existe pas." | tee -a "$REPORT"; exit 1
+fi
+
+# Témoin exigé par --check-access
+if [[ ! -e "$MIRROR/RCLONE_TEST" ]]; then
+  echo "BLOQUANT : $MIRROR/RCLONE_TEST absent." | tee -a "$REPORT"; rc=1
+fi
+
+# Recouvrement avec un autre agent de synchronisation
+for concurrent in SynologyDrive OneDrive Dropbox Nextcloud; do
+  if [[ "$MIRROR" == *"/$concurrent/"* || "$MIRROR" == *"/$concurrent" ]]; then
+    echo "BLOQUANT : miroir situé dans $concurrent — collision." | tee -a "$REPORT"; rc=1
+  fi
+  if find "$MIRROR" -maxdepth 3 -type d -name "$concurrent" -print -quit 2>/dev/null | grep -q .; then
+    echo "BLOQUANT : dossier $concurrent DANS le miroir — collision." | tee -a "$REPORT"; rc=1
+  fi
+done
+
+# Noms écartés par les filtres
+long_files=$(find "$MIRROR" -type f -printf '%f\t%p\n' 2>/dev/null | awk -F'\t' -v m="$MAXLEN" 'length($1)>m')
+long_dirs=$(find "$MIRROR" -type d -printf '%f\t%p\n' 2>/dev/null | awk -F'\t' -v m="$MAXLEN" 'length($1)>m')
+nf=$(printf '%s' "$long_files" | grep -c . || true)
+nd=$(printf '%s' "$long_dirs"  | grep -c . || true)
+
+if (( nf > 0 || nd > 0 )); then
+  {
+    echo "AVERTISSEMENT : noms de plus de $MAXLEN caractères — EXCLUS de la synchronisation."
+    echo "  fichiers : $nf / dossiers : $nd (contenu entier écarté)"; echo
+    [[ -n "$long_files" ]] && { echo "--- fichiers ---"; printf '%s\n' "$long_files" | cut -f2; echo; }
+    [[ -n "$long_dirs"  ]] && { echo "--- dossiers ---"; printf '%s\n' "$long_dirs"  | cut -f2; echo; }
+  } >> "$REPORT"
+  echo "AVERTISSEMENT : $nf fichier(s) et $nd dossier(s) exclus — détail dans $REPORT"
+  (( rc == 0 )) && rc=2
+fi
+
+count=$(find "$MIRROR" -type f 2>/dev/null | wc -l)
+{
+  echo "--- volumétrie ---"
+  echo "fichiers : $count"
+  echo "taille   : $(du -sh "$MIRROR" 2>/dev/null | cut -f1)"
+  echo "Terminé : $(date -Is) — code $rc"
+} >> "$REPORT"
+
+# Marge sous la limite d'éléments d'un Drive partagé (~500 000)
+if (( count > 400000 )); then
+  echo "AVERTISSEMENT : $count fichiers — limite de ~500 000 éléments par Drive partagé en vue."
+  (( rc == 0 )) && rc=2
+fi
+
+(( rc == 0 )) && echo "Pre-flight OK — $count fichiers, rien à signaler."
+exit "$rc"
+```
+
+### Étape 8 : le script de synchronisation
+
+```bash title="~/.local/bin/rclone-bisync.sh" linenums="1"
+#!/usr/bin/env bash
+# Passe bisync des deux paires (chiffrée + claire).
+# Appelé par rclone-bisync.service. Utilisable à la main pour déboguer.
+#
+# Usage :
+#   rclone-bisync.sh              → passe normale (refuse si l'état bisync est absent)
+#   rclone-bisync.sh --resync     → amorçage initial, à ne lancer qu'une fois par paire
+#   rclone-bisync.sh --dry-run    → simulation, n'écrit rien
+set -uo pipefail
+
+# Paramètres propres à la machine. En exécution manuelle, on lit le même fichier
+# que systemd, pour que ligne de commande et service se comportent identiquement.
+MACHINE_ENV="${XDG_CONFIG_HOME:-$HOME/.config}/rclone/machine.env"
+if [[ -r "$MACHINE_ENV" ]]; then
+  set -a; . "$MACHINE_ENV"; set +a
+fi
+
+MIRROR_ROOT="${RCLONE_MIRROR_ROOT:?RCLONE_MIRROR_ROOT non défini — voir $MACHINE_ENV}"
+# Filtres : un fichier commun identique sur les deux postes, plus un complément
+# propre à la machine. bisync n'accepte qu'UN fichier via --filters-file, d'où
+# l'assemblage ci-dessous.
+FILTRES_COMMUN="${XDG_CONFIG_HOME:-$HOME/.config}/rclone/filters.txt"
+FILTRES_LOCAL="${XDG_CONFIG_HOME:-$HOME/.config}/rclone/filters-local.txt"
+FILTERS="${XDG_CACHE_HOME:-$HOME/.cache}/rclone/filters-assemble.txt"
+LOGDIR="${XDG_DATA_HOME:-$HOME/.local/share}/rclone/logs"
+WORKDIR="${XDG_CACHE_HOME:-$HOME/.cache}/rclone/bisync"
+PREFLIGHT="$HOME/.local/bin/rclone-bisync-preflight.sh"
+
+# État de la déduplication des notifications, partagé avec rclone-notify.sh.
+# Un fichier « echec-<paire> » par paire en échec déterministe, contenant le
+# motif canonique de l'échec. rclone-notify.sh en dérive la signature et
+# n'alerte qu'une fois par signature. Voir le piège n°13.
+ETAT_NOTIFY="${RCLONE_NOTIFY_STATE_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/rclone/notify}"
+
+# Nouvelle tentative avant de déclarer un échec (voir la boucle plus bas).
+TENTATIVES_MAX="${RCLONE_TENTATIVES_MAX:-2}"
+DELAI_REESSAI="${RCLONE_DELAI_REESSAI:-15}"
+
+# Paires : <sous-dossier local>:<remote>
+# La paire claire vise un sous-dossier dédié, pas la racine du Drive en clair :
+# celui-ci peut déjà contenir des ressources qu'on ne veut ni rapatrier ni piloter.
+PAIRS=(
+  "Chiffre:gcrypt:"
+  "Clair:gd-clair:Rclone"
+)
+
+EXTRA=()
+RESYNC=0
+ONLY=""
+while (( $# )); do
+  case "$1" in
+    --resync)  RESYNC=1 ;;
+    --dry-run) EXTRA+=(--dry-run) ;;
+    # Re-baser une seule paire sans toucher à l'autre. Utile après un
+    # "Safety abort: all files were changed", fréquent tant qu'une paire ne
+    # contient qu'un ou deux fichiers : le moindre changement y vaut 100 %.
+    --only)    ONLY="${2:?--only attend un nom de paire (Chiffre ou Clair)}"; shift ;;
+    # Passe outre les garde-fous connexion limitée / batterie faible.
+    --force-run) FORCE_RUN=1 ;;
+    # Contourne --max-delete pour UNE exécution, en passant --force à rclone.
+    # Usage prévu : après avoir déplacé ou renommé des dossiers. bisync ne sait
+    # pas détecter les déplacements : il les voit comme des suppressions massives
+    # suivies de créations — « 31 new, 30 deleted » pour un simple regroupement
+    # dans un sous-dossier — et le garde-fou bloque. Voir le piège n°12.
+    # À n'employer qu'après avoir vérifié en --dry-run ce qui va disparaître.
+    --autoriser-suppressions) AUTORISER_SUPPR=1 ;;
+    *)         echo "option inconnue : $1" >&2; exit 64 ;;
+  esac
+  shift
+done
+FORCE_RUN="${FORCE_RUN:-0}"
+AUTORISER_SUPPR="${AUTORISER_SUPPR:-0}"
+
+mkdir -p "$LOGDIR" "$WORKDIR" "$(dirname "$FILTERS")" "$ETAT_NOTIFY"
+
+# Assemblage des filtres, avant tout appel à rclone.
+# « awk 1 » garantit une fin de ligne à chaque fichier : sans quoi la dernière
+# règle du fichier commun et la première du complément local fusionneraient.
+# La sortie DOIT être déterministe : --filters-file en calcule une empreinte et
+# réclamerait un --resync à chaque passe si le contenu variait d'une fois sur
+# l'autre. Concaténer deux fichiers stables l'est.
+if [[ -r "$FILTRES_LOCAL" ]]; then
+  awk 1 "$FILTRES_COMMUN" "$FILTRES_LOCAL" > "$FILTERS"
+else
+  awk 1 "$FILTRES_COMMUN" > "$FILTERS"
+fi
+
+# Motif canonique d'un échec, pour la signature de déduplication.
+# Les cinq cas nommés sont les échecs déterministes connus ; leurs chaînes ont
+# été relevées dans le binaire rclone 1.75.0, pas devinées.
+# Le repli hache la dernière ligne d'erreur : deux problèmes inconnus DIFFÉRENTS
+# doivent produire deux signatures différentes, sinon le second serait masqué
+# par le dédoublonnage du premier.
+motif_echec() {
+  local t
+  t=$(tail -40 "$1" 2>/dev/null)
+  case "$t" in
+    *"too many deletes"*)                echo "too_many_deletes" ;;
+    *"all files were changed"*)           echo "all_files_changed" ;;
+    *"filters file has changed"*)         echo "filtres_modifies" ;;
+    *"filters file md5 hash not found"*)  echo "filtres_empreinte_absente" ;;
+    *"Access test failed"*)               echo "check_access" ;;
+    *"couldn't connect"*|*"dial tcp"*|*"no route to host"*) echo "reseau" ;;
+    *) printf 'autre_%s\n' "$(printf '%s' "$t" | grep -oE 'ERROR *: .*' | tail -1 \
+                               | md5sum | cut -c1-8)" ;;
+  esac
+}
+
+# Suivi des déplacements. bisync prend en charge --track-renames depuis rclone
+# 1.66 (doc rclone, section « Renamed directories ») : sans lui, déplacer un
+# dossier fait supprimer puis réenvoyer tous ses fichiers. Vérifié par test :
+# 40 Kio re-transférés sans le drapeau, « Server Side Moves: 10 » et 0 octet
+# avec. Voir le piège n°12.
+#
+# La stratégie dépend des empreintes exposées par le remote :
+#   Clair   — gd-clair expose md5/sha1/sha256, donc la stratégie « hash » par
+#             défaut : appariement par CONTENU, aucun faux positif possible.
+#             Actif en permanence.
+#   Chiffre — gcrypt n'expose AUCUNE empreinte, et rclone refuse alors le
+#             drapeau (« do not have a common hash »). Seule « modtime,leaf »
+#             fonctionne, mais elle apparie sur nom de base + date : deux
+#             fichiers de même nom, même date ET même taille pour un contenu
+#             différent seraient confondus, et bisync comparant sur taille+date
+#             faute d'empreinte, l'erreur passerait inaperçue. On ne l'active
+#             donc QUE sur --autoriser-suppressions, c'est-à-dire au moment où
+#             l'on réorganise volontairement, après un --dry-run.
+#
+# Jamais avec --resync : rclone y ignore le drapeau (il ne fonctionne qu'avec
+# sync, pas copy) en écrivant deux lignes ERROR inutiles au journal.
+#
+# À savoir : le drapeau supprime le re-transfert, PAS le blocage. --max-delete
+# compte toujours les fichiers déplacés comme supprimés, sa vérification ayant
+# lieu AVANT la détection de renommage. Un gros déplacement réclame donc encore
+# --autoriser-suppressions, sur les DEUX machines — mais il ne coûte plus rien.
+suivi_deplacements() {   # remplit SUIVI pour la paire $1
+  SUIVI=()
+  (( RESYNC )) && return 0
+  case "$1" in
+    Clair)
+      SUIVI=(--track-renames) ;;
+    Chiffre)
+      (( AUTORISER_SUPPR )) && SUIVI=(--track-renames --track-renames-strategy modtime,leaf) ;;
+  esac
+  return 0
+}
+
+# --- Garde-fous propres aux machines mobiles -------------------------------
+# Activés uniquement si machine.env les déclare. Une passe sautée n'est PAS un
+# échec : on sort en 0, sinon systemd déclencherait une notification d'alerte
+# pour un comportement voulu.
+
+# Au démarrage, le timer (Persistent=true) et le dispatcher réseau déclenchent des
+# passes AVANT que la session ne soit déverrouillée. Le trousseau est alors
+# inaccessible : secret-tool échoue, rclone renvoie
+#   ERROR : Using --password-command returned: exit status 1
+# et chaque tentative produit une notification d'échec. Ce n'est pas une panne,
+# seulement une passe prématurée : on la saute proprement, sans lever d'alerte.
+trousseau_requis_indisponible() {
+  local conf="${RCLONE_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/rclone/rclone.conf}"
+  head -1 "$conf" 2>/dev/null | grep -qi "Encrypted" || return 1   # config en clair : sans objet
+  command -v secret-tool >/dev/null 2>&1 || return 1
+  ! secret-tool lookup service rclone key config >/dev/null 2>&1
+}
+
+connexion_limitee() {
+  # NetworkManager, état global. Enum : 1=oui, 2=non, 3=oui (deviné), 4=non (deviné).
+  local m
+  m=$(busctl get-property org.freedesktop.NetworkManager /org/freedesktop/NetworkManager \
+        org.freedesktop.NetworkManager Metered 2>/dev/null | awk '{print $2}')
+  [[ "$m" == "1" || "$m" == "3" ]]
+}
+
+batterie_faible() {
+  # Sur secteur : jamais faible, quel que soit le niveau.
+  local ac
+  for ac in /sys/class/power_supply/A{C,DP}*/online /sys/class/power_supply/*/online; do
+    [[ -r "$ac" ]] || continue
+    [[ "$(cat "$ac" 2>/dev/null)" == "1" ]] && return 1
+  done
+  # Moyenne sur toutes les batteries présentes (ce portable en a deux).
+  local total=0 n=0 c b
+  for b in /sys/class/power_supply/*/; do
+    [[ "$(cat "$b/type" 2>/dev/null)" == "Battery" ]] || continue
+    c=$(cat "$b/capacity" 2>/dev/null) || continue
+    [[ "$c" =~ ^[0-9]+$ ]] || continue
+    total=$((total + c)); n=$((n + 1))
+  done
+  (( n == 0 )) && return 1          # pas de batterie : machine fixe
+  (( total / n < RCLONE_BATTERY_MIN ))
+}
+
+# Volontairement NON contournable par --force-run : forcer ne ferait qu'échouer,
+# rclone étant incapable de déchiffrer sa configuration sans le trousseau.
+if trousseau_requis_indisponible; then
+  echo "Passe sautée : trousseau verrouillé ou indisponible (session pas encore ouverte ?)."
+  exit 0
+fi
+
+if (( ! FORCE_RUN )); then
+  if [[ "${RCLONE_SKIP_ON_METERED:-0}" == "1" ]] && connexion_limitee; then
+    echo "Passe sautée : connexion limitée (forcer avec --force-run)."
+    exit 0
+  fi
+  if [[ -n "${RCLONE_BATTERY_MIN:-}" ]] && (( RCLONE_BATTERY_MIN > 0 )) && batterie_faible; then
+    echo "Passe sautée : batterie sous ${RCLONE_BATTERY_MIN}% et machine débranchée (forcer avec --force-run)."
+    exit 0
+  fi
+fi
+
+# Garde-fous rclone. Chacun est justifié dans la section « Pièges rencontrés ».
+COMMON=(
+  # --filters-file, et NON --filter-from : c'est le mécanisme propre à bisync,
+  # qui mémorise une empreinte des filtres et REFUSE de tourner s'ils ont changé,
+  # en exigeant un --resync. Vérifié par test : avec --filter-from, ajouter une
+  # exclusion fait interpréter les fichiers concernés comme des SUPPRESSIONS à
+  # propager. Sur un miroir volumineux, la proportion reste sous --max-delete et
+  # les fichiers disparaissent réellement de Google Drive. Voir le piège n°11.
+  --filters-file "$FILTERS"
+  --check-access                    # refuse de tourner si RCLONE_TEST manque d'un côté
+  --max-delete 10                   # abandonne si plus de 10 % des fichiers disparaîtraient
+  --conflict-resolve newer          # en cas de conflit, la version la plus récente gagne
+  --conflict-loser num              # ... et la perdante est conservée, suffixée
+  --conflict-suffix conflict
+  --resilient                       # tolère les erreurs transitoires
+  --recover                         # reprend proprement après une interruption
+  # Sans ceci les verrous n'expirent JAMAIS : une veille ou un plantage en pleine
+  # passe laisserait un verrou définitif. Le verrou est LOCAL
+  # (~/.cache/rclone/bisync/*.lck) : il ne bloque que cette machine, pas les deux.
+  --max-lock 15m
+  --create-empty-src-dirs           # sans quoi l'arborescence de dossiers vides ne remonte pas
+  --drive-skip-gdocs                # les Docs natifs n'ont pas de taille stable
+  --fast-list                       # une seule liste récursive : divise les appels API
+  --tpslimit 10                     # Drive limite la création de fichiers
+  --tpslimit-burst 20
+  --transfers "${RCLONE_TRANSFERS:-8}"
+  --checkers  "${RCLONE_CHECKERS:-16}"
+  --drive-pacer-min-sleep 10ms      # possible grâce au Client ID dédié
+  --workdir "$WORKDIR"
+  --log-level INFO
+)
+
+# La config est chiffrée : le mot de passe vient du trousseau.
+if command -v secret-tool >/dev/null 2>&1; then
+  COMMON+=(--password-command "secret-tool lookup service rclone key config")
+fi
+
+rc=0
+for pair in "${PAIRS[@]}"; do
+  local_sub="${pair%%:*}"
+  remote="${pair#*:}"
+
+  if [[ -n "$ONLY" && "$ONLY" != "$local_sub" ]]; then
+    continue
+  fi
+  local_path="$MIRROR_ROOT/$local_sub"
+  log="$LOGDIR/bisync-$local_sub.log"
+
+  echo "=== paire $local_sub ↔ $remote ==="
+
+  # 1. Audit pre-flight : bloque sur anomalie, avertit sur exclusion silencieuse.
+  if ! "$PREFLIGHT" "$local_path"; then
+    pf=$?
+    if (( pf == 1 )); then
+      echo "pre-flight BLOQUANT pour $local_sub — paire ignorée." >&2
+      rc=1
+      continue
+    fi
+    echo "pre-flight : avertissements, on continue."
+  fi
+
+  # 2. Refus explicite de resynchroniser sans demande. Un --resync automatique
+  #    après perte de l'état bisync réécrirait les deux côtés : jamais implicite.
+  state_present=$(find "$WORKDIR" -maxdepth 1 -name "*$local_sub*" -print -quit 2>/dev/null)
+  suivi_deplacements "$local_sub"
+  args=("${COMMON[@]}" "${EXTRA[@]}" "${SUIVI[@]}" --log-file "$log")
+
+  # Déblocage explicite du garde-fou de suppressions, pour cette exécution.
+  if (( AUTORISER_SUPPR )); then
+    echo "ATTENTION : --max-delete contourné pour cette passe ($local_sub)." >&2
+    args+=(--force)
+  fi
+
+  # Corbeille locale : un fichier écrasé ou supprimé côté local y est déplacé
+  # au lieu d'être perdu. Le côté Drive est déjà couvert par la corbeille des
+  # Drive partagés (30 jours) ; c'est le côté local qui était à découvert.
+  #
+  # PAS de --suffix ici, malgré la tentation d'horodater les copies de secours :
+  # --suffix est un drapeau GLOBAL. Faute de --backup-dir2, rclone l'applique
+  # aussi au côté Drive et y RENOMME les fichiers au lieu de les supprimer.
+  # Conséquences constatées : --max-delete n'a plus rien à compter et ne protège
+  # plus, et l'arborescence Drive se remplit de copies suffixées. Piège n°4.
+  # Un --backup-dir2 exigerait un second remote crypt hors de gcrypt: — non
+  # justifié tant que la corbeille Drive couvre 30 jours.
+  if [[ -n "${RCLONE_BACKUP_ROOT:-}" ]]; then
+    args+=(--backup-dir1 "$RCLONE_BACKUP_ROOT/$local_sub")
+  fi
+  if (( RESYNC )); then
+    echo "AMORÇAGE (--resync) demandé explicitement."
+    args+=(--resync)
+  elif [[ -z "$state_present" ]]; then
+    echo "ERREUR : aucun état bisync pour $local_sub." >&2
+    echo "         Premier lancement ? Utilise : $0 --resync" >&2
+    rc=1
+    continue
+  fi
+
+  # Une seconde tentative distingue le transitoire du persistant.
+  # Motivation : le binaire rclone s'est effondré une fois sur un SIGSEGV pendant
+  # sa propre initialisation, avant même d'ouvrir son fichier de log. Incident
+  # unique, sans cause matérielle, réparé de lui-même à la passe suivante — mais
+  # il avait déclenché une notification d'échec pour rien. Voir le piège n°10.
+  # Les échecs déterministes (too many deletes, check-access) échouent à
+  # l'identique au second essai : l'alerte est bien levée, avec 15 s de retard.
+  tentative=1
+  while :; do
+    if rclone bisync "$local_path" "$remote" "${args[@]}"; then
+      if (( tentative > 1 )); then
+        echo "paire $local_sub : OK (réussie au ${tentative}e essai — échec transitoire absorbé)"
+      else
+        echo "paire $local_sub : OK"
+      fi
+      # La paire repasse : sa signature d'échec disparaît, de sorte qu'un même
+      # problème réapparaissant plus tard donnera bien lieu à une alerte.
+      rm -f "$ETAT_NOTIFY/echec-$local_sub"
+      break
+    fi
+    # Un verrou détenu par une autre passe n'est pas une panne : c'est de la
+    # concurrence. Cas vécu — une passe manuelle lancée pendant qu'une
+    # passe automatique téléchargeait 3 Go. Le verrou expire seul (--max-lock),
+    # la passe suivante prendra le relais : inutile d'alerter.
+    if tail -5 "$log" 2>/dev/null | grep -q "prior lock file found"; then
+      echo "paire $local_sub : passe déjà en cours ailleurs, on laisse la main."
+      break
+    fi
+    if (( tentative >= TENTATIVES_MAX )); then
+      echo "paire $local_sub : ECHEC après $tentative essais (voir $log)" >&2
+      # Signature à destination de rclone-notify.sh. Le code de sortie reste
+      # non nul : le dédoublonnage tait la notification, jamais l'échec lui-même,
+      # qui doit rester visible dans « systemctl --user status ».
+      printf '%s\n' "$(motif_echec "$log")" > "$ETAT_NOTIFY/echec-$local_sub"
+      rc=1
+      break
+    fi
+    echo "paire $local_sub : échec au ${tentative}er essai, nouvelle tentative dans ${DELAI_REESSAI}s" >&2
+    sleep "$DELAI_REESSAI"
+    tentative=$((tentative + 1))
+  done
+done
+
+# Plus aucune paire en échec : on oublie la dernière signature notifiée, pour
+# qu'un problème identique réapparaissant plus tard réalerte bien. Le test porte
+# sur les fichiers restants et non sur $rc, afin que « --only <paire> » ne purge
+# pas l'état d'une paire qu'il n'a pas traitée.
+if ! compgen -G "$ETAT_NOTIFY/echec-*" >/dev/null; then
+  rm -f "$ETAT_NOTIFY/notifie"
+fi
+
+exit "$rc"
+```
+
+!!! tip "Pourquoi le script refuse de resynchroniser tout seul"
+    Si l'état bisync disparaît — nettoyage de `~/.cache`, réinstallation — un `--resync` automatique **réécrirait les deux côtés** et pourrait écraser la version la plus récente. Il doit rester une décision consciente.
+
+### Étape 9 : les unités systemd
+
+```ini title="~/.config/systemd/user/rclone-bisync.service"
+[Unit]
+Description=Synchronisation bidirectionnelle rclone vers Google Drive
+After=graphical-session.target
+PartOf=graphical-session.target
+OnFailure=rclone-notify@%n.service
+# Indispensable : systemd limite par défaut à 5 démarrages par tranche de 10 s,
+# au-delà de quoi l'unité est marquée « start-limit-hit », donc en ÉCHEC, avec
+# notification. Au démarrage, le dispatcher réseau et le rattrapage du timer
+# produisent facilement six démarrages en trois secondes. Voir le piège n°9.
+StartLimitIntervalSec=0
+
+[Service]
+Type=oneshot
+# PartOf=graphical-session.target fait arrêter le service à la fin de session.
+# Sans cette ligne, cet arrêt ORDONNÉ compte comme un échec
+# (code=killed, status=15/TERM → result 'signal') et notifie. Voir le piège n°10.
+SuccessExitStatus=SIGTERM
+EnvironmentFile=%h/.config/rclone/machine.env
+ExecStart=%h/.local/bin/rclone-bisync.sh
+TimeoutStartSec=3h
+Nice=10
+IOSchedulingClass=idle
+
+[Install]
+WantedBy=graphical-session.target
+```
+
+```ini title="~/.config/systemd/user/rclone-bisync.timer"
+[Unit]
+Description=Déclenchement périodique de la synchronisation rclone
+
+[Timer]
+OnCalendar=*:0/15
+Persistent=true
+RandomizedDelaySec=120
+AccuracySec=30s
+Unit=rclone-bisync.service
+
+[Install]
+WantedBy=timers.target
+```
+
+!!! note "Le rôle de RandomizedDelaySec"
+    Sans ce décalage, les deux machines taperaient l'API Drive à la même seconde. `Persistent=true` rattrape par ailleurs la passe manquée si la machine était éteinte.
+
+La notification ne passe pas directement par `notify-send` : deux garde-fous s'interposent, un échec déterministe se répétant à chaque passe et l'urgence `critical` ne respectant pas le mode « Ne pas déranger ». Voir le piège n°13.
+
+```bash title="~/.local/bin/rclone-notify.sh" linenums="1"
+#!/usr/bin/env bash
+# Émission des notifications d'échec rclone, avec deux garde-fous (piège n°13) :
+#   1. déduplication — une seule alerte par signature d'échec ;
+#   2. respect du mode « Ne pas déranger » de GNOME.
+# Appelé par rclone-notify@.service. Sort toujours en 0 : un défaut de
+# notification ne doit pas se transformer en second échec systemd.
+#
+# Usage : rclone-notify.sh <unité-en-échec>
+set -uo pipefail
+
+UNITE="${1:-unité inconnue}"
+ETAT="${RCLONE_NOTIFY_STATE_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/rclone/notify}"
+NOTIFIE="$ETAT/notifie"
+mkdir -p "$ETAT" || exit 0
+
+# Signature de l'échec courant. Le script de synchronisation dépose un fichier
+# « echec-<paire> » par paire en échec déterministe et le retire dès qu'elle
+# repasse ; la signature est la concaténation ordonnée de ces fichiers. Elle
+# change donc dès qu'une paire s'ajoute, disparaît, ou change de motif d'erreur.
+# Repli sur le nom de l'unité pour les échecs qui ne viennent pas du script
+# (rclone-mount@ notamment), lesquels ne déposent aucun fichier de paire.
+signature() {
+  local s f
+  s=$(cd "$ETAT" 2>/dev/null && for f in echec-*; do
+        [ -e "$f" ] || continue
+        printf '%s=%s\n' "${f#echec-}" "$(cat "$f" 2>/dev/null)"
+      done | LC_ALL=C sort)
+  if [ -n "$s" ]; then printf '%s\n' "$s"; else printf 'unite=%s\n' "$UNITE"; fi
+}
+
+# GNOME expose le mode par org.gnome.desktop.notifications show-banners.
+# Absence de gsettings (session non GNOME) = pas de mode à respecter.
+ne_pas_deranger() {
+  command -v gsettings >/dev/null 2>&1 || return 1
+  [ "$(gsettings get org.gnome.desktop.notifications show-banners 2>/dev/null)" = "false" ]
+}
+
+en_ligne() { printf '%s' "$1" | tr '\n' ' ' | sed 's/ *$//'; }
+
+SIG="$(signature)"
+PRECEDENTE="$(cat "$NOTIFIE" 2>/dev/null || true)"
+
+if [ "$SIG" = "$PRECEDENTE" ]; then
+  echo "Notification supprimée : signature inchangée depuis la dernière alerte."
+  echo "  signature : $(en_ligne "$SIG")"
+  exit 0
+fi
+
+# Ne PAS marquer la signature ici : l'alerte n'est pas annulée, seulement
+# différée, et repartira à la première passe en échec après la levée du mode.
+if ne_pas_deranger; then
+  echo "Notification différée : « Ne pas déranger » actif."
+  echo "  signature : $(en_ligne "$SIG")"
+  echo "  Signature NON marquée : l'alerte repartira à la première passe en"
+  echo "  échec après la levée du mode."
+  exit 0
+fi
+
+notify-send --urgency=critical --icon=dialog-error \
+  "rclone : échec de $UNITE" \
+  "$(en_ligne "$SIG")\nDétail : journalctl --user -u $UNITE -n 50\nLogs : ~/.local/share/rclone/logs/" \
+  || { echo "notify-send a échoué (démon de notification pas encore prêt ?)." ; exit 0; }
+
+printf '%s\n' "$SIG" > "$NOTIFIE"
+echo "Notification émise. Signature : $(en_ligne "$SIG")"
+exit 0
+```
+
+```ini title="~/.config/systemd/user/rclone-notify@.service"
+[Unit]
+Description=Notification d'échec pour %i
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/rclone-notify.sh %i
+```
+
+!!! warning "Le script doit rester en dehors de `OnFailure=`"
+    Il est tentant de supprimer `OnFailure=` pour faire taire les alertes répétées. Ce serait perdre aussi la **première**, la seule qui apporte une information. C'est la déduplication qui doit filtrer, pas la suppression de l'alerte.
+
+```ini title="~/.config/systemd/user/rclone-mount@.service"
+[Unit]
+Description=Montage rclone du remote %i
+After=graphical-session.target
+PartOf=graphical-session.target
+OnFailure=rclone-notify@%n.service
+
+[Service]
+Type=notify
+EnvironmentFile=%h/.config/rclone/machine.env
+# L'ORDRE COMPTE : le démontage doit précéder le mkdir. Voir le piège n°5.
+ExecStartPre=-/bin/fusermount3 -uz %h/mnt/%i
+ExecStartPre=/bin/mkdir -p %h/mnt/%i ${RCLONE_CACHE_DIR}
+ExecStart=/usr/bin/rclone mount %i: %h/mnt/%i \
+    --config %h/.config/rclone/rclone.conf \
+    --password-command "secret-tool lookup service rclone key config" \
+    --vfs-cache-mode full \
+    --cache-dir ${RCLONE_CACHE_DIR} \
+    --vfs-cache-max-size ${RCLONE_VFS_CACHE_MAX_SIZE} \
+    --vfs-cache-max-age 168h \
+    --vfs-read-chunk-size 32M \
+    --vfs-read-chunk-size-limit 1G \
+    --buffer-size 32M \
+    --dir-cache-time 1000h \
+    --poll-interval 15s \
+    --drive-skip-gdocs \
+    --tpslimit 10 \
+    --umask 077 \
+    --log-level INFO \
+    --log-file %h/.local/share/rclone/logs/mount-%i.log
+ExecStop=/bin/fusermount3 -uz %h/mnt/%i
+ExecStopPost=-/bin/fusermount3 -uz %h/mnt/%i
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=graphical-session.target
+```
+
+!!! tip "dir-cache-time à 1000 h n'est pas une erreur"
+    Google Drive gère la notification de changements. Avec `--poll-interval 15s`, rclone est prévenu des modifications distantes ; un cache de répertoires très long est donc sans risque et économise énormément d'appels API.
+
+### Étape 10 : déclenchement réseau et rotation des logs
+
+```bash title="/etc/NetworkManager/dispatcher.d/90-rclone-bisync"
+#!/bin/sh
+# Relance la synchronisation au retour de connectivité.
+# NetworkManager exécute ce script en root ; le service visé est --user.
+RCLONE_USER="user"
+STATUS="$2"
+case "$STATUS" in up|vpn-up) ;; *) exit 0 ;; esac
+
+# Les événements réseau arrivent en rafale : ne rien faire si une passe tourne.
+if systemctl --user --machine="${RCLONE_USER}@.host" is-active --quiet rclone-bisync.service 2>/dev/null; then
+  exit 0
+fi
+systemctl --user --machine="${RCLONE_USER}@.host" start --no-block rclone-bisync.service 2>/dev/null
+exit 0
+```
+
+```text title="/etc/logrotate.d/rclone"
+/home/user/.local/share/rclone/logs/*.log {
+    weekly
+    rotate 8
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+    su user user
+    create 0640 user user
+}
+```
+
+```bash
+sudo install -o root -g root -m 0755 /tmp/90-rclone-bisync /etc/NetworkManager/dispatcher.d/90-rclone-bisync && sudo install -o root -g root -m 0644 /tmp/logrotate-rclone /etc/logrotate.d/rclone
+```
+
+!!! warning "La directive su du logrotate n'est pas facultative"
+    logrotate refuse de traiter un répertoire inscriptible par un non-root sans indication explicite du propriétaire.
+
+### Étape 11 : amorçage
+
+Créez l'arborescence et les fichiers témoins des deux côtés, puis simulez **avant** d'exécuter :
+
+```bash
+mkdir -p /mnt/donnees/GoogleDrive/{Chiffre,Clair} && touch /mnt/donnees/GoogleDrive/{Chiffre,Clair}/RCLONE_TEST && rclone copy /mnt/donnees/GoogleDrive/Chiffre/RCLONE_TEST gcrypt: && rclone copy /mnt/donnees/GoogleDrive/Clair/RCLONE_TEST gd-clair:Rclone
+```
+
+```bash
+~/.local/bin/rclone-bisync.sh --resync --dry-run
+```
+
+Si la simulation est propre :
+
+```bash
+~/.local/bin/rclone-bisync.sh --resync && systemctl --user enable --now rclone-bisync.timer
+```
+
+!!! warning "Le plafond des 750 Go par jour"
+    Google limite l'envoi à **750 Go par jour et par utilisateur**. Pour un amorçage volumineux, étalez avec `--max-transfer 700G --cutoff-mode soft` et relancez les jours suivants.
+
+### Étape 12 : la seconde machine
+
+Scripts, filtres et unités sont **identiques**. Seul `machine.env` diffère. Le fichier `rclone.conf` étant chiffré, il peut transiter par `scp` sans risque.
+
+```bash
+scp ~/.config/rclone/{rclone.conf,filters.txt} user@192.168.1.42:.config/rclone/ && scp ~/.local/bin/rclone-bisync*.sh user@192.168.1.42:.local/bin/ && scp ~/.config/systemd/user/rclone-*.service ~/.config/systemd/user/rclone-*.timer user@192.168.1.42:.config/systemd/user/
+```
+
+Sur la seconde machine, déposez le mot de passe de configuration dans le trousseau local (`secret-tool store …`), adaptez `machine.env`, puis amorcez avec `--resync`.
+
+## Pièges rencontrés
+
+Cette section est la plus utile de l'article. Chacun de ces défauts n'est apparu qu'**au test**, et plusieurs peuvent coûter des données.
+
+### Piège n°1 — Ne jamais pointer Crypt sur la racine d'un remote
+
+L'assistant prévient discrètement que `monremote:` est déconseillé. Voici ce qui se passe si le Drive contient déjà des dossiers en clair :
+
+!!! failure "Message d'erreur"
+    ```
+    NOTICE: Projets: Skipping undecryptable dir name: not a multiple of blocksize
+    NOTICE: Factures: Skipping undecryptable dir name: not a multiple of blocksize
+    ```
+
+Le listage renvoyé est **vide**, et le message se répète à chaque passe. Un remote Crypt à la racine part du principe que *tout* ce qui s'y trouve est chiffré. **Solution** : toujours viser un sous-dossier dédié, `gd-chiffre:Rclone`. Son nom reste en clair — c'est le point d'ancrage, sans conséquence.
+
+!!! tip "Corollaire souvent oublié"
+    Les dossiers en clair qui subsistent à côté divulguent votre **structure organisationnelle**, c'est-à-dire vos sujets, même si aucun fichier n'est lisible. Si vous avez choisi `directory_name_encryption = true`, recréez cette arborescence **dans** la zone chiffrée et supprimez la version en clair.
+
+### Piège n°2 — L'abandon « all files were changed » sur un miroir presque vide
+
+!!! failure "Message d'erreur"
+    ```
+    ERROR : Safety abort: all files were changed on Path2 "gd-clair:Rclone/". Run with --force if desired.
+    NOTICE: Bisync aborted. Please try again.
+    ```
+
+Quand une paire ne contient qu'**un seul fichier** (typiquement `RCLONE_TEST` juste après l'amorçage), sa réécriture par l'autre machine représente 100 % du contenu — ce que bisync interprète comme un côté vidé par accident. Le garde-fou fonctionne parfaitement ; c'est le jeu de données minuscule qui le rend pathologique.
+
+Le défaut est **persistant** : la paire échoue à chaque passe, donc toutes les 15 minutes, avec une notification à chaque fois. **Solution** : déposer un second fichier stable dans chaque zone. Un `LISEZMOI.txt` documentant le dossier fait très bien l'affaire et sert deux fois.
+
+### Piège n°3 — `--max-delete` est un pourcentage, pas un nombre
+
+L'aide générique annonce `--max-delete int : When synchronizing, limit the number of deletes`. C'est vrai pour `rclone sync`, **faux pour bisync**, qui en redéfinit le sens :
+
+!!! failure "Message d'erreur"
+    ```
+    ERROR : Safety abort: too many deletes (>10%, 19 of 31) on Path1 "/mnt/donnees/GoogleDrive/Chiffre/". Run with --force if desired.
+    ```
+
+Deux subtilités vérifiées par l'expérience : le dénominateur inclut les **dossiers**, pas seulement les fichiers ; et la comparaison est un « strictement supérieur ». Une suppression tombant à exactement 10 % passe donc sans être bloquée.
+
+### Piège n°4 — `--suffix` neutralise silencieusement `--max-delete`
+
+En ajoutant `--backup-dir1` pour disposer d'une corbeille locale, la tentation est d'y joindre un `--suffix` horodaté pour éviter que deux sauvegardes successives ne s'écrasent. **Ne le faites pas.**
+
+`--suffix` est un drapeau **global**. En l'absence de `--backup-dir2`, rclone l'applique aussi au côté distant, où il **renomme** les fichiers au lieu de les supprimer. Conséquence : plus aucune suppression à compter, donc `--max-delete` ne protège plus rien, et l'arborescence Drive se remplit de copies suffixées. Le symptôme est trompeur — la passe se termine par un `OK` rassurant.
+
+### Piège n°5 — Un montage qui ne survit pas à un plantage
+
+Après un `kill -9` du processus `rclone mount`, systemd relance bien le service, mais celui-ci reste bloqué :
+
+!!! failure "Message d'erreur"
+    ```
+    mkdir: impossible d'évaluer «/home/user/mnt/gd-clair»: Noeud final de transport n'est pas connecté
+    rclone-mount@gd-clair.service: Control process exited, code=exited, status=1/FAILURE
+    ```
+
+Deux causes cumulées. D'abord, **`ExecStop` n'est pas exécuté quand le processus principal est déjà mort** : le montage FUSE fantôme subsiste. Il faut un `ExecStopPost`, qui lui tourne systématiquement. Ensuite, l'**ordre des `ExecStartPre` compte** : si `mkdir` précède le `fusermount3 -uz`, il échoue en tentant d'inspecter un chemin cassé, ce qui coûte un cycle d'échec et une notification inutile avant que le service ne se rétablisse.
+
+### Piège n°6 — Le verrou bisync est local, et par défaut éternel
+
+`--max-lock` vaut **0** par défaut, c'est-à-dire que les verrous n'expirent jamais. Après une interruption — mise en veille, coupure réseau, plantage — la machine concernée reste bloquée :
+
+!!! failure "Message d'erreur"
+    ```
+    NOTICE: Failed to bisync: prior lock file found: ~/.cache/rclone/bisync/….lck
+    Tip: this indicates that another bisync run (of these same paths) either is still
+    running or was interrupted before completion.
+    ```
+
+Deux précisions utiles. Le verrou est **local** (`~/.cache/rclone/bisync/*.lck`), pas sur le remote : il ne bloque donc que la machine concernée, pas les deux. Et `--max-lock 15m` suffit à le rendre auto-expirant, rclone le renouvelant tant que la passe tourne. Sans cette option, il faut supprimer le fichier à la main.
+
+Bonne nouvelle vérifiée au test : une fois le verrou levé, la passe suivante se termine **sans `--resync`** grâce à `--resilient` et `--recover`. Un test réel — passe tuée par `SIGKILL` à 8 fichiers sur 300 — s'est soldé par une reprise complète et automatique.
+
+### Piège n°7 — Faire cohabiter bisync avec un autre client de synchronisation
+
+Si votre disque héberge déjà Nextcloud, Synology Drive, Dropbox ou OneDrive, **le miroir bisync doit vivre dans un répertoire strictement disjoint**. Deux agents sur les mêmes fichiers produisent une boucle de conflits, et les fichiers temporaires ou partiels de l'un partent sur le cloud de l'autre. Le script pre-flight de l'étape 7 détecte ce recouvrement et refuse de démarrer.
+
+### Piège n°8 — Nettoyer avec les timers actifs
+
+Erreur d'exploitation classique, à connaître : supprimer des fichiers sur les deux machines et sur Drive **pendant que les timers tournent** ne fonctionne pas. Une passe automatique se déclenche au milieu et repousse ce que vous venez d'effacer. La procédure correcte :
+
+```bash
+systemctl --user stop rclone-bisync.timer
+```
+
+Puis supprimer sur **les trois côtés**, relancer un `--resync`, et seulement ensuite redémarrer le timer.
+
+### Piège n°9 — Le trousseau n'est pas encore déverrouillé au démarrage
+
+Celui-ci ne se manifeste qu'au **premier vrai redémarrage**, et il se reproduit à chacun.
+
+!!! failure "Message d'erreur"
+    ```
+    gnome-keyring-daemon: couldn't create system prompt:
+      GDBus.Error:org.freedesktop.DBus.Error.Spawn.ChildExited:
+      Process org.gnome.keyring.SystemPrompter exited with status 1
+    ERROR : Using --password-command returned: exit status 1
+    ```
+
+Au démarrage, deux mécanismes déclenchent des passes **avant** que la session graphique n'ait déverrouillé le trousseau : le rattrapage `Persistent=true` du timer, qui compense la passe manquée pendant l'extinction, et le dispatcher NetworkManager, qui réagit à *chaque* interface qui monte — filaire, VPN, ponts. Sur une machine réelle, cela fait facilement quatre déclenchements dans les deux minutes suivant le démarrage, contre quatre pour le timer sur l'heure entière.
+
+À ce moment-là `secret-tool` ne peut pas ouvrir la collection : elle est verrouillée et le prompteur graphique n'est pas encore disponible. rclone ne peut donc pas déchiffrer sa configuration, le service tombe en échec, et `OnFailure` déclenche une notification à chaque tentative. Le tout se résorbe seul une fois la session ouverte — mais l'utilisateur a déjà reçu une volée d'alertes pour un problème qui n'en est pas un.
+
+!!! tip "Détail savoureux"
+    La toute première notification échoue elle aussi, avec `org.freedesktop.Notifications exited with status 1` : le démon de notification n'est pas davantage démarré que le trousseau.
+
+**Solution** : la fonction `trousseau_requis_indisponible()` du script (étape 8). Si la configuration est chiffrée et que le trousseau ne répond pas, la passe est **sautée avec un code de sortie 0**. systemd la considère comme réussie, aucune alerte n'est levée, et la passe suivante s'exécutera normalement une fois la session ouverte.
+
+Deux choix de conception méritent d'être soulignés. Le garde-fou est **délibérément non contournable** par `--force-run` : forcer ne ferait qu'échouer plus bruyamment, rclone étant de toute façon incapable de déchiffrer sa configuration. Et il ne s'active **que si la configuration est réellement chiffrée** — sur une machine où elle est en clair, il ne doit jamais bloquer quoi que ce soit.
+
+!!! warning "Ne confondez pas avec une vraie panne"
+    Tant que ce garde-fou n'est pas en place, le symptôme visible est un service en échec au démarrage. Il est tentant d'incriminer le réseau, les identifiants OAuth ou la configuration rclone. Le seul indice fiable est `Using --password-command returned: exit status 1` dans les journaux rclone : c'est le trousseau, rien d'autre.
+
+#### Le piège dans le piège : `start-limit-hit`
+
+Ce correctif en provoque un second si l'on s'arrête là, et le constat est déroutant : le garde-fou **fonctionne**, chaque passe se termine en succès, et pourtant l'unité tombe en échec.
+
+!!! failure "Message d'erreur"
+    ```
+    rclone-bisync.sh[2999]: Passe sautée : trousseau verrouillé ou indisponible.
+    systemd[2507]: Finished rclone-bisync.service.
+    …
+    systemd[2507]: rclone-bisync.service: Start request repeated too quickly.
+    systemd[2507]: rclone-bisync.service: Failed with result 'start-limit-hit'.
+    systemd[2507]: rclone-bisync.service: Triggering OnFailure= dependencies.
+    ```
+
+L'explication tient à une interaction entre deux éléments de cette page. Le dispatcher NetworkManager déclenche une passe **par interface qui monte** — filaire, VPN, ponts — et le rattrapage `Persistent=true` du timer s'y ajoute : six démarrages en trois secondes sont courants au boot. Tant que chaque passe durait plusieurs secondes, ces déclenchements s'espaçaient naturellement. Depuis que le garde-fou trousseau les fait sortir en quelques **millisecondes**, ils se télescopent et dépassent la limite systemd par défaut de **5 démarrages par tranche de 10 secondes**.
+
+L'unité est alors marquée `start-limit-hit`, ce qui compte comme un échec et déclenche `OnFailure`. Autrement dit : le correctif du piège n°9 recrée exactement la notification qu'il devait supprimer.
+
+**Solution** — une ligne dans la section `[Unit]` :
+
+```ini
+StartLimitIntervalSec=0
+```
+
+Pour une tâche ponctuelle et idempotente, ce plafond n'apporte rien : relancer une synchronisation dix fois d'affilée est sans danger, la seule conséquence étant quelques passes inutiles qui se terminent aussitôt.
+
+!!! success "Comment vérifier"
+    ```bash
+    systemctl --user reset-failed rclone-bisync.service; for i in $(seq 1 8); do systemctl --user start --no-block rclone-bisync.service; done; sleep 12; systemctl --user show -p Result --value rclone-bisync.service
+    ```
+    Doit afficher `success`, et `journalctl --user -u rclone-bisync.service | grep start-limit-hit` doit rester vide.
+
+!!! tip "La leçon générale"
+    Rendre une tâche périodique **plus rapide** peut la faire franchir un seuil de fréquence qu'elle ne rencontrait pas auparavant. Le réflexe, après avoir accéléré un service déclenché par plusieurs sources, est de vérifier ses limites de démarrage — pas seulement son code de sortie.
+
+### Piège n°10 — L'échec isolé qui n'est pas une panne
+
+Deux situations produisent une notification d'échec alors que **rien ne va mal**. Elles méritent d'être traitées ensemble, car la réponse est la même : distinguer le transitoire du persistant avant d'alerter.
+
+**Le plantage du binaire.** rclone est un programme Go, et il lui arrive de s'effondrer :
+
+!!! failure "Message d'erreur"
+    ```
+    fatal error: unexpected signal during runtime execution
+    [signal SIGSEGV: segmentation violation code=0x1 addr=0x77a030cff1c3 pc=0x43e453]
+    runtime.sweepone()
+      runtime/mgcsweep.go:383
+    github.com/rclone/rclone/backend/overview.GetBackendConfig(...)
+    github.com/rclone/rclone/fs.Register(...)
+    ```
+
+!!! danger "Le piège du diagnostic"
+    Ce plantage survient pendant l'**initialisation des paquets Go**, donc **avant que rclone n'ouvre son fichier de journal**. Vos logs rclone seront donc parfaitement **vides** pour cet incident. Toute la trace se trouve dans le journal systemd — cherchez-la avec `journalctl --user -u rclone-bisync.service`, jamais dans `~/.local/share/rclone/logs/`. Un cas observé en production : une seule occurrence en six jours d'exploitation, sans récidive.
+
+**Avant de conclure au hasard, écartez le matériel.** Un `SIGSEGV` dans le ramasse-miettes évoque une corruption mémoire, ce qui mérite trente secondes de vérification :
+
+```bash
+dpkg -V rclone; sudo dmesg -T | grep -iE "edac|mce|machine check|Hardware Error"; journalctl -b | grep -ic segfault
+```
+
+!!! success "Résultat attendu"
+    Aucune sortie de `dpkg -V` (binaire conforme au paquet), aucune ligne EDAC ni MCE, et un compte de `segfault` proche de zéro. Attention au comptage : un filtre trop large additionne les lignes d'un *même* incident et les plantages d'autres applications — Chrome en produit régulièrement, sans rapport.
+
+**La passe concurrente.** Second cas, plus fréquent : lancer une synchronisation à la main pendant qu'une passe automatique tourne déjà.
+
+!!! failure "Message d'erreur"
+    ```
+    NOTICE: Failed to bisync: prior lock file found:
+      ~/.cache/rclone/bisync/…_Clair..gd-clair_Rclone.lck
+    ```
+
+Ce n'est pas une panne mais de la concurrence — d'autant plus probable qu'un premier transfert volumineux peut durer bien plus que l'intervalle du timer. Le verrou expire seul grâce à `--max-lock` et la passe suivante prend le relais.
+
+**Solution — la boucle de reprise de l'étape 8.** Elle traite les trois cas séparément :
+
+| Situation | Comportement |
+|---|---|
+| Échec transitoire (plantage, coupure réseau) | Second essai 15 s plus tard ; s'il réussit, **aucune alerte**, mention « réussie au 2e essai » au journal |
+| Verrou détenu par une autre passe | Cède la main immédiatement, **sortie 0**, aucune alerte |
+| Échec déterministe (`too many deletes`, `check-access`) | Échoue à l'identique au second essai → **alerte levée**, avec 15 s de retard |
+
+!!! tip "Pourquoi une seule reprise, et pas trois"
+    Un second essai suffit à absorber le bruit. Au-delà, on retarde la détection des vrais problèmes sans rien gagner : un échec déterministe échouera autant de fois qu'on le relancera. La trace « réussie au 2e essai » reste au journal précisément pour qu'un plantage qui deviendrait récurrent ne passe pas inaperçu.
+
+**Troisième cas : l'arrêt en fin de session.** Celui-ci ne se déclenche que si une passe tourne au moment où vous fermez votre session ou éteignez la machine.
+
+!!! failure "Message d'erreur"
+    ```
+    rclone-bisync.service: Main process exited, code=killed, status=15/TERM
+    rclone-bisync.service: Failed with result 'signal'.
+    rclone-bisync.service: Stopped rclone-bisync.service.
+    rclone-bisync.service: Triggering OnFailure= dependencies.
+    ```
+
+La cause est la directive `PartOf=graphical-session.target` de l'unité : elle fait arrêter le service quand la session s'achève, ce qui est le comportement voulu — on ne veut pas d'une synchronisation qui continue après la déconnexion. Mais systemd compte cette terminaison par signal comme un **échec**, et déclenche donc une notification pour un arrêt parfaitement ordonné.
+
+**Solution** — une ligne dans la section `[Service]` :
+
+```ini
+SuccessExitStatus=SIGTERM
+```
+
+!!! success "Comment vérifier"
+    ```bash
+    systemctl --user start --no-block rclone-bisync.service; sleep 1; systemctl --user stop rclone-bisync.service; sleep 2; systemctl --user show -p Result --value rclone-bisync.service
+    ```
+    Doit afficher `success`. Sans le correctif, la même séquence donne `signal` et une notification.
+
+### Piège n°11 — Changer les filtres peut supprimer vos fichiers
+
+C'est le piège le plus dangereux de cette page, et le plus silencieux.
+
+`rclone` propose `--filter-from`, que l'on emploie naturellement. Mais **bisync possède le sien**, `--filters-file`, et la différence n'a rien de cosmétique.
+
+Avec `--filter-from`, bisync ne mémorise **rien** des filtres employés. Le jour où vous ajoutez une exclusion, les fichiers concernés disparaissent simplement du listage. bisync compare ce listage à celui de la passe précédente et en tire la seule conclusion possible de son point de vue : **ces fichiers ont été supprimés, il faut propager la suppression**.
+
+!!! failure "Ce que produit --filter-from après un ajout d'exclusion"
+    ```
+    ERROR : Safety abort: too many deletes (>10%, 4 of 10) on Path1 "…"
+    ```
+
+!!! danger "Pourquoi le garde-fou ne vous sauvera pas"
+    Dans l'exemple ci-dessus, `--max-delete` a bloqué — mais uniquement parce que la proportion atteignait 40 %. Le seuil porte sur un **pourcentage**. Excluez un dossier de trois fichiers dans un miroir qui en compte plusieurs centaines : la proportion reste sous 10 %, aucun garde-fou ne se déclenche, et **les fichiers sont réellement supprimés de Google Drive**. Le miroir local du poste qui exclut est intact, celui de l'autre poste se videra à la passe suivante. Rien dans l'interface ne signale d'anomalie.
+
+**La solution tient en un drapeau.** `--filters-file` enregistre une empreinte MD5 du fichier de filtres dans le répertoire de travail de bisync, et refuse de tourner si elle a changé :
+
+!!! success "Ce que produit --filters-file"
+    ```
+    ERROR : Bisync critical error: filters file has changed (must run --resync)
+    ERROR : Bisync aborted. Must run --resync to recover.
+    ```
+
+Aucun fichier n'est touché. Vous relancez avec `--resync` **en connaissance de cause**, et la nouvelle base de comparaison intègre les filtres à jour.
+
+!!! warning "Conséquence pratique à accepter"
+    Toute modification des filtres impose désormais un `--resync` sur la machine concernée. C'est le prix de la sécurité, et il est modeste : changer ses filtres reste un événement rare.
+
+**Second écueil, dans l'écriture du motif.** Pour exclure un dossier à tous les niveaux de l'arborescence, le réflexe est d'écrire `**/`. C'est une erreur, vérifiable en trois commandes :
+
+```bash
+mkdir -p t/_NOSYNC/x t/sous/_NOSYNC && touch t/_NOSYNC/a t/sous/_NOSYNC/b t/normal && printf -- "- **/_NOSYNC/**\n" > t/f && rclone lsf -R --files-only t --filter-from t/f
+```
+
+!!! failure "Résultat"
+    Le fichier `_NOSYNC/a`, situé à la **racine**, est conservé : `**/` impose au moins un niveau de dossier avant le motif. Le dossier racine passe donc au travers.
+
+Le motif correct est le plus simple — sans préfixe, il s'applique à tous les niveaux **et** écarte le répertoire lui-même :
+
+```text
+- _NOSYNC_laptop/**
+```
+
+!!! tip "Un motif à vérifier plutôt qu'à supposer"
+    C'est le second cas de cette page où la syntaxe des filtres rclone se comporte autrement qu'attendu — voir déjà, à l'étape 5, le motif `{{^.{144,}$}}` qui porte sur le chemin complet et non sur le nom du fichier. Prenez l'habitude de valider tout nouveau motif avec `rclone lsf -R --files-only` sur une arborescence jetable avant de le mettre en production.
+
+### Piège n°12 — Déplacer des dossiers bloque la synchronisation
+
+Celui-ci se produira au premier rangement que vous ferez, et le message affole à tort.
+
+!!! failure "Message d'erreur"
+    ```
+    Path1:   61 changes:   31 new,    0 modified,   30 deleted
+    ERROR : Safety abort: too many deletes (>10%, 30 of 37) on Path1 "…"
+    ```
+
+**bisync voit un déplacement comme une suppression suivie d'une création.** Déplacer un dossier dans un sous-dossier lui apparaît comme autant de suppressions à l'ancien emplacement, suivies d'autant de créations au nouveau. La signature est reconnaissable au premier coup d'œil — un nombre de créations presque égal au nombre de suppressions, et aucune modification.
+
+Regrouper deux dossiers sous un parent commun a suffi, dans un cas réel, à produire 30 suppressions sur 37 entrées, soit 81 %. Le garde-fou bloque et l'alerte revient jusqu'à intervention — une seule fois si vous avez mis en place la déduplication du piège n°13, à chaque passe sinon.
+
+!!! success "La bonne nouvelle"
+    **Rien n'est perdu, et rien n'a été propagé.** C'est précisément le rôle du garde-fou. Vérifiez-le en comparant les compteurs : un déplacement laisse le nombre de fichiers et le volume total inchangés de part et d'autre.
+
+#### bisync sait suivre les déplacements — mais cela ne lève pas le blocage
+
+Contrairement à une idée répandue, que cette page a elle-même propagée, **`--track-renames` est pris en charge par bisync depuis rclone v1.66**. La section « Renamed directories » de la documentation officielle le recommande explicitement. Mesuré sur une arborescence jetable, un dossier de dix fichiers déplacé sous un parent :
+
+| Configuration | Résultat |
+|---|---|
+| sans `--track-renames` | 40 Kio re-transférés, 10 supprimés, 10 renvoyés |
+| avec `--track-renames` | `Transferred: 0 B`, `Deleted: 0 (files)`, `Renamed: 10`, `Server Side Moves: 10` |
+
+!!! warning "Le drapeau supprime le transfert, pas l'abandon"
+    `--max-delete` compte toujours les fichiers déplacés comme supprimés : sa vérification a lieu **avant** la détection de renommage. Avec `--track-renames` actif on obtient encore `Safety abort: too many deletes (>10%, 11 of 13)`. C'est documenté en amont, et vérifié par test. Vous devrez donc toujours débloquer une fois — mais le déblocage ne coûte plus rien.
+
+**La stratégie d'appariement dépend des empreintes disponibles.** Relevez-les avant de choisir :
+
+```bash
+rclone backend features gd-clair: | grep -i hashes
+```
+
+Un remote Drive expose `md5`, `sha1` et `sha256` : la stratégie `hash` par défaut convient, et elle apparie par **contenu** — aucun faux positif possible. Un remote `crypt` n'expose en revanche **aucune** empreinte, et rclone refuse alors le drapeau :
+
+!!! failure "Message d'erreur sur un remote chiffré"
+    ```
+    ERROR : Encrypted drive 'gcrypt:': Ignoring --track-renames as the source and destination do not have a common hash
+    ```
+
+Seule `--track-renames-strategy modtime,leaf` fonctionne sur une zone chiffrée, et elle apparie sur le nom de base plus la date. D'où un arbitrage à faire consciemment.
+
+!!! danger "Le compromis de la zone chiffrée"
+    `modtime,leaf` peut confondre deux fichiers portant le même nom de base, la même date **et** la même taille pour un contenu différent. Comme bisync compare sur taille + date faute d'empreinte, l'erreur passerait inaperçue. La configuration retenue ici : `--track-renames` en permanent sur la zone claire, et `modtime,leaf` sur la zone chiffrée **uniquement** pendant `--autoriser-suppressions` — c'est-à-dire au moment où l'on réorganise volontairement, après avoir lu un `--dry-run`. Voir la fonction `suivi_deplacements()` de l'étape 8.
+
+!!! note "Jamais avec `--resync`"
+    `--track-renames` ne fonctionne qu'avec `sync`, pas `copy`. Un `--resync` l'ignore en écrivant deux lignes `ERROR : … Ignoring --track-renames as it doesn't work with copy or move, only sync`, sort néanmoins en 0 et se déroule normalement. Le script l'omet donc explicitement lors d'un amorçage, pour ne pas polluer le journal.
+
+**La procédure de déblocage, une fois le suivi en place.** Vérifiez, puis autorisez :
+
+```bash
+rclone-bisync.sh --dry-run && rclone-bisync.sh --autoriser-suppressions
+```
+
+Puis la même chose sur la seconde machine, qui abandonne aussi de son côté. Vérifié : elle bloque sur Path2, puis effectue ses déplacements côté serveur pour 0 octet et converge. Aucun `--resync` n'est nécessaire, quel que soit le volume.
+
+!!! danger "Ne débloquez jamais sans avoir lu la liste"
+    `--autoriser-suppressions` désactive la seule protection qui vous sépare d'une propagation destructive. Le `--dry-run` préalable n'est pas une formalité : c'est le dernier moment où une vraie fausse manipulation — un dossier supprimé par erreur, un disque à moitié monté — se distingue encore d'un simple rangement.
+
+**L'alternative qui ne désactive aucun garde-fou.** Reproduire le déplacement côté serveur, puis re-baser. Plus long à taper, mais `--max-delete` reste actif de bout en bout :
+
+```bash
+rclone move "gd-clair:Rclone/MonDossier" "gd-clair:Rclone/Parent/MonDossier" --delete-empty-src-dirs
+```
+
+Puis le même `mv` en local sur l'autre machine, et un `--resync` sur les deux. Dans un cas réel portant sur 6 Go, l'opération a pris 8 secondes et la re-base a rapporté `Transferred: 0 B`.
+
+!!! tip "Vérifiez d'abord que ce sera bien côté serveur"
+    Un `--dry-run` doit annoncer `Skipped server-side directory move as --dry-run is set`. Si rclone parle de copie, c'est que la source et la destination ne sont pas sur le même remote, et vous transféreriez les données pour rien.
+
+!!! example "Comment vérifier le suivi des déplacements"
+    Sur une arborescence jetable, jamais sur vos vraies données :
+    ```bash
+    mkdir -p t/p1/Dossier t/p2 && for i in $(seq 1 10); do echo $i > t/p1/Dossier/f$i.txt; done
+    echo x > t/p1/a.txt && rclone bisync t/p1 t/p2 --resync --create-empty-src-dirs -q
+    mkdir -p t/p1/Parent && mv t/p1/Dossier t/p1/Parent/Dossier
+    rclone bisync t/p1 t/p2 --create-empty-src-dirs --max-delete 90 --track-renames -v --stats 0
+    ```
+    Le journal doit montrer des lignes `Moved (server-side)` et un bilan `Transferred: 0 B` avec `Server Side Moves: 10`. Sans le drapeau, la même séquence transfère les dix fichiers.
+
+### Piège n°13 — L'alerte qui se répète, et qui ignore « Ne pas déranger »
+
+Deux défauts de la couche de notification, distincts mais indissociables : ils se corrigent dans le même script, et le second ne se remarque qu'une fois le premier traité.
+
+**Premier défaut — un échec déterministe alerte à chaque passe.** Les pièges n°3, n°11 et n°12 produisent tous un blocage qui persiste jusqu'à intervention. Avec un timer toutes les quinze minutes, cela fait quatre notifications par heure, rigoureusement identiques, dont aucune n'apporte plus que la première.
+
+Un cas réel : un regroupement de dossiers (piège n°12) a produit **onze alertes identiques** pour un seul incident — sept dans la soirée, puis quatre de plus au redémarrage trois jours plus tard, le blocage ayant traversé l'extinction intact. Le compteur affiché était le même à l'unité près, ce qui a d'abord fait croire à une récidive alors qu'il ne s'était rien passé entre-temps.
+
+!!! failure "Ce que reçoit l'utilisateur"
+    ```
+    20:48  rclone : échec de rclone-bisync.service
+    21:01  rclone : échec de rclone-bisync.service
+    21:16  rclone : échec de rclone-bisync.service
+    21:31  rclone : échec de rclone-bisync.service
+    ```
+
+**La solution n'est pas d'espacer les alertes mais de les indexer sur le problème.** Le script de synchronisation dépose, pour chaque paire en échec déterministe, un fichier nommé d'après la paire et contenant un motif canonique — `too_many_deletes`, `check_access`, `filtres_modifies`… La concaténation ordonnée de ces fichiers forme une **signature**, et une alerte n'est émise que si elle diffère de la dernière notifiée.
+
+| Événement | Alerte émise |
+|---|---|
+| Premier échec | oui |
+| Même échec aux passes suivantes | non |
+| Un autre motif d'erreur apparaît | oui |
+| Une seconde paire tombe en échec | oui |
+| Le problème disparaît puis revient | oui |
+
+Deux points de conception méritent d'être soulignés. Le motif de repli, pour un échec non reconnu, intègre une empreinte de la dernière ligne d'erreur : sans cela, deux problèmes inconnus **différents** partageraient une même signature et le second serait masqué par la déduplication du premier. Et le code de sortie du script reste non nul — **le dédoublonnage tait la notification, jamais l'échec**, qui demeure visible dans `systemctl --user status`.
+
+**Second défaut — l'urgence `critical` et le mode « Ne pas déranger ».** Constaté en exploitation sur les deux machines : les notifications continuaient de s'afficher alors que le mode était actif. GNOME réserve un traitement particulier à l'urgence `critical`, afin que les alertes importantes ne soient pas escamotées — choix défendable en général, indésirable ici.
+
+!!! tip "Pourquoi ne pas simplement baisser l'urgence"
+    Passer en `--urgency=normal` laisse GNOME décider, mais coûte la propriété la plus utile de `critical` : la notification reste affichée jusqu'à ce qu'on la ferme, au lieu de s'effacer au bout de quelques secondes. Pour une alerte qu'on peut manquer en s'absentant, c'est une régression.
+
+La solution consiste à lire le réglage soi-même et à se taire, sans rien perdre :
+
+```bash
+gsettings get org.gnome.desktop.notifications show-banners   # false = mode actif
+```
+
+Le détail qui compte : quand le mode est actif, le script **ne marque pas** la signature comme notifiée. L'alerte est différée, pas annulée — elle repart à la première passe en échec après la levée du mode. Et si le problème s'est résolu entre-temps, vous n'êtes pas dérangé pour rien.
+
+!!! note "`gsettings` fonctionne bien depuis une unité `--user`"
+    C'était le vrai risque de ce correctif : `gsettings` a besoin du bus de session, et une unité systemd `--user` pouvait ne pas y avoir accès. Vérifié sur deux machines, il y accède. Sur une session non GNOME, l'absence de `gsettings` est traitée comme « pas de mode à respecter » et les alertes passent normalement.
+
+!!! example "Comment vérifier"
+    ```bash
+    ETAT=~/.local/state/rclone/notify; mkdir -p "$ETAT"
+    printf 'test\n' > "$ETAT/echec-ZoneTest"
+    systemctl --user start rclone-notify@test.service          # doit ÉMETTRE
+    systemctl --user start rclone-notify@test.service          # doit SUPPRIMER
+    gsettings set org.gnome.desktop.notifications show-banners false
+    printf 'test2\n' > "$ETAT/echec-ZoneTest"
+    systemctl --user start rclone-notify@test.service          # doit DIFFÉRER
+    gsettings set org.gnome.desktop.notifications show-banners true
+    systemctl --user start rclone-notify@test.service          # doit ÉMETTRE
+    journalctl --user -u 'rclone-notify@test.service' -n 20 --no-pager
+    rm -f "$ETAT/echec-ZoneTest" "$ETAT/notifie"
+    ```
+    Les quatre verdicts apparaissent en clair dans le journal. Pensez à retirer les fichiers de test : une signature oubliée empêcherait la purge automatique.
+
+## Vérification
+
+Une configuration bisync ne se déclare pas fonctionnelle parce qu'elle affiche `OK` une fois. Voici la batterie de tests à passer.
+
+**1. Le chiffrement est-il réel ?** Comparez la vue déchiffrée et la vue brute :
+
+```bash
+rclone lsf -R gcrypt: --password-command "secret-tool lookup service rclone key config" && echo "--- ce que Google stocke ---" && rclone lsf -R gd-chiffre:Rclone --password-command "secret-tool lookup service rclone key config"
+```
+
+!!! success "Résultat attendu"
+    La première commande affiche vos noms réels. La seconde ne doit montrer **que** des chaînes opaques du type `ikdg52let48cvkrm2adjanbcbo/g240t6gvaie4vj8d6lsgr804nk/`, dossiers compris.
+
+**2. Le conflit est-il arbitré sans perte ?** Modifiez le même fichier sur les deux machines sans synchroniser entre les deux, puis lancez une passe de chaque côté.
+
+!!! success "Résultat attendu"
+    La version la plus récente conserve son nom ; l'autre est présente à côté sous `nomdufichier.conflict1`. Les deux machines convergent vers le même état.
+
+**3. Le garde-fou de suppression tient-il ?** Supprimez plus de 10 % des entrées d'une paire et lancez une passe. La passe doit **échouer** et rien ne doit disparaître du côté distant.
+
+**4. Le montage se relève-t-il ?**
+
+```bash
+systemctl --user show -p MainPID --value rclone-mount@gd-clair.service | xargs -r kill -9 && sleep 18 && systemctl --user is-active rclone-mount@gd-clair.service && ls ~/mnt/gd-clair
+```
+
+!!! danger "Piège de ce test"
+    N'utilisez pas `pgrep -f "rclone mount"` pour trouver le PID : le motif correspond aussi à **votre propre ligne de commande**, et vous tuerez votre shell. Passez par `systemctl show -p MainPID`.
+
+**5. L'alerte fonctionne-t-elle vraiment ?** Provoquez un échec réel et vérifiez que `OnFailure` déclenche :
+
+```bash
+mv /mnt/donnees/GoogleDrive/Chiffre/RCLONE_TEST /mnt/donnees/GoogleDrive/Chiffre/.masque && systemctl --user start rclone-bisync.service; journalctl --user -u "rclone-notify@*" --since "2 min ago" --no-pager | tail -3
+```
+
+Pensez à restaurer le témoin ensuite : le prochain passage rétablira l'état de lui-même, la paire repassant au vert.
+
+!!! warning "Ne relancez pas ce test deux fois de suite"
+    Avec la déduplication du piège n°13, la seconde exécution ne notifiera **rien** — la signature n'a pas changé — et l'on croirait l'alerte cassée. Le journal de `rclone-notify@` tranche : il dit explicitement « émise », « supprimée » ou « différée ».
+
+**6. La propagation automatique.** Déposez un fichier sur une machine et **ne lancez rien**. Il doit apparaître sur l'autre en deux cycles de timer, soit une trentaine de minutes avec `OnCalendar=*:0/15`.
+
+**7. Après redémarrage.** C'est la vérification la plus révélatrice, et celle qu'on oublie le plus souvent. Redémarrez réellement, ouvrez votre session, puis attendez une heure avant d'inspecter :
+
+```bash
+systemctl --user list-timers rclone-bisync.timer; journalctl --user -b -u rclone-bisync.service --no-pager | grep -c Starting; grep -c "password-command" ~/.local/share/rclone/logs/*.log
+```
+
+!!! success "Résultat attendu"
+    Une prochaine échéance affichée, et **zéro** occurrence de `password-command` dans les journaux. Le nombre de déclenchements dépassera celui du timer seul — c'est normal, voir le piège n°9. Ce qui compte est qu'aucun ne se solde par un échec.
+
+## Aide-mémoire
+
+| Commande | Description |
+|---|---|
+| `rclone-bisync.sh` | Passe normale sur les deux paires |
+| `rclone-bisync.sh --dry-run` | Simulation, n'écrit rien |
+| `rclone-bisync.sh --resync` | Amorçage / re-base (à utiliser sciemment) |
+| `rclone-bisync.sh --only Chiffre` | Traite une seule paire |
+| `rclone-bisync.sh --force-run` | Ignore les garde-fous batterie et connexion limitée |
+| `rclone-bisync.sh --autoriser-suppressions` | Contourne `--max-delete` pour une passe, après un déplacement (piège n°12) |
+| `systemctl --user list-timers rclone-bisync.timer` | Prochaine et dernière exécution |
+| `journalctl --user -u rclone-bisync.service -n 50` | Journal de la dernière passe |
+| `journalctl --user -u "rclone-notify@*" -n 20` | Pourquoi une alerte a été émise, supprimée ou différée |
+| `ls ~/.local/state/rclone/notify/` | Signatures d'échec en cours ; vide = rien en échec |
+| `systemctl --user start rclone-mount@gd-clair.service` | Monte un remote à la demande |
+| `rclone lsf -R gcrypt:` | Vue déchiffrée du contenu distant |
+| `rclone lsf -R gd-chiffre:Rclone` | Vue brute, telle que Google la stocke |
+| `rm ~/.cache/rclone/bisync/*.lck` | Lève un verrou bloquant après un plantage |
+| `rclone selfupdate --package deb` | Met à jour rclone en conservant le paquet |
+
+## Checklist de déploiement
+
+- [ ] rclone ≥ 1.66 installé depuis le `.deb` officiel, signature vérifiée, paquet figé
+- [ ] `libsecret-tools` installé sur **chaque** machine
+- [ ] Projet Google Cloud dans l'organisation, écran de consentement en **Interne**
+- [ ] Client OAuth de type **Application de bureau**
+- [ ] Remote Crypt pointant sur un **sous-dossier**, jamais sur la racine
+- [ ] Mot de passe **et sel** Crypt notés dans le gestionnaire de mots de passe
+- [ ] Configuration chiffrée, mot de passe dans le trousseau, sauvegarde en clair détruite
+- [ ] Miroir sur un support **non amovible**, disjoint de tout autre client de synchronisation
+- [ ] Fichiers `RCLONE_TEST` présents des deux côtés de chaque paire
+- [ ] Second fichier stable dans chaque zone (évite le piège n°2)
+- [ ] `--dry-run` propre avant le premier `--resync`
+- [ ] Test de conflit provoqué concluant
+- [ ] Test de suppression massive bloqué par `--max-delete`
+- [ ] Notification d'échec vérifiée par un échec réel
+- [ ] Garde-fou trousseau en place dans le script (sinon échecs à chaque démarrage)
+- [ ] Comportement après **redémarrage réel** vérifié, journaux sans `password-command`
+- [ ] Aller-retour création / modification / suppression testé **dans les deux sens**
+- [ ] `--filters-file` employé, **jamais** `--filter-from` (voir le piège n°11)
+- [ ] Tout nouveau motif de filtre validé sur une arborescence jetable avant mise en production
+- [ ] Alertes dédoublonnées et respectant « Ne pas déranger », vérifiées par les quatre verdicts du piège n°13
+- [ ] `--track-renames` actif, avec une stratégie adaptée aux empreintes de chaque remote (piège n°12)
+
+## Glossaire
+
+bisync
+:   Mode de rclone assurant une synchronisation **bidirectionnelle** entre deux emplacements, avec détection des conflits. À distinguer de `sync`, unidirectionnel et destructif pour la destination.
+
+Crypt
+:   Type de remote rclone servant d'enveloppe autour d'un autre remote. Il chiffre le contenu, et optionnellement les noms de fichiers et de dossiers, **avant** l'envoi. Le fournisseur ne voit jamais les données en clair.
+
+Sel (`password2`)
+:   Second secret combiné au mot de passe lors de la dérivation de clé. Perdre le sel équivaut à perdre le mot de passe : les données deviennent irrécupérables.
+
+VFS cache
+:   Cache local utilisé par `rclone mount` pour permettre lecture et écriture aléatoires sur un système de fichiers distant. Sans lui, beaucoup d'applications échouent sur un montage réseau.
+
+Drive partagé
+:   Espace Google Workspace appartenant à l'organisation et non à un utilisateur. Plafonné à environ **500 000 éléments**, indépendamment du volume — c'est le nombre de fichiers, et non les téraoctets, qui devient contraignant.
+
+## Ressources
+
+- [Documentation rclone bisync](https://rclone.org/bisync/) — Référence des options et des garde-fous
+- [Documentation rclone crypt](https://rclone.org/crypt/) — Fonctionnement du chiffrement et dérivation de clé
+- [Configurer son propre Client ID Google Drive](https://rclone.org/drive/#making-your-own-client-id) — Procédure officielle
+- [Limites d'un Drive partagé](https://support.google.com/a/answer/7338880) — Plafonds d'éléments et de contenus
+- [Vérification des signatures rclone](https://rclone.org/release_signing/) — Empreinte de la clé de release
