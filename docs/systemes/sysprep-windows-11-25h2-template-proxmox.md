@@ -363,7 +363,7 @@ Placer le fichier dans `C:\Windows\System32\Sysprep\unattend.xml`.
 
           <UserAccounts>
             <AdministratorPassword>
-              <Value>ChangeMe!2026</Value>
+              <Value>REMPLACER_PAR_UN_MOT_DE_PASSE_ADMIN_FORT</Value>
               <PlainText>true</PlainText>
             </AdministratorPassword>
             <LocalAccounts>
@@ -372,7 +372,7 @@ Placer le fichier dans `C:\Windows\System32\Sysprep\unattend.xml`.
                 <DisplayName>opsadmin</DisplayName>
                 <Group>Administrators</Group>
                 <Password>
-                  <Value>ChangeMe!2026</Value>
+                  <Value>REMPLACER_PAR_UN_MOT_DE_PASSE_OPSADMIN_FORT_ET_DIFFERENT</Value>
                   <PlainText>true</PlainText>
                 </Password>
               </LocalAccount>
@@ -406,7 +406,7 @@ Placer le fichier dans `C:\Windows\System32\Sysprep\unattend.xml`.
     **`BypassNRO`** — Windows 11 impose une connexion réseau et un compte Microsoft pendant l'OOBE. La création d'un compte local dans la passe `oobeSystem` suffit généralement à contourner cet écran ; cette clé de registre sert de filet de sécurité selon les builds.
 
 !!! danger "Mots de passe en clair"
-    Le fichier de réponse contient des mots de passe lisibles. `sysprep` les masque dans la copie déposée en `C:\Windows\Panther\unattend.xml`, mais l'original reste en clair sur l'image. Changez-les au premier démarrage, ou pilotez-les via **Cloudbase-Init** (l'équivalent Windows de cloud-init).
+    Le fichier de réponse contient des mots de passe lisibles. `sysprep` les masque dans la copie déposée en `C:\Windows\Panther\unattend.xml`, mais l'original reste en clair sur l'image. Remplacez les valeurs d'exemple ci-dessus par des mots de passe forts et **différents** pour le compte Administrateur et pour `opsadmin` — ne réutilisez jamais le même secret entre deux comptes privilégiés. Changez-les au premier démarrage, ou pilotez-les via **Cloudbase-Init** (l'équivalent Windows de cloud-init).
 
 ### Étape 5 : snapshot et coupure réseau
 
