@@ -120,6 +120,7 @@ nav:
     - "Surveiller et analyser l'espace disque sous Linux avec df, du et ncdu": systemes/surveiller-analyser-espace-disque-linux-df-du-ncdu.md
     - Comprendre et gérer le machine-id sous Linux: systemes/machine-id-linux.md
     - virt-sysprep — préparer une image Linux au clonage: systemes/virt-sysprep-preparer-image-linux-clonage.md
+    - Sysprep d'une VM Windows 11 25H2 et création d'un template sur Proxmox VE: systemes/sysprep-windows-11-25h2-template-proxmox.md
     - Créer et gérer des snapshots de VM avec virsh (libvirt) sur Ubuntu Server: systemes/creer-gerer-snapshots-vm-virsh-libvirt-ubuntu-server.md
     - "Sauvegarder et restaurer un dossier avec `rsync` sur Linux en local ou via SSH": systemes/sauvegarder-restaurer-dossier-rsync-linux-local-ssh.md
     - "Étendre un volume logique LVM après ajout d’un disque sur une VM Linux": systemes/etendre-volume-logique-lvm-apres-ajout-disque-vm-linux.md
