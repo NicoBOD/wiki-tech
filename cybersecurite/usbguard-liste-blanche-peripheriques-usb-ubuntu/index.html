@@ -1,0 +1,3613 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation">
+      
+      
+        <meta name="author" content="Nicolas BODAINE">
+      
+      
+        <link rel="canonical" href="https://wiki.bodaine.fr/cybersecurite/usbguard-liste-blanche-peripheriques-usb-ubuntu/">
+      
+      
+        <link rel="prev" href="../chiffrer-poste-windows-11-bitlocker-manage-bde-deblocage-helpdesk/">
+      
+      
+        <link rel="next" href="../../ia/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Contrôler les périphériques USB avec USBGuard sur Ubuntu (liste blanche anti-BadUSB) - Wiki Tech — NicoBOD</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        
+        <link rel="stylesheet" href="../../assets/external/fonts.googleapis.com/css.56f7ac64.css">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+    
+    
+      
+    
+    
+
+    <!-- SEO -->
+    <meta name="author" content="Nicolas BODAINE">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph : compléments non gérés par le plugin social.     -->
+    <!-- og:type/title/description/image/url sont posés par social.   -->
+    <meta property="og:site_name" content="Wiki Tech — NicoBOD">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card : la grande image et l'image elle-même sont      -->
+    <!-- héritées des balises og:image générées par le plugin social.  -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Contrôler les périphériques USB avec USBGuard sur Ubuntu (liste blanche anti-BadUSB) — Wiki Tech — NicoBOD">
+    <meta name="twitter:description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation">
+  
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#controler-les-peripheriques-usb-avec-usbguard-sur-ubuntu-liste-blanche-anti-badusb" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../.." title="Wiki Tech — NicoBOD" class="md-header__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wiki Tech — NicoBOD
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Contrôler les périphériques USB avec USBGuard sur Ubuntu (liste blanche anti-BadUSB)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer en mode clair"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer en mode clair" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Passer en mode sombre"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer en mode sombre" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Revenir au thème système"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Revenir au thème système" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Partager" aria-label="Partager" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../systemes/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h16v10H4m16 2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4c-1.11 0-2 .89-2 2v10a2 2 0 0 0 2 2H0v2h24v-2z"/></svg>
+    
+  
+  Systèmes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reseaux/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v2h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+    
+  
+  Réseaux
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../cloud/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 20q-2.28 0-3.89-1.57Q1 16.85 1 14.58q0-1.95 1.17-3.48 1.18-1.53 3.08-1.95.63-2.3 2.5-3.72Q9.63 4 12 4q2.93 0 4.96 2.04Q19 8.07 19 11q1.73.2 2.86 1.5 1.14 1.28 1.14 3 0 1.88-1.31 3.19T18.5 20Z"/></svg>
+    
+  
+  Cloud
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12h7c-.53 4.11-3.28 7.78-7 8.92zH5V6.3l7-3.11M12 1 3 5v6c0 5.55 3.84 10.73 9 12 5.16-1.27 9-6.45 9-12V5z"/></svg>
+    
+  
+  Cybersécurité
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../ia/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/></svg>
+    
+  
+  IA
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../automatisation/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+    
+  
+  Automatisation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../logiciels/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m0 5H3V4h18z"/></svg>
+    
+  
+  Logiciels
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../debug/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 12h-4v-2h4m0 6h-4v-2h4m6-6h-2.81a6 6 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6 6 0 0 0-2.83 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20z"/></svg>
+    
+  
+  Debug
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../astuces/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+    
+  
+  Astuces
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../tags/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tags
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Wiki Tech — NicoBOD" class="md-nav__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../assets/logo.svg" alt="logo">
+
+    </a>
+    Wiki Tech — NicoBOD
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../systemes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Systèmes
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../reseaux/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Réseaux
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12h7c-.53 4.11-3.28 7.78-7 8.92zH5V6.3l7-3.11M12 1 3 5v6c0 5.55 3.84 10.73 9 12 5.16-1.27 9-6.45 9-12V5z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cybersécurité
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cybersécurité
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configurer-sudo-visudo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configurer sudo en toute sécurité avec visudo
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../renforcer-politique-mots-de-passe-pam-pwquality-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Renforcer la politique de mots de passe sous Linux avec pam_pwquality
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssh-mfa-google-authenticator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sécuriser SSH avec l'authentification double facteur (MFA) via Google Authenticator
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fail2ban-proteger-ssh-ubuntu-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installer et configurer Fail2ban pour protéger SSH sur Ubuntu Server 24.04
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crowdsec-alternative-fail2ban-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Protéger un serveur Linux avec CrowdSec : l'alternative collaborative à Fail2ban
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ufw-ubuntu-server-premieres-regles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UFW sur Ubuntu Server — ouvrir seulement SSH, HTTP et HTTPS
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../certbot-nginx-https-lets-encrypt-ubuntu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sécuriser un serveur web Nginx avec Let's Encrypt et Certbot sur Ubuntu Server
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssh-cle-publique-desactiver-mot-de-passe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configurer l’accès SSH par clé et désactiver l’authentification par mot de passe sur Ubuntu Server
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lynis-audit-securite-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Auditer la sécurité de son serveur Linux avec Lynis
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cartographier-analyser-ports-reseau-nmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cartographier et analyser les ports d'un réseau avec Nmap
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../securiser-volume-donnees-chiffrement-luks-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sécuriser un volume de données avec le chiffrement LUKS sous Linux
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dechiffrer-automatiquement-luks-tpm2-clevis-secure-boot-ubuntu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Déverrouiller automatiquement LUKS au démarrage avec le TPM2 et Clevis (Ubuntu 24.04)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../renforcer-securite-service-apparmor-ubuntu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Renforcer la sécurité d'un service avec AppArmor sous Ubuntu
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../activer-lecteur-empreintes-digitales-login-sudo-thinkpad-ubuntu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Activer le lecteur d'empreintes digitales (login + sudo) sur ThinkPad sous Ubuntu 24.04
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chiffrer-signer-fichiers-gpg-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chiffrer et signer des fichiers avec GPG sous Linux
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analyser-wifi-mode-moniteur-injection-aircrack-ng/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analyser son réseau Wi-Fi en mode moniteur et tester l'injection avec Aircrack-ng
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chiffrer-poste-windows-11-bitlocker-manage-bde-deblocage-helpdesk/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chiffrer un poste Windows 11 Pro avec BitLocker : disque système, BitLocker To Go, manage-bde et déblocage helpdesk
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contrôler les périphériques USB avec USBGuard sur Ubuntu (liste blanche anti-BadUSB)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contrôler les périphériques USB avec USBGuard sur Ubuntu (liste blanche anti-BadUSB)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#contexte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contexte
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prérequis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#procedure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Procédure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Procédure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#etape-1-neutraliser-le-demarrage-automatique-du-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 1 : Neutraliser le démarrage automatique du service
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-2-installer-le-paquet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 2 : Installer le paquet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-3-generer-la-politique-initiale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 3 : Générer la politique initiale
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-4-accorder-les-droits-dadministration-via-lipc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 4 : Accorder les droits d'administration via l'IPC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-5-demarrer-le-demon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 5 : Démarrer le démon
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-6-autoriser-un-nouveau-peripherique-au-quotidien" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 6 : Autoriser un nouveau périphérique au quotidien
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-7-optionnel-notifications-sur-le-bureau" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 7 (optionnel) : Notifications sur le bureau
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vérification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aide-memoire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aide-mémoire
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Aide-mémoire">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fichiers-importants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fichiers importants
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parametres-cles-de-usbguard-daemonconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paramètres clés de usbguard-daemon.conf
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#problemes-frequents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problèmes fréquents
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Problèmes fréquents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#probleme-1-plus-de-clavier-ni-de-souris-apres-linstallation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problème 1 : Plus de clavier ni de souris après l'installation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-2-erreur-de-connexion-a-lipc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problème 2 : Erreur de connexion à l'IPC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-3-la-regle-na-pas-survecu-au-redemarrage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problème 3 : La règle n'a pas survécu au redémarrage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-4-le-peripherique-est-allow-mais-ne-fonctionne-toujours-pas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problème 4 : Le périphérique est « allow » mais ne fonctionne toujours pas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-5-un-peripherique-connu-est-bloque-apres-une-mise-a-jour" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problème 5 : Un périphérique connu est bloqué après une mise à jour
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-6-apt-remove-usbguard-se-fige" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problème 6 : apt remove usbguard se fige
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glossaire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Glossaire
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../ia/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IA
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../automatisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automatisation
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../logiciels/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logiciels
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../debug/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../astuces/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Astuces
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tags/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.5 7A1.5 1.5 0 0 1 4 5.5 1.5 1.5 0 0 1 5.5 4 1.5 1.5 0 0 1 7 5.5 1.5 1.5 0 0 1 5.5 7m15.91 4.58-9-9C12.05 2.22 11.55 2 11 2H4c-1.11 0-2 .89-2 2v7c0 .55.22 1.05.59 1.41l8.99 9c.37.36.87.59 1.42.59s1.05-.23 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.56-.23-1.06-.59-1.42"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#contexte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contexte
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prérequis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#procedure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Procédure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Procédure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#etape-1-neutraliser-le-demarrage-automatique-du-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 1 : Neutraliser le démarrage automatique du service
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-2-installer-le-paquet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 2 : Installer le paquet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-3-generer-la-politique-initiale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 3 : Générer la politique initiale
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-4-accorder-les-droits-dadministration-via-lipc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 4 : Accorder les droits d'administration via l'IPC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-5-demarrer-le-demon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 5 : Démarrer le démon
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-6-autoriser-un-nouveau-peripherique-au-quotidien" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 6 : Autoriser un nouveau périphérique au quotidien
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-7-optionnel-notifications-sur-le-bureau" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 7 (optionnel) : Notifications sur le bureau
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vérification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aide-memoire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aide-mémoire
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Aide-mémoire">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fichiers-importants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fichiers importants
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parametres-cles-de-usbguard-daemonconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paramètres clés de usbguard-daemon.conf
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#problemes-frequents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problèmes fréquents
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Problèmes fréquents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#probleme-1-plus-de-clavier-ni-de-souris-apres-linstallation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problème 1 : Plus de clavier ni de souris après l'installation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-2-erreur-de-connexion-a-lipc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problème 2 : Erreur de connexion à l'IPC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-3-la-regle-na-pas-survecu-au-redemarrage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problème 3 : La règle n'a pas survécu au redémarrage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-4-le-peripherique-est-allow-mais-ne-fonctionne-toujours-pas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problème 4 : Le périphérique est « allow » mais ne fonctionne toujours pas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-5-un-peripherique-connu-est-bloque-apres-une-mise-a-jour" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problème 5 : Un périphérique connu est bloqué après une mise à jour
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-6-apt-remove-usbguard-se-fige" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problème 6 : apt remove usbguard se fige
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glossaire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Glossaire
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Cybersécurité
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:badusb" class="md-tag">badusb</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:durcissement" class="md-tag">durcissement</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:linux" class="md-tag">linux</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:securite" class="md-tag">securite</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:ubuntu" class="md-tag">ubuntu</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:usb" class="md-tag">usb</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:usbguard" class="md-tag">usbguard</a>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/NicoBOD/wiki-tech/edit/main/docs/cybersecurite/usbguard-liste-blanche-peripheriques-usb-ubuntu.md" title="Editer cette page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/NicoBOD/wiki-tech/raw/main/docs/cybersecurite/usbguard-liste-blanche-peripheriques-usb-ubuntu.md" title="Consulter la source de cette page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<h1 id="controler-les-peripheriques-usb-avec-usbguard-sur-ubuntu-liste-blanche-anti-badusb">Contrôler les périphériques <abbr title="Universal Serial Bus">USB</abbr> avec USBGuard sur Ubuntu (liste blanche anti-BadUSB)<a class="headerlink" href="#controler-les-peripheriques-usb-avec-usbguard-sur-ubuntu-liste-blanche-anti-badusb" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Résumé</p>
+<p>USBGuard applique une politique d'autorisation sur le bus <abbr title="Universal Serial Bus">USB</abbr> : seuls les périphériques explicitement listés dans la politique peuvent dialoguer avec le noyau, tous les autres sont bloqués à chaud. Cette note couvre l'installation sur Ubuntu, la génération d'une liste blanche à partir du matériel de confiance, l'ouverture des droits <abbr title="Inter-Process Communication">IPC</abbr>, la gestion quotidienne des nouveaux périphériques — et surtout la façon d'éviter (ou de réparer) le classique verrouillage clavier/souris qui piège la majorité des premières installations.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Propriété</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Difficulté</td>
+<td>Intermédiaire</td>
+</tr>
+<tr>
+<td>OS / Environnement</td>
+<td>Ubuntu 24.04 LTS (paquet <code>usbguard</code> 1.1.2)</td>
+</tr>
+<tr>
+<td>Privilèges requis</td>
+<td><code>root</code> / <code>sudo</code></td>
+</tr>
+<tr>
+<td>Durée estimée</td>
+<td>20 à 30 minutes</td>
+</tr>
+<tr>
+<td>Dernière mise à jour</td>
+<td>2026-09-06</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="contexte">Contexte<a class="headerlink" href="#contexte" title="Permanent link">&para;</a></h2>
+<p>Le bus <abbr title="Universal Serial Bus">USB</abbr> a été conçu pour la commodité, pas pour la sécurité : par défaut, <strong>tout périphérique branché est immédiatement énuméré, pilote chargé, et considéré comme légitime</strong>. C'est exactement ce qu'exploite la classe d'attaques dite <strong>BadUSB</strong> : un objet qui ressemble à une clé de stockage annonce au système qu'il est en réalité un <strong>clavier</strong> (classe <abbr title="Human Interface Device">HID</abbr>), puis « tape » à 1 000 caractères par minute un script qui ouvre un shell inversé. Les variantes commerciales de ce type d'outil (Rubber Ducky, O.MG Cable, Bash Bunny) coûtent quelques dizaines d'euros et fonctionnent sur un poste déverrouillé en moins de trois secondes.</p>
+<p>USBGuard répond à ce problème en s'appuyant sur un mécanisme peu connu du noyau Linux : chaque périphérique <abbr title="Universal Serial Bus">USB</abbr> expose dans <code>sysfs</code> un attribut <code>authorized</code> (<code>/sys/bus/usb/devices/*/authorized</code>). Tant qu'il vaut <code>0</code>, le noyau énumère bien le périphérique mais <strong>ne lie aucun pilote</strong> : le matériel est électriquement présent mais fonctionnellement inerte.</p>
+<p>Le démon <code>usbguard-daemon</code> se place au-dessus de ce mécanisme et automatise la décision :</p>
+<ol>
+<li>Il écoute les événements <code>uevent</code> du noyau (branchement, débranchement).</li>
+<li>Il compare le périphérique aux règles de sa politique (<code>/etc/usbguard/rules.conf</code>), dans l'ordre, <strong>première règle correspondante gagnante</strong>.</li>
+<li>Si aucune règle ne correspond, il applique la cible implicite <code>ImplicitPolicyTarget</code>, qui vaut <code>block</code> par défaut.</li>
+</ol>
+<p>C'est une approche <strong>liste blanche</strong> (allow-list) : ce qui n'est pas explicitement autorisé est refusé. Elle est très efficace, mais elle a une conséquence directe qu'il faut avoir en tête avant de taper la première commande : <strong>si le démon démarre avec une politique vide, votre clavier et votre souris <abbr title="Universal Serial Bus">USB</abbr> sont bloqués eux aussi</strong>.</p>
+<div class="admonition danger">
+<p class="admonition-title">Le piège n°1 : se verrouiller hors de sa propre machine</p>
+<p>Sur Debian et Ubuntu, le paquet <code>usbguard</code> <strong>active et démarre le service dès la fin de l'installation <code>apt</code></strong>, avec un fichier <code>rules.conf</code> vide. Sur un poste fixe équipé d'un clavier et d'une souris <abbr title="Universal Serial Bus">USB</abbr>, l'écran devient inerte dans la seconde qui suit, avant même que vous ayez pu générer la moindre règle. La procédure ci-dessous neutralise ce comportement <strong>avant</strong> d'installer le paquet. Si vous êtes déjà tombé dans le piège, sautez directement à <a href="#probleme-1-plus-de-clavier-ni-de-souris-apres-linstallation">Problèmes fréquents</a>.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">USBGuard n'est pas un antivirus</p>
+<p>USBGuard décide <em>quel matériel</em> a le droit de parler au noyau. Il ne lit pas le contenu des clés <abbr title="Universal Serial Bus">USB</abbr> et ne détecte aucun malware dans les fichiers. Il se combine donc utilement avec le chiffrement des supports, une politique de montage <code>noexec,nosuid,nodev</code> et un antivirus si le poste échange des fichiers avec l'extérieur.</p>
+</div>
+<hr />
+<h2 id="prerequis">Prérequis<a class="headerlink" href="#prerequis" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Un poste ou serveur sous <strong>Ubuntu 24.04 LTS</strong> (la procédure vaut aussi pour Debian 12/13 et les dérivés).</li>
+<li>Un compte disposant des droits <code>sudo</code>.</li>
+<li><strong>Tous les périphériques <abbr title="Universal Serial Bus">USB</abbr> indispensables branchés</strong> avant de commencer : clavier, souris, dongle sans fil, hub, webcam externe, casque, clé de sécurité <abbr title="Fast IDentity Online 2">FIDO2</abbr>, lecteur d'empreintes… La liste blanche initiale est une photographie de ce qui est branché à l'instant <code>t</code>.</li>
+<li>Fortement recommandé : <strong>un second canal d'accès</strong> (session SSH ouverte depuis une autre machine, ou console d'hyperviseur/<abbr title="Intelligent Platform Management Interface">IPMI</abbr>). C'est votre filet de sécurité si le clavier local est bloqué.</li>
+<li>Un ordinateur portable dont le clavier interne est en PS/2 émulé (<code>i8042</code>) est nettement plus indulgent qu'un poste fixe : il continuera à fonctionner même en cas d'erreur de politique.</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Cas particulier : serveur distant</p>
+<p>Sur un serveur administré uniquement en SSH, le risque de verrouillage clavier est nul, <strong>mais</strong> attention aux adaptateurs réseau <abbr title="Universal Serial Bus">USB</abbr>, aux dongles KVM-over-IP et aux clés de licence : s'ils ne figurent pas dans la liste blanche, vous perdez respectivement le réseau, la console et l'application. Vérifiez la sortie de <code>lsusb</code> avant de démarrer le démon.</p>
+</div>
+<hr />
+<h2 id="procedure">Procédure<a class="headerlink" href="#procedure" title="Permanent link">&para;</a></h2>
+<h3 id="etape-1-neutraliser-le-demarrage-automatique-du-service">Étape 1 : Neutraliser le démarrage automatique du service<a class="headerlink" href="#etape-1-neutraliser-le-demarrage-automatique-du-service" title="Permanent link">&para;</a></h3>
+<p>On masque les unités systemd <strong>avant</strong> l'installation. <code>systemctl mask</code> crée un lien symbolique vers <code>/dev/null</code> dans <code>/etc/systemd/system/</code>, ce qui rend l'unité impossible à démarrer — y compris par les scripts post-installation du paquet.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>mask<span class="w"> </span>usbguard.service<span class="w"> </span>usbguard-dbus.service
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Pourquoi masquer et non désactiver ?</p>
+<p><code>systemctl disable</code> empêche seulement le démarrage <strong>au boot</strong> ; le script <code>postinst</code> du paquet, lui, lance le service immédiatement via <code>deb-systemd-invoke</code>. Seul <code>mask</code> bloque les deux cas. On peut d'ailleurs masquer une unité qui n'existe pas encore : le lien est créé et sera pris en compte dès l'apparition du fichier de service.</p>
+</div>
+<p><em>Vérification :</em> la commande doit afficher deux lignes <code>Created symlink …</code>. Aucune erreur n'est attendue même si le paquet n'est pas encore installé.</p>
+<hr />
+<h3 id="etape-2-installer-le-paquet">Étape 2 : Installer le paquet<a class="headerlink" href="#etape-2-installer-le-paquet" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>usbguard
+</code></pre></div>
+<p>Le paquet <code>usbguard</code> d'Ubuntu 24.04 fournit la version <strong>1.1.2</strong>. Il installe le démon, l'outil en ligne de commande <code>usbguard</code>, les unités systemd et une configuration par défaut dans <code>/etc/usbguard/</code>.</p>
+<p><em>Vérification :</em></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>usbguard<span class="w"> </span>--version
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>systemctl<span class="w"> </span>is-enabled<span class="w"> </span>usbguard.service<span class="w">   </span><span class="c1"># doit répondre : masked</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>systemctl<span class="w"> </span>is-active<span class="w"> </span>usbguard.service<span class="w">    </span><span class="c1"># doit répondre : inactive</span>
+</code></pre></div>
+<div class="admonition success">
+<p class="admonition-title">Résultat attendu</p>
+<p>Le numéro de version s'affiche (<code>usbguard 1.1.2</code>), le service est bien <code>masked</code> et <code>inactive</code>, et <strong>tous vos périphériques <abbr title="Universal Serial Bus">USB</abbr> fonctionnent toujours normalement</strong>.</p>
+</div>
+<hr />
+<h3 id="etape-3-generer-la-politique-initiale">Étape 3 : Générer la politique initiale<a class="headerlink" href="#etape-3-generer-la-politique-initiale" title="Permanent link">&para;</a></h3>
+<p><code>usbguard generate-policy</code> inspecte le matériel actuellement branché et produit une règle <code>allow</code> par périphérique. Deux approches, selon le niveau de rigueur souhaité :</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Méthode recommandée (avec relecture)</label><label for="__tabbed_1_2">Méthode rapide (une ligne)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 1. Générer dans un fichier temporaire, sans écraser quoi que ce soit</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>usbguard<span class="w"> </span>generate-policy<span class="w"> </span>&gt;<span class="w"> </span>/tmp/rules.conf
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># 2. Relire et corriger le contenu</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>sudo<span class="w"> </span>nano<span class="w"> </span>/tmp/rules.conf
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># 3. Installer avec les bons droits et le bon propriétaire</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>sudo<span class="w"> </span>install<span class="w"> </span>-m<span class="w"> </span><span class="m">0600</span><span class="w"> </span>-o<span class="w"> </span>root<span class="w"> </span>-g<span class="w"> </span>root<span class="w"> </span>/tmp/rules.conf<span class="w"> </span>/etc/usbguard/rules.conf
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sudo<span class="w"> </span>usbguard<span class="w"> </span>generate-policy<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/usbguard/rules.conf
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Contrôlez les permissions</p>
+<p><code>tee</code> conserve les droits d'un fichier existant, mais crée un fichier en <code>0644</code> s'il n'existe pas. Or <code>rules.conf</code> contient les numéros de série de votre matériel : il doit rester illisible par les utilisateurs ordinaires.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">0600</span><span class="w"> </span>/etc/usbguard/rules.conf
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>chown<span class="w"> </span>root:root<span class="w"> </span>/etc/usbguard/rules.conf
+</code></pre></div></p>
+</div>
+</div>
+</div>
+</div>
+<p><em>Vérification :</em></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sudo<span class="w"> </span>cat<span class="w"> </span>/etc/usbguard/rules.conf
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>stat<span class="w"> </span>-c<span class="w"> </span><span class="s1">'%A %U:%G %n'</span><span class="w"> </span>/etc/usbguard/rules.conf<span class="w">   </span><span class="c1"># attendu : -rw------- root:root</span>
+</code></pre></div>
+<p>Vous devez retrouver vos contrôleurs <abbr title="Universal Serial Bus">USB</abbr> (<code>xHCI Host Controller</code>), votre clavier, votre souris, la webcam et le Bluetooth internes (qui sont, eux aussi, des périphériques <abbr title="Universal Serial Bus">USB</abbr> sur la quasi-totalité des portables).</p>
+<h4 id="lire-une-regle-usbguard">Lire une règle USBGuard<a class="headerlink" href="#lire-une-regle-usbguard" title="Permanent link">&para;</a></h4>
+<p>Une ligne générée ressemble à ceci :</p>
+<div class="highlight"><span class="filename">/etc/usbguard/rules.conf</span><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>allow id 046d:c52b serial "" name "USB Receiver" hash "jEP/6WzviqdJ5VSeTUY8Pat…" parent-hash "kv0Xb…" with-interface { 03:01:01 03:01:02 03:00:00 }
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Élément</th>
+<th>Signification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>allow</code></td>
+<td><strong>Cible</strong> de la règle : <code>allow</code> (autoriser), <code>block</code> (refuser l'autorisation) ou <code>reject</code> (retirer logiquement le périphérique du système).</td>
+</tr>
+<tr>
+<td><code>id 046d:c52b</code></td>
+<td>Identifiants <strong><abbr title="Vendor ID">VID</abbr>:<abbr title="Product ID">PID</abbr></strong> — constructeur (<code>046d</code> = Logitech) et modèle. Facilement falsifiables par un attaquant.</td>
+</tr>
+<tr>
+<td><code>serial ""</code></td>
+<td>Numéro de série déclaré. Vide sur beaucoup de matériels bas de gamme.</td>
+</tr>
+<tr>
+<td><code>name "…"</code></td>
+<td>Nom déclaré par le périphérique. Purement informatif, falsifiable également.</td>
+</tr>
+<tr>
+<td><code>hash "…"</code></td>
+<td>Empreinte calculée par USBGuard à partir de l'ensemble des descripteurs. Bien plus difficile à usurper qu'un simple <abbr title="Vendor ID">VID</abbr>:<abbr title="Product ID">PID</abbr>.</td>
+</tr>
+<tr>
+<td><code>parent-hash "…"</code></td>
+<td>Empreinte du port/hub parent : elle attache le périphérique à un emplacement physique de l'arborescence <abbr title="Universal Serial Bus">USB</abbr>.</td>
+</tr>
+<tr>
+<td><code>with-interface { … }</code></td>
+<td>Classes d'interface annoncées, au format <code>classe:sous-classe:protocole</code>. C'est <strong>le champ le plus intéressant en sécurité</strong>.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Les classes d'interface, le cœur de la défense anti-BadUSB</p>
+<p>Quelques classes à connaître : <code>03</code> = <abbr title="Human Interface Device">HID</abbr> (clavier, souris), <code>08</code> = stockage de masse, <code>09</code> = hub, <code>0e</code> = vidéo (webcam), <code>e0</code> = sans fil (Bluetooth), <code>ff</code> = spécifique constructeur.
+Une clé <abbr title="Universal Serial Bus">USB</abbr> piégée se trahit en annonçant à la fois <code>08</code> (stockage) et <code>03:00:01</code> (clavier). On peut donc écrire une règle explicite :
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>reject with-interface all-of { 08:*:* 03:00:* }
+</code></pre></div>
+Ajoutée <strong>avant</strong> les règles <code>allow</code>, elle refuse tout périphérique qui prétend être simultanément une clé et un clavier.</p>
+</div>
+<div class="admonition question">
+<p class="admonition-title">Faut-il conserver les <code>hash</code> ?</p>
+<p>Le hash est l'attribut le plus robuste, mais il change si le firmware du périphérique est mis à jour ou si le noyau modifie sa façon d'exposer les descripteurs — la règle cesse alors de correspondre et le matériel se retrouve bloqué sans raison apparente. Pour un parc de postes ou pour du matériel amené à être mis à jour, on préfère souvent générer sans hash puis ajouter le numéro de série :
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>sudo<span class="w"> </span>usbguard<span class="w"> </span>generate-policy<span class="w"> </span>--no-hashes<span class="w"> </span>&gt;<span class="w"> </span>/tmp/rules.conf
+</code></pre></div></p>
+</div>
+<hr />
+<h3 id="etape-4-accorder-les-droits-dadministration-via-lipc">Étape 4 : Accorder les droits d'administration via l'<abbr title="Inter-Process Communication">IPC</abbr><a class="headerlink" href="#etape-4-accorder-les-droits-dadministration-via-lipc" title="Permanent link">&para;</a></h3>
+<p>Le démon expose une interface <strong><abbr title="Inter-Process Communication">IPC</abbr></strong> (Inter-Process Communication) qui permet à l'outil <code>usbguard</code> de lui parler sans être <code>root</code> à chaque branchement. Depuis la version 0.7, la bonne méthode consiste à créer un <strong>fichier de contrôle d'accès</strong> dans <code>/etc/usbguard/IPCAccessControl.d/</code> — les anciennes directives <code>IPCAllowedUsers</code> et <code>IPCAllowedGroups</code> de <code>usbguard-daemon.conf</code> sont considérées comme héritées et ne sont plus la voie recommandée.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>sudo<span class="w"> </span>usbguard<span class="w"> </span>add-user<span class="w"> </span>--group<span class="w"> </span>sudo<span class="w"> </span>--devices<span class="w"> </span>ALL<span class="w"> </span>--policy<span class="w"> </span>modify,list<span class="w"> </span>--exceptions<span class="w"> </span>listen
+</code></pre></div>
+<p>Décomposition des options :</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Effet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--group sudo</code></td>
+<td>La cible est le <strong>groupe</strong> <code>sudo</code> (et non un utilisateur). Sans <code>-g</code>/<code>--group</code>, le nom serait interprété comme un identifiant utilisateur.</td>
+</tr>
+<tr>
+<td><code>--devices ALL</code></td>
+<td>Toutes les permissions sur les périphériques : <code>list</code> (les lister), <code>modify</code> (changer leur état d'autorisation), <code>listen</code> (recevoir les événements).</td>
+</tr>
+<tr>
+<td><code>--policy modify,list</code></td>
+<td>Droit de lire <strong>et de modifier</strong> la politique. <code>modify</code> est indispensable pour que l'option <code>-p</code> (règle permanente) fonctionne.</td>
+</tr>
+<tr>
+<td><code>--exceptions listen</code></td>
+<td>Réception des messages d'exception du démon.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Un droit <code>sudo</code> élargi</p>
+<p>Donner ces privilèges au groupe <code>sudo</code> est pratique sur un poste personnel, car les membres de ce groupe peuvent déjà devenir <code>root</code>. Sur un serveur multi-utilisateurs, préférez un groupe dédié et n'y placez que les comptes concernés :
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sudo<span class="w"> </span>groupadd<span class="w"> </span>--system<span class="w"> </span>usbguard
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>sudo<span class="w"> </span>usermod<span class="w"> </span>-aG<span class="w"> </span>usbguard<span class="w"> </span><span class="s2">"</span><span class="nv">$USER</span><span class="s2">"</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>sudo<span class="w"> </span>usbguard<span class="w"> </span>add-user<span class="w"> </span>--group<span class="w"> </span>usbguard<span class="w"> </span>--devices<span class="w"> </span>ALL<span class="w"> </span>--policy<span class="w"> </span>modify,list<span class="w"> </span>--exceptions<span class="w"> </span>listen
+</code></pre></div>
+L'appartenance à un nouveau groupe n'est effective qu'après une reconnexion complète de la session.</p>
+</div>
+<p><em>Vérification :</em> la commande crée un fichier dont le nom est celui du groupe <strong>préfixé par deux-points</strong> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>sudo<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/etc/usbguard/IPCAccessControl.d/
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>sudo<span class="w"> </span>cat<span class="w"> </span>/etc/usbguard/IPCAccessControl.d/:sudo
+</code></pre></div>
+<div class="admonition success">
+<p class="admonition-title">Résultat attendu</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>Devices=modify list listen
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>Policy=modify list
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>Exceptions=listen
+</code></pre></div>
+Toute modification apportée par <code>add-user</code> ou <code>remove-user</code> <strong>n'est prise en compte qu'après un (re)démarrage du démon</strong> — ce qui tombe bien, il n'est pas encore lancé.</p>
+</div>
+<hr />
+<h3 id="etape-5-demarrer-le-demon">Étape 5 : Démarrer le démon<a class="headerlink" href="#etape-5-demarrer-le-demon" title="Permanent link">&para;</a></h3>
+<p>La politique est en place et les droits <abbr title="Inter-Process Communication">IPC</abbr> sont configurés : on peut lever le masquage et activer le service.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>unmask<span class="w"> </span>usbguard.service
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>usbguard.service
+</code></pre></div>
+<p><em>Vérification :</em></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>systemctl<span class="w"> </span>status<span class="w"> </span>usbguard.service
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>usbguard<span class="w"> </span>list-devices
+</code></pre></div>
+<div class="admonition success">
+<p class="admonition-title">Résultat attendu</p>
+<p>Le service est <code>active (running)</code>. La sortie de <code>list-devices</code> affiche vos périphériques avec la mention <code>allow</code>. Le clavier, la souris et le pointeur continuent de répondre. Notez que <code>usbguard list-devices</code> fonctionne désormais <strong>sans <code>sudo</code></strong> : c'est la preuve que les droits <abbr title="Inter-Process Communication">IPC</abbr> de l'étape 4 sont opérationnels.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Test de non-régression, sans risque</p>
+<p>Débranchez puis rebranchez votre souris : elle doit repartir instantanément (elle est dans la liste blanche). Branchez ensuite une clé <abbr title="Universal Serial Bus">USB</abbr> inconnue : elle ne doit <strong>pas</strong> apparaître dans le gestionnaire de fichiers, et <code>usbguard list-devices</code> doit la montrer en <code>block</code>.</p>
+</div>
+<hr />
+<h3 id="etape-6-autoriser-un-nouveau-peripherique-au-quotidien">Étape 6 : Autoriser un nouveau périphérique au quotidien<a class="headerlink" href="#etape-6-autoriser-un-nouveau-peripherique-au-quotidien" title="Permanent link">&para;</a></h3>
+<p>Tout périphérique absent de la liste blanche reste inerte. Pour l'admettre :</p>
+<p><strong>1. Identifier son numéro de périphérique interne</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>usbguard<span class="w"> </span>list-devices<span class="w"> </span>--blocked
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>16: block id 0951:1666 serial "60A44C..." name "DataTraveler 3.0" hash "…" with-interface { 08:06:50 }
+</code></pre></div>
+<p>Le premier nombre (<code>16</code> ici) est <strong>l'identifiant interne du périphérique</strong> attribué par le démon — à ne pas confondre ni avec le <abbr title="Vendor ID">VID</abbr>:<abbr title="Product ID">PID</abbr> <code>0951:1666</code>, ni avec un identifiant de règle (ceux de <code>usbguard list-rules</code>, utilisés avec <code>append-rule</code>/<code>remove-rule</code>). Il change à chaque rebranchement.</p>
+<p><strong>2. Autoriser le périphérique</strong></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Autorisation temporaire (session en cours)</label><label for="__tabbed_2_2">Autorisation permanente</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>usbguard<span class="w"> </span>allow-device<span class="w"> </span><span class="m">16</span>
+</code></pre></div>
+<p>L'autorisation disparaît au redémarrage du démon. C'est le bon choix pour une clé de passage appartenant à un tiers.</p>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>usbguard<span class="w"> </span>allow-device<span class="w"> </span><span class="m">16</span><span class="w"> </span>-p
+</code></pre></div>
+<p>Le drapeau <code>-p</code> / <code>--permanent</code> ajoute une règle <code>allow</code> spécifique à <code>/etc/usbguard/rules.conf</code>. Le périphérique sera reconnu après chaque redémarrage.</p>
+</div>
+</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Piège de syntaxe : le sens de <code>-p</code> change selon la sous-commande</p>
+<p>Avec <code>allow-device</code>, <code>block-device</code> et <code>reject-device</code>, <code>-p</code> signifie <code>--permanent</code>.
+Avec <code>generate-policy</code>, <code>-p</code> signifie <code>--with-ports</code> (générer des règles liées au port physique). Deux options homonymes, deux effets sans rapport.</p>
+</div>
+<p><em>Vérification :</em></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>usbguard<span class="w"> </span>list-devices<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>datatraveler
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'^allow'</span><span class="w"> </span>/etc/usbguard/rules.conf<span class="w">   </span><span class="c1"># le compteur augmente si -p a été utilisé</span>
+</code></pre></div>
+<p>Le périphérique doit être passé en <code>allow</code> et devenir accessible dans le système (montage automatique, <code>lsblk</code>, etc.).</p>
+<div class="admonition tip">
+<p class="admonition-title">Voir les événements en direct</p>
+<p>Dans un terminal laissé ouvert, <code>usbguard watch</code> affiche en temps réel les branchements, les blocages et les modifications de politique. Très pratique pendant la phase de mise au point.</p>
+</div>
+<hr />
+<h3 id="etape-7-optionnel-notifications-sur-le-bureau">Étape 7 (optionnel) : Notifications sur le bureau<a class="headerlink" href="#etape-7-optionnel-notifications-sur-le-bureau" title="Permanent link">&para;</a></h3>
+<p>En environnement graphique, être bloqué sans le moindre message est déroutant. Deux compléments existent :</p>
+<p><strong>a. <code>usbguard-notifier</code></strong> — une petite fenêtre surgissante à chaque branchement ou blocage :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>usbguard-notifier
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>--user<span class="w"> </span>usbguard-notifier.service
+</code></pre></div>
+<p>Ce service a besoin, au minimum, du privilège <abbr title="Inter-Process Communication">IPC</abbr> <code>Devices=listen</code> pour votre compte — déjà couvert par l'étape 4 si vous appartenez au groupe visé.</p>
+<p><strong>b. L'intégration native de GNOME</strong> — GNOME sait piloter USBGuard via D-Bus pour rejeter les périphériques branchés <strong>pendant que la session est verrouillée</strong> (scénario classique de l'attaque « evil maid ») :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>unmask<span class="w"> </span>usbguard-dbus.service
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>usbguard-dbus.service
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>gsettings<span class="w"> </span><span class="nb">set</span><span class="w"> </span>org.gnome.desktop.privacy<span class="w"> </span>usb-protection<span class="w"> </span><span class="nb">true</span>
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>gsettings<span class="w"> </span><span class="nb">set</span><span class="w"> </span>org.gnome.desktop.privacy<span class="w"> </span>usb-protection-level<span class="w"> </span>lockscreen<span class="w">   </span><span class="c1"># ou 'always'</span>
+</code></pre></div>
+<hr />
+<h2 id="verification">Vérification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
+<p>Récapitulatif des contrôles à effectuer une fois l'ensemble en place :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="c1"># 1. Le service tourne et démarrera au boot</span>
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>systemctl<span class="w"> </span>is-active<span class="w"> </span>usbguard.service<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>systemctl<span class="w"> </span>is-enabled<span class="w"> </span>usbguard.service
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>
+<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="c1"># 2. La politique est chargée et non vide</span>
+<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>usbguard<span class="w"> </span>list-rules<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+<a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>
+<a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a><span class="c1"># 3. Les paramètres de sécurité par défaut sont bien appliqués</span>
+<a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a>usbguard<span class="w"> </span>get-parameter<span class="w"> </span>ImplicitPolicyTarget<span class="w">    </span><span class="c1"># attendu : block</span>
+<a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a>usbguard<span class="w"> </span>get-parameter<span class="w"> </span>InsertedDevicePolicy<span class="w">    </span><span class="c1"># attendu : apply-policy</span>
+<a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a>
+<a id="__codelineno-23-11" name="__codelineno-23-11" href="#__codelineno-23-11"></a><span class="c1"># 4. Les journaux ne contiennent pas d'erreur de chargement</span>
+<a id="__codelineno-23-12" name="__codelineno-23-12" href="#__codelineno-23-12"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>usbguard.service<span class="w"> </span>-b<span class="w"> </span>--no-pager<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">20</span>
+</code></pre></div>
+<div class="admonition success">
+<p class="admonition-title">Résultat attendu</p>
+<p><code>active</code> + <code>enabled</code>, une liste de règles numérotées, les deux paramètres aux valeurs ci-dessus, et un journal se terminant par le chargement de la politique sans message <code>error</code>.</p>
+</div>
+<p><strong>Test final, celui qui compte :</strong> redémarrez la machine. Après le retour de l'écran de connexion, le clavier et la souris doivent fonctionner immédiatement. C'est le seul moyen de valider que <code>PresentDevicePolicy=apply-policy</code> retrouve bien votre matériel au démarrage.</p>
+<hr />
+<h2 id="aide-memoire">Aide-mémoire<a class="headerlink" href="#aide-memoire" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Commande / Action</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>usbguard list-devices</code></td>
+<td>Lister tous les périphériques reconnus et leur état</td>
+</tr>
+<tr>
+<td><code>usbguard list-devices -b</code></td>
+<td>Ne lister que les périphériques bloqués</td>
+</tr>
+<tr>
+<td><code>usbguard list-devices -t</code></td>
+<td>Affichage en arborescence (utile pour repérer les hubs)</td>
+</tr>
+<tr>
+<td><code>usbguard allow-device &lt;ID&gt; -p</code></td>
+<td>Autoriser un périphérique de façon permanente</td>
+</tr>
+<tr>
+<td><code>usbguard block-device &lt;ID&gt; -p</code></td>
+<td>Bloquer un périphérique de façon permanente</td>
+</tr>
+<tr>
+<td><code>usbguard reject-device &lt;ID&gt;</code></td>
+<td>Retirer logiquement le périphérique du système</td>
+</tr>
+<tr>
+<td><code>usbguard list-rules</code></td>
+<td>Afficher la politique en vigueur, avec les identifiants de règle</td>
+</tr>
+<tr>
+<td><code>usbguard list-rules -d</code></td>
+<td>Afficher la politique et les périphériques concernés par chaque règle</td>
+</tr>
+<tr>
+<td><code>usbguard append-rule '&lt;règle&gt;'</code></td>
+<td>Ajouter une règle à la fin de la politique</td>
+</tr>
+<tr>
+<td><code>usbguard remove-rule &lt;ID&gt;</code></td>
+<td>Supprimer une règle par son identifiant</td>
+</tr>
+<tr>
+<td><code>usbguard generate-policy</code></td>
+<td>Générer une politique à partir du matériel branché</td>
+</tr>
+<tr>
+<td><code>usbguard generate-policy --no-hashes</code></td>
+<td>Générer une politique sans empreintes (plus tolérante)</td>
+</tr>
+<tr>
+<td><code>usbguard watch</code></td>
+<td>Suivre les événements <abbr title="Universal Serial Bus">USB</abbr> en temps réel</td>
+</tr>
+<tr>
+<td><code>usbguard add-user &lt;nom&gt; …</code></td>
+<td>Créer un fichier de contrôle d'accès <abbr title="Inter-Process Communication">IPC</abbr></td>
+</tr>
+<tr>
+<td><code>usbguard remove-user &lt;nom&gt;</code></td>
+<td>Supprimer un fichier de contrôle d'accès <abbr title="Inter-Process Communication">IPC</abbr></td>
+</tr>
+<tr>
+<td><code>usbguard get-parameter &lt;nom&gt;</code></td>
+<td>Lire un paramètre à chaud (<code>ImplicitPolicyTarget</code>, <code>InsertedDevicePolicy</code>)</td>
+</tr>
+<tr>
+<td><code>usbguard set-parameter &lt;nom&gt; &lt;valeur&gt;</code></td>
+<td>Modifier un paramètre à chaud (non persistant)</td>
+</tr>
+<tr>
+<td><code>lsusb -t</code></td>
+<td>Vue noyau de l'arborescence <abbr title="Universal Serial Bus">USB</abbr>, indépendante d'USBGuard</td>
+</tr>
+</tbody>
+</table>
+<h3 id="fichiers-importants">Fichiers importants<a class="headerlink" href="#fichiers-importants" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Chemin</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/etc/usbguard/usbguard-daemon.conf</code></td>
+<td>Configuration du démon (cibles implicites, chemins, audit)</td>
+</tr>
+<tr>
+<td><code>/etc/usbguard/rules.conf</code></td>
+<td>Politique principale — <code>0600 root:root</code></td>
+</tr>
+<tr>
+<td><code>/etc/usbguard/rules.d/</code></td>
+<td>Politiques additionnelles, chargées par ordre alphanumérique</td>
+</tr>
+<tr>
+<td><code>/etc/usbguard/IPCAccessControl.d/</code></td>
+<td>Fichiers de contrôle d'accès <abbr title="Inter-Process Communication">IPC</abbr> (<code>utilisateur</code> ou <code>:groupe</code>)</td>
+</tr>
+<tr>
+<td><code>/var/log/usbguard/usbguard-audit.log</code></td>
+<td>Journal d'audit, si <code>AuditBackend=FileAudit</code> est configuré</td>
+</tr>
+</tbody>
+</table>
+<h3 id="parametres-cles-de-usbguard-daemonconf">Paramètres clés de <code>usbguard-daemon.conf</code><a class="headerlink" href="#parametres-cles-de-usbguard-daemonconf" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Paramètre</th>
+<th>Valeur par défaut</th>
+<th>Signification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ImplicitPolicyTarget</code></td>
+<td><code>block</code></td>
+<td>Sort réservé aux périphériques ne correspondant à aucune règle</td>
+</tr>
+<tr>
+<td><code>PresentDevicePolicy</code></td>
+<td><code>apply-policy</code></td>
+<td>Traitement des périphériques déjà branchés au démarrage du démon</td>
+</tr>
+<tr>
+<td><code>PresentControllerPolicy</code></td>
+<td><code>keep</code></td>
+<td>Traitement des contrôleurs <abbr title="Universal Serial Bus">USB</abbr> déjà présents</td>
+</tr>
+<tr>
+<td><code>InsertedDevicePolicy</code></td>
+<td><code>apply-policy</code></td>
+<td>Traitement des périphériques branchés à chaud</td>
+</tr>
+<tr>
+<td><code>RestoreControllerDeviceState</code></td>
+<td><code>false</code></td>
+<td>Restaurer ou non l'état permissif d'origine à l'arrêt du démon</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition danger">
+<p class="admonition-title">Ne passez jamais <code>RestoreControllerDeviceState</code> à <code>true</code></p>
+<p>Avec cette valeur, il suffit de faire planter ou de couper le démon pour que le système revienne à son état d'origine — c'est-à-dire permissif. La protection devient contournable par une simple attaque en déni de service sur le processus.</p>
+</div>
+<hr />
+<h2 id="problemes-frequents">Problèmes fréquents<a class="headerlink" href="#problemes-frequents" title="Permanent link">&para;</a></h2>
+<h3 id="probleme-1-plus-de-clavier-ni-de-souris-apres-linstallation">Problème 1 : Plus de clavier ni de souris après l'installation<a class="headerlink" href="#probleme-1-plus-de-clavier-ni-de-souris-apres-linstallation" title="Permanent link">&para;</a></h3>
+<div class="admonition failure">
+<p class="admonition-title">Symptôme</p>
+<p>Immédiatement après <code>apt install usbguard</code>, l'écran ne réagit plus. Aucune saisie n'est possible, la souris est figée. Rien n'est affiché à l'écran pour l'expliquer.</p>
+</div>
+<p><strong>Cause :</strong> le service a démarré avec une politique vide et <code>ImplicitPolicyTarget=block</code> : tout le matériel <abbr title="Universal Serial Bus">USB</abbr> a été désautorisé, y compris les périphériques de saisie.</p>
+<p><strong>Solution :</strong></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Si vous avez un accès SSH</label><label for="__tabbed_3_2">Si vous n'avez que la console locale</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Depuis une autre machine, connectez-vous et neutralisez le service :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>stop<span class="w"> </span>usbguard.service
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>mask<span class="w"> </span>usbguard.service<span class="w"> </span>usbguard-dbus.service
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>sudo<span class="w"> </span>reboot
+</code></pre></div>
+<p>Reprenez ensuite la procédure à l'<a href="#etape-3-generer-la-politique-initiale">étape 3</a>.</p>
+</div>
+<div class="tabbed-block">
+<p>Le clavier fonctionne encore dans GRUB, car c'est le firmware UEFI/BIOS qui le gère à ce stade — USBGuard n'entre en scène qu'après le démarrage du noyau.</p>
+<ol>
+<li>Redémarrez la machine (bouton d'alimentation si nécessaire).</li>
+<li>Au menu GRUB, appuyez sur <span class="keys"><kbd class="key-e">E</kbd></span> pour éditer l'entrée de démarrage.</li>
+<li>
+<p>Repérez la ligne commençant par <code>linux</code> et ajoutez à la <strong>fin</strong> de celle-ci :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>systemd.mask=usbguard.service
+</code></pre></div>
+</li>
+<li>
+<p>Appuyez sur <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-x">X</kbd></span> pour démarrer. Le service ne sera pas lancé pour cette session uniquement.</p>
+</li>
+<li>
+<p>Une fois la session ouverte, rendez le masquage durable :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>mask<span class="w"> </span>usbguard.service<span class="w"> </span>usbguard-dbus.service
+</code></pre></div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Le menu GRUB ne s'affiche pas ?</p>
+<p>Maintenez <span class="keys"><kbd class="key-shift">Shift</kbd></span> (BIOS hérité) ou appuyez plusieurs fois sur <span class="keys"><kbd class="key-escape">Esc</kbd></span> (UEFI) pendant le démarrage. Pour rendre le menu permanent une fois l'accès retrouvé : <code>GRUB_TIMEOUT_STYLE=menu</code> et <code>GRUB_TIMEOUT=5</code> dans <code>/etc/default/grub</code>, puis <code>sudo update-grub</code>.</p>
+</div>
+<hr />
+<h3 id="probleme-2-erreur-de-connexion-a-lipc">Problème 2 : Erreur de connexion à l'<abbr title="Inter-Process Communication">IPC</abbr><a class="headerlink" href="#probleme-2-erreur-de-connexion-a-lipc" title="Permanent link">&para;</a></h3>
+<div class="admonition failure">
+<p class="admonition-title">Symptôme</p>
+<p><code>usbguard list-devices</code> renvoie une erreur de connexion ou de permission alors que le démon tourne bien.</p>
+</div>
+<p><strong>Causes possibles, dans l'ordre à tester :</strong></p>
+<ol>
+<li><strong>Le démon n'a pas été redémarré</strong> après <code>add-user</code>. Les fichiers de <code>IPCAccessControl.d/</code> ne sont lus qu'au démarrage :
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>usbguard.service
+</code></pre></div></li>
+<li><strong>L'appartenance au groupe n'est pas active</strong> dans la session courante. Vérifiez avec <code>id -nG</code> ; si le groupe manque, déconnectez-vous et reconnectez-vous (un simple <code>su - $USER</code> ne suffit pas pour une session graphique).</li>
+<li><strong>Le fichier de contrôle d'accès ne porte pas le bon nom.</strong> Un groupe doit être préfixé par <code>:</code> — <code>/etc/usbguard/IPCAccessControl.d/:sudo</code> — alors qu'un utilisateur n'a pas de préfixe. C'est le symptôme typique d'un <code>add-user</code> lancé sans <code>-g</code>.</li>
+</ol>
+<hr />
+<h3 id="probleme-3-la-regle-na-pas-survecu-au-redemarrage">Problème 3 : La règle n'a pas survécu au redémarrage<a class="headerlink" href="#probleme-3-la-regle-na-pas-survecu-au-redemarrage" title="Permanent link">&para;</a></h3>
+<div class="admonition failure">
+<p class="admonition-title">Symptôme</p>
+<p>Un périphérique autorisé la veille est de nouveau bloqué après un <code>reboot</code>.</p>
+</div>
+<p><strong>Causes :</strong></p>
+<ul>
+<li>Le drapeau <code>-p</code> a été oublié : l'autorisation n'existait qu'en mémoire.</li>
+<li>Ou le privilège <abbr title="Inter-Process Communication">IPC</abbr> <code>Policy=modify</code> est absent : le démon a accepté l'autorisation temporaire mais a refusé d'écrire dans <code>rules.conf</code>. Corrigez en rejouant l'<a href="#etape-4-accorder-les-droits-dadministration-via-lipc">étape 4</a> avec <code>--policy modify,list</code>, puis redémarrez le démon.</li>
+</ul>
+<p>Contrôle rapide : la règle correspondante doit apparaître dans <code>sudo cat /etc/usbguard/rules.conf</code>, pas seulement dans <code>usbguard list-rules</code>.</p>
+<hr />
+<h3 id="probleme-4-le-peripherique-est-allow-mais-ne-fonctionne-toujours-pas">Problème 4 : Le périphérique est « allow » mais ne fonctionne toujours pas<a class="headerlink" href="#probleme-4-le-peripherique-est-allow-mais-ne-fonctionne-toujours-pas" title="Permanent link">&para;</a></h3>
+<div class="admonition failure">
+<p class="admonition-title">Symptôme</p>
+<p><code>usbguard list-devices</code> indique <code>allow</code>, mais rien ne se monte et aucun pilote ne se charge.</p>
+</div>
+<p><strong>Cause :</strong> l'<abbr title="Universal Serial Bus">USB</abbr> est une <strong>arborescence</strong>. Un périphérique branché derrière un hub, un dock ou un écran-concentrateur ne peut être atteint que si <strong>tous ses parents</strong> sont eux-mêmes autorisés. Un hub bloqué rend inaccessible tout ce qui se trouve derrière lui.</p>
+<p><strong>Solution :</strong> affichez la hiérarchie et autorisez le hub parent, puis le périphérique :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>usbguard<span class="w"> </span>list-devices<span class="w"> </span>-t
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>usbguard<span class="w"> </span>allow-device<span class="w"> </span>&lt;ID_DU_HUB&gt;<span class="w"> </span>-p
+</code></pre></div>
+<hr />
+<h3 id="probleme-5-un-peripherique-connu-est-bloque-apres-une-mise-a-jour">Problème 5 : Un périphérique connu est bloqué après une mise à jour<a class="headerlink" href="#probleme-5-un-peripherique-connu-est-bloque-apres-une-mise-a-jour" title="Permanent link">&para;</a></h3>
+<div class="admonition failure">
+<p class="admonition-title">Symptôme</p>
+<p>Un matériel présent dans la politique depuis des mois se retrouve subitement en <code>block</code>.</p>
+</div>
+<p><strong>Cause :</strong> son attribut <code>hash</code> a changé — mise à jour de firmware du périphérique, ou changement dans la façon dont le noyau expose ses descripteurs après une montée de version.</p>
+<p><strong>Solution :</strong> remplacez la règle par une version sans hash, adossée au numéro de série lorsqu'il existe :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>usbguard<span class="w"> </span>list-rules<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">"nom du périphérique"</span><span class="w">   </span><span class="c1"># relever l'ID de règle</span>
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>usbguard<span class="w"> </span>remove-rule<span class="w"> </span>&lt;ID_DE_REGLE&gt;
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>usbguard<span class="w"> </span>append-rule<span class="w"> </span><span class="s1">'allow id 0951:1666 serial "60A44C..." name "DataTraveler 3.0"'</span>
+</code></pre></div>
+<hr />
+<h3 id="probleme-6-apt-remove-usbguard-se-fige">Problème 6 : <code>apt remove usbguard</code> se fige<a class="headerlink" href="#probleme-6-apt-remove-usbguard-se-fige" title="Permanent link">&para;</a></h3>
+<div class="admonition failure">
+<p class="admonition-title">Symptôme</p>
+<p>La désinstallation reste bloquée pendant l'arrêt du service.</p>
+</div>
+<p><strong>Solution :</strong> arrêtez et masquez d'abord les services, puis désinstallez :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>stop<span class="w"> </span>usbguard.service<span class="w"> </span>usbguard-dbus.service
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>mask<span class="w"> </span>usbguard.service<span class="w"> </span>usbguard-dbus.service
+<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>sudo<span class="w"> </span>apt<span class="w"> </span>purge<span class="w"> </span>usbguard
+</code></pre></div>
+<hr />
+<h2 id="checklist">Checklist<a class="headerlink" href="#checklist" title="Permanent link">&para;</a></h2>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Tous les périphériques de confiance sont branchés avant de commencer</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Un second canal d'accès (SSH ou console d'hyperviseur) est disponible</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>usbguard.service</code> et <code>usbguard-dbus.service</code> sont masqués <strong>avant</strong> <code>apt install</code></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Le paquet est installé et <code>usbguard --version</code> répond</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> La politique initiale est générée, relue et installée en <code>0600 root:root</code></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> La politique contient bien le clavier, la souris et les périphériques internes</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Le fichier de contrôle d'accès <abbr title="Inter-Process Communication">IPC</abbr> est créé dans <code>IPCAccessControl.d/</code> avec <code>Policy=modify</code></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Le service est démasqué, activé et actif</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>usbguard list-devices</code> fonctionne sans <code>sudo</code></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Une clé inconnue est bien refusée, une clé autorisée avec <code>-p</code> est bien acceptée</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> La machine a été redémarrée et le clavier fonctionne dès l'écran de connexion</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> (optionnel) Notifications de bureau ou protection GNOME à l'écran verrouillé activées</li>
+</ul>
+<hr />
+<h2 id="glossaire">Glossaire<a class="headerlink" href="#glossaire" title="Permanent link">&para;</a></h2>
+<dl>
+<dt>BadUSB</dt>
+<dd>Famille d'attaques exploitant la capacité d'un périphérique <abbr title="Universal Serial Bus">USB</abbr> à mentir sur sa propre nature. Un objet ressemblant à une clé de stockage se déclare clavier et injecte des frappes à grande vitesse, ou se déclare carte réseau pour détourner le trafic DNS du poste.</dd>
+<dt>Liste blanche (allow-list)</dt>
+<dd>Modèle de sécurité où tout est interdit sauf ce qui est explicitement autorisé. Plus contraignant qu'une liste noire, mais seul modèle capable de résister à une menace inconnue à l'avance.</dd>
+<dt><abbr title="Vendor ID">VID</abbr> / <abbr title="Product ID">PID</abbr></dt>
+<dd><em>Vendor ID</em> et <em>Product ID</em> : deux entiers 16 bits identifiant le constructeur et le modèle d'un périphérique <abbr title="Universal Serial Bus">USB</abbr> (<code>046d:c52b</code>). Ils sont déclarés par le périphérique lui-même et sont donc trivialement falsifiables.</dd>
+<dt>Classe d'interface <abbr title="Universal Serial Bus">USB</abbr></dt>
+<dd>Catégorie fonctionnelle déclarée par le périphérique au format <code>classe:sous-classe:protocole</code>. Elle indique au noyau quel pilote charger. Un même périphérique physique peut exposer plusieurs interfaces de classes différentes — ce qui est précisément le mécanisme des attaques BadUSB.</dd>
+<dt><abbr title="Human Interface Device">HID</abbr></dt>
+<dd><em>Human Interface Device</em>, classe <code>03</code> : claviers, souris, manettes. C'est la classe visée par la majorité des attaques par injection de frappes, car aucun pilote spécifique ni aucune confirmation utilisateur n'est requis.</dd>
+<dt>sysfs</dt>
+<dd>Pseudo-système de fichiers monté sur <code>/sys</code>, qui expose les objets du noyau sous forme de fichiers. USBGuard s'appuie sur l'attribut <code>/sys/bus/usb/devices/*/authorized</code> pour autoriser ou désautoriser un périphérique.</dd>
+<dt>Démon (daemon)</dt>
+<dd>Processus qui tourne en arrière-plan, sans terminal attaché, généralement lancé et supervisé par <code>systemd</code>. Ici, <code>usbguard-daemon</code>.</dd>
+<dt><abbr title="Inter-Process Communication">IPC</abbr></dt>
+<dd><em>Inter-Process Communication</em> : mécanisme permettant à deux processus d'échanger. USBGuard expose un canal <abbr title="Inter-Process Communication">IPC</abbr> pour que l'outil <code>usbguard</code> pilote le démon sans être <code>root</code>, avec un contrôle fin des privilèges.</dd>
+<dt>Cible implicite (<code>ImplicitPolicyTarget</code>)</dt>
+<dd>Décision appliquée à un périphérique ne correspondant à aucune règle de la politique. <code>block</code> par défaut, c'est ce qui fait d'USBGuard une liste blanche.</dd>
+<dt>Attaque « evil maid »</dt>
+<dd>Scénario où un attaquant obtient un accès physique bref à une machine laissée sans surveillance (chambre d'hôtel, open space) pour y brancher un périphérique malveillant. La protection GNOME à l'écran verrouillé cible directement ce cas.</dd>
+</dl>
+<hr />
+<h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://usbguard.github.io/">Site officiel USBGuard</a> — Documentation de référence du projet</li>
+<li><a href="https://usbguard.github.io/documentation/configuration">Documentation : configuration du démon</a> — Détail de <code>usbguard-daemon.conf</code> et du contrôle d'accès <abbr title="Inter-Process Communication">IPC</abbr></li>
+<li><a href="https://manpages.debian.org/testing/usbguard/usbguard.1.en.html"><code>usbguard(1)</code> — manuel Debian</a> — Toutes les sous-commandes et leurs options</li>
+<li><a href="https://manpages.debian.org/testing/usbguard/usbguard-rules.conf.5.en.html"><code>usbguard-rules.conf(5)</code> — manuel Debian</a> — Grammaire complète du langage de règles</li>
+<li><a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/security_hardening/protecting-systems-against-intrusive-usb-devices_security-hardening">Red Hat — Protecting systems against intrusive <abbr title="Universal Serial Bus">USB</abbr> devices</a> — Bonnes pratiques et politiques structurées dans <code>rules.d/</code></li>
+<li><a href="https://wiki.archlinux.org/title/USBGuard">USBGuard sur ArchWiki</a> — Intégration GNOME et cas particuliers</li>
+<li><a href="https://github.com/USBGuard/usbguard">Dépôt GitHub du projet</a> — Sources, journal des versions et suivi des bugs</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../chiffrer-poste-windows-11-bitlocker-manage-bde-deblocage-helpdesk/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: Chiffrer un poste Windows 11 Pro avec BitLocker : disque système, BitLocker To Go, manage-bde et déblocage helpdesk">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                Chiffrer un poste Windows 11 Pro avec BitLocker : disque système, BitLocker To Go, manage-bde et déblocage helpdesk
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../ia/" class="md-footer__link md-footer__link--next" aria-label="Suivant: Intelligence Artificielle">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                Intelligence Artificielle
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      <a href="/mentions-legales/">Mentions légales</a>
+
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/bodaine" target="_blank" rel="noopener" title="Nicolas BODAINE sur LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://github.com/NicoBOD" target="_blank" rel="noopener" title="NicoBOD sur GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://nicolas.bodaine.fr" target="_blank" rel="noopener" title="Portfolio de Nicolas BODAINE" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="/feed_rss_created.xml" target="_blank" rel="noopener" title="Flux RSS des derniers articles" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 64c0-17.7 14.3-32 32-32 229.8 0 416 186.2 416 416 0 17.7-14.3 32-32 32s-32-14.3-32-32C384 253.6 226.4 96 32 96 14.3 96 0 81.7 0 64m0 352a64 64 0 1 1 128 0 64 64 0 1 1-128 0m32-256c159.1 0 288 128.9 288 288 0 17.7-14.3 32-32 32s-32-14.3-32-32c0-123.7-100.3-224-224-224-17.7 0-32-14.3-32-32s14.3-32 32-32"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.path", "navigation.indexes", "navigation.prune", "navigation.footer", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "content.action.view", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
