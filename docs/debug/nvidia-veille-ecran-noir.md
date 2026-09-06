@@ -1,6 +1,6 @@
 ---
 title: "NVIDIA — Écran noir après sortie de veille"
-date: 2026-05-30
+date: 2026-09-06
 author: Nicolas BODAINE
 tags:
   - nvidia
@@ -8,7 +8,9 @@ tags:
   - suspend
   - écran noir
   - systemd
-difficulty: intermédiaire
+  - kernel
+  - fbcon
+difficulty: avancé
 os: Ubuntu 24.04
 status: publié
 ---
@@ -16,270 +18,360 @@ status: publié
 # NVIDIA — Écran noir après sortie de veille
 
 !!! abstract "Résumé"
-    Après une mise en veille (suspend S3), le PC sort bien de veille mais l'écran reste noir.
-    Le problème vient du driver NVIDIA qui ne restaure pas correctement la VRAM et/ou le terminal virtuel (VT) au réveil.
-    Cette fiche couvre le diagnostic complet et la correction définitive.
+    Après une mise en veille (suspend S3), le PC se réveille mais l'écran reste noir, et `Ctrl+Alt+F3` ne répond pas non plus : la machine est totalement figée et seul l'arrêt forcé permet d'en sortir.
+
+    La cause n'est **pas** une VRAM mal restaurée. C'est un **interblocage entre deux verrous du noyau** — le verrou console (`console_lock`) et le verrou de gestion d'énergie de `nvidia-modeset` (`nvkms_pm_lock`) — qui ne peut se produire **qu'au premier réveil de chaque démarrage**.
+
+    Le correctif tient en un paramètre noyau : **`fbcon=nodefer`**.
 
 | Propriété | Valeur |
 |-----------|--------|
-| Difficulté | Intermédiaire |
-| OS / Environnement | Ubuntu 24.04 Desktop — Gnome — X11 |
-| GPU | NVIDIA GeForce GTX 1060 6GB |
-| Driver | nvidia-driver-580 (580.159.03) |
-| Dernière mise à jour | 2026-05-30 |
+| Difficulté | Avancé |
+| OS / Environnement | Ubuntu 24.04 Desktop — GNOME — X11 |
+| GPU | NVIDIA GeForce GTX 1060 6GB (GP106, Pascal) |
+| Driver | nvidia-driver-580 (580.173.02) |
+| Noyau | 7.0.0-31-generic (HWE) |
+| Dernière mise à jour | 2026-09-06 |
+
+!!! warning "Cette fiche corrige entièrement une version précédente"
+    La version du 2026-05-30 attribuait la panne à une restauration de VRAM défaillante et à un mécanisme `WantedBy` cassé. **Ces deux diagnostics étaient faux.** Les remèdes qui en découlaient étaient structurellement inopérants : ils s'exécutaient en aval du point de blocage et n'ont jamais tourné lors d'un seul incident. Le détail et les preuves sont en fin de fiche, section « Pourquoi les correctifs précédents ne pouvaient pas fonctionner ».
 
 ## Contexte
 
-Après une mise à jour du noyau (ex. migration automatique via `unattended-upgrades`) ou du driver NVIDIA (ex. 535 → 580), la mise en veille peut échouer de deux façons :
+Sur un poste Ubuntu 24.04 + GNOME + X11 avec pilote NVIDIA propriétaire, la mise en veille S3 se déroule normalement et le système se réveille bien (les ventilateurs repartent, le réseau revient, la machine reste joignable en SSH), mais l'affichage ne revient jamais.
 
-1. **La veille ne s'enclenche pas** → le driver refuse de suspendre (erreur `-5`)
-2. **L'écran reste noir au réveil** → la veille S3 fonctionne, le système revient, mais l'affichage n'est pas restauré
+Le point qui égare le diagnostic est l'**intermittence** : la panne ne survient pas à chaque veille. Sur le poste de référence, la mesure sur près de quatre mois donne **8 gels sur 22 mises en veille, soit 36 %**. Cette irrégularité fait croire à une régression de version ou à un effet de mise à jour, alors qu'il s'agit d'une course entre deux tâches du noyau.
 
-Les deux problèmes ont des causes liées mais distinctes.
+!!! info "L'exposition est d'un seul événement par démarrage"
+    Le mécanisme ne peut se déclencher qu'à la **première** sortie de veille suivant un démarrage. Une fois cette première sortie passée sans encombre, toutes les veilles suivantes du même démarrage sont sûres. Sur le poste de référence, un démarrage a enchaîné trois veilles avec une seule fenêtre d'exposition.
 
-## Problème
+## Symptômes
 
-!!! failure "Symptôme 1 — La veille échoue immédiatement"
+!!! failure "Symptôme principal — gel total au réveil"
+    - Le système sort de veille S3 (`PM: suspend exit` présent dans les journaux).
+    - L'écran reste noir définitivement.
+    - `Ctrl+Alt+F3` puis `Ctrl+Alt+F2` ne restaurent rien : **aucune console virtuelle ne peut plus s'ouvrir**.
+    - Le bouton d'alimentation est enregistré (`Power key pressed short`) mais sans effet.
+    - La machine répond encore au réseau (SSH, Tailscale, ping) : le noyau tourne, seul l'affichage et le sous-système TTY sont bloqués.
+    - Au bout de 121 secondes, le noyau signale des tâches bloquées (`INFO: task ... blocked for more than 121 seconds`).
+
+Ne pas confondre avec un symptôme voisin et distinct : la veille qui **refuse de s'enclencher** avec `nvidia 0000:01:00.0: PM: failed to suspend async: error -5`. Ce cas-là est traité en fin de fiche.
+
+## Le mécanisme réel
+
+### La condition structurelle : la prise de console différée
+
+Le noyau Ubuntu est compilé avec `CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER=y`. Combiné à `quiet splash` et `vt.handoff=7` dans la ligne de commande, cela signifie que la console graphique `fbcon` **n'est pas attachée au démarrage** : elle attend qu'un message soit imprimé sur une console en mode texte pour prendre la main, afin de ne pas gâcher l'animation Plymouth.
+
+```bash
+grep FRAMEBUFFER_CONSOLE_DEFERRED /boot/config-$(uname -r)
+# CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER=y
+
+journalctl -k -b 0 | grep 'Deferring console take-over'
+# fbcon: Deferring console take-over   (x2)
+
+ls /sys/class/vtconsole/
+# vtcon0 seulement — et son nom est "(S) dummy device"
+```
+
+Ce piège est **réarmé à chaque démarrage**.
+
+### Le déclencheur : `chvt 63` puis un message noyau au réveil
+
+À l'endormissement, le script du pilote `/usr/bin/nvidia-sleep.sh` bascule sur la console virtuelle 63, une VT neuve en mode texte (contrairement à la VT de la session X, qui est en mode graphique) :
+
+```bash
+fgconsole > "${XORG_VT_FILE}"
+chvt 63
+echo "$1" > /proc/driver/nvidia/suspend
+```
+
+Cette dernière écriture fait prendre à `nvidia_modeset_suspend()` le verrou `nvkms_pm_lock` **en écriture**, et ce verrou est conservé pendant **toute la durée de la veille**.
+
+Au réveil, `resume_console()` vide la file des messages noyau vers la VT63, qui est en mode texte. Le premier message dont la priorité passe le filtre `console_loglevel` déclenche alors la prise de console différée. Sur le poste de référence, avec `console_loglevel = 4`, ce message est `Bluetooth: hci0: No support for _PRR ACPI method` (priorité 3), et `fbcon: Taking over console` suit **31 microsecondes plus tard**.
+
+!!! tip "Identifier le déclencheur sur votre machine"
+    Le message coupable dépend du matériel. Il faut chercher, parmi les messages du réveil, le dernier dont la priorité est **strictement inférieure** au premier chiffre de `/proc/sys/kernel/printk`.
+
+    ```bash
+    cat /proc/sys/kernel/printk        # ex. : 4 4 1 7  -> seuls les niveaux 0 à 3 s'affichent
+    journalctl -k -b -1 -o json | \
+      python3 -c "
+    import sys,json
+    for l in sys.stdin:
+        try: j=json.loads(l)
+        except: continue
+        m=j.get('MESSAGE','')
+        if isinstance(m,list): m=''.join(map(chr,m))
+        if 'Taking over console' in m or int(j.get('PRIORITY',9))<4:
+            print(j.get('__MONOTONIC_TIMESTAMP'), j.get('PRIORITY'), m[:70])
+    "
     ```
-    nvidia 0000:01:00.0: PM: failed to suspend async: error -5
-    PM: Some devices failed to suspend, or early wake event detected
-    Failed to put system to sleep. System resumed again: Input/output error
+
+    Un message de priorité 4 ou plus (`xhci_hcd ... xHC error in resume` par exemple) ne peut **pas** être le déclencheur : il n'est pas imprimé sur la console.
+
+### L'interblocage
+
+Deux chemins se croisent alors, chacun détenant ce que l'autre attend.
+
+**Chemin A — la prise de console.** Le worker noyau prend `console_lock`, puis descend jusqu'au pilote NVIDIA et demande `nvkms_pm_lock` en lecture :
+
+```text
+fbcon_register_existing_fbs
+  └─ do_fb_registered → do_fbcon_takeover
+       └─ do_take_over_console        ← PREND console_lock
+            └─ do_bind_con_driver → visual_init → fbcon_init
+                 └─ drm_fb_helper_set_par
+                      └─ __drm_fb_helper_restore_fbdev_mode_unlocked
+                           └─ drm_fb_helper_hotplug_event
+                                └─ drm_client_modeset_probe
+                                     └─ drm_helper_probe_single_connector_modes
+                                          └─ nv_drm_connector_detect [nvidia_drm]
+                                               └─ nvkms_ioctl_from_kapi [nvidia_modeset]
+                                                    └─ down_read(nvkms_pm_lock)  ← BLOQUE
+```
+
+**Chemin B — la sortie de veille du pilote.** `echo resume > /proc/driver/nvidia/suspend` appelle `nv_resume_devices()`, qui exécute d'abord `nvidia_resume()` puis, **en dernier seulement**, `nvidia_modeset_resume(0)` — c'est-à-dire l'unique libérateur de `nvkms_pm_lock`. Or `nvidia_resume()` passe par `rm_power_management()` → `os_disable_console_access()`, qui demande… `console_lock`.
+
+Le libérateur du verrou qu'attend le chemin A est donc lui-même bloqué derrière le verrou que le chemin A détient. Les deux verrous sont ininterruptibles : **aucune tâche n'est tuable, plus aucun terminal ne peut s'ouvrir**, d'où l'écran noir et l'impossibilité de basculer sur une console texte.
+
+!!! quote "Le noyau nomme lui-même le cycle"
+    ```text
+    INFO: task kworker/5:0:27371 <reader> blocked on an rw-semaphore
+          likely owned by task kworker/u32:27:27352 <writer>
+    INFO: task nvidia-sleep.sh:27414 blocked on a semaphore
+          likely last held by task kworker/5:0:27371
     ```
+    La première ligne est le worker `fbcon` (`Workqueue: events fbcon_register_existing_fbs`) qui attend le verrou NVIDIA. La seconde est `nvidia-sleep.sh` qui attend le verrou console détenu par ce même worker. Le cycle est fermé.
 
-!!! failure "Symptôme 2 — Écran noir au réveil"
-    Le système sort de veille S3 (les ventilateurs tournent, le réseau revient) mais l'écran reste noir.
-    `Ctrl+Alt+F3` puis `Ctrl+Alt+F2` ne restaure pas l'affichage.
+## Diagnostic
 
-## Diagnostic rapide
-
-### 1. Vérifier les logs de la dernière veille
+### 1. Vérifier que le piège est armé sur le démarrage courant
 
 ```bash
-# Logs du boot actuel (si le système a été redémarré après le blocage)
-journalctl -b -1 | grep -iE 'nvidia|suspend|resume|PM:|sleep'
+journalctl -k -b 0 | grep -c 'Deferring console take-over'   # 2 = piège armé
+ls /sys/class/vtconsole/                                      # vtcon0 seul = fbcon non attaché
+cat /proc/fb                                                  # 0 nvidia-drmdrmfb
 ```
 
-### 2. Vérifier l'état DKMS
+### 2. Déterminer si un réveil a réussi ou échoué
+
+Le marqueur le plus fiable est la présence de la ligne de bascule framebuffer après un `Taking over console` :
 
 ```bash
-dkms status
+journalctl -k -b -1 | grep -E 'Taking over console|switching to colour frame buffer'
 ```
 
-!!! warning "Résultat à surveiller"
-    Si le statut est `added` au lieu de `installed`, le module n'a pas été compilé.
-    Cause probable : headers du noyau manquants.
+!!! success "Réveil réussi"
+    Les **deux** lignes sont présentes : la prise de console est allée au bout.
 
-### 3. Vérifier les services NVIDIA
+!!! failure "Réveil bloqué"
+    `fbcon: Taking over console` est présent mais `Console: switching to colour frame buffer device` est **absent** : la prise de console s'est arrêtée en plein milieu, dans le pilote NVIDIA.
+
+Sur le poste de référence, cette séparation est parfaite sur six démarrages : les deux démarrages où la seconde ligne manquait sont exactement les deux qui ont gelé.
+
+### 3. Confirmer par les tâches bloquées
 
 ```bash
-systemctl is-enabled nvidia-suspend nvidia-resume nvidia-hibernate
+journalctl -k -b -1 | grep -A25 'blocked for more than'
 ```
 
-### 4. Vérifier les paramètres du driver
+La signature à reconnaître est un `kworker` avec `Workqueue: events fbcon_register_existing_fbs`, bloqué sur `down_read` via `nv_drm_connector_detect` et `nvkms_ioctl_from_kapi`.
+
+### 4. Capturer la pile du détenteur du verrou (depuis un autre poste)
+
+La machine reste joignable par le réseau pendant le gel. C'est la seule occasion d'obtenir la donnée décisive.
 
 ```bash
-cat /proc/driver/nvidia/params | grep -E 'Preserve|TemporaryFilePath'
+ssh utilisateur@machine-gelee
+sudo sh -c 'echo w > /proc/sysrq-trigger'          # liste les tâches en attente ininterruptible
+P=$(pgrep -f 'nvidia-sleep.sh resume'); sudo cat /proc/$P/stack
+sudo dmesg | tail -300 | tee /tmp/gel.txt
+sudo systemctl reboot -f                            # seulement APRÈS la capture
 ```
 
-### 5. Confirmer que nvidia-resume.service s'est exécuté au dernier réveil
-
-```bash
-journalctl -b -1 -u nvidia-suspend.service -u nvidia-resume.service -u nvidia-display-restore.service
-```
-
-!!! warning "Signe d'alerte — WantedBy silencieusement ignoré"
-    Si `nvidia-suspend.service` apparaît mais **pas** `nvidia-resume.service`, le mécanisme
-    `WantedBy=systemd-suspend.service` ne fonctionne pas dans le chemin de retour de veille
-    sur **systemd 255** (Ubuntu 24.04).
-
-    Les services sont activés et correctement liés dans `systemd-suspend.service.wants/`
-    mais ne sont jamais déclenchés au réveil — même si les étapes 2 et 3 ont déjà été appliquées.
-    → Appliquer l'**Étape 4** ci-dessous.
+!!! danger "N'utilisez que `echo w`"
+    `echo w` se contente d'imprimer les tâches bloquées. Les touches magiques `b` (redémarrage immédiat) et `c` (plantage volontaire) provoquent une perte de données.
 
 ## Solution
 
-### Étape 1 : Installer les headers du noyau (si manquants)
+### Étape 1 : rendre le menu GRUB visible (filet de sécurité, à faire en premier)
+
+Sur beaucoup d'installations Ubuntu, `GRUB_TIMEOUT=0` et `GRUB_TIMEOUT_STYLE=hidden` : aucun menu ne s'affiche, donc aucun moyen de retirer un paramètre noyau qui poserait problème. Cette étape ne change rien au fonctionnement, elle ouvre seulement la porte de secours.
 
 ```bash
-sudo apt-get install -y linux-headers-$(uname -r)
+sudo mkdir -p /root/rollback-nvidia
+sudo cp -a /etc/default/grub /boot/grub/grub.cfg /root/rollback-nvidia/
+printf '%s\n' 'GRUB_TIMEOUT_STYLE=menu' 'GRUB_TIMEOUT=5' \
+  | sudo tee /etc/default/grub.d/98-menu-visible.cfg
+sudo update-grub
 ```
 
-Cela permet à DKMS de compiler le module NVIDIA pour le noyau actuel.
+### Étape 2 : appliquer `fbcon=nodefer`
 
-### Étape 2 : Activer les services NVIDIA de suspend/resume
-
-```bash
-sudo systemctl enable nvidia-suspend.service nvidia-resume.service nvidia-hibernate.service
-```
-
-!!! info "Pourquoi c'est nécessaire"
-    Le paramètre `NVreg_PreserveVideoMemoryAllocations=1` demande au driver de sauvegarder la VRAM en veille.
-    Mais sans ces services, les scripts `nvidia-sleep.sh` (qui font la sauvegarde/restauration effective) ne sont jamais exécutés → erreur -5 au suspend.
-
-### Étape 3 : Créer un service de restauration d'affichage (filet de sécurité)
-
-Le script `nvidia-sleep.sh` bascule sur le VT63 avant le suspend et doit revenir sur le bon VT au resume. Ce `chvt` échoue parfois silencieusement → écran noir.
-
-Créer le service :
+Le paramètre attache `fbcon` **dès le démarrage**, alors que le GPU est éveillé et qu'aucun verrou de gestion d'énergie n'est détenu. Dès lors, `fbcon_register_existing_fbs` ne peut plus jamais être programmé au réveil : l'arête du cycle disparaît, au lieu de voir sa probabilité réduite.
 
 ```bash
-sudo tee /etc/systemd/system/nvidia-display-restore.service << 'EOF'
-[Unit]
-Description=Restore display after NVIDIA resume
-After=nvidia-resume.service systemd-suspend.service
-After=systemd-hibernate.service
-After=systemd-suspend-then-hibernate.service
-
-[Service]
-Type=oneshot
-ExecStartPre=/bin/sleep 2
-ExecStart=/bin/bash -c 'echo resume > /proc/driver/nvidia/suspend 2>/dev/null; VT=$(cat /sys/class/tty/tty0/active 2>/dev/null | tr -dc "0-9"); if [ "$VT" = "63" ] || [ -z "$VT" ] || [ "$VT" -gt 7 ]; then chvt 2; fi'
-
-[Install]
-WantedBy=systemd-suspend.service
-WantedBy=systemd-hibernate.service
-WantedBy=systemd-suspend-then-hibernate.service
+sudo tee /etc/default/grub.d/99-fbcon-nodefer.cfg >/dev/null <<'EOF'
+# Correctif ecran noir au premier reveil : attache fbcon des le demarrage
+# pour supprimer l'interblocage console_lock <-> nvkms_pm_lock.
+GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT fbcon=nodefer"
 EOF
+sudo update-grub
 ```
 
-Activer le service :
-
-```bash
-sudo systemctl daemon-reload
-sudo systemctl enable nvidia-display-restore.service
-```
-
-!!! warning "Limitation sur systemd 255 / Ubuntu 24.04"
-    Ce service utilise `WantedBy=systemd-suspend.service`, le même mécanisme que
-    `nvidia-resume.service`. Sur systemd 255, ce mécanisme peut échouer silencieusement
-    au réveil : le service est activé mais jamais déclenché.
-    Si l'écran reste noir malgré cette étape, appliquer l'**Étape 4**.
-
-### Étape 4 : Drop-in systemd — garantir l'exécution au réveil
-
-!!! info "Quand appliquer cette étape"
-    À appliquer si, après les étapes 2 et 3, `nvidia-resume.service` n'apparaît toujours
-    pas dans les journaux après un réveil (cf. Diagnostic — étape 5).
-
-Ce drop-in attache `nvidia-sleep.sh resume` **et la restauration du VT** directement à `ExecStartPost` de `systemd-suspend.service`, ce qui garantit leur exécution indépendamment du mécanisme `WantedBy` (et rend le service de l'Étape 3 redondant).
-
-```bash
-sudo mkdir -p /etc/systemd/system/systemd-suspend.service.d/
-sudo tee /etc/systemd/system/systemd-suspend.service.d/nvidia-resume.conf << 'EOF'
-[Service]
-# Restauration VRAM
-ExecStartPost=-/usr/bin/nvidia-sleep.sh resume
-# Restauration du VT — remplace nvidia-display-restore.service (Étape 3)
-ExecStartPost=-/bin/sleep 2
-ExecStartPost=-/bin/bash -c 'echo resume > /proc/driver/nvidia/suspend 2>/dev/null; VT=$(cat /sys/class/tty/tty0/active 2>/dev/null | tr -dc "0-9"); if [ "$VT" = "63" ] || [ -z "$VT" ] || [ "$VT" -gt 7 ]; then chvt 2; fi'
-EOF
-sudo systemctl daemon-reload
-```
-
-!!! success "Pourquoi ce fix est plus fiable"
-    - `ExecStartPost` s'exécute **toujours** dès que `systemd-sleep suspend` se termine (après le réveil), indépendamment de la version de systemd.
-    - Le préfixe `-` ignore les erreurs éventuelles sans bloquer le service.
-    - Le fichier est dans `/etc/systemd/system/` et ne sera pas écrasé par une mise à jour du driver.
-    - `nvidia-sleep.sh resume` est idempotent : l'appeler en doublon avec le hook `/usr/lib/systemd/system-sleep/nvidia` existant est sans danger.
-    - Le `chvt 2` final n'agit que si l'on est resté bloqué sur VT63 (ou un VT inconnu), donc inoffensif sinon.
-
-!!! tip "L'Étape 3 devient redondante"
-    Avec les 3 `ExecStartPost` du drop-in ci-dessus, le `nvidia-display-restore.service` de l'Étape 3 ne sert plus à rien — il ne tournait de toute façon pas, victime du même bug `WantedBy`. Après plusieurs cycles suspend/resume validés, tu peux le désactiver :
+!!! warning "Contrôler avant de redémarrer"
     ```bash
-    sudo systemctl disable nvidia-display-restore.service
+    sudo grep -m1 -o 'quiet splash[^"]*' /boot/grub/grub.cfg
+    # attendu : quiet splash ... fbcon=nodefer $vt_handoff
     ```
+    Si `fbcon=nodefer` n'apparaît pas, **ne pas redémarrer** : le fichier n'a pas été pris en compte.
 
-    Cas observé en pratique (2026-05-30) : sans le `chvt` dans le drop-in, la VRAM est bien restaurée mais l'écran reste sur VT63 → écran noir malgré l'Étape 4 d'origine. C'est pour ça que le drop-in inclut désormais les 3 actions.
+    La présence de `$vt_handoff` est normale et voulue : `/etc/grub.d/10_linux` le réinjecte tant que `splash` est présent. Plymouth est conservé.
 
-### Étape 5 : Vérifier la cohérence de la config modprobe
+!!! tip "Pourquoi un fichier dans `/etc/default/grub.d/` plutôt qu'une édition de `/etc/default/grub`"
+    `grub-mkconfig` lit ce répertoire, et `/etc/kernel/postinst.d/zz-update-grub` relance `update-grub` à chaque nouveau noyau : le paramètre est donc réappliqué automatiquement à chaque mise à jour, sans intervention.
+
+### Étape 3 : retirer les remèdes empilés par l'ancien diagnostic
+
+Si vous aviez appliqué la version précédente de cette fiche, ces éléments sont inutiles et ajoutent 3 à 4 secondes de latence à chaque réveil. On les déplace plutôt que de les supprimer.
 
 ```bash
-grep -r 'NVreg_' /etc/modprobe.d/
+sudo systemctl disable --now nvidia-display-restore.service
+sudo mkdir -p /root/rollback-nvidia/systemd
+sudo mv /etc/systemd/system/nvidia-display-restore.service /root/rollback-nvidia/systemd/
+sudo mv /etc/systemd/system/systemd-suspend.service.d/nvidia-resume.conf /root/rollback-nvidia/systemd/
+sudo systemctl daemon-reload
 ```
 
-S'assurer que `NVreg_TemporaryFilePath` pointe vers `/var/tmp` (et non `/var` tronqué) :
+!!! danger "Ne pas toucher aux unités du paquet"
+    `nvidia-suspend.service`, `nvidia-resume.service`, `nvidia-hibernate.service` et le hook `/usr/lib/systemd/system-sleep/nvidia` appartiennent à `nvidia-kernel-common-580` et doivent rester **activés et intacts**. Ce sont eux qui font réellement le travail.
+
+### Étape 4 : redémarrer et vérifier
 
 ```bash
-# Fichier généré par le driver :
-cat /etc/modprobe.d/nvidia-graphics-drivers-kms.conf
-```
-
-Si nécessaire, corriger :
-
-```bash
-sudo sed -i 's|NVreg_TemporaryFilePath=/var$|NVreg_TemporaryFilePath=/var/tmp|' \
-  /etc/modprobe.d/nvidia-graphics-drivers-kms.conf
+sudo reboot
 ```
 
 ## Vérification
 
-Après avoir appliqué les corrections, vérifier la configuration complète :
+À lancer après le redémarrage, **avant** toute mise en veille :
 
 ```bash
-# Services activés
-systemctl is-enabled nvidia-suspend nvidia-resume nvidia-hibernate nvidia-display-restore
+grep -o 'fbcon=nodefer' /proc/cmdline                          # attendu : fbcon=nodefer
+journalctl -k -b 0 | grep -c 'Deferring console take-over'     # attendu : 0   (avant : 2)
+ls /sys/class/vtconsole/                                        # attendu : vtcon0 ET vtcon1
+cat /sys/class/vtconsole/vtcon1/name                            # attendu : frame buffer device
+journalctl -k -b 0 | grep -c 'switching to colour frame buffer' # attendu : >= 1, au démarrage
+cat /proc/fb                                                    # attendu : 0 nvidia-drmdrmfb
+```
 
-# Drop-in appliqué
-systemctl cat systemd-suspend.service | grep -A2 ExecStart
+Puis vérifier manuellement que `Ctrl+Alt+F3` affiche bien une invite de connexion et que `Ctrl+Alt+F2` ramène la session graphique.
 
-# Chaîne de services
-systemctl list-dependencies systemd-suspend.service
+Après chaque réveil de veille :
 
-# Paramètres NVIDIA
+```bash
+journalctl -k -b 0 | grep -c 'Taking over console'    # attendu : 0
+journalctl -k -b 0 | grep -c 'blocked for more than'  # attendu : 0
+```
+
+!!! warning "Un seul réveil réussi ne prouve rien"
+    Le taux d'échec de référence étant d'environ 36 %, un unique réveil réussi avait déjà près de deux chances sur trois de survenir par hasard. Comme l'exposition est d'un événement par démarrage, un cycle de test utile est : **redémarrage → première veille → réveil**. Il faut environ 6 à 8 cycles sans échec pour conclure sérieusement.
+
+!!! failure "Ce qui invaliderait ce diagnostic"
+    Un gel au réveil **alors que** `journalctl -k -b 0 | grep 'Taking over console'` ne renvoie rien. Dans ce cas, `fbcon` est hors de cause : capturer la pile du détenteur (section Diagnostic, point 4) avant toute autre modification.
+
+## Pourquoi les correctifs précédents ne pouvaient pas fonctionner
+
+Cette section conserve la trace des erreurs de la version du 2026-05-30, pour éviter qu'elles ne soient réintroduites.
+
+!!! failure "Erreur 1 — « `WantedBy=systemd-suspend.service` est cassé sur systemd 255 »"
+    **Faux.** C'est cette affirmation qui a motivé la construction de trois couches de redondance.
+
+    Le mécanisme fonctionne parfaitement : les liens existent dans `/etc/systemd/system/systemd-suspend.service.wants/`, et les journaux de tous les réveils **réussis** contiennent `nvidia-resume.service ExecStartPre TRIGGERED`. Il paraissait cassé parce qu'on ne l'observait que les jours de gel, où `systemd-suspend.service` ne se termine jamais et où, par conséquent, rien de ce qui vient après ne s'exécute.
+
+!!! failure "Erreur 2 — les remèdes ajoutés étaient en aval du blocage"
+    `nvidia-display-restore.service` et le drop-in `ExecStartPost` sur `systemd-suspend.service` ne s'exécutent qu'**après** la fin de `systemd-suspend.service`. Or le blocage se produit à l'intérieur du hook `/usr/lib/systemd/system-sleep/nvidia`, donc pendant l'exécution de ce service.
+
+    Mesure sur le poste de référence : 22 réveils tracés, 14 lignes `ExecStartPost reached`. Lors des 8 gels, ces remèdes ont tourné **zéro fois**. Ils ne pouvaient pas fonctionner, et ils coûtaient 3 à 4 secondes à chaque réveil réussi.
+
+!!! failure "Erreur 3 — « `nvidia-sleep.sh resume` est idempotent, l'appeler plusieurs fois est sans risque »"
+    **Faux.** Dans `nv.c`, `nv_set_system_power_state()` prend un sémaphore **ininterruptible** *avant* son test d'idempotence :
+
+    ```c
+    down(&nv_system_power_state_lock);
+    ...
+    if (nv_system_power_state == power_state) { status = NV_OK; goto done; }
+    ```
+
+    Une seconde écriture concurrente ne « ne fait rien » : elle se bloque en état D, non tuable. Multiplier les chemins de restauration ne fiabilise rien, cela multiplie les tâches ingérables.
+
+!!! failure "Erreur 4 — « `NVreg_PreserveVideoMemoryAllocations=0` provoque l'erreur -5 »"
+    **Inversion de causalité.** Le code de `nvidia_suspend()` montre que le message provient de la condition inverse :
+
+    ```c
+    if (nv->preserve_vidmem_allocations && !is_procfs_suspend) {
+        /* "PreserveVideoMemoryAllocations module parameter is set.
+            System Power Management attempted without driver procfs suspend interface." */
+        status = NV_ERR_NOT_SUPPORTED;   /* remonté en -EIO = -5 */
+    }
+    ```
+
+    L'erreur -5 survient donc quand `Preserve` vaut **1** *et* que l'interface procfs n'est pas utilisée — typiquement après avoir masqué `nvidia-suspend.service`. C'est le cas traité par les étapes ci-dessous, et il est distinct du gel au réveil.
+
+!!! failure "Erreur 5 — attribuer la panne à une mise à jour de noyau ou de firmware"
+    Sur le poste de référence, les gels s'étalent de façon continue sur quatre mois, dont sept sans aucune mise à jour préalable. De plus, le firmware NVIDIA GSP ne concerne que les architectures Turing et ultérieures : une carte Pascal (GTX 10xx) n'en charge aucun. Et une recompilation DKMS pour un noyau qui n'est pas celui en cours d'exécution ne touche pas le module chargé, lequel réside entièrement en mémoire.
+
+## Cas voisin : la veille refuse de s'enclencher (erreur -5)
+
+Ce symptôme est **différent** du gel au réveil et se traite séparément.
+
+```text
+nvidia 0000:01:00.0: PM: failed to suspend async: error -5
+Failed to put system to sleep. System resumed again: Input/output error
+```
+
+Il signifie que `NVreg_PreserveVideoMemoryAllocations=1` est actif mais que les scripts qui font réellement la sauvegarde de VRAM ne sont pas exécutés. Vérifier dans l'ordre :
+
+```bash
+# 1. Le module DKMS est-il compilé pour le noyau courant ?
+dkms status                                    # "installed" et non "added"
+sudo apt-get install -y linux-headers-$(uname -r)
+
+# 2. Les unités du pilote sont-elles activées ?
+systemctl is-enabled nvidia-suspend nvidia-resume nvidia-hibernate
+sudo systemctl enable nvidia-suspend.service nvidia-resume.service nvidia-hibernate.service
+
+# 3. Le chemin de sauvegarde est-il cohérent ?
+grep -r 'NVreg_' /etc/modprobe.d/
 cat /proc/driver/nvidia/params | grep -E 'Preserve|TemporaryFilePath'
-
-# Mode de veille
-cat /sys/power/mem_sleep
 ```
 
-!!! success "Résultat attendu"
-    ```
-    enabled
-    enabled
-    enabled
-    enabled
+`NVreg_TemporaryFilePath` doit pointer vers un répertoire disposant d'assez d'espace libre pour le contenu de la VRAM (`/var/tmp` convient).
 
-    ExecStart=/usr/lib/systemd/systemd-sleep suspend
-    # /etc/systemd/system/systemd-suspend.service.d/nvidia-resume.conf
-    ExecStartPost=-/usr/bin/nvidia-sleep.sh resume
-    ExecStartPost=-/bin/sleep 2
-    ExecStartPost=-/bin/bash -c 'echo resume > /proc/driver/nvidia/suspend …; chvt 2; fi'
+## Piège annexe : ne pas purger le métapaquet orphelin
 
-    systemd-suspend.service
-    ├─nvidia-display-restore.service
-    ├─nvidia-resume.service
-    ├─nvidia-suspend.service
-    ├─system.slice
-    └─sleep.target
+Sur ce type d'installation, on trouve parfois un ancien métapaquet (`nvidia-driver-575` par exemple) resté installé à côté du pilote courant. Il est tentant de le purger par propreté.
 
-    PreserveVideoMemoryAllocations: 1
-    TemporaryFilePath: "/var/tmp"
+!!! danger "Vérifier avant de purger"
+    Ce métapaquet peut être le **seul** paquet NVIDIA marqué « installé manuellement ». Le retirer fait alors basculer toute la pile graphique en « installée automatiquement », et le premier `apt autoremove` supprime le pilote.
 
-    s2idle [deep]
-    ```
-
-Puis tester la mise en veille :
-
-```bash
-systemctl suspend
-```
-
-Après le réveil, vérifier que le drop-in s'est exécuté :
-
-```bash
-journalctl -b 0 -u systemd-suspend.service
-```
-
-!!! success "Résultat attendu après réveil"
-    La sortie doit contenir des lignes mentionnant `nvidia-sleep.sh` **et** `chvt` dans les `ExecStartPost`. Vérification plus directe :
     ```bash
-    systemctl show systemd-suspend.service -p ExecStartPost | tr ' ' '\n' | grep -E 'nvidia-sleep|chvt'
+    apt-mark showmanual | grep -i nvidia          # qui ancre la pile ?
+    apt-get -s remove <metapaquet> | grep -ci nvidia   # simulation, aucune modification
     ```
 
-!!! tip "Astuce"
-    Si l'écran met 2-3 secondes à revenir après le réveil, c'est normal (délai du service de restauration).
+    Corriger d'abord l'ancrage, purger ensuite :
+
+    ```bash
+    sudo apt-mark manual nvidia-driver-580 nvidia-dkms-580 nvidia-utils-580 \
+                         xserver-xorg-video-nvidia-580 nvidia-kernel-common-580 dkms
+    ```
 
 ## Ressources
 
-- [NVIDIA Driver README — Power Management](https://us.download.nvidia.com/XFree86/Linux-x86_64/580.126.09/README/powermanagement.html) — Documentation officielle NVIDIA sur la gestion de la veille
-- [Arch Wiki — NVIDIA/Tips and tricks — Preserve video memory](https://wiki.archlinux.org/title/NVIDIA/Tips_and_tricks#Preserve_video_memory_after_suspend) — Guide de référence communautaire
+- [NVIDIA Driver README — Power Management](https://download.nvidia.com/XFree86/Linux-x86_64/580.65.06/README/powermanagement.html) — comportement officiel du pilote en veille, rôle de `NVreg_PreserveVideoMemoryAllocations`
+- [NVIDIA Driver README — GSP Firmware](https://download.nvidia.com/XFree86/Linux-x86_64/580.65.06/README/gsp.html) — confirme que le firmware GSP ne concerne que Turing et au-delà
+- [LWN — Deferred console takeover](https://lwn.net/Articles/758312/) — le mécanisme `CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER` à l'origine du piège
+- [Arch Wiki — NVIDIA/Tips and tricks : Preserve video memory](https://wiki.archlinux.org/title/NVIDIA/Tips_and_tricks) — guide de référence communautaire
+- [Ubuntu Launchpad #2158993](https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2158993) — rapport amont décrivant le même interblocage entre `nvidia_modeset` et le sous-système console/fbcon, dans un contexte différent (pilote 595-open, Wayland) : le mécanisme n'est donc pas propre à cette configuration
