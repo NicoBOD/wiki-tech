@@ -247,7 +247,7 @@ usbguard list-devices
 
 Tout périphérique absent de la liste blanche reste inerte. Pour l'admettre :
 
-**1. Identifier son numéro de règle interne**
+**1. Identifier son numéro de périphérique interne**
 
 ```bash
 usbguard list-devices --blocked
@@ -257,7 +257,7 @@ usbguard list-devices --blocked
 16: block id 0951:1666 serial "60A44C..." name "DataTraveler 3.0" hash "…" with-interface { 08:06:50 }
 ```
 
-Le premier nombre (`16` ici) est **l'identifiant interne de règle** attribué par le démon — à ne pas confondre avec le VID:PID `0951:1666`. Il change à chaque rebranchement.
+Le premier nombre (`16` ici) est **l'identifiant interne du périphérique** attribué par le démon — à ne pas confondre ni avec le VID:PID `0951:1666`, ni avec un identifiant de règle (ceux de `usbguard list-rules`, utilisés avec `append-rule`/`remove-rule`). Il change à chaque rebranchement.
 
 **2. Autoriser le périphérique**
 
