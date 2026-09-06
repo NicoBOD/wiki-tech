@@ -278,6 +278,23 @@ journalctl -k -b 0 | grep -c 'blocked for more than'  # attendu : 0
 !!! warning "Un seul réveil réussi ne prouve rien"
     Le taux d'échec de référence étant d'environ 36 %, un unique réveil réussi avait déjà près de deux chances sur trois de survenir par hasard. Comme l'exposition est d'un événement par démarrage, un cycle de test utile est : **redémarrage → première veille → réveil**. Il faut environ 6 à 8 cycles sans échec pour conclure sérieusement.
 
+!!! success "Résultat mesuré sur le poste de référence (2026-09-06)"
+    Premier cycle complet après application du correctif, tous les contrôles au vert :
+
+    ```text
+    fbcon=nodefer present dans /proc/cmdline
+    aucun 'Deferring console take-over'            (avant : 2)
+    vtcon1 existe : (M) frame buffer device bind=1  (avant : absent)
+    console basculee sur le framebuffer (2 fois), au demarrage
+    framebuffer NVIDIA conserve : 0 nvidia-drmdrmfb
+    aucune prise de console au reveil
+    aucune tache bloquee
+    marqueur 'ExecStartPost reached' present = reveil complet
+    latence du reveil : 1,00 s                      (avant nettoyage : 3 a 4 s)
+    ```
+
+    Le point décisif n'est pas que le réveil ait réussi, mais que **`fbcon: Taking over console` soit absent du réveil**. Avant le correctif, ce message apparaissait au premier réveil de **tous** les démarrages sans exception. Le chemin de code qui provoquait l'interblocage n'est donc plus emprunté du tout : la preuve est mécaniste et non plus seulement statistique.
+
 !!! failure "Ce qui invaliderait ce diagnostic"
     Un gel au réveil **alors que** `journalctl -k -b 0 | grep 'Taking over console'` ne renvoie rien. Dans ce cas, `fbcon` est hors de cause : capturer la pile du détenteur (section Diagnostic, point 4) avant toute autre modification.
 
