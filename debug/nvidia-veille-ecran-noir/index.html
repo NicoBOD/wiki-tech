@@ -1771,10 +1771,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#probleme" class="md-nav__link">
+  <a href="#symptomes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problème
+        Symptômes
       
     </span>
   </a>
@@ -1782,22 +1782,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#diagnostic-rapide" class="md-nav__link">
+  <a href="#le-mecanisme-reel" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Diagnostic rapide
+        Le mécanisme réel
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Diagnostic rapide">
+    <nav class="md-nav" aria-label="Le mécanisme réel">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-verifier-les-logs-de-la-derniere-veille" class="md-nav__link">
+  <a href="#la-condition-structurelle-la-prise-de-console-differee" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. Vérifier les logs de la dernière veille
+        La condition structurelle : la prise de console différée
       
     </span>
   </a>
@@ -1805,10 +1805,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-verifier-letat-dkms" class="md-nav__link">
+  <a href="#le-declencheur-chvt-63-puis-un-message-noyau-au-reveil" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Vérifier l'état DKMS
+        Le déclencheur : chvt 63 puis un message noyau au réveil
       
     </span>
   </a>
@@ -1816,10 +1816,38 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-verifier-les-services-nvidia" class="md-nav__link">
+  <a href="#linterblocage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Vérifier les services NVIDIA
+        L'interblocage
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#diagnostic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagnostic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Diagnostic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-verifier-que-le-piege-est-arme-sur-le-demarrage-courant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Vérifier que le piège est armé sur le démarrage courant
       
     </span>
   </a>
@@ -1827,10 +1855,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#4-verifier-les-parametres-du-driver" class="md-nav__link">
+  <a href="#2-determiner-si-un-reveil-a-reussi-ou-echoue" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. Vérifier les paramètres du driver
+        2. Déterminer si un réveil a réussi ou échoué
       
     </span>
   </a>
@@ -1838,10 +1866,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#5-confirmer-que-nvidia-resumeservice-sest-execute-au-dernier-reveil" class="md-nav__link">
+  <a href="#3-confirmer-par-les-taches-bloquees" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5. Confirmer que nvidia-resume.service s'est exécuté au dernier réveil
+        3. Confirmer par les tâches bloquées
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-capturer-la-pile-du-detenteur-du-verrou-depuis-un-autre-poste" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Capturer la pile du détenteur du verrou (depuis un autre poste)
       
     </span>
   </a>
@@ -1866,10 +1905,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#etape-1-installer-les-headers-du-noyau-si-manquants" class="md-nav__link">
+  <a href="#etape-1-rendre-le-menu-grub-visible-filet-de-securite-a-faire-en-premier" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Étape 1 : Installer les headers du noyau (si manquants)
+        Étape 1 : rendre le menu GRUB visible (filet de sécurité, à faire en premier)
       
     </span>
   </a>
@@ -1877,10 +1916,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#etape-2-activer-les-services-nvidia-de-suspendresume" class="md-nav__link">
+  <a href="#etape-2-appliquer-fbconnodefer" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Étape 2 : Activer les services NVIDIA de suspend/resume
+        Étape 2 : appliquer fbcon=nodefer
       
     </span>
   </a>
@@ -1888,10 +1927,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#etape-3-creer-un-service-de-restauration-daffichage-filet-de-securite" class="md-nav__link">
+  <a href="#etape-3-retirer-les-remedes-empiles-par-lancien-diagnostic" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Étape 3 : Créer un service de restauration d'affichage (filet de sécurité)
+        Étape 3 : retirer les remèdes empilés par l'ancien diagnostic
       
     </span>
   </a>
@@ -1899,21 +1938,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#etape-4-drop-in-systemd-garantir-lexecution-au-reveil" class="md-nav__link">
+  <a href="#etape-4-redemarrer-et-verifier" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Étape 4 : Drop-in systemd — garantir l'exécution au réveil
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#etape-5-verifier-la-coherence-de-la-config-modprobe" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Étape 5 : Vérifier la cohérence de la config modprobe
+        Étape 4 : redémarrer et vérifier
       
     </span>
   </a>
@@ -1930,6 +1958,39 @@
     <span class="md-ellipsis">
       
         Vérification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pourquoi-les-correctifs-precedents-ne-pouvaient-pas-fonctionner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pourquoi les correctifs précédents ne pouvaient pas fonctionner
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cas-voisin-la-veille-refuse-de-senclencher-erreur-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cas voisin : la veille refuse de s'enclencher (erreur -5)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#piege-annexe-ne-pas-purger-le-metapaquet-orphelin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Piège annexe : ne pas purger le métapaquet orphelin
       
     </span>
   </a>
@@ -2185,10 +2246,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#probleme" class="md-nav__link">
+  <a href="#symptomes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problème
+        Symptômes
       
     </span>
   </a>
@@ -2196,22 +2257,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#diagnostic-rapide" class="md-nav__link">
+  <a href="#le-mecanisme-reel" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Diagnostic rapide
+        Le mécanisme réel
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Diagnostic rapide">
+    <nav class="md-nav" aria-label="Le mécanisme réel">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-verifier-les-logs-de-la-derniere-veille" class="md-nav__link">
+  <a href="#la-condition-structurelle-la-prise-de-console-differee" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. Vérifier les logs de la dernière veille
+        La condition structurelle : la prise de console différée
       
     </span>
   </a>
@@ -2219,10 +2280,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-verifier-letat-dkms" class="md-nav__link">
+  <a href="#le-declencheur-chvt-63-puis-un-message-noyau-au-reveil" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Vérifier l'état DKMS
+        Le déclencheur : chvt 63 puis un message noyau au réveil
       
     </span>
   </a>
@@ -2230,10 +2291,38 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-verifier-les-services-nvidia" class="md-nav__link">
+  <a href="#linterblocage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Vérifier les services NVIDIA
+        L'interblocage
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#diagnostic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagnostic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Diagnostic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-verifier-que-le-piege-est-arme-sur-le-demarrage-courant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Vérifier que le piège est armé sur le démarrage courant
       
     </span>
   </a>
@@ -2241,10 +2330,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#4-verifier-les-parametres-du-driver" class="md-nav__link">
+  <a href="#2-determiner-si-un-reveil-a-reussi-ou-echoue" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. Vérifier les paramètres du driver
+        2. Déterminer si un réveil a réussi ou échoué
       
     </span>
   </a>
@@ -2252,10 +2341,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#5-confirmer-que-nvidia-resumeservice-sest-execute-au-dernier-reveil" class="md-nav__link">
+  <a href="#3-confirmer-par-les-taches-bloquees" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5. Confirmer que nvidia-resume.service s'est exécuté au dernier réveil
+        3. Confirmer par les tâches bloquées
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-capturer-la-pile-du-detenteur-du-verrou-depuis-un-autre-poste" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Capturer la pile du détenteur du verrou (depuis un autre poste)
       
     </span>
   </a>
@@ -2280,10 +2380,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#etape-1-installer-les-headers-du-noyau-si-manquants" class="md-nav__link">
+  <a href="#etape-1-rendre-le-menu-grub-visible-filet-de-securite-a-faire-en-premier" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Étape 1 : Installer les headers du noyau (si manquants)
+        Étape 1 : rendre le menu GRUB visible (filet de sécurité, à faire en premier)
       
     </span>
   </a>
@@ -2291,10 +2391,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#etape-2-activer-les-services-nvidia-de-suspendresume" class="md-nav__link">
+  <a href="#etape-2-appliquer-fbconnodefer" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Étape 2 : Activer les services NVIDIA de suspend/resume
+        Étape 2 : appliquer fbcon=nodefer
       
     </span>
   </a>
@@ -2302,10 +2402,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#etape-3-creer-un-service-de-restauration-daffichage-filet-de-securite" class="md-nav__link">
+  <a href="#etape-3-retirer-les-remedes-empiles-par-lancien-diagnostic" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Étape 3 : Créer un service de restauration d'affichage (filet de sécurité)
+        Étape 3 : retirer les remèdes empilés par l'ancien diagnostic
       
     </span>
   </a>
@@ -2313,21 +2413,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#etape-4-drop-in-systemd-garantir-lexecution-au-reveil" class="md-nav__link">
+  <a href="#etape-4-redemarrer-et-verifier" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Étape 4 : Drop-in systemd — garantir l'exécution au réveil
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#etape-5-verifier-la-coherence-de-la-config-modprobe" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Étape 5 : Vérifier la cohérence de la config modprobe
+        Étape 4 : redémarrer et vérifier
       
     </span>
   </a>
@@ -2344,6 +2433,39 @@
     <span class="md-ellipsis">
       
         Vérification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pourquoi-les-correctifs-precedents-ne-pouvaient-pas-fonctionner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pourquoi les correctifs précédents ne pouvaient pas fonctionner
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cas-voisin-la-veille-refuse-de-senclencher-erreur-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cas voisin : la veille refuse de s'enclencher (erreur -5)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#piege-annexe-ne-pas-purger-le-metapaquet-orphelin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Piège annexe : ne pas purger le métapaquet orphelin
       
     </span>
   </a>
@@ -2430,6 +2552,20 @@
       
       
       
+        <a href="../../tags/#tag:fbcon" class="md-tag">fbcon</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:kernel" class="md-tag">kernel</a>
+      
+    
+      
+      
+      
+      
         <a href="../../tags/#tag:nvidia" class="md-tag">nvidia</a>
       
     
@@ -2484,9 +2620,9 @@
 <h1 id="nvidia-ecran-noir-apres-sortie-de-veille">NVIDIA — Écran noir après sortie de veille<a class="headerlink" href="#nvidia-ecran-noir-apres-sortie-de-veille" title="Permanent link">&para;</a></h1>
 <div class="admonition abstract">
 <p class="admonition-title">Résumé</p>
-<p>Après une mise en veille (suspend S3), le PC sort bien de veille mais l'écran reste noir.
-Le problème vient du driver NVIDIA qui ne restaure pas correctement la VRAM et/ou le terminal virtuel (VT) au réveil.
-Cette fiche couvre le diagnostic complet et la correction définitive.</p>
+<p>Après une mise en veille (suspend S3), le PC se réveille mais l'écran reste noir, et <code>Ctrl+Alt+F3</code> ne répond pas non plus : la machine est totalement figée et seul l'arrêt forcé permet d'en sortir.</p>
+<p>La cause n'est <strong>pas</strong> une VRAM mal restaurée. C'est un <strong>interblocage entre deux verrous du noyau</strong> — le verrou console (<code>console_lock</code>) et le verrou de gestion d'énergie de <code>nvidia-modeset</code> (<code>nvkms_pm_lock</code>) — qui ne peut se produire <strong>qu'au premier réveil de chaque démarrage</strong>.</p>
+<p>Le correctif tient en un paramètre noyau : <strong><code>fbcon=nodefer</code></strong>.</p>
 </div>
 <table>
 <thead>
@@ -2498,231 +2634,315 @@ Cette fiche couvre le diagnostic complet et la correction définitive.</p>
 <tbody>
 <tr>
 <td>Difficulté</td>
-<td>Intermédiaire</td>
+<td>Avancé</td>
 </tr>
 <tr>
 <td>OS / Environnement</td>
-<td>Ubuntu 24.04 Desktop — Gnome — X11</td>
+<td>Ubuntu 24.04 Desktop — GNOME — X11</td>
 </tr>
 <tr>
 <td>GPU</td>
-<td>NVIDIA GeForce GTX 1060 6GB</td>
+<td>NVIDIA GeForce GTX 1060 6GB (GP106, Pascal)</td>
 </tr>
 <tr>
 <td>Driver</td>
-<td>nvidia-driver-580 (580.159.03)</td>
+<td>nvidia-driver-580 (580.173.02)</td>
+</tr>
+<tr>
+<td>Noyau</td>
+<td>7.0.0-31-generic (HWE)</td>
 </tr>
 <tr>
 <td>Dernière mise à jour</td>
-<td>2026-05-30</td>
+<td>2026-09-06</td>
 </tr>
 </tbody>
 </table>
+<div class="admonition warning">
+<p class="admonition-title">Cette fiche corrige entièrement une version précédente</p>
+<p>La version du 2026-05-30 attribuait la panne à une restauration de VRAM défaillante et à un mécanisme <code>WantedBy</code> cassé. <strong>Ces deux diagnostics étaient faux.</strong> Les remèdes qui en découlaient étaient structurellement inopérants : ils s'exécutaient en aval du point de blocage et n'ont jamais tourné lors d'un seul incident. Le détail et les preuves sont en fin de fiche, section « Pourquoi les correctifs précédents ne pouvaient pas fonctionner ».</p>
+</div>
 <h2 id="contexte">Contexte<a class="headerlink" href="#contexte" title="Permanent link">&para;</a></h2>
-<p>Après une mise à jour du noyau (ex. migration automatique via <code>unattended-upgrades</code>) ou du driver NVIDIA (ex. 535 → 580), la mise en veille peut échouer de deux façons :</p>
-<ol>
-<li><strong>La veille ne s'enclenche pas</strong> → le driver refuse de suspendre (erreur <code>-5</code>)</li>
-<li><strong>L'écran reste noir au réveil</strong> → la veille S3 fonctionne, le système revient, mais l'affichage n'est pas restauré</li>
-</ol>
-<p>Les deux problèmes ont des causes liées mais distinctes.</p>
-<h2 id="probleme">Problème<a class="headerlink" href="#probleme" title="Permanent link">&para;</a></h2>
-<div class="admonition failure">
-<p class="admonition-title">Symptôme 1 — La veille échoue immédiatement</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>nvidia 0000:01:00.0: PM: failed to suspend async: error -5
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>PM: Some devices failed to suspend, or early wake event detected
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Failed to put system to sleep. System resumed again: Input/output error
-</code></pre></div>
-</div>
-<div class="admonition failure">
-<p class="admonition-title">Symptôme 2 — Écran noir au réveil</p>
-<p>Le système sort de veille S3 (les ventilateurs tournent, le réseau revient) mais l'écran reste noir.
-<code>Ctrl+Alt+F3</code> puis <code>Ctrl+Alt+F2</code> ne restaure pas l'affichage.</p>
-</div>
-<h2 id="diagnostic-rapide">Diagnostic rapide<a class="headerlink" href="#diagnostic-rapide" title="Permanent link">&para;</a></h2>
-<h3 id="1-verifier-les-logs-de-la-derniere-veille">1. Vérifier les logs de la dernière veille<a class="headerlink" href="#1-verifier-les-logs-de-la-derniere-veille" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Logs du boot actuel (si le système a été redémarré après le blocage)</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>journalctl<span class="w"> </span>-b<span class="w"> </span>-1<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">'nvidia|suspend|resume|PM:|sleep'</span>
-</code></pre></div>
-<h3 id="2-verifier-letat-dkms">2. Vérifier l'état DKMS<a class="headerlink" href="#2-verifier-letat-dkms" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>dkms<span class="w"> </span>status
-</code></pre></div>
-<div class="admonition warning">
-<p class="admonition-title">Résultat à surveiller</p>
-<p>Si le statut est <code>added</code> au lieu de <code>installed</code>, le module n'a pas été compilé.
-Cause probable : headers du noyau manquants.</p>
-</div>
-<h3 id="3-verifier-les-services-nvidia">3. Vérifier les services NVIDIA<a class="headerlink" href="#3-verifier-les-services-nvidia" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>systemctl<span class="w"> </span>is-enabled<span class="w"> </span>nvidia-suspend<span class="w"> </span>nvidia-resume<span class="w"> </span>nvidia-hibernate
-</code></pre></div>
-<h3 id="4-verifier-les-parametres-du-driver">4. Vérifier les paramètres du driver<a class="headerlink" href="#4-verifier-les-parametres-du-driver" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>cat<span class="w"> </span>/proc/driver/nvidia/params<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'Preserve|TemporaryFilePath'</span>
-</code></pre></div>
-<h3 id="5-confirmer-que-nvidia-resumeservice-sest-execute-au-dernier-reveil">5. Confirmer que nvidia-resume.service s'est exécuté au dernier réveil<a class="headerlink" href="#5-confirmer-que-nvidia-resumeservice-sest-execute-au-dernier-reveil" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>journalctl<span class="w"> </span>-b<span class="w"> </span>-1<span class="w"> </span>-u<span class="w"> </span>nvidia-suspend.service<span class="w"> </span>-u<span class="w"> </span>nvidia-resume.service<span class="w"> </span>-u<span class="w"> </span>nvidia-display-restore.service
-</code></pre></div>
-<div class="admonition warning">
-<p class="admonition-title">Signe d'alerte — WantedBy silencieusement ignoré</p>
-<p>Si <code>nvidia-suspend.service</code> apparaît mais <strong>pas</strong> <code>nvidia-resume.service</code>, le mécanisme
-<code>WantedBy=systemd-suspend.service</code> ne fonctionne pas dans le chemin de retour de veille
-sur <strong>systemd 255</strong> (Ubuntu 24.04).</p>
-<p>Les services sont activés et correctement liés dans <code>systemd-suspend.service.wants/</code>
-mais ne sont jamais déclenchés au réveil — même si les étapes 2 et 3 ont déjà été appliquées.
-→ Appliquer l'<strong>Étape 4</strong> ci-dessous.</p>
-</div>
-<h2 id="solution">Solution<a class="headerlink" href="#solution" title="Permanent link">&para;</a></h2>
-<h3 id="etape-1-installer-les-headers-du-noyau-si-manquants">Étape 1 : Installer les headers du noyau (si manquants)<a class="headerlink" href="#etape-1-installer-les-headers-du-noyau-si-manquants" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>linux-headers-<span class="k">$(</span>uname<span class="w"> </span>-r<span class="k">)</span>
-</code></pre></div>
-<p>Cela permet à DKMS de compiler le module NVIDIA pour le noyau actuel.</p>
-<h3 id="etape-2-activer-les-services-nvidia-de-suspendresume">Étape 2 : Activer les services NVIDIA de suspend/resume<a class="headerlink" href="#etape-2-activer-les-services-nvidia-de-suspendresume" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>nvidia-suspend.service<span class="w"> </span>nvidia-resume.service<span class="w"> </span>nvidia-hibernate.service
-</code></pre></div>
+<p>Sur un poste Ubuntu 24.04 + GNOME + X11 avec pilote NVIDIA propriétaire, la mise en veille S3 se déroule normalement et le système se réveille bien (les ventilateurs repartent, le réseau revient, la machine reste joignable en SSH), mais l'affichage ne revient jamais.</p>
+<p>Le point qui égare le diagnostic est l'<strong>intermittence</strong> : la panne ne survient pas à chaque veille. Sur le poste de référence, la mesure sur près de quatre mois donne <strong>8 gels sur 22 mises en veille, soit 36 %</strong>. Cette irrégularité fait croire à une régression de version ou à un effet de mise à jour, alors qu'il s'agit d'une course entre deux tâches du noyau.</p>
 <div class="admonition info">
-<p class="admonition-title">Pourquoi c'est nécessaire</p>
-<p>Le paramètre <code>NVreg_PreserveVideoMemoryAllocations=1</code> demande au driver de sauvegarder la VRAM en veille.
-Mais sans ces services, les scripts <code>nvidia-sleep.sh</code> (qui font la sauvegarde/restauration effective) ne sont jamais exécutés → erreur -5 au suspend.</p>
+<p class="admonition-title">L'exposition est d'un seul événement par démarrage</p>
+<p>Le mécanisme ne peut se déclencher qu'à la <strong>première</strong> sortie de veille suivant un démarrage. Une fois cette première sortie passée sans encombre, toutes les veilles suivantes du même démarrage sont sûres. Sur le poste de référence, un démarrage a enchaîné trois veilles avec une seule fenêtre d'exposition.</p>
 </div>
-<h3 id="etape-3-creer-un-service-de-restauration-daffichage-filet-de-securite">Étape 3 : Créer un service de restauration d'affichage (filet de sécurité)<a class="headerlink" href="#etape-3-creer-un-service-de-restauration-daffichage-filet-de-securite" title="Permanent link">&para;</a></h3>
-<p>Le script <code>nvidia-sleep.sh</code> bascule sur le VT63 avant le suspend et doit revenir sur le bon VT au resume. Ce <code>chvt</code> échoue parfois silencieusement → écran noir.</p>
-<p>Créer le service :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/systemd/system/nvidia-display-restore.service<span class="w"> </span><span class="s">&lt;&lt; 'EOF'</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="s">[Unit]</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="s">Description=Restore display after NVIDIA resume</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="s">After=nvidia-resume.service systemd-suspend.service</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="s">After=systemd-hibernate.service</span>
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="s">After=systemd-suspend-then-hibernate.service</span>
-<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
-<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="s">[Service]</span>
-<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="s">Type=oneshot</span>
-<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="s">ExecStartPre=/bin/sleep 2</span>
-<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="s">ExecStart=/bin/bash -c 'echo resume &gt; /proc/driver/nvidia/suspend 2&gt;/dev/null; VT=$(cat /sys/class/tty/tty0/active 2&gt;/dev/null | tr -dc "0-9"); if [ "$VT" = "63" ] || [ -z "$VT" ] || [ "$VT" -gt 7 ]; then chvt 2; fi'</span>
-<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>
-<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="s">[Install]</span>
-<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="s">WantedBy=systemd-suspend.service</span>
-<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="s">WantedBy=systemd-hibernate.service</span>
-<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="s">WantedBy=systemd-suspend-then-hibernate.service</span>
-<a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a><span class="s">EOF</span>
-</code></pre></div>
-<p>Activer le service :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>nvidia-display-restore.service
-</code></pre></div>
-<div class="admonition warning">
-<p class="admonition-title">Limitation sur systemd 255 / Ubuntu 24.04</p>
-<p>Ce service utilise <code>WantedBy=systemd-suspend.service</code>, le même mécanisme que
-<code>nvidia-resume.service</code>. Sur systemd 255, ce mécanisme peut échouer silencieusement
-au réveil : le service est activé mais jamais déclenché.
-Si l'écran reste noir malgré cette étape, appliquer l'<strong>Étape 4</strong>.</p>
-</div>
-<h3 id="etape-4-drop-in-systemd-garantir-lexecution-au-reveil">Étape 4 : Drop-in systemd — garantir l'exécution au réveil<a class="headerlink" href="#etape-4-drop-in-systemd-garantir-lexecution-au-reveil" title="Permanent link">&para;</a></h3>
-<div class="admonition info">
-<p class="admonition-title">Quand appliquer cette étape</p>
-<p>À appliquer si, après les étapes 2 et 3, <code>nvidia-resume.service</code> n'apparaît toujours
-pas dans les journaux après un réveil (cf. Diagnostic — étape 5).</p>
-</div>
-<p>Ce drop-in attache <code>nvidia-sleep.sh resume</code> <strong>et la restauration du VT</strong> directement à <code>ExecStartPost</code> de <code>systemd-suspend.service</code>, ce qui garantit leur exécution indépendamment du mécanisme <code>WantedBy</code> (et rend le service de l'Étape 3 redondant).</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/etc/systemd/system/systemd-suspend.service.d/
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/systemd/system/systemd-suspend.service.d/nvidia-resume.conf<span class="w"> </span><span class="s">&lt;&lt; 'EOF'</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="s">[Service]</span>
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="s"># Restauration VRAM</span>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="s">ExecStartPost=-/usr/bin/nvidia-sleep.sh resume</span>
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="s"># Restauration du VT — remplace nvidia-display-restore.service (Étape 3)</span>
-<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="s">ExecStartPost=-/bin/sleep 2</span>
-<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="s">ExecStartPost=-/bin/bash -c 'echo resume &gt; /proc/driver/nvidia/suspend 2&gt;/dev/null; VT=$(cat /sys/class/tty/tty0/active 2&gt;/dev/null | tr -dc "0-9"); if [ "$VT" = "63" ] || [ -z "$VT" ] || [ "$VT" -gt 7 ]; then chvt 2; fi'</span>
-<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="s">EOF</span>
-<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
-</code></pre></div>
-<div class="admonition success">
-<p class="admonition-title">Pourquoi ce fix est plus fiable</p>
+<h2 id="symptomes">Symptômes<a class="headerlink" href="#symptomes" title="Permanent link">&para;</a></h2>
+<div class="admonition failure">
+<p class="admonition-title">Symptôme principal — gel total au réveil</p>
 <ul>
-<li><code>ExecStartPost</code> s'exécute <strong>toujours</strong> dès que <code>systemd-sleep suspend</code> se termine (après le réveil), indépendamment de la version de systemd.</li>
-<li>Le préfixe <code>-</code> ignore les erreurs éventuelles sans bloquer le service.</li>
-<li>Le fichier est dans <code>/etc/systemd/system/</code> et ne sera pas écrasé par une mise à jour du driver.</li>
-<li><code>nvidia-sleep.sh resume</code> est idempotent : l'appeler en doublon avec le hook <code>/usr/lib/systemd/system-sleep/nvidia</code> existant est sans danger.</li>
-<li>Le <code>chvt 2</code> final n'agit que si l'on est resté bloqué sur VT63 (ou un VT inconnu), donc inoffensif sinon.</li>
+<li>Le système sort de veille S3 (<code>PM: suspend exit</code> présent dans les journaux).</li>
+<li>L'écran reste noir définitivement.</li>
+<li><code>Ctrl+Alt+F3</code> puis <code>Ctrl+Alt+F2</code> ne restaurent rien : <strong>aucune console virtuelle ne peut plus s'ouvrir</strong>.</li>
+<li>Le bouton d'alimentation est enregistré (<code>Power key pressed short</code>) mais sans effet.</li>
+<li>La machine répond encore au réseau (SSH, Tailscale, ping) : le noyau tourne, seul l'affichage et le sous-système TTY sont bloqués.</li>
+<li>Au bout de 121 secondes, le noyau signale des tâches bloquées (<code>INFO: task ... blocked for more than 121 seconds</code>).</li>
 </ul>
 </div>
+<p>Ne pas confondre avec un symptôme voisin et distinct : la veille qui <strong>refuse de s'enclencher</strong> avec <code>nvidia 0000:01:00.0: PM: failed to suspend async: error -5</code>. Ce cas-là est traité en fin de fiche.</p>
+<h2 id="le-mecanisme-reel">Le mécanisme réel<a class="headerlink" href="#le-mecanisme-reel" title="Permanent link">&para;</a></h2>
+<h3 id="la-condition-structurelle-la-prise-de-console-differee">La condition structurelle : la prise de console différée<a class="headerlink" href="#la-condition-structurelle-la-prise-de-console-differee" title="Permanent link">&para;</a></h3>
+<p>Le noyau Ubuntu est compilé avec <code>CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER=y</code>. Combiné à <code>quiet splash</code> et <code>vt.handoff=7</code> dans la ligne de commande, cela signifie que la console graphique <code>fbcon</code> <strong>n'est pas attachée au démarrage</strong> : elle attend qu'un message soit imprimé sur une console en mode texte pour prendre la main, afin de ne pas gâcher l'animation Plymouth.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>grep<span class="w"> </span>FRAMEBUFFER_CONSOLE_DEFERRED<span class="w"> </span>/boot/config-<span class="k">$(</span>uname<span class="w"> </span>-r<span class="k">)</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1"># CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER=y</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>journalctl<span class="w"> </span>-k<span class="w"> </span>-b<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">'Deferring console take-over'</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># fbcon: Deferring console take-over   (x2)</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>ls<span class="w"> </span>/sys/class/vtconsole/
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1"># vtcon0 seulement — et son nom est "(S) dummy device"</span>
+</code></pre></div>
+<p>Ce piège est <strong>réarmé à chaque démarrage</strong>.</p>
+<h3 id="le-declencheur-chvt-63-puis-un-message-noyau-au-reveil">Le déclencheur : <code>chvt 63</code> puis un message noyau au réveil<a class="headerlink" href="#le-declencheur-chvt-63-puis-un-message-noyau-au-reveil" title="Permanent link">&para;</a></h3>
+<p>À l'endormissement, le script du pilote <code>/usr/bin/nvidia-sleep.sh</code> bascule sur la console virtuelle 63, une VT neuve en mode texte (contrairement à la VT de la session X, qui est en mode graphique) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>fgconsole<span class="w"> </span>&gt;<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">XORG_VT_FILE</span><span class="si">}</span><span class="s2">"</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>chvt<span class="w"> </span><span class="m">63</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span><span class="w"> </span>&gt;<span class="w"> </span>/proc/driver/nvidia/suspend
+</code></pre></div>
+<p>Cette dernière écriture fait prendre à <code>nvidia_modeset_suspend()</code> le verrou <code>nvkms_pm_lock</code> <strong>en écriture</strong>, et ce verrou est conservé pendant <strong>toute la durée de la veille</strong>.</p>
+<p>Au réveil, <code>resume_console()</code> vide la file des messages noyau vers la VT63, qui est en mode texte. Le premier message dont la priorité passe le filtre <code>console_loglevel</code> déclenche alors la prise de console différée. Sur le poste de référence, avec <code>console_loglevel = 4</code>, ce message est <code>Bluetooth: hci0: No support for _PRR ACPI method</code> (priorité 3), et <code>fbcon: Taking over console</code> suit <strong>31 microsecondes plus tard</strong>.</p>
 <div class="admonition tip">
-<p class="admonition-title">L'Étape 3 devient redondante</p>
-<p>Avec les 3 <code>ExecStartPost</code> du drop-in ci-dessus, le <code>nvidia-display-restore.service</code> de l'Étape 3 ne sert plus à rien — il ne tournait de toute façon pas, victime du même bug <code>WantedBy</code>. Après plusieurs cycles suspend/resume validés, tu peux le désactiver :
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>disable<span class="w"> </span>nvidia-display-restore.service
-</code></pre></div></p>
-<p>Cas observé en pratique (2026-05-30) : sans le <code>chvt</code> dans le drop-in, la VRAM est bien restaurée mais l'écran reste sur VT63 → écran noir malgré l'Étape 4 d'origine. C'est pour ça que le drop-in inclut désormais les 3 actions.</p>
+<p class="admonition-title">Identifier le déclencheur sur votre machine</p>
+<p>Le message coupable dépend du matériel. C'est le dernier message précédant <code>fbcon: Taking over console</code> dont la priorité est <strong>strictement inférieure</strong> au premier chiffre de <code>/proc/sys/kernel/printk</code> (le <code>console_loglevel</code>).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 1. Quel est le seuil d'affichage sur la console ?</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>cat<span class="w"> </span>/proc/sys/kernel/printk
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># ex. : "4 4 1 7"  -&gt;  seules les priorités 0 à 3 atteignent la console</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># 2. Que s'est-il passé juste avant la prise de console ?</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>journalctl<span class="w"> </span>-k<span class="w"> </span>-b<span class="w"> </span>-1<span class="w"> </span>-o<span class="w"> </span>short-monotonic<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-B5<span class="w"> </span><span class="s1">'Taking over console'</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="c1"># 3. Parmi ces messages, lesquels atteignent réellement la console ?</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="c1">#    (-p 3 = priorités 0 à 3, à adapter au seuil lu à l'étape 1)</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>journalctl<span class="w"> </span>-k<span class="w"> </span>-b<span class="w"> </span>-1<span class="w"> </span>-p<span class="w"> </span><span class="m">3</span><span class="w"> </span>-o<span class="w"> </span>short-monotonic
+</code></pre></div>
+<p>Le déclencheur est le message présent dans les sorties 2 <strong>et</strong> 3, avec l'horodatage le plus proche de la prise de console. Un message de priorité 4 ou plus (<code>xhci_hcd ... xHC error in resume</code> par exemple) ne peut <strong>pas</strong> être le déclencheur : il n'est jamais imprimé sur la console.</p>
+<p>Ajustez <code>-b -1</code> selon le démarrage à examiner ; <code>-b -1</code> désigne le démarrage précédent, ce qui convient quand le gel a imposé un arrêt forcé.</p>
 </div>
-<h3 id="etape-5-verifier-la-coherence-de-la-config-modprobe">Étape 5 : Vérifier la cohérence de la config modprobe<a class="headerlink" href="#etape-5-verifier-la-coherence-de-la-config-modprobe" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>grep<span class="w"> </span>-r<span class="w"> </span><span class="s1">'NVreg_'</span><span class="w"> </span>/etc/modprobe.d/
+<div class="admonition note">
+<p class="admonition-title">Une prise de console à l'extinction est normale</p>
+<p><code>fbcon: Taking over console</code> apparaît aussi lors d'un arrêt ou d'un redémarrage, juste après les messages de démontage des systèmes de fichiers. C'est sans danger : aucun verrou de veille n'est alors détenu. Seule compte la prise de console survenant <strong>après</strong> un <code>PM: suspend exit</code>.</p>
+</div>
+<h3 id="linterblocage">L'interblocage<a class="headerlink" href="#linterblocage" title="Permanent link">&para;</a></h3>
+<p>Deux chemins se croisent alors, chacun détenant ce que l'autre attend.</p>
+<p><strong>Chemin A — la prise de console.</strong> Le worker noyau prend <code>console_lock</code>, puis descend jusqu'au pilote NVIDIA et demande <code>nvkms_pm_lock</code> en lecture :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>fbcon_register_existing_fbs
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  └─ do_fb_registered → do_fbcon_takeover
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>       └─ do_take_over_console        ← PREND console_lock
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>            └─ do_bind_con_driver → visual_init → fbcon_init
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>                 └─ drm_fb_helper_set_par
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>                      └─ __drm_fb_helper_restore_fbdev_mode_unlocked
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>                           └─ drm_fb_helper_hotplug_event
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>                                └─ drm_client_modeset_probe
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>                                     └─ drm_helper_probe_single_connector_modes
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>                                          └─ nv_drm_connector_detect [nvidia_drm]
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>                                               └─ nvkms_ioctl_from_kapi [nvidia_modeset]
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>                                                    └─ down_read(nvkms_pm_lock)  ← BLOQUE
 </code></pre></div>
-<p>S'assurer que <code>NVreg_TemporaryFilePath</code> pointe vers <code>/var/tmp</code> (et non <code>/var</code> tronqué) :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Fichier généré par le driver :</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>cat<span class="w"> </span>/etc/modprobe.d/nvidia-graphics-drivers-kms.conf
+<p><strong>Chemin B — la sortie de veille du pilote.</strong> <code>echo resume &gt; /proc/driver/nvidia/suspend</code> appelle <code>nv_resume_devices()</code>, qui exécute d'abord <code>nvidia_resume()</code> puis, <strong>en dernier seulement</strong>, <code>nvidia_modeset_resume(0)</code> — c'est-à-dire l'unique libérateur de <code>nvkms_pm_lock</code>. Or <code>nvidia_resume()</code> passe par <code>rm_power_management()</code> → <code>os_disable_console_access()</code>, qui demande… <code>console_lock</code>.</p>
+<p>Le libérateur du verrou qu'attend le chemin A est donc lui-même bloqué derrière le verrou que le chemin A détient. Les deux verrous sont ininterruptibles : <strong>aucune tâche n'est tuable, plus aucun terminal ne peut s'ouvrir</strong>, d'où l'écran noir et l'impossibilité de basculer sur une console texte.</p>
+<div class="admonition quote">
+<p class="admonition-title">Le noyau nomme lui-même le cycle</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>INFO: task kworker/5:0:27371 &lt;reader&gt; blocked on an rw-semaphore
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>      likely owned by task kworker/u32:27:27352 &lt;writer&gt;
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>INFO: task nvidia-sleep.sh:27414 blocked on a semaphore
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>      likely last held by task kworker/5:0:27371
 </code></pre></div>
-<p>Si nécessaire, corriger :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>sudo<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">'s|NVreg_TemporaryFilePath=/var$|NVreg_TemporaryFilePath=/var/tmp|'</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">  </span>/etc/modprobe.d/nvidia-graphics-drivers-kms.conf
+La première ligne est le worker <code>fbcon</code> (<code>Workqueue: events fbcon_register_existing_fbs</code>) qui attend le verrou NVIDIA. La seconde est <code>nvidia-sleep.sh</code> qui attend le verrou console détenu par ce même worker. Le cycle est fermé.</p>
+</div>
+<h2 id="diagnostic">Diagnostic<a class="headerlink" href="#diagnostic" title="Permanent link">&para;</a></h2>
+<h3 id="1-verifier-que-le-piege-est-arme-sur-le-demarrage-courant">1. Vérifier que le piège est armé sur le démarrage courant<a class="headerlink" href="#1-verifier-que-le-piege-est-arme-sur-le-demarrage-courant" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>journalctl<span class="w"> </span>-k<span class="w"> </span>-b<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'Deferring console take-over'</span><span class="w">   </span><span class="c1"># 2 = piège armé</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>ls<span class="w"> </span>/sys/class/vtconsole/<span class="w">                                      </span><span class="c1"># vtcon0 seul = fbcon non attaché</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>cat<span class="w"> </span>/proc/fb<span class="w">                                                  </span><span class="c1"># 0 nvidia-drmdrmfb</span>
+</code></pre></div>
+<h3 id="2-determiner-si-un-reveil-a-reussi-ou-echoue">2. Déterminer si un réveil a réussi ou échoué<a class="headerlink" href="#2-determiner-si-un-reveil-a-reussi-ou-echoue" title="Permanent link">&para;</a></h3>
+<p>Le marqueur le plus fiable est la présence de la ligne de bascule framebuffer après un <code>Taking over console</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>journalctl<span class="w"> </span>-k<span class="w"> </span>-b<span class="w"> </span>-1<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'Taking over console|switching to colour frame buffer'</span>
+</code></pre></div>
+<div class="admonition success">
+<p class="admonition-title">Réveil réussi</p>
+<p>Les <strong>deux</strong> lignes sont présentes : la prise de console est allée au bout.</p>
+</div>
+<div class="admonition failure">
+<p class="admonition-title">Réveil bloqué</p>
+<p><code>fbcon: Taking over console</code> est présent mais <code>Console: switching to colour frame buffer device</code> est <strong>absent</strong> : la prise de console s'est arrêtée en plein milieu, dans le pilote NVIDIA.</p>
+</div>
+<p>Sur le poste de référence, cette séparation est parfaite sur six démarrages : les deux démarrages où la seconde ligne manquait sont exactement les deux qui ont gelé.</p>
+<h3 id="3-confirmer-par-les-taches-bloquees">3. Confirmer par les tâches bloquées<a class="headerlink" href="#3-confirmer-par-les-taches-bloquees" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>journalctl<span class="w"> </span>-k<span class="w"> </span>-b<span class="w"> </span>-1<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A25<span class="w"> </span><span class="s1">'blocked for more than'</span>
+</code></pre></div>
+<p>La signature à reconnaître est un <code>kworker</code> avec <code>Workqueue: events fbcon_register_existing_fbs</code>, bloqué sur <code>down_read</code> via <code>nv_drm_connector_detect</code> et <code>nvkms_ioctl_from_kapi</code>.</p>
+<h3 id="4-capturer-la-pile-du-detenteur-du-verrou-depuis-un-autre-poste">4. Capturer la pile du détenteur du verrou (depuis un autre poste)<a class="headerlink" href="#4-capturer-la-pile-du-detenteur-du-verrou-depuis-un-autre-poste" title="Permanent link">&para;</a></h3>
+<p>La machine reste joignable par le réseau pendant le gel. C'est la seule occasion d'obtenir la donnée décisive.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>ssh<span class="w"> </span>utilisateur@machine-gelee
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sudo<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">'echo w &gt; /proc/sysrq-trigger'</span><span class="w">          </span><span class="c1"># liste les tâches en attente ininterruptible</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="nv">P</span><span class="o">=</span><span class="k">$(</span>pgrep<span class="w"> </span>-f<span class="w"> </span><span class="s1">'nvidia-sleep.sh resume'</span><span class="k">)</span><span class="p">;</span><span class="w"> </span>sudo<span class="w"> </span>cat<span class="w"> </span>/proc/<span class="nv">$P</span>/stack
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>sudo<span class="w"> </span>dmesg<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-300<span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>/tmp/gel.txt
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>reboot<span class="w"> </span>-f<span class="w">                            </span><span class="c1"># seulement APRÈS la capture</span>
+</code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">N'utilisez que <code>echo w</code></p>
+<p><code>echo w</code> se contente d'imprimer les tâches bloquées. Les touches magiques <code>b</code> (redémarrage immédiat) et <code>c</code> (plantage volontaire) provoquent une perte de données.</p>
+</div>
+<h2 id="solution">Solution<a class="headerlink" href="#solution" title="Permanent link">&para;</a></h2>
+<h3 id="etape-1-rendre-le-menu-grub-visible-filet-de-securite-a-faire-en-premier">Étape 1 : rendre le menu GRUB visible (filet de sécurité, à faire en premier)<a class="headerlink" href="#etape-1-rendre-le-menu-grub-visible-filet-de-securite-a-faire-en-premier" title="Permanent link">&para;</a></h3>
+<p>Sur beaucoup d'installations Ubuntu, <code>GRUB_TIMEOUT=0</code> et <code>GRUB_TIMEOUT_STYLE=hidden</code> : aucun menu ne s'affiche, donc aucun moyen de retirer un paramètre noyau qui poserait problème. Cette étape ne change rien au fonctionnement, elle ouvre seulement la porte de secours.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/root/rollback-nvidia
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>sudo<span class="w"> </span>cp<span class="w"> </span>-a<span class="w"> </span>/etc/default/grub<span class="w"> </span>/boot/grub/grub.cfg<span class="w"> </span>/root/rollback-nvidia/
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="nb">printf</span><span class="w"> </span><span class="s1">'%s\n'</span><span class="w"> </span><span class="s1">'GRUB_TIMEOUT_STYLE=menu'</span><span class="w"> </span><span class="s1">'GRUB_TIMEOUT=5'</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">  </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/default/grub.d/98-menu-visible.cfg
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>sudo<span class="w"> </span>update-grub
+</code></pre></div>
+<h3 id="etape-2-appliquer-fbconnodefer">Étape 2 : appliquer <code>fbcon=nodefer</code><a class="headerlink" href="#etape-2-appliquer-fbconnodefer" title="Permanent link">&para;</a></h3>
+<p>Le paramètre attache <code>fbcon</code> <strong>dès le démarrage</strong>, alors que le GPU est éveillé et qu'aucun verrou de gestion d'énergie n'est détenu. Dès lors, <code>fbcon_register_existing_fbs</code> ne peut plus jamais être programmé au réveil : l'arête du cycle disparaît, au lieu de voir sa probabilité réduite.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/default/grub.d/99-fbcon-nodefer.cfg<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="s"># Correctif ecran noir au premier reveil : attache fbcon des le demarrage</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="s"># pour supprimer l'interblocage console_lock &lt;-&gt; nvkms_pm_lock.</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="s">GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT fbcon=nodefer"</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="s">EOF</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>sudo<span class="w"> </span>update-grub
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Contrôler avant de redémarrer</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-m1<span class="w"> </span>-o<span class="w"> </span><span class="s1">'quiet splash[^"]*'</span><span class="w"> </span>/boot/grub/grub.cfg
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="c1"># attendu : quiet splash ... fbcon=nodefer $vt_handoff</span>
+</code></pre></div>
+Si <code>fbcon=nodefer</code> n'apparaît pas, <strong>ne pas redémarrer</strong> : le fichier n'a pas été pris en compte.</p>
+<p>La présence de <code>$vt_handoff</code> est normale et voulue : <code>/etc/grub.d/10_linux</code> le réinjecte tant que <code>splash</code> est présent. Plymouth est conservé.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Pourquoi un fichier dans <code>/etc/default/grub.d/</code> plutôt qu'une édition de <code>/etc/default/grub</code></p>
+<p><code>grub-mkconfig</code> lit ce répertoire, et <code>/etc/kernel/postinst.d/zz-update-grub</code> relance <code>update-grub</code> à chaque nouveau noyau : le paramètre est donc réappliqué automatiquement à chaque mise à jour, sans intervention.</p>
+</div>
+<h3 id="etape-3-retirer-les-remedes-empiles-par-lancien-diagnostic">Étape 3 : retirer les remèdes empilés par l'ancien diagnostic<a class="headerlink" href="#etape-3-retirer-les-remedes-empiles-par-lancien-diagnostic" title="Permanent link">&para;</a></h3>
+<p>Si vous aviez appliqué la version précédente de cette fiche, ces éléments sont inutiles et ajoutent 3 à 4 secondes de latence à chaque réveil. On les déplace plutôt que de les supprimer.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>disable<span class="w"> </span>--now<span class="w"> </span>nvidia-display-restore.service
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/root/rollback-nvidia/systemd
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>sudo<span class="w"> </span>mv<span class="w"> </span>/etc/systemd/system/nvidia-display-restore.service<span class="w"> </span>/root/rollback-nvidia/systemd/
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>sudo<span class="w"> </span>mv<span class="w"> </span>/etc/systemd/system/systemd-suspend.service.d/nvidia-resume.conf<span class="w"> </span>/root/rollback-nvidia/systemd/
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
+</code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">Ne pas toucher aux unités du paquet</p>
+<p><code>nvidia-suspend.service</code>, <code>nvidia-resume.service</code>, <code>nvidia-hibernate.service</code> et le hook <code>/usr/lib/systemd/system-sleep/nvidia</code> appartiennent à <code>nvidia-kernel-common-580</code> et doivent rester <strong>activés et intacts</strong>. Ce sont eux qui font réellement le travail.</p>
+</div>
+<h3 id="etape-4-redemarrer-et-verifier">Étape 4 : redémarrer et vérifier<a class="headerlink" href="#etape-4-redemarrer-et-verifier" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sudo<span class="w"> </span>reboot
 </code></pre></div>
 <h2 id="verification">Vérification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
-<p>Après avoir appliqué les corrections, vérifier la configuration complète :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Services activés</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>systemctl<span class="w"> </span>is-enabled<span class="w"> </span>nvidia-suspend<span class="w"> </span>nvidia-resume<span class="w"> </span>nvidia-hibernate<span class="w"> </span>nvidia-display-restore
-<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
-<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="c1"># Drop-in appliqué</span>
-<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>systemctl<span class="w"> </span>cat<span class="w"> </span>systemd-suspend.service<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A2<span class="w"> </span>ExecStart
-<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>
-<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="c1"># Chaîne de services</span>
-<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>systemctl<span class="w"> </span>list-dependencies<span class="w"> </span>systemd-suspend.service
-<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>
-<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="c1"># Paramètres NVIDIA</span>
-<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>cat<span class="w"> </span>/proc/driver/nvidia/params<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'Preserve|TemporaryFilePath'</span>
-<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>
-<a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a><span class="c1"># Mode de veille</span>
-<a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a>cat<span class="w"> </span>/sys/power/mem_sleep
+<p>À lancer après le redémarrage, <strong>avant</strong> toute mise en veille :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>grep<span class="w"> </span>-o<span class="w"> </span><span class="s1">'fbcon=nodefer'</span><span class="w"> </span>/proc/cmdline<span class="w">                          </span><span class="c1"># attendu : fbcon=nodefer</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>journalctl<span class="w"> </span>-k<span class="w"> </span>-b<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'Deferring console take-over'</span><span class="w">     </span><span class="c1"># attendu : 0   (avant : 2)</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>ls<span class="w"> </span>/sys/class/vtconsole/<span class="w">                                        </span><span class="c1"># attendu : vtcon0 ET vtcon1</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>cat<span class="w"> </span>/sys/class/vtconsole/vtcon1/name<span class="w">                            </span><span class="c1"># attendu : frame buffer device</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>journalctl<span class="w"> </span>-k<span class="w"> </span>-b<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'switching to colour frame buffer'</span><span class="w"> </span><span class="c1"># attendu : &gt;= 1, au démarrage</span>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>cat<span class="w"> </span>/proc/fb<span class="w">                                                    </span><span class="c1"># attendu : 0 nvidia-drmdrmfb</span>
 </code></pre></div>
-<div class="admonition success">
-<p class="admonition-title">Résultat attendu</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>enabled
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>enabled
-<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>enabled
-<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>enabled
-<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>
-<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>ExecStart=/usr/lib/systemd/systemd-sleep suspend
-<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a># /etc/systemd/system/systemd-suspend.service.d/nvidia-resume.conf
-<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>ExecStartPost=-/usr/bin/nvidia-sleep.sh resume
-<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>ExecStartPost=-/bin/sleep 2
-<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>ExecStartPost=-/bin/bash -c 'echo resume &gt; /proc/driver/nvidia/suspend …; chvt 2; fi'
-<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>
-<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>systemd-suspend.service
-<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>├─nvidia-display-restore.service
-<a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a>├─nvidia-resume.service
-<a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a>├─nvidia-suspend.service
-<a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a>├─system.slice
-<a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a>└─sleep.target
-<a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a>
-<a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a>PreserveVideoMemoryAllocations: 1
-<a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a>TemporaryFilePath: "/var/tmp"
-<a id="__codelineno-16-21" name="__codelineno-16-21" href="#__codelineno-16-21"></a>
-<a id="__codelineno-16-22" name="__codelineno-16-22" href="#__codelineno-16-22"></a>s2idle [deep]
+<p>Puis vérifier manuellement que <code>Ctrl+Alt+F3</code> affiche bien une invite de connexion et que <code>Ctrl+Alt+F2</code> ramène la session graphique.</p>
+<p>Après chaque réveil de veille :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>journalctl<span class="w"> </span>-k<span class="w"> </span>-b<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'Taking over console'</span><span class="w">    </span><span class="c1"># attendu : 0</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>journalctl<span class="w"> </span>-k<span class="w"> </span>-b<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'blocked for more than'</span><span class="w">  </span><span class="c1"># attendu : 0</span>
 </code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Un seul réveil réussi ne prouve rien</p>
+<p>Le taux d'échec de référence étant d'environ 36 %, un unique réveil réussi avait déjà près de deux chances sur trois de survenir par hasard. Comme l'exposition est d'un événement par démarrage, un cycle de test utile est : <strong>redémarrage → première veille → réveil</strong>. Il faut environ 6 à 8 cycles sans échec pour conclure sérieusement.</p>
 </div>
-<p>Puis tester la mise en veille :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>systemctl<span class="w"> </span><span class="nb">suspend</span>
-</code></pre></div>
-<p>Après le réveil, vérifier que le drop-in s'est exécuté :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>journalctl<span class="w"> </span>-b<span class="w"> </span><span class="m">0</span><span class="w"> </span>-u<span class="w"> </span>systemd-suspend.service
-</code></pre></div>
 <div class="admonition success">
-<p class="admonition-title">Résultat attendu après réveil</p>
-<p>La sortie doit contenir des lignes mentionnant <code>nvidia-sleep.sh</code> <strong>et</strong> <code>chvt</code> dans les <code>ExecStartPost</code>. Vérification plus directe :
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>systemctl<span class="w"> </span>show<span class="w"> </span>systemd-suspend.service<span class="w"> </span>-p<span class="w"> </span>ExecStartPost<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span><span class="s1">' '</span><span class="w"> </span><span class="s1">'\n'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'nvidia-sleep|chvt'</span>
-</code></pre></div></p>
+<p class="admonition-title">Résultat mesuré sur le poste de référence (2026-09-06)</p>
+<p>Premier cycle complet après application du correctif, tous les contrôles au vert :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>fbcon=nodefer present dans /proc/cmdline
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>aucun 'Deferring console take-over'            (avant : 2)
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>vtcon1 existe : (M) frame buffer device bind=1  (avant : absent)
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>console basculee sur le framebuffer (2 fois), au demarrage
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>framebuffer NVIDIA conserve : 0 nvidia-drmdrmfb
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>aucune prise de console au reveil
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>aucune tache bloquee
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>marqueur 'ExecStartPost reached' present = reveil complet
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>latence du reveil : 1,00 s                      (avant nettoyage : 3 a 4 s)
+</code></pre></div>
+<p>Le point décisif n'est pas que le réveil ait réussi, mais que <strong><code>fbcon: Taking over console</code> soit absent du réveil</strong>. Avant le correctif, ce message apparaissait au premier réveil de <strong>tous</strong> les démarrages sans exception. Le chemin de code qui provoquait l'interblocage n'est donc plus emprunté du tout : la preuve est mécaniste et non plus seulement statistique.</p>
 </div>
-<div class="admonition tip">
-<p class="admonition-title">Astuce</p>
-<p>Si l'écran met 2-3 secondes à revenir après le réveil, c'est normal (délai du service de restauration).</p>
+<div class="admonition failure">
+<p class="admonition-title">Ce qui invaliderait ce diagnostic</p>
+<p>Un gel au réveil <strong>alors que</strong> <code>journalctl -k -b 0 | grep 'Taking over console'</code> ne renvoie rien. Dans ce cas, <code>fbcon</code> est hors de cause : capturer la pile du détenteur (section Diagnostic, point 4) avant toute autre modification.</p>
+</div>
+<h2 id="pourquoi-les-correctifs-precedents-ne-pouvaient-pas-fonctionner">Pourquoi les correctifs précédents ne pouvaient pas fonctionner<a class="headerlink" href="#pourquoi-les-correctifs-precedents-ne-pouvaient-pas-fonctionner" title="Permanent link">&para;</a></h2>
+<p>Cette section conserve la trace des erreurs de la version du 2026-05-30, pour éviter qu'elles ne soient réintroduites.</p>
+<div class="admonition failure">
+<p class="admonition-title">Erreur 1 — « <code>WantedBy=systemd-suspend.service</code> est cassé sur systemd 255 »</p>
+<p><strong>Faux.</strong> C'est cette affirmation qui a motivé la construction de trois couches de redondance.</p>
+<p>Le mécanisme fonctionne parfaitement : les liens existent dans <code>/etc/systemd/system/systemd-suspend.service.wants/</code>, et les journaux de tous les réveils <strong>réussis</strong> contiennent <code>nvidia-resume.service ExecStartPre TRIGGERED</code>. Il paraissait cassé parce qu'on ne l'observait que les jours de gel, où <code>systemd-suspend.service</code> ne se termine jamais et où, par conséquent, rien de ce qui vient après ne s'exécute.</p>
+</div>
+<div class="admonition failure">
+<p class="admonition-title">Erreur 2 — les remèdes ajoutés étaient en aval du blocage</p>
+<p><code>nvidia-display-restore.service</code> et le drop-in <code>ExecStartPost</code> sur <code>systemd-suspend.service</code> ne s'exécutent qu'<strong>après</strong> la fin de <code>systemd-suspend.service</code>. Or le blocage se produit à l'intérieur du hook <code>/usr/lib/systemd/system-sleep/nvidia</code>, donc pendant l'exécution de ce service.</p>
+<p>Mesure sur le poste de référence : 22 réveils tracés, 14 lignes <code>ExecStartPost reached</code>. Lors des 8 gels, ces remèdes ont tourné <strong>zéro fois</strong>. Ils ne pouvaient pas fonctionner, et ils coûtaient 3 à 4 secondes à chaque réveil réussi.</p>
+</div>
+<div class="admonition failure">
+<p class="admonition-title">Erreur 3 — « <code>nvidia-sleep.sh resume</code> est idempotent, l'appeler plusieurs fois est sans risque »</p>
+<p><strong>Faux.</strong> Dans <code>nv.c</code>, <code>nv_set_system_power_state()</code> prend un sémaphore <strong>ininterruptible</strong> <em>avant</em> son test d'idempotence :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">down</span><span class="p">(</span><span class="o">&amp;</span><span class="n">nv_system_power_state_lock</span><span class="p">);</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="p">...</span>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">nv_system_power_state</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">power_state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NV_OK</span><span class="p">;</span><span class="w"> </span><span class="k">goto</span><span class="w"> </span><span class="n">done</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<p>Une seconde écriture concurrente ne « ne fait rien » : elle se bloque en état D, non tuable. Multiplier les chemins de restauration ne fiabilise rien, cela multiplie les tâches ingérables.</p>
+</div>
+<div class="admonition failure">
+<p class="admonition-title">Erreur 4 — « <code>NVreg_PreserveVideoMemoryAllocations=0</code> provoque l'erreur -5 »</p>
+<p><strong>Inversion de causalité.</strong> Le code de <code>nvidia_suspend()</code> montre que le message provient de la condition inverse :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">nv</span><span class="o">-&gt;</span><span class="n">preserve_vidmem_allocations</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">is_procfs_suspend</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">    </span><span class="cm">/* "PreserveVideoMemoryAllocations module parameter is set.</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="cm">        System Power Management attempted without driver procfs suspend interface." */</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NV_ERR_NOT_SUPPORTED</span><span class="p">;</span><span class="w">   </span><span class="cm">/* remonté en -EIO = -5 */</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="p">}</span>
+</code></pre></div>
+<p>L'erreur -5 survient donc quand <code>Preserve</code> vaut <strong>1</strong> <em>et</em> que l'interface procfs n'est pas utilisée — typiquement après avoir masqué <code>nvidia-suspend.service</code>. C'est le cas traité par les étapes ci-dessous, et il est distinct du gel au réveil.</p>
+</div>
+<div class="admonition failure">
+<p class="admonition-title">Erreur 5 — attribuer la panne à une mise à jour de noyau ou de firmware</p>
+<p>Sur le poste de référence, les gels s'étalent de façon continue sur quatre mois, dont sept sans aucune mise à jour préalable. De plus, le firmware NVIDIA GSP ne concerne que les architectures Turing et ultérieures : une carte Pascal (GTX 10xx) n'en charge aucun. Et une recompilation DKMS pour un noyau qui n'est pas celui en cours d'exécution ne touche pas le module chargé, lequel réside entièrement en mémoire.</p>
+</div>
+<h2 id="cas-voisin-la-veille-refuse-de-senclencher-erreur-5">Cas voisin : la veille refuse de s'enclencher (erreur -5)<a class="headerlink" href="#cas-voisin-la-veille-refuse-de-senclencher-erreur-5" title="Permanent link">&para;</a></h2>
+<p>Ce symptôme est <strong>différent</strong> du gel au réveil et se traite séparément.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>nvidia 0000:01:00.0: PM: failed to suspend async: error -5
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>Failed to put system to sleep. System resumed again: Input/output error
+</code></pre></div>
+<p>Il signifie que <code>NVreg_PreserveVideoMemoryAllocations=1</code> est actif mais que les scripts qui font réellement la sauvegarde de VRAM ne sont pas exécutés. Vérifier dans l'ordre :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1"># 1. Le module DKMS est-il compilé pour le noyau courant ?</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>dkms<span class="w"> </span>status<span class="w">                                    </span><span class="c1"># "installed" et non "added"</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>linux-headers-<span class="k">$(</span>uname<span class="w"> </span>-r<span class="k">)</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="c1"># 2. Les unités du pilote sont-elles activées ?</span>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>systemctl<span class="w"> </span>is-enabled<span class="w"> </span>nvidia-suspend<span class="w"> </span>nvidia-resume<span class="w"> </span>nvidia-hibernate
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>nvidia-suspend.service<span class="w"> </span>nvidia-resume.service<span class="w"> </span>nvidia-hibernate.service
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>
+<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="c1"># 3. Le chemin de sauvegarde est-il cohérent ?</span>
+<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a>grep<span class="w"> </span>-r<span class="w"> </span><span class="s1">'NVreg_'</span><span class="w"> </span>/etc/modprobe.d/
+<a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a>cat<span class="w"> </span>/proc/driver/nvidia/params<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'Preserve|TemporaryFilePath'</span>
+</code></pre></div>
+<p><code>NVreg_TemporaryFilePath</code> doit pointer vers un répertoire disposant d'assez d'espace libre pour le contenu de la VRAM (<code>/var/tmp</code> convient).</p>
+<h2 id="piege-annexe-ne-pas-purger-le-metapaquet-orphelin">Piège annexe : ne pas purger le métapaquet orphelin<a class="headerlink" href="#piege-annexe-ne-pas-purger-le-metapaquet-orphelin" title="Permanent link">&para;</a></h2>
+<p>Sur ce type d'installation, on trouve parfois un ancien métapaquet (<code>nvidia-driver-575</code> par exemple) resté installé à côté du pilote courant. Il est tentant de le purger par propreté.</p>
+<div class="admonition danger">
+<p class="admonition-title">Vérifier avant de purger</p>
+<p>Ce métapaquet peut être le <strong>seul</strong> paquet NVIDIA marqué « installé manuellement ». Le retirer fait alors basculer toute la pile graphique en « installée automatiquement », et le premier <code>apt autoremove</code> supprime le pilote.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>apt-mark<span class="w"> </span>showmanual<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>nvidia<span class="w">          </span><span class="c1"># qui ancre la pile ?</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>apt-get<span class="w"> </span>-s<span class="w"> </span>remove<span class="w"> </span>&lt;metapaquet&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-ci<span class="w"> </span>nvidia<span class="w">   </span><span class="c1"># simulation, aucune modification</span>
+</code></pre></div>
+<p>Corriger d'abord l'ancrage, purger ensuite :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>sudo<span class="w"> </span>apt-mark<span class="w"> </span>manual<span class="w"> </span>nvidia-driver-580<span class="w"> </span>nvidia-dkms-580<span class="w"> </span>nvidia-utils-580<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="w">                     </span>xserver-xorg-video-nvidia-580<span class="w"> </span>nvidia-kernel-common-580<span class="w"> </span>dkms
+</code></pre></div>
 </div>
 <h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="https://us.download.nvidia.com/XFree86/Linux-x86_64/580.126.09/README/powermanagement.html">NVIDIA Driver README — Power Management</a> — Documentation officielle NVIDIA sur la gestion de la veille</li>
-<li><a href="https://wiki.archlinux.org/title/NVIDIA/Tips_and_tricks#Preserve_video_memory_after_suspend">Arch Wiki — NVIDIA/Tips and tricks — Preserve video memory</a> — Guide de référence communautaire</li>
+<li><a href="https://download.nvidia.com/XFree86/Linux-x86_64/580.65.06/README/powermanagement.html">NVIDIA Driver README — Power Management</a> — comportement officiel du pilote en veille, rôle de <code>NVreg_PreserveVideoMemoryAllocations</code></li>
+<li><a href="https://download.nvidia.com/XFree86/Linux-x86_64/580.65.06/README/gsp.html">NVIDIA Driver README — GSP Firmware</a> — confirme que le firmware GSP ne concerne que Turing et au-delà</li>
+<li><a href="https://lwn.net/Articles/758312/">LWN — Deferred console takeover</a> — le mécanisme <code>CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER</code> à l'origine du piège</li>
+<li><a href="https://wiki.archlinux.org/title/NVIDIA/Tips_and_tricks">Arch Wiki — NVIDIA/Tips and tricks : Preserve video memory</a> — guide de référence communautaire</li>
+<li><a href="https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2158993">Ubuntu Launchpad #2158993</a> — rapport amont décrivant le même interblocage entre <code>nvidia_modeset</code> et le sous-système console/fbcon, dans un contexte différent (pilote 595-open, Wayland) : le mécanisme n'est donc pas propre à cette configuration</li>
 </ul>
 
 
