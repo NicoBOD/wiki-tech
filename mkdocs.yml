@@ -185,6 +185,7 @@ nav:
     - Chiffrer et signer des fichiers avec GPG sous Linux: cybersecurite/chiffrer-signer-fichiers-gpg-linux.md
     - "Analyser son réseau Wi-Fi en mode moniteur et tester l'injection avec Aircrack-ng": cybersecurite/analyser-wifi-mode-moniteur-injection-aircrack-ng.md
     - "Chiffrer un poste Windows 11 Pro avec BitLocker : disque système, BitLocker To Go, manage-bde et déblocage helpdesk": cybersecurite/chiffrer-poste-windows-11-bitlocker-manage-bde-deblocage-helpdesk.md
+    - Contrôler les périphériques USB avec USBGuard sur Ubuntu (liste blanche anti-BadUSB): cybersecurite/usbguard-liste-blanche-peripheriques-usb-ubuntu.md
   - IA:
     - ia/index.md
     - "Déployer Tabby en local : l'alternative open source à GitHub Copilot": ia/deployer-tabby-local-alternative-github-copilot.md

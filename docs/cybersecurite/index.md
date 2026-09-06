@@ -38,3 +38,4 @@ Protection des serveurs, pare-feu, certificats SSL et bonnes pratiques de durcis
 - [Activer le lecteur d'empreintes digitales (login + sudo) sur ThinkPad sous Ubuntu 24.04](activer-lecteur-empreintes-digitales-login-sudo-thinkpad-ubuntu.md) — Faire fonctionner un capteur Validity 138a:0097 (python-validity/open-fprintd) pour déverrouiller la session et authentifier sudo.
 
 - [Renforcer la sécurité d'un service avec AppArmor sous Ubuntu](renforcer-securite-service-apparmor-ubuntu.md) — Créer un périmètre de sécurité strict (sandbox) pour limiter les capacités des applications.
+- [Contrôler les périphériques USB avec USBGuard sur Ubuntu (liste blanche anti-BadUSB)](usbguard-liste-blanche-peripheriques-usb-ubuntu.md) — Mettre en place une liste blanche des périphériques USB pour se protéger des attaques de type BadUSB.
