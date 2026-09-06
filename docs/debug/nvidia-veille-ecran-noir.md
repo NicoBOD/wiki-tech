@@ -91,24 +91,27 @@ Cette dernière écriture fait prendre à `nvidia_modeset_suspend()` le verrou `
 Au réveil, `resume_console()` vide la file des messages noyau vers la VT63, qui est en mode texte. Le premier message dont la priorité passe le filtre `console_loglevel` déclenche alors la prise de console différée. Sur le poste de référence, avec `console_loglevel = 4`, ce message est `Bluetooth: hci0: No support for _PRR ACPI method` (priorité 3), et `fbcon: Taking over console` suit **31 microsecondes plus tard**.
 
 !!! tip "Identifier le déclencheur sur votre machine"
-    Le message coupable dépend du matériel. Il faut chercher, parmi les messages du réveil, le dernier dont la priorité est **strictement inférieure** au premier chiffre de `/proc/sys/kernel/printk`.
+    Le message coupable dépend du matériel. C'est le dernier message précédant `fbcon: Taking over console` dont la priorité est **strictement inférieure** au premier chiffre de `/proc/sys/kernel/printk` (le `console_loglevel`).
 
     ```bash
-    cat /proc/sys/kernel/printk        # ex. : 4 4 1 7  -> seuls les niveaux 0 à 3 s'affichent
-    journalctl -k -b -1 -o json | \
-      python3 -c "
-    import sys,json
-    for l in sys.stdin:
-        try: j=json.loads(l)
-        except: continue
-        m=j.get('MESSAGE','')
-        if isinstance(m,list): m=''.join(map(chr,m))
-        if 'Taking over console' in m or int(j.get('PRIORITY',9))<4:
-            print(j.get('__MONOTONIC_TIMESTAMP'), j.get('PRIORITY'), m[:70])
-    "
+    # 1. Quel est le seuil d'affichage sur la console ?
+    cat /proc/sys/kernel/printk
+    # ex. : "4 4 1 7"  ->  seules les priorités 0 à 3 atteignent la console
+
+    # 2. Que s'est-il passé juste avant la prise de console ?
+    journalctl -k -b -1 -o short-monotonic | grep -B5 'Taking over console'
+
+    # 3. Parmi ces messages, lesquels atteignent réellement la console ?
+    #    (-p 3 = priorités 0 à 3, à adapter au seuil lu à l'étape 1)
+    journalctl -k -b -1 -p 3 -o short-monotonic
     ```
 
-    Un message de priorité 4 ou plus (`xhci_hcd ... xHC error in resume` par exemple) ne peut **pas** être le déclencheur : il n'est pas imprimé sur la console.
+    Le déclencheur est le message présent dans les sorties 2 **et** 3, avec l'horodatage le plus proche de la prise de console. Un message de priorité 4 ou plus (`xhci_hcd ... xHC error in resume` par exemple) ne peut **pas** être le déclencheur : il n'est jamais imprimé sur la console.
+
+    Ajustez `-b -1` selon le démarrage à examiner ; `-b -1` désigne le démarrage précédent, ce qui convient quand le gel a imposé un arrêt forcé.
+
+!!! note "Une prise de console à l'extinction est normale"
+    `fbcon: Taking over console` apparaît aussi lors d'un arrêt ou d'un redémarrage, juste après les messages de démontage des systèmes de fichiers. C'est sans danger : aucun verrou de veille n'est alors détenu. Seule compte la prise de console survenant **après** un `PM: suspend exit`.
 
 ### L'interblocage
 
