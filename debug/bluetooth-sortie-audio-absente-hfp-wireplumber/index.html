@@ -12,13 +12,13 @@
         <meta name="author" content="Nicolas BODAINE">
       
       
-        <link rel="canonical" href="https://wiki.bodaine.fr/debug/diagnostiquer-consommation-cpu-memoire-htop-free/">
+        <link rel="canonical" href="https://wiki.bodaine.fr/debug/bluetooth-sortie-audio-absente-hfp-wireplumber/">
       
       
-        <link rel="prev" href="../diagnostiquer-materiel-pilotes-linux-dmesg/">
+        <link rel="prev" href="../sniffnet-appimage-ubuntu-2404/">
       
       
-        <link rel="next" href="../diagnostiquer-disque-plein-saturation-io-iostat-iotop-linux/">
+        <link rel="next" href="../../astuces/">
       
       
         
@@ -29,7 +29,7 @@
     
     
       
-        <title>Diagnostiquer la consommation CPU et mémoire sous Linux avec htop et free - Wiki Tech — NicoBOD</title>
+        <title>Bluetooth — Écouteurs appairés mais absents des sorties audio (WirePlumber/HFP) - Wiki Tech — NicoBOD</title>
       
     
     
@@ -82,7 +82,7 @@
     <!-- Twitter Card : la grande image et l'image elle-même sont      -->
     <!-- héritées des balises og:image générées par le plugin social.  -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Diagnostiquer la consommation CPU et mémoire sous Linux avec htop et free — Wiki Tech — NicoBOD">
+    <meta name="twitter:title" content="Bluetooth — Écouteurs appairés mais absents des sorties audio (WirePlumber/HFP) — Wiki Tech — NicoBOD">
     <meta name="twitter:description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation">
   
 
@@ -105,7 +105,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#diagnostiquer-la-consommation-cpu-et-memoire-sous-linux-avec-htop-et-free" class="md-skip">
+        <a href="#bluetooth-ecouteurs-appaires-mais-absents-des-sorties-audio-wireplumberhfp" class="md-skip">
           Aller au contenu
         </a>
       
@@ -140,7 +140,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Diagnostiquer la consommation CPU et mémoire sous Linux avec htop et free
+              Bluetooth — Écouteurs appairés mais absents des sorties audio (WirePlumber/HFP)
             
           </span>
         </div>
@@ -1372,44 +1372,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Diagnostiquer la consommation CPU et mémoire sous Linux avec htop et free
-  
-
-    
-  </span>
-  
-  
-    
-  
-  
-    <span class="md-status md-status--publié"></span>
-  
-
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../diagnostiquer-consommation-cpu-memoire-htop-free/" class="md-nav__link">
         
   
   
@@ -1432,131 +1398,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table des matières
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#contexte" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Contexte
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#prerequis" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Prérequis
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#procedure" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Procédure
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Procédure">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-vue-densemble-de-la-memoire-avec-free" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Vue d'ensemble de la mémoire avec free
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-installer-htop" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Installer htop
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-analyser-la-consommation-en-temps-reel-avec-htop" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Analyser la consommation en temps réel avec htop
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-naviguer-et-filtrer-dans-htop" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. Naviguer et filtrer dans htop
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#aide-memoire" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Aide-mémoire
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#ressources" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Ressources
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1951,10 +1792,44 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../bluetooth-sortie-audio-absente-hfp-wireplumber/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bluetooth — Écouteurs appairés mais absents des sorties audio (WirePlumber/HFP)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1977,6 +1852,214 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#contexte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contexte
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comprendre-la-chaine-audio-bluetooth-sous-linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comprendre la chaîne audio Bluetooth sous Linux
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#symptomes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Symptômes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#diagnostic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagnostic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Diagnostic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-verifier-la-connexion-cote-bluez" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Vérifier la connexion côté BlueZ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-chercher-la-carte-audio-correspondante-cote-pipewire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Chercher la carte audio correspondante côté PipeWire
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-identifier-la-boucle-hfp-dans-les-journaux-de-wireplumber" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Identifier la boucle HFP dans les journaux de WirePlumber
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-ecarter-un-second-serveur-de-son-concurrent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Écarter un second serveur de son concurrent
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#solution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Solution
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solution">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#etape-1-recuperer-ladresse-mac-de-lappareil" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 1 : récupérer l'adresse MAC de l'appareil
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-2-creer-une-regle-wireplumber-ciblee-sur-cet-appareil" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 2 : créer une règle WirePlumber ciblée sur cet appareil
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-3-redemarrer-wireplumber-et-forcer-une-reconnexion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 3 : redémarrer WirePlumber et forcer une reconnexion
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vérification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glossaire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Glossaire
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2141,10 +2224,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#prerequis" class="md-nav__link">
+  <a href="#comprendre-la-chaine-audio-bluetooth-sous-linux" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Prérequis
+        Comprendre la chaîne audio Bluetooth sous Linux
       
     </span>
   </a>
@@ -2152,22 +2235,33 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#procedure" class="md-nav__link">
+  <a href="#symptomes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Procédure
+        Symptômes
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Procédure">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#diagnostic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagnostic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Diagnostic">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-vue-densemble-de-la-memoire-avec-free" class="md-nav__link">
+  <a href="#1-verifier-la-connexion-cote-bluez" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. Vue d'ensemble de la mémoire avec free
+        1. Vérifier la connexion côté BlueZ
       
     </span>
   </a>
@@ -2175,10 +2269,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-installer-htop" class="md-nav__link">
+  <a href="#2-chercher-la-carte-audio-correspondante-cote-pipewire" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Installer htop
+        2. Chercher la carte audio correspondante côté PipeWire
       
     </span>
   </a>
@@ -2186,10 +2280,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-analyser-la-consommation-en-temps-reel-avec-htop" class="md-nav__link">
+  <a href="#3-identifier-la-boucle-hfp-dans-les-journaux-de-wireplumber" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Analyser la consommation en temps réel avec htop
+        3. Identifier la boucle HFP dans les journaux de WirePlumber
       
     </span>
   </a>
@@ -2197,10 +2291,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#4-naviguer-et-filtrer-dans-htop" class="md-nav__link">
+  <a href="#4-ecarter-un-second-serveur-de-son-concurrent" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. Naviguer et filtrer dans htop
+        4. Écarter un second serveur de son concurrent
       
     </span>
   </a>
@@ -2213,10 +2307,82 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#aide-memoire" class="md-nav__link">
+  <a href="#solution" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Aide-mémoire
+        Solution
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solution">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#etape-1-recuperer-ladresse-mac-de-lappareil" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 1 : récupérer l'adresse MAC de l'appareil
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-2-creer-une-regle-wireplumber-ciblee-sur-cet-appareil" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 2 : créer une règle WirePlumber ciblée sur cet appareil
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-3-redemarrer-wireplumber-et-forcer-une-reconnexion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 3 : redémarrer WirePlumber et forcer une reconnexion
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vérification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glossaire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Glossaire
       
     </span>
   </a>
@@ -2303,49 +2469,56 @@
       
       
       
-        <a href="../../tags/#tag:cpu" class="md-tag">cpu</a>
+        <a href="../../tags/#tag:a2dp" class="md-tag">a2dp</a>
       
     
       
       
       
       
-        <a href="../../tags/#tag:debug" class="md-tag">debug</a>
+        <a href="../../tags/#tag:audio" class="md-tag">audio</a>
       
     
       
       
       
       
-        <a href="../../tags/#tag:free" class="md-tag">free</a>
+        <a href="../../tags/#tag:bluetooth" class="md-tag">bluetooth</a>
       
     
       
       
       
       
-        <a href="../../tags/#tag:htop" class="md-tag">htop</a>
+        <a href="../../tags/#tag:gnome" class="md-tag">gnome</a>
       
     
       
       
       
       
-        <a href="../../tags/#tag:linux" class="md-tag">linux</a>
+        <a href="../../tags/#tag:hfp" class="md-tag">hfp</a>
       
     
       
       
       
       
-        <a href="../../tags/#tag:ram" class="md-tag">ram</a>
+        <a href="../../tags/#tag:pipewire" class="md-tag">pipewire</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:wireplumber" class="md-tag">wireplumber</a>
       
     
   </nav>
 
 
   
-    <a href="https://github.com/NicoBOD/wiki-tech/edit/main/docs/debug/diagnostiquer-consommation-cpu-memoire-htop-free.md" title="Editer cette page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/NicoBOD/wiki-tech/edit/main/docs/debug/bluetooth-sortie-audio-absente-hfp-wireplumber.md" title="Editer cette page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -2354,17 +2527,19 @@
     
       
     
-    <a href="https://github.com/NicoBOD/wiki-tech/raw/main/docs/debug/diagnostiquer-consommation-cpu-memoire-htop-free.md" title="Consulter la source de cette page" class="md-content__button md-icon">
+    <a href="https://github.com/NicoBOD/wiki-tech/raw/main/docs/debug/bluetooth-sortie-audio-absente-hfp-wireplumber.md" title="Consulter la source de cette page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
     </a>
   
 
 
-<h1 id="diagnostiquer-la-consommation-cpu-et-memoire-sous-linux-avec-htop-et-free">Diagnostiquer la consommation CPU et mémoire sous Linux avec htop et free<a class="headerlink" href="#diagnostiquer-la-consommation-cpu-et-memoire-sous-linux-avec-htop-et-free" title="Permanent link">&para;</a></h1>
+<h1 id="bluetooth-ecouteurs-appaires-mais-absents-des-sorties-audio-wireplumberhfp">Bluetooth — Écouteurs appairés mais absents des sorties audio (WirePlumber/HFP)<a class="headerlink" href="#bluetooth-ecouteurs-appaires-mais-absents-des-sorties-audio-wireplumberhfp" title="Permanent link">&para;</a></h1>
 <div class="admonition abstract">
 <p class="admonition-title">Résumé</p>
-<p>Apprenez à identifier rapidement quels processus consomment le plus de ressources (CPU et mémoire) sur un serveur Linux grâce aux commandes <code>htop</code> et <code>free</code>.</p>
+<p>Un casque ou des écouteurs Bluetooth s'appairent et se connectent normalement (<code>Connected: yes</code> dans <code>bluetoothctl</code>), mais <strong>n'apparaissent jamais dans la liste des sorties audio</strong> de GNOME Paramètres, ni dans <code>pactl</code>/<code>wpctl</code>. Tout se passe comme si l'appareil n'existait pas pour le son, alors que Bluetooth le voit parfaitement.</p>
+<p>La cause n'est <strong>pas</strong> un problème d'appairage. Le journal de WirePlumber tourne en boucle sur <code>RFCOMM receive command but modem not available: AT+CCLK?</code> : l'appareil ouvre une session <strong>mains-libres (HFP)</strong> que WirePlumber ne peut pas satisfaire, et cette négociation qui échoue en continu empêche le profil <strong>A2DP</strong> (lecture stéréo) de se stabiliser. Résultat : PipeWire ne crée jamais la carte audio correspondante, donc GNOME n'a rien à proposer.</p>
+<p>Le correctif force, pour cet appareil précis, une connexion en A2DP uniquement — sans désactiver le mode mains-libres pour le reste de vos périphériques Bluetooth.</p>
 </div>
 <table>
 <thead>
@@ -2376,138 +2551,207 @@
 <tbody>
 <tr>
 <td>Difficulté</td>
-<td>Débutant</td>
+<td>Intermédiaire</td>
 </tr>
 <tr>
 <td>OS / Environnement</td>
-<td>Ubuntu / Debian / RHEL</td>
+<td>Ubuntu 24.04 Desktop — GNOME</td>
+</tr>
+<tr>
+<td>Serveur audio</td>
+<td>PipeWire 1.0.5 + WirePlumber 0.4.17</td>
 </tr>
 <tr>
 <td>Dernière mise à jour</td>
-<td>2026-06-13</td>
+<td>2026-09-08</td>
 </tr>
 </tbody>
 </table>
 <h2 id="contexte">Contexte<a class="headerlink" href="#contexte" title="Permanent link">&para;</a></h2>
-<p>Lorsqu'un serveur devient lent ou qu'une application plante inopinément, la première étape du diagnostic consiste souvent à vérifier la consommation des ressources de la machine : le processeur (CPU) et la mémoire vive (RAM).</p>
-<p>Linux fournit des outils intégrés et légers pour surveiller ces métriques en temps réel. Les plus courants sont <code>free</code> pour une vue d'ensemble de la mémoire, et <code>htop</code> pour le détail par processus.</p>
-<h2 id="prerequis">Prérequis<a class="headerlink" href="#prerequis" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Un accès terminal (local ou via SSH) à une machine Linux.</li>
-<li>Les droits d'installation de paquets si <code>htop</code> n'est pas déjà présent.</li>
-</ul>
-<h2 id="procedure">Procédure<a class="headerlink" href="#procedure" title="Permanent link">&para;</a></h2>
-<h3 id="1-vue-densemble-de-la-memoire-avec-free">1. Vue d'ensemble de la mémoire avec <code>free</code><a class="headerlink" href="#1-vue-densemble-de-la-memoire-avec-free" title="Permanent link">&para;</a></h3>
-<p>La commande <code>free</code> permet de voir d'un coup d'œil l'état de la mémoire RAM et du swap (mémoire virtuelle sur le disque).</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>free<span class="w"> </span>-h
-</code></pre></div>
-<div class="admonition tip">
-<p class="admonition-title">L'option <code>-h</code> (human-readable)</p>
-<p>Elle affiche les valeurs en Mo (Mégaoctets) ou Go (Gigaoctets) au lieu des kilooctets par défaut, ce qui facilite grandement la lecture.</p>
+<p>Diagnostiqué sur <code>pc-fixe</code> après l'appairage d'écouteurs Bluetooth (modèle Eumo V1). L'appairage se déroule sans erreur, mais l'appareil reste invisible dans <strong>Paramètres → Son → Sortie</strong>. Ce cas s'applique à n'importe quel casque/écouteurs Bluetooth affichant le même symptôme, pas seulement à ce modèle précis : la cause est un comportement de négociation de profil, pas un défaut matériel propre à un appareil.</p>
+<div class="admonition info">
+<p class="admonition-title">Ne pas confondre avec l'absence totale de son Bluetooth</p>
+<p>Si <strong>aucun</strong> appareil Bluetooth n'a jamais fonctionné en audio sur cette machine (même un casque déjà connu pour bien fonctionner ailleurs), le problème est probablement plus basique : le paquet <code>libspa-0.2-bluetooth</code> (fourni par <code>pipewire-audio</code>) est absent. Vérifier avec <code>dpkg -l | grep libspa-0.2-bluetooth</code>. Cette fiche traite d'un cas différent : Bluetooth fonctionne, mais un appareil précis échoue à devenir une sortie audio.</p>
 </div>
-<p><strong>Exemple de sortie :</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>               total        used        free      shared  buff/cache   available
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Mem:           7.8Gi       1.2Gi       3.4Gi        20Mi       3.2Gi       6.3Gi
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Swap:          2.0Gi          0B       2.0Gi
-</code></pre></div>
-<p><strong>Que regarder en priorité ?</strong></p>
-<ul>
-<li><strong>total</strong> : La quantité totale de RAM installée.</li>
-<li><strong>available</strong> : C'est le chiffre le plus important ! Il indique la mémoire <em>réellement</em> disponible pour de nouvelles applications, sans que le système ait besoin d'utiliser le swap.</li>
-<li><strong>buff/cache</strong> : Mémoire utilisée par Linux pour accélérer les accès disques. Cette mémoire est relâchée automatiquement si une application en a besoin.</li>
-</ul>
-<div class="admonition warning">
-<p class="admonition-title">Ne confondez pas <code>free</code> et <code>available</code></p>
-<p>La colonne <code>free</code> indique la mémoire totalement inutilisée, ce qui est souvent faible sur Linux car le système utilise l'espace libre pour mettre en cache des fichiers (<code>buff/cache</code>). Référez-vous toujours à la colonne <code>available</code>.</p>
-</div>
-<h3 id="2-installer-htop">2. Installer <code>htop</code><a class="headerlink" href="#2-installer-htop" title="Permanent link">&para;</a></h3>
-<p><code>htop</code> est un gestionnaire de tâches interactif en ligne de commande. S'il n'est pas installé, vous pouvez l'ajouter facilement :</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Ubuntu / Debian</label><label for="__tabbed_1_2">RHEL / Rocky Linux / AlmaLinux</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>update
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>htop
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>epel-release
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>htop
-</code></pre></div>
-</div>
-</div>
-</div>
-<h3 id="3-analyser-la-consommation-en-temps-reel-avec-htop">3. Analyser la consommation en temps réel avec <code>htop</code><a class="headerlink" href="#3-analyser-la-consommation-en-temps-reel-avec-htop" title="Permanent link">&para;</a></h3>
-<p>Lancez l'outil simplement en tapant :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>htop
+<h2 id="comprendre-la-chaine-audio-bluetooth-sous-linux">Comprendre la chaîne audio Bluetooth sous Linux<a class="headerlink" href="#comprendre-la-chaine-audio-bluetooth-sous-linux" title="Permanent link">&para;</a></h2>
+<p>Sur un poste Ubuntu 24.04 (GNOME, PipeWire), un appareil audio Bluetooth traverse plusieurs couches avant d'apparaître dans les paramètres système. Chacune peut fonctionner indépendamment des autres :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Bluetooth (contrôleur HCI, appairage)
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  └─ BlueZ (bluetoothd) — daemon Bluetooth Linux, expose org.bluez sur D-Bus
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>       └─ WirePlumber (moniteur bluez5) — décide QUELS profils deviennent des nœuds PipeWire
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>            └─ PipeWire — graphe audio réel (carte, sink, source)
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                 └─ pipewire-pulse — compatibilité protocole PulseAudio
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>                      └─ GNOME Paramètres → Son — liste les sinks disponibles
 </code></pre></div>
 <div class="admonition note">
-<p class="admonition-title">Lancer avec sudo</p>
-<p>Certaines informations sur les processus d'autres utilisateurs ou du système peuvent être masquées. Lancer <code>sudo htop</code> permet de tout voir.</p>
+<p class="admonition-title">BlueZ, D-Bus, PipeWire, WirePlumber : qui fait quoi ?</p>
+<p><strong>BlueZ</strong> est la pile Bluetooth officielle de Linux (le daemon <code>bluetoothd</code>). Il gère l'appairage, la connexion radio, et annonce les capacités audio de l'appareil (A2DP, HFP...) via <strong>D-Bus</strong> — un bus de communication inter-processus standard sur Linux, utilisé par les applications pour s'échanger des messages et exposer des services (ici, BlueZ expose l'objet <code>/org/bluez/hci0/dev_XX_XX_XX_XX_XX_XX</code> représentant l'appareil connecté).</p>
+<p><strong>PipeWire</strong> est le serveur multimédia qui a remplacé PulseAudio (audio) et JACK (audio professionnel) sur les distributions Linux récentes. Il gère le graphe réel des flux audio : cartes, sinks (sorties), sources (entrées).</p>
+<p><strong>WirePlumber</strong> est le gestionnaire de politique de PipeWire : c'est lui qui décide, pour chaque périphérique détecté, s'il devient un nœud PipeWire et avec quels réglages. Pour le Bluetooth, WirePlumber embarque un greffon (« moniteur bluez5 ») qui dialogue avec BlueZ en D-Bus. <strong>C'est cette étape précise qui échoue dans le cas traité ici</strong> : BlueZ voit l'appareil connecté, mais WirePlumber ne parvient jamais à en faire une carte audio.</p>
 </div>
-<p><strong>Comprendre l'interface :</strong></p>
-<p>L'écran est divisé en deux parties principales :</p>
-<ol>
-<li><strong>En haut (l'en-tête) :</strong></li>
-<li><strong>Barres numérotées (1, 2, 3...) :</strong> L'utilisation de chaque cœur du processeur.</li>
-<li><strong>Mem :</strong> La consommation de RAM (code couleur : vert = utilisé par les processus, bleu = buffers, jaune = cache).</li>
-<li><strong>Swp :</strong> L'utilisation du fichier d'échange (Swap).</li>
-<li>
-<p><strong>Load average :</strong> La charge moyenne du système sur les 1, 5 et 15 dernières minutes. Si ce chiffre dépasse durablement le nombre de cœurs de votre processeur, le serveur est surchargé.</p>
-</li>
-<li>
-<p><strong>En bas (la liste des processus) :</strong></p>
-</li>
-<li><strong>PID :</strong> L'identifiant unique du processus.</li>
-<li><strong>USER :</strong> L'utilisateur qui a lancé le processus.</li>
-<li><strong>%CPU :</strong> Le pourcentage de processeur utilisé par le processus.</li>
-<li><strong>%MEM :</strong> Le pourcentage de mémoire vive utilisé.</li>
-<li><strong>Command :</strong> Le nom de l'application ou la ligne de commande exécutée.</li>
-</ol>
-<h3 id="4-naviguer-et-filtrer-dans-htop">4. Naviguer et filtrer dans <code>htop</code><a class="headerlink" href="#4-naviguer-et-filtrer-dans-htop" title="Permanent link">&para;</a></h3>
-<p><code>htop</code> est interactif. Voici les raccourcis essentiels pour trouver le coupable :</p>
+<p>Cette distinction explique pourquoi <code>bluetoothctl</code> peut afficher une connexion parfaitement saine alors que le son est absent : <code>bluetoothctl</code> ne parle qu'à BlueZ (les deux premières couches), pas à PipeWire.</p>
+<h2 id="symptomes">Symptômes<a class="headerlink" href="#symptomes" title="Permanent link">&para;</a></h2>
+<div class="admonition failure">
+<p class="admonition-title">Symptôme principal</p>
 <ul>
-<li><strong>Trier par consommation CPU :</strong> Appuyez sur <span class="keys"><kbd class="key-f6">F6</kbd></span> (SortBy) puis sélectionnez <code>PERCENT_CPU</code>. (C'est souvent le tri par défaut).</li>
-<li><strong>Trier par consommation mémoire :</strong> Appuyez sur <span class="keys"><kbd class="key-f6">F6</kbd></span> puis sélectionnez <code>PERCENT_MEM</code>.</li>
-<li><strong>Rechercher un processus spécifique :</strong> Appuyez sur <span class="keys"><kbd class="key-f3">F3</kbd></span> (Search), tapez le nom (ex: <code>nginx</code> ou <code>mysql</code>) et appuyez sur <span class="keys"><kbd class="key-enter">Enter</kbd></span>.</li>
-<li><strong>Filtrer l'affichage :</strong> Appuyez sur <span class="keys"><kbd class="key-f4">F4</kbd></span> (Filter) pour n'afficher que les lignes contenant un mot précis.</li>
-<li><strong>Tuer un processus bloqué :</strong> Sélectionnez le processus avec les flèches haut/bas, appuyez sur <span class="keys"><kbd class="key-f9">F9</kbd></span> (Kill), choisissez le signal <code>SIGTERM</code> (ou <code>SIGKILL</code> en dernier recours) et validez avec <span class="keys"><kbd class="key-enter">Enter</kbd></span>.</li>
+<li>L'appareil apparaît dans <code>bluetoothctl devices</code> et passe à <code>Connected: yes</code> après appairage.</li>
+<li>GNOME Paramètres → Son ne propose pas l'appareil dans la liste des sorties, comme s'il n'existait pas.</li>
+<li><code>pactl list cards short</code> et <code>pactl list sinks short</code> ne montrent <strong>aucune</strong> entrée <code>bluez_card.*</code> / <code>bluez_output.*</code> pour cet appareil.</li>
+<li>Le journal de WirePlumber répète en boucle (toutes les ~10 secondes) :
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>RFCOMM receive command but modem not available: AT+CCLK?
+</code></pre></div></li>
 </ul>
-<p>Pour quitter <code>htop</code>, appuyez sur <span class="keys"><kbd class="key-f10">F10</kbd></span> ou la touche <code>q</code>.</p>
-<h2 id="aide-memoire">Aide-mémoire<a class="headerlink" href="#aide-memoire" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Commande / Action</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>free -h</code></td>
-<td>Affiche la RAM totale, utilisée et disponible en format lisible.</td>
-</tr>
-<tr>
-<td><code>htop</code></td>
-<td>Lance le gestionnaire de tâches interactif.</td>
-</tr>
-<tr>
-<td><code>F6</code> (dans htop)</td>
-<td>Ouvre le menu de tri (pour trier par CPU ou MEM).</td>
-</tr>
-<tr>
-<td><code>F9</code> (dans htop)</td>
-<td>Envoie un signal pour arrêter (tuer) le processus sélectionné.</td>
-</tr>
-<tr>
-<td><code>q</code> (dans htop)</td>
-<td>Quitter l'interface.</td>
-</tr>
-</tbody>
-</table>
+</div>
+<h2 id="diagnostic">Diagnostic<a class="headerlink" href="#diagnostic" title="Permanent link">&para;</a></h2>
+<div class="admonition tip">
+<p class="admonition-title">Méthode</p>
+<p>Avant de modifier quoi que ce soit, on vérifie chaque couche du schéma ci-dessus dans l'ordre, pour localiser précisément celle qui casse. Un correctif appliqué sans cette étape risque de traiter le mauvais symptôme.</p>
+</div>
+<h3 id="1-verifier-la-connexion-cote-bluez">1. Vérifier la connexion côté BlueZ<a class="headerlink" href="#1-verifier-la-connexion-cote-bluez" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>bluetoothctl<span class="w"> </span>devices
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># Device AA:BB:CC:DD:EE:FF Nom de l'appareil</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>bluetoothctl<span class="w"> </span>info<span class="w"> </span>AA:BB:CC:DD:EE:FF
+</code></pre></div>
+<p>Vérifier dans la sortie :</p>
+<ul>
+<li><code>Paired: yes</code> et <code>Connected: yes</code> — la connexion Bluetooth elle-même est saine.</li>
+<li>La présence de <code>UUID: Audio Sink</code> (A2DP) — l'appareil sait faire de la lecture stéréo.</li>
+<li>La présence de <code>UUID: Handsfree</code> — l'appareil propose aussi le profil mains-libres, source probable du conflit (voir plus bas).</li>
+</ul>
+<p>Si <code>Connected</code> n'est pas <code>yes</code>, le problème est en amont (appairage/connexion Bluetooth) et sort du cadre de cette fiche.</p>
+<h3 id="2-chercher-la-carte-audio-correspondante-cote-pipewire">2. Chercher la carte audio correspondante côté PipeWire<a class="headerlink" href="#2-chercher-la-carte-audio-correspondante-cote-pipewire" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pactl<span class="w"> </span>list<span class="w"> </span>cards<span class="w"> </span>short<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>bluez
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>pactl<span class="w"> </span>list<span class="w"> </span>sinks<span class="w"> </span>short<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>bluez
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>wpctl<span class="w"> </span>status<span class="w">   </span><span class="c1"># section "Audio &gt; Devices" : chercher [bluez5]</span>
+</code></pre></div>
+<p><strong>Aucun résultat</strong> alors que <code>bluetoothctl</code> annonce <code>Connected: yes</code> confirme que la rupture se situe entre BlueZ et PipeWire — c'est-à-dire au niveau de WirePlumber.</p>
+<h3 id="3-identifier-la-boucle-hfp-dans-les-journaux-de-wireplumber">3. Identifier la boucle HFP dans les journaux de WirePlumber<a class="headerlink" href="#3-identifier-la-boucle-hfp-dans-les-journaux-de-wireplumber" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>journalctl<span class="w"> </span>--user<span class="w"> </span>-u<span class="w"> </span>wireplumber<span class="w"> </span>--since<span class="w"> </span><span class="s2">"30 min ago"</span><span class="w"> </span>--no-pager<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">"AT\+CCLK|modem not available|unknown transport"</span>
+</code></pre></div>
+<p>La présence de lignes répétées <code>RFCOMM receive command but modem not available: AT+CCLK?</code> confirme le diagnostic : l'appareil envoie des commandes AT (protocole de contrôle d'appel hérité des modems, réutilisé par le profil mains-libres) que WirePlumber ne sait pas traiter.</p>
+<div class="admonition note">
+<p class="admonition-title">Que sont HFP/HSP, et pourquoi des commandes « modem » sur un PC ?</p>
+<p><strong>A2DP</strong> (Advanced Audio Distribution Profile) transporte de l'audio stéréo haute qualité dans un seul sens — c'est le profil utilisé pour écouter de la musique.</p>
+<p><strong>HFP</strong> (Hands-Free Profile) et son ancêtre <strong>HSP</strong> (Headset Profile) sont conçus pour les appels téléphoniques : audio bidirectionnel mais mono et basse qualité, plus un canal de contrôle qui transporte des <strong>commandes AT</strong> — le même jeu de commandes texte historiquement utilisé pour piloter les modems (<code>AT+CCLK?</code> demande l'heure courante, typiquement pour synchroniser l'horloge affichée par un kit mains-libres de voiture). Ce canal de contrôle circule sur <strong>RFCOMM</strong>, un protocole Bluetooth qui émule un port série.</p>
+<p>Un PC ne sait pas répondre comme le ferait un téléphone à toutes ces commandes. Si l'appareil Bluetooth insiste pour ouvrir une session HFP dès la connexion, et que cette négociation échoue en boucle, elle peut empêcher le profil A2DP de se stabiliser sur le même appareil.</p>
+</div>
+<h3 id="4-ecarter-un-second-serveur-de-son-concurrent">4. Écarter un second serveur de son concurrent<a class="headerlink" href="#4-ecarter-un-second-serveur-de-son-concurrent" title="Permanent link">&para;</a></h3>
+<p>Le journal WirePlumber peut aussi afficher cet avertissement :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Properties changed in unknown transport '.../sep1/fd0'. Multiple sound server
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>instances (PipeWire/Pulseaudio/bluez-alsa) are probably trying to use
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>Bluetooth audio at the same time...
+</code></pre></div>
+<p>Ce message est trompeur pris isolément : il apparaît aussi quand la négociation HFP instable (étape 3) perturbe le suivi interne de WirePlumber, sans qu'un second serveur soit réellement en cause. Vérifier avant de conclure :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>ps<span class="w"> </span>aux<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">"pulseaudio|bluealsa"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-v<span class="w"> </span>grep
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>dpkg<span class="w"> </span>-l<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">"^ii.*(pulseaudio-module-bluetooth|bluealsa)"</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>list-units<span class="w"> </span>--all<span class="w"> </span>--type<span class="o">=</span>service<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">"pulseaudio|bluealsa"</span>
+</code></pre></div>
+<p>Si ces commandes ne renvoient rien (aucun processus, aucun paquet, aucun service actif), il n'y a pas de second serveur de son : l'avertissement corrobore simplement l'instabilité de la négociation HFP identifiée à l'étape 3.</p>
+<h2 id="solution">Solution<a class="headerlink" href="#solution" title="Permanent link">&para;</a></h2>
+<p>WirePlumber 0.4.x (celui d'Ubuntu 24.04) se configure en Lua. Le réglage qui désactive complètement HFP/HSP (<code>bluez5.hfphsp-backend</code>) est <strong>global à tout le Bluetooth</strong> : l'appliquer couperait le micro Bluetooth de tous vos autres casques, pas seulement de l'appareil fautif. La solution ci-dessous cible uniquement l'appareil concerné.</p>
+<h3 id="etape-1-recuperer-ladresse-mac-de-lappareil">Étape 1 : récupérer l'adresse MAC de l'appareil<a class="headerlink" href="#etape-1-recuperer-ladresse-mac-de-lappareil" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>bluetoothctl<span class="w"> </span>devices
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="c1"># Device AA:BB:CC:DD:EE:FF Nom de l'appareil</span>
+</code></pre></div>
+<p>WirePlumber désigne les cartes Bluetooth par un nom dérivé de cette adresse, deux-points remplacés par des underscores :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"AA:BB:CC:DD:EE:FF"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span><span class="s1">':'</span><span class="w"> </span><span class="s1">'_'</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1"># AA_BB_CC_DD_EE_FF   →  device.name = bluez_card.AA_BB_CC_DD_EE_FF</span>
+</code></pre></div>
+<h3 id="etape-2-creer-une-regle-wireplumber-ciblee-sur-cet-appareil">Étape 2 : créer une règle WirePlumber ciblée sur cet appareil<a class="headerlink" href="#etape-2-creer-une-regle-wireplumber-ciblee-sur-cet-appareil" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.config/wireplumber/bluetooth.lua.d
+</code></pre></div>
+<p>Créer <code>~/.config/wireplumber/bluetooth.lua.d/51-&lt;nom-appareil&gt;.lua</code> (remplacer <code>&lt;nom-appareil&gt;</code> par un repère lisible, ex. <code>casque-sport</code>) :</p>
+<div class="highlight"><span class="filename">~/.config/wireplumber/bluetooth.lua.d/51-&lt;nom-appareil&gt;.lua</span><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1">-- Restreint UN appareil Bluetooth précis à l'auto-connexion A2DP,</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="c1">-- sans toucher au réglage HFP global (qui reste actif pour les autres</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="c1">-- périphériques). Remplacer l'adresse ci-dessous par la vôtre (étape 1).</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="nb">table.insert</span><span class="p">(</span><span class="nv">bluez_monitor</span><span class="p">.</span><span class="py">rules</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">  </span><span class="nv">matches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">    </span><span class="p">{</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="s2">"device.name"</span><span class="p">,</span><span class="w"> </span><span class="s2">"matches"</span><span class="p">,</span><span class="w"> </span><span class="s2">"bluez_card.AA_BB_CC_DD_EE_FF"</span><span class="w"> </span><span class="p">},</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">    </span><span class="p">},</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">  </span><span class="p">},</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">  </span><span class="nv">apply_properties</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">    </span><span class="p">[</span><span class="s2">"bluez5.auto-connect"</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"[ a2dp_sink ]"</span><span class="p">,</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">    </span><span class="p">[</span><span class="s2">"device.profile"</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"a2dp-sink"</span><span class="p">,</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">  </span><span class="p">},</span>
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="p">})</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Pourquoi un nouveau fichier plutôt que modifier la config existante</p>
+<p>WirePlumber charge <strong>tous</strong> les fichiers <code>.lua</code> du dossier <code>bluetooth.lua.d/</code>, aussi bien ceux du système (<code>/usr/share/wireplumber/bluetooth.lua.d/</code>) que ceux de l'utilisateur (<code>~/.config/wireplumber/bluetooth.lua.d/</code>), et les fusionne. <code>table.insert(bluez_monitor.rules, ...)</code> <strong>ajoute</strong> une règle à la liste existante au lieu de la remplacer : le fichier système d'origine reste intact, et la modification survit aux mises à jour du paquet <code>wireplumber</code>.</p>
+</div>
+<h3 id="etape-3-redemarrer-wireplumber-et-forcer-une-reconnexion">Étape 3 : redémarrer WirePlumber et forcer une reconnexion<a class="headerlink" href="#etape-3-redemarrer-wireplumber-et-forcer-une-reconnexion" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>restart<span class="w"> </span>wireplumber
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>bluetoothctl<span class="w"> </span>disconnect<span class="w"> </span>AA:BB:CC:DD:EE:FF
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>bluetoothctl<span class="w"> </span>connect<span class="w"> </span>AA:BB:CC:DD:EE:FF
+</code></pre></div>
+<div class="admonition success">
+<p class="admonition-title">Aucun droit root nécessaire</p>
+<p>Toute cette procédure agit au niveau utilisateur (<code>~/.config</code>, <code>systemctl --user</code>) : pas de <code>sudo</code>, pas de redémarrage de la machine.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Effet de bord attendu, sans gravité</p>
+<p>Si l'appareil continue d'ouvrir une session HFP de son propre chef (certains modèles le font sans que le PC ait rien demandé), la boucle <code>AT+CCLK?</code> peut persister dans les journaux. Dans les tests menés sur ce cas, cela n'a pas empêché le flux A2DP de rester stable — c'est un bruit de journal, pas un dysfonctionnement. Si le son venait à couper ou se déconnecter régulièrement, voir le repli ci-dessous.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Si le correctif ciblé ne suffit pas : le repli global</p>
+<p><code>bluez5.hfphsp-backend</code> ne peut se régler qu'au niveau du moniteur entier, pas par appareil. En dernier recours, dans <code>~/.config/wireplumber/bluetooth.lua.d/51-no-hfp.lua</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nv">bluez_monitor</span><span class="p">.</span><span class="py">properties</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span><span class="p">[</span><span class="s2">"bluez5.hfphsp-backend"</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"none"</span><span class="p">,</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="p">}</span>
+</code></pre></div>
+<p>Puis <code>systemctl --user restart wireplumber</code>. Ceci désactive HFP/HSP pour <strong>tous</strong> les périphériques Bluetooth de la machine : plus de micro/appel via Bluetooth sur aucun appareil, mais la lecture audio A2DP reste intacte partout. À réserver au cas où le correctif ciblé de l'étape 2 ne suffit pas.</p>
+</div>
+<h2 id="verification">Vérification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>pactl<span class="w"> </span>list<span class="w"> </span>cards<span class="w"> </span>short<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>bluez
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="c1"># doit afficher : NNN  bluez_card.AA_BB_CC_DD_EE_FF  module-bluez5-device.c</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>pactl<span class="w"> </span>list<span class="w"> </span>sinks<span class="w"> </span>short<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>bluez
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="c1"># doit afficher : NNN  bluez_output.AA_BB_CC_DD_EE_FF.1  PipeWire  ...  RUNNING (ou SUSPENDED au repos)</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>wpctl<span class="w"> </span>status
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="c1"># section Audio &gt; Devices : l'appareil apparaît avec le tag [bluez5]</span>
+</code></pre></div>
+<div class="admonition success">
+<p class="admonition-title">Résultat attendu</p>
+<p>L'appareil apparaît désormais dans <strong>Paramètres → Son → Sortie</strong> et peut y être sélectionné. Jouer un son doit faire passer le sink de <code>SUSPENDED</code> à <code>RUNNING</code> dans <code>pactl list sinks short</code>.</p>
+</div>
+<h2 id="checklist">Checklist<a class="headerlink" href="#checklist" title="Permanent link">&para;</a></h2>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>bluetoothctl info &lt;MAC&gt;</code> confirme <code>Connected: yes</code></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>pactl list cards short</code> ne montre pas encore la carte <code>bluez_card.*</code> (avant correctif)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Boucle <code>AT+CCLK?</code> repérée dans <code>journalctl --user -u wireplumber</code></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Absence de second serveur de son confirmée (<code>ps aux</code>, <code>dpkg -l</code>, <code>systemctl --user list-units</code>)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Règle créée dans <code>~/.config/wireplumber/bluetooth.lua.d/51-&lt;nom-appareil&gt;.lua</code></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>systemctl --user restart wireplumber</code> puis reconnexion de l'appareil</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>pactl list cards short</code> / <code>wpctl status</code> montrent désormais l'appareil</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> L'appareil est sélectionnable dans GNOME Paramètres → Son</li>
+</ul>
+<h2 id="glossaire">Glossaire<a class="headerlink" href="#glossaire" title="Permanent link">&para;</a></h2>
+<dl>
+<dt>BlueZ</dt>
+<dd>Pile Bluetooth officielle de Linux (daemon <code>bluetoothd</code>). Gère l'appairage, les connexions, et expose les appareils sur D-Bus.</dd>
+<dt>D-Bus</dt>
+<dd>Bus de communication inter-processus standard sur Linux, utilisé par les services système et applications pour s'échanger messages et appels de méthode.</dd>
+<dt>A2DP (Advanced Audio Distribution Profile)</dt>
+<dd>Profil Bluetooth de diffusion audio stéréo haute qualité, à sens unique (lecture de musique).</dd>
+<dt>HFP / HSP (Hands-Free / Headset Profile)</dt>
+<dd>Profils Bluetooth pour les appels téléphoniques : audio bidirectionnel mono basse qualité, plus un canal de contrôle par commandes AT.</dd>
+<dt>RFCOMM</dt>
+<dd>Protocole Bluetooth qui émule un port série (RS-232), utilisé notamment pour transporter les commandes AT du profil HFP/HSP.</dd>
+<dt>PipeWire</dt>
+<dd>Serveur multimédia Linux qui unifie audio et vidéo, remplaçant PulseAudio et JACK tout en restant compatible avec leurs clients respectifs.</dd>
+<dt>WirePlumber</dt>
+<dd>Gestionnaire de politique de PipeWire : décide quels périphériques deviennent quels nœuds audio, avec quels réglages. Configuré en Lua sur les versions 0.4.x (Ubuntu 24.04).</dd>
+<dt>Service <code>systemd --user</code></dt>
+<dd>Service systemd démarré et géré dans la session d'un utilisateur connecté (<code>systemctl --user ...</code>), indépendamment des services système nécessitant les droits root.</dd>
+</dl>
 <h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="https://man7.org/linux/man-pages/man1/free.1.html">Manuel de free (en anglais)</a></li>
-<li><a href="https://htop.dev/">Site officiel de htop</a></li>
+<li><a href="https://wiki.archlinux.org/title/PipeWire">ArchWiki — PipeWire</a> — référence communautaire sur la configuration de PipeWire, y compris le Bluetooth.</li>
+<li><a href="https://wiki.archlinux.org/title/Bluetooth">ArchWiki — Bluetooth</a> — dépannage général de la pile Bluetooth sous Linux.</li>
+<li><a href="https://pipewire.pages.freedesktop.org/wireplumber/">Documentation officielle WirePlumber</a> — référence des propriétés et règles de configuration Lua.</li>
 </ul>
 
 
@@ -2549,7 +2793,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
         
           
-          <a href="../diagnostiquer-materiel-pilotes-linux-dmesg/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: Diagnostiquer les problèmes matériels et pilotes sous Linux avec dmesg">
+          <a href="../sniffnet-appimage-ubuntu-2404/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: Sniffnet AppImage — Installation et lancement sur Ubuntu 24.04">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2559,20 +2803,20 @@
                 Précédent
               </span>
               <div class="md-ellipsis">
-                Diagnostiquer les problèmes matériels et pilotes sous Linux avec dmesg
+                Sniffnet AppImage — Installation et lancement sur Ubuntu 24.04
               </div>
             </div>
           </a>
         
         
           
-          <a href="../diagnostiquer-disque-plein-saturation-io-iostat-iotop-linux/" class="md-footer__link md-footer__link--next" aria-label="Suivant: Diagnostiquer un disque plein ou une saturation I/O sur Linux avec iostat et iotop">
+          <a href="../../astuces/" class="md-footer__link md-footer__link--next" aria-label="Suivant: Astuces">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Suivant
               </span>
               <div class="md-ellipsis">
-                Diagnostiquer un disque plein ou une saturation I/O sur Linux avec iostat et iotop
+                Astuces
               </div>
             </div>
             <div class="md-footer__button md-icon">
