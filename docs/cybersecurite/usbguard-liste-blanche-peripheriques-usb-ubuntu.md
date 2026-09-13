@@ -18,133 +18,277 @@ status: publié
 # Contrôler les périphériques USB avec USBGuard sur Ubuntu (liste blanche anti-BadUSB)
 
 !!! abstract "Résumé"
-    USBGuard applique une politique d'autorisation sur le bus USB : seuls les périphériques explicitement listés dans la politique peuvent dialoguer avec le noyau, tous les autres sont bloqués à chaud. Cette note couvre l'installation sur Ubuntu, la génération d'une liste blanche à partir du matériel de confiance, l'ouverture des droits IPC, la gestion quotidienne des nouveaux périphériques — et surtout la façon d'éviter (ou de réparer) le classique verrouillage clavier/souris qui piège la majorité des premières installations.
+    USBGuard applique une politique d’autorisation sur le bus USB : seuls les périphériques correspondant à une règle d’autorisation peuvent être utilisés par le noyau. Les autres sont bloqués ou rejetés selon la politique configurée.
+
+    Cette note couvre l’installation sur Ubuntu 24.04, la génération d’une liste blanche à partir du matériel de confiance, la configuration des droits IPC et la gestion quotidienne des nouveaux périphériques. Elle explique également comment éviter — ou réparer — le verrouillage du clavier et de la souris qui peut survenir lors d’une première installation mal préparée.
 
 | Propriété | Valeur |
 |-----------|--------|
 | Difficulté | Intermédiaire |
-| OS / Environnement | Ubuntu 24.04 LTS (paquet `usbguard` 1.1.2) |
+| OS / Environnement | Ubuntu 24.04 LTS (Desktop et Server) |
+| Version d’USBGuard | À vérifier avec `apt policy usbguard` et `usbguard --version` |
 | Privilèges requis | `root` / `sudo` |
 | Durée estimée | 20 à 30 minutes |
-| Dernière mise à jour | 2026-09-06 |
+| Dernière mise à jour | 2026-09-13 |
 
 ---
 
 ## Contexte
 
-Le bus USB a été conçu pour la commodité, pas pour la sécurité : par défaut, **tout périphérique branché est immédiatement énuméré, pilote chargé, et considéré comme légitime**. C'est exactement ce qu'exploite la classe d'attaques dite **BadUSB** : un objet qui ressemble à une clé de stockage annonce au système qu'il est en réalité un **clavier** (classe HID), puis « tape » à 1 000 caractères par minute un script qui ouvre un shell inversé. Les variantes commerciales de ce type d'outil (Rubber Ducky, O.MG Cable, Bash Bunny) coûtent quelques dizaines d'euros et fonctionnent sur un poste déverrouillé en moins de trois secondes.
+Le bus USB a été conçu pour la commodité, pas pour la sécurité. Par défaut, un périphérique branché est détecté par le noyau, ses interfaces sont examinées et les pilotes correspondants peuvent être chargés.
 
-USBGuard répond à ce problème en s'appuyant sur un mécanisme peu connu du noyau Linux : chaque périphérique USB expose dans `sysfs` un attribut `authorized` (`/sys/bus/usb/devices/*/authorized`). Tant qu'il vaut `0`, le noyau énumère bien le périphérique mais **ne lie aucun pilote** : le matériel est électriquement présent mais fonctionnellement inerte.
+C’est notamment ce qu’exploite la famille d’attaques dite **BadUSB** : un objet ressemblant à une clé de stockage peut se déclarer comme un clavier USB, puis injecter automatiquement des frappes afin d’ouvrir un terminal ou d’exécuter des commandes. D’autres variantes se présentent comme une carte réseau, un adaptateur série ou un périphérique composite exposant plusieurs fonctions à la fois.
 
-Le démon `usbguard-daemon` se place au-dessus de ce mécanisme et automatise la décision :
+USBGuard s’appuie sur le mécanisme d’autorisation USB du noyau Linux. Chaque périphérique USB expose dans `sysfs` un attribut `authorized`, généralement sous :
 
-1. Il écoute les événements `uevent` du noyau (branchement, débranchement).
-2. Il compare le périphérique aux règles de sa politique (`/etc/usbguard/rules.conf`), dans l'ordre, **première règle correspondante gagnante**.
-3. Si aucune règle ne correspond, il applique la cible implicite `ImplicitPolicyTarget`, qui vaut `block` par défaut.
+```text
+/sys/bus/usb/devices/*/authorized
+```
 
-C'est une approche **liste blanche** (allow-list) : ce qui n'est pas explicitement autorisé est refusé. Elle est très efficace, mais elle a une conséquence directe qu'il faut avoir en tête avant de taper la première commande : **si le démon démarre avec une politique vide, votre clavier et votre souris USB sont bloqués eux aussi**.
+Lorsqu’un périphérique est désautorisé, ses interfaces ne peuvent normalement pas être utilisées par les pilotes du noyau.
 
-!!! danger "Le piège n°1 : se verrouiller hors de sa propre machine"
-    Sur Debian et Ubuntu, le paquet `usbguard` **active et démarre le service dès la fin de l'installation `apt`**, avec un fichier `rules.conf` vide. Sur un poste fixe équipé d'un clavier et d'une souris USB, l'écran devient inerte dans la seconde qui suit, avant même que vous ayez pu générer la moindre règle. La procédure ci-dessous neutralise ce comportement **avant** d'installer le paquet. Si vous êtes déjà tombé dans le piège, sautez directement à [Problèmes fréquents](#probleme-1-plus-de-clavier-ni-de-souris-apres-linstallation).
+Le démon `usbguard-daemon` automatise cette décision :
 
-!!! info "USBGuard n'est pas un antivirus"
-    USBGuard décide *quel matériel* a le droit de parler au noyau. Il ne lit pas le contenu des clés USB et ne détecte aucun malware dans les fichiers. Il se combine donc utilement avec le chiffrement des supports, une politique de montage `noexec,nosuid,nodev` et un antivirus si le poste échange des fichiers avec l'extérieur.
+1. Il surveille l’apparition et la disparition des périphériques USB.
+2. Il compare chaque périphérique aux règles de la politique.
+3. Les règles sont examinées dans l’ordre et la première règle correspondante détermine la décision.
+4. Si aucune règle ne correspond, la cible définie par `ImplicitPolicyTarget` est appliquée.
+
+Une politique configurée avec une cible implicite `block` suit donc un modèle de **liste blanche** : tout ce qui n’est pas explicitement autorisé reste bloqué.
+
+!!! danger "Le piège principal : se verrouiller hors de sa propre machine"
+    Lors de l’installation du paquet, le service peut être activé ou démarré automatiquement par les scripts du paquet. Selon la version, la configuration et le mode d’installation, une politique initiale peut également être générée à partir des périphériques présents.
+
+    Il ne faut pas dépendre de ce comportement :
+
+    - une politique vide ou incomplète peut bloquer le clavier et la souris ;
+    - une politique générée automatiquement peut autoriser un périphérique indésirable déjà branché ;
+    - un périphérique indispensable placé derrière un hub non autorisé peut devenir inaccessible.
+
+    La procédure ci-dessous masque donc le service **avant** l’installation, afin de préparer et de relire la politique avant toute mise en application.
+
+!!! info "USBGuard n’est pas un antivirus"
+    USBGuard décide quel matériel peut être utilisé par le noyau. Il n’analyse pas les fichiers présents sur les supports USB et ne détecte aucun logiciel malveillant.
+
+    Il peut être combiné au chiffrement, à la désactivation du montage automatique, aux options `nosuid,nodev,noexec` et à une solution d’analyse des fichiers. L’option `noexec` constitue seulement une barrière supplémentaire : elle n’empêche pas nécessairement un interpréteur d’exécuter explicitement un script présent sur le support.
 
 ---
 
 ## Prérequis
 
-- Un poste ou serveur sous **Ubuntu 24.04 LTS** (la procédure vaut aussi pour Debian 12/13 et les dérivés).
+- Un poste ou serveur sous **Ubuntu 24.04 LTS**.
 - Un compte disposant des droits `sudo`.
-- **Tous les périphériques USB indispensables branchés** avant de commencer : clavier, souris, dongle sans fil, hub, webcam externe, casque, clé de sécurité FIDO2, lecteur d'empreintes… La liste blanche initiale est une photographie de ce qui est branché à l'instant `t`.
-- Fortement recommandé : **un second canal d'accès** (session SSH ouverte depuis une autre machine, ou console d'hyperviseur/IPMI). C'est votre filet de sécurité si le clavier local est bloqué.
-- Un ordinateur portable dont le clavier interne est en PS/2 émulé (`i8042`) est nettement plus indulgent qu'un poste fixe : il continuera à fonctionner même en cas d'erreur de politique.
+- Tous les périphériques USB indispensables branchés avant la génération de la politique :
+  - clavier ;
+  - souris ;
+  - récepteur sans fil ;
+  - hub ou dock ;
+  - webcam ;
+  - casque ;
+  - adaptateur réseau USB ;
+  - clé de sécurité FIDO2 ;
+  - lecteur d’empreintes ;
+  - périphériques internes reliés en USB.
+- Les périphériques non indispensables ou non vérifiés doivent être débranchés.
+- Fortement recommandé : un second canal d’accès déjà testé, par exemple :
+  - une session SSH ouverte depuis une autre machine ;
+  - une console d’hyperviseur ;
+  - une console série ;
+  - une interface IPMI ou équivalente.
+
+!!! warning "Vérifiez la nature du clavier interne"
+    Un clavier ou un pavé tactile interne utilisant `i8042`, I²C-HID ou SPI n’est normalement pas contrôlé par USBGuard. Certains périphériques internes sont cependant reliés au bus USB.
+
+    Vérifiez la topologie réelle de la machine :
+
+    ```bash
+    lsusb
+    lsusb -t
+    grep -iE 'keyboard|mouse|touchpad' /proc/bus/input/devices
+    ```
 
 !!! warning "Cas particulier : serveur distant"
-    Sur un serveur administré uniquement en SSH, le risque de verrouillage clavier est nul, **mais** attention aux adaptateurs réseau USB, aux dongles KVM-over-IP et aux clés de licence : s'ils ne figurent pas dans la liste blanche, vous perdez respectivement le réseau, la console et l'application. Vérifiez la sortie de `lsusb` avant de démarrer le démon.
+    Sur un serveur administré uniquement en SSH, vérifiez attentivement les adaptateurs réseau USB, les périphériques KVM, les clés de licence et les supports contenant des données nécessaires au démarrage.
+
+    Si l’interface réseau utilisée par SSH est elle-même raccordée en USB et qu’elle est bloquée, vous perdrez également l’accès distant.
 
 ---
 
 ## Procédure
 
-### Étape 1 : Neutraliser le démarrage automatique du service
+### Étape 1 : contrôler les périphériques présents
 
-On masque les unités systemd **avant** l'installation. `systemctl mask` crée un lien symbolique vers `/dev/null` dans `/etc/systemd/system/`, ce qui rend l'unité impossible à démarrer — y compris par les scripts post-installation du paquet.
+Avant de générer une politique, débranchez les périphériques non indispensables puis examinez la topologie USB :
+
+```bash
+lsusb
+lsusb -t
+```
+
+!!! danger "La génération de politique ne vérifie pas la fiabilité du matériel"
+    `usbguard generate-policy` crée des règles à partir des périphériques détectés. Il ne sait pas déterminer si un périphérique est légitime, compromis ou malveillant.
+
+    Un périphérique indésirable déjà branché pendant la génération risque donc d’être ajouté à la liste blanche.
+
+---
+
+### Étape 2 : neutraliser le démarrage automatique du service
+
+Masquez les unités systemd avant d’installer le paquet :
 
 ```bash
 sudo systemctl mask usbguard.service usbguard-dbus.service
 ```
 
-!!! note "Pourquoi masquer et non désactiver ?"
-    `systemctl disable` empêche seulement le démarrage **au boot** ; le script `postinst` du paquet, lui, lance le service immédiatement via `deb-systemd-invoke`. Seul `mask` bloque les deux cas. On peut d'ailleurs masquer une unité qui n'existe pas encore : le lien est créé et sera pris en compte dès l'apparition du fichier de service.
+`systemctl mask` crée des liens vers `/dev/null` dans `/etc/systemd/system/`. Une unité masquée ne peut pas être démarrée, y compris par un script de post-installation.
 
-*Vérification :* la commande doit afficher deux lignes `Created symlink …`. Aucune erreur n'est attendue même si le paquet n'est pas encore installé.
+!!! note "Pourquoi masquer plutôt que désactiver ?"
+    `systemctl disable` empêche principalement le lancement automatique au démarrage de la machine. Il n’empêche pas nécessairement un script de paquet de démarrer immédiatement le service.
+
+    `systemctl mask` bloque également les démarrages manuels et les démarrages demandés par une autre unité.
+
+Une unité peut être masquée avant même que son fichier soit installé. Selon la version de systemd, un avertissement indiquant que l’unité n’existe pas encore peut être affiché sans empêcher la création du masque.
+
+Vérifiez les liens :
+
+```bash
+ls -l /etc/systemd/system/usbguard.service
+ls -l /etc/systemd/system/usbguard-dbus.service
+```
+
+Les liens doivent pointer vers `/dev/null`.
 
 ---
 
-### Étape 2 : Installer le paquet
+### Étape 3 : installer le paquet
 
 ```bash
-sudo apt update && sudo apt install usbguard
+sudo apt update
+sudo apt install usbguard
 ```
 
-Le paquet `usbguard` d'Ubuntu 24.04 fournit la version **1.1.2**. Il installe le démon, l'outil en ligne de commande `usbguard`, les unités systemd et une configuration par défaut dans `/etc/usbguard/`.
-
-*Vérification :*
+Vérifiez la version réellement installée et l’état du service :
 
 ```bash
+apt policy usbguard
 usbguard --version
-systemctl is-enabled usbguard.service   # doit répondre : masked
-systemctl is-active usbguard.service    # doit répondre : inactive
+
+systemctl is-enabled usbguard.service
+systemctl is-active usbguard.service
 ```
 
-!!! success "Résultat attendu"
-    Le numéro de version s'affiche (`usbguard 1.1.2`), le service est bien `masked` et `inactive`, et **tous vos périphériques USB fonctionnent toujours normalement**.
+Résultat attendu :
+
+- `usbguard.service` est `masked` ;
+- `usbguard.service` est `inactive` ;
+- les périphériques USB continuent de fonctionner.
+
+!!! note "Version du paquet"
+    Ubuntu 24.04 fournit un paquet basé sur USBGuard 1.1.2 au moment de la rédaction. Le numéro de révision Ubuntu et la version disponible peuvent évoluer avec les mises à jour.
+
+    Utilisez toujours les commandes ci-dessus plutôt que de supposer une version précise.
 
 ---
 
-### Étape 3 : Générer la politique initiale
+### Étape 4 : examiner la configuration du démon
 
-`usbguard generate-policy` inspecte le matériel actuellement branché et produit une règle `allow` par périphérique. Deux approches, selon le niveau de rigueur souhaité :
+Affichez les paramètres principaux :
 
-=== "Méthode recommandée (avec relecture)"
+```bash
+sudo grep -E '^[[:space:]]*(RuleFile|RuleFolder|ImplicitPolicyTarget|PresentDevicePolicy|PresentControllerPolicy|InsertedDevicePolicy|RestoreControllerDeviceState)=' \
+    /etc/usbguard/usbguard-daemon.conf
+```
 
-    ```bash
-    # 1. Générer dans un fichier temporaire, sans écraser quoi que ce soit
-    sudo usbguard generate-policy > /tmp/rules.conf
+Vérifiez notamment les valeurs suivantes :
 
-    # 2. Relire et corriger le contenu
-    sudo nano /tmp/rules.conf
+```text
+ImplicitPolicyTarget=block
+PresentDevicePolicy=apply-policy
+InsertedDevicePolicy=apply-policy
+RestoreControllerDeviceState=false
+```
 
-    # 3. Installer avec les bons droits et le bon propriétaire
-    sudo install -m 0600 -o root -g root /tmp/rules.conf /etc/usbguard/rules.conf
+Les lignes exactes peuvent différer selon la version du paquet. Si un paramètre n’est pas présent, consultez sa valeur par défaut dans le manuel installé :
+
+```bash
+man usbguard-daemon.conf
+```
+
+!!! warning "RuleFile et RuleFolder"
+    Vérifiez si le démon utilise un fichier unique avec `RuleFile` ou un dossier avec `RuleFolder`.
+
+    La configuration Ubuntu habituelle utilise :
+
+    ```text
+    RuleFile=/etc/usbguard/rules.conf
     ```
 
-=== "Méthode rapide (une ligne)"
+    Ne supposez pas que `/etc/usbguard/rules.d/` est automatiquement chargé. Ce dossier n’est utilisé que si `RuleFolder` est explicitement configuré et pris en charge par la version installée.
 
-    ```bash
-    sudo usbguard generate-policy | sudo tee /etc/usbguard/rules.conf
-    ```
+---
 
-    !!! warning "Contrôlez les permissions"
-        `tee` conserve les droits d'un fichier existant, mais crée un fichier en `0644` s'il n'existe pas. Or `rules.conf` contient les numéros de série de votre matériel : il doit rester illisible par les utilisateurs ordinaires.
-        ```bash
-        sudo chmod 0600 /etc/usbguard/rules.conf
-        sudo chown root:root /etc/usbguard/rules.conf
-        ```
+### Étape 5 : générer la politique initiale
 
-*Vérification :*
+Générez la politique dans un fichier temporaire avec des permissions restrictives :
+
+```bash
+sudo sh -c 'umask 077; usbguard generate-policy > /tmp/usbguard-rules.conf'
+```
+
+Relisez intégralement son contenu :
+
+```bash
+sudo nano /tmp/usbguard-rules.conf
+```
+
+Vous devez retrouver les périphériques USB de confiance actuellement présents :
+
+- clavier ;
+- souris ;
+- récepteur sans fil ;
+- webcam ;
+- Bluetooth interne ;
+- lecteur d’empreintes ;
+- clé FIDO2 ;
+- hubs et docks éventuels ;
+- adaptateur réseau USB, le cas échéant.
+
+Les contrôleurs hôtes USB sont traités séparément par USBGuard, notamment au moyen de `PresentControllerPolicy`. Leur absence parmi les règles ordinaires n’est donc pas nécessairement une anomalie.
+
+Installez ensuite le fichier avec les bons droits :
+
+```bash
+sudo install -m 0600 -o root -g root \
+    /tmp/usbguard-rules.conf \
+    /etc/usbguard/rules.conf
+```
+
+Vérifiez le résultat :
 
 ```bash
 sudo cat /etc/usbguard/rules.conf
-stat -c '%A %U:%G %n' /etc/usbguard/rules.conf   # attendu : -rw------- root:root
+stat -c '%A %U:%G %n' /etc/usbguard/rules.conf
 ```
 
-Vous devez retrouver vos contrôleurs USB (`xHCI Host Controller`), votre clavier, votre souris, la webcam et le Bluetooth internes (qui sont, eux aussi, des périphériques USB sur la quasi-totalité des portables).
+Résultat attendu :
+
+```text
+-rw------- root:root /etc/usbguard/rules.conf
+```
+
+!!! warning "Ne remplacez pas à l’aveugle une politique active"
+    Lors d’une modification ultérieure, générez toujours la nouvelle politique dans un fichier temporaire. Relisez-la avant de remplacer le fichier utilisé par le démon.
+
+    Sauvegardez la politique existante :
+
+    ```bash
+    sudo cp -a /etc/usbguard/rules.conf \
+        /etc/usbguard/rules.conf.backup
+    ```
 
 #### Lire une règle USBGuard
 
-Une ligne générée ressemble à ceci :
+Une règle générée peut ressembler à ceci :
 
 ```text title="/etc/usbguard/rules.conf"
 allow id 046d:c52b serial "" name "USB Receiver" hash "jEP/6WzviqdJ5VSeTUY8Pat…" parent-hash "kv0Xb…" with-interface { 03:01:01 03:01:02 03:00:00 }
@@ -152,421 +296,918 @@ allow id 046d:c52b serial "" name "USB Receiver" hash "jEP/6WzviqdJ5VSeTUY8Pat�
 
 | Élément | Signification |
 |---------|---------------|
-| `allow` | **Cible** de la règle : `allow` (autoriser), `block` (refuser l'autorisation) ou `reject` (retirer logiquement le périphérique du système). |
-| `id 046d:c52b` | Identifiants **VID:PID** — constructeur (`046d` = Logitech) et modèle. Facilement falsifiables par un attaquant. |
-| `serial ""` | Numéro de série déclaré. Vide sur beaucoup de matériels bas de gamme. |
-| `name "…"` | Nom déclaré par le périphérique. Purement informatif, falsifiable également. |
-| `hash "…"` | Empreinte calculée par USBGuard à partir de l'ensemble des descripteurs. Bien plus difficile à usurper qu'un simple VID:PID. |
-| `parent-hash "…"` | Empreinte du port/hub parent : elle attache le périphérique à un emplacement physique de l'arborescence USB. |
-| `with-interface { … }` | Classes d'interface annoncées, au format `classe:sous-classe:protocole`. C'est **le champ le plus intéressant en sécurité**. |
+| `allow` | Cible de la règle : `allow` autorise le périphérique, `block` le maintient désautorisé et `reject` tente de le retirer logiquement du système. |
+| `id 046d:c52b` | Identifiants VID:PID du constructeur et du modèle. Ils sont déclarés par le périphérique et sont falsifiables. |
+| `serial ""` | Numéro de série déclaré par le périphérique. Il est vide sur de nombreux matériels et reste falsifiable. |
+| `name "…"` | Nom déclaré par le périphérique. Lorsqu’il figure dans la règle, il participe à la correspondance, mais il reste falsifiable. |
+| `hash "…"` | Empreinte calculée à partir des descripteurs USB. Elle rend la règle plus précise, sans constituer une authentification cryptographique. |
+| `parent-hash "…"` | Empreinte des descripteurs du périphérique parent, généralement un hub. Elle ne désigne pas à elle seule un port physique précis. |
+| `via-port "…"` | Chemin ou port USB auquel la règle est associée. Ce critère dépend de la topologie physique. |
+| `with-interface { … }` | Classes d’interface annoncées par le périphérique, au format `classe:sous-classe:protocole`. |
 
-!!! tip "Les classes d'interface, le cœur de la défense anti-BadUSB"
-    Quelques classes à connaître : `03` = HID (clavier, souris), `08` = stockage de masse, `09` = hub, `0e` = vidéo (webcam), `e0` = sans fil (Bluetooth), `ff` = spécifique constructeur.
-    Une clé USB piégée se trahit en annonçant à la fois `08` (stockage) et `03:00:01` (clavier). On peut donc écrire une règle explicite :
-    ```text
-    reject with-interface all-of { 08:*:* 03:00:* }
-    ```
-    Ajoutée **avant** les règles `allow`, elle refuse tout périphérique qui prétend être simultanément une clé et un clavier.
+!!! warning "Le hash n’est pas une preuve d’identité"
+    Le `hash` USBGuard est calculé à partir des descripteurs annoncés par le périphérique. Il ne s’agit ni d’une signature cryptographique, ni d’une attestation du firmware, ni d’une identité matérielle infalsifiable.
 
-!!! question "Faut-il conserver les `hash` ?"
-    Le hash est l'attribut le plus robuste, mais il change si le firmware du périphérique est mis à jour ou si le noyau modifie sa façon d'exposer les descripteurs — la règle cesse alors de correspondre et le matériel se retrouve bloqué sans raison apparente. Pour un parc de postes ou pour du matériel amené à être mis à jour, on préfère souvent générer sans hash puis ajouter le numéro de série :
-    ```bash
-    sudo usbguard generate-policy --no-hashes > /tmp/rules.conf
-    ```
+    Un périphérique programmable connaissant les valeurs attendues peut tenter de reproduire les mêmes descripteurs.
+
+    Le hash reste néanmoins utile pour réduire les correspondances accidentelles entre plusieurs périphériques partageant le même VID:PID.
+
+#### Lier une règle à un port
+
+Pour une machine dont le câblage est stable, il est possible de générer des règles liées à la topologie des ports :
+
+```bash
+sudo sh -c 'umask 077; usbguard generate-policy --with-ports > /tmp/usbguard-rules.conf'
+```
+
+Cette option ajoute des critères `via-port`.
+
+!!! warning "Inconvénient de `via-port`"
+    Une règle liée à un port peut cesser de correspondre après :
+
+    - un changement de port ;
+    - l’ajout ou le retrait d’un hub ;
+    - le remplacement d’un dock ;
+    - une modification de la topologie USB ;
+    - certains changements de firmware ou de matériel.
+
+#### Générer sans hash
+
+Il est possible de générer une politique sans empreintes :
+
+```bash
+sudo sh -c 'umask 077; usbguard generate-policy --no-hashes > /tmp/usbguard-rules.conf'
+```
+
+Cette politique est généralement plus tolérante aux changements de descripteurs, mais elle est aussi moins précise.
+
+Si vous retirez les hashes, essayez de conserver plusieurs critères :
+
+- `id` ;
+- `serial`, lorsqu’il est réellement unique ;
+- `name` ;
+- `with-interface` ;
+- éventuellement `via-port`.
+
+Aucun de ces champs ne constitue cependant une authentification cryptographique.
+
+#### Classes d’interface importantes
+
+| Classe | Fonction habituelle |
+|--------|---------------------|
+| `03` | HID : clavier, souris, manette |
+| `08` | Stockage de masse |
+| `09` | Hub USB |
+| `0e` | Vidéo, par exemple webcam |
+| `e0` | Sans fil, notamment certains adaptateurs Bluetooth |
+| `ff` | Fonction spécifique au constructeur |
+
+Une règle placée avant les règles d’autorisation peut rejeter les périphériques composites annonçant simultanément une interface de stockage et une interface HID :
+
+```text
+reject with-interface all-of { 08:*:* 03:*:* }
+```
+
+!!! warning "Cette règle ne bloque pas tous les BadUSB"
+    Elle bloque seulement les périphériques présentant simultanément une fonction de stockage et une fonction HID.
+
+    Un périphérique malveillant se présentant uniquement comme clavier HID ne correspond pas à cette règle. La protection principale reste donc une liste blanche précise des périphériques HID autorisés.
+
+    Certains périphériques légitimes sont également composites. Vérifiez l’impact d’une telle règle sur les téléphones, docks, claviers avec lecteur de cartes et matériels spécialisés.
 
 ---
 
-### Étape 4 : Accorder les droits d'administration via l'IPC
+### Étape 6 : accorder les droits d’administration via l’IPC
 
-Le démon expose une interface **IPC** (Inter-Process Communication) qui permet à l'outil `usbguard` de lui parler sans être `root` à chaque branchement. Depuis la version 0.7, la bonne méthode consiste à créer un **fichier de contrôle d'accès** dans `/etc/usbguard/IPCAccessControl.d/` — les anciennes directives `IPCAllowedUsers` et `IPCAllowedGroups` de `usbguard-daemon.conf` sont considérées comme héritées et ne sont plus la voie recommandée.
+Le démon expose une interface IPC permettant à l’outil `usbguard` de consulter les périphériques et de modifier leur état.
 
-```bash
-sudo usbguard add-user --group sudo --devices ALL --policy modify,list --exceptions listen
+USBGuard prend en charge des fichiers de contrôle d’accès dans :
+
+```text
+/etc/usbguard/IPCAccessControl.d/
 ```
 
-Décomposition des options :
+Vérifiez d’abord la syntaxe prise en charge par la version installée :
+
+```bash
+usbguard add-user --help
+```
+
+Pour accorder les droits au groupe `sudo` :
+
+```bash
+sudo usbguard add-user sudo --group \
+    --devices ALL \
+    --policy modify,list \
+    --exceptions listen
+```
+
+!!! warning "Position de l’option `--group`"
+    Avec USBGuard 1.1.x, le nom du groupe est généralement fourni comme argument positionnel et `--group` indique que cet argument désigne un groupe :
+
+    ```bash
+    usbguard add-user NOM_DU_GROUPE --group ...
+    ```
+
+    Vérifiez toujours `usbguard add-user --help`, car la syntaxe exacte peut varier selon la version empaquetée.
 
 | Option | Effet |
 |--------|-------|
-| `--group sudo` | La cible est le **groupe** `sudo` (et non un utilisateur). Sans `-g`/`--group`, le nom serait interprété comme un identifiant utilisateur. |
-| `--devices ALL` | Toutes les permissions sur les périphériques : `list` (les lister), `modify` (changer leur état d'autorisation), `listen` (recevoir les événements). |
-| `--policy modify,list` | Droit de lire **et de modifier** la politique. `modify` est indispensable pour que l'option `-p` (règle permanente) fonctionne. |
-| `--exceptions listen` | Réception des messages d'exception du démon. |
+| `sudo` | Nom du groupe auquel les droits sont accordés |
+| `--group` | Indique que la cible est un groupe et non un utilisateur |
+| `--devices ALL` | Autorise la consultation, l’écoute et la modification de l’état des périphériques |
+| `--policy modify,list` | Autorise la lecture et la modification de la politique |
+| `--exceptions listen` | Autorise la réception des événements d’exception |
 
-!!! warning "Un droit `sudo` élargi"
-    Donner ces privilèges au groupe `sudo` est pratique sur un poste personnel, car les membres de ce groupe peuvent déjà devenir `root`. Sur un serveur multi-utilisateurs, préférez un groupe dédié et n'y placez que les comptes concernés :
-    ```bash
-    sudo groupadd --system usbguard
-    sudo usermod -aG usbguard "$USER"
-    sudo usbguard add-user --group usbguard --devices ALL --policy modify,list --exceptions listen
-    ```
-    L'appartenance à un nouveau groupe n'est effective qu'après une reconnexion complète de la session.
-
-*Vérification :* la commande crée un fichier dont le nom est celui du groupe **préfixé par deux-points** :
+Vérifiez le fichier créé :
 
 ```bash
 sudo ls -l /etc/usbguard/IPCAccessControl.d/
 sudo cat /etc/usbguard/IPCAccessControl.d/:sudo
 ```
 
-!!! success "Résultat attendu"
-    ```text
-    Devices=modify list listen
-    Policy=modify list
-    Exceptions=listen
+Le contenu doit être proche de :
+
+```text
+Devices=modify list listen
+Policy=modify list
+Exceptions=listen
+```
+
+!!! warning "Ces droits permettent de modifier la politique de sécurité"
+    `Devices=modify` permet d’autoriser ou de bloquer des périphériques à chaud.
+
+    `Policy=modify` permet d’ajouter des règles persistantes et donc, potentiellement, d’affaiblir fortement la politique.
+
+    Sur un poste personnel, les accorder au groupe `sudo` n’ajoute généralement pas de privilège fondamental, puisque ses membres peuvent déjà devenir `root`. Sur un système multi-utilisateur, utilisez un groupe administratif dédié :
+
+    ```bash
+    sudo groupadd --system usbguard-admin
+    sudo usermod -aG usbguard-admin "$USER"
+
+    sudo usbguard add-user usbguard-admin --group \
+        --devices ALL \
+        --policy modify,list \
+        --exceptions listen
     ```
-    Toute modification apportée par `add-user` ou `remove-user` **n'est prise en compte qu'après un (re)démarrage du démon** — ce qui tombe bien, il n'est pas encore lancé.
+
+    L’appartenance au nouveau groupe ne devient effective qu’après une reconnexion complète de la session.
+
+Les fichiers de contrôle d’accès sont lus au démarrage du démon. Toute modification nécessite donc un démarrage ou un redémarrage d’USBGuard.
 
 ---
 
-### Étape 5 : Démarrer le démon
+### Étape 7 : démarrer le démon
 
-La politique est en place et les droits IPC sont configurés : on peut lever le masquage et activer le service.
+La politique et les droits IPC étant en place, démasquez puis activez le service :
 
 ```bash
 sudo systemctl unmask usbguard.service
 sudo systemctl enable --now usbguard.service
 ```
 
-*Vérification :*
+Vérifiez son état :
 
 ```bash
-systemctl status usbguard.service
-usbguard list-devices
+systemctl --no-pager --full status usbguard.service
+journalctl -u usbguard.service -b --no-pager
 ```
 
-!!! success "Résultat attendu"
-    Le service est `active (running)`. La sortie de `list-devices` affiche vos périphériques avec la mention `allow`. Le clavier, la souris et le pointeur continuent de répondre. Notez que `usbguard list-devices` fonctionne désormais **sans `sudo`** : c'est la preuve que les droits IPC de l'étape 4 sont opérationnels.
+Puis interrogez USBGuard :
 
-!!! tip "Test de non-régression, sans risque"
-    Débranchez puis rebranchez votre souris : elle doit repartir instantanément (elle est dans la liste blanche). Branchez ensuite une clé USB inconnue : elle ne doit **pas** apparaître dans le gestionnaire de fichiers, et `usbguard list-devices` doit la montrer en `block`.
+```bash
+usbguard list-devices
+usbguard list-rules
+```
+
+Résultat attendu :
+
+- le service est `active (running)` ;
+- les périphériques de confiance sont indiqués comme `allow` ;
+- le clavier et la souris continuent de fonctionner ;
+- `usbguard list-devices` fonctionne sans `sudo` pour les membres du groupe autorisé.
+
+!!! warning "Si l’accès IPC échoue"
+    Testez d’abord les commandes avec `sudo` :
+
+    ```bash
+    sudo usbguard list-devices
+    sudo usbguard list-rules
+    ```
+
+    Si elles fonctionnent avec `sudo` mais pas sans, le problème vient probablement des droits IPC ou de l’appartenance au groupe, et non de la politique USB elle-même.
 
 ---
 
-### Étape 6 : Autoriser un nouveau périphérique au quotidien
+### Étape 8 : tester la politique
 
-Tout périphérique absent de la liste blanche reste inerte. Pour l'admettre :
+Commencez par un périphérique non indispensable.
 
-**1. Identifier son numéro de périphérique interne**
+1. Débranchez puis rebranchez une souris ou un périphérique autorisé.
+2. Vérifiez qu’il redevient immédiatement utilisable.
+3. Branchez ensuite une clé USB inconnue.
+4. Vérifiez qu’elle n’est pas montée.
+5. Affichez les périphériques bloqués :
 
 ```bash
 usbguard list-devices --blocked
 ```
 
+Selon la version installée, la forme courte suivante peut également être disponible :
+
+```bash
+usbguard list-devices -b
+```
+
+Un périphérique inconnu doit apparaître avec l’état `block`.
+
+!!! danger "Ne commencez pas avec un périphérique critique"
+    Ne testez pas initialement avec :
+
+    - votre seul clavier ;
+    - l’adaptateur réseau utilisé pour SSH ;
+    - le support contenant le système ;
+    - un dock indispensable ;
+    - le seul périphérique permettant la récupération.
+
+---
+
+### Étape 9 : autoriser un nouveau périphérique
+
+#### Identifier son identifiant interne
+
+```bash
+usbguard list-devices --blocked
+```
+
+Exemple :
+
 ```text
 16: block id 0951:1666 serial "60A44C..." name "DataTraveler 3.0" hash "…" with-interface { 08:06:50 }
 ```
 
-Le premier nombre (`16` ici) est **l'identifiant interne du périphérique** attribué par le démon — à ne pas confondre ni avec le VID:PID `0951:1666`, ni avec un identifiant de règle (ceux de `usbguard list-rules`, utilisés avec `append-rule`/`remove-rule`). Il change à chaque rebranchement.
+Le premier nombre, `16` dans cet exemple, est l’identifiant interne attribué par le démon au périphérique.
 
-**2. Autoriser le périphérique**
+Il ne faut pas le confondre avec :
 
-=== "Autorisation temporaire (session en cours)"
+- le VID:PID `0951:1666` ;
+- l’identifiant d’une règle affiché par `usbguard list-rules`.
 
-    ```bash
-    usbguard allow-device 16
-    ```
+L’identifiant du périphérique peut changer après un rebranchement ou un redémarrage du démon.
 
-    L'autorisation disparaît au redémarrage du démon. C'est le bon choix pour une clé de passage appartenant à un tiers.
-
-=== "Autorisation permanente"
-
-    ```bash
-    usbguard allow-device 16 -p
-    ```
-
-    Le drapeau `-p` / `--permanent` ajoute une règle `allow` spécifique à `/etc/usbguard/rules.conf`. Le périphérique sera reconnu après chaque redémarrage.
-
-!!! warning "Piège de syntaxe : le sens de `-p` change selon la sous-commande"
-    Avec `allow-device`, `block-device` et `reject-device`, `-p` signifie `--permanent`.
-    Avec `generate-policy`, `-p` signifie `--with-ports` (générer des règles liées au port physique). Deux options homonymes, deux effets sans rapport.
-
-*Vérification :*
+#### Autorisation temporaire
 
 ```bash
-usbguard list-devices | grep -i datatraveler
-sudo grep -c '^allow' /etc/usbguard/rules.conf   # le compteur augmente si -p a été utilisé
+usbguard allow-device 16
 ```
 
-Le périphérique doit être passé en `allow` et devenir accessible dans le système (montage automatique, `lsblk`, etc.).
+Cette décision n’ajoute pas de règle persistante. Elle disparaît notamment après le redémarrage du démon ou la disparition du périphérique.
 
-!!! tip "Voir les événements en direct"
-    Dans un terminal laissé ouvert, `usbguard watch` affiche en temps réel les branchements, les blocages et les modifications de politique. Très pratique pendant la phase de mise au point.
+Utilisez cette méthode pour un périphérique de passage dont vous ne souhaitez pas conserver l’autorisation.
+
+#### Autorisation permanente
+
+```bash
+usbguard allow-device 16 -p
+```
+
+Le drapeau `-p` ou `--permanent` ajoute une règle persistante à la politique configurée par le démon.
+
+Avec la configuration Ubuntu habituelle utilisant :
+
+```text
+RuleFile=/etc/usbguard/rules.conf
+```
+
+la règle est enregistrée dans ce fichier.
+
+!!! warning "Relisez toute règle permanente"
+    Une règle générée automatiquement peut être plus large ou plus fragile que prévu. Après une autorisation permanente, examinez la politique :
+
+    ```bash
+    usbguard list-rules
+    sudo grep -nF '0951:1666' /etc/usbguard/rules.conf
+    ```
+
+    Remplacez `0951:1666` par un attribut du périphérique concerné.
+
+!!! warning "Le sens de `-p` dépend de la sous-commande"
+    Avec `allow-device`, `block-device` et `reject-device`, `-p` signifie généralement `--permanent`.
+
+    Avec `generate-policy`, `-p` peut signifier `--with-ports`.
+
+    Vérifiez l’aide de la sous-commande avant utilisation :
+
+    ```bash
+    usbguard allow-device --help
+    usbguard generate-policy --help
+    ```
+
+#### Suivre les événements en direct
+
+```bash
+usbguard watch
+```
+
+Cette commande permet d’observer les branchements, les blocages et les modifications d’état en temps réel.
 
 ---
 
-### Étape 7 (optionnel) : Notifications sur le bureau
+### Étape 10 facultative : notifications sur le bureau
 
-En environnement graphique, être bloqué sans le moindre message est déroutant. Deux compléments existent :
-
-**a. `usbguard-notifier`** — une petite fenêtre surgissante à chaque branchement ou blocage :
+#### Installer `usbguard-notifier`
 
 ```bash
 sudo apt install usbguard-notifier
-systemctl enable --now --user usbguard-notifier.service
 ```
 
-Ce service a besoin, au minimum, du privilège IPC `Devices=listen` pour votre compte — déjà couvert par l'étape 4 si vous appartenez au groupe visé.
+Vérifiez le mécanisme de lancement fourni par le paquet :
 
-**b. L'intégration native de GNOME** — GNOME sait piloter USBGuard via D-Bus pour rejeter les périphériques branchés **pendant que la session est verrouillée** (scénario classique de l'attaque « evil maid ») :
+```bash
+dpkg -L usbguard-notifier | grep -E 'systemd|autostart|\.desktop$'
+systemctl --user list-unit-files 'usbguard*'
+```
+
+Si une unité utilisateur `usbguard-notifier.service` est effectivement installée :
+
+```bash
+systemctl --user enable --now usbguard-notifier.service
+```
+
+Si le paquet fournit uniquement un fichier XDG Autostart, déconnectez-vous puis reconnectez-vous.
+
+Le notifier doit disposer au minimum du droit IPC nécessaire pour écouter les événements :
+
+```text
+Devices=listen
+```
+
+!!! warning "Ne donnez pas de droits excessifs au notifier"
+    Un outil chargé uniquement d’afficher des notifications n’a pas besoin du droit `Policy=modify`.
+
+    Ne rendez jamais les sockets ou fichiers USBGuard accessibles à tous avec `chmod 666` ou `chmod 777`, et n’exécutez pas une application graphique avec `sudo` pour contourner un problème de permissions.
+
+#### Protection USB proposée par GNOME
+
+Certaines versions de GNOME peuvent utiliser le service D-Bus d’USBGuard afin de renforcer la politique lorsque la session est verrouillée.
+
+Cette fonction dépend :
+
+- de la version de GNOME ;
+- des paquets installés ;
+- des correctifs Ubuntu ;
+- de la présence du service D-Bus ;
+- de la présence des clés `gsettings` correspondantes.
+
+Vérifiez d’abord les éléments disponibles :
+
+```bash
+systemctl list-unit-files 'usbguard*'
+gsettings list-keys org.gnome.desktop.privacy | grep '^usb-protection'
+```
+
+Si `usbguard-dbus.service` et les clés correspondantes existent :
 
 ```bash
 sudo systemctl unmask usbguard-dbus.service
 sudo systemctl enable --now usbguard-dbus.service
 
 gsettings set org.gnome.desktop.privacy usb-protection true
-gsettings set org.gnome.desktop.privacy usb-protection-level lockscreen   # ou 'always'
+gsettings set org.gnome.desktop.privacy usb-protection-level 'lockscreen'
 ```
+
+La valeur `'always'` peut être disponible selon le schéma installé :
+
+```bash
+gsettings range org.gnome.desktop.privacy usb-protection-level
+```
+
+!!! note "Le service D-Bus est facultatif"
+    `usbguard.service` et son interface IPC suffisent à appliquer la politique USBGuard.
+
+    N’activez `usbguard-dbus.service` que si GNOME ou un autre client installé en a réellement besoin.
 
 ---
 
 ## Vérification
 
-Récapitulatif des contrôles à effectuer une fois l'ensemble en place :
+Effectuez les contrôles suivants une fois la configuration terminée.
+
+### État du service
 
 ```bash
-# 1. Le service tourne et démarrera au boot
-systemctl is-active usbguard.service && systemctl is-enabled usbguard.service
-
-# 2. La politique est chargée et non vide
-usbguard list-rules | head
-
-# 3. Les paramètres de sécurité par défaut sont bien appliqués
-usbguard get-parameter ImplicitPolicyTarget    # attendu : block
-usbguard get-parameter InsertedDevicePolicy    # attendu : apply-policy
-
-# 4. Les journaux ne contiennent pas d'erreur de chargement
-journalctl -u usbguard.service -b --no-pager | tail -n 20
+systemctl is-active usbguard.service
+systemctl is-enabled usbguard.service
 ```
 
-!!! success "Résultat attendu"
-    `active` + `enabled`, une liste de règles numérotées, les deux paramètres aux valeurs ci-dessus, et un journal se terminant par le chargement de la politique sans message `error`.
+Résultat attendu :
 
-**Test final, celui qui compte :** redémarrez la machine. Après le retour de l'écran de connexion, le clavier et la souris doivent fonctionner immédiatement. C'est le seul moyen de valider que `PresentDevicePolicy=apply-policy` retrouve bien votre matériel au démarrage.
+```text
+active
+enabled
+```
+
+### Politique chargée
+
+```bash
+usbguard list-rules
+```
+
+La liste ne doit pas être vide.
+
+### Paramètres actifs
+
+```bash
+usbguard get-parameter ImplicitPolicyTarget
+usbguard get-parameter PresentDevicePolicy
+usbguard get-parameter InsertedDevicePolicy
+```
+
+Les valeurs attendues pour une politique de liste blanche sont généralement :
+
+```text
+block
+apply-policy
+apply-policy
+```
+
+Vérifiez également la configuration sur disque :
+
+```bash
+sudo grep -E '^[[:space:]]*(ImplicitPolicyTarget|PresentDevicePolicy|InsertedDevicePolicy|PresentControllerPolicy|RestoreControllerDeviceState)=' \
+    /etc/usbguard/usbguard-daemon.conf
+```
+
+### Journaux
+
+```bash
+journalctl -u usbguard.service -b --no-pager | tail -n 50
+```
+
+Recherchez notamment :
+
+- une erreur de syntaxe dans une règle ;
+- une erreur de chargement du fichier ;
+- une erreur de permission ;
+- un problème IPC ;
+- un périphérique indispensable bloqué.
+
+### Tests finaux
+
+1. Redémarrez la machine.
+2. Vérifiez le clavier et la souris à l’écran de connexion.
+3. Vérifiez le réseau si un adaptateur USB est utilisé.
+4. Rebranchez un périphérique autorisé.
+5. Branchez un périphérique inconnu non indispensable et confirmez son blocage.
+6. Si la machine utilise un dock ou une topologie complexe, effectuez également un arrêt complet suivi d’un démarrage.
+7. Vérifiez la procédure de récupération pendant qu’un accès de secours reste disponible.
 
 ---
 
 ## Aide-mémoire
 
-| Commande / Action | Description |
-|-------------------|-------------|
-| `usbguard list-devices` | Lister tous les périphériques reconnus et leur état |
-| `usbguard list-devices -b` | Ne lister que les périphériques bloqués |
-| `usbguard list-devices -t` | Affichage en arborescence (utile pour repérer les hubs) |
-| `usbguard allow-device <ID> -p` | Autoriser un périphérique de façon permanente |
-| `usbguard block-device <ID> -p` | Bloquer un périphérique de façon permanente |
-| `usbguard reject-device <ID>` | Retirer logiquement le périphérique du système |
-| `usbguard list-rules` | Afficher la politique en vigueur, avec les identifiants de règle |
-| `usbguard list-rules -d` | Afficher la politique et les périphériques concernés par chaque règle |
-| `usbguard append-rule '<règle>'` | Ajouter une règle à la fin de la politique |
-| `usbguard remove-rule <ID>` | Supprimer une règle par son identifiant |
-| `usbguard generate-policy` | Générer une politique à partir du matériel branché |
-| `usbguard generate-policy --no-hashes` | Générer une politique sans empreintes (plus tolérante) |
-| `usbguard watch` | Suivre les événements USB en temps réel |
-| `usbguard add-user <nom> …` | Créer un fichier de contrôle d'accès IPC |
-| `usbguard remove-user <nom>` | Supprimer un fichier de contrôle d'accès IPC |
-| `usbguard get-parameter <nom>` | Lire un paramètre à chaud (`ImplicitPolicyTarget`, `InsertedDevicePolicy`) |
-| `usbguard set-parameter <nom> <valeur>` | Modifier un paramètre à chaud (non persistant) |
-| `lsusb -t` | Vue noyau de l'arborescence USB, indépendante d'USBGuard |
+| Commande ou action | Description |
+|--------------------|-------------|
+| `usbguard list-devices` | Lister les périphériques connus du démon et leur état |
+| `usbguard list-devices --blocked` | Lister les périphériques bloqués |
+| `usbguard list-devices -t` | Afficher les périphériques sous forme d’arborescence, si l’option est prise en charge |
+| `usbguard allow-device <ID>` | Autoriser temporairement un périphérique |
+| `usbguard allow-device <ID> -p` | Autoriser un périphérique et ajouter une règle persistante |
+| `usbguard block-device <ID> -p` | Bloquer un périphérique avec une règle persistante |
+| `usbguard reject-device <ID>` | Rejeter logiquement un périphérique |
+| `usbguard list-rules` | Afficher la politique chargée et les identifiants de règles |
+| `usbguard list-rules -d` | Afficher des informations supplémentaires sur les règles, si l’option est prise en charge |
+| `usbguard append-rule '<règle>'` | Ajouter une règle à la politique |
+| `usbguard remove-rule <ID>` | Supprimer une règle à partir de son identifiant |
+| `usbguard generate-policy` | Générer une politique à partir des périphériques présents |
+| `usbguard generate-policy --no-hashes` | Générer une politique sans empreintes |
+| `usbguard generate-policy --with-ports` | Générer des règles liées à la topologie des ports |
+| `usbguard watch` | Suivre les événements USBGuard en temps réel |
+| `usbguard add-user <nom> …` | Créer un contrôle d’accès IPC |
+| `usbguard remove-user <nom>` | Supprimer un contrôle d’accès IPC |
+| `usbguard get-parameter <nom>` | Lire un paramètre exposé par le démon |
+| `usbguard set-parameter <nom> <valeur>` | Modifier un paramètre à chaud, sans nécessairement le rendre persistant |
+| `lsusb` | Lister les périphériques vus par le noyau |
+| `lsusb -t` | Afficher l’arborescence USB vue par le noyau |
+| `journalctl -u usbguard.service -b` | Consulter les journaux du démon pour le démarrage courant |
+
+Vérifiez les options disponibles dans la version installée :
+
+```bash
+usbguard --help
+usbguard list-devices --help
+usbguard generate-policy --help
+```
 
 ### Fichiers importants
 
 | Chemin | Rôle |
 |--------|------|
-| `/etc/usbguard/usbguard-daemon.conf` | Configuration du démon (cibles implicites, chemins, audit) |
-| `/etc/usbguard/rules.conf` | Politique principale — `0600 root:root` |
-| `/etc/usbguard/rules.d/` | Politiques additionnelles, chargées par ordre alphanumérique |
-| `/etc/usbguard/IPCAccessControl.d/` | Fichiers de contrôle d'accès IPC (`utilisateur` ou `:groupe`) |
-| `/var/log/usbguard/usbguard-audit.log` | Journal d'audit, si `AuditBackend=FileAudit` est configuré |
+| `/etc/usbguard/usbguard-daemon.conf` | Configuration du démon |
+| `/etc/usbguard/rules.conf` | Fichier de politique habituel sur Ubuntu |
+| `/etc/usbguard/rules.d/` | Dossier de politiques uniquement si `RuleFolder` est configuré |
+| `/etc/usbguard/IPCAccessControl.d/` | Contrôles d’accès IPC pour les utilisateurs et les groupes |
+| `/var/log/usbguard/usbguard-audit.log` | Journal d’audit si `AuditBackend=FileAudit` est configuré |
+| `/var/log/journal/` | Journaux persistants de systemd, lorsqu’ils sont activés |
 
 ### Paramètres clés de `usbguard-daemon.conf`
 
-| Paramètre | Valeur par défaut | Signification |
-|-----------|-------------------|---------------|
-| `ImplicitPolicyTarget` | `block` | Sort réservé aux périphériques ne correspondant à aucune règle |
-| `PresentDevicePolicy` | `apply-policy` | Traitement des périphériques déjà branchés au démarrage du démon |
+| Paramètre | Valeur habituelle à vérifier | Signification |
+|-----------|------------------------------|---------------|
+| `RuleFile` | `/etc/usbguard/rules.conf` | Fichier principal de politique |
+| `RuleFolder` | Variable selon la configuration | Dossier contenant des politiques additionnelles |
+| `ImplicitPolicyTarget` | `block` | Décision appliquée lorsqu’aucune règle ne correspond |
+| `PresentDevicePolicy` | `apply-policy` | Traitement des périphériques présents au démarrage du démon |
 | `PresentControllerPolicy` | `keep` | Traitement des contrôleurs USB déjà présents |
 | `InsertedDevicePolicy` | `apply-policy` | Traitement des périphériques branchés à chaud |
-| `RestoreControllerDeviceState` | `false` | Restaurer ou non l'état permissif d'origine à l'arrêt du démon |
+| `RestoreControllerDeviceState` | `false` | Restauration éventuelle de l’état antérieur des contrôleurs lors de l’arrêt propre du démon |
 
-!!! danger "Ne passez jamais `RestoreControllerDeviceState` à `true`"
-    Avec cette valeur, il suffit de faire planter ou de couper le démon pour que le système revienne à son état d'origine — c'est-à-dire permissif. La protection devient contournable par une simple attaque en déni de service sur le processus.
+!!! warning "Conservez de préférence `RestoreControllerDeviceState=false`"
+    Avec `true`, USBGuard tente de restaurer l’état antérieur des contrôleurs lors d’un **arrêt propre** du démon. Si cet état était permissif, de nouveaux périphériques pourraient alors être autorisés après l’arrêt du service.
+
+    Un processus interrompu brutalement ne peut généralement pas exécuter cette restauration. Il est donc incorrect d’affirmer qu’un simple crash restaure automatiquement un état permissif.
+
+    La valeur `false` reste néanmoins préférable pour conserver un comportement aussi proche que possible du « fail closed » après l’arrêt du service.
 
 ---
 
 ## Problèmes fréquents
 
-### Problème 1 : Plus de clavier ni de souris après l'installation
+### Problème 1 : plus de clavier ni de souris après l’installation
 
 !!! failure "Symptôme"
-    Immédiatement après `apt install usbguard`, l'écran ne réagit plus. Aucune saisie n'est possible, la souris est figée. Rien n'est affiché à l'écran pour l'expliquer.
+    Après l’installation ou le démarrage du service, l’écran ne réagit plus, le clavier ne saisit rien et la souris reste figée.
 
-**Cause :** le service a démarré avec une politique vide et `ImplicitPolicyTarget=block` : tout le matériel USB a été désautorisé, y compris les périphériques de saisie.
+**Causes possibles :**
 
-**Solution :**
+- le service a démarré avec une politique vide ;
+- la politique ne contient aucune règle correspondant aux périphériques de saisie ;
+- le clavier ou la souris se trouve derrière un hub bloqué ;
+- les descripteurs actuels ne correspondent plus à la règle ;
+- la politique présente au démarrage n’est pas celle que vous avez modifiée.
 
-=== "Si vous avez un accès SSH"
+Avec `ImplicitPolicyTarget=block`, le matériel concerné est alors désautorisé.
 
-    Depuis une autre machine, connectez-vous et neutralisez le service :
+#### Si vous avez un accès SSH
 
-    ```bash
-    sudo systemctl stop usbguard.service
-    sudo systemctl mask usbguard.service usbguard-dbus.service
-    sudo reboot
+Masquez et arrêtez les services :
+
+```bash
+sudo systemctl mask --now usbguard.service usbguard-dbus.service
+systemctl is-enabled usbguard.service
+sudo reboot
+```
+
+L’arrêt du démon ne réautorise pas nécessairement les périphériques déjà bloqués. Leur rebranchement ou un redémarrage peut être nécessaire.
+
+Après le redémarrage, reprenez la procédure à l’étape de génération de la politique.
+
+#### Si vous n’avez que la console locale
+
+Un clavier USB directement connecté est généralement pris en charge par le firmware dans GRUB, avant le démarrage d’USBGuard. Ce n’est toutefois pas garanti avec :
+
+- un clavier Bluetooth ;
+- certains récepteurs sans fil ;
+- un dock USB-C ;
+- un KVM ;
+- certaines configurations UEFI.
+
+Si le clavier fonctionne dans GRUB :
+
+1. Redémarrez la machine.
+2. Affichez le menu GRUB.
+3. Appuyez sur ++e++ pour modifier l’entrée.
+4. Repérez la ligne commençant par `linux`.
+5. Ajoutez à la fin :
+
+    ```text
+    systemd.mask=usbguard.service systemd.mask=usbguard-dbus.service
     ```
 
-    Reprenez ensuite la procédure à l'[étape 3](#etape-3-generer-la-politique-initiale).
+6. Appuyez sur ++ctrl+x++ ou ++f10++ pour démarrer.
+7. Une fois la session ouverte, rendez le masquage permanent :
 
-=== "Si vous n'avez que la console locale"
+    ```bash
+    sudo systemctl mask usbguard.service usbguard-dbus.service
+    ```
 
-    Le clavier fonctionne encore dans GRUB, car c'est le firmware UEFI/BIOS qui le gère à ce stade — USBGuard n'entre en scène qu'après le démarrage du noyau.
+!!! tip "Le menu GRUB ne s’affiche pas"
+    Maintenez ++shift++ sur certaines machines BIOS ou appuyez plusieurs fois sur ++esc++ sur certaines machines UEFI.
 
-    1. Redémarrez la machine (bouton d'alimentation si nécessaire).
-    2. Au menu GRUB, appuyez sur ++e++ pour éditer l'entrée de démarrage.
-    3. Repérez la ligne commençant par `linux` et ajoutez à la **fin** de celle-ci :
+    Pour rendre le menu temporairement visible lors des prochains démarrages, modifiez `/etc/default/grub` :
 
-        ```text
-        systemd.mask=usbguard.service
-        ```
+    ```text
+    GRUB_TIMEOUT_STYLE=menu
+    GRUB_TIMEOUT=5
+    ```
 
-    4. Appuyez sur ++ctrl+x++ pour démarrer. Le service ne sera pas lancé pour cette session uniquement.
-    5. Une fois la session ouverte, rendez le masquage durable :
+    Puis appliquez la configuration :
 
-        ```bash
-        sudo systemctl mask usbguard.service usbguard-dbus.service
-        ```
+    ```bash
+    sudo update-grub
+    ```
 
-!!! tip "Le menu GRUB ne s'affiche pas ?"
-    Maintenez ++shift++ (BIOS hérité) ou appuyez plusieurs fois sur ++esc++ (UEFI) pendant le démarrage. Pour rendre le menu permanent une fois l'accès retrouvé : `GRUB_TIMEOUT_STYLE=menu` et `GRUB_TIMEOUT=5` dans `/etc/default/grub`, puis `sudo update-grub`.
-
----
-
-### Problème 2 : Erreur de connexion à l'IPC
-
-!!! failure "Symptôme"
-    `usbguard list-devices` renvoie une erreur de connexion ou de permission alors que le démon tourne bien.
-
-**Causes possibles, dans l'ordre à tester :**
-
-1. **Le démon n'a pas été redémarré** après `add-user`. Les fichiers de `IPCAccessControl.d/` ne sont lus qu'au démarrage :
-   ```bash
-   sudo systemctl restart usbguard.service
-   ```
-2. **L'appartenance au groupe n'est pas active** dans la session courante. Vérifiez avec `id -nG` ; si le groupe manque, déconnectez-vous et reconnectez-vous (un simple `su - $USER` ne suffit pas pour une session graphique).
-3. **Le fichier de contrôle d'accès ne porte pas le bon nom.** Un groupe doit être préfixé par `:` — `/etc/usbguard/IPCAccessControl.d/:sudo` — alors qu'un utilisateur n'a pas de préfixe. C'est le symptôme typique d'un `add-user` lancé sans `-g`.
+!!! danger "Ne dépendez pas d’une méthode de récupération non testée"
+    Le mode de récupération ne garantit pas que le clavier fonctionnera. Sur une machine chiffrée ou sans périphérique d’entrée indépendant de l’USB, prévoyez une console distante, un accès série ou un support de secours testé.
 
 ---
 
-### Problème 3 : La règle n'a pas survécu au redémarrage
+### Problème 2 : erreur de connexion à l’IPC
 
 !!! failure "Symptôme"
-    Un périphérique autorisé la veille est de nouveau bloqué après un `reboot`.
+    `usbguard list-devices` renvoie une erreur de connexion ou de permission alors que le démon fonctionne.
 
-**Causes :**
+Testez d’abord :
 
-- Le drapeau `-p` a été oublié : l'autorisation n'existait qu'en mémoire.
-- Ou le privilège IPC `Policy=modify` est absent : le démon a accepté l'autorisation temporaire mais a refusé d'écrire dans `rules.conf`. Corrigez en rejouant l'[étape 4](#etape-4-accorder-les-droits-dadministration-via-lipc) avec `--policy modify,list`, puis redémarrez le démon.
+```bash
+sudo usbguard list-devices
+```
 
-Contrôle rapide : la règle correspondante doit apparaître dans `sudo cat /etc/usbguard/rules.conf`, pas seulement dans `usbguard list-rules`.
+Si la commande fonctionne avec `sudo`, vérifiez les éléments suivants.
+
+#### Le démon n’a pas été redémarré
+
+Les fichiers de contrôle d’accès sont lus au démarrage :
+
+```bash
+sudo systemctl restart usbguard.service
+```
+
+#### L’appartenance au groupe n’est pas active
+
+```bash
+id
+id -nG
+```
+
+Déconnectez-vous complètement puis reconnectez-vous si le groupe manque.
+
+#### Le fichier de contrôle d’accès porte un mauvais nom
+
+Pour un groupe, le fichier est normalement préfixé par `:` :
+
+```text
+/etc/usbguard/IPCAccessControl.d/:sudo
+```
+
+Pour un utilisateur, il ne possède pas ce préfixe.
+
+#### Le service ne fonctionne pas
+
+```bash
+systemctl status usbguard.service
+journalctl -u usbguard.service -b --no-pager
+```
+
+!!! danger "Ne contournez pas le problème avec des permissions globales"
+    N’utilisez pas `chmod 666`, `chmod 777`, `xhost +` ou l’exécution d’un programme graphique avec `sudo`.
+
+    Corrigez les droits IPC au moyen des mécanismes fournis par USBGuard.
 
 ---
 
-### Problème 4 : Le périphérique est « allow » mais ne fonctionne toujours pas
+### Problème 3 : une autorisation n’a pas survécu au redémarrage
 
 !!! failure "Symptôme"
-    `usbguard list-devices` indique `allow`, mais rien ne se monte et aucun pilote ne se charge.
+    Un périphérique autorisé précédemment est de nouveau bloqué après le redémarrage.
 
-**Cause :** l'USB est une **arborescence**. Un périphérique branché derrière un hub, un dock ou un écran-concentrateur ne peut être atteint que si **tous ses parents** sont eux-mêmes autorisés. Un hub bloqué rend inaccessible tout ce qui se trouve derrière lui.
+**Causes possibles :**
 
-**Solution :** affichez la hiérarchie et autorisez le hub parent, puis le périphérique :
+- l’option `-p` a été oubliée ;
+- le compte possède `Devices=modify`, mais pas `Policy=modify` ;
+- le démon utilise un autre `RuleFile` ou un `RuleFolder` ;
+- la règle persistante ne correspond plus au périphérique ;
+- le périphérique a été branché sur un autre port alors que la règle contient `via-port`.
+
+Vérifiez :
+
+```bash
+usbguard list-rules
+sudo grep -E '^[[:space:]]*(RuleFile|RuleFolder)=' \
+    /etc/usbguard/usbguard-daemon.conf
+```
+
+Avec la configuration habituelle :
+
+```bash
+sudo grep -nF 'VID:PID' /etc/usbguard/rules.conf
+```
+
+Remplacez `VID:PID` par l’identifiant réel, par exemple `0951:1666`.
+
+---
+
+### Problème 4 : le périphérique est autorisé mais ne fonctionne pas
+
+!!! failure "Symptôme"
+    `usbguard list-devices` indique `allow`, mais aucun pilote ne se charge ou aucun support n’apparaît.
+
+L’USB forme une arborescence. Un périphérique placé derrière un hub, un dock ou un écran-concentrateur dépend de ses parents.
+
+Affichez la hiérarchie :
 
 ```bash
 usbguard list-devices -t
+lsusb -t
+```
+
+Vérifiez que les hubs parents sont également autorisés.
+
+Si nécessaire :
+
+```bash
 usbguard allow-device <ID_DU_HUB> -p
 ```
 
----
-
-### Problème 5 : Un périphérique connu est bloqué après une mise à jour
-
-!!! failure "Symptôme"
-    Un matériel présent dans la politique depuis des mois se retrouve subitement en `block`.
-
-**Cause :** son attribut `hash` a changé — mise à jour de firmware du périphérique, ou changement dans la façon dont le noyau expose ses descripteurs après une montée de version.
-
-**Solution :** remplacez la règle par une version sans hash, adossée au numéro de série lorsqu'il existe :
+Consultez aussi les journaux du noyau :
 
 ```bash
-usbguard list-rules | grep -i "nom du périphérique"   # relever l'ID de règle
-usbguard remove-rule <ID_DE_REGLE>
-usbguard append-rule 'allow id 0951:1666 serial "60A44C..." name "DataTraveler 3.0"'
+journalctl -k -b --no-pager | tail -n 100
 ```
 
+Un périphérique autorisé par USBGuard peut rester inutilisable pour une autre raison :
+
+- pilote absent ;
+- erreur de montage ;
+- périphérique défectueux ;
+- alimentation insuffisante ;
+- problème de câble ;
+- règle udev ;
+- verrouillage LUKS ;
+- politique de bureau.
+
 ---
 
-### Problème 6 : `apt remove usbguard` se fige
+### Problème 5 : un périphérique connu est bloqué après une mise à jour
 
 !!! failure "Symptôme"
-    La désinstallation reste bloquée pendant l'arrêt du service.
+    Un périphérique présent dans la politique depuis longtemps apparaît soudainement en `block`.
 
-**Solution :** arrêtez et masquez d'abord les services, puis désinstallez :
+**Causes possibles :**
+
+- ses descripteurs ont changé après une mise à jour de firmware ;
+- son `hash` a changé ;
+- son nom ou son numéro de série déclaré a changé ;
+- ses interfaces ont changé ;
+- le périphérique se trouve derrière un autre hub ;
+- son port a changé alors que la règle utilise `via-port`.
+
+Commencez par sauvegarder la politique :
 
 ```bash
-sudo systemctl stop usbguard.service usbguard-dbus.service
-sudo systemctl mask usbguard.service usbguard-dbus.service
+sudo cp -a /etc/usbguard/rules.conf \
+    /etc/usbguard/rules.conf.backup
+```
+
+Comparez ensuite le périphérique et la règle :
+
+```bash
+usbguard list-devices
+usbguard list-rules
+```
+
+N’enlevez pas systématiquement le hash. Construisez plutôt une nouvelle règle suffisamment précise à partir des descripteurs actuels, puis testez-la avec un accès de secours disponible.
+
+Si vous choisissez une règle sans hash, conservez autant que possible plusieurs critères :
+
+```text
+allow id 0951:1666 serial "60A44C..." name "DataTraveler 3.0" with-interface { 08:06:50 }
+```
+
+Le numéro de série et le nom restent falsifiables. La suppression du hash constitue donc un compromis de maintenance, pas une amélioration de sécurité.
+
+---
+
+### Problème 6 : la désinstallation semble bloquée
+
+!!! failure "Symptôme"
+    `apt remove` ou `apt purge` semble rester bloqué pendant l’arrêt du service.
+
+Masquez et arrêtez d’abord les unités :
+
+```bash
+sudo systemctl mask --now usbguard.service usbguard-dbus.service
+```
+
+Puis désinstallez :
+
+```bash
 sudo apt purge usbguard
 ```
+
+Après la désinstallation, vérifiez les masques éventuellement laissés dans `/etc/systemd/system/` :
+
+```bash
+ls -l /etc/systemd/system/usbguard*.service
+```
+
+Si vous souhaitez supprimer ces masques :
+
+```bash
+sudo systemctl unmask usbguard.service usbguard-dbus.service
+sudo systemctl daemon-reload
+```
+
+---
+
+## Limites de la protection
+
+USBGuard réduit l’exposition aux périphériques USB inconnus, mais ne constitue pas une authentification matérielle et ne couvre pas tous les risques liés aux connecteurs modernes.
+
+- Les VID, PID, noms, numéros de série et descripteurs sont déclarés par le périphérique et peuvent être imités.
+- Le hash USBGuard est une empreinte de descripteurs, pas une attestation cryptographique.
+- Un périphérique déjà autorisé peut devenir malveillant ou exploiter une vulnérabilité de son pilote.
+- Une règle autorisant tous les claviers, tous les supports de stockage ou tous les périphériques d’un constructeur affaiblit fortement la protection.
+- USBGuard ne contrôle pas le contenu des fichiers.
+- USBGuard ne remplace pas un antivirus ou une solution EDR.
+- USBGuard ne couvre pas nécessairement Thunderbolt, le tunneling PCIe, les modes alternatifs USB-C ou toutes les fonctions d’un dock.
+- La protection ne s’applique qu’une fois le noyau, le démon et la politique opérationnels.
+- Un administrateur disposant de `root` ou de `Policy=modify` peut modifier ou désactiver la politique.
+- Un attaquant disposant d’un accès physique prolongé peut employer d’autres techniques que l’USB.
+
+USBGuard doit donc être considéré comme une couche de défense parmi d’autres :
+
+- mises à jour du noyau ;
+- chiffrement du disque ;
+- verrouillage de session ;
+- contrôle physique ;
+- moindre privilège ;
+- configuration sécurisée de Thunderbolt et USB-C ;
+- restrictions de montage ;
+- supervision des journaux.
 
 ---
 
 ## Checklist
 
-- [ ] Tous les périphériques de confiance sont branchés avant de commencer
-- [ ] Un second canal d'accès (SSH ou console d'hyperviseur) est disponible
-- [ ] `usbguard.service` et `usbguard-dbus.service` sont masqués **avant** `apt install`
-- [ ] Le paquet est installé et `usbguard --version` répond
-- [ ] La politique initiale est générée, relue et installée en `0600 root:root`
-- [ ] La politique contient bien le clavier, la souris et les périphériques internes
-- [ ] Le fichier de contrôle d'accès IPC est créé dans `IPCAccessControl.d/` avec `Policy=modify`
+- [ ] Les périphériques non indispensables ou non vérifiés sont débranchés
+- [ ] Les périphériques de confiance nécessaires sont branchés
+- [ ] La sortie de `lsusb` et `lsusb -t` a été contrôlée
+- [ ] Un second canal d’accès testé est disponible
+- [ ] `usbguard.service` et `usbguard-dbus.service` sont masqués avant l’installation
+- [ ] Le paquet est installé et sa version réelle a été vérifiée
+- [ ] `RuleFile` ou `RuleFolder` a été vérifié dans `usbguard-daemon.conf`
+- [ ] La politique initiale a été générée dans un fichier temporaire
+- [ ] Chaque périphérique autorisé a été identifié et justifié
+- [ ] La politique est installée en `0600 root:root`
+- [ ] Le clavier, la souris, les hubs, le dock et le réseau USB nécessaires sont couverts
+- [ ] Les droits IPC suivent le principe du moindre privilège
 - [ ] Le service est démasqué, activé et actif
-- [ ] `usbguard list-devices` fonctionne sans `sudo`
-- [ ] Une clé inconnue est bien refusée, une clé autorisée avec `-p` est bien acceptée
-- [ ] La machine a été redémarrée et le clavier fonctionne dès l'écran de connexion
-- [ ] (optionnel) Notifications de bureau ou protection GNOME à l'écran verrouillé activées
+- [ ] `usbguard list-devices` fonctionne pour le compte autorisé
+- [ ] Une règle permanente apparaît dans la politique chargée
+- [ ] Un périphérique inconnu est bloqué
+- [ ] Un périphérique connu fonctionne après rebranchement
+- [ ] La machine a été redémarrée
+- [ ] Les périphériques indispensables fonctionnent à l’écran de connexion
+- [ ] La procédure de récupération a été vérifiée
+- [ ] Les limites de sécurité d’USBGuard sont comprises
+- [ ] Les composants GNOME ou notifier n’ont été activés qu’après vérification de leur présence
 
 ---
 
 ## Glossaire
 
 BadUSB
-:   Famille d'attaques exploitant la capacité d'un périphérique USB à mentir sur sa propre nature. Un objet ressemblant à une clé de stockage se déclare clavier et injecte des frappes à grande vitesse, ou se déclare carte réseau pour détourner le trafic DNS du poste.
+:   Famille d’attaques exploitant la capacité d’un périphérique USB à déclarer une fonction différente de son apparence. Un objet ressemblant à une clé peut se présenter comme un clavier, une carte réseau ou un périphérique composite.
 
-Liste blanche (allow-list)
-:   Modèle de sécurité où tout est interdit sauf ce qui est explicitement autorisé. Plus contraignant qu'une liste noire, mais seul modèle capable de résister à une menace inconnue à l'avance.
+Liste blanche
+:   Modèle de sécurité dans lequel tout est interdit sauf ce qui est explicitement autorisé. Le terme anglais recommandé est *allow-list*.
 
 VID / PID
-:   *Vendor ID* et *Product ID* : deux entiers 16 bits identifiant le constructeur et le modèle d'un périphérique USB (`046d:c52b`). Ils sont déclarés par le périphérique lui-même et sont donc trivialement falsifiables.
+:   *Vendor ID* et *Product ID*. Ces deux entiers identifient le constructeur et le modèle déclarés par le périphérique, par exemple `046d:c52b`. Ils sont falsifiables.
 
-Classe d'interface USB
-:   Catégorie fonctionnelle déclarée par le périphérique au format `classe:sous-classe:protocole`. Elle indique au noyau quel pilote charger. Un même périphérique physique peut exposer plusieurs interfaces de classes différentes — ce qui est précisément le mécanisme des attaques BadUSB.
+Classe d’interface USB
+:   Catégorie fonctionnelle déclarée par une interface USB au format `classe:sous-classe:protocole`. Un même périphérique physique peut exposer plusieurs interfaces.
 
 HID
-:   *Human Interface Device*, classe `03` : claviers, souris, manettes. C'est la classe visée par la majorité des attaques par injection de frappes, car aucun pilote spécifique ni aucune confirmation utilisateur n'est requis.
+:   *Human Interface Device*, classe USB `03`. Cette classe couvre notamment les claviers, souris et manettes.
+
+Périphérique composite
+:   Périphérique USB exposant plusieurs interfaces ou fonctions, par exemple stockage, clavier et carte réseau dans un même appareil.
+
+Hash USBGuard
+:   Empreinte calculée à partir des descripteurs USB. Elle aide à produire une règle plus précise, mais ne prouve pas cryptographiquement l’identité physique du périphérique.
+
+`parent-hash`
+:   Empreinte des descripteurs du périphérique parent, généralement un hub. Elle ne désigne pas nécessairement un port physique unique.
+
+`via-port`
+:   Critère décrivant le chemin ou le port utilisé dans la topologie USB. Il peut rendre une règle plus restrictive, mais aussi plus sensible aux changements de câblage.
 
 sysfs
-:   Pseudo-système de fichiers monté sur `/sys`, qui expose les objets du noyau sous forme de fichiers. USBGuard s'appuie sur l'attribut `/sys/bus/usb/devices/*/authorized` pour autoriser ou désautoriser un périphérique.
+:   Pseudo-système de fichiers monté sous `/sys`, qui expose des objets et attributs du noyau sous forme de fichiers.
 
-Démon (daemon)
-:   Processus qui tourne en arrière-plan, sans terminal attaché, généralement lancé et supervisé par `systemd`. Ici, `usbguard-daemon`.
+Démon
+:   Processus fonctionnant en arrière-plan et généralement supervisé par systemd. Dans ce document, il s’agit de `usbguard-daemon`.
 
 IPC
-:   *Inter-Process Communication* : mécanisme permettant à deux processus d'échanger. USBGuard expose un canal IPC pour que l'outil `usbguard` pilote le démon sans être `root`, avec un contrôle fin des privilèges.
+:   *Inter-Process Communication*. USBGuard expose une interface IPC permettant au client `usbguard` de communiquer avec le démon selon des droits précis.
 
-Cible implicite (`ImplicitPolicyTarget`)
-:   Décision appliquée à un périphérique ne correspondant à aucune règle de la politique. `block` par défaut, c'est ce qui fait d'USBGuard une liste blanche.
+Cible implicite
+:   Décision appliquée à un périphérique ne correspondant à aucune règle. Une cible `block` permet d’appliquer un modèle de liste blanche.
 
 Attaque « evil maid »
-:   Scénario où un attaquant obtient un accès physique bref à une machine laissée sans surveillance (chambre d'hôtel, open space) pour y brancher un périphérique malveillant. La protection GNOME à l'écran verrouillé cible directement ce cas.
+:   Scénario dans lequel un attaquant obtient un accès physique temporaire à une machine laissée sans surveillance.
 
 *[USB]: Universal Serial Bus
 *[HID]: Human Interface Device
@@ -576,15 +1217,17 @@ Attaque « evil maid »
 *[ACL]: Access Control List
 *[FIDO2]: Fast IDentity Online 2
 *[IPMI]: Intelligent Platform Management Interface
+*[EDR]: Endpoint Detection and Response
 
 ---
 
 ## Ressources
 
-- [Site officiel USBGuard](https://usbguard.github.io/) — Documentation de référence du projet
-- [Documentation : configuration du démon](https://usbguard.github.io/documentation/configuration) — Détail de `usbguard-daemon.conf` et du contrôle d'accès IPC
-- [`usbguard(1)` — manuel Debian](https://manpages.debian.org/testing/usbguard/usbguard.1.en.html) — Toutes les sous-commandes et leurs options
-- [`usbguard-rules.conf(5)` — manuel Debian](https://manpages.debian.org/testing/usbguard/usbguard-rules.conf.5.en.html) — Grammaire complète du langage de règles
-- [Red Hat — Protecting systems against intrusive USB devices](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/security_hardening/protecting-systems-against-intrusive-usb-devices_security-hardening) — Bonnes pratiques et politiques structurées dans `rules.d/`
-- [USBGuard sur ArchWiki](https://wiki.archlinux.org/title/USBGuard) — Intégration GNOME et cas particuliers
-- [Dépôt GitHub du projet](https://github.com/USBGuard/usbguard) — Sources, journal des versions et suivi des bugs
+- [Site officiel USBGuard](https://usbguard.github.io/) — documentation et présentation du projet
+- [Documentation de configuration](https://usbguard.github.io/documentation/configuration) — configuration du démon et contrôle d’accès IPC
+- [`usbguard(1)` — manuel Debian](https://manpages.debian.org/testing/usbguard/usbguard.1.en.html) — commandes et options du client
+- [`usbguard-rules.conf(5)` — manuel Debian](https://manpages.debian.org/testing/usbguard/usbguard-rules.conf.5.en.html) — grammaire des règles
+- [`usbguard-daemon.conf(5)` — manuel Debian](https://manpages.debian.org/testing/usbguard/usbguard-daemon.conf.5.en.html) — paramètres du démon
+- [Red Hat — Protecting systems against intrusive USB devices](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/security_hardening/protecting-systems-against-intrusive-usb-devices_security-hardening) — recommandations de durcissement
+- [USBGuard sur ArchWiki](https://wiki.archlinux.org/title/USBGuard) — exemples de configuration et intégration au bureau
+- [Dépôt GitHub du projet](https://github.com/USBGuard/usbguard) — sources, versions et suivi des anomalies
