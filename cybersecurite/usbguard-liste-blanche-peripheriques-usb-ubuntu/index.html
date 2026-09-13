@@ -1822,6 +1822,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#controle-dacces-ipc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contrôle d’accès IPC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#permissions-des-fichiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Permissions des fichiers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#journaux" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1959,6 +1981,17 @@
     <span class="md-ellipsis">
       
         Problème 6 : la désinstallation semble bloquée
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-7-le-demon-refuse-de-demarrer-apres-une-modification-de-la-politique" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problème 7 : le démon refuse de démarrer après une modification de la politique
       
     </span>
   </a>
@@ -2711,6 +2744,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#controle-dacces-ipc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contrôle d’accès IPC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#permissions-des-fichiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Permissions des fichiers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#journaux" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2848,6 +2903,17 @@
     <span class="md-ellipsis">
       
         Problème 6 : la désinstallation semble bloquée
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probleme-7-le-demon-refuse-de-demarrer-apres-une-modification-de-la-politique" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problème 7 : le démon refuse de démarrer après une modification de la politique
       
     </span>
   </a>
@@ -3042,6 +3108,7 @@
 <p class="admonition-title">Résumé</p>
 <p>USBGuard applique une politique d’autorisation sur le bus <abbr title="Universal Serial Bus">USB</abbr> : seuls les périphériques correspondant à une règle d’autorisation peuvent être utilisés par le noyau. Les autres sont bloqués ou rejetés selon la politique configurée.</p>
 <p>Cette note couvre l’installation sur Ubuntu 24.04, la génération d’une liste blanche à partir du matériel de confiance, la configuration des droits <abbr title="Inter-Process Communication">IPC</abbr> et la gestion quotidienne des nouveaux périphériques. Elle explique également comment éviter — ou réparer — le verrouillage du clavier et de la souris qui peut survenir lors d’une première installation mal préparée.</p>
+<p>Une attention particulière est portée à trois comportements propres au paquet Ubuntu, qui prennent en défaut la plupart des procédures génériques : l’accès <abbr title="Inter-Process Communication">IPC</abbr> complet accordé d’office au groupe <code>plugdev</code>, l’ajout automatique d’un critère <code>via-port</code> aux périphériques sans numéro de série, et le chargement effectif de <code>/etc/usbguard/rules.d/</code>.</p>
 </div>
 <table>
 <thead>
@@ -3193,42 +3260,143 @@
 <li><code>usbguard.service</code> est <code>inactive</code> ;</li>
 <li>les périphériques <abbr title="Universal Serial Bus">USB</abbr> continuent de fonctionner.</li>
 </ul>
+<div class="admonition danger">
+<p class="admonition-title">Ce que le paquet Ubuntu a déjà fait à votre place</p>
+<p>Sur Ubuntu 24.04, le script de post-installation du paquet n’est pas passif. S’il ne trouve pas de fichier <code>/etc/usbguard/rules.conf</code>, il exécute :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>usbguard<span class="w"> </span>generate-policy<span class="w"> </span>&gt;&gt;<span class="w"> </span>/etc/usbguard/rules.conf<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">true</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>usbguard<span class="w"> </span>add-user<span class="w"> </span>-g<span class="w"> </span>plugdev<span class="w"> </span>--devices<span class="o">=</span>modify,list,listen<span class="w"> </span>--policy<span class="o">=</span>list<span class="w"> </span>--exceptions<span class="o">=</span>listen
+</code></pre></div>
+<p>Deux conséquences à retenir :</p>
+<ul>
+<li>une politique a <strong>déjà</strong> été générée à partir des périphériques branchés au moment de l’installation. L’étape 5 la remplacera, mais vérifiez dès maintenant qu’elle n’est pas vide, car le <code>|| true</code> masque un éventuel échec de génération — et une politique vide est exactement ce qui verrouille clavier et souris au démarrage du service ;</li>
+<li>un fichier de contrôle d’accès <abbr title="Inter-Process Communication">IPC</abbr> a <strong>déjà</strong> été créé pour le groupe <code>plugdev</code>. Ce point est traité à l’étape 4.</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>wc<span class="w"> </span>-l<span class="w"> </span>/etc/usbguard/rules.conf
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sudo<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/etc/usbguard/IPCAccessControl.d/
+</code></pre></div>
+</div>
+<div class="admonition success">
+<p class="admonition-title">Le masque survit bien à l’installation</p>
+<p>Le script du paquet appelle <code>deb-systemd-helper unmask</code> sur les deux unités. Cet utilitaire refuse toutefois de retirer un masque qu’il n’a pas posé lui-même : il exige la présence d’un fichier d’état dans <code>/var/lib/systemd/deb-systemd-helper-masked/</code>. Un masque créé par l’administrateur avec <code>systemctl mask</code> est donc conservé.</p>
+<p>Une seule exception : si <code>usbguard</code> avait déjà été installé puis retiré par <code>apt remove</code> sans purge, le masque appartiendrait au paquet et serait levé, ce qui démarrerait le service. La vérification <code>systemctl is-enabled</code> ci-dessus détecte ce cas.</p>
+</div>
 <div class="admonition note">
-<p class="admonition-title">Version du paquet</p>
-<p>Ubuntu 24.04 fournit un paquet basé sur USBGuard 1.1.2 au moment de la rédaction. Le numéro de révision Ubuntu et la version disponible peuvent évoluer avec les mises à jour.</p>
-<p>Utilisez toujours les commandes ci-dessus plutôt que de supposer une version précise.</p>
+<p class="admonition-title">Version et dépôt du paquet</p>
+<p>Ubuntu 24.04 fournit <code>usbguard</code> 1.1.2 et <code>usbguard-notifier</code> 0.1.0, tous deux dans le composant <strong><code>universe</code></strong>. Il est actif par défaut sur une installation Desktop ou Server standard, mais pas nécessairement sur une image minimale ou personnalisée.</p>
+<p>Le numéro de révision Ubuntu peut évoluer avec les mises à jour : utilisez toujours les commandes ci-dessus plutôt que de supposer une version précise.</p>
 </div>
 <hr />
 <h3 id="etape-4-examiner-la-configuration-du-demon">Étape 4 : examiner la configuration du démon<a class="headerlink" href="#etape-4-examiner-la-configuration-du-demon" title="Permanent link">&para;</a></h3>
 <p>Affichez les paramètres principaux :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'^[[:space:]]*(RuleFile|RuleFolder|ImplicitPolicyTarget|PresentDevicePolicy|PresentControllerPolicy|InsertedDevicePolicy|RestoreControllerDeviceState)='</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span>/etc/usbguard/usbguard-daemon.conf
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'^[[:space:]]*(RuleFile|RuleFolder|ImplicitPolicyTarget|PresentDevicePolicy|PresentControllerPolicy|InsertedDevicePolicy|AuthorizedDefault|RestoreControllerDeviceState|DeviceRulesWithPort|IPCAllowedUsers|IPCAllowedGroups|IPCAccessControlFiles|AuditBackend|AuditFilePath)='</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span>/etc/usbguard/usbguard-daemon.conf
 </code></pre></div>
-<p>Vérifiez notamment les valeurs suivantes :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>ImplicitPolicyTarget=block
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>PresentDevicePolicy=apply-policy
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>InsertedDevicePolicy=apply-policy
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>RestoreControllerDeviceState=false
-</code></pre></div>
-<p>Les lignes exactes peuvent différer selon la version du paquet. Si un paramètre n’est pas présent, consultez sa valeur par défaut dans le manuel installé :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>man<span class="w"> </span>usbguard-daemon.conf
-</code></pre></div>
-<div class="admonition warning">
-<p class="admonition-title">RuleFile et RuleFolder</p>
-<p>Vérifiez si le démon utilise un fichier unique avec <code>RuleFile</code> ou un dossier avec <code>RuleFolder</code>.</p>
-<p>La configuration Ubuntu habituelle utilise :</p>
+<p>Sur une Ubuntu 24.04 fraîchement installée, le paquet livre exactement ceci :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>RuleFile=/etc/usbguard/rules.conf
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>RuleFolder=/etc/usbguard/rules.d/
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>ImplicitPolicyTarget=block
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>PresentDevicePolicy=apply-policy
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>PresentControllerPolicy=keep
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>InsertedDevicePolicy=apply-policy
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>AuthorizedDefault=none
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>RestoreControllerDeviceState=false
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>DeviceManagerBackend=uevent
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>IPCAllowedUsers=root
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>IPCAllowedGroups=root plugdev
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>IPCAccessControlFiles=/etc/usbguard/IPCAccessControl.d/
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>DeviceRulesWithPort=false
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>AuditBackend=FileAudit
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>AuditFilePath=/var/log/usbguard/usbguard-audit.log
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a>HidePII=false
 </code></pre></div>
-<p>Ne supposez pas que <code>/etc/usbguard/rules.d/</code> est automatiquement chargé. Ce dossier n’est utilisé que si <code>RuleFolder</code> est explicitement configuré et pris en charge par la version installée.</p>
+<p>Les valeurs de <code>ImplicitPolicyTarget</code>, <code>PresentDevicePolicy</code> et <code>InsertedDevicePolicy</code> sont celles attendues pour une liste blanche. <strong>Les deux lignes <code>IPCAllowedUsers</code> et <code>IPCAllowedGroups</code> méritent en revanche une attention particulière</strong>, traitée plus bas dans cette étape.</p>
+<p>Les lignes exactes peuvent différer selon la version du paquet. Si un paramètre n’est pas présent, consultez sa valeur par défaut dans le manuel installé :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>man<span class="w"> </span>usbguard-daemon.conf
+</code></pre></div>
+<h4 id="rulefile-et-rulefolder-sont-tous-les-deux-actifs-sur-ubuntu"><code>RuleFile</code> et <code>RuleFolder</code> sont tous les deux actifs sur Ubuntu<a class="headerlink" href="#rulefile-et-rulefolder-sont-tous-les-deux-actifs-sur-ubuntu" title="Permanent link">&para;</a></h4>
+<p>Contrairement à une idée répandue, ces deux directives ne s’excluent pas. Ubuntu 24.04 les configure <strong>toutes les deux</strong>, et USBGuard 1.1.2 les traite de façon <strong>additive</strong> : le démon construit une liste de jeux de règles en chargeant d’abord <code>RuleFile</code>, puis chaque fichier de <code>RuleFolder</code> dans l’ordre alphanumérique.</p>
+<p>Deux conséquences pratiques :</p>
+<ul>
+<li><code>/etc/usbguard/rules.conf</code> étant chargé <strong>en premier</strong>, ses règles restent prioritaires puisque la première règle correspondante l’emporte. La politique produite à l’étape 5 fait donc bien autorité.</li>
+<li><code>/etc/usbguard/rules.d/</code> <strong>est bel et bien lu</strong>. Le dossier est vide à l’installation, mais tout fichier qui y sera déposé participera à la politique.</li>
+</ul>
+<div class="admonition danger">
+<p class="admonition-title">Un fichier mal protégé dans <code>rules.d/</code> empêche le démon de démarrer</p>
+<p>Au chargement, le démon applique un contrôle de permissions à <code>usbguard-daemon.conf</code>, à <code>RuleFile</code> <strong>et à chaque fichier présent dans <code>RuleFolder</code></strong>. Un fichier qui porte le moindre bit de permission pour le groupe ou pour les autres — les <code>0644</code> par défaut, typiquement — provoque une exception et <strong>le service refuse de démarrer</strong>.</p>
+<p>L’unité livrée par Ubuntu lance <code>usbguard-daemon -f -s -c /etc/usbguard/usbguard-daemon.conf</code>, sans l’option <code>-P</code> qui désactiverait ce contrôle : la vérification est donc bien active.</p>
+<p>Tout fichier déposé dans <code>/etc/usbguard/rules.d/</code> doit être en <code>0600 root:root</code>, au même titre que <code>rules.conf</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>sudo<span class="w"> </span>install<span class="w"> </span>-m<span class="w"> </span><span class="m">0600</span><span class="w"> </span>-o<span class="w"> </span>root<span class="w"> </span>-g<span class="w"> </span>root<span class="w"> </span>source.conf<span class="w"> </span>/etc/usbguard/rules.d/50-exemple.conf
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>sudo<span class="w"> </span>find<span class="w"> </span>/etc/usbguard<span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span>!<span class="w"> </span>-perm<span class="w"> </span><span class="m">0600</span><span class="w"> </span>-printf<span class="w"> </span><span class="s1">'%m %p\n'</span>
+</code></pre></div>
+<p>La dernière commande ne doit rien afficher. Notez que le démon qui refuse de démarrer laisse le système <strong>sans aucune protection <abbr title="Universal Serial Bus">USB</abbr></strong> : c’est une panne silencieuse, à surveiller dans les journaux.</p>
+</div>
+<h4 id="les-droits-ipc-deja-accordes-par-ubuntu">Les droits <abbr title="Inter-Process Communication">IPC</abbr> déjà accordés par Ubuntu<a class="headerlink" href="#les-droits-ipc-deja-accordes-par-ubuntu" title="Permanent link">&para;</a></h4>
+<p>C’est le point le plus important de cette étape, et celui qui invalide le plus souvent le modèle de sécurité que l’on croit avoir mis en place.</p>
+<p>La configuration livrée contient :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>IPCAllowedUsers=root
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>IPCAllowedGroups=root plugdev
+</code></pre></div>
+<p><code>IPCAllowedUsers</code> et <code>IPCAllowedGroups</code> sont les directives <strong>héritées</strong> de contrôle d’accès. Le manuel <code>usbguard-daemon.conf(5)</code> les documente sous le titre « Legacy » avec cette formulation sans ambiguïté : <em>« Example configuration allowing <strong>full <abbr title="Inter-Process Communication">IPC</abbr> access</strong> »</em>. Elles n’accordent pas un droit partiel : dans le code d’USBGuard 1.1.2, elles appliquent l’autorisation par défaut <code>Section::ALL, Privilege::ALL</code>.</p>
+<p>À cela s’ajoute le fichier de contrôle d’accès <code>:plugdev</code> créé automatiquement par le script de post-installation.</p>
+<div class="admonition danger">
+<p class="admonition-title">Sur un poste Ubuntu par défaut, votre compte peut désactiver la liste blanche sans mot de passe</p>
+<p>Le premier compte créé lors de l’installation d’Ubuntu appartient au groupe <code>plugdev</code>. Vérifiez-le :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>id<span class="w"> </span>-nG<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span><span class="s1">' '</span><span class="w"> </span><span class="s1">'\n'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-x<span class="w"> </span>plugdev
+</code></pre></div>
+<p>Si ce groupe apparaît, alors <strong>sans <code>sudo</code></strong> ce compte peut notamment :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>usbguard<span class="w"> </span>allow-device<span class="w"> </span>&lt;ID&gt;<span class="w"> </span>-p<span class="w">                      </span><span class="c1"># ajouter une règle permanente</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>usbguard<span class="w"> </span>set-parameter<span class="w"> </span>ImplicitPolicyTarget<span class="w"> </span>allow<span class="w">  </span><span class="c1"># neutraliser toute la liste blanche</span>
+</code></pre></div>
+<p>La deuxième commande fait tomber le modèle liste blanche dans son intégralité. Tant que cette configuration est en place, l’étape 6 et le principe du moindre privilège n’ont aucun effet réel.</p>
+</div>
+<p>Pour retrouver un contrôle d’accès cohérent, neutralisez la directive héritée et retirez l’autorisation accordée au groupe <code>plugdev</code>. Conservez <code>IPCAllowedUsers=root</code>, qui permet à <code>root</code> d’utiliser l’<abbr title="Inter-Process Communication">IPC</abbr> et donc à vos commandes <code>sudo usbguard …</code> de fonctionner :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>sudo<span class="w"> </span>cp<span class="w"> </span>-a<span class="w"> </span>/etc/usbguard/usbguard-daemon.conf<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="w">    </span>/etc/usbguard/usbguard-daemon.conf.backup
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>sudo<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">'s/^IPCAllowedGroups=/#IPCAllowedGroups=/'</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="w">    </span>/etc/usbguard/usbguard-daemon.conf
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>sudo<span class="w"> </span>usbguard<span class="w"> </span>remove-user<span class="w"> </span>plugdev<span class="w"> </span>-g
+</code></pre></div>
+<p>Vérifiez le résultat :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-nE<span class="w"> </span><span class="s1">'^[[:space:]]*#?IPCAllowed'</span><span class="w"> </span>/etc/usbguard/usbguard-daemon.conf
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>sudo<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/etc/usbguard/IPCAccessControl.d/
+</code></pre></div>
+<p>Les droits nominatifs seront ensuite accordés explicitement à l’étape 6. Comme les fichiers de contrôle d’accès et la configuration ne sont lus qu’au démarrage du démon, ces modifications ne prendront effet qu’à l’étape 7.</p>
+<div class="admonition note">
+<p class="admonition-title">Si vous préférez conserver l’accès de <code>plugdev</code></p>
+<p>C’est un choix défendable sur un poste strictement personnel, où le compte concerné peut de toute façon devenir <code>root</code>. Faites-le alors sciemment, et non par méconnaissance : sur une machine partagée, cela revient à confier la politique <abbr title="Universal Serial Bus">USB</abbr> à tous les comptes du groupe.</p>
 </div>
 <hr />
 <h3 id="etape-5-generer-la-politique-initiale">Étape 5 : générer la politique initiale<a class="headerlink" href="#etape-5-generer-la-politique-initiale" title="Permanent link">&para;</a></h3>
-<p>Générez la politique dans un fichier temporaire avec des permissions restrictives :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sudo<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">'umask 077; usbguard generate-policy &gt; /tmp/usbguard-rules.conf'</span>
+<p>Générez la politique dans un fichier de travail accessible au seul <code>root</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>sudo<span class="w"> </span>install<span class="w"> </span>-d<span class="w"> </span>-m<span class="w"> </span><span class="m">0700</span><span class="w"> </span>-o<span class="w"> </span>root<span class="w"> </span>-g<span class="w"> </span>root<span class="w"> </span>/root/usbguard
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>sudo<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">'umask 077; usbguard generate-policy &gt; /root/usbguard/rules.conf.new'</span>
 </code></pre></div>
-<p>Relisez intégralement son contenu :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>sudo<span class="w"> </span>nano<span class="w"> </span>/tmp/usbguard-rules.conf
+<p>Relisez intégralement son contenu — en lecture seule, pour éviter toute modification involontaire :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>sudo<span class="w"> </span>less<span class="w"> </span>/root/usbguard/rules.conf.new
 </code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">Par défaut, <code>generate-policy</code> lie déjà vos règles à un port physique</p>
+<p>C’est le piège le plus coûteux de cette procédure, car il ne se manifeste que des semaines plus tard.</p>
+<p>Sans aucune option, <code>usbguard generate-policy</code> ajoute un attribut <code>via-port</code> à <strong>tout périphérique qui ne déclare pas de numéro de série</strong>. Le manuel <code>usbguard(1)</code> le dit à propos de <code>--with-ports</code> : <em>« By default, port specific rules are generated only for devices which do not export an iSerial value »</em>, et le générateur d’USBGuard 1.1.2 active bien ce comportement par défaut.</p>
+<p>Or la majorité des claviers, souris, récepteurs sans fil et hubs d’entrée de gamme ne déclarent aucun numéro de série. <strong>Leurs règles seront donc liées au port sur lequel ils étaient branchés pendant la génération</strong>, et changer de prise suffira à les faire bloquer.</p>
+<p>Mesurez l’ampleur du phénomène avant d’aller plus loin :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'via-port'</span><span class="w"> </span>/root/usbguard/rules.conf.new
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>sudo<span class="w"> </span>grep<span class="w"> </span><span class="s1">'via-port'</span><span class="w"> </span>/root/usbguard/rules.conf.new
+</code></pre></div>
+<p>Deux choix s’offrent alors à vous :</p>
+<ul>
+<li><strong>conserver ce comportement</strong> : plus restrictif, c’est une réelle protection contre un périphérique qui usurperait l’identité d’un matériel connu, mais vous devez accepter qu’un changement de prise, l’ajout d’un hub ou le remplacement d’un dock bloque le périphérique ;</li>
+<li>
+<p><strong>le désactiver</strong> avec <code>-P</code> / <code>--no-ports-sn</code>, pour une politique stable quel que soit le port :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>sudo<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">'umask 077; usbguard generate-policy --no-ports-sn &gt; /root/usbguard/rules.conf.new'</span>
+</code></pre></div>
+</li>
+</ul>
+<p>Sur un poste de bureau dont on rebranche régulièrement le matériel, la seconde option évite la grande majorité des blocages inattendus. Sur une machine au câblage figé, la première est préférable.</p>
+<p>Quel que soit votre choix, faites-le <strong>maintenant</strong> et en conscience : c’est ce détail qui détermine si votre clavier fonctionnera encore le jour où vous le brancherez sur une autre prise.</p>
+</div>
 <p>Vous devez retrouver les périphériques <abbr title="Universal Serial Bus">USB</abbr> de confiance actuellement présents :</p>
 <ul>
 <li>clavier ;</li>
@@ -3243,28 +3411,28 @@
 </ul>
 <p>Les contrôleurs hôtes <abbr title="Universal Serial Bus">USB</abbr> sont traités séparément par USBGuard, notamment au moyen de <code>PresentControllerPolicy</code>. Leur absence parmi les règles ordinaires n’est donc pas nécessairement une anomalie.</p>
 <p>Installez ensuite le fichier avec les bons droits :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sudo<span class="w"> </span>install<span class="w"> </span>-m<span class="w"> </span><span class="m">0600</span><span class="w"> </span>-o<span class="w"> </span>root<span class="w"> </span>-g<span class="w"> </span>root<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">    </span>/tmp/usbguard-rules.conf<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">    </span>/etc/usbguard/rules.conf
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>sudo<span class="w"> </span>install<span class="w"> </span>-m<span class="w"> </span><span class="m">0600</span><span class="w"> </span>-o<span class="w"> </span>root<span class="w"> </span>-g<span class="w"> </span>root<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="w">    </span>/root/usbguard/rules.conf.new<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="w">    </span>/etc/usbguard/rules.conf
 </code></pre></div>
 <p>Vérifiez le résultat :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>sudo<span class="w"> </span>cat<span class="w"> </span>/etc/usbguard/rules.conf
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>stat<span class="w"> </span>-c<span class="w"> </span><span class="s1">'%A %U:%G %n'</span><span class="w"> </span>/etc/usbguard/rules.conf
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>sudo<span class="w"> </span>cat<span class="w"> </span>/etc/usbguard/rules.conf
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>stat<span class="w"> </span>-c<span class="w"> </span><span class="s1">'%A %U:%G %n'</span><span class="w"> </span>/etc/usbguard/rules.conf
 </code></pre></div>
 <p>Résultat attendu :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>-rw------- root:root /etc/usbguard/rules.conf
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>-rw------- root:root /etc/usbguard/rules.conf
 </code></pre></div>
 <div class="admonition warning">
 <p class="admonition-title">Ne remplacez pas à l’aveugle une politique active</p>
-<p>Lors d’une modification ultérieure, générez toujours la nouvelle politique dans un fichier temporaire. Relisez-la avant de remplacer le fichier utilisé par le démon.</p>
+<p>Lors d’une modification ultérieure, générez toujours la nouvelle politique dans un fichier de travail réservé à <code>root</code>. Relisez-la avant de remplacer le fichier utilisé par le démon.</p>
 <p>Sauvegardez la politique existante :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>sudo<span class="w"> </span>cp<span class="w"> </span>-a<span class="w"> </span>/etc/usbguard/rules.conf<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="w">    </span>/etc/usbguard/rules.conf.backup
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>sudo<span class="w"> </span>cp<span class="w"> </span>-a<span class="w"> </span>/etc/usbguard/rules.conf<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="w">    </span>/etc/usbguard/rules.conf.backup
 </code></pre></div>
 </div>
 <h4 id="lire-une-regle-usbguard">Lire une règle USBGuard<a class="headerlink" href="#lire-une-regle-usbguard" title="Permanent link">&para;</a></h4>
 <p>Une règle générée peut ressembler à ceci :</p>
-<div class="highlight"><span class="filename">/etc/usbguard/rules.conf</span><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>allow id 046d:c52b serial "" name "USB Receiver" hash "jEP/6WzviqdJ5VSeTUY8Pat…" parent-hash "kv0Xb…" with-interface { 03:01:01 03:01:02 03:00:00 }
+<div class="highlight"><span class="filename">/etc/usbguard/rules.conf</span><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>allow id 046d:c52b serial "" name "USB Receiver" hash "jEP/6WzviqdJ5VSeTUY8Pat…" parent-hash "kv0Xb…" with-interface { 03:01:01 03:01:02 03:00:00 }
 </code></pre></div>
 <table>
 <thead>
@@ -3314,14 +3482,34 @@
 <p>Un périphérique programmable connaissant les valeurs attendues peut tenter de reproduire les mêmes descripteurs.</p>
 <p>Le hash reste néanmoins utile pour réduire les correspondances accidentelles entre plusieurs périphériques partageant le même <abbr title="Vendor ID">VID</abbr>:<abbr title="Product ID">PID</abbr>.</p>
 </div>
-<h4 id="lier-une-regle-a-un-port">Lier une règle à un port<a class="headerlink" href="#lier-une-regle-a-un-port" title="Permanent link">&para;</a></h4>
-<p>Pour une machine dont le câblage est stable, il est possible de générer des règles liées à la topologie des ports :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>sudo<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">'umask 077; usbguard generate-policy --with-ports &gt; /tmp/usbguard-rules.conf'</span>
-</code></pre></div>
-<p>Cette option ajoute des critères <code>via-port</code>.</p>
+<h4 id="maitriser-le-critere-via-port">Maîtriser le critère <code>via-port</code><a class="headerlink" href="#maitriser-le-critere-via-port" title="Permanent link">&para;</a></h4>
+<p>Trois comportements sont possibles, et il est essentiel de savoir lequel s’applique :</p>
+<table>
+<thead>
+<tr>
+<th>Commande</th>
+<th>Périphériques recevant un <code>via-port</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>usbguard generate-policy</code></td>
+<td><strong>Ceux sans numéro de série</strong> — comportement par défaut</td>
+</tr>
+<tr>
+<td><code>usbguard generate-policy --with-ports</code> (<code>-p</code>)</td>
+<td><strong>Tous</strong>, y compris ceux qui déclarent un numéro de série</td>
+</tr>
+<tr>
+<td><code>usbguard generate-policy --no-ports-sn</code> (<code>-P</code>)</td>
+<td><strong>Aucun</strong></td>
+</tr>
+</tbody>
+</table>
+<p><code>--with-ports</code> convient à une machine dont le câblage ne bouge jamais et pour laquelle on souhaite la politique la plus stricte possible.</p>
 <div class="admonition warning">
 <p class="admonition-title">Inconvénient de <code>via-port</code></p>
-<p>Une règle liée à un port peut cesser de correspondre après :</p>
+<p>Une règle liée à un port cesse de correspondre après :</p>
 <ul>
 <li>un changement de port ;</li>
 <li>l’ajout ou le retrait d’un hub ;</li>
@@ -3329,10 +3517,16 @@
 <li>une modification de la topologie <abbr title="Universal Serial Bus">USB</abbr> ;</li>
 <li>certains changements de firmware ou de matériel.</li>
 </ul>
+<p>Rappelez-vous que ce risque concerne aussi la génération par défaut, et pas seulement <code>--with-ports</code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Les règles permanentes ajoutées plus tard ne suivent pas la même règle</p>
+<p>La configuration Ubuntu contient <code>DeviceRulesWithPort=false</code>. Les règles créées à chaud par <code>usbguard allow-device &lt;ID&gt; -p</code> <strong>n’incluent donc pas</strong> de <code>via-port</code>, contrairement à celles produites par <code>generate-policy</code>.</p>
+<p>Votre politique peut ainsi mélanger deux styles de règles. Ce n’est pas une anomalie, mais cela explique qu’un périphérique autorisé après coup se révèle plus tolérant au changement de prise que ceux de la politique initiale.</p>
 </div>
 <h4 id="generer-sans-hash">Générer sans hash<a class="headerlink" href="#generer-sans-hash" title="Permanent link">&para;</a></h4>
 <p>Il est possible de générer une politique sans empreintes :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>sudo<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">'umask 077; usbguard generate-policy --no-hashes &gt; /tmp/usbguard-rules.conf'</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>sudo<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">'umask 077; usbguard generate-policy --no-hashes &gt; /root/usbguard/rules.conf.new'</span>
 </code></pre></div>
 <p>Cette politique est généralement plus tolérante aux changements de descripteurs, mais elle est aussi moins précise.</p>
 <p>Si vous retirez les hashes, essayez de conserver plusieurs critères :</p>
@@ -3380,8 +3574,20 @@
 </tbody>
 </table>
 <p>Une règle placée avant les règles d’autorisation peut rejeter les périphériques composites annonçant simultanément une interface de stockage et une interface <abbr title="Human Interface Device">HID</abbr> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>reject with-interface all-of { 08:*:* 03:*:* }
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>reject with-interface all-of { 08:*:* 03:*:* }
 </code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Cette règle doit impérativement être placée en tête de la politique</p>
+<p>La première règle correspondante l’emporte. Une règle <code>reject</code> située <strong>après</strong> les règles <code>allow</code> ne servirait donc à rien.</p>
+<p>Or <code>usbguard append-rule</code> ajoute en fin de politique et ne propose que l’option <code>-a</code> / <code>--after &lt;ID&gt;</code> : il n’existe pas de <code>--before</code>. La façon fiable de procéder est d’écrire la règle en première ligne du fichier de politique, démon arrêté :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>stop<span class="w"> </span>usbguard.service
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>sudo<span class="w"> </span>cp<span class="w"> </span>-a<span class="w"> </span>/etc/usbguard/rules.conf<span class="w"> </span>/etc/usbguard/rules.conf.backup
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>sudo<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">'1i reject with-interface all-of { 08:*:* 03:*:* }'</span><span class="w"> </span>/etc/usbguard/rules.conf
+<a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>usbguard.service
+<a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a>usbguard<span class="w"> </span>list-rules
+</code></pre></div>
+<p>Relisez la politique obtenue avant de rebrancher quoi que ce soit d’indispensable.</p>
+</div>
 <div class="admonition warning">
 <p class="admonition-title">Cette règle ne bloque pas tous les BadUSB</p>
 <p>Elle bloque seulement les périphériques présentant simultanément une fonction de stockage et une fonction <abbr title="Human Interface Device">HID</abbr>.</p>
@@ -3392,23 +3598,29 @@
 <h3 id="etape-6-accorder-les-droits-dadministration-via-lipc">Étape 6 : accorder les droits d’administration via l’<abbr title="Inter-Process Communication">IPC</abbr><a class="headerlink" href="#etape-6-accorder-les-droits-dadministration-via-lipc" title="Permanent link">&para;</a></h3>
 <p>Le démon expose une interface <abbr title="Inter-Process Communication">IPC</abbr> permettant à l’outil <code>usbguard</code> de consulter les périphériques et de modifier leur état.</p>
 <p>USBGuard prend en charge des fichiers de contrôle d’accès dans :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>/etc/usbguard/IPCAccessControl.d/
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>/etc/usbguard/IPCAccessControl.d/
 </code></pre></div>
+<p>C’est la méthode recommandée, car elle permet de descendre à la granularité de la section et du privilège, là où les directives héritées <code>IPCAllowedUsers</code> et <code>IPCAllowedGroups</code> accordent tout ou rien.</p>
+<div class="admonition info">
+<p class="admonition-title">Cette étape n’a de sens qu’après le nettoyage de l’étape 4</p>
+<p>Si vous n’avez pas neutralisé <code>IPCAllowedGroups=root plugdev</code> ni retiré le fichier <code>:plugdev</code>, les droits accordés ici ne restreignent rien : le groupe <code>plugdev</code> conserve un accès complet à l’<abbr title="Inter-Process Communication">IPC</abbr>, y compris la modification des paramètres du démon.</p>
+</div>
 <p>Vérifiez d’abord la syntaxe prise en charge par la version installée :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>usbguard<span class="w"> </span>add-user<span class="w"> </span>--help
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>usbguard<span class="w"> </span>add-user<span class="w"> </span>--help
 </code></pre></div>
 <p>Pour accorder les droits au groupe <code>sudo</code> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>sudo<span class="w"> </span>usbguard<span class="w"> </span>add-user<span class="w"> </span>sudo<span class="w"> </span>--group<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="w">    </span>--devices<span class="w"> </span>ALL<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="w">    </span>--policy<span class="w"> </span>modify,list<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="w">    </span>--exceptions<span class="w"> </span>listen
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>sudo<span class="w"> </span>usbguard<span class="w"> </span>add-user<span class="w"> </span>sudo<span class="w"> </span>--group<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a><span class="w">    </span>--devices<span class="w"> </span>ALL<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a><span class="w">    </span>--policy<span class="w"> </span>modify,list<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a><span class="w">    </span>--exceptions<span class="w"> </span>listen
 </code></pre></div>
-<div class="admonition warning">
-<p class="admonition-title">Position de l’option <code>--group</code></p>
-<p>Avec USBGuard 1.1.x, le nom du groupe est généralement fourni comme argument positionnel et <code>--group</code> indique que cet argument désigne un groupe :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>usbguard<span class="w"> </span>add-user<span class="w"> </span>NOM_DU_GROUPE<span class="w"> </span>--group<span class="w"> </span>...
+<div class="admonition note">
+<p class="admonition-title">Sur la syntaxe de <code>add-user</code></p>
+<p>Le nom est un argument positionnel et <code>--group</code> (<code>-g</code>) indique qu’il désigne un groupe plutôt qu’un utilisateur. L’analyse des options étant réalisée par <code>getopt_long</code> sans contrainte d’ordre, les deux écritures suivantes sont équivalentes :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>usbguard<span class="w"> </span>add-user<span class="w"> </span>NOM_DU_GROUPE<span class="w"> </span>--group<span class="w"> </span>--devices<span class="w"> </span>ALL
+<a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>usbguard<span class="w"> </span>add-user<span class="w"> </span>-g<span class="w"> </span>NOM_DU_GROUPE<span class="w"> </span>--devices<span class="o">=</span>ALL
 </code></pre></div>
-<p>Vérifiez toujours <code>usbguard add-user --help</code>, car la syntaxe exacte peut varier selon la version empaquetée.</p>
+<p>Le mot-clé <code>ALL</code> est officiellement documenté : <em>« You can also use ALL instead of privileges to automatically assign all relevant privileges to a given section »</em>. Les privilèges disponibles sont <code>list</code>, <code>modify</code> et <code>listen</code>.</p>
 </div>
 <table>
 <thead>
@@ -3441,26 +3653,26 @@
 </tbody>
 </table>
 <p>Vérifiez le fichier créé :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>sudo<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/etc/usbguard/IPCAccessControl.d/
-<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>sudo<span class="w"> </span>cat<span class="w"> </span>/etc/usbguard/IPCAccessControl.d/:sudo
+<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>sudo<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/etc/usbguard/IPCAccessControl.d/
+<a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>sudo<span class="w"> </span>cat<span class="w"> </span>/etc/usbguard/IPCAccessControl.d/:sudo
 </code></pre></div>
 <p>Le contenu doit être proche de :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>Devices=modify list listen
-<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>Policy=modify list
-<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>Exceptions=listen
+<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>Devices=modify list listen
+<a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>Policy=modify list
+<a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a>Exceptions=listen
 </code></pre></div>
 <div class="admonition warning">
 <p class="admonition-title">Ces droits permettent de modifier la politique de sécurité</p>
 <p><code>Devices=modify</code> permet d’autoriser ou de bloquer des périphériques à chaud.</p>
 <p><code>Policy=modify</code> permet d’ajouter des règles persistantes et donc, potentiellement, d’affaiblir fortement la politique.</p>
 <p>Sur un poste personnel, les accorder au groupe <code>sudo</code> n’ajoute généralement pas de privilège fondamental, puisque ses membres peuvent déjà devenir <code>root</code>. Sur un système multi-utilisateur, utilisez un groupe administratif dédié :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>sudo<span class="w"> </span>groupadd<span class="w"> </span>--system<span class="w"> </span>usbguard-admin
-<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>sudo<span class="w"> </span>usermod<span class="w"> </span>-aG<span class="w"> </span>usbguard-admin<span class="w"> </span><span class="s2">"</span><span class="nv">$USER</span><span class="s2">"</span>
-<a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>
-<a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a>sudo<span class="w"> </span>usbguard<span class="w"> </span>add-user<span class="w"> </span>usbguard-admin<span class="w"> </span>--group<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a><span class="w">    </span>--devices<span class="w"> </span>ALL<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a><span class="w">    </span>--policy<span class="w"> </span>modify,list<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a><span class="w">    </span>--exceptions<span class="w"> </span>listen
+<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>sudo<span class="w"> </span>groupadd<span class="w"> </span>--system<span class="w"> </span>usbguard-admin
+<a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>sudo<span class="w"> </span>usermod<span class="w"> </span>-aG<span class="w"> </span>usbguard-admin<span class="w"> </span><span class="s2">"</span><span class="nv">$USER</span><span class="s2">"</span>
+<a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>
+<a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a>sudo<span class="w"> </span>usbguard<span class="w"> </span>add-user<span class="w"> </span>usbguard-admin<span class="w"> </span>--group<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a><span class="w">    </span>--devices<span class="w"> </span>ALL<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-36-6" name="__codelineno-36-6" href="#__codelineno-36-6"></a><span class="w">    </span>--policy<span class="w"> </span>modify,list<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-36-7" name="__codelineno-36-7" href="#__codelineno-36-7"></a><span class="w">    </span>--exceptions<span class="w"> </span>listen
 </code></pre></div>
 <p>L’appartenance au nouveau groupe ne devient effective qu’après une reconnexion complète de la session.</p>
 </div>
@@ -3468,16 +3680,16 @@
 <hr />
 <h3 id="etape-7-demarrer-le-demon">Étape 7 : démarrer le démon<a class="headerlink" href="#etape-7-demarrer-le-demon" title="Permanent link">&para;</a></h3>
 <p>La politique et les droits <abbr title="Inter-Process Communication">IPC</abbr> étant en place, démasquez puis activez le service :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>unmask<span class="w"> </span>usbguard.service
-<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>usbguard.service
+<div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>unmask<span class="w"> </span>usbguard.service
+<a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>usbguard.service
 </code></pre></div>
 <p>Vérifiez son état :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>systemctl<span class="w"> </span>--no-pager<span class="w"> </span>--full<span class="w"> </span>status<span class="w"> </span>usbguard.service
-<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>usbguard.service<span class="w"> </span>-b<span class="w"> </span>--no-pager
+<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>systemctl<span class="w"> </span>--no-pager<span class="w"> </span>--full<span class="w"> </span>status<span class="w"> </span>usbguard.service
+<a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>usbguard.service<span class="w"> </span>-b<span class="w"> </span>--no-pager
 </code></pre></div>
 <p>Puis interrogez USBGuard :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>usbguard<span class="w"> </span>list-devices
-<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>usbguard<span class="w"> </span>list-rules
+<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>usbguard<span class="w"> </span>list-devices
+<a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a>usbguard<span class="w"> </span>list-rules
 </code></pre></div>
 <p>Résultat attendu :</p>
 <ul>
@@ -3489,8 +3701,8 @@
 <div class="admonition warning">
 <p class="admonition-title">Si l’accès <abbr title="Inter-Process Communication">IPC</abbr> échoue</p>
 <p>Testez d’abord les commandes avec <code>sudo</code> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>sudo<span class="w"> </span>usbguard<span class="w"> </span>list-devices
-<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>sudo<span class="w"> </span>usbguard<span class="w"> </span>list-rules
+<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>sudo<span class="w"> </span>usbguard<span class="w"> </span>list-devices
+<a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a>sudo<span class="w"> </span>usbguard<span class="w"> </span>list-rules
 </code></pre></div>
 <p>Si elles fonctionnent avec <code>sudo</code> mais pas sans, le problème vient probablement des droits <abbr title="Inter-Process Communication">IPC</abbr> ou de l’appartenance au groupe, et non de la politique <abbr title="Universal Serial Bus">USB</abbr> elle-même.</p>
 </div>
@@ -3504,10 +3716,10 @@
 <li>Vérifiez qu’elle n’est pas montée.</li>
 <li>Affichez les périphériques bloqués :</li>
 </ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>usbguard<span class="w"> </span>list-devices<span class="w"> </span>--blocked
+<div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>usbguard<span class="w"> </span>list-devices<span class="w"> </span>--blocked
 </code></pre></div>
 <p>Selon la version installée, la forme courte suivante peut également être disponible :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>usbguard<span class="w"> </span>list-devices<span class="w"> </span>-b
+<div class="highlight"><pre><span></span><code><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>usbguard<span class="w"> </span>list-devices<span class="w"> </span>-b
 </code></pre></div>
 <p>Un périphérique inconnu doit apparaître avec l’état <code>block</code>.</p>
 <div class="admonition danger">
@@ -3524,10 +3736,10 @@
 <hr />
 <h3 id="etape-9-autoriser-un-nouveau-peripherique">Étape 9 : autoriser un nouveau périphérique<a class="headerlink" href="#etape-9-autoriser-un-nouveau-peripherique" title="Permanent link">&para;</a></h3>
 <h4 id="identifier-son-identifiant-interne">Identifier son identifiant interne<a class="headerlink" href="#identifier-son-identifiant-interne" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>usbguard<span class="w"> </span>list-devices<span class="w"> </span>--blocked
+<div class="highlight"><pre><span></span><code><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a>usbguard<span class="w"> </span>list-devices<span class="w"> </span>--blocked
 </code></pre></div>
 <p>Exemple :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>16: block id 0951:1666 serial "60A44C..." name "DataTraveler 3.0" hash "…" with-interface { 08:06:50 }
+<div class="highlight"><pre><span></span><code><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a>16: block id 0951:1666 serial "60A44C..." name "DataTraveler 3.0" hash "…" with-interface { 08:06:50 }
 </code></pre></div>
 <p>Le premier nombre, <code>16</code> dans cet exemple, est l’identifiant interne attribué par le démon au périphérique.</p>
 <p>Il ne faut pas le confondre avec :</p>
@@ -3537,23 +3749,23 @@
 </ul>
 <p>L’identifiant du périphérique peut changer après un rebranchement ou un redémarrage du démon.</p>
 <h4 id="autorisation-temporaire">Autorisation temporaire<a class="headerlink" href="#autorisation-temporaire" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>usbguard<span class="w"> </span>allow-device<span class="w"> </span><span class="m">16</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a>usbguard<span class="w"> </span>allow-device<span class="w"> </span><span class="m">16</span>
 </code></pre></div>
 <p>Cette décision n’ajoute pas de règle persistante. Elle disparaît notamment après le redémarrage du démon ou la disparition du périphérique.</p>
 <p>Utilisez cette méthode pour un périphérique de passage dont vous ne souhaitez pas conserver l’autorisation.</p>
 <h4 id="autorisation-permanente">Autorisation permanente<a class="headerlink" href="#autorisation-permanente" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>usbguard<span class="w"> </span>allow-device<span class="w"> </span><span class="m">16</span><span class="w"> </span>-p
+<div class="highlight"><pre><span></span><code><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a>usbguard<span class="w"> </span>allow-device<span class="w"> </span><span class="m">16</span><span class="w"> </span>-p
 </code></pre></div>
 <p>Le drapeau <code>-p</code> ou <code>--permanent</code> ajoute une règle persistante à la politique configurée par le démon.</p>
 <p>Avec la configuration Ubuntu habituelle utilisant :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>RuleFile=/etc/usbguard/rules.conf
+<div class="highlight"><pre><span></span><code><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a>RuleFile=/etc/usbguard/rules.conf
 </code></pre></div>
 <p>la règle est enregistrée dans ce fichier.</p>
 <div class="admonition warning">
 <p class="admonition-title">Relisez toute règle permanente</p>
 <p>Une règle générée automatiquement peut être plus large ou plus fragile que prévu. Après une autorisation permanente, examinez la politique :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>usbguard<span class="w"> </span>list-rules
-<a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-nF<span class="w"> </span><span class="s1">'0951:1666'</span><span class="w"> </span>/etc/usbguard/rules.conf
+<div class="highlight"><pre><span></span><code><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a>usbguard<span class="w"> </span>list-rules
+<a id="__codelineno-48-2" name="__codelineno-48-2" href="#__codelineno-48-2"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-nF<span class="w"> </span><span class="s1">'0951:1666'</span><span class="w"> </span>/etc/usbguard/rules.conf
 </code></pre></div>
 <p>Remplacez <code>0951:1666</code> par un attribut du périphérique concerné.</p>
 </div>
@@ -3562,30 +3774,38 @@
 <p>Avec <code>allow-device</code>, <code>block-device</code> et <code>reject-device</code>, <code>-p</code> signifie généralement <code>--permanent</code>.</p>
 <p>Avec <code>generate-policy</code>, <code>-p</code> peut signifier <code>--with-ports</code>.</p>
 <p>Vérifiez l’aide de la sous-commande avant utilisation :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>usbguard<span class="w"> </span>allow-device<span class="w"> </span>--help
-<a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a>usbguard<span class="w"> </span>generate-policy<span class="w"> </span>--help
+<div class="highlight"><pre><span></span><code><a id="__codelineno-49-1" name="__codelineno-49-1" href="#__codelineno-49-1"></a>usbguard<span class="w"> </span>allow-device<span class="w"> </span>--help
+<a id="__codelineno-49-2" name="__codelineno-49-2" href="#__codelineno-49-2"></a>usbguard<span class="w"> </span>generate-policy<span class="w"> </span>--help
 </code></pre></div>
 </div>
 <h4 id="suivre-les-evenements-en-direct">Suivre les événements en direct<a class="headerlink" href="#suivre-les-evenements-en-direct" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>usbguard<span class="w"> </span>watch
+<div class="highlight"><pre><span></span><code><a id="__codelineno-50-1" name="__codelineno-50-1" href="#__codelineno-50-1"></a>usbguard<span class="w"> </span>watch
 </code></pre></div>
 <p>Cette commande permet d’observer les branchements, les blocages et les modifications d’état en temps réel.</p>
 <hr />
 <h3 id="etape-10-facultative-notifications-sur-le-bureau">Étape 10 facultative : notifications sur le bureau<a class="headerlink" href="#etape-10-facultative-notifications-sur-le-bureau" title="Permanent link">&para;</a></h3>
 <h4 id="installer-usbguard-notifier">Installer <code>usbguard-notifier</code><a class="headerlink" href="#installer-usbguard-notifier" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>usbguard-notifier
+<div class="highlight"><pre><span></span><code><a id="__codelineno-51-1" name="__codelineno-51-1" href="#__codelineno-51-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>usbguard-notifier
 </code></pre></div>
-<p>Vérifiez le mécanisme de lancement fourni par le paquet :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a>dpkg<span class="w"> </span>-L<span class="w"> </span>usbguard-notifier<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'systemd|autostart|\.desktop$'</span>
-<a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>list-unit-files<span class="w"> </span><span class="s1">'usbguard*'</span>
+<p>Sur Ubuntu 24.04, ce paquet livre une unité <strong>utilisateur</strong> <code>/usr/lib/systemd/user/usbguard-notifier.service</code>, et aucun fichier XDG Autostart. Vous pouvez le confirmer :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-52-1" name="__codelineno-52-1" href="#__codelineno-52-1"></a>dpkg<span class="w"> </span>-L<span class="w"> </span>usbguard-notifier<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'systemd|autostart|\.desktop$'</span>
+<a id="__codelineno-52-2" name="__codelineno-52-2" href="#__codelineno-52-2"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>list-unit-files<span class="w"> </span><span class="s1">'usbguard*'</span>
 </code></pre></div>
-<p>Si une unité utilisateur <code>usbguard-notifier.service</code> est effectivement installée :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a>systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>usbguard-notifier.service
+<p>L’activation se fait donc au niveau de la session :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-53-1" name="__codelineno-53-1" href="#__codelineno-53-1"></a>systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>usbguard-notifier.service
+<a id="__codelineno-53-2" name="__codelineno-53-2" href="#__codelineno-53-2"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>status<span class="w"> </span>usbguard-notifier.service
 </code></pre></div>
-<p>Si le paquet fournit uniquement un fichier XDG Autostart, déconnectez-vous puis reconnectez-vous.</p>
-<p>Le notifier doit disposer au minimum du droit <abbr title="Inter-Process Communication">IPC</abbr> nécessaire pour écouter les événements :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a>Devices=listen
+<p>Le notifier doit disposer du droit <abbr title="Inter-Process Communication">IPC</abbr> lui permettant d’écouter les événements, au minimum :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-54-1" name="__codelineno-54-1" href="#__codelineno-54-1"></a>Devices=listen
 </code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Droits nécessaires après le nettoyage de l’étape 4</p>
+<p>Tant que <code>plugdev</code> disposait d’un accès complet, le notifier fonctionnait sans configuration. Ce n’est plus le cas une fois cet accès retiré.</p>
+<p>Si votre compte appartient au groupe auquel vous avez accordé les droits à l’étape 6, il n’y a rien à faire. Sinon, accordez le strict nécessaire à votre seul compte :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-55-1" name="__codelineno-55-1" href="#__codelineno-55-1"></a>sudo<span class="w"> </span>usbguard<span class="w"> </span>add-user<span class="w"> </span><span class="s2">"</span><span class="nv">$USER</span><span class="s2">"</span><span class="w"> </span>--devices<span class="w"> </span>list,listen<span class="w"> </span>--exceptions<span class="w"> </span>listen
+<a id="__codelineno-55-2" name="__codelineno-55-2" href="#__codelineno-55-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>usbguard.service
+</code></pre></div>
+</div>
 <div class="admonition warning">
 <p class="admonition-title">Ne donnez pas de droits excessifs au notifier</p>
 <p>Un outil chargé uniquement d’afficher des notifications n’a pas besoin du droit <code>Policy=modify</code>.</p>
@@ -3602,18 +3822,49 @@
 <li>de la présence des clés <code>gsettings</code> correspondantes.</li>
 </ul>
 <p>Vérifiez d’abord les éléments disponibles :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a>systemctl<span class="w"> </span>list-unit-files<span class="w"> </span><span class="s1">'usbguard*'</span>
-<a id="__codelineno-46-2" name="__codelineno-46-2" href="#__codelineno-46-2"></a>gsettings<span class="w"> </span>list-keys<span class="w"> </span>org.gnome.desktop.privacy<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">'^usb-protection'</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-56-1" name="__codelineno-56-1" href="#__codelineno-56-1"></a>systemctl<span class="w"> </span>list-unit-files<span class="w"> </span><span class="s1">'usbguard*'</span>
+<a id="__codelineno-56-2" name="__codelineno-56-2" href="#__codelineno-56-2"></a>gsettings<span class="w"> </span>list-keys<span class="w"> </span>org.gnome.desktop.privacy<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">'^usb-protection'</span>
 </code></pre></div>
-<p>Si <code>usbguard-dbus.service</code> et les clés correspondantes existent :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>unmask<span class="w"> </span>usbguard-dbus.service
-<a id="__codelineno-47-2" name="__codelineno-47-2" href="#__codelineno-47-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>usbguard-dbus.service
-<a id="__codelineno-47-3" name="__codelineno-47-3" href="#__codelineno-47-3"></a>
-<a id="__codelineno-47-4" name="__codelineno-47-4" href="#__codelineno-47-4"></a>gsettings<span class="w"> </span><span class="nb">set</span><span class="w"> </span>org.gnome.desktop.privacy<span class="w"> </span>usb-protection<span class="w"> </span><span class="nb">true</span>
-<a id="__codelineno-47-5" name="__codelineno-47-5" href="#__codelineno-47-5"></a>gsettings<span class="w"> </span><span class="nb">set</span><span class="w"> </span>org.gnome.desktop.privacy<span class="w"> </span>usb-protection-level<span class="w"> </span><span class="s1">'lockscreen'</span>
+<div class="admonition danger">
+<p class="admonition-title">Activer le service D-Bus ouvre une voie polkit sans authentification</p>
+<p>Le paquet Ubuntu installe <code>/usr/share/polkit-1/rules.d/org.usbguard1.rules</code>, dont le commentaire est explicite : <em>« Allow users in plugdev and sudo group to run usbguard actions without authentication »</em>.</p>
+<p>Cette règle accorde <code>polkit.Result.YES</code>, c’est-à-dire <strong>aucune demande de mot de passe</strong>, à tout membre des groupes <code>plugdev</code> ou <code>sudo</code> disposant d’une session locale active, pour trois actions :</p>
+<table>
+<thead>
+<tr>
+<th>Action polkit</th>
+<th>Effet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>org.usbguard1.setParameter</code></td>
+<td>Modifier un paramètre du démon, <code>ImplicitPolicyTarget</code> compris</td>
+</tr>
+<tr>
+<td><code>org.usbguard.Policy1.appendRule</code></td>
+<td>Ajouter une règle à la politique</td>
+</tr>
+<tr>
+<td><code>org.usbguard.Devices1.applyDevicePolicy</code></td>
+<td>Autoriser ou bloquer un périphérique</td>
+</tr>
+</tbody>
+</table>
+<p>Tant que <code>usbguard-dbus.service</code> reste arrêté, cette voie d’accès n’existe pas. Le nettoyage réalisé à l’étape 4 ne la referme pas non plus : il porte sur l’<abbr title="Inter-Process Communication">IPC</abbr>, alors que cette règle s’applique à l’interface D-Bus.</p>
+<p>Si vous activez le service D-Bus, inspectez la règle et, le cas échéant, restreignez-la avec un fichier de priorité supérieure dans <code>/etc/polkit-1/rules.d/</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-57-1" name="__codelineno-57-1" href="#__codelineno-57-1"></a>cat<span class="w"> </span>/usr/share/polkit-1/rules.d/org.usbguard1.rules
+</code></pre></div>
+</div>
+<p>Si <code>usbguard-dbus.service</code> et les clés correspondantes existent, et après avoir pris connaissance de l’avertissement ci-dessus :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-58-1" name="__codelineno-58-1" href="#__codelineno-58-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>unmask<span class="w"> </span>usbguard-dbus.service
+<a id="__codelineno-58-2" name="__codelineno-58-2" href="#__codelineno-58-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>usbguard-dbus.service
+<a id="__codelineno-58-3" name="__codelineno-58-3" href="#__codelineno-58-3"></a>
+<a id="__codelineno-58-4" name="__codelineno-58-4" href="#__codelineno-58-4"></a>gsettings<span class="w"> </span><span class="nb">set</span><span class="w"> </span>org.gnome.desktop.privacy<span class="w"> </span>usb-protection<span class="w"> </span><span class="nb">true</span>
+<a id="__codelineno-58-5" name="__codelineno-58-5" href="#__codelineno-58-5"></a>gsettings<span class="w"> </span><span class="nb">set</span><span class="w"> </span>org.gnome.desktop.privacy<span class="w"> </span>usb-protection-level<span class="w"> </span><span class="s1">'lockscreen'</span>
 </code></pre></div>
 <p>La valeur <code>'always'</code> peut être disponible selon le schéma installé :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a>gsettings<span class="w"> </span>range<span class="w"> </span>org.gnome.desktop.privacy<span class="w"> </span>usb-protection-level
+<div class="highlight"><pre><span></span><code><a id="__codelineno-59-1" name="__codelineno-59-1" href="#__codelineno-59-1"></a>gsettings<span class="w"> </span>range<span class="w"> </span>org.gnome.desktop.privacy<span class="w"> </span>usb-protection-level
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Le service D-Bus est facultatif</p>
@@ -3624,33 +3875,54 @@
 <h2 id="verification">Vérification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
 <p>Effectuez les contrôles suivants une fois la configuration terminée.</p>
 <h3 id="etat-du-service">État du service<a class="headerlink" href="#etat-du-service" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-49-1" name="__codelineno-49-1" href="#__codelineno-49-1"></a>systemctl<span class="w"> </span>is-active<span class="w"> </span>usbguard.service
-<a id="__codelineno-49-2" name="__codelineno-49-2" href="#__codelineno-49-2"></a>systemctl<span class="w"> </span>is-enabled<span class="w"> </span>usbguard.service
+<div class="highlight"><pre><span></span><code><a id="__codelineno-60-1" name="__codelineno-60-1" href="#__codelineno-60-1"></a>systemctl<span class="w"> </span>is-active<span class="w"> </span>usbguard.service
+<a id="__codelineno-60-2" name="__codelineno-60-2" href="#__codelineno-60-2"></a>systemctl<span class="w"> </span>is-enabled<span class="w"> </span>usbguard.service
 </code></pre></div>
 <p>Résultat attendu :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-50-1" name="__codelineno-50-1" href="#__codelineno-50-1"></a>active
-<a id="__codelineno-50-2" name="__codelineno-50-2" href="#__codelineno-50-2"></a>enabled
+<div class="highlight"><pre><span></span><code><a id="__codelineno-61-1" name="__codelineno-61-1" href="#__codelineno-61-1"></a>active
+<a id="__codelineno-61-2" name="__codelineno-61-2" href="#__codelineno-61-2"></a>enabled
 </code></pre></div>
 <h3 id="politique-chargee">Politique chargée<a class="headerlink" href="#politique-chargee" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-51-1" name="__codelineno-51-1" href="#__codelineno-51-1"></a>usbguard<span class="w"> </span>list-rules
+<div class="highlight"><pre><span></span><code><a id="__codelineno-62-1" name="__codelineno-62-1" href="#__codelineno-62-1"></a>usbguard<span class="w"> </span>list-rules
 </code></pre></div>
 <p>La liste ne doit pas être vide.</p>
 <h3 id="parametres-actifs">Paramètres actifs<a class="headerlink" href="#parametres-actifs" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-52-1" name="__codelineno-52-1" href="#__codelineno-52-1"></a>usbguard<span class="w"> </span>get-parameter<span class="w"> </span>ImplicitPolicyTarget
-<a id="__codelineno-52-2" name="__codelineno-52-2" href="#__codelineno-52-2"></a>usbguard<span class="w"> </span>get-parameter<span class="w"> </span>PresentDevicePolicy
-<a id="__codelineno-52-3" name="__codelineno-52-3" href="#__codelineno-52-3"></a>usbguard<span class="w"> </span>get-parameter<span class="w"> </span>InsertedDevicePolicy
+<div class="highlight"><pre><span></span><code><a id="__codelineno-63-1" name="__codelineno-63-1" href="#__codelineno-63-1"></a>usbguard<span class="w"> </span>get-parameter<span class="w"> </span>ImplicitPolicyTarget
+<a id="__codelineno-63-2" name="__codelineno-63-2" href="#__codelineno-63-2"></a>usbguard<span class="w"> </span>get-parameter<span class="w"> </span>PresentDevicePolicy
+<a id="__codelineno-63-3" name="__codelineno-63-3" href="#__codelineno-63-3"></a>usbguard<span class="w"> </span>get-parameter<span class="w"> </span>InsertedDevicePolicy
 </code></pre></div>
 <p>Les valeurs attendues pour une politique de liste blanche sont généralement :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-53-1" name="__codelineno-53-1" href="#__codelineno-53-1"></a>block
-<a id="__codelineno-53-2" name="__codelineno-53-2" href="#__codelineno-53-2"></a>apply-policy
-<a id="__codelineno-53-3" name="__codelineno-53-3" href="#__codelineno-53-3"></a>apply-policy
+<div class="highlight"><pre><span></span><code><a id="__codelineno-64-1" name="__codelineno-64-1" href="#__codelineno-64-1"></a>block
+<a id="__codelineno-64-2" name="__codelineno-64-2" href="#__codelineno-64-2"></a>apply-policy
+<a id="__codelineno-64-3" name="__codelineno-64-3" href="#__codelineno-64-3"></a>apply-policy
 </code></pre></div>
 <p>Vérifiez également la configuration sur disque :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-54-1" name="__codelineno-54-1" href="#__codelineno-54-1"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'^[[:space:]]*(ImplicitPolicyTarget|PresentDevicePolicy|InsertedDevicePolicy|PresentControllerPolicy|RestoreControllerDeviceState)='</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-54-2" name="__codelineno-54-2" href="#__codelineno-54-2"></a><span class="w">    </span>/etc/usbguard/usbguard-daemon.conf
+<div class="highlight"><pre><span></span><code><a id="__codelineno-65-1" name="__codelineno-65-1" href="#__codelineno-65-1"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'^[[:space:]]*(ImplicitPolicyTarget|PresentDevicePolicy|InsertedDevicePolicy|PresentControllerPolicy|RestoreControllerDeviceState)='</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-65-2" name="__codelineno-65-2" href="#__codelineno-65-2"></a><span class="w">    </span>/etc/usbguard/usbguard-daemon.conf
 </code></pre></div>
+<h3 id="controle-dacces-ipc">Contrôle d’accès <abbr title="Inter-Process Communication">IPC</abbr><a class="headerlink" href="#controle-dacces-ipc" title="Permanent link">&para;</a></h3>
+<p>C’est la vérification que l’on oublie le plus souvent, alors qu’elle conditionne la valeur réelle de toute la politique.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-66-1" name="__codelineno-66-1" href="#__codelineno-66-1"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-nE<span class="w"> </span><span class="s1">'^[[:space:]]*#?(IPCAllowedUsers|IPCAllowedGroups)='</span><span class="w"> </span>/etc/usbguard/usbguard-daemon.conf
+<a id="__codelineno-66-2" name="__codelineno-66-2" href="#__codelineno-66-2"></a>sudo<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/etc/usbguard/IPCAccessControl.d/
+</code></pre></div>
+<p>Résultat attendu après le nettoyage de l’étape 4 :</p>
+<ul>
+<li><code>IPCAllowedGroups</code> est commentée, ou ne contient plus <code>plugdev</code> ;</li>
+<li><code>IPCAllowedUsers=root</code> subsiste ;</li>
+<li>le dossier <code>IPCAccessControl.d/</code> ne contient plus <code>:plugdev</code>, mais uniquement les accès que vous avez accordés.</li>
+</ul>
+<p>Confirmez ensuite qu’un compte non privilégié <strong>ne peut pas</strong> désarmer la politique. Depuis un compte qui ne fait partie d’aucun groupe autorisé :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-67-1" name="__codelineno-67-1" href="#__codelineno-67-1"></a>usbguard<span class="w"> </span>set-parameter<span class="w"> </span>ImplicitPolicyTarget<span class="w"> </span>allow
+</code></pre></div>
+<p>La commande doit échouer sur une erreur d’accès. Si elle aboutit, la liste blanche vient d’être neutralisée — remettez immédiatement la valeur <code>block</code> et reprenez l’étape 4 :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-68-1" name="__codelineno-68-1" href="#__codelineno-68-1"></a>sudo<span class="w"> </span>usbguard<span class="w"> </span>set-parameter<span class="w"> </span>ImplicitPolicyTarget<span class="w"> </span>block
+</code></pre></div>
+<h3 id="permissions-des-fichiers">Permissions des fichiers<a class="headerlink" href="#permissions-des-fichiers" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-69-1" name="__codelineno-69-1" href="#__codelineno-69-1"></a>sudo<span class="w"> </span>find<span class="w"> </span>/etc/usbguard<span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span>!<span class="w"> </span>-perm<span class="w"> </span><span class="m">0600</span><span class="w"> </span>-printf<span class="w"> </span><span class="s1">'%m %p\n'</span>
+</code></pre></div>
+<p>Cette commande ne doit rien afficher : un seul fichier trop permissif dans <code>/etc/usbguard/</code> ou <code>/etc/usbguard/rules.d/</code> empêche le démon de démarrer.</p>
 <h3 id="journaux">Journaux<a class="headerlink" href="#journaux" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-55-1" name="__codelineno-55-1" href="#__codelineno-55-1"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>usbguard.service<span class="w"> </span>-b<span class="w"> </span>--no-pager<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">50</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-70-1" name="__codelineno-70-1" href="#__codelineno-70-1"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>usbguard.service<span class="w"> </span>-b<span class="w"> </span>--no-pager<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">50</span>
 </code></pre></div>
 <p>Recherchez notamment :</p>
 <ul>
@@ -3690,7 +3962,7 @@
 </tr>
 <tr>
 <td><code>usbguard list-devices -t</code></td>
-<td>Afficher les périphériques sous forme d’arborescence, si l’option est prise en charge</td>
+<td>Afficher les périphériques sous forme d’arborescence (<code>--tree</code>)</td>
 </tr>
 <tr>
 <td><code>usbguard allow-device &lt;ID&gt;</code></td>
@@ -3714,11 +3986,15 @@
 </tr>
 <tr>
 <td><code>usbguard list-rules -d</code></td>
-<td>Afficher des informations supplémentaires sur les règles, si l’option est prise en charge</td>
+<td>Afficher, pour chaque règle, les périphériques qu’elle concerne (<code>--show-devices</code>)</td>
 </tr>
 <tr>
 <td><code>usbguard append-rule '&lt;règle&gt;'</code></td>
-<td>Ajouter une règle à la politique</td>
+<td>Ajouter une règle <strong>à la fin</strong> de la politique</td>
+</tr>
+<tr>
+<td><code>usbguard append-rule '&lt;règle&gt;' -a &lt;ID&gt;</code></td>
+<td>Insérer une règle après celle portant cet identifiant (il n’existe pas de <code>--before</code>)</td>
 </tr>
 <tr>
 <td><code>usbguard remove-rule &lt;ID&gt;</code></td>
@@ -3734,7 +4010,11 @@
 </tr>
 <tr>
 <td><code>usbguard generate-policy --with-ports</code></td>
-<td>Générer des règles liées à la topologie des ports</td>
+<td>Lier <strong>tous</strong> les périphériques à leur port (<code>via-port</code>)</td>
+</tr>
+<tr>
+<td><code>usbguard generate-policy --no-ports-sn</code></td>
+<td>N’ajouter <code>via-port</code> à <strong>aucun</strong> périphérique</td>
 </tr>
 <tr>
 <td><code>usbguard watch</code></td>
@@ -3771,9 +4051,9 @@
 </tbody>
 </table>
 <p>Vérifiez les options disponibles dans la version installée :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-56-1" name="__codelineno-56-1" href="#__codelineno-56-1"></a>usbguard<span class="w"> </span>--help
-<a id="__codelineno-56-2" name="__codelineno-56-2" href="#__codelineno-56-2"></a>usbguard<span class="w"> </span>list-devices<span class="w"> </span>--help
-<a id="__codelineno-56-3" name="__codelineno-56-3" href="#__codelineno-56-3"></a>usbguard<span class="w"> </span>generate-policy<span class="w"> </span>--help
+<div class="highlight"><pre><span></span><code><a id="__codelineno-71-1" name="__codelineno-71-1" href="#__codelineno-71-1"></a>usbguard<span class="w"> </span>--help
+<a id="__codelineno-71-2" name="__codelineno-71-2" href="#__codelineno-71-2"></a>usbguard<span class="w"> </span>list-devices<span class="w"> </span>--help
+<a id="__codelineno-71-3" name="__codelineno-71-3" href="#__codelineno-71-3"></a>usbguard<span class="w"> </span>generate-policy<span class="w"> </span>--help
 </code></pre></div>
 <h3 id="fichiers-importants">Fichiers importants<a class="headerlink" href="#fichiers-importants" title="Permanent link">&para;</a></h3>
 <table>
@@ -3794,15 +4074,27 @@
 </tr>
 <tr>
 <td><code>/etc/usbguard/rules.d/</code></td>
-<td>Dossier de politiques uniquement si <code>RuleFolder</code> est configuré</td>
+<td>Politiques additionnelles — <strong>actif par défaut sur Ubuntu 24.04</strong> ; chaque fichier doit être en <code>0600 root:root</code></td>
 </tr>
 <tr>
 <td><code>/etc/usbguard/IPCAccessControl.d/</code></td>
 <td>Contrôles d’accès <abbr title="Inter-Process Communication">IPC</abbr> pour les utilisateurs et les groupes</td>
 </tr>
 <tr>
+<td><code>/usr/lib/systemd/system/usbguard.service</code></td>
+<td>Unité du démon ; le contrôle de permissions est actif faute de l’option <code>-P</code></td>
+</tr>
+<tr>
+<td><code>/usr/share/polkit-1/rules.d/org.usbguard1.rules</code></td>
+<td>Règle polkit accordant <code>plugdev</code> et <code>sudo</code> sans authentification, <strong>via D-Bus uniquement</strong></td>
+</tr>
+<tr>
 <td><code>/var/log/usbguard/usbguard-audit.log</code></td>
-<td>Journal d’audit si <code>AuditBackend=FileAudit</code> est configuré</td>
+<td>Journal d’audit — <strong>actif par défaut sur Ubuntu 24.04</strong></td>
+</tr>
+<tr>
+<td><code>/etc/logrotate.d/usbguard</code></td>
+<td>Rotation du journal d’audit ; voir l’avertissement ci-dessous</td>
 </tr>
 <tr>
 <td><code>/var/log/journal/</code></td>
@@ -3823,12 +4115,12 @@
 <tr>
 <td><code>RuleFile</code></td>
 <td><code>/etc/usbguard/rules.conf</code></td>
-<td>Fichier principal de politique</td>
+<td>Fichier principal de politique, chargé en premier</td>
 </tr>
 <tr>
 <td><code>RuleFolder</code></td>
-<td>Variable selon la configuration</td>
-<td>Dossier contenant des politiques additionnelles</td>
+<td><code>/etc/usbguard/rules.d/</code></td>
+<td>Politiques additionnelles, chargées <strong>après</strong> <code>RuleFile</code> et en ordre alphanumérique</td>
 </tr>
 <tr>
 <td><code>ImplicitPolicyTarget</code></td>
@@ -3851,9 +4143,39 @@
 <td>Traitement des périphériques branchés à chaud</td>
 </tr>
 <tr>
+<td><code>AuthorizedDefault</code></td>
+<td><code>none</code></td>
+<td>État d’autorisation appliqué par le noyau avant toute décision d’USBGuard</td>
+</tr>
+<tr>
 <td><code>RestoreControllerDeviceState</code></td>
 <td><code>false</code></td>
 <td>Restauration éventuelle de l’état antérieur des contrôleurs lors de l’arrêt propre du démon</td>
+</tr>
+<tr>
+<td><code>DeviceRulesWithPort</code></td>
+<td><code>false</code></td>
+<td>Ajout ou non d’un <code>via-port</code> aux règles créées à chaud via l’<abbr title="Inter-Process Communication">IPC</abbr></td>
+</tr>
+<tr>
+<td><code>IPCAllowedUsers</code></td>
+<td><code>root</code></td>
+<td>Directive héritée accordant un accès <abbr title="Inter-Process Communication">IPC</abbr> <strong>complet</strong> aux utilisateurs listés</td>
+</tr>
+<tr>
+<td><code>IPCAllowedGroups</code></td>
+<td><code>root plugdev</code></td>
+<td>Directive héritée accordant un accès <abbr title="Inter-Process Communication">IPC</abbr> <strong>complet</strong> aux groupes listés — à revoir, voir l’étape 4</td>
+</tr>
+<tr>
+<td><code>IPCAccessControlFiles</code></td>
+<td><code>/etc/usbguard/IPCAccessControl.d/</code></td>
+<td>Méthode recommandée, granulaire par section et par privilège</td>
+</tr>
+<tr>
+<td><code>AuditBackend</code></td>
+<td><code>FileAudit</code></td>
+<td>Destination du journal d’audit</td>
 </tr>
 </tbody>
 </table>
@@ -3862,6 +4184,15 @@
 <p>Avec <code>true</code>, USBGuard tente de restaurer l’état antérieur des contrôleurs lors d’un <strong>arrêt propre</strong> du démon. Si cet état était permissif, de nouveaux périphériques pourraient alors être autorisés après l’arrêt du service.</p>
 <p>Un processus interrompu brutalement ne peut généralement pas exécuter cette restauration. Il est donc incorrect d’affirmer qu’un simple crash restaure automatiquement un état permissif.</p>
 <p>La valeur <code>false</code> reste néanmoins préférable pour conserver un comportement aussi proche que possible du « fail closed » après l’arrêt du service.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Le journal d’audit devient lisible par tous après la première rotation</p>
+<p>Le démon crée <code>/var/log/usbguard/usbguard-audit.log</code> avec un masque <code>0077</code>, donc en <code>0600</code>. Mais le fichier <code>/etc/logrotate.d/usbguard</code> livré par le paquet contient <code>create 644 root root</code> : <strong>après la première rotation hebdomadaire, le journal est lisible par n’importe quel compte local</strong>.</p>
+<p>Comme <code>HidePII=false</code> est également la valeur par défaut, ce journal contient les noms et numéros de série des périphériques branchés. Si cela vous gêne, resserrez la directive :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-72-1" name="__codelineno-72-1" href="#__codelineno-72-1"></a>sudo<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">'s/create 644 root root/create 640 root adm/'</span><span class="w"> </span>/etc/logrotate.d/usbguard
+<a id="__codelineno-72-2" name="__codelineno-72-2" href="#__codelineno-72-2"></a>sudo<span class="w"> </span>logrotate<span class="w"> </span>--debug<span class="w"> </span>/etc/logrotate.d/usbguard
+</code></pre></div>
+<p>L’option <code>--debug</code> simule la rotation sans l’exécuter.</p>
 </div>
 <hr />
 <h2 id="problemes-frequents">Problèmes fréquents<a class="headerlink" href="#problemes-frequents" title="Permanent link">&para;</a></h2>
@@ -3881,9 +4212,9 @@
 <p>Avec <code>ImplicitPolicyTarget=block</code>, le matériel concerné est alors désautorisé.</p>
 <h4 id="si-vous-avez-un-acces-ssh">Si vous avez un accès SSH<a class="headerlink" href="#si-vous-avez-un-acces-ssh" title="Permanent link">&para;</a></h4>
 <p>Masquez et arrêtez les services :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-57-1" name="__codelineno-57-1" href="#__codelineno-57-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>mask<span class="w"> </span>--now<span class="w"> </span>usbguard.service<span class="w"> </span>usbguard-dbus.service
-<a id="__codelineno-57-2" name="__codelineno-57-2" href="#__codelineno-57-2"></a>systemctl<span class="w"> </span>is-enabled<span class="w"> </span>usbguard.service
-<a id="__codelineno-57-3" name="__codelineno-57-3" href="#__codelineno-57-3"></a>sudo<span class="w"> </span>reboot
+<div class="highlight"><pre><span></span><code><a id="__codelineno-73-1" name="__codelineno-73-1" href="#__codelineno-73-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>mask<span class="w"> </span>--now<span class="w"> </span>usbguard.service<span class="w"> </span>usbguard-dbus.service
+<a id="__codelineno-73-2" name="__codelineno-73-2" href="#__codelineno-73-2"></a>systemctl<span class="w"> </span>is-enabled<span class="w"> </span>usbguard.service
+<a id="__codelineno-73-3" name="__codelineno-73-3" href="#__codelineno-73-3"></a>sudo<span class="w"> </span>reboot
 </code></pre></div>
 <p>L’arrêt du démon ne réautorise pas nécessairement les périphériques déjà bloqués. Leur rebranchement ou un redémarrage peut être nécessaire.</p>
 <p>Après le redémarrage, reprenez la procédure à l’étape de génération de la politique.</p>
@@ -3904,7 +4235,7 @@
 <li>Repérez la ligne commençant par <code>linux</code>.</li>
 <li>
 <p>Ajoutez à la fin :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-58-1" name="__codelineno-58-1" href="#__codelineno-58-1"></a>systemd.mask=usbguard.service systemd.mask=usbguard-dbus.service
+<div class="highlight"><pre><span></span><code><a id="__codelineno-74-1" name="__codelineno-74-1" href="#__codelineno-74-1"></a>systemd.mask=usbguard.service systemd.mask=usbguard-dbus.service
 </code></pre></div>
 </li>
 <li>
@@ -3912,7 +4243,7 @@
 </li>
 <li>
 <p>Une fois la session ouverte, rendez le masquage permanent :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-59-1" name="__codelineno-59-1" href="#__codelineno-59-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>mask<span class="w"> </span>usbguard.service<span class="w"> </span>usbguard-dbus.service
+<div class="highlight"><pre><span></span><code><a id="__codelineno-75-1" name="__codelineno-75-1" href="#__codelineno-75-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>mask<span class="w"> </span>usbguard.service<span class="w"> </span>usbguard-dbus.service
 </code></pre></div>
 </li>
 </ol>
@@ -3920,11 +4251,11 @@
 <p class="admonition-title">Le menu GRUB ne s’affiche pas</p>
 <p>Maintenez <span class="keys"><kbd class="key-shift">Shift</kbd></span> sur certaines machines BIOS ou appuyez plusieurs fois sur <span class="keys"><kbd class="key-escape">Esc</kbd></span> sur certaines machines UEFI.</p>
 <p>Pour rendre le menu temporairement visible lors des prochains démarrages, modifiez <code>/etc/default/grub</code> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-60-1" name="__codelineno-60-1" href="#__codelineno-60-1"></a>GRUB_TIMEOUT_STYLE=menu
-<a id="__codelineno-60-2" name="__codelineno-60-2" href="#__codelineno-60-2"></a>GRUB_TIMEOUT=5
+<div class="highlight"><pre><span></span><code><a id="__codelineno-76-1" name="__codelineno-76-1" href="#__codelineno-76-1"></a>GRUB_TIMEOUT_STYLE=menu
+<a id="__codelineno-76-2" name="__codelineno-76-2" href="#__codelineno-76-2"></a>GRUB_TIMEOUT=5
 </code></pre></div>
 <p>Puis appliquez la configuration :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-61-1" name="__codelineno-61-1" href="#__codelineno-61-1"></a>sudo<span class="w"> </span>update-grub
+<div class="highlight"><pre><span></span><code><a id="__codelineno-77-1" name="__codelineno-77-1" href="#__codelineno-77-1"></a>sudo<span class="w"> </span>update-grub
 </code></pre></div>
 </div>
 <div class="admonition danger">
@@ -3938,26 +4269,26 @@
 <p><code>usbguard list-devices</code> renvoie une erreur de connexion ou de permission alors que le démon fonctionne.</p>
 </div>
 <p>Testez d’abord :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-62-1" name="__codelineno-62-1" href="#__codelineno-62-1"></a>sudo<span class="w"> </span>usbguard<span class="w"> </span>list-devices
+<div class="highlight"><pre><span></span><code><a id="__codelineno-78-1" name="__codelineno-78-1" href="#__codelineno-78-1"></a>sudo<span class="w"> </span>usbguard<span class="w"> </span>list-devices
 </code></pre></div>
 <p>Si la commande fonctionne avec <code>sudo</code>, vérifiez les éléments suivants.</p>
 <h4 id="le-demon-na-pas-ete-redemarre">Le démon n’a pas été redémarré<a class="headerlink" href="#le-demon-na-pas-ete-redemarre" title="Permanent link">&para;</a></h4>
 <p>Les fichiers de contrôle d’accès sont lus au démarrage :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-63-1" name="__codelineno-63-1" href="#__codelineno-63-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>usbguard.service
+<div class="highlight"><pre><span></span><code><a id="__codelineno-79-1" name="__codelineno-79-1" href="#__codelineno-79-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>usbguard.service
 </code></pre></div>
 <h4 id="lappartenance-au-groupe-nest-pas-active">L’appartenance au groupe n’est pas active<a class="headerlink" href="#lappartenance-au-groupe-nest-pas-active" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-64-1" name="__codelineno-64-1" href="#__codelineno-64-1"></a>id
-<a id="__codelineno-64-2" name="__codelineno-64-2" href="#__codelineno-64-2"></a>id<span class="w"> </span>-nG
+<div class="highlight"><pre><span></span><code><a id="__codelineno-80-1" name="__codelineno-80-1" href="#__codelineno-80-1"></a>id
+<a id="__codelineno-80-2" name="__codelineno-80-2" href="#__codelineno-80-2"></a>id<span class="w"> </span>-nG
 </code></pre></div>
 <p>Déconnectez-vous complètement puis reconnectez-vous si le groupe manque.</p>
 <h4 id="le-fichier-de-controle-dacces-porte-un-mauvais-nom">Le fichier de contrôle d’accès porte un mauvais nom<a class="headerlink" href="#le-fichier-de-controle-dacces-porte-un-mauvais-nom" title="Permanent link">&para;</a></h4>
 <p>Pour un groupe, le fichier est normalement préfixé par <code>:</code> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-65-1" name="__codelineno-65-1" href="#__codelineno-65-1"></a>/etc/usbguard/IPCAccessControl.d/:sudo
+<div class="highlight"><pre><span></span><code><a id="__codelineno-81-1" name="__codelineno-81-1" href="#__codelineno-81-1"></a>/etc/usbguard/IPCAccessControl.d/:sudo
 </code></pre></div>
 <p>Pour un utilisateur, il ne possède pas ce préfixe.</p>
 <h4 id="le-service-ne-fonctionne-pas">Le service ne fonctionne pas<a class="headerlink" href="#le-service-ne-fonctionne-pas" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-66-1" name="__codelineno-66-1" href="#__codelineno-66-1"></a>systemctl<span class="w"> </span>status<span class="w"> </span>usbguard.service
-<a id="__codelineno-66-2" name="__codelineno-66-2" href="#__codelineno-66-2"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>usbguard.service<span class="w"> </span>-b<span class="w"> </span>--no-pager
+<div class="highlight"><pre><span></span><code><a id="__codelineno-82-1" name="__codelineno-82-1" href="#__codelineno-82-1"></a>systemctl<span class="w"> </span>status<span class="w"> </span>usbguard.service
+<a id="__codelineno-82-2" name="__codelineno-82-2" href="#__codelineno-82-2"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>usbguard.service<span class="w"> </span>-b<span class="w"> </span>--no-pager
 </code></pre></div>
 <div class="admonition danger">
 <p class="admonition-title">Ne contournez pas le problème avec des permissions globales</p>
@@ -3979,12 +4310,12 @@
 <li>le périphérique a été branché sur un autre port alors que la règle contient <code>via-port</code>.</li>
 </ul>
 <p>Vérifiez :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-67-1" name="__codelineno-67-1" href="#__codelineno-67-1"></a>usbguard<span class="w"> </span>list-rules
-<a id="__codelineno-67-2" name="__codelineno-67-2" href="#__codelineno-67-2"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'^[[:space:]]*(RuleFile|RuleFolder)='</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-67-3" name="__codelineno-67-3" href="#__codelineno-67-3"></a><span class="w">    </span>/etc/usbguard/usbguard-daemon.conf
+<div class="highlight"><pre><span></span><code><a id="__codelineno-83-1" name="__codelineno-83-1" href="#__codelineno-83-1"></a>usbguard<span class="w"> </span>list-rules
+<a id="__codelineno-83-2" name="__codelineno-83-2" href="#__codelineno-83-2"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'^[[:space:]]*(RuleFile|RuleFolder)='</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-83-3" name="__codelineno-83-3" href="#__codelineno-83-3"></a><span class="w">    </span>/etc/usbguard/usbguard-daemon.conf
 </code></pre></div>
 <p>Avec la configuration habituelle :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-68-1" name="__codelineno-68-1" href="#__codelineno-68-1"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-nF<span class="w"> </span><span class="s1">'VID:PID'</span><span class="w"> </span>/etc/usbguard/rules.conf
+<div class="highlight"><pre><span></span><code><a id="__codelineno-84-1" name="__codelineno-84-1" href="#__codelineno-84-1"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-nF<span class="w"> </span><span class="s1">'VID:PID'</span><span class="w"> </span>/etc/usbguard/rules.conf
 </code></pre></div>
 <p>Remplacez <code>VID:PID</code> par l’identifiant réel, par exemple <code>0951:1666</code>.</p>
 <hr />
@@ -3995,15 +4326,15 @@
 </div>
 <p>L’<abbr title="Universal Serial Bus">USB</abbr> forme une arborescence. Un périphérique placé derrière un hub, un dock ou un écran-concentrateur dépend de ses parents.</p>
 <p>Affichez la hiérarchie :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-69-1" name="__codelineno-69-1" href="#__codelineno-69-1"></a>usbguard<span class="w"> </span>list-devices<span class="w"> </span>-t
-<a id="__codelineno-69-2" name="__codelineno-69-2" href="#__codelineno-69-2"></a>lsusb<span class="w"> </span>-t
+<div class="highlight"><pre><span></span><code><a id="__codelineno-85-1" name="__codelineno-85-1" href="#__codelineno-85-1"></a>usbguard<span class="w"> </span>list-devices<span class="w"> </span>-t
+<a id="__codelineno-85-2" name="__codelineno-85-2" href="#__codelineno-85-2"></a>lsusb<span class="w"> </span>-t
 </code></pre></div>
 <p>Vérifiez que les hubs parents sont également autorisés.</p>
 <p>Si nécessaire :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-70-1" name="__codelineno-70-1" href="#__codelineno-70-1"></a>usbguard<span class="w"> </span>allow-device<span class="w"> </span>&lt;ID_DU_HUB&gt;<span class="w"> </span>-p
+<div class="highlight"><pre><span></span><code><a id="__codelineno-86-1" name="__codelineno-86-1" href="#__codelineno-86-1"></a>usbguard<span class="w"> </span>allow-device<span class="w"> </span>&lt;ID_DU_HUB&gt;<span class="w"> </span>-p
 </code></pre></div>
 <p>Consultez aussi les journaux du noyau :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-71-1" name="__codelineno-71-1" href="#__codelineno-71-1"></a>journalctl<span class="w"> </span>-k<span class="w"> </span>-b<span class="w"> </span>--no-pager<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">100</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-87-1" name="__codelineno-87-1" href="#__codelineno-87-1"></a>journalctl<span class="w"> </span>-k<span class="w"> </span>-b<span class="w"> </span>--no-pager<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">100</span>
 </code></pre></div>
 <p>Un périphérique autorisé par USBGuard peut rester inutilisable pour une autre raison :</p>
 <ul>
@@ -4032,16 +4363,16 @@
 <li>son port a changé alors que la règle utilise <code>via-port</code>.</li>
 </ul>
 <p>Commencez par sauvegarder la politique :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-72-1" name="__codelineno-72-1" href="#__codelineno-72-1"></a>sudo<span class="w"> </span>cp<span class="w"> </span>-a<span class="w"> </span>/etc/usbguard/rules.conf<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-72-2" name="__codelineno-72-2" href="#__codelineno-72-2"></a><span class="w">    </span>/etc/usbguard/rules.conf.backup
+<div class="highlight"><pre><span></span><code><a id="__codelineno-88-1" name="__codelineno-88-1" href="#__codelineno-88-1"></a>sudo<span class="w"> </span>cp<span class="w"> </span>-a<span class="w"> </span>/etc/usbguard/rules.conf<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-88-2" name="__codelineno-88-2" href="#__codelineno-88-2"></a><span class="w">    </span>/etc/usbguard/rules.conf.backup
 </code></pre></div>
 <p>Comparez ensuite le périphérique et la règle :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-73-1" name="__codelineno-73-1" href="#__codelineno-73-1"></a>usbguard<span class="w"> </span>list-devices
-<a id="__codelineno-73-2" name="__codelineno-73-2" href="#__codelineno-73-2"></a>usbguard<span class="w"> </span>list-rules
+<div class="highlight"><pre><span></span><code><a id="__codelineno-89-1" name="__codelineno-89-1" href="#__codelineno-89-1"></a>usbguard<span class="w"> </span>list-devices
+<a id="__codelineno-89-2" name="__codelineno-89-2" href="#__codelineno-89-2"></a>usbguard<span class="w"> </span>list-rules
 </code></pre></div>
 <p>N’enlevez pas systématiquement le hash. Construisez plutôt une nouvelle règle suffisamment précise à partir des descripteurs actuels, puis testez-la avec un accès de secours disponible.</p>
 <p>Si vous choisissez une règle sans hash, conservez autant que possible plusieurs critères :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-74-1" name="__codelineno-74-1" href="#__codelineno-74-1"></a>allow id 0951:1666 serial "60A44C..." name "DataTraveler 3.0" with-interface { 08:06:50 }
+<div class="highlight"><pre><span></span><code><a id="__codelineno-90-1" name="__codelineno-90-1" href="#__codelineno-90-1"></a>allow id 0951:1666 serial "60A44C..." name "DataTraveler 3.0" with-interface { 08:06:50 }
 </code></pre></div>
 <p>Le numéro de série et le nom restent falsifiables. La suppression du hash constitue donc un compromis de maintenance, pas une amélioration de sécurité.</p>
 <hr />
@@ -4051,18 +4382,46 @@
 <p><code>apt remove</code> ou <code>apt purge</code> semble rester bloqué pendant l’arrêt du service.</p>
 </div>
 <p>Masquez et arrêtez d’abord les unités :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-75-1" name="__codelineno-75-1" href="#__codelineno-75-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>mask<span class="w"> </span>--now<span class="w"> </span>usbguard.service<span class="w"> </span>usbguard-dbus.service
+<div class="highlight"><pre><span></span><code><a id="__codelineno-91-1" name="__codelineno-91-1" href="#__codelineno-91-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>mask<span class="w"> </span>--now<span class="w"> </span>usbguard.service<span class="w"> </span>usbguard-dbus.service
 </code></pre></div>
 <p>Puis désinstallez :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-76-1" name="__codelineno-76-1" href="#__codelineno-76-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>purge<span class="w"> </span>usbguard
+<div class="highlight"><pre><span></span><code><a id="__codelineno-92-1" name="__codelineno-92-1" href="#__codelineno-92-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>purge<span class="w"> </span>usbguard
 </code></pre></div>
 <p>Après la désinstallation, vérifiez les masques éventuellement laissés dans <code>/etc/systemd/system/</code> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-77-1" name="__codelineno-77-1" href="#__codelineno-77-1"></a>ls<span class="w"> </span>-l<span class="w"> </span>/etc/systemd/system/usbguard*.service
+<div class="highlight"><pre><span></span><code><a id="__codelineno-93-1" name="__codelineno-93-1" href="#__codelineno-93-1"></a>ls<span class="w"> </span>-l<span class="w"> </span>/etc/systemd/system/usbguard*.service
 </code></pre></div>
 <p>Si vous souhaitez supprimer ces masques :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-78-1" name="__codelineno-78-1" href="#__codelineno-78-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>unmask<span class="w"> </span>usbguard.service<span class="w"> </span>usbguard-dbus.service
-<a id="__codelineno-78-2" name="__codelineno-78-2" href="#__codelineno-78-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
+<div class="highlight"><pre><span></span><code><a id="__codelineno-94-1" name="__codelineno-94-1" href="#__codelineno-94-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>unmask<span class="w"> </span>usbguard.service<span class="w"> </span>usbguard-dbus.service
+<a id="__codelineno-94-2" name="__codelineno-94-2" href="#__codelineno-94-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
 </code></pre></div>
+<hr />
+<h3 id="probleme-7-le-demon-refuse-de-demarrer-apres-une-modification-de-la-politique">Problème 7 : le démon refuse de démarrer après une modification de la politique<a class="headerlink" href="#probleme-7-le-demon-refuse-de-demarrer-apres-une-modification-de-la-politique" title="Permanent link">&para;</a></h3>
+<div class="admonition failure">
+<p class="admonition-title">Symptôme</p>
+<p><code>usbguard.service</code> passe en <code>failed</code> au démarrage, et les périphériques <abbr title="Universal Serial Bus">USB</abbr> fonctionnent tous — y compris ceux qui devraient être bloqués.</p>
+</div>
+<p>C’est une panne qui <strong>ouvre</strong> la protection au lieu de la fermer : sans démon, aucune politique n’est appliquée. Elle passe donc facilement inaperçue.</p>
+<p>La cause la plus fréquente est un contrôle de permissions en échec. Le démon vérifie <code>usbguard-daemon.conf</code>, le fichier <code>RuleFile</code> et <strong>chaque fichier présent dans <code>RuleFolder</code></strong> ; tout bit de permission accordé au groupe ou aux autres provoque une exception au chargement.</p>
+<p>Identifiez le fichier fautif :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-95-1" name="__codelineno-95-1" href="#__codelineno-95-1"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>usbguard.service<span class="w"> </span>-b<span class="w"> </span>--no-pager<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s1">'permission'</span>
+<a id="__codelineno-95-2" name="__codelineno-95-2" href="#__codelineno-95-2"></a>sudo<span class="w"> </span>find<span class="w"> </span>/etc/usbguard<span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span>!<span class="w"> </span>-perm<span class="w"> </span><span class="m">0600</span><span class="w"> </span>-printf<span class="w"> </span><span class="s1">'%m %p\n'</span>
+</code></pre></div>
+<p>Corrigez puis redémarrez :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-96-1" name="__codelineno-96-1" href="#__codelineno-96-1"></a>sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">0600</span><span class="w"> </span>/etc/usbguard/rules.conf<span class="w"> </span>/etc/usbguard/usbguard-daemon.conf
+<a id="__codelineno-96-2" name="__codelineno-96-2" href="#__codelineno-96-2"></a>sudo<span class="w"> </span>find<span class="w"> </span>/etc/usbguard/rules.d<span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span>-exec<span class="w"> </span>chmod<span class="w"> </span><span class="m">0600</span><span class="w"> </span><span class="o">{}</span><span class="w"> </span>+
+<a id="__codelineno-96-3" name="__codelineno-96-3" href="#__codelineno-96-3"></a>sudo<span class="w"> </span>chown<span class="w"> </span>-R<span class="w"> </span>root:root<span class="w"> </span>/etc/usbguard
+<a id="__codelineno-96-4" name="__codelineno-96-4" href="#__codelineno-96-4"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>usbguard.service
+<a id="__codelineno-96-5" name="__codelineno-96-5" href="#__codelineno-96-5"></a>systemctl<span class="w"> </span>is-active<span class="w"> </span>usbguard.service
+</code></pre></div>
+<p>Les autres causes possibles sont une erreur de syntaxe dans une règle et un <code>RuleFile</code> inexistant :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-97-1" name="__codelineno-97-1" href="#__codelineno-97-1"></a>sudo<span class="w"> </span>usbguard-rule-parser<span class="w"> </span>-f<span class="w"> </span>/etc/usbguard/rules.conf
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Surveillez cette panne dans la durée</p>
+<p>Puisqu’elle est silencieuse, ajoutez sa détection à vos vérifications périodiques :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-98-1" name="__codelineno-98-1" href="#__codelineno-98-1"></a>systemctl<span class="w"> </span>is-active<span class="w"> </span>usbguard.service<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s1">'ALERTE : USBGuard ne tourne pas'</span>
+</code></pre></div>
+</div>
 <hr />
 <h2 id="limites-de-la-protection">Limites de la protection<a class="headerlink" href="#limites-de-la-protection" title="Permanent link">&para;</a></h2>
 <p>USBGuard réduit l’exposition aux périphériques <abbr title="Universal Serial Bus">USB</abbr> inconnus, mais ne constitue pas une authentification matérielle et ne couvre pas tous les risques liés aux connecteurs modernes.</p>
@@ -4076,6 +4435,8 @@
 <li>USBGuard ne couvre pas nécessairement Thunderbolt, le tunneling PCIe, les modes alternatifs <abbr title="Universal Serial Bus">USB</abbr>-C ou toutes les fonctions d’un dock.</li>
 <li>La protection ne s’applique qu’une fois le noyau, le démon et la politique opérationnels.</li>
 <li>Un administrateur disposant de <code>root</code> ou de <code>Policy=modify</code> peut modifier ou désactiver la politique.</li>
+<li>Les valeurs par défaut d’une distribution peuvent accorder bien plus de droits que prévu : sur Ubuntu 24.04, <code>IPCAllowedGroups=root plugdev</code> et la règle polkit du paquet en sont deux exemples.</li>
+<li>Un démon qui ne démarre pas laisse le système sans aucune protection : cette panne est silencieuse et doit être surveillée.</li>
 <li>Un attaquant disposant d’un accès physique prolongé peut employer d’autres techniques que l’<abbr title="Universal Serial Bus">USB</abbr>.</li>
 </ul>
 <p>USBGuard doit donc être considéré comme une couche de défense parmi d’autres :</p>
@@ -4098,11 +4459,16 @@
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Un second canal d’accès testé est disponible</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>usbguard.service</code> et <code>usbguard-dbus.service</code> sont masqués avant l’installation</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Le paquet est installé et sa version réelle a été vérifiée</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>RuleFile</code> ou <code>RuleFolder</code> a été vérifié dans <code>usbguard-daemon.conf</code></li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> La politique initiale a été générée dans un fichier temporaire</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> La politique générée automatiquement par le paquet a été inspectée et n’est pas vide</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>RuleFile</code> <strong>et</strong> <code>RuleFolder</code> ont été vérifiés dans <code>usbguard-daemon.conf</code></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> La politique initiale a été générée dans un fichier de travail réservé à <code>root</code></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> La présence de <code>via-port</code> dans la politique générée a été mesurée et le compromis a été tranché</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Chaque périphérique autorisé a été identifié et justifié</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> La politique est installée en <code>0600 root:root</code></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Aucun fichier de <code>/etc/usbguard/</code> n’est plus permissif que <code>0600</code></li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Le clavier, la souris, les hubs, le dock et le réseau <abbr title="Universal Serial Bus">USB</abbr> nécessaires sont couverts</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>IPCAllowedGroups=root plugdev</code> a été neutralisée et l’accès <code>:plugdev</code> retiré</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Un compte non autorisé ne peut pas exécuter <code>usbguard set-parameter</code></li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Les droits <abbr title="Inter-Process Communication">IPC</abbr> suivent le principe du moindre privilège</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Le service est démasqué, activé et actif</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>usbguard list-devices</code> fonctionne pour le compte autorisé</li>
@@ -4114,6 +4480,8 @@
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> La procédure de récupération a été vérifiée</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Les limites de sécurité d’USBGuard sont comprises</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Les composants GNOME ou notifier n’ont été activés qu’après vérification de leur présence</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Si <code>usbguard-dbus.service</code> a été activé, la règle polkit accordant <code>plugdev</code> et <code>sudo</code> sans authentification a été relue</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> La rotation du journal d’audit a été resserrée si sa lisibilité par tous pose problème</li>
 </ul>
 <hr />
 <h2 id="glossaire">Glossaire<a class="headerlink" href="#glossaire" title="Permanent link">&para;</a></h2>
