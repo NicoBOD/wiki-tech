@@ -1530,9 +1530,536 @@ Les deux boucles finales sont la partie importante : **arrêter le démon ne ré
 
 Ce filet ne dispense pas de la session SSH : si l’activation échoue d’une façon imprévue, avant même d’atteindre l’invite, seul un accès distant permet de reprendre la main.
 
-### Vérifications restantes après l’activation
+### Le redémarrage, contrôle décisif
 
-Le blocage d’un périphérique inconnu et le rebranchement du matériel de confiance se testent immédiatement. **Le redémarrage reste le contrôle décisif** : c’est lui seul qui confirme que le clavier répondra à l’écran de connexion, lorsque la politique est appliquée aux périphériques présents au démarrage du démon. Effectuez-le avec la session SSH toujours ouverte.
+Le blocage d’un périphérique inconnu et le rebranchement du matériel de confiance se testent immédiatement. Mais **seul le redémarrage confirme que le clavier répondra à l’écran de connexion**, lorsque la politique est appliquée aux périphériques présents au démarrage du démon plutôt qu’à des branchements à chaud.
+
+Sur l’installation décrite ici, il s’est déroulé sans incident : démon démarré une vingtaine de secondes après le début de l’amorçage, dix périphériques reconnus, dix autorisés, aucun bloqué.
+
+```bash
+systemctl is-active usbguard.service; systemctl is-enabled usbguard.service
+usbguard list-devices --blocked      # doit ne rien afficher
+```
+
+Le journal permet de confirmer que chaque périphérique a bien été évalué au démarrage. Recherchez les entrées `type='Device.Present'` assorties de `target.new='allow'` :
+
+```bash
+journalctl -u usbguard.service -b --no-pager | grep "Device.Present"
+```
+
+!!! warning "Le redémarrage coupe aussi votre session SSH"
+    C’est une évidence que l’on oublie : le filet de sécurité disparaît pendant l’opération même où l’on en aurait le plus besoin. Si le clavier ne revenait pas, il faudrait rouvrir une session SSH depuis l’autre machine — ce qui suppose que le service SSH démarre correctement et que le réseau monte sans intervention.
+
+    Vérifiez donc **avant** de redémarrer que `ssh` est bien activé au démarrage :
+
+    ```bash
+    systemctl is-enabled ssh
+    ```
+
+### Surprise n° 4 : sur le matériel bas de gamme, `id` et `name` ne distinguent rien
+
+Après quelques ajouts, la politique était passée de dix à dix-huit règles. Cinq des règles ajoutées correspondaient à cinq clés USB **physiquement distinctes**, d’un même modèle chinois d’entrée de gamme :
+
+```text
+allow id ffff:5678 serial "65113912…" name "Disk 2.0" hash "ZWNWOD08xS…" with-interface 08:06:50
+allow id ffff:5678 serial "86219711…" name "Disk 2.0" hash "oWa6qVP8uz…" with-interface 08:06:50
+allow id ffff:5678 serial "39274311…" name "Disk 2.0" hash "IpjRcqvOO7…" with-interface 08:06:50
+allow id ffff:5678 serial "67576210…" name "Disk 2.0" hash "jfX9/9DdBD…" with-interface 08:06:50
+allow id ffff:5678 serial "60366710…" name "Disk 2.0" hash "x1j39iAsa2…" with-interface 08:06:50
+```
+
+Identifiant identique, nom identique, cinq numéros de série différents. C’est le comportement normal d’un lot de clés bâties sur le même contrôleur générique — et c’est très instructif.
+
+D’abord, **`ffff` n’est pas un identifiant constructeur attribué**. Il est absent de la base de l’USB-IF, alors que tous les autres identifiants de la politique s’y résolvent :
+
+```bash
+grep -m1 -iE '^ffff' /usr/share/misc/usb.ids   # aucun résultat
+grep -m1 -iE '^0781' /usr/share/misc/usb.ids   # 0781  SanDisk Corp.
+```
+
+Ce n’est pas en soi un signe de malveillance : les contrôleurs de stockage bon marché sont couramment expédiés avec un identifiant non enregistré. Mais la conséquence est concrète.
+
+!!! warning "Pour ce matériel, seuls `serial` et `hash` discriminent"
+    Une règle qui reposerait sur le seul `id ffff:5678` autoriserait **n’importe quelle clé de cette famille**, y compris une que vous n’avez jamais vue. Le nom `"Disk 2.0"` est tout aussi générique et n’apporte aucune garantie.
+
+    C’est un argument concret en faveur du maintien des empreintes, évoqué plus haut dans « Générer sans hash » : sur du matériel de marque, `id` et `serial` suffisent souvent à se repérer ; sur ce type de matériel, retirer les hashes reviendrait à ouvrir la porte à toute une catégorie de périphériques.
+
+    Vérifiez donc qu’aucune de vos règles ne se réduit à un identifiant générique :
+
+    ```bash
+    usbguard list-rules | grep -v 'hash' | grep -v 'serial "[^"]\+"'
+    ```
+
+Ensuite, **chaque `usbguard allow-device <ID> -p` écrit une règle permanente supplémentaire, sans jamais vérifier qu’une règle équivalente existe déjà**. Cinq clés autorisées donnent cinq règles : c’est attendu. Mais la politique grossit sans que rien ne le signale, et il devient vite difficile de se rappeler ce que chaque ligne autorise.
+
+### Auditer la politique périodiquement
+
+```bash
+usbguard list-rules | wc -l
+usbguard list-rules | grep -oE 'id [0-9a-f]{4}:[0-9a-f]{4}' | sort | uniq -c | sort -rn
+```
+
+Un même identifiant apparaissant plusieurs fois a deux explications possibles, qu’il faut savoir départager :
+
+- **plusieurs exemplaires d’un même modèle**, chacun avec son propre numéro de série — cas légitime, celui décrit ci-dessus ;
+- **des règles mortes**, laissées par un périphérique qui présente une identité différente à chaque branchement.
+
+!!! danger "Un périphérique qui change d’identité ne peut pas être mis en liste blanche"
+    Si un périphérique annonce un numéro de série différent à chaque énumération, l’empreinte USBGuard change avec lui, puisqu’elle est calculée à partir des attributs du périphérique. Chaque autorisation permanente laisse alors derrière elle une règle qui ne correspondra plus jamais, et le périphérique est de toute façon bloqué au branchement suivant.
+
+    Pour trancher entre les deux cas, branchez **le même exemplaire** deux fois de suite et comparez :
+
+    ```bash
+    usbguard list-devices --blocked
+    # débrancher, rebrancher le même périphérique, puis :
+    usbguard list-devices --blocked
+    ```
+
+    Si le `serial` diffère d’un relevé à l’autre pour un exemplaire unique, le comportement est confirmé et aucune règle fondée sur `serial` ou `hash` ne pourra le reconnaître durablement.
+
+Le nettoyage d’éventuelles règles mortes se fait règle par règle. **Supprimez toujours des identifiants les plus élevés vers les plus bas**, car les numéros se décalent après chaque suppression :
+
+```bash
+usbguard list-rules                        # relever les identifiants à retirer
+sudo usbguard remove-rule 15
+sudo usbguard remove-rule 14
+sudo usbguard remove-rule 13
+usbguard list-rules                        # vérifier le résultat
+```
+
+Sauvegardez la politique avant l’opération.
+
+---
+
+## Scripts de mise en place
+
+Les trois scripts ci-dessous automatisent la procédure décrite plus haut, avec les garde-fous qui en font l’intérêt. Ils sont donnés pour une installation dans `/usr/local/sbin/` ; adaptez le chemin si vous les placez ailleurs, car les deux premiers se renvoient l’un à l’autre.
+
+Ils sont volontairement séparés en deux temps. Le premier ne change rien au fonctionnement du système : il prépare la politique et les droits, mais laisse le démon masqué. Le second est le seul moment où l’on prend un risque, et il sait revenir en arrière tout seul.
+
+!!! warning "À relire avant de les exécuter"
+    Ces scripts appliquent les choix décrits dans cette note : politique sans liaison aux ports, révocation de l’accès `plugdev`, report des droits sur le groupe `sudo`, service D-Bus laissé masqué. Si vos arbitrages diffèrent, modifiez-les plutôt que de les lancer tels quels.
+
+    Ouvrez une session SSH depuis une autre machine avant de commencer, et vérifiez que votre interface réseau n’est pas un adaptateur USB — le premier script refuse de continuer dans ce cas.
+
+??? example "`usbguard-1-preparer.sh`"
+
+    Contrôles préalables, masquage, installation, génération de la politique et durcissement des droits IPC. **N’active rien** : à l’issue de ce script, le démon est toujours masqué et le système fonctionne comme avant. Il refuse d’aller plus loin si la politique est vide, si un périphérique branché n’a pas de règle, ou si aucune interface HID n’est couverte.
+
+    ```bash
+    #!/usr/bin/env bash
+    #
+    # USBGuard — phase 1 : préparation (n'active RIEN)
+    #
+    # À l'issue de ce script, la politique et les droits IPC sont en place mais le
+    # démon reste masqué et arrêté : le système fonctionne exactement comme avant.
+    # L'activation se fait séparément avec usbguard-2-activer.sh.
+    #
+    set -euo pipefail
+
+    RESET=$'\e[0m'; RED=$'\e[31m'; GRN=$'\e[32m'; YEL=$'\e[33m'; BLD=$'\e[1m'
+    ok()   { printf '  %s✓%s %s\n' "$GRN" "$RESET" "$1"; }
+    warn() { printf '  %s!%s %s\n' "$YEL" "$RESET" "$1"; }
+    die()  { printf '\n%sÉCHEC :%s %s\n' "$RED" "$RESET" "$1" >&2; exit 1; }
+    step() { printf '\n%s=== %s ===%s\n' "$BLD" "$1" "$RESET"; }
+
+    WORKDIR=/root/usbguard
+    POLICY=$WORKDIR/rules.conf.new
+
+    # ---------------------------------------------------------------- pré-vols ---
+    step "Contrôles préalables"
+
+    [ "$(id -u)" -eq 0 ] || die "à lancer avec sudo."
+    ok "exécuté en root"
+
+    . /etc/os-release
+    [ "${VERSION_ID:-}" = "24.04" ] || warn "Ubuntu ${VERSION_ID:-?} détecté, script validé pour 24.04"
+    ok "système : ${PRETTY_NAME}"
+
+    if dpkg -l usbguard 2>/dev/null | grep -q '^ii'; then
+        die "usbguard est déjà installé. Ce script vise une première installation.
+           Pour repartir de zéro : sudo systemctl mask --now usbguard.service usbguard-dbus.service
+                                   sudo apt purge usbguard"
+    fi
+    ok "usbguard non installé"
+
+    # Aucune interface réseau ne doit être portée par le bus USB : USBGuard
+    # pourrait sinon couper l'accès distant en même temps que le clavier.
+    for i in /sys/class/net/*; do
+        n=$(basename "$i"); [ "$n" = lo ] && continue
+        if readlink -f "$i/device" 2>/dev/null | grep -q usb; then
+            die "l'interface réseau $n est un adaptateur USB.
+           USBGuard risquerait de vous couper l'accès distant. Abandon."
+        fi
+    done
+    ok "aucune interface réseau n'est sur le bus USB"
+
+    # Détection de la session SSH de secours.
+    SSH_PEER=$( { ss -tn state established '( sport = :22 )' 2>/dev/null \
+                  | awk 'NR>1{sub(/:[0-9]+$/,"",$4); print $4}' | sort -u | head -1; } || true)
+    if [ -n "${SSH_PEER:-}" ]; then
+        NETIF=$(ip -o route get "$SSH_PEER" 2>/dev/null | grep -oP 'dev \K\S+' || true)
+        ok "session SSH active depuis $SSH_PEER${NETIF:+ via $NETIF} — canal de secours confirmé"
+    else
+        warn "AUCUNE session SSH détectée."
+        warn "Sans clavier PS/2, une erreur vous laisserait sans aucun moyen d'action."
+        read -r -p "  Continuer malgré tout ? [oui/non] " R
+        [ "$R" = "oui" ] || die "interrompu. Ouvrez une session SSH depuis une autre machine."
+    fi
+
+    # Inventaire des périphériques présents, hors contrôleurs racine.
+    mapfile -t PRESENT < <(
+        for d in /sys/bus/usb/devices/*/; do
+            [ -f "$d/idVendor" ] || continue
+            v=$(<"$d/idVendor"); p=$(<"$d/idProduct")
+            [ "$v" = "1d6b" ] && continue
+            printf '%s:%s\n' "$v" "$p"
+        done | sort -u
+    )
+    [ "${#PRESENT[@]}" -gt 0 ] || die "aucun périphérique USB détecté, situation anormale."
+    printf '  %s%d périphériques USB présents :%s\n' "$BLD" "${#PRESENT[@]}" "$RESET"
+    for d in /sys/bus/usb/devices/*/; do
+        [ -f "$d/idVendor" ] || continue
+        v=$(<"$d/idVendor"); p=$(<"$d/idProduct")
+        [ "$v" = "1d6b" ] && continue
+        printf '      %s:%s  %s\n' "$v" "$p" "$(cat "$d/product" 2>/dev/null || echo '(sans nom)')"
+    done
+    echo
+    read -r -p "  Ces périphériques sont-ils TOUS légitimes et à conserver ? [oui/non] " REP
+    [ "$REP" = "oui" ] || die "interrompu. Débranchez l'intrus et relancez."
+
+    # ------------------------------------------------------------- masquage ------
+    step "Masquage des unités avant installation"
+    systemctl mask usbguard.service usbguard-dbus.service >/dev/null 2>&1 || true
+    for u in usbguard.service usbguard-dbus.service; do
+        [ "$(readlink -f "/etc/systemd/system/$u" 2>/dev/null)" = /dev/null ] \
+            || die "le masque de $u n'a pas été créé."
+        ok "$u masqué"
+    done
+
+    # ----------------------------------------------------------- installation ----
+    step "Installation du paquet"
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update -qq
+    apt-get install -y -qq usbguard >/dev/null
+    ok "usbguard $(dpkg-query -W -f='${Version}' usbguard) installé"
+
+    # Le service doit toujours être neutralisé après le postinst.
+    STATE=$(systemctl is-enabled usbguard.service 2>/dev/null || true)
+    [ "$STATE" = masked ] || die "usbguard.service n'est plus masqué (état : $STATE).
+           Le paquet avait probablement été retiré sans purge auparavant.
+           Lancez : sudo systemctl mask --now usbguard.service usbguard-dbus.service"
+    ok "usbguard.service toujours masqué"
+    systemctl is-active --quiet usbguard.service && die "le démon tourne, abandon." || true
+    ok "démon inactif, périphériques USB intacts"
+
+    # Ce que le postinst a fabriqué tout seul.
+    [ -s /etc/usbguard/rules.conf ] \
+        && ok "politique auto-générée par le paquet : $(wc -l < /etc/usbguard/rules.conf) règles (elle va être remplacée)" \
+        || warn "politique auto-générée vide ou absente — sans importance, on la régénère"
+    [ -e /etc/usbguard/IPCAccessControl.d/:plugdev ] \
+        && warn "accès IPC plugdev créé par le paquet — il va être révoqué"
+
+    # -------------------------------------------------------------- politique ----
+    step "Génération de la politique (sans liaison aux ports)"
+    install -d -m 0700 -o root -g root "$WORKDIR"
+    sh -c "umask 077; usbguard generate-policy --no-ports-sn > '$POLICY'"
+
+    RULES=$(grep -c '^allow' "$POLICY" || true)
+    [ "$RULES" -gt 0 ] || die "politique générée vide. NE PAS ACTIVER."
+    ok "$RULES règles allow générées"
+
+    if grep -q 'via-port' "$POLICY"; then
+        warn "des règles via-port subsistent malgré --no-ports-sn :"
+        grep -n 'via-port' "$POLICY" | sed 's/^/      /'
+    else
+        ok "aucune règle liée à un port — vos périphériques resteront valides sur n'importe quelle prise"
+    fi
+
+    # Chaque périphérique présent doit avoir sa règle, sinon blocage à l'activation.
+    MISSING=0
+    for id in "${PRESENT[@]}"; do
+        grep -q "id $id" "$POLICY" || { warn "ABSENT de la politique : $id"; MISSING=1; }
+    done
+    [ "$MISSING" -eq 0 ] || die "des périphériques présents n'ont pas de règle. NE PAS ACTIVER."
+    ok "les ${#PRESENT[@]} périphériques présents ont tous une règle"
+
+    # Garde-fou spécifique : au moins une règle couvrant un périphérique d'entrée.
+    grep -q 'with-interface.*03:' "$POLICY" \
+        || die "aucune règle ne couvre une interface HID (classe 03).
+           Votre clavier et votre souris seraient bloqués. NE PAS ACTIVER."
+    ok "au moins une interface HID (clavier/souris) est couverte"
+
+    install -m 0600 -o root -g root "$POLICY" /etc/usbguard/rules.conf
+    ok "politique installée en $(stat -c '%A %U:%G' /etc/usbguard/rules.conf)"
+
+    # ------------------------------------------------------------- droits IPC ----
+    step "Durcissement des droits IPC"
+    cp -a /etc/usbguard/usbguard-daemon.conf /etc/usbguard/usbguard-daemon.conf.backup
+    sed -i 's/^IPCAllowedGroups=/#IPCAllowedGroups=/' /etc/usbguard/usbguard-daemon.conf
+    grep -q '^#IPCAllowedGroups=' /etc/usbguard/usbguard-daemon.conf \
+        || die "IPCAllowedGroups n'a pas pu être neutralisée."
+    ok "IPCAllowedGroups neutralisée (accès complet hérité de plugdev supprimé)"
+    grep -q '^IPCAllowedUsers=root' /etc/usbguard/usbguard-daemon.conf \
+        && ok "IPCAllowedUsers=root conservée (sudo usbguard … continuera de fonctionner)"
+
+    usbguard remove-user plugdev -g 2>/dev/null || true
+    [ -e /etc/usbguard/IPCAccessControl.d/:plugdev ] \
+        && die "le fichier :plugdev n'a pas pu être retiré." \
+        || ok "accès IPC de plugdev révoqué"
+
+    usbguard add-user sudo --group --devices ALL --policy modify,list --exceptions listen
+    [ -e /etc/usbguard/IPCAccessControl.d/:sudo ] || die "l'accès du groupe sudo n'a pas été créé."
+    ok "droits accordés au groupe sudo :"
+    sed 's/^/      /' /etc/usbguard/IPCAccessControl.d/:sudo
+
+    # --------------------------------------------------------- permissions -------
+    step "Contrôle des permissions"
+    BAD=$(find /etc/usbguard -type f ! -perm 0600 -printf '%m %p\n' || true)
+    [ -z "$BAD" ] || die "fichiers trop permissifs, le démon refuserait de démarrer :
+    $BAD"
+    ok "tous les fichiers de /etc/usbguard sont en 0600"
+
+    # ------------------------------------------------------------------ bilan ----
+    step "Préparation terminée — RIEN n'est encore actif"
+    cat <<EOF
+
+      Le démon est toujours masqué : votre système fonctionne comme avant.
+
+      1. Relisez la politique qui sera appliquée :
+
+           sudo less /etc/usbguard/rules.conf
+
+      2. Quand vous êtes prêt, activez avec :
+
+           sudo /usr/local/sbin/usbguard-2-activer.sh
+
+         Gardez votre session SSH ouverte pendant l'activation.
+
+    EOF
+    ```
+
+??? example "`usbguard-2-activer.sh`"
+
+    Démarre le démon, puis demande une confirmation **au clavier** avec un délai de 90 secondes. Si le clavier vient d’être bloqué, la confirmation est impossible, le délai expire et la protection est retirée automatiquement : unités masquées et arrêtées, puis attributs `authorized` du sysfs remis à 1 pour réanimer les périphériques sans redémarrage.
+
+    ```bash
+    #!/usr/bin/env bash
+    #
+    # USBGuard — phase 2 : activation, avec retour arrière automatique
+    #
+    # Démarre le démon puis attend une confirmation au clavier. Si le clavier ne
+    # répond plus (donc s'il vient d'être bloqué), le délai expire et la protection
+    # est automatiquement retirée, les périphériques étant réautorisés.
+    #
+    set -euo pipefail
+
+    RESET=$'\e[0m'; RED=$'\e[31m'; GRN=$'\e[32m'; YEL=$'\e[33m'; BLD=$'\e[1m'
+    ok()   { printf '  %s✓%s %s\n' "$GRN" "$RESET" "$1"; }
+    warn() { printf '  %s!%s %s\n' "$YEL" "$RESET" "$1"; }
+    die()  { printf '\n%sÉCHEC :%s %s\n' "$RED" "$RESET" "$1" >&2; exit 1; }
+    step() { printf '\n%s=== %s ===%s\n' "$BLD" "$1" "$RESET"; }
+
+    DELAI=${DELAI:-90}
+
+    reautoriser() {
+        for f in /sys/bus/usb/devices/*/authorized_default; do [ -w "$f" ] && echo 1 > "$f" || true; done
+        for f in /sys/bus/usb/devices/*/authorized;         do [ -w "$f" ] && echo 1 > "$f" || true; done
+    }
+
+    retour_arriere() {
+        printf '\n%s>>> RETOUR ARRIÈRE EN COURS <<<%s\n' "$RED" "$RESET"
+        systemctl mask --now usbguard.service usbguard-dbus.service >/dev/null 2>&1 || true
+        reautoriser
+        printf '%s\n' "  Démon arrêté et masqué, périphériques USB réautorisés."
+        printf '%s\n' "  Si le clavier ne revient pas immédiatement, débranchez/rebranchez-le,"
+        printf '%s\n' "  ou redémarrez : le masque survivra au redémarrage."
+        printf '%s\n' "  Rien n'est perdu : la politique reste dans /etc/usbguard/rules.conf."
+    }
+
+    [ "$(id -u)" -eq 0 ] || die "à lancer avec sudo."
+
+    step "Contrôles avant activation"
+    [ -s /etc/usbguard/rules.conf ] || die "/etc/usbguard/rules.conf absent ou vide. Lancez d'abord la phase 1."
+    NB_ALLOW=$(grep -c '^allow' /etc/usbguard/rules.conf || true)
+    [ "$NB_ALLOW" -gt 0 ] || die "la politique ne contient aucune règle allow. NE PAS ACTIVER."
+    ok "politique présente : $NB_ALLOW règles allow"
+    [ "$(stat -c '%a %U:%G' /etc/usbguard/rules.conf)" = "600 root:root" ] \
+        || die "permissions incorrectes sur rules.conf."
+    ok "permissions correctes"
+    BAD=$(find /etc/usbguard -type f ! -perm 0600 -printf '%m %p\n' || true)
+    [ -z "$BAD" ] || die "fichiers trop permissifs :
+    $BAD"
+    ok "aucun fichier trop permissif"
+
+    mapfile -t PRESENT < <(
+        for d in /sys/bus/usb/devices/*/; do
+            [ -f "$d/idVendor" ] || continue
+            v=$(<"$d/idVendor"); p=$(<"$d/idProduct")
+            [ "$v" = "1d6b" ] && continue
+            printf '%s:%s\n' "$v" "$p"
+        done | sort -u
+    )
+    for id in "${PRESENT[@]}"; do
+        grep -q "id $id" /etc/usbguard/rules.conf \
+            || die "le périphérique $id est branché mais absent de la politique.
+           Il serait bloqué. Relancez la phase 1."
+    done
+    ok "les ${#PRESENT[@]} périphériques branchés ont tous une règle"
+
+    step "Démarrage du démon"
+    systemctl unmask usbguard.service >/dev/null
+    systemctl enable --now usbguard.service >/dev/null 2>&1 || {
+        journalctl -u usbguard.service -b --no-pager | tail -20
+        die "le démon n'a pas démarré. Consultez le journal ci-dessus."
+    }
+    sleep 2
+    systemctl is-active --quiet usbguard.service || {
+        journalctl -u usbguard.service -b --no-pager | tail -20
+        retour_arriere
+        die "usbguard.service n'est pas actif."
+    }
+    ok "usbguard.service actif"
+
+    step "État des périphériques"
+    usbguard list-devices | sed 's/^/  /'
+
+    BLOQUES=$( { usbguard list-devices --blocked 2>/dev/null | wc -l; } || true)
+    if [ "$BLOQUES" -gt 0 ]; then
+        warn "$BLOQUES périphérique(s) bloqué(s) :"
+        usbguard list-devices --blocked | sed 's/^/      /'
+    fi
+
+    printf '\n%s' "$BLD"
+    cat <<EOF
+    ================================================================
+      TEST DU CLAVIER — $DELAI secondes
+    ================================================================
+    $RESET
+      Tapez  oui  puis Entrée pour CONSERVER la protection.
+
+      Si votre clavier ne répond plus, ne faites rien : au bout de
+      $DELAI secondes la protection sera retirée automatiquement et
+      vos périphériques réautorisés.
+
+    EOF
+
+    REP=""
+    if read -r -t "$DELAI" -p "  Votre clavier fonctionne-t-il ? [oui] " REP && [ "$REP" = "oui" ]; then
+        step "Protection conservée"
+        ok "usbguard.service : $(systemctl is-active usbguard.service) / $(systemctl is-enabled usbguard.service)"
+
+        if [ -n "${SUDO_USER:-}" ]; then
+            if runuser -u "$SUDO_USER" -- usbguard list-devices >/dev/null 2>&1; then
+                ok "$SUDO_USER peut interroger USBGuard sans sudo"
+            else
+                warn "$SUDO_USER ne peut pas encore interroger USBGuard sans sudo — reconnectez votre session"
+            fi
+            if runuser -u "$SUDO_USER" -- usbguard set-parameter ImplicitPolicyTarget block >/dev/null 2>&1; then
+                warn "$SUDO_USER peut modifier les paramètres (normal : il est dans le groupe sudo)"
+            fi
+        fi
+
+        cat <<EOF
+
+      Reste à faire, dans cet ordre :
+
+        1. Branchez une clé USB inconnue et vérifiez qu'elle est refusée :
+             usbguard list-devices --blocked
+
+        2. Débranchez/rebranchez souris et clavier : ils doivent revenir seuls.
+
+        3. Redémarrez la machine et vérifiez le clavier à l'écran de connexion.
+           Gardez la session SSH ouverte pendant ce test.
+
+      En cas de problème, depuis SSH :
+           sudo /usr/local/sbin/usbguard-secours.sh
+
+    EOF
+    else
+        [ -z "$REP" ] && printf '\n  %sAucune réponse dans le délai imparti.%s\n' "$YEL" "$RESET"
+        retour_arriere
+        exit 1
+    fi
+    ```
+
+??? example "`usbguard-secours.sh`"
+
+    À garder sous la main dans la session SSH. Arrête et masque USBGuard, puis réautorise tous les périphériques. La politique n’est pas supprimée : elle reste dans `/etc/usbguard/rules.conf` et pourra être reprise après diagnostic.
+
+    ```bash
+    #!/usr/bin/env bash
+    #
+    # USBGuard — script de secours
+    #
+    # À lancer depuis la session SSH si clavier et souris ne répondent plus.
+    # Arrête et masque USBGuard, puis réautorise tous les périphériques USB.
+    # La politique n'est pas supprimée : elle reste dans /etc/usbguard/rules.conf.
+    #
+    set -uo pipefail
+
+    RESET=$'\e[0m'; GRN=$'\e[32m'; BLD=$'\e[1m'
+    ok() { printf '  %s✓%s %s\n' "$GRN" "$RESET" "$1"; }
+
+    [ "$(id -u)" -eq 0 ] || { echo "À lancer avec sudo." >&2; exit 1; }
+
+    printf '%s=== Neutralisation d'"'"'USBGuard ===%s\n' "$BLD" "$RESET"
+
+    systemctl mask --now usbguard.service usbguard-dbus.service >/dev/null 2>&1 || true
+    ok "unités arrêtées et masquées"
+
+    N=0
+    for f in /sys/bus/usb/devices/*/authorized_default; do
+        [ -w "$f" ] && { echo 1 > "$f" 2>/dev/null && N=$((N+1)); } || true
+    done
+    for f in /sys/bus/usb/devices/*/authorized; do
+        [ -w "$f" ] && { echo 1 > "$f" 2>/dev/null && N=$((N+1)); } || true
+    done
+    ok "$N attributs d'autorisation remis à 1"
+
+    printf '\n%sÉtat :%s\n' "$BLD" "$RESET"
+    printf '  usbguard.service : %s / %s\n' \
+        "$(systemctl is-active usbguard.service 2>/dev/null || echo inactive)" \
+        "$(systemctl is-enabled usbguard.service 2>/dev/null || echo masked)"
+    printf '  périphériques USB vus par le noyau : %s\n' "$(lsusb | wc -l)"
+
+    cat <<'EOF'
+
+      Si le clavier ne revient pas tout de suite, débranchez-le puis rebranchez-le.
+      En dernier recours, redémarrez : le masque survit au redémarrage.
+
+      Pour repartir sur de bonnes bases ensuite :
+          sudo less /etc/usbguard/rules.conf     # voir ce qui avait été généré
+          journalctl -u usbguard.service -b      # comprendre ce qui a bloqué
+
+    EOF
+    ```
+
+### Installation et usage
+
+```bash
+sudo install -m 0750 -o root -g root usbguard-*.sh /usr/local/sbin/
+
+sudo /usr/local/sbin/usbguard-1-preparer.sh
+sudo less /etc/usbguard/rules.conf          # relire la politique avant d'activer
+sudo /usr/local/sbin/usbguard-2-activer.sh
+```
+
+Le délai du test clavier se règle par variable d’environnement si 90 secondes ne conviennent pas :
+
+```bash
+sudo DELAI=180 /usr/local/sbin/usbguard-2-activer.sh
+```
+
+!!! tip "Les deux boucles qui comptent vraiment"
+    Dans le script d’activation comme dans celui de secours, la réautorisation passe par une écriture directe dans `sysfs` :
+
+    ```bash
+    for f in /sys/bus/usb/devices/*/authorized_default; do echo 1 > "$f" 2>/dev/null; done
+    for f in /sys/bus/usb/devices/*/authorized;         do echo 1 > "$f" 2>/dev/null; done
+    ```
+
+    C’est la partie indispensable : **arrêter le démon ne réautorise pas les périphériques déjà bloqués**. Sans ces deux boucles, un retour arrière laisserait le clavier inerte jusqu’à un rebranchement ou un redémarrage.
 
 ---
 
