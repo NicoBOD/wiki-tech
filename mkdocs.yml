@@ -131,6 +131,8 @@ nav:
     - Comprendre et gérer les permissions sous Linux (chmod, chown): systemes/gerer-permissions-fichiers-chmod-chown-linux.md
     - Maintenir ses sessions terminal à distance avec tmux sous Linux: systemes/tmux-maintenir-sessions-terminal-distance.md
     - Installer une interface graphique légère (LXQt ou XFCE) sur Debian 13: systemes/installer-interface-graphique-legere-debian-13.md
+    - "Découvrir les fonctions serveur de Windows Server — Cours et travaux dirigés TSSR": systemes/windows-server-fonctions-serveur.md
+    - "Découvrir les services d'infrastructure Windows Server — DNS, Active Directory, DHCP et WINS": systemes/windows-server-dns-ad-dhcp-wins.md
   - Réseaux:
     - reseaux/index.md
     - Bloquer les requêtes malveillantes et publicités avec Pi-hole: reseaux/installer-configurer-pi-hole-reseau-local.md
