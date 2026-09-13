@@ -469,6 +469,22 @@ Trois comportements sont possibles, et il est essentiel de savoir lequel s’app
 
     Rappelez-vous que ce risque concerne aussi la génération par défaut, et pas seulement `--with-ports`.
 
+!!! warning "Supprimer `via-port` ne rend pas un périphérique totalement indépendant de sa prise"
+    Même généré avec `--no-ports-sn`, chaque règle conserve un attribut `parent-hash`, et le manuel `usbguard-rules.conf(5)` est explicite : *« Match a hash of the parent device »*. C’est donc bien un critère de correspondance, pas une simple annotation.
+
+    Le parent d’un périphérique branché directement sur la carte mère est le concentrateur racine du contrôleur USB concerné. En pratique :
+
+    - déplacer un périphérique vers une autre prise **du même contrôleur** ne change pas le `parent-hash` : la règle continue de correspondre ;
+    - le déplacer vers une prise servie par **un autre contrôleur** change le `parent-hash` : la règle ne correspond plus et le périphérique est bloqué.
+
+    Une machine possédant deux contrôleurs xHCI a donc deux « zones » de prises entre lesquelles un périphérique autorisé ne circule pas librement. Repérez-les avant de conclure qu’un déplacement est sans risque :
+
+    ```bash
+    lsusb -t
+    ```
+
+    Chaque ligne `/: Bus 0XX...Port 001: Dev 001, Class=root_hub` correspond à un contrôleur distinct.
+
 !!! note "Les règles permanentes ajoutées plus tard ne suivent pas la même règle"
     La configuration Ubuntu contient `DeviceRulesWithPort=false`. Les règles créées à chaud par `usbguard allow-device <ID> -p` **n’incluent donc pas** de `via-port`, contrairement à celles produites par `generate-policy`.
 
@@ -909,10 +925,33 @@ La liste ne doit pas être vide.
 
 ### Paramètres actifs
 
+!!! warning "Ces commandes exigent le privilège `Parameters`, que l’étape 6 n’accorde pas"
+    Le contrôle d’accès recommandé à l’étape 6 couvre les sections `Devices`, `Policy` et `Exceptions`, mais **pas** `Parameters`. Un compte pourtant autorisé obtient donc :
+
+    ```text
+    IPC ERROR: request id=1: IPC method: usbguard.IPC.getParameter: Permission denied
+    ```
+
+    Ce n’est pas une anomalie : ne pas accorder `Parameters=modify` est précisément ce qui empêche un processus tournant sous votre compte d’exécuter `usbguard set-parameter ImplicitPolicyTarget allow` et de désarmer la liste blanche.
+
+    Deux façons de procéder, au choix :
+
+    ```bash
+    # soit interroger le démon en tant que root
+    sudo usbguard get-parameter ImplicitPolicyTarget
+
+    # soit accorder la lecture seule des paramètres, sans le droit de les modifier
+    sudo usbguard add-user sudo --group \
+        --devices ALL --policy modify,list --exceptions listen --parameters list
+    sudo systemctl restart usbguard.service
+    ```
+
+    N’accordez `--parameters modify` que si vous en avez un besoin précis.
+
 ```bash
-usbguard get-parameter ImplicitPolicyTarget
-usbguard get-parameter PresentDevicePolicy
-usbguard get-parameter InsertedDevicePolicy
+sudo usbguard get-parameter ImplicitPolicyTarget
+sudo usbguard get-parameter PresentDevicePolicy
+sudo usbguard get-parameter InsertedDevicePolicy
 ```
 
 Les valeurs attendues pour une politique de liste blanche sont généralement :
@@ -1398,6 +1437,102 @@ sudo usbguard-rule-parser -f /etc/usbguard/rules.conf
     ```bash
     systemctl is-active usbguard.service || echo 'ALERTE : USBGuard ne tourne pas'
     ```
+
+---
+
+## Retour d’expérience : une première installation réelle
+
+Cette section consigne le déroulé d’une mise en place effective sur un poste de bureau Ubuntu 24.04, et les trois surprises rencontrées. Les numéros de série et les empreintes sont tronqués.
+
+### Le contexte
+
+Un poste fixe équipé de six périphériques USB — webcam, adaptateur Bluetooth, casque audio avec contrôles HID, récepteur sans fil clavier/souris, souris filaire, clavier mécanique — répartis sur deux contrôleurs xHCI distincts.
+
+Deux caractéristiques rendaient la manœuvre délicate :
+
+- **aucun clavier PS/2**, donc pas de périphérique d’entrée échappant à USBGuard ;
+- **un seul de ces périphériques déclarait un numéro de série** : la webcam. Les deux claviers n’en avaient aucun.
+
+La seconde caractéristique est décisive. Avec une génération par défaut, les deux claviers auraient été épinglés à leur prise. La politique a donc été produite avec `--no-ports-sn`.
+
+Le canal de secours a été vérifié avant tout : la session SSH transitait par une carte réseau PCI, insensible à USBGuard. Sur une machine dont l’interface réseau est un adaptateur USB, cette vérification n’est pas optionnelle.
+
+### Le résultat
+
+La politique générée comptait dix règles : six périphériques et quatre concentrateurs racine, à raison de deux par contrôleur, l’un pour l’USB 2.0 et l’autre pour l’USB 3.0.
+
+Le test avec une clé USB inconnue a fonctionné du premier coup :
+
+```text
+21: block id ffff:5678 serial "65113912…" name "Disk 2.0" hash "ZWNWOD08xS…" with-interface 08:06:50
+```
+
+L’identifiant constructeur `ffff` mérite d’ailleurs un mot : aucun constructeur légitime ne se voit attribuer cette valeur. C’est le genre de détail qu’une liste blanche par empreinte rend visible.
+
+### Surprise n° 1 : `list-devices` affiche `via-port` même sans règle `via-port`
+
+C’est le piège le plus déroutant, car il donne l’impression que `--no-ports-sn` n’a pas fonctionné.
+
+Après activation, `usbguard list-devices` affichait un `via-port` sur chaque ligne :
+
+```text
+20: allow id 1038:161a serial "" name "…" hash "CvHZUDg/dG…" via-port "1-14" with-interface { 03:01:01 … }
+```
+
+Il n’y avait pourtant aucun `via-port` dans la politique. **Les deux commandes ne montrent pas la même chose** :
+
+| Commande | Ce qui est affiché |
+|----------|--------------------|
+| `usbguard list-devices` | La description complète de chaque **périphérique** présent, avec tous ses attributs observés — dont la prise qu’il occupe réellement. Le mot en tête de ligne est son **état** courant. |
+| `usbguard list-rules` | Les **règles** de la politique chargée, c’est-à-dire les critères réellement utilisés pour décider. |
+
+Pour savoir si votre politique dépend des ports, il faut donc interroger les règles, jamais les périphériques :
+
+```bash
+usbguard list-rules | grep -c 'via-port'
+```
+
+### Surprise n° 2 : `usbguard get-parameter` refusé malgré des droits IPC corrects
+
+La vérification des paramètres actifs échouait alors que `usbguard list-devices` et `list-rules` fonctionnaient sans `sudo` :
+
+```text
+IPC ERROR: request id=1: IPC method: usbguard.IPC.getParameter: Permission denied
+```
+
+La cause est le contrôle d’accès de l’étape 6, qui couvre `Devices`, `Policy` et `Exceptions` mais laisse la section `Parameters` vide. Ce comportement est traité en détail dans la section « Paramètres actifs ».
+
+C’est en réalité une bonne nouvelle : c’est exactement ce qui empêche un processus tournant sous votre compte de désarmer la politique d’une seule commande.
+
+### Surprise n° 3 : `--no-ports-sn` ne suffit pas à libérer un périphérique de sa prise
+
+Chaque règle conservait un `parent-hash`, qui reste un critère de correspondance. Sur cette machine à deux contrôleurs, déplacer un périphérique d’une prise à l’autre du même contrôleur est sans effet, mais le brancher sur une prise servie par l’autre contrôleur le ferait basculer en `block`. Voir l’avertissement de la section consacrée à `via-port`.
+
+### Ce qui a le mieux fonctionné : une activation à retour arrière automatique
+
+Plutôt que de démarrer le démon et d’espérer, l’activation a été enveloppée dans un test dont l’échec se corrige tout seul. L’idée : demander une confirmation **au clavier**, avec un délai. Si le clavier vient d’être bloqué, la confirmation est impossible, le délai expire et la protection se retire.
+
+```bash
+systemctl unmask usbguard.service
+systemctl enable --now usbguard.service
+
+if read -r -t 90 -p "Votre clavier fonctionne-t-il ? [oui] " R && [ "$R" = oui ]; then
+    echo "Protection conservée."
+else
+    echo "Aucune réponse — retour arrière."
+    systemctl mask --now usbguard.service usbguard-dbus.service
+    for f in /sys/bus/usb/devices/*/authorized_default; do echo 1 > "$f" 2>/dev/null; done
+    for f in /sys/bus/usb/devices/*/authorized;         do echo 1 > "$f" 2>/dev/null; done
+fi
+```
+
+Les deux boucles finales sont la partie importante : **arrêter le démon ne réautorise pas les périphériques déjà bloqués**. Sans elles, il faudrait débrancher et rebrancher le matériel, ou redémarrer.
+
+Ce filet ne dispense pas de la session SSH : si l’activation échoue d’une façon imprévue, avant même d’atteindre l’invite, seul un accès distant permet de reprendre la main.
+
+### Vérifications restantes après l’activation
+
+Le blocage d’un périphérique inconnu et le rebranchement du matériel de confiance se testent immédiatement. **Le redémarrage reste le contrôle décisif** : c’est lui seul qui confirme que le clavier répondra à l’écran de connexion, lorsque la politique est appliquée aux périphériques présents au démarrage du démon. Effectuez-le avec la session SSH toujours ouverte.
 
 ---
 
