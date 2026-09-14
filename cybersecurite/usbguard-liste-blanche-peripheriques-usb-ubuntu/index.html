@@ -2152,6 +2152,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#un-raccourci-dans-le-menu-gnome" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Un raccourci dans le menu GNOME
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Un raccourci dans le menu GNOME">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lassistant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        L’assistant
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lentree-de-menu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        L’entrée de menu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#eprouver-le-raccourci-avant-den-avoir-besoin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Éprouver le raccourci avant d’en avoir besoin
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#limites-de-la-protection" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3218,6 +3268,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#un-raccourci-dans-le-menu-gnome" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Un raccourci dans le menu GNOME
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Un raccourci dans le menu GNOME">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lassistant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        L’assistant
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lentree-de-menu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        L’entrée de menu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#eprouver-le-raccourci-avant-den-avoir-besoin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Éprouver le raccourci avant d’en avoir besoin
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#limites-de-la-protection" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3819,6 +3919,8 @@
 <li>déplacer un périphérique vers une autre prise <strong>du même contrôleur</strong> ne change pas le <code>parent-hash</code> : la règle continue de correspondre ;</li>
 <li>le déplacer vers une prise servie par <strong>un autre contrôleur</strong> change le <code>parent-hash</code> : la règle ne correspond plus et le périphérique est bloqué.</li>
 </ul>
+<p>Les deux points ont été vérifiés en branchant successivement un même adaptateur sur quatre prises d’un contrôleur puis sur une prise du second. Cette mesure a mis au jour un point qui prête à confusion : le <code>hash</code> du périphérique, lui, <strong>n’a pas bougé d’un contrôleur à l’autre</strong>. L’empreinte ne décrit que le périphérique, jamais son point de raccordement.</p>
+<p>C’est bien <code>parent-hash</code>, et lui seul, qui rattache une règle à un concentrateur donné. Comparer les <code>hash</code> pour savoir si un déplacement pose problème ne sert donc à rien : il faut regarder les <code>parent-hash</code>.</p>
 <p>Une machine possédant deux contrôleurs xHCI a donc deux « zones » de prises entre lesquelles un périphérique autorisé ne circule pas librement. Repérez-les avant de conclure qu’un déplacement est sans risque :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>lsusb<span class="w"> </span>-t
 </code></pre></div>
@@ -5293,6 +5395,193 @@
 </code></pre></div>
 <p>C’est la partie indispensable : <strong>arrêter le démon ne réautorise pas les périphériques déjà bloqués</strong>. Sans ces deux boucles, un retour arrière laisserait le clavier inerte jusqu’à un rebranchement ou un redémarrage.</p>
 </div>
+<hr />
+<h2 id="un-raccourci-dans-le-menu-gnome">Un raccourci dans le menu GNOME<a class="headerlink" href="#un-raccourci-dans-le-menu-gnome" title="Permanent link">&para;</a></h2>
+<p>Une liste blanche a un défaut d’ergonomie bien réel : quelques semaines après l’installation, on branche une clé, il ne se passe rien, et l’on a oublié pourquoi. Le réflexe de consulter <code>usbguard list-devices --blocked</code> ne vient pas naturellement.</p>
+<p>Une entrée dans le menu des applications règle les deux problèmes à la fois. Elle sert de <strong>rappel visuel</strong> — son intitulé dit que les clés non enregistrées sont bloquées — et de porte d’entrée pour les autoriser sans avoir à se souvenir d’une commande.</p>
+<div class="admonition info">
+<p class="admonition-title">Aucun mot de passe n’est demandé, et c’est voulu</p>
+<p>L’assistant fonctionne sans <code>sudo</code> parce que le groupe autorisé à l’étape 6 possède les privilèges <abbr title="Inter-Process Communication">IPC</abbr> <code>Devices=modify</code> et <code>Policy=modify</code>. C’est précisément ce que ce contrôle d’accès rend possible.</p>
+<p>Si vous avez accordé des privilèges plus restreints, l’assistant affichera une erreur explicite plutôt que d’échouer en silence.</p>
+</div>
+<h3 id="lassistant">L’assistant<a class="headerlink" href="#lassistant" title="Permanent link">&para;</a></h3>
+<p>Il liste les périphériques bloqués en clair — nom, identifiant, numéro de série, type d’interface déduit — puis propose de les autoriser, soit pour la session en cours, soit en inscrivant une règle permanente. La distinction entre les deux est rappelée à chaque fois, car c’est elle que l’on oublie.</p>
+<details class="example">
+<summary><code>~/.local/bin/usbguard-autoriser</code></summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-122-1" name="__codelineno-122-1" href="#__codelineno-122-1"></a><span class="ch">#!/usr/bin/env bash</span>
+<a id="__codelineno-122-2" name="__codelineno-122-2" href="#__codelineno-122-2"></a><span class="c1">#</span>
+<a id="__codelineno-122-3" name="__codelineno-122-3" href="#__codelineno-122-3"></a><span class="c1"># Assistant USBGuard — lister les périphériques USB bloqués et les autoriser.</span>
+<a id="__codelineno-122-4" name="__codelineno-122-4" href="#__codelineno-122-4"></a><span class="c1">#</span>
+<a id="__codelineno-122-5" name="__codelineno-122-5" href="#__codelineno-122-5"></a><span class="c1"># Ne nécessite pas sudo : le groupe « sudo » dispose des privilèges IPC</span>
+<a id="__codelineno-122-6" name="__codelineno-122-6" href="#__codelineno-122-6"></a><span class="c1"># Devices=modify et Policy=modify accordés lors de la mise en place.</span>
+<a id="__codelineno-122-7" name="__codelineno-122-7" href="#__codelineno-122-7"></a><span class="c1">#</span>
+<a id="__codelineno-122-8" name="__codelineno-122-8" href="#__codelineno-122-8"></a><span class="nb">set</span><span class="w"> </span>-uo<span class="w"> </span>pipefail
+<a id="__codelineno-122-9" name="__codelineno-122-9" href="#__codelineno-122-9"></a>
+<a id="__codelineno-122-10" name="__codelineno-122-10" href="#__codelineno-122-10"></a><span class="nv">R</span><span class="o">=</span><span class="s1">$'\e[0m'</span><span class="p">;</span><span class="w"> </span><span class="nv">RED</span><span class="o">=</span><span class="s1">$'\e[31m'</span><span class="p">;</span><span class="w"> </span><span class="nv">GRN</span><span class="o">=</span><span class="s1">$'\e[32m'</span><span class="p">;</span><span class="w"> </span><span class="nv">YEL</span><span class="o">=</span><span class="s1">$'\e[33m'</span><span class="p">;</span><span class="w"> </span><span class="nv">CYA</span><span class="o">=</span><span class="s1">$'\e[36m'</span><span class="p">;</span><span class="w"> </span><span class="nv">B</span><span class="o">=</span><span class="s1">$'\e[1m'</span><span class="p">;</span><span class="w"> </span><span class="nv">DIM</span><span class="o">=</span><span class="s1">$'\e[2m'</span>
+<a id="__codelineno-122-11" name="__codelineno-122-11" href="#__codelineno-122-11"></a>
+<a id="__codelineno-122-12" name="__codelineno-122-12" href="#__codelineno-122-12"></a>pause_et_quitter<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<a id="__codelineno-122-13" name="__codelineno-122-13" href="#__codelineno-122-13"></a><span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'\n%sAppuyez sur Entrée pour fermer cette fenêtre.%s '</span><span class="w"> </span><span class="s2">"</span><span class="nv">$DIM</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-14" name="__codelineno-122-14" href="#__codelineno-122-14"></a><span class="w">    </span><span class="nb">read</span><span class="w"> </span>-r<span class="w"> </span>_<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">true</span>
+<a id="__codelineno-122-15" name="__codelineno-122-15" href="#__codelineno-122-15"></a><span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">1</span><span class="k">:-</span><span class="nv">0</span><span class="si">}</span><span class="s2">"</span>
+<a id="__codelineno-122-16" name="__codelineno-122-16" href="#__codelineno-122-16"></a><span class="o">}</span>
+<a id="__codelineno-122-17" name="__codelineno-122-17" href="#__codelineno-122-17"></a>
+<a id="__codelineno-122-18" name="__codelineno-122-18" href="#__codelineno-122-18"></a>entete<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<a id="__codelineno-122-19" name="__codelineno-122-19" href="#__codelineno-122-19"></a><span class="w">    </span>clear<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">true</span>
+<a id="__codelineno-122-20" name="__codelineno-122-20" href="#__codelineno-122-20"></a><span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'%s╔══════════════════════════════════════════════════════════════╗%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$CYA</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-21" name="__codelineno-122-21" href="#__codelineno-122-21"></a><span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'%s║%s  %sUSBGuard — autoriser un périphérique USB%s                    %s║%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$CYA</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$B</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$CYA</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-22" name="__codelineno-122-22" href="#__codelineno-122-22"></a><span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'%s╚══════════════════════════════════════════════════════════════╝%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$CYA</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-23" name="__codelineno-122-23" href="#__codelineno-122-23"></a><span class="o">}</span>
+<a id="__codelineno-122-24" name="__codelineno-122-24" href="#__codelineno-122-24"></a>
+<a id="__codelineno-122-25" name="__codelineno-122-25" href="#__codelineno-122-25"></a><span class="c1"># ------------------------------------------------------------------ état ----</span>
+<a id="__codelineno-122-26" name="__codelineno-122-26" href="#__codelineno-122-26"></a>entete
+<a id="__codelineno-122-27" name="__codelineno-122-27" href="#__codelineno-122-27"></a>
+<a id="__codelineno-122-28" name="__codelineno-122-28" href="#__codelineno-122-28"></a><span class="k">if</span><span class="w"> </span>!<span class="w"> </span>systemctl<span class="w"> </span>is-active<span class="w"> </span>--quiet<span class="w"> </span>usbguard.service<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<a id="__codelineno-122-29" name="__codelineno-122-29" href="#__codelineno-122-29"></a><span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'\n  %s⚠ USBGuard n'</span><span class="s2">"'"</span><span class="s1">'est pas en cours d'</span><span class="s2">"'"</span><span class="s1">'exécution.%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$RED</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-30" name="__codelineno-122-30" href="#__codelineno-122-30"></a><span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'  Aucune protection USB n'</span><span class="s2">"'"</span><span class="s1">'est appliquée actuellement.\n\n'</span>
+<a id="__codelineno-122-31" name="__codelineno-122-31" href="#__codelineno-122-31"></a><span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'  Pour le redémarrer :   %ssudo systemctl start usbguard.service%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$B</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-32" name="__codelineno-122-32" href="#__codelineno-122-32"></a><span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'  Pour diagnostiquer :   %sjournalctl -u usbguard.service -b%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$B</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-33" name="__codelineno-122-33" href="#__codelineno-122-33"></a><span class="w">    </span>pause_et_quitter<span class="w"> </span><span class="m">1</span>
+<a id="__codelineno-122-34" name="__codelineno-122-34" href="#__codelineno-122-34"></a><span class="k">fi</span>
+<a id="__codelineno-122-35" name="__codelineno-122-35" href="#__codelineno-122-35"></a>
+<a id="__codelineno-122-36" name="__codelineno-122-36" href="#__codelineno-122-36"></a><span class="k">if</span><span class="w"> </span>!<span class="w"> </span>usbguard<span class="w"> </span>list-devices<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<a id="__codelineno-122-37" name="__codelineno-122-37" href="#__codelineno-122-37"></a><span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'\n  %s⚠ Impossible de dialoguer avec le démon USBGuard.%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$RED</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-38" name="__codelineno-122-38" href="#__codelineno-122-38"></a><span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'  Votre compte a-t-il toujours les droits IPC ? Testez :\n\n'</span>
+<a id="__codelineno-122-39" name="__codelineno-122-39" href="#__codelineno-122-39"></a><span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'    %ssudo usbguard list-devices%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$B</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-40" name="__codelineno-122-40" href="#__codelineno-122-40"></a><span class="w">    </span>pause_et_quitter<span class="w"> </span><span class="m">1</span>
+<a id="__codelineno-122-41" name="__codelineno-122-41" href="#__codelineno-122-41"></a><span class="k">fi</span>
+<a id="__codelineno-122-42" name="__codelineno-122-42" href="#__codelineno-122-42"></a>
+<a id="__codelineno-122-43" name="__codelineno-122-43" href="#__codelineno-122-43"></a><span class="nv">NB_REGLES</span><span class="o">=</span><span class="k">$(</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>usbguard<span class="w"> </span>list-rules<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l<span class="p">;</span><span class="w"> </span><span class="o">}</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s1">'?'</span><span class="k">)</span>
+<a id="__codelineno-122-44" name="__codelineno-122-44" href="#__codelineno-122-44"></a><span class="nb">printf</span><span class="w"> </span><span class="s1">'\n  %s✓%s Service actif — %s règles dans la liste blanche\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$GRN</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$NB_REGLES</span><span class="s2">"</span>
+<a id="__codelineno-122-45" name="__codelineno-122-45" href="#__codelineno-122-45"></a>
+<a id="__codelineno-122-46" name="__codelineno-122-46" href="#__codelineno-122-46"></a><span class="c1"># ------------------------------------------------------------- boucle -------</span>
+<a id="__codelineno-122-47" name="__codelineno-122-47" href="#__codelineno-122-47"></a><span class="k">while</span><span class="w"> </span>true<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<a id="__codelineno-122-48" name="__codelineno-122-48" href="#__codelineno-122-48"></a><span class="w">    </span>mapfile<span class="w"> </span>-t<span class="w"> </span>BLOQUES<span class="w"> </span>&lt;<span class="w"> </span>&lt;<span class="o">(</span>usbguard<span class="w"> </span>list-devices<span class="w"> </span>--blocked<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="o">)</span>
+<a id="__codelineno-122-49" name="__codelineno-122-49" href="#__codelineno-122-49"></a>
+<a id="__codelineno-122-50" name="__codelineno-122-50" href="#__codelineno-122-50"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="si">${#</span><span class="nv">BLOQUES</span><span class="p">[@]</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<a id="__codelineno-122-51" name="__codelineno-122-51" href="#__codelineno-122-51"></a><span class="w">        </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'\n  %s✓ Aucun périphérique bloqué.%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$GRN</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-52" name="__codelineno-122-52" href="#__codelineno-122-52"></a><span class="w">        </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'\n  %sTout ce qui est branché est autorisé.%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$DIM</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-53" name="__codelineno-122-53" href="#__codelineno-122-53"></a><span class="w">        </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'  %sSi une clé vient d'</span><span class="s2">"'"</span><span class="s1">'être insérée et n'</span><span class="s2">"'"</span><span class="s1">'apparaît pas ici,%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$DIM</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-54" name="__codelineno-122-54" href="#__codelineno-122-54"></a><span class="w">        </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'  %sdébranchez-la et rebranchez-la, puis relancez cet assistant.%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$DIM</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-55" name="__codelineno-122-55" href="#__codelineno-122-55"></a><span class="w">        </span>pause_et_quitter<span class="w"> </span><span class="m">0</span>
+<a id="__codelineno-122-56" name="__codelineno-122-56" href="#__codelineno-122-56"></a><span class="w">    </span><span class="k">fi</span>
+<a id="__codelineno-122-57" name="__codelineno-122-57" href="#__codelineno-122-57"></a>
+<a id="__codelineno-122-58" name="__codelineno-122-58" href="#__codelineno-122-58"></a><span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'\n  %s%d périphérique(s) bloqué(s)%s — c'</span><span class="s2">"'"</span><span class="s1">'est le comportement normal\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$YEL</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="si">${#</span><span class="nv">BLOQUES</span><span class="p">[@]</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-59" name="__codelineno-122-59" href="#__codelineno-122-59"></a><span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'  %spour tout matériel qui n'</span><span class="s2">"'"</span><span class="s1">'est pas encore dans la liste blanche.%s\n\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$DIM</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-60" name="__codelineno-122-60" href="#__codelineno-122-60"></a>
+<a id="__codelineno-122-61" name="__codelineno-122-61" href="#__codelineno-122-61"></a><span class="w">    </span><span class="nb">declare</span><span class="w"> </span>-a<span class="w"> </span><span class="nv">IDS</span><span class="o">=()</span>
+<a id="__codelineno-122-62" name="__codelineno-122-62" href="#__codelineno-122-62"></a><span class="w">    </span><span class="nv">n</span><span class="o">=</span><span class="m">0</span>
+<a id="__codelineno-122-63" name="__codelineno-122-63" href="#__codelineno-122-63"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span>ligne<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">BLOQUES</span><span class="p">[@]</span><span class="si">}</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<a id="__codelineno-122-64" name="__codelineno-122-64" href="#__codelineno-122-64"></a><span class="w">        </span><span class="nv">n</span><span class="o">=</span><span class="k">$((</span><span class="nv">n</span><span class="o">+</span><span class="m">1</span><span class="k">))</span>
+<a id="__codelineno-122-65" name="__codelineno-122-65" href="#__codelineno-122-65"></a><span class="w">        </span><span class="nv">dev_id</span><span class="o">=</span><span class="si">${</span><span class="nv">ligne</span><span class="p">%%:*</span><span class="si">}</span>
+<a id="__codelineno-122-66" name="__codelineno-122-66" href="#__codelineno-122-66"></a><span class="w">        </span>IDS<span class="o">[</span><span class="nv">$n</span><span class="o">]=</span><span class="nv">$dev_id</span>
+<a id="__codelineno-122-67" name="__codelineno-122-67" href="#__codelineno-122-67"></a><span class="w">        </span><span class="nv">nom</span><span class="o">=</span><span class="k">$(</span>sed<span class="w"> </span>-nE<span class="w"> </span><span class="s1">'s/.*[^-]name "([^"]*)".*/\1/p'</span><span class="w"> </span><span class="o">&lt;&lt;&lt;</span><span class="s2">"</span><span class="nv">$ligne</span><span class="s2">"</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="nv">nom</span><span class="o">=</span><span class="si">${</span><span class="nv">nom</span><span class="k">:-</span><span class="s2">"(sans nom)"</span><span class="si">}</span>
+<a id="__codelineno-122-68" name="__codelineno-122-68" href="#__codelineno-122-68"></a><span class="w">        </span><span class="nv">vid</span><span class="o">=</span><span class="k">$(</span>sed<span class="w"> </span>-nE<span class="w"> </span><span class="s1">'s/.*id ([0-9a-f]{4}:[0-9a-f]{4}).*/\1/p'</span><span class="w"> </span><span class="o">&lt;&lt;&lt;</span><span class="s2">"</span><span class="nv">$ligne</span><span class="s2">"</span><span class="k">)</span>
+<a id="__codelineno-122-69" name="__codelineno-122-69" href="#__codelineno-122-69"></a><span class="w">        </span><span class="nv">ser</span><span class="o">=</span><span class="k">$(</span>sed<span class="w"> </span>-nE<span class="w"> </span><span class="s1">'s/.* serial "([^"]*)".*/\1/p'</span><span class="w"> </span><span class="o">&lt;&lt;&lt;</span><span class="s2">"</span><span class="nv">$ligne</span><span class="s2">"</span><span class="k">)</span>
+<a id="__codelineno-122-70" name="__codelineno-122-70" href="#__codelineno-122-70"></a><span class="w">        </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$ser</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nv">ser</span><span class="o">=</span><span class="s2">"série </span><span class="si">${</span><span class="nv">ser</span><span class="p">:</span><span class="nv">0</span><span class="p">:</span><span class="nv">12</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nv">ser</span><span class="o">=</span><span class="s2">"sans série"</span>
+<a id="__codelineno-122-71" name="__codelineno-122-71" href="#__codelineno-122-71"></a><span class="w">        </span><span class="c1"># « with-interface 08:06:50 » ou « with-interface { 0e:01:00 01:01:00 … } » :</span>
+<a id="__codelineno-122-72" name="__codelineno-122-72" href="#__codelineno-122-72"></a><span class="w">        </span><span class="c1"># on retient la première classe réelle, en ignorant l'accolade ouvrante.</span>
+<a id="__codelineno-122-73" name="__codelineno-122-73" href="#__codelineno-122-73"></a><span class="w">        </span><span class="nv">cls</span><span class="o">=</span><span class="k">$(</span>sed<span class="w"> </span>-nE<span class="w"> </span><span class="s1">'s/.*with-interface \{? *([0-9a-f]{2}:[0-9a-f*]{2}:[0-9a-f*]{2}).*/\1/p'</span><span class="w"> </span><span class="o">&lt;&lt;&lt;</span><span class="s2">"</span><span class="nv">$ligne</span><span class="s2">"</span><span class="k">)</span>
+<a id="__codelineno-122-74" name="__codelineno-122-74" href="#__codelineno-122-74"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="s2">"</span><span class="nv">$cls</span><span class="s2">"</span><span class="w"> </span><span class="k">in</span>
+<a id="__codelineno-122-75" name="__codelineno-122-75" href="#__codelineno-122-75"></a><span class="w">            </span><span class="m">08</span>:*<span class="o">)</span><span class="w"> </span><span class="nv">type</span><span class="o">=</span><span class="s2">"stockage"</span><span class="w"> </span><span class="p">;;</span><span class="w">  </span><span class="m">03</span>:*<span class="o">)</span><span class="w"> </span><span class="nv">type</span><span class="o">=</span><span class="s2">"clavier/souris (HID)"</span><span class="w"> </span><span class="p">;;</span>
+<a id="__codelineno-122-76" name="__codelineno-122-76" href="#__codelineno-122-76"></a><span class="w">            </span>0e:*<span class="o">)</span><span class="w"> </span><span class="nv">type</span><span class="o">=</span><span class="s2">"vidéo"</span><span class="w">    </span><span class="p">;;</span><span class="w">  </span>e0:*<span class="o">)</span><span class="w"> </span><span class="nv">type</span><span class="o">=</span><span class="s2">"sans fil"</span><span class="w">            </span><span class="p">;;</span>
+<a id="__codelineno-122-77" name="__codelineno-122-77" href="#__codelineno-122-77"></a><span class="w">            </span><span class="m">06</span>:*<span class="o">)</span><span class="w"> </span><span class="nv">type</span><span class="o">=</span><span class="s2">"photo/MTP"</span><span class="p">;;</span><span class="w">  </span>*<span class="o">)</span><span class="w">    </span><span class="nv">type</span><span class="o">=</span><span class="s2">"</span><span class="nv">$cls</span><span class="s2">"</span><span class="w">                </span><span class="p">;;</span>
+<a id="__codelineno-122-78" name="__codelineno-122-78" href="#__codelineno-122-78"></a><span class="w">        </span><span class="k">esac</span>
+<a id="__codelineno-122-79" name="__codelineno-122-79" href="#__codelineno-122-79"></a><span class="w">        </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'   %s[%d]%s %s%s%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$B</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$n</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$B</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$nom</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-80" name="__codelineno-122-80" href="#__codelineno-122-80"></a><span class="w">        </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'       %s%s · %s · %s%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$DIM</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$vid</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$ser</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$type</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-81" name="__codelineno-122-81" href="#__codelineno-122-81"></a><span class="w">    </span><span class="k">done</span>
+<a id="__codelineno-122-82" name="__codelineno-122-82" href="#__codelineno-122-82"></a>
+<a id="__codelineno-122-83" name="__codelineno-122-83" href="#__codelineno-122-83"></a><span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'\n  %sQue voulez-vous faire ?%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$B</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-84" name="__codelineno-122-84" href="#__codelineno-122-84"></a><span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'    %s&lt;numéro&gt;%s   autoriser %sjuste pour cette fois%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$B</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$GRN</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-85" name="__codelineno-122-85" href="#__codelineno-122-85"></a><span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'    %sp&lt;numéro&gt;%s  autoriser %set retenir définitivement%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$B</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$YEL</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-86" name="__codelineno-122-86" href="#__codelineno-122-86"></a><span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'    %sq%s          quitter\n\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$B</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-87" name="__codelineno-122-87" href="#__codelineno-122-87"></a><span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'  Votre choix : '</span>
+<a id="__codelineno-122-88" name="__codelineno-122-88" href="#__codelineno-122-88"></a><span class="w">    </span><span class="nb">read</span><span class="w"> </span>-r<span class="w"> </span>choix<span class="w"> </span><span class="o">||</span><span class="w"> </span>pause_et_quitter<span class="w"> </span><span class="m">0</span>
+<a id="__codelineno-122-89" name="__codelineno-122-89" href="#__codelineno-122-89"></a>
+<a id="__codelineno-122-90" name="__codelineno-122-90" href="#__codelineno-122-90"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="s2">"</span><span class="nv">$choix</span><span class="s2">"</span><span class="w"> </span><span class="k">in</span>
+<a id="__codelineno-122-91" name="__codelineno-122-91" href="#__codelineno-122-91"></a><span class="w">        </span>q<span class="p">|</span>Q<span class="p">|</span><span class="s1">''</span><span class="o">)</span><span class="w"> </span>pause_et_quitter<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="p">;;</span>
+<a id="__codelineno-122-92" name="__codelineno-122-92" href="#__codelineno-122-92"></a><span class="w">        </span>p*<span class="p">|</span>P*<span class="o">)</span><span class="w">  </span><span class="nv">perm</span><span class="o">=</span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="nv">num</span><span class="o">=</span><span class="si">${</span><span class="nv">choix</span><span class="p">:</span><span class="nv">1</span><span class="si">}</span><span class="w"> </span><span class="p">;;</span>
+<a id="__codelineno-122-93" name="__codelineno-122-93" href="#__codelineno-122-93"></a><span class="w">        </span>*<span class="o">)</span><span class="w">      </span><span class="nv">perm</span><span class="o">=</span><span class="m">0</span><span class="p">;</span><span class="w"> </span><span class="nv">num</span><span class="o">=</span><span class="nv">$choix</span><span class="w"> </span><span class="p">;;</span>
+<a id="__codelineno-122-94" name="__codelineno-122-94" href="#__codelineno-122-94"></a><span class="w">    </span><span class="k">esac</span>
+<a id="__codelineno-122-95" name="__codelineno-122-95" href="#__codelineno-122-95"></a>
+<a id="__codelineno-122-96" name="__codelineno-122-96" href="#__codelineno-122-96"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span>!<span class="w"> </span><span class="o">[[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$num</span><span class="s2">"</span><span class="w"> </span><span class="o">=</span>~<span class="w"> </span>^<span class="o">[</span><span class="m">0</span>-9<span class="o">]</span>+$<span class="w"> </span><span class="o">]]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$num</span><span class="s2">"</span><span class="w"> </span>-lt<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$num</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="s2">"</span><span class="nv">$n</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<a id="__codelineno-122-97" name="__codelineno-122-97" href="#__codelineno-122-97"></a><span class="w">        </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'\n  %sChoix invalide.%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$RED</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">1</span>.5<span class="p">;</span><span class="w"> </span>entete<span class="p">;</span><span class="w"> </span><span class="k">continue</span>
+<a id="__codelineno-122-98" name="__codelineno-122-98" href="#__codelineno-122-98"></a><span class="w">    </span><span class="k">fi</span>
+<a id="__codelineno-122-99" name="__codelineno-122-99" href="#__codelineno-122-99"></a>
+<a id="__codelineno-122-100" name="__codelineno-122-100" href="#__codelineno-122-100"></a><span class="w">    </span><span class="nv">cible</span><span class="o">=</span><span class="si">${</span><span class="nv">IDS</span><span class="p">[</span><span class="nv">$num</span><span class="p">]</span><span class="si">}</span>
+<a id="__codelineno-122-101" name="__codelineno-122-101" href="#__codelineno-122-101"></a>
+<a id="__codelineno-122-102" name="__codelineno-122-102" href="#__codelineno-122-102"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$perm</span><span class="s2">"</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<a id="__codelineno-122-103" name="__codelineno-122-103" href="#__codelineno-122-103"></a><span class="w">        </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'\n  %sUne règle permanente sera ajoutée à la politique.%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$YEL</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-104" name="__codelineno-122-104" href="#__codelineno-122-104"></a><span class="w">        </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'  %sÀ ne faire que pour du matériel qui vous appartient.%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$DIM</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-105" name="__codelineno-122-105" href="#__codelineno-122-105"></a><span class="w">        </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'  Confirmer ? [oui/non] '</span>
+<a id="__codelineno-122-106" name="__codelineno-122-106" href="#__codelineno-122-106"></a><span class="w">        </span><span class="nb">read</span><span class="w"> </span>-r<span class="w"> </span>c<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">true</span>
+<a id="__codelineno-122-107" name="__codelineno-122-107" href="#__codelineno-122-107"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$c</span><span class="s2">"</span><span class="w"> </span>!<span class="o">=</span><span class="w"> </span><span class="s2">"oui"</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'  Annulé.\n'</span><span class="p">;</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span>entete<span class="p">;</span><span class="w"> </span><span class="k">continue</span><span class="p">;</span><span class="w"> </span><span class="k">fi</span>
+<a id="__codelineno-122-108" name="__codelineno-122-108" href="#__codelineno-122-108"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span>usbguard<span class="w"> </span>allow-device<span class="w"> </span><span class="s2">"</span><span class="nv">$cible</span><span class="s2">"</span><span class="w"> </span>-p<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<a id="__codelineno-122-109" name="__codelineno-122-109" href="#__codelineno-122-109"></a><span class="w">            </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'\n  %s✓ Autorisé et enregistré dans la liste blanche.%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$GRN</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-110" name="__codelineno-122-110" href="#__codelineno-122-110"></a><span class="w">        </span><span class="k">else</span>
+<a id="__codelineno-122-111" name="__codelineno-122-111" href="#__codelineno-122-111"></a><span class="w">            </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'\n  %s✗ Échec. Droits IPC insuffisants sur la politique ?%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$RED</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-112" name="__codelineno-122-112" href="#__codelineno-122-112"></a><span class="w">        </span><span class="k">fi</span>
+<a id="__codelineno-122-113" name="__codelineno-122-113" href="#__codelineno-122-113"></a><span class="w">    </span><span class="k">else</span>
+<a id="__codelineno-122-114" name="__codelineno-122-114" href="#__codelineno-122-114"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span>usbguard<span class="w"> </span>allow-device<span class="w"> </span><span class="s2">"</span><span class="nv">$cible</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<a id="__codelineno-122-115" name="__codelineno-122-115" href="#__codelineno-122-115"></a><span class="w">            </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'\n  %s✓ Autorisé pour cette fois.%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$GRN</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-116" name="__codelineno-122-116" href="#__codelineno-122-116"></a><span class="w">            </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'  %sAu prochain branchement, ce périphérique sera de nouveau bloqué.%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$DIM</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-117" name="__codelineno-122-117" href="#__codelineno-122-117"></a><span class="w">        </span><span class="k">else</span>
+<a id="__codelineno-122-118" name="__codelineno-122-118" href="#__codelineno-122-118"></a><span class="w">            </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'\n  %s✗ Échec de l'</span><span class="s2">"'"</span><span class="s1">'autorisation.%s\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$RED</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span>
+<a id="__codelineno-122-119" name="__codelineno-122-119" href="#__codelineno-122-119"></a><span class="w">        </span><span class="k">fi</span>
+<a id="__codelineno-122-120" name="__codelineno-122-120" href="#__codelineno-122-120"></a><span class="w">    </span><span class="k">fi</span>
+<a id="__codelineno-122-121" name="__codelineno-122-121" href="#__codelineno-122-121"></a>
+<a id="__codelineno-122-122" name="__codelineno-122-122" href="#__codelineno-122-122"></a><span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'\n  %sEntrée pour continuer…%s '</span><span class="w"> </span><span class="s2">"</span><span class="nv">$DIM</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span><span class="nb">read</span><span class="w"> </span>-r<span class="w"> </span>_<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">true</span>
+<a id="__codelineno-122-123" name="__codelineno-122-123" href="#__codelineno-122-123"></a><span class="w">    </span>entete
+<a id="__codelineno-122-124" name="__codelineno-122-124" href="#__codelineno-122-124"></a><span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'\n  %s✓%s Service actif — %s règles dans la liste blanche\n'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$GRN</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$R</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>usbguard<span class="w"> </span>list-rules<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l<span class="p">;</span><span class="w"> </span><span class="o">}</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s1">'?'</span><span class="k">)</span><span class="s2">"</span>
+<a id="__codelineno-122-125" name="__codelineno-122-125" href="#__codelineno-122-125"></a><span class="k">done</span>
+</code></pre></div>
+</details>
+<p>Installez-le et rendez-le exécutable :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-123-1" name="__codelineno-123-1" href="#__codelineno-123-1"></a>install<span class="w"> </span>-m<span class="w"> </span><span class="m">0755</span><span class="w"> </span>usbguard-autoriser<span class="w"> </span>~/.local/bin/usbguard-autoriser
+</code></pre></div>
+<h3 id="lentree-de-menu">L’entrée de menu<a class="headerlink" href="#lentree-de-menu" title="Permanent link">&para;</a></h3>
+<p>Le fichier <code>.desktop</code> se crée dans <code>~/.local/share/applications/</code>. Aucun privilège n’est nécessaire : cet emplacement est propre à votre compte.</p>
+<p>Le bloc ci-dessous emploie volontairement un délimiteur <strong>non protégé</strong>, afin que <code>$HOME</code> soit remplacé par votre répertoire personnel au moment de la création — la clé <code>Exec</code> exige un chemin absolu et n’interprète ni <code>~</code> ni les variables d’environnement.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-124-1" name="__codelineno-124-1" href="#__codelineno-124-1"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>~/.local/share/applications/usbguard-autoriser.desktop<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<a id="__codelineno-124-2" name="__codelineno-124-2" href="#__codelineno-124-2"></a><span class="s">[Desktop Entry]</span>
+<a id="__codelineno-124-3" name="__codelineno-124-3" href="#__codelineno-124-3"></a><span class="s">Type=Application</span>
+<a id="__codelineno-124-4" name="__codelineno-124-4" href="#__codelineno-124-4"></a><span class="s">Version=1.0</span>
+<a id="__codelineno-124-5" name="__codelineno-124-5" href="#__codelineno-124-5"></a><span class="s">Name=USBGuard — Autoriser une clé USB</span>
+<a id="__codelineno-124-6" name="__codelineno-124-6" href="#__codelineno-124-6"></a><span class="s">GenericName=Contrôle des périphériques USB</span>
+<a id="__codelineno-124-7" name="__codelineno-124-7" href="#__codelineno-124-7"></a><span class="s">Comment=Les clés USB non enregistrées sont bloquées : ouvrez cet assistant pour en autoriser une</span>
+<a id="__codelineno-124-8" name="__codelineno-124-8" href="#__codelineno-124-8"></a><span class="s">Exec=$HOME/.local/bin/usbguard-autoriser</span>
+<a id="__codelineno-124-9" name="__codelineno-124-9" href="#__codelineno-124-9"></a><span class="s">Icon=drive-removable-media-usb</span>
+<a id="__codelineno-124-10" name="__codelineno-124-10" href="#__codelineno-124-10"></a><span class="s">Terminal=true</span>
+<a id="__codelineno-124-11" name="__codelineno-124-11" href="#__codelineno-124-11"></a><span class="s">Categories=System;Security;</span>
+<a id="__codelineno-124-12" name="__codelineno-124-12" href="#__codelineno-124-12"></a><span class="s">Keywords=USB;USBGuard;clé;stockage;autoriser;bloqué;liste blanche;sécurité;</span>
+<a id="__codelineno-124-13" name="__codelineno-124-13" href="#__codelineno-124-13"></a><span class="s">StartupNotify=false</span>
+<a id="__codelineno-124-14" name="__codelineno-124-14" href="#__codelineno-124-14"></a><span class="s">EOF</span>
+<a id="__codelineno-124-15" name="__codelineno-124-15" href="#__codelineno-124-15"></a>
+<a id="__codelineno-124-16" name="__codelineno-124-16" href="#__codelineno-124-16"></a>update-desktop-database<span class="w"> </span>~/.local/share/applications
+</code></pre></div>
+<p>L’entrée apparaît alors dans les Activités en tapant « <abbr title="Universal Serial Bus">USB</abbr> » ou « USBGuard ». Un clic droit permet de l’épingler au Dash, ce qui renforce l’effet de rappel recherché.</p>
+<div class="admonition tip">
+<p class="admonition-title">Vérifier le fichier plutôt que de le découvrir à l’usage</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-125-1" name="__codelineno-125-1" href="#__codelineno-125-1"></a>desktop-file-validate<span class="w"> </span>~/.local/share/applications/usbguard-autoriser.desktop
+</code></pre></div>
+<p>La commande ne doit rien afficher. Elle signale notamment la présence de plusieurs catégories principales, qui ferait apparaître l’entrée en double dans le menu — d’où le <code>Categories=System;Security;</code> ci-dessus, où seule <code>System</code> est une catégorie principale.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">À propos de l’icône</p>
+<p><code>drive-removable-media-usb</code> est un nom d’icône standard, résolu par le thème actif ou par l’un de ceux dont il hérite. Sur Ubuntu, <code>Yaru-prussiangreen</code> hérite de <code>Yaru</code>, qui la fournit. Pour vérifier qu’elle se résout réellement plutôt que de le supposer :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-126-1" name="__codelineno-126-1" href="#__codelineno-126-1"></a>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">"import gi; gi.require_version('Gtk','3.0'); from gi.repository import Gtk; \</span>
+<a id="__codelineno-126-2" name="__codelineno-126-2" href="#__codelineno-126-2"></a><span class="s2">print(Gtk.IconTheme.get_default().lookup_icon('drive-removable-media-usb',48,0).get_filename())"</span>
+</code></pre></div>
+</div>
+<h3 id="eprouver-le-raccourci-avant-den-avoir-besoin">Éprouver le raccourci avant d’en avoir besoin<a class="headerlink" href="#eprouver-le-raccourci-avant-den-avoir-besoin" title="Permanent link">&para;</a></h3>
+<p>Un assistant de dépannage que l’on découvre le jour du dépannage est un pari. Le vérifier demande une minute, en bloquant volontairement un périphérique <strong>non critique</strong> — jamais un clavier ni une souris :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-127-1" name="__codelineno-127-1" href="#__codelineno-127-1"></a><span class="nv">ID</span><span class="o">=</span><span class="k">$(</span>usbguard<span class="w"> </span>list-devices<span class="w"> </span>--allowed<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>webcam<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-1<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d:<span class="w"> </span>-f1<span class="k">)</span>
+<a id="__codelineno-127-2" name="__codelineno-127-2" href="#__codelineno-127-2"></a>usbguard<span class="w"> </span>block-device<span class="w"> </span><span class="s2">"</span><span class="nv">$ID</span><span class="s2">"</span><span class="w">          </span><span class="c1"># la webcam apparaît alors comme bloquée</span>
+<a id="__codelineno-127-3" name="__codelineno-127-3" href="#__codelineno-127-3"></a>usbguard-autoriser<span class="w">                   </span><span class="c1"># la sélectionner pour la réautoriser</span>
+<a id="__codelineno-127-4" name="__codelineno-127-4" href="#__codelineno-127-4"></a>usbguard<span class="w"> </span>list-devices<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>webcam
+</code></pre></div>
+<p>L’état final doit être <code>allow</code>. Si l’assistant échoue en cours de route, réautorisez directement :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-128-1" name="__codelineno-128-1" href="#__codelineno-128-1"></a>usbguard<span class="w"> </span>allow-device<span class="w"> </span><span class="s2">"</span><span class="nv">$ID</span><span class="s2">"</span>
+</code></pre></div>
 <hr />
 <h2 id="limites-de-la-protection">Limites de la protection<a class="headerlink" href="#limites-de-la-protection" title="Permanent link">&para;</a></h2>
 <p>USBGuard réduit l’exposition aux périphériques <abbr title="Universal Serial Bus">USB</abbr> inconnus, mais ne constitue pas une authentification matérielle et ne couvre pas tous les risques liés aux connecteurs modernes.</p>
