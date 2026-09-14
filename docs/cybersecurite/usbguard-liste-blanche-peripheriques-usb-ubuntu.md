@@ -477,6 +477,10 @@ Trois comportements sont possibles, et il est essentiel de savoir lequel s’app
     - déplacer un périphérique vers une autre prise **du même contrôleur** ne change pas le `parent-hash` : la règle continue de correspondre ;
     - le déplacer vers une prise servie par **un autre contrôleur** change le `parent-hash` : la règle ne correspond plus et le périphérique est bloqué.
 
+    Les deux points ont été vérifiés en branchant successivement un même adaptateur sur quatre prises d’un contrôleur puis sur une prise du second. Cette mesure a mis au jour un point qui prête à confusion : le `hash` du périphérique, lui, **n’a pas bougé d’un contrôleur à l’autre**. L’empreinte ne décrit que le périphérique, jamais son point de raccordement.
+
+    C’est bien `parent-hash`, et lui seul, qui rattache une règle à un concentrateur donné. Comparer les `hash` pour savoir si un déplacement pose problème ne sert donc à rien : il faut regarder les `parent-hash`.
+
     Une machine possédant deux contrôleurs xHCI a donc deux « zones » de prises entre lesquelles un périphérique autorisé ne circule pas librement. Repérez-les avant de conclure qu’un déplacement est sans risque :
 
     ```bash
@@ -2060,6 +2064,218 @@ sudo DELAI=180 /usr/local/sbin/usbguard-2-activer.sh
     ```
 
     C’est la partie indispensable : **arrêter le démon ne réautorise pas les périphériques déjà bloqués**. Sans ces deux boucles, un retour arrière laisserait le clavier inerte jusqu’à un rebranchement ou un redémarrage.
+
+---
+
+## Un raccourci dans le menu GNOME
+
+Une liste blanche a un défaut d’ergonomie bien réel : quelques semaines après l’installation, on branche une clé, il ne se passe rien, et l’on a oublié pourquoi. Le réflexe de consulter `usbguard list-devices --blocked` ne vient pas naturellement.
+
+Une entrée dans le menu des applications règle les deux problèmes à la fois. Elle sert de **rappel visuel** — son intitulé dit que les clés non enregistrées sont bloquées — et de porte d’entrée pour les autoriser sans avoir à se souvenir d’une commande.
+
+!!! info "Aucun mot de passe n’est demandé, et c’est voulu"
+    L’assistant fonctionne sans `sudo` parce que le groupe autorisé à l’étape 6 possède les privilèges IPC `Devices=modify` et `Policy=modify`. C’est précisément ce que ce contrôle d’accès rend possible.
+
+    Si vous avez accordé des privilèges plus restreints, l’assistant affichera une erreur explicite plutôt que d’échouer en silence.
+
+### L’assistant
+
+Il liste les périphériques bloqués en clair — nom, identifiant, numéro de série, type d’interface déduit — puis propose de les autoriser, soit pour la session en cours, soit en inscrivant une règle permanente. La distinction entre les deux est rappelée à chaque fois, car c’est elle que l’on oublie.
+
+??? example "`~/.local/bin/usbguard-autoriser`"
+
+    ```bash
+    #!/usr/bin/env bash
+    #
+    # Assistant USBGuard — lister les périphériques USB bloqués et les autoriser.
+    #
+    # Ne nécessite pas sudo : le groupe « sudo » dispose des privilèges IPC
+    # Devices=modify et Policy=modify accordés lors de la mise en place.
+    #
+    set -uo pipefail
+
+    R=$'\e[0m'; RED=$'\e[31m'; GRN=$'\e[32m'; YEL=$'\e[33m'; CYA=$'\e[36m'; B=$'\e[1m'; DIM=$'\e[2m'
+
+    pause_et_quitter() {
+        printf '\n%sAppuyez sur Entrée pour fermer cette fenêtre.%s ' "$DIM" "$R"
+        read -r _ || true
+        exit "${1:-0}"
+    }
+
+    entete() {
+        clear 2>/dev/null || true
+        printf '%s╔══════════════════════════════════════════════════════════════╗%s\n' "$CYA" "$R"
+        printf '%s║%s  %sUSBGuard — autoriser un périphérique USB%s                    %s║%s\n' "$CYA" "$R" "$B" "$R" "$CYA" "$R"
+        printf '%s╚══════════════════════════════════════════════════════════════╝%s\n' "$CYA" "$R"
+    }
+
+    # ------------------------------------------------------------------ état ----
+    entete
+
+    if ! systemctl is-active --quiet usbguard.service; then
+        printf '\n  %s⚠ USBGuard n'"'"'est pas en cours d'"'"'exécution.%s\n' "$RED" "$R"
+        printf '  Aucune protection USB n'"'"'est appliquée actuellement.\n\n'
+        printf '  Pour le redémarrer :   %ssudo systemctl start usbguard.service%s\n' "$B" "$R"
+        printf '  Pour diagnostiquer :   %sjournalctl -u usbguard.service -b%s\n' "$B" "$R"
+        pause_et_quitter 1
+    fi
+
+    if ! usbguard list-devices >/dev/null 2>&1; then
+        printf '\n  %s⚠ Impossible de dialoguer avec le démon USBGuard.%s\n' "$RED" "$R"
+        printf '  Votre compte a-t-il toujours les droits IPC ? Testez :\n\n'
+        printf '    %ssudo usbguard list-devices%s\n' "$B" "$R"
+        pause_et_quitter 1
+    fi
+
+    NB_REGLES=$( { usbguard list-rules | wc -l; } || echo '?')
+    printf '\n  %s✓%s Service actif — %s règles dans la liste blanche\n' "$GRN" "$R" "$NB_REGLES"
+
+    # ------------------------------------------------------------- boucle -------
+    while true; do
+        mapfile -t BLOQUES < <(usbguard list-devices --blocked 2>/dev/null)
+
+        if [ "${#BLOQUES[@]}" -eq 0 ]; then
+            printf '\n  %s✓ Aucun périphérique bloqué.%s\n' "$GRN" "$R"
+            printf '\n  %sTout ce qui est branché est autorisé.%s\n' "$DIM" "$R"
+            printf '  %sSi une clé vient d'"'"'être insérée et n'"'"'apparaît pas ici,%s\n' "$DIM" "$R"
+            printf '  %sdébranchez-la et rebranchez-la, puis relancez cet assistant.%s\n' "$DIM" "$R"
+            pause_et_quitter 0
+        fi
+
+        printf '\n  %s%d périphérique(s) bloqué(s)%s — c'"'"'est le comportement normal\n' "$YEL" "${#BLOQUES[@]}" "$R"
+        printf '  %spour tout matériel qui n'"'"'est pas encore dans la liste blanche.%s\n\n' "$DIM" "$R"
+
+        declare -a IDS=()
+        n=0
+        for ligne in "${BLOQUES[@]}"; do
+            n=$((n+1))
+            dev_id=${ligne%%:*}
+            IDS[$n]=$dev_id
+            nom=$(sed -nE 's/.*[^-]name "([^"]*)".*/\1/p' <<<"$ligne"); nom=${nom:-"(sans nom)"}
+            vid=$(sed -nE 's/.*id ([0-9a-f]{4}:[0-9a-f]{4}).*/\1/p' <<<"$ligne")
+            ser=$(sed -nE 's/.* serial "([^"]*)".*/\1/p' <<<"$ligne")
+            [ -n "$ser" ] && ser="série ${ser:0:12}" || ser="sans série"
+            # « with-interface 08:06:50 » ou « with-interface { 0e:01:00 01:01:00 … } » :
+            # on retient la première classe réelle, en ignorant l'accolade ouvrante.
+            cls=$(sed -nE 's/.*with-interface \{? *([0-9a-f]{2}:[0-9a-f*]{2}:[0-9a-f*]{2}).*/\1/p' <<<"$ligne")
+            case "$cls" in
+                08:*) type="stockage" ;;  03:*) type="clavier/souris (HID)" ;;
+                0e:*) type="vidéo"    ;;  e0:*) type="sans fil"            ;;
+                06:*) type="photo/MTP";;  *)    type="$cls"                ;;
+            esac
+            printf '   %s[%d]%s %s%s%s\n' "$B" "$n" "$R" "$B" "$nom" "$R"
+            printf '       %s%s · %s · %s%s\n' "$DIM" "$vid" "$ser" "$type" "$R"
+        done
+
+        printf '\n  %sQue voulez-vous faire ?%s\n' "$B" "$R"
+        printf '    %s<numéro>%s   autoriser %sjuste pour cette fois%s\n' "$B" "$R" "$GRN" "$R"
+        printf '    %sp<numéro>%s  autoriser %set retenir définitivement%s\n' "$B" "$R" "$YEL" "$R"
+        printf '    %sq%s          quitter\n\n' "$B" "$R"
+        printf '  Votre choix : '
+        read -r choix || pause_et_quitter 0
+
+        case "$choix" in
+            q|Q|'') pause_et_quitter 0 ;;
+            p*|P*)  perm=1; num=${choix:1} ;;
+            *)      perm=0; num=$choix ;;
+        esac
+
+        if ! [[ "$num" =~ ^[0-9]+$ ]] || [ "$num" -lt 1 ] || [ "$num" -gt "$n" ]; then
+            printf '\n  %sChoix invalide.%s\n' "$RED" "$R"; sleep 1.5; entete; continue
+        fi
+
+        cible=${IDS[$num]}
+
+        if [ "$perm" -eq 1 ]; then
+            printf '\n  %sUne règle permanente sera ajoutée à la politique.%s\n' "$YEL" "$R"
+            printf '  %sÀ ne faire que pour du matériel qui vous appartient.%s\n' "$DIM" "$R"
+            printf '  Confirmer ? [oui/non] '
+            read -r c || true
+            if [ "$c" != "oui" ]; then printf '  Annulé.\n'; sleep 1; entete; continue; fi
+            if usbguard allow-device "$cible" -p; then
+                printf '\n  %s✓ Autorisé et enregistré dans la liste blanche.%s\n' "$GRN" "$R"
+            else
+                printf '\n  %s✗ Échec. Droits IPC insuffisants sur la politique ?%s\n' "$RED" "$R"
+            fi
+        else
+            if usbguard allow-device "$cible"; then
+                printf '\n  %s✓ Autorisé pour cette fois.%s\n' "$GRN" "$R"
+                printf '  %sAu prochain branchement, ce périphérique sera de nouveau bloqué.%s\n' "$DIM" "$R"
+            else
+                printf '\n  %s✗ Échec de l'"'"'autorisation.%s\n' "$RED" "$R"
+            fi
+        fi
+
+        printf '\n  %sEntrée pour continuer…%s ' "$DIM" "$R"; read -r _ || true
+        entete
+        printf '\n  %s✓%s Service actif — %s règles dans la liste blanche\n' "$GRN" "$R" "$( { usbguard list-rules | wc -l; } || echo '?')"
+    done
+    ```
+
+Installez-le et rendez-le exécutable :
+
+```bash
+install -m 0755 usbguard-autoriser ~/.local/bin/usbguard-autoriser
+```
+
+### L’entrée de menu
+
+Le fichier `.desktop` se crée dans `~/.local/share/applications/`. Aucun privilège n’est nécessaire : cet emplacement est propre à votre compte.
+
+Le bloc ci-dessous emploie volontairement un délimiteur **non protégé**, afin que `$HOME` soit remplacé par votre répertoire personnel au moment de la création — la clé `Exec` exige un chemin absolu et n’interprète ni `~` ni les variables d’environnement.
+
+```bash
+cat > ~/.local/share/applications/usbguard-autoriser.desktop <<EOF
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=USBGuard — Autoriser une clé USB
+GenericName=Contrôle des périphériques USB
+Comment=Les clés USB non enregistrées sont bloquées : ouvrez cet assistant pour en autoriser une
+Exec=$HOME/.local/bin/usbguard-autoriser
+Icon=drive-removable-media-usb
+Terminal=true
+Categories=System;Security;
+Keywords=USB;USBGuard;clé;stockage;autoriser;bloqué;liste blanche;sécurité;
+StartupNotify=false
+EOF
+
+update-desktop-database ~/.local/share/applications
+```
+
+L’entrée apparaît alors dans les Activités en tapant « USB » ou « USBGuard ». Un clic droit permet de l’épingler au Dash, ce qui renforce l’effet de rappel recherché.
+
+!!! tip "Vérifier le fichier plutôt que de le découvrir à l’usage"
+    ```bash
+    desktop-file-validate ~/.local/share/applications/usbguard-autoriser.desktop
+    ```
+
+    La commande ne doit rien afficher. Elle signale notamment la présence de plusieurs catégories principales, qui ferait apparaître l’entrée en double dans le menu — d’où le `Categories=System;Security;` ci-dessus, où seule `System` est une catégorie principale.
+
+!!! note "À propos de l’icône"
+    `drive-removable-media-usb` est un nom d’icône standard, résolu par le thème actif ou par l’un de ceux dont il hérite. Sur Ubuntu, `Yaru-prussiangreen` hérite de `Yaru`, qui la fournit. Pour vérifier qu’elle se résout réellement plutôt que de le supposer :
+
+    ```bash
+    python3 -c "import gi; gi.require_version('Gtk','3.0'); from gi.repository import Gtk; \
+    print(Gtk.IconTheme.get_default().lookup_icon('drive-removable-media-usb',48,0).get_filename())"
+    ```
+
+### Éprouver le raccourci avant d’en avoir besoin
+
+Un assistant de dépannage que l’on découvre le jour du dépannage est un pari. Le vérifier demande une minute, en bloquant volontairement un périphérique **non critique** — jamais un clavier ni une souris :
+
+```bash
+ID=$(usbguard list-devices --allowed | grep -i webcam | head -1 | cut -d: -f1)
+usbguard block-device "$ID"          # la webcam apparaît alors comme bloquée
+usbguard-autoriser                   # la sélectionner pour la réautoriser
+usbguard list-devices | grep -i webcam
+```
+
+L’état final doit être `allow`. Si l’assistant échoue en cours de route, réautorisez directement :
+
+```bash
+usbguard allow-device "$ID"
+```
 
 ---
 
