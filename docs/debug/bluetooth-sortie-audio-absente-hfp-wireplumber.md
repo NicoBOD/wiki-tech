@@ -24,12 +24,14 @@ status: publié
 
     Le correctif force, pour cet appareil précis, une connexion en A2DP uniquement — sans désactiver le mode mains-libres pour le reste de vos périphériques Bluetooth.
 
+    **Symptôme identique, autre cause possible :** si la boucle `AT+CCLK?` est absente mais que `listen(): Address already in use` apparaît, le coupable n'est pas l'appareil. WirePlumber a laissé des **enregistrements D-Bus fantômes** dans BlueZ au démarrage, et le transport A2DP s'y accroche. Voir l'[étape 4b](#4b-enregistrements-d-bus-fantomes-laisses-par-wireplumber-au-demarrage).
+
 | Propriété | Valeur |
 |-----------|--------|
 | Difficulté | Intermédiaire |
 | OS / Environnement | Ubuntu 24.04 Desktop — GNOME |
 | Serveur audio | PipeWire 1.0.5 + WirePlumber 0.4.17 |
-| Dernière mise à jour | 2026-09-08 |
+| Dernière mise à jour | 2026-09-14 |
 
 ## Contexte
 
@@ -119,7 +121,7 @@ La présence de lignes répétées `RFCOMM receive command but modem not availab
 
     Un PC ne sait pas répondre comme le ferait un téléphone à toutes ces commandes. Si l'appareil Bluetooth insiste pour ouvrir une session HFP dès la connexion, et que cette négociation échoue en boucle, elle peut empêcher le profil A2DP de se stabiliser sur le même appareil.
 
-### 4. Écarter un second serveur de son concurrent
+### 4. Écarter un second serveur de son — et les enregistrements fantômes
 
 Le journal WirePlumber peut aussi afficher cet avertissement :
 
@@ -129,7 +131,12 @@ instances (PipeWire/Pulseaudio/bluez-alsa) are probably trying to use
 Bluetooth audio at the same time...
 ```
 
-Ce message est trompeur pris isolément : il apparaît aussi quand la négociation HFP instable (étape 3) perturbe le suivi interne de WirePlumber, sans qu'un second serveur soit réellement en cause. Vérifier avant de conclure :
+!!! warning "Ce message recouvre deux situations très différentes"
+    Il peut être un **faux ami** (cas 4a) ou le signe d'une **panne réelle** (cas 4b) — mais même dans ce second cas, son libellé est trompeur : il n'y a pas forcément de second serveur de son. Les deux cas n'ont ni la même cause ni le même correctif, et le test du 4a est **incapable** de détecter le 4b.
+
+#### 4a. Faux ami : aucun concurrent, c'est la boucle HFP
+
+L'avertissement apparaît quand la négociation HFP instable (étape 3) perturbe le suivi interne de WirePlumber, sans qu'un second serveur soit en cause :
 
 ```bash
 ps aux | grep -iE "pulseaudio|bluealsa" | grep -v grep
@@ -137,7 +144,110 @@ dpkg -l | grep -iE "^ii.*(pulseaudio-module-bluetooth|bluealsa)"
 systemctl --user list-units --all --type=service | grep -iE "pulseaudio|bluealsa"
 ```
 
-Si ces commandes ne renvoient rien (aucun processus, aucun paquet, aucun service actif), il n'y a pas de second serveur de son : l'avertissement corrobore simplement l'instabilité de la négociation HFP identifiée à l'étape 3.
+Si ces commandes ne renvoient rien **et** que la boucle `AT+CCLK?` de l'étape 3 est présente, l'avertissement corrobore simplement cette instabilité. Passer à la [Solution](#solution).
+
+#### 4b. Enregistrements D-Bus fantômes laissés par WirePlumber au démarrage
+
+!!! failure "Signature : AT+CCLK absent, Address already in use présent"
+    Si l'étape 3 ne trouve **aucune** occurrence de `AT+CCLK?` mais que ceci apparaît en nombre, vous êtes dans le cas 4b :
+
+    ```bash
+    journalctl -b --user -u wireplumber | grep -c "Address already in use"
+    ```
+
+**Le marqueur qui tranche.** Une seule ligne suffit à confirmer le diagnostic, côté `bluetoothd` :
+
+```bash
+journalctl -b -u bluetooth | grep "ServiceUnknown"
+```
+
+```text
+src/profile.c:new_conn_reply() Hands-Free Voice gateway replied with an error:
+org.freedesktop.DBus.Error.ServiceUnknown, The name :1.67 was not provided by
+any .service files
+```
+
+`:1.67` est une connexion D-Bus **morte**, à laquelle BlueZ continue pourtant de router chaque connexion mains-libres entrante. Le vérifier :
+
+```bash
+busctl --system list | grep ":1.67"   # aucune sortie = la connexion n'existe plus
+```
+
+??? info "Le mécanisme, maillon par maillon"
+    1. Au démarrage, le moniteur bluez de WirePlumber échoue à initialiser son backend mains-libres : `listen(): Address already in use` sur les canaux RFCOMM, et `RegisterProfile() failed: org.bluez.Error.NotPermitted` sur les profils HFP `0000111e` / `0000111f`.
+    2. Il **réessaie** — plusieurs dizaines de fois en quelques secondes. Chaque tentative ouvre une **nouvelle connexion D-Bus** qui enregistre à nouveau profils et endpoints auprès de `bluetoothd`.
+    3. Ces connexions meurent les unes après les autres, mais **BlueZ conserve leurs enregistrements**. D'où la ligne `ServiceUnknown` ci-dessus : le profil HFP pointe sur un cadavre.
+    4. Quand le casque se connecte, le transport A2DP est rattaché à un endpoint orphelin, que le WirePlumber vivant ne reconnaît pas : c'est le fameux *unknown transport*. Aucune carte n'est créée, GNOME n'a rien à proposer.
+    5. Redémarrer WirePlumber ferme les connexions mortes ; BlueZ nettoie alors ses enregistrements et le moniteur s'enregistre une fois, proprement.
+
+    L'endpoint **SBC** — codec obligatoire, sans lequel aucun A2DP n'est négociable — peut aussi finir refusé au passage :
+
+    ```text
+    media_endpoint_create() Unable initialize endpoint for UUID 0000110b
+    app_register_endpoint() Unable to register endpoint /MediaEndpoint/A2DPSink/sbc: Invalid argument
+    ```
+
+**Réparation immédiate.** L'ordre compte : le redémarrage nettoie, la reconnexion renégocie.
+
+```bash
+systemctl --user restart wireplumber
+sleep 5
+bluetoothctl disconnect <MAC>
+sleep 4
+bluetoothctl connect <MAC>
+pactl list sinks short | grep bluez
+```
+
+!!! warning "Le redémarrage de WirePlumber seul ne suffit pas"
+    Il fait réapparaître la carte, mais en **HFP mono 16 kHz** (`s16le 1ch 16000Hz`). C'est la reconnexion qui renégocie l'A2DP. Le format attendu en sortie est `s16le 2ch 48000Hz`. La connexion Bluetooth elle-même est parfois capricieuse (`br-connection-unknown`) : deux tentatives sont souvent nécessaires, ce n'est pas lié à la panne audio.
+
+##### Facteurs aggravants : les piles audio des autres UID
+
+Sur Ubuntu, `/etc/systemd/user/*.wants/` active `pipewire` et `wireplumber` pour **toute** session utilisateur, y compris celles qui ne sont pas la vôtre :
+
+```bash
+journalctl -b | grep "Started wireplumber.service"   # plusieurs systemd[PID] = plusieurs piles
+journalctl -b | grep "User Manager for UID"          # 120 = gdm, 65534 = gnome-initial-setup
+```
+
+Ces piles concurrentes **aggravent** la boucle sans en être la cause. Sur le cas mesuré ici, la répartition des erreurs bluez par UID était sans appel :
+
+| UID | Qui | Erreurs bluez |
+|-----|-----|---------------|
+| 1000 | votre session | **53** |
+| 120 | `gdm` (écran de connexion) | 6 |
+| 65534 | `nobody` (`gnome-initial-setup`, intermittent) | 0 à 7 |
+
+Autrement dit : **l'essentiel de la boucle est une auto-collision de votre propre WirePlumber**, pas un conflit entre utilisateurs. Neutraliser le Bluetooth de `gdm` retire du bruit mais **ne répare pas** la panne — vérifié par un test décisif, casque allumé, avec `gdm` désactivé : le symptôme se reproduit à l'identique.
+
+??? tip "Neutraliser quand même le Bluetooth de gdm (facultatif)"
+    WirePlumber 0.4 fait primer la configuration utilisateur sur celle du système à nom de fichier identique. Un fichier **vide** portant le nom de celui qui active les moniteurs Bluetooth les désactive donc pour `gdm` seul, sans toucher à votre session ni au son de l'écran de connexion (lecteur d'écran Orca compris) :
+
+    ```bash
+    sudo install -d -o gdm -g gdm /var/lib/gdm3/.config/wireplumber/bluetooth.lua.d
+    sudo install -o gdm -g gdm /dev/null \
+      /var/lib/gdm3/.config/wireplumber/bluetooth.lua.d/90-enable-all.lua
+    ```
+
+    Vérification : `Using legacy bluez5 API` doit disparaître du journal de l'UID 120. Annulation : `sudo rm -rf /var/lib/gdm3/.config/wireplumber`.
+
+!!! danger "Piège de validation"
+    `journalctl -b | grep -c "Started wireplumber.service"` est un **mauvais** critère pour juger ce correctif : il désactive le moniteur Bluetooth de `gdm`, pas son service `wireplumber`, qui démarre toujours. Compter plutôt les collisions (`Address already in use`) et les endpoints refusés (`Unable to register endpoint`).
+
+##### Correctif de fond possible
+
+La boucle porte spécifiquement sur le RFCOMM et les profils HFP. Sans backend mains-libres, WirePlumber ne bind plus de socket RFCOMM et n'enregistre plus `111e`/`111f` : la boucle n'a plus lieu d'être. C'est le même levier que le [repli global](#solution) décrit plus bas, dans `~/.config/wireplumber/bluetooth.lua.d/51-no-hfp.lua` :
+
+```lua
+bluez_monitor.properties = {
+  ["bluez5.hfphsp-backend"] = "none",
+}
+```
+
+Coût : plus de micro Bluetooth sur aucun appareil. À réserver aux postes qui disposent d'un autre micro.
+
+!!! note "Statut de ce correctif"
+    Déduit du mécanisme établi ci-dessus, **mais non validé par un redémarrage** au moment de la rédaction. À vérifier avec `journalctl -b --user -u wireplumber | grep -c "Address already in use"`, qui doit retomber à `0`.
 
 ## Solution
 
@@ -231,7 +341,7 @@ wpctl status
 - [ ] `bluetoothctl info <MAC>` confirme `Connected: yes`
 - [ ] `pactl list cards short` ne montre pas encore la carte `bluez_card.*` (avant correctif)
 - [ ] Boucle `AT+CCLK?` repérée dans `journalctl --user -u wireplumber`
-- [ ] Absence de second serveur de son confirmée (`ps aux`, `dpkg -l`, `systemctl --user list-units`)
+- [ ] Cas 4b écarté : aucune ligne `ServiceUnknown` dans `journalctl -b -u bluetooth`, et `Address already in use` à `0` côté WirePlumber
 - [ ] Règle créée dans `~/.config/wireplumber/bluetooth.lua.d/51-<nom-appareil>.lua`
 - [ ] `systemctl --user restart wireplumber` puis reconnexion de l'appareil
 - [ ] `pactl list cards short` / `wpctl status` montrent désormais l'appareil
