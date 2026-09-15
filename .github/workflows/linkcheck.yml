@@ -40,6 +40,18 @@ jobs:
           # images publiées sur ghcr.io) renvoient parfois 502 aux requêtes
           # automatisées des runners CI (cf. issues #28, #31), alors qu'elles
           # sont bien accessibles pour un humain.
+          # --exclude aka.ms/myrecoverykey : ce raccourci Microsoft répond 301
+          # vers account.microsoft.com/devices/recoverykey, une page de compte
+          # qui exige une authentification et coupe la connexion des clients
+          # automatisés : invérifiable en CI, valide pour un humain (cf. issues
+          # #41, #43). L'exclusion vise cette URL seule, pas tout le domaine :
+          # un futur lien aka.ms reste vérifié.
+          # --exclude .../~sgtatham/putty/ : le serveur qui héberge la
+          # documentation de PuTTY met systématiquement 12 à 14 s à répondre et
+          # coupe une requête sur deux (connexion réinitialisée), ce qui déclenche
+          # des timeouts en CI (cf. issue #43) ; les pages restent accessibles
+          # pour un humain, même principe que l'exclusion gnu.org ci-dessus.
+          # Limitée là aussi au sous-arbre concerné plutôt qu'au domaine entier.
           args: >-
             --no-progress
             --max-retries 2
@@ -47,6 +59,8 @@ jobs:
             --exclude-all-private
             --exclude 'gnu\.org'
             --exclude 'github\.com/[^/]+/[^/]+/pkgs/container/'
+            --exclude 'aka\.ms/myrecoverykey'
+            --exclude 'chiark\.greenend\.org\.uk/~sgtatham/putty/'
             'docs/**/*.md'
             'README.md'
           # N'échoue pas le job : le résultat est remonté via une issue.
