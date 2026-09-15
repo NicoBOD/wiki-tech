@@ -1951,10 +1951,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#4-ecarter-un-second-serveur-de-son-concurrent" class="md-nav__link">
+  <a href="#4-ecarter-un-second-serveur-de-son-et-les-enregistrements-fantomes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. Écarter un second serveur de son concurrent
+        4. Écarter un second serveur de son — et les enregistrements fantômes
       
     </span>
   </a>
@@ -2295,10 +2295,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#4-ecarter-un-second-serveur-de-son-concurrent" class="md-nav__link">
+  <a href="#4-ecarter-un-second-serveur-de-son-et-les-enregistrements-fantomes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. Écarter un second serveur de son concurrent
+        4. Écarter un second serveur de son — et les enregistrements fantômes
       
     </span>
   </a>
@@ -2544,6 +2544,7 @@
 <p>Un casque ou des écouteurs Bluetooth s'appairent et se connectent normalement (<code>Connected: yes</code> dans <code>bluetoothctl</code>), mais <strong>n'apparaissent jamais dans la liste des sorties audio</strong> de GNOME Paramètres, ni dans <code>pactl</code>/<code>wpctl</code>. Tout se passe comme si l'appareil n'existait pas pour le son, alors que Bluetooth le voit parfaitement.</p>
 <p>La cause n'est <strong>pas</strong> un problème d'appairage. Le journal de WirePlumber tourne en boucle sur <code>RFCOMM receive command but modem not available: AT+CCLK?</code> : l'appareil ouvre une session <strong>mains-libres (HFP)</strong> que WirePlumber ne peut pas satisfaire, et cette négociation qui échoue en continu empêche le profil <strong>A2DP</strong> (lecture stéréo) de se stabiliser. Résultat : PipeWire ne crée jamais la carte audio correspondante, donc GNOME n'a rien à proposer.</p>
 <p>Le correctif force, pour cet appareil précis, une connexion en A2DP uniquement — sans désactiver le mode mains-libres pour le reste de vos périphériques Bluetooth.</p>
+<p><strong>Symptôme identique, autre cause possible :</strong> si la boucle <code>AT+CCLK?</code> est absente mais que <code>listen(): Address already in use</code> apparaît, le coupable n'est pas l'appareil. WirePlumber a laissé des <strong>enregistrements D-Bus fantômes</strong> dans BlueZ au démarrage, et le transport A2DP s'y accroche. Voir l'<a href="#4b-enregistrements-d-bus-fantomes-laisses-par-wireplumber-au-demarrage">étape 4b</a>.</p>
 </div>
 <table>
 <thead>
@@ -2567,7 +2568,7 @@
 </tr>
 <tr>
 <td>Dernière mise à jour</td>
-<td>2026-09-08</td>
+<td>2026-09-14</td>
 </tr>
 </tbody>
 </table>
@@ -2640,55 +2641,160 @@
 <p><strong>HFP</strong> (Hands-Free Profile) et son ancêtre <strong>HSP</strong> (Headset Profile) sont conçus pour les appels téléphoniques : audio bidirectionnel mais mono et basse qualité, plus un canal de contrôle qui transporte des <strong>commandes AT</strong> — le même jeu de commandes texte historiquement utilisé pour piloter les modems (<code>AT+CCLK?</code> demande l'heure courante, typiquement pour synchroniser l'horloge affichée par un kit mains-libres de voiture). Ce canal de contrôle circule sur <strong>RFCOMM</strong>, un protocole Bluetooth qui émule un port série.</p>
 <p>Un PC ne sait pas répondre comme le ferait un téléphone à toutes ces commandes. Si l'appareil Bluetooth insiste pour ouvrir une session HFP dès la connexion, et que cette négociation échoue en boucle, elle peut empêcher le profil A2DP de se stabiliser sur le même appareil.</p>
 </div>
-<h3 id="4-ecarter-un-second-serveur-de-son-concurrent">4. Écarter un second serveur de son concurrent<a class="headerlink" href="#4-ecarter-un-second-serveur-de-son-concurrent" title="Permanent link">&para;</a></h3>
+<h3 id="4-ecarter-un-second-serveur-de-son-et-les-enregistrements-fantomes">4. Écarter un second serveur de son — et les enregistrements fantômes<a class="headerlink" href="#4-ecarter-un-second-serveur-de-son-et-les-enregistrements-fantomes" title="Permanent link">&para;</a></h3>
 <p>Le journal WirePlumber peut aussi afficher cet avertissement :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Properties changed in unknown transport '.../sep1/fd0'. Multiple sound server
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>instances (PipeWire/Pulseaudio/bluez-alsa) are probably trying to use
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>Bluetooth audio at the same time...
 </code></pre></div>
-<p>Ce message est trompeur pris isolément : il apparaît aussi quand la négociation HFP instable (étape 3) perturbe le suivi interne de WirePlumber, sans qu'un second serveur soit réellement en cause. Vérifier avant de conclure :</p>
+<div class="admonition warning">
+<p class="admonition-title">Ce message recouvre deux situations très différentes</p>
+<p>Il peut être un <strong>faux ami</strong> (cas 4a) ou le signe d'une <strong>panne réelle</strong> (cas 4b) — mais même dans ce second cas, son libellé est trompeur : il n'y a pas forcément de second serveur de son. Les deux cas n'ont ni la même cause ni le même correctif, et le test du 4a est <strong>incapable</strong> de détecter le 4b.</p>
+</div>
+<h4 id="4a-faux-ami-aucun-concurrent-cest-la-boucle-hfp">4a. Faux ami : aucun concurrent, c'est la boucle HFP<a class="headerlink" href="#4a-faux-ami-aucun-concurrent-cest-la-boucle-hfp" title="Permanent link">&para;</a></h4>
+<p>L'avertissement apparaît quand la négociation HFP instable (étape 3) perturbe le suivi interne de WirePlumber, sans qu'un second serveur soit en cause :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>ps<span class="w"> </span>aux<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">"pulseaudio|bluealsa"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-v<span class="w"> </span>grep
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>dpkg<span class="w"> </span>-l<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">"^ii.*(pulseaudio-module-bluetooth|bluealsa)"</span>
 <a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>list-units<span class="w"> </span>--all<span class="w"> </span>--type<span class="o">=</span>service<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">"pulseaudio|bluealsa"</span>
 </code></pre></div>
-<p>Si ces commandes ne renvoient rien (aucun processus, aucun paquet, aucun service actif), il n'y a pas de second serveur de son : l'avertissement corrobore simplement l'instabilité de la négociation HFP identifiée à l'étape 3.</p>
+<p>Si ces commandes ne renvoient rien <strong>et</strong> que la boucle <code>AT+CCLK?</code> de l'étape 3 est présente, l'avertissement corrobore simplement cette instabilité. Passer à la <a href="#solution">Solution</a>.</p>
+<h4 id="4b-enregistrements-d-bus-fantomes-laisses-par-wireplumber-au-demarrage">4b. Enregistrements D-Bus fantômes laissés par WirePlumber au démarrage<a class="headerlink" href="#4b-enregistrements-d-bus-fantomes-laisses-par-wireplumber-au-demarrage" title="Permanent link">&para;</a></h4>
+<div class="admonition failure">
+<p class="admonition-title">Signature : AT+CCLK absent, Address already in use présent</p>
+<p>Si l'étape 3 ne trouve <strong>aucune</strong> occurrence de <code>AT+CCLK?</code> mais que ceci apparaît en nombre, vous êtes dans le cas 4b :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>journalctl<span class="w"> </span>-b<span class="w"> </span>--user<span class="w"> </span>-u<span class="w"> </span>wireplumber<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s2">"Address already in use"</span>
+</code></pre></div>
+</div>
+<p><strong>Le marqueur qui tranche.</strong> Une seule ligne suffit à confirmer le diagnostic, côté <code>bluetoothd</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>journalctl<span class="w"> </span>-b<span class="w"> </span>-u<span class="w"> </span>bluetooth<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"ServiceUnknown"</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>src/profile.c:new_conn_reply() Hands-Free Voice gateway replied with an error:
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>org.freedesktop.DBus.Error.ServiceUnknown, The name :1.67 was not provided by
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>any .service files
+</code></pre></div>
+<p><code>:1.67</code> est une connexion D-Bus <strong>morte</strong>, à laquelle BlueZ continue pourtant de router chaque connexion mains-libres entrante. Le vérifier :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>busctl<span class="w"> </span>--system<span class="w"> </span>list<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">":1.67"</span><span class="w">   </span><span class="c1"># aucune sortie = la connexion n'existe plus</span>
+</code></pre></div>
+<details class="info">
+<summary>Le mécanisme, maillon par maillon</summary>
+<ol>
+<li>Au démarrage, le moniteur bluez de WirePlumber échoue à initialiser son backend mains-libres : <code>listen(): Address already in use</code> sur les canaux RFCOMM, et <code>RegisterProfile() failed: org.bluez.Error.NotPermitted</code> sur les profils HFP <code>0000111e</code> / <code>0000111f</code>.</li>
+<li>Il <strong>réessaie</strong> — plusieurs dizaines de fois en quelques secondes. Chaque tentative ouvre une <strong>nouvelle connexion D-Bus</strong> qui enregistre à nouveau profils et endpoints auprès de <code>bluetoothd</code>.</li>
+<li>Ces connexions meurent les unes après les autres, mais <strong>BlueZ conserve leurs enregistrements</strong>. D'où la ligne <code>ServiceUnknown</code> ci-dessus : le profil HFP pointe sur un cadavre.</li>
+<li>Quand le casque se connecte, le transport A2DP est rattaché à un endpoint orphelin, que le WirePlumber vivant ne reconnaît pas : c'est le fameux <em>unknown transport</em>. Aucune carte n'est créée, GNOME n'a rien à proposer.</li>
+<li>Redémarrer WirePlumber ferme les connexions mortes ; BlueZ nettoie alors ses enregistrements et le moniteur s'enregistre une fois, proprement.</li>
+</ol>
+<p>L'endpoint <strong>SBC</strong> — codec obligatoire, sans lequel aucun A2DP n'est négociable — peut aussi finir refusé au passage :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>media_endpoint_create() Unable initialize endpoint for UUID 0000110b
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>app_register_endpoint() Unable to register endpoint /MediaEndpoint/A2DPSink/sbc: Invalid argument
+</code></pre></div>
+</details>
+<p><strong>Réparation immédiate.</strong> L'ordre compte : le redémarrage nettoie, la reconnexion renégocie.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>restart<span class="w"> </span>wireplumber
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>sleep<span class="w"> </span><span class="m">5</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>bluetoothctl<span class="w"> </span>disconnect<span class="w"> </span>&lt;MAC&gt;
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>sleep<span class="w"> </span><span class="m">4</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>bluetoothctl<span class="w"> </span>connect<span class="w"> </span>&lt;MAC&gt;
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>pactl<span class="w"> </span>list<span class="w"> </span>sinks<span class="w"> </span>short<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>bluez
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Le redémarrage de WirePlumber seul ne suffit pas</p>
+<p>Il fait réapparaître la carte, mais en <strong>HFP mono 16 kHz</strong> (<code>s16le 1ch 16000Hz</code>). C'est la reconnexion qui renégocie l'A2DP. Le format attendu en sortie est <code>s16le 2ch 48000Hz</code>. La connexion Bluetooth elle-même est parfois capricieuse (<code>br-connection-unknown</code>) : deux tentatives sont souvent nécessaires, ce n'est pas lié à la panne audio.</p>
+</div>
+<h5 id="facteurs-aggravants-les-piles-audio-des-autres-uid">Facteurs aggravants : les piles audio des autres UID<a class="headerlink" href="#facteurs-aggravants-les-piles-audio-des-autres-uid" title="Permanent link">&para;</a></h5>
+<p>Sur Ubuntu, <code>/etc/systemd/user/*.wants/</code> active <code>pipewire</code> et <code>wireplumber</code> pour <strong>toute</strong> session utilisateur, y compris celles qui ne sont pas la vôtre :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>journalctl<span class="w"> </span>-b<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"Started wireplumber.service"</span><span class="w">   </span><span class="c1"># plusieurs systemd[PID] = plusieurs piles</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>journalctl<span class="w"> </span>-b<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"User Manager for UID"</span><span class="w">          </span><span class="c1"># 120 = gdm, 65534 = gnome-initial-setup</span>
+</code></pre></div>
+<p>Ces piles concurrentes <strong>aggravent</strong> la boucle sans en être la cause. Sur le cas mesuré ici, la répartition des erreurs bluez par UID était sans appel :</p>
+<table>
+<thead>
+<tr>
+<th>UID</th>
+<th>Qui</th>
+<th>Erreurs bluez</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1000</td>
+<td>votre session</td>
+<td><strong>53</strong></td>
+</tr>
+<tr>
+<td>120</td>
+<td><code>gdm</code> (écran de connexion)</td>
+<td>6</td>
+</tr>
+<tr>
+<td>65534</td>
+<td><code>nobody</code> (<code>gnome-initial-setup</code>, intermittent)</td>
+<td>0 à 7</td>
+</tr>
+</tbody>
+</table>
+<p>Autrement dit : <strong>l'essentiel de la boucle est une auto-collision de votre propre WirePlumber</strong>, pas un conflit entre utilisateurs. Neutraliser le Bluetooth de <code>gdm</code> retire du bruit mais <strong>ne répare pas</strong> la panne — vérifié par un test décisif, casque allumé, avec <code>gdm</code> désactivé : le symptôme se reproduit à l'identique.</p>
+<details class="tip">
+<summary>Neutraliser quand même le Bluetooth de gdm (facultatif)</summary>
+<p>WirePlumber 0.4 fait primer la configuration utilisateur sur celle du système à nom de fichier identique. Un fichier <strong>vide</strong> portant le nom de celui qui active les moniteurs Bluetooth les désactive donc pour <code>gdm</code> seul, sans toucher à votre session ni au son de l'écran de connexion (lecteur d'écran Orca compris) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>sudo<span class="w"> </span>install<span class="w"> </span>-d<span class="w"> </span>-o<span class="w"> </span>gdm<span class="w"> </span>-g<span class="w"> </span>gdm<span class="w"> </span>/var/lib/gdm3/.config/wireplumber/bluetooth.lua.d
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>sudo<span class="w"> </span>install<span class="w"> </span>-o<span class="w"> </span>gdm<span class="w"> </span>-g<span class="w"> </span>gdm<span class="w"> </span>/dev/null<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">  </span>/var/lib/gdm3/.config/wireplumber/bluetooth.lua.d/90-enable-all.lua
+</code></pre></div>
+<p>Vérification : <code>Using legacy bluez5 API</code> doit disparaître du journal de l'UID 120. Annulation : <code>sudo rm -rf /var/lib/gdm3/.config/wireplumber</code>.</p>
+</details>
+<div class="admonition danger">
+<p class="admonition-title">Piège de validation</p>
+<p><code>journalctl -b | grep -c "Started wireplumber.service"</code> est un <strong>mauvais</strong> critère pour juger ce correctif : il désactive le moniteur Bluetooth de <code>gdm</code>, pas son service <code>wireplumber</code>, qui démarre toujours. Compter plutôt les collisions (<code>Address already in use</code>) et les endpoints refusés (<code>Unable to register endpoint</code>).</p>
+</div>
+<h5 id="correctif-de-fond-possible">Correctif de fond possible<a class="headerlink" href="#correctif-de-fond-possible" title="Permanent link">&para;</a></h5>
+<p>La boucle porte spécifiquement sur le RFCOMM et les profils HFP. Sans backend mains-libres, WirePlumber ne bind plus de socket RFCOMM et n'enregistre plus <code>111e</code>/<code>111f</code> : la boucle n'a plus lieu d'être. C'est le même levier que le <a href="#solution">repli global</a> décrit plus bas, dans <code>~/.config/wireplumber/bluetooth.lua.d/51-no-hfp.lua</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nv">bluez_monitor</span><span class="p">.</span><span class="py">properties</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">  </span><span class="p">[</span><span class="s2">"bluez5.hfphsp-backend"</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"none"</span><span class="p">,</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="p">}</span>
+</code></pre></div>
+<p>Coût : plus de micro Bluetooth sur aucun appareil. À réserver aux postes qui disposent d'un autre micro.</p>
+<div class="admonition note">
+<p class="admonition-title">Statut de ce correctif</p>
+<p>Déduit du mécanisme établi ci-dessus, <strong>mais non validé par un redémarrage</strong> au moment de la rédaction. À vérifier avec <code>journalctl -b --user -u wireplumber | grep -c "Address already in use"</code>, qui doit retomber à <code>0</code>.</p>
+</div>
 <h2 id="solution">Solution<a class="headerlink" href="#solution" title="Permanent link">&para;</a></h2>
 <p>WirePlumber 0.4.x (celui d'Ubuntu 24.04) se configure en Lua. Le réglage qui désactive complètement HFP/HSP (<code>bluez5.hfphsp-backend</code>) est <strong>global à tout le Bluetooth</strong> : l'appliquer couperait le micro Bluetooth de tous vos autres casques, pas seulement de l'appareil fautif. La solution ci-dessous cible uniquement l'appareil concerné.</p>
 <h3 id="etape-1-recuperer-ladresse-mac-de-lappareil">Étape 1 : récupérer l'adresse MAC de l'appareil<a class="headerlink" href="#etape-1-recuperer-ladresse-mac-de-lappareil" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>bluetoothctl<span class="w"> </span>devices
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="c1"># Device AA:BB:CC:DD:EE:FF Nom de l'appareil</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>bluetoothctl<span class="w"> </span>devices
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="c1"># Device AA:BB:CC:DD:EE:FF Nom de l'appareil</span>
 </code></pre></div>
 <p>WirePlumber désigne les cartes Bluetooth par un nom dérivé de cette adresse, deux-points remplacés par des underscores :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"AA:BB:CC:DD:EE:FF"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span><span class="s1">':'</span><span class="w"> </span><span class="s1">'_'</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1"># AA_BB_CC_DD_EE_FF   →  device.name = bluez_card.AA_BB_CC_DD_EE_FF</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"AA:BB:CC:DD:EE:FF"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span><span class="s1">':'</span><span class="w"> </span><span class="s1">'_'</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="c1"># AA_BB_CC_DD_EE_FF   →  device.name = bluez_card.AA_BB_CC_DD_EE_FF</span>
 </code></pre></div>
 <h3 id="etape-2-creer-une-regle-wireplumber-ciblee-sur-cet-appareil">Étape 2 : créer une règle WirePlumber ciblée sur cet appareil<a class="headerlink" href="#etape-2-creer-une-regle-wireplumber-ciblee-sur-cet-appareil" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.config/wireplumber/bluetooth.lua.d
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.config/wireplumber/bluetooth.lua.d
 </code></pre></div>
 <p>Créer <code>~/.config/wireplumber/bluetooth.lua.d/51-&lt;nom-appareil&gt;.lua</code> (remplacer <code>&lt;nom-appareil&gt;</code> par un repère lisible, ex. <code>casque-sport</code>) :</p>
-<div class="highlight"><span class="filename">~/.config/wireplumber/bluetooth.lua.d/51-&lt;nom-appareil&gt;.lua</span><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1">-- Restreint UN appareil Bluetooth précis à l'auto-connexion A2DP,</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="c1">-- sans toucher au réglage HFP global (qui reste actif pour les autres</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="c1">-- périphériques). Remplacer l'adresse ci-dessous par la vôtre (étape 1).</span>
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="nb">table.insert</span><span class="p">(</span><span class="nv">bluez_monitor</span><span class="p">.</span><span class="py">rules</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">  </span><span class="nv">matches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">    </span><span class="p">{</span>
-<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="s2">"device.name"</span><span class="p">,</span><span class="w"> </span><span class="s2">"matches"</span><span class="p">,</span><span class="w"> </span><span class="s2">"bluez_card.AA_BB_CC_DD_EE_FF"</span><span class="w"> </span><span class="p">},</span>
-<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">    </span><span class="p">},</span>
-<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">  </span><span class="p">},</span>
-<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">  </span><span class="nv">apply_properties</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">    </span><span class="p">[</span><span class="s2">"bluez5.auto-connect"</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"[ a2dp_sink ]"</span><span class="p">,</span>
-<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">    </span><span class="p">[</span><span class="s2">"device.profile"</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"a2dp-sink"</span><span class="p">,</span>
-<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">  </span><span class="p">},</span>
-<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="p">})</span>
+<div class="highlight"><span class="filename">~/.config/wireplumber/bluetooth.lua.d/51-&lt;nom-appareil&gt;.lua</span><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1">-- Restreint UN appareil Bluetooth précis à l'auto-connexion A2DP,</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="c1">-- sans toucher au réglage HFP global (qui reste actif pour les autres</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="c1">-- périphériques). Remplacer l'adresse ci-dessous par la vôtre (étape 1).</span>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="nb">table.insert</span><span class="p">(</span><span class="nv">bluez_monitor</span><span class="p">.</span><span class="py">rules</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="w">  </span><span class="nv">matches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="w">    </span><span class="p">{</span>
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="s2">"device.name"</span><span class="p">,</span><span class="w"> </span><span class="s2">"matches"</span><span class="p">,</span><span class="w"> </span><span class="s2">"bluez_card.AA_BB_CC_DD_EE_FF"</span><span class="w"> </span><span class="p">},</span>
+<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="w">    </span><span class="p">},</span>
+<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a><span class="w">  </span><span class="p">},</span>
+<a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="w">  </span><span class="nv">apply_properties</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a><span class="w">    </span><span class="p">[</span><span class="s2">"bluez5.auto-connect"</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"[ a2dp_sink ]"</span><span class="p">,</span>
+<a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a><span class="w">    </span><span class="p">[</span><span class="s2">"device.profile"</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"a2dp-sink"</span><span class="p">,</span>
+<a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a><span class="w">  </span><span class="p">},</span>
+<a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a><span class="p">})</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Pourquoi un nouveau fichier plutôt que modifier la config existante</p>
 <p>WirePlumber charge <strong>tous</strong> les fichiers <code>.lua</code> du dossier <code>bluetooth.lua.d/</code>, aussi bien ceux du système (<code>/usr/share/wireplumber/bluetooth.lua.d/</code>) que ceux de l'utilisateur (<code>~/.config/wireplumber/bluetooth.lua.d/</code>), et les fusionne. <code>table.insert(bluez_monitor.rules, ...)</code> <strong>ajoute</strong> une règle à la liste existante au lieu de la remplacer : le fichier système d'origine reste intact, et la modification survit aux mises à jour du paquet <code>wireplumber</code>.</p>
 </div>
 <h3 id="etape-3-redemarrer-wireplumber-et-forcer-une-reconnexion">Étape 3 : redémarrer WirePlumber et forcer une reconnexion<a class="headerlink" href="#etape-3-redemarrer-wireplumber-et-forcer-une-reconnexion" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>restart<span class="w"> </span>wireplumber
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>bluetoothctl<span class="w"> </span>disconnect<span class="w"> </span>AA:BB:CC:DD:EE:FF
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>bluetoothctl<span class="w"> </span>connect<span class="w"> </span>AA:BB:CC:DD:EE:FF
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>restart<span class="w"> </span>wireplumber
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>bluetoothctl<span class="w"> </span>disconnect<span class="w"> </span>AA:BB:CC:DD:EE:FF
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>bluetoothctl<span class="w"> </span>connect<span class="w"> </span>AA:BB:CC:DD:EE:FF
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Aucun droit root nécessaire</p>
@@ -2701,21 +2807,21 @@
 <div class="admonition tip">
 <p class="admonition-title">Si le correctif ciblé ne suffit pas : le repli global</p>
 <p><code>bluez5.hfphsp-backend</code> ne peut se régler qu'au niveau du moniteur entier, pas par appareil. En dernier recours, dans <code>~/.config/wireplumber/bluetooth.lua.d/51-no-hfp.lua</code> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nv">bluez_monitor</span><span class="p">.</span><span class="py">properties</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span><span class="p">[</span><span class="s2">"bluez5.hfphsp-backend"</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"none"</span><span class="p">,</span>
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="nv">bluez_monitor</span><span class="p">.</span><span class="py">properties</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="w">  </span><span class="p">[</span><span class="s2">"bluez5.hfphsp-backend"</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"none"</span><span class="p">,</span>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="p">}</span>
 </code></pre></div>
 <p>Puis <code>systemctl --user restart wireplumber</code>. Ceci désactive HFP/HSP pour <strong>tous</strong> les périphériques Bluetooth de la machine : plus de micro/appel via Bluetooth sur aucun appareil, mais la lecture audio A2DP reste intacte partout. À réserver au cas où le correctif ciblé de l'étape 2 ne suffit pas.</p>
 </div>
 <h2 id="verification">Vérification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>pactl<span class="w"> </span>list<span class="w"> </span>cards<span class="w"> </span>short<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>bluez
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="c1"># doit afficher : NNN  bluez_card.AA_BB_CC_DD_EE_FF  module-bluez5-device.c</span>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
-<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>pactl<span class="w"> </span>list<span class="w"> </span>sinks<span class="w"> </span>short<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>bluez
-<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="c1"># doit afficher : NNN  bluez_output.AA_BB_CC_DD_EE_FF.1  PipeWire  ...  RUNNING (ou SUSPENDED au repos)</span>
-<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>
-<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>wpctl<span class="w"> </span>status
-<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="c1"># section Audio &gt; Devices : l'appareil apparaît avec le tag [bluez5]</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>pactl<span class="w"> </span>list<span class="w"> </span>cards<span class="w"> </span>short<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>bluez
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="c1"># doit afficher : NNN  bluez_card.AA_BB_CC_DD_EE_FF  module-bluez5-device.c</span>
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>pactl<span class="w"> </span>list<span class="w"> </span>sinks<span class="w"> </span>short<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>bluez
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="c1"># doit afficher : NNN  bluez_output.AA_BB_CC_DD_EE_FF.1  PipeWire  ...  RUNNING (ou SUSPENDED au repos)</span>
+<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>
+<a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>wpctl<span class="w"> </span>status
+<a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a><span class="c1"># section Audio &gt; Devices : l'appareil apparaît avec le tag [bluez5]</span>
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu</p>
@@ -2726,7 +2832,7 @@
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>bluetoothctl info &lt;MAC&gt;</code> confirme <code>Connected: yes</code></li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>pactl list cards short</code> ne montre pas encore la carte <code>bluez_card.*</code> (avant correctif)</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Boucle <code>AT+CCLK?</code> repérée dans <code>journalctl --user -u wireplumber</code></li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Absence de second serveur de son confirmée (<code>ps aux</code>, <code>dpkg -l</code>, <code>systemctl --user list-units</code>)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Cas 4b écarté : aucune ligne <code>ServiceUnknown</code> dans <code>journalctl -b -u bluetooth</code>, et <code>Address already in use</code> à <code>0</code> côté WirePlumber</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Règle créée dans <code>~/.config/wireplumber/bluetooth.lua.d/51-&lt;nom-appareil&gt;.lua</code></li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>systemctl --user restart wireplumber</code> puis reconnexion de l'appareil</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>pactl list cards short</code> / <code>wpctl status</code> montrent désormais l'appareil</li>
