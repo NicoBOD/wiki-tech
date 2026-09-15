@@ -73,8 +73,11 @@ sudo docker run -d \
   -e MINIO_ROOT_USER=admin \
   -e MINIO_ROOT_PASSWORD=ChangeMeStrongPassword123 \
   --restart unless-stopped \
-  minio/minio server /data --console-address ":9001"
+  quay.io/minio/minio server /data --console-address ":9001"
 ```
+
+!!! note "Pourquoi `quay.io/minio/minio` et pas `minio/minio` ?"
+    MinIO ne publie plus l'image communautaire sur Docker Hub : le dépôt `minio/minio` y est devenu inaccessible et un `docker run minio/minio` échoue désormais à l'authentification. Le registre officiel de l'image open-source est maintenant **quay.io**, d'où le nom complet dans la commande. Si vous suivez un tutoriel plus ancien qui indique `minio/minio`, préfixez-le simplement par `quay.io/`.
 
 !!! warning "Choisissez un mot de passe robuste"
     `MINIO_ROOT_PASSWORD` doit faire **au moins 8 caractères**. Un mot de passe faible est refusé au démarrage. Remplacez `ChangeMeStrongPassword123` par une vraie phrase secrète, et conservez-la : c'est le seul compte admin par défaut.
@@ -207,6 +210,6 @@ Politique (Policy)
 ## Ressources
 
 - [Documentation officielle MinIO (Linux)](https://min.io/docs/minio/linux/index.html) — Guide de référence d'installation, déploiement distribué et sécurisation.
-- [MinIO sur Docker Hub](https://hub.docker.com/r/minio/minio) — Image officielle et tags disponibles.
+- [Image MinIO sur Quay.io](https://quay.io/repository/minio/minio) — Registre officiel de l'image communautaire et tags `RELEASE.*` disponibles (l'image n'est plus publiée sur Docker Hub).
 - [AWS S3 API Reference](https://docs.aws.amazon.com/AmazonS3/latest/API/API_Operations.html) — Spécification de l'API S3 que MinIO implémente.
 - [Installer Docker Engine sur Ubuntu 24.04](../logiciels/installer-docker-engine-ubuntu-2404.md) — Prérequis si Docker n'est pas encore présent sur votre serveur.
