@@ -13,6 +13,7 @@ Administration système, stockage, sécurité locale et gestion des utilisateurs
 - [Comprendre et gérer le `machine-id` sous Linux](machine-id-linux.md) — Découvrir à quoi sert cet identifiant unique et comment le regénérer proprement.
 - [Maintenir ses sessions terminal à distance avec tmux sous Linux](tmux-maintenir-sessions-terminal-distance.md) — Ne plus perdre son travail en cas de coupure réseau grâce aux multiplexeurs.
 - [Installer une interface graphique légère (LXQt ou XFCE) sur Debian 13](installer-interface-graphique-legere-debian-13.md) — Ajouter Xorg, LightDM et un bureau sobre en ressources sur un serveur sans environnement graphique.
+- [Créer des lanceurs GNOME personnalisés avec actions rapides et rechargement à chaud](creer-lanceurs-gnome-desktop-linux.md) — Intégrer des outils CLI ou Docker au menu d'applications, gérer la localisation et recharger GNOME Shell.
 - [Découvrir les fonctions serveur de Windows Server](windows-server-fonctions-serveur.md) — Parcours débutant de 21 h : installation, stockage, SMB, FSRM, IIS, sauvegarde, automatisation et diagnostic.
 - [Découvrir les services d'infrastructure Windows Server — DNS, AD, DHCP et WINS](windows-server-dns-ad-dhcp-wins.md) — Parcours débutant de 21 h : DNS, contrôleur de domaine, annuaire, GPO, DHCP et WINS.
 
