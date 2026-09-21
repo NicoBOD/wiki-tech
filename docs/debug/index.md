@@ -36,3 +36,5 @@ Outils et méthodologies pour diagnostiquer et résoudre des problèmes informat
 - [Bluetooth — Écouteurs appairés mais absents des sorties audio (WirePlumber/HFP)](bluetooth-sortie-audio-absente-hfp-wireplumber.md) — Un appareil connecté qui n'apparaît jamais comme sortie audio, à cause d'une négociation HFP qui échoue en boucle.
 - [Sniffnet AppImage — Installation et lancement sur Ubuntu 24.04](sniffnet-appimage-ubuntu-2404.md) — Astuce pour faire fonctionner l'interface de surveillance réseau de Sniffnet.
 - [AppImageLauncher — Échec d'intégration sur Ubuntu 24.04 (compression zstd)](appimagelauncher-compression-zstd-ubuntu-2404.md) — Contourner l'erreur de compression Zstandard qui empêche l'intégration des AppImages.
+- [NordVPN — Perte de connexion Ethernet après redémarrage de la box Internet (PC sur onduleur)](nordvpn-perte-connexion-ethernet-reboot-box-onduleur.md) — Résoudre le blocage silencieux d'OpenVPN et du pare-feu nftables lors du retour de courant grâce à un script NetworkManager Dispatcher.
+

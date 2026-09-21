@@ -252,6 +252,7 @@ nav:
     - AppImageLauncher — Échec d'intégration sur Ubuntu 24.04 (compression zstd): debug/appimagelauncher-compression-zstd-ubuntu-2404.md
     - Sniffnet AppImage — Installation et lancement sur Ubuntu 24.04: debug/sniffnet-appimage-ubuntu-2404.md
     - "Bluetooth — Écouteurs appairés mais absents des sorties audio (WirePlumber/HFP)": debug/bluetooth-sortie-audio-absente-hfp-wireplumber.md
+    - "NordVPN — Perte de connexion Ethernet après reboot box (PC sur onduleur)": debug/nordvpn-perte-connexion-ethernet-reboot-box-onduleur.md
   - Astuces:
     - astuces/index.md
     - Maintenir ses sessions terminal actives et multiplexer son affichage avec Tmux: astuces/maintenir-sessions-terminal-tmux.md
