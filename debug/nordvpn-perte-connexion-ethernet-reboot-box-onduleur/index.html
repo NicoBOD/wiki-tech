@@ -12,13 +12,13 @@
         <meta name="author" content="Nicolas BODAINE">
       
       
-        <link rel="canonical" href="https://wiki.bodaine.fr/debug/appimagelauncher-compression-zstd-ubuntu-2404/">
+        <link rel="canonical" href="https://wiki.bodaine.fr/debug/nordvpn-perte-connexion-ethernet-reboot-box-onduleur/">
       
       
-        <link rel="prev" href="../nvidia-veille-ecran-noir/">
+        <link rel="prev" href="../bluetooth-sortie-audio-absente-hfp-wireplumber/">
       
       
-        <link rel="next" href="../sniffnet-appimage-ubuntu-2404/">
+        <link rel="next" href="../../astuces/">
       
       
         
@@ -29,7 +29,7 @@
     
     
       
-        <title>AppImageLauncher — Échec d'intégration sur Ubuntu 24.04 (compression zstd) - Wiki Tech — NicoBOD</title>
+        <title>NordVPN — Perte de connexion Ethernet après redémarrage de la box Internet (PC sur onduleur) - Wiki Tech — NicoBOD</title>
       
     
     
@@ -82,7 +82,7 @@
     <!-- Twitter Card : la grande image et l'image elle-même sont      -->
     <!-- héritées des balises og:image générées par le plugin social.  -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="AppImageLauncher — Échec d'intégration sur Ubuntu 24.04 (compression zstd) — Wiki Tech — NicoBOD">
+    <meta name="twitter:title" content="NordVPN — Perte de connexion Ethernet après redémarrage de la box Internet (PC sur onduleur) — Wiki Tech — NicoBOD">
     <meta name="twitter:description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation">
   
 
@@ -105,7 +105,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#appimagelauncher-echec-dintegration-sur-ubuntu-2404-compression-zstd" class="md-skip">
+        <a href="#nordvpn-perte-de-connexion-ethernet-apres-redemarrage-de-la-box-internet-pc-sur-onduleur" class="md-skip">
           Aller au contenu
         </a>
       
@@ -140,7 +140,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              AppImageLauncher — Échec d'intégration sur Ubuntu 24.04 (compression zstd)
+              NordVPN — Perte de connexion Ethernet après redémarrage de la box Internet (PC sur onduleur)
             
           </span>
         </div>
@@ -1730,44 +1730,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    AppImageLauncher — Échec d'intégration sur Ubuntu 24.04 (compression zstd)
-  
-
-    
-  </span>
-  
-  
-    
-  
-  
-    <span class="md-status md-status--publié"></span>
-  
-
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../appimagelauncher-compression-zstd-ubuntu-2404/" class="md-nav__link">
         
   
   
@@ -1790,253 +1756,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table des matières
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#contexte" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Contexte
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#probleme" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Problème
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#diagnostic" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Diagnostic
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Diagnostic">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-confirmer-lerreur-dans-les-journaux" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Confirmer l'erreur dans les journaux
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-verifier-la-version-installee-et-le-ppa" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Vérifier la version installée et le PPA
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-identifier-la-compression-de-lappimage-problematique" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Identifier la compression de l'AppImage problématique
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-confirmer-que-la-bibliotheque-bundlee-est-le-coupable" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. Confirmer que la bibliothèque bundlée est le coupable
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#solution" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Solution
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Solution">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#etape-1-installer-les-dependances-systeme" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Étape 1 : Installer les dépendances système
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#etape-2-creer-une-version-patchee-avec-le-bon-soname" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Étape 2 : Créer une version patchée avec le bon soname
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#etape-3-sauvegarder-lancienne-bibliotheque-et-installer-la-nouvelle" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Étape 3 : Sauvegarder l'ancienne bibliothèque et installer la nouvelle
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#etape-4-redemarrer-le-daemon" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Étape 4 : Redémarrer le daemon
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#verification" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Vérification
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Vérification">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#tester-la-bibliotheque-directement" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Tester la bibliothèque directement
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#verifier-lintegration-dans-les-journaux" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Vérifier l'intégration dans les journaux
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#verifier-le-raccourci-cree" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Vérifier le raccourci créé
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#restauration-si-necessaire" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Restauration (si nécessaire)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#glossaire" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Glossaire
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#ressources" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Ressources
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2116,10 +1835,44 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../nordvpn-perte-connexion-ethernet-reboot-box-onduleur/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NordVPN — Perte de connexion Ethernet après reboot box (PC sur onduleur)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2142,6 +1895,242 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#contexte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contexte
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comprendre-la-chaine-reseau-et-lorigine-du-blocage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comprendre la chaîne réseau et l'origine du blocage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#diagnostic-pas-a-pas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagnostic pas-à-pas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Diagnostic pas-à-pas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-constat-du-lien-physique-et-de-la-configuration-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Constat du lien physique et de la configuration IP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-examen-des-journaux-du-noyau-journalctl-k" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Examen des journaux du noyau (journalctl -k)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-examen-du-demon-nordvpn-et-du-gel-openvpn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Examen du démon NordVPN et du gel OpenVPN
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-verification-des-regles-de-filtrage-nftables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Vérification des règles de filtrage nftables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-detection-du-conflit-ipv6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Détection du conflit IPv6
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#procedure-de-resolution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Procédure de résolution
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Procédure de résolution">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#etape-1-desactiver-ipv6-dans-les-profils-networkmanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 1 : Désactiver IPv6 dans les profils NetworkManager
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etape-2-mettre-en-place-le-script-de-reprise-networkmanager-dispatcher" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 2 : Mettre en place le script de reprise NetworkManager Dispatcher
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification-et-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vérification et validation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Vérification et validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-test-syntaxique-du-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Test syntaxique du script
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-test-a-chaud-dexecution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Test à chaud d'exécution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-test-de-connectivite-globale-sans-wi-fi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Test de connectivité globale sans Wi-Fi
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aide-memoire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aide-mémoire
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glossaire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Glossaire
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2306,10 +2295,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#probleme" class="md-nav__link">
+  <a href="#comprendre-la-chaine-reseau-et-lorigine-du-blocage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Problème
+        Comprendre la chaîne réseau et l'origine du blocage
       
     </span>
   </a>
@@ -2317,22 +2306,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#diagnostic" class="md-nav__link">
+  <a href="#diagnostic-pas-a-pas" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Diagnostic
+        Diagnostic pas-à-pas
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Diagnostic">
+    <nav class="md-nav" aria-label="Diagnostic pas-à-pas">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-confirmer-lerreur-dans-les-journaux" class="md-nav__link">
+  <a href="#1-constat-du-lien-physique-et-de-la-configuration-ip" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. Confirmer l'erreur dans les journaux
+        1. Constat du lien physique et de la configuration IP
       
     </span>
   </a>
@@ -2340,10 +2329,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-verifier-la-version-installee-et-le-ppa" class="md-nav__link">
+  <a href="#2-examen-des-journaux-du-noyau-journalctl-k" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Vérifier la version installée et le PPA
+        2. Examen des journaux du noyau (journalctl -k)
       
     </span>
   </a>
@@ -2351,10 +2340,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-identifier-la-compression-de-lappimage-problematique" class="md-nav__link">
+  <a href="#3-examen-du-demon-nordvpn-et-du-gel-openvpn" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Identifier la compression de l'AppImage problématique
+        3. Examen du démon NordVPN et du gel OpenVPN
       
     </span>
   </a>
@@ -2362,10 +2351,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#4-confirmer-que-la-bibliotheque-bundlee-est-le-coupable" class="md-nav__link">
+  <a href="#4-verification-des-regles-de-filtrage-nftables" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. Confirmer que la bibliothèque bundlée est le coupable
+        4. Vérification des règles de filtrage nftables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-detection-du-conflit-ipv6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Détection du conflit IPv6
       
     </span>
   </a>
@@ -2378,22 +2378,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#solution" class="md-nav__link">
+  <a href="#procedure-de-resolution" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Solution
+        Procédure de résolution
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Solution">
+    <nav class="md-nav" aria-label="Procédure de résolution">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#etape-1-installer-les-dependances-systeme" class="md-nav__link">
+  <a href="#etape-1-desactiver-ipv6-dans-les-profils-networkmanager" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Étape 1 : Installer les dépendances système
+        Étape 1 : Désactiver IPv6 dans les profils NetworkManager
       
     </span>
   </a>
@@ -2401,32 +2401,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#etape-2-creer-une-version-patchee-avec-le-bon-soname" class="md-nav__link">
+  <a href="#etape-2-mettre-en-place-le-script-de-reprise-networkmanager-dispatcher" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Étape 2 : Créer une version patchée avec le bon soname
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#etape-3-sauvegarder-lancienne-bibliotheque-et-installer-la-nouvelle" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Étape 3 : Sauvegarder l'ancienne bibliothèque et installer la nouvelle
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#etape-4-redemarrer-le-daemon" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Étape 4 : Redémarrer le daemon
+        Étape 2 : Mettre en place le script de reprise NetworkManager Dispatcher
       
     </span>
   </a>
@@ -2439,22 +2417,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#verification" class="md-nav__link">
+  <a href="#verification-et-validation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Vérification
+        Vérification et validation
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Vérification">
+    <nav class="md-nav" aria-label="Vérification et validation">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#tester-la-bibliotheque-directement" class="md-nav__link">
+  <a href="#1-test-syntaxique-du-script" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Tester la bibliothèque directement
+        1. Test syntaxique du script
       
     </span>
   </a>
@@ -2462,10 +2440,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#verifier-lintegration-dans-les-journaux" class="md-nav__link">
+  <a href="#2-test-a-chaud-dexecution" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Vérifier l'intégration dans les journaux
+        2. Test à chaud d'exécution
       
     </span>
   </a>
@@ -2473,10 +2451,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#verifier-le-raccourci-cree" class="md-nav__link">
+  <a href="#3-test-de-connectivite-globale-sans-wi-fi" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Vérifier le raccourci créé
+        3. Test de connectivité globale sans Wi-Fi
       
     </span>
   </a>
@@ -2489,10 +2467,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#restauration-si-necessaire" class="md-nav__link">
+  <a href="#aide-memoire" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Restauration (si nécessaire)
+        Aide-mémoire
       
     </span>
   </a>
@@ -2590,49 +2568,63 @@
       
       
       
-        <a href="../../tags/#tag:appimage" class="md-tag">appimage</a>
+        <a href="../../tags/#tag:networkmanager" class="md-tag">networkmanager</a>
       
     
       
       
       
       
-        <a href="../../tags/#tag:appimagelauncher" class="md-tag">appimagelauncher</a>
+        <a href="../../tags/#tag:nftables" class="md-tag">nftables</a>
       
     
       
       
       
       
-        <a href="../../tags/#tag:libappimage" class="md-tag">libappimage</a>
+        <a href="../../tags/#tag:nordvpn" class="md-tag">nordvpn</a>
       
     
       
       
       
       
-        <a href="../../tags/#tag:squashfs" class="md-tag">squashfs</a>
+        <a href="../../tags/#tag:openvpn" class="md-tag">openvpn</a>
       
     
       
       
       
       
-        <a href="../../tags/#tag:ubuntu-2404" class="md-tag">ubuntu 24.04</a>
+        <a href="../../tags/#tag:reseau" class="md-tag">reseau</a>
       
     
       
       
       
       
-        <a href="../../tags/#tag:zstd" class="md-tag">zstd</a>
+        <a href="../../tags/#tag:systemd" class="md-tag">systemd</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:ubuntu" class="md-tag">ubuntu</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:vpn" class="md-tag">vpn</a>
       
     
   </nav>
 
 
   
-    <a href="https://github.com/NicoBOD/wiki-tech/edit/main/docs/debug/appimagelauncher-compression-zstd-ubuntu-2404.md" title="Editer cette page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/NicoBOD/wiki-tech/edit/main/docs/debug/nordvpn-perte-connexion-ethernet-reboot-box-onduleur.md" title="Editer cette page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -2641,20 +2633,19 @@
     
       
     
-    <a href="https://github.com/NicoBOD/wiki-tech/raw/main/docs/debug/appimagelauncher-compression-zstd-ubuntu-2404.md" title="Consulter la source de cette page" class="md-content__button md-icon">
+    <a href="https://github.com/NicoBOD/wiki-tech/raw/main/docs/debug/nordvpn-perte-connexion-ethernet-reboot-box-onduleur.md" title="Consulter la source de cette page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
     </a>
   
 
 
-<h1 id="appimagelauncher-echec-dintegration-sur-ubuntu-2404-compression-zstd">AppImageLauncher — Échec d'intégration sur Ubuntu 24.04 (compression zstd)<a class="headerlink" href="#appimagelauncher-echec-dintegration-sur-ubuntu-2404-compression-zstd" title="Permanent link">&para;</a></h1>
+<h1 id="nordvpn-perte-de-connexion-ethernet-apres-redemarrage-de-la-box-internet-pc-sur-onduleur">NordVPN — Perte de connexion Ethernet après redémarrage de la box Internet (PC sur onduleur)<a class="headerlink" href="#nordvpn-perte-de-connexion-ethernet-apres-redemarrage-de-la-box-internet-pc-sur-onduleur" title="Permanent link">&para;</a></h1>
 <div class="admonition abstract">
 <p class="admonition-title">Résumé</p>
-<p>AppImageLauncher 2.2.0 (seule version disponible, compilée pour Ubuntu 18.04) ne supporte pas
-la compression <strong>zstd</strong> utilisée par les AppImages modernes. Sur Ubuntu 24.04, le daemon échoue
-silencieusement et aucun raccourci système n'est créé. Cette fiche couvre le diagnostic complet
-et la correction sans désinstaller AppImageLauncher.</p>
+<p>Sur un ordinateur sous Ubuntu raccordé à un <strong>onduleur</strong> et relié en <strong>Ethernet (RJ45)</strong> à une box Internet non secourue, une coupure de courant provoque l'extinction puis le redémarrage de la box. Au retour du courant, la carte Ethernet se reconnecte immédiatement et obtient bien une adresse IP locale par DHCP, mais <strong>l'accès à Internet demeure totalement bloqué</strong>. La connexion ne se rétablissait qu'en allumant manuellement le Wi-Fi.</p>
+<p>La cause racine provient de <strong>NordVPN</strong> en mode <strong>OpenVPN avec Obfuscation</strong>. Lors du redémarrage de la box, ses ports Ethernet locaux s'activent plusieurs dizaines de secondes avant que sa synchronisation Internet WAN (fibre ou ADSL) ne soit effective. OpenVPN subit alors un échec de négociation TLS et déclenche un redémarrage logiciel interne (<code>SIGUSR1</code>) qui se fige indéfiniment dans l'attente d'identifiants (<code>AUTH</code>). Pendant ce blocage, les règles de filtrage <strong>nftables</strong> de NordVPN maintiennent une politique de rejet strict (<code>policy drop</code>) et bloquent les requêtes DNS locales, isolant totalement la machine. L'activation manuelle du Wi-Fi générait un événement réseau forçant le démon à détruire et recréer le tunnel de zéro.</p>
+<p>La solution met en place un script de reprise automatique <strong>NetworkManager Dispatcher</strong> non intrusif : il surveille la remontée du câble Ethernet, s'assure de la présence de la box sur le réseau local, accorde un délai de grâce pour la reconnexion naturelle et, si le blocage persiste, redémarre proprement le démon NordVPN. En complément, la configuration <strong>IPv6</strong> de NetworkManager est harmonisée pour supprimer les erreurs en boucle dans les journaux système.</p>
 </div>
 <table>
 <thead>
@@ -2666,176 +2657,311 @@ et la correction sans désinstaller AppImageLauncher.</p>
 <tbody>
 <tr>
 <td>Difficulté</td>
-<td>Avancé</td>
+<td>Intermédiaire</td>
 </tr>
 <tr>
 <td>OS / Environnement</td>
-<td>Ubuntu 24.04 Desktop</td>
+<td>Ubuntu 24.04 LTS Desktop (GNOME)</td>
+</tr>
+<tr>
+<td>Composants clés</td>
+<td>NetworkManager, OpenVPN 2.6, NordVPN 5.4, nftables, systemd</td>
+</tr>
+<tr>
+<td>Architecture</td>
+<td>PC fixe sur onduleur, Box Internet reliée en RJ45</td>
 </tr>
 <tr>
 <td>Dernière mise à jour</td>
-<td>2026-05-07</td>
+<td>2026-09-21</td>
 </tr>
 </tbody>
 </table>
 <h2 id="contexte">Contexte<a class="headerlink" href="#contexte" title="Permanent link">&para;</a></h2>
-<p>AppImageLauncher s'intègre au système via un hook <code>binfmt_misc</code> : tout clic sur un fichier <code>.AppImage</code>
-est intercepté par <code>/usr/bin/AppImageLauncher</code>, qui extrait les métadonnées (icônes, <code>.desktop</code>) du
-squashfs interne pour créer un raccourci dans le lanceur GNOME.</p>
-<p>Le PPA officiel (<code>ppa:appimagelauncher-team/stable</code>) <strong>n'existe pas pour Ubuntu 24.04 Noble</strong> :
-seul le paquet compilé pour Ubuntu 18.04 Bionic (version 2.2.0) est installable. Sa bibliothèque
-interne <code>libappimage.so</code> embarque une version ancienne de squashfuse qui ne reconnaît que les
-compressions <strong>xz</strong> et <strong>zlib</strong>. Les AppImages récentes (Sniffnet, etc.) utilisent <strong>zstd</strong>, ce qui
-provoque l'échec.</p>
-<h2 id="probleme">Problème<a class="headerlink" href="#probleme" title="Permanent link">&para;</a></h2>
-<div class="admonition failure">
-<p class="admonition-title">Message d'erreur dans les journaux système</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>appimagelauncherd: Squashfs image uses (null) compression, this version supports only xz, zlib.
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>appimagelauncherd: ERROR: appimage_shall_not_be_integrated : sqfs_open_image error: /home/user/Applications/MonApp.AppImage
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>appimagelauncherd: WARNING: AppImage shall not be integrated, skipping
+<p>Dans une installation domestique ou professionnelle, il est courant de protéger l'unité centrale par un onduleur (UPS) pour parer aux coupures d'électricité. La box Internet (Freebox, Livebox, SFR Box, Bbox, etc.) est quant à elle fréquemment branchée sur une prise murale standard.</p>
+<p>Lors d'un incident électrique :
+1. Le PC reste alimenté et continue de tourner grâce à la batterie de l'onduleur.
+2. La box Internet s'éteint brutalement.
+3. Au rétablissement du secteur, la box redémarre électriquement.
+4. L'ordinateur constate le retour du signal physique Ethernet et récupère sa configuration IP locale via DHCP.
+5. Pourtant, la navigation web, le ping externe et la résolution DNS restent inopérants.</p>
+<p>Sur cette machine, le protocole <strong>OpenVPN</strong> associé à la fonctionnalité <strong>Obfuscate</strong> (obfuscation du trafic pour contourner les blocages réseau) est strictement requis, ce qui exclut l'usage de NordLynx (WireGuard). Le Wi-Fi étant habituellement désactivé, l'objectif est d'obtenir une reconnexion Ethernet 100 % autonome et résiliente, sans aucune manipulation manuelle.</p>
+<hr />
+<h2 id="comprendre-la-chaine-reseau-et-lorigine-du-blocage">Comprendre la chaîne réseau et l'origine du blocage<a class="headerlink" href="#comprendre-la-chaine-reseau-et-lorigine-du-blocage" title="Permanent link">&para;</a></h2>
+<p>Pour appréhender ce dysfonctionnement, il convient d'analyser les différentes couches logicielles impliquées et la chronologie de redémarrage des équipements :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>[ Box Internet ] (Reboot électrique)
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  ├─ Switch LAN (RJ45) ─────────────&gt; Actif en ~10-15s (Lien UP + DHCP OK)
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  └─ Synchronisation WAN (Fibre/DSL) ─&gt; Actif en ~60-120s (Internet réel)
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>          │
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>[ PC Ubuntu ]
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  ├─ Pilote Ethernet (e1000e) ───────&gt; Détecte NIC Link Up
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  ├─ NetworkManager ─────────────────&gt; Récupère IP locale (192.168.168.10)
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  └─ NordVPN (OpenVPN)
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>       ├─ Tente négociation TLS ────&gt; Échoue (WAN pas encore prêt)
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>       ├─ Déclenche SIGUSR1 ─────────&gt; Fige OpenVPN en état AUTH
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>       └─ nftables (inet nordvpn) ───&gt; Bloque TOUT le trafic sortant (Policy DROP)
 </code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Notions fondamentales : qui fait quoi ?</p>
+<p><strong>Switch LAN vs Synchronisation WAN</strong> : Une box Internet combine plusieurs rôles. À l'allumage, son commutateur réseau local (switch Ethernet) et son serveur DHCP démarrent presque instantanément. À l'inverse, l'alignement optique (fibre GPON) ou la synchronisation xDSL, suivi de l'authentification réseau opérateur (PPPoE / IPoE), demande une à deux minutes supplémentaires.</p>
+<p><strong>OpenVPN et signal SIGUSR1</strong> : Dans l'architecture OpenVPN, le signal Unix <code>SIGUSR1</code> correspond à un « soft restart » (redémarrage doux sans libérer la mémoire). Le processus ne quitte pas le système d'exploitation, mais réinitialise sa machine à états interne. Lors de cette transition, OpenVPN redemande ses identifiants de session (<code>AUTH</code>) via son socket d'administration UNIX.</p>
+<p><strong>Le bug d'authentification du démon NordVPN</strong> : Le démon en arrière-plan <code>nordvpnd</code> n'injecte les identifiants utilisateur qu'à l'initialisation initiale d'un nouveau processus binaire. Lorsqu'OpenVPN effectue un redémarrage interne sur <code>SIGUSR1</code>, <code>nordvpnd</code> n'intercepte pas la demande d'authentification. OpenVPN se retrouve ainsi en attente passive infinie (<code>could not read Auth username/password</code>), bloquant le tunnel <code>nordtun</code>.</p>
+<p><strong>Le piège du pare-feu nftables</strong> : Pour empêcher les fuites de données hors VPN, NordVPN configure des règles de pare-feu avancées dans la table <code>inet nordvpn</code>. Sa chaîne <code>output</code> applique une politique par défaut <code>policy drop</code>. Seuls les paquets marqués spécifiquement par le socket VPN (<code>0xe1f1</code>) ou à destination du tunnel <code>nordtun</code> sont autorisés, tandis que les requêtes DNS locales (port 53 vers la box) sont expressément rejetées. Si le tunnel ne remonte pas, l'ensemble de la machine est plongé dans un trou noir réseau.</p>
+<p><strong>Pourquoi l'activation du Wi-Fi débloquait la situation</strong> : Dès que l'interface Wi-Fi (<code>wlp3s0</code>) devenait active, le moniteur d'interfaces de NordVPN détectait un changement d'état (<code>monitored interfaces changed</code>). Cet événement interne forçait <code>nordvpnd</code> à exécuter sa routine <code>refresh VPN</code>, qui tue le processus OpenVPN figé avec un signal <code>SIGINT</code>, purge les règles et relance un binaire propre avec ses identifiants.</p>
 </div>
-<p>Le daemon intègre normalement l'AppImage dans <code>~/Applications/</code> mais supprime ensuite les fichiers
-de bureau générés et aucun raccourci n'est créé dans le lanceur GNOME.</p>
-<h2 id="diagnostic">Diagnostic<a class="headerlink" href="#diagnostic" title="Permanent link">&para;</a></h2>
-<h3 id="1-confirmer-lerreur-dans-les-journaux">1. Confirmer l'erreur dans les journaux<a class="headerlink" href="#1-confirmer-lerreur-dans-les-journaux" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>journalctl<span class="w"> </span>--user<span class="w"> </span>--no-pager<span class="w"> </span>-n<span class="w"> </span><span class="m">50</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">"appimage\|squashfs\|compression"</span>
+<hr />
+<h2 id="diagnostic-pas-a-pas">Diagnostic pas-à-pas<a class="headerlink" href="#diagnostic-pas-a-pas" title="Permanent link">&para;</a></h2>
+<p>Lors de l'incident, plusieurs commandes de diagnostic en lecture seule permettent d'identifier précisément le phénomène.</p>
+<h3 id="1-constat-du-lien-physique-et-de-la-configuration-ip">1. Constat du lien physique et de la configuration IP<a class="headerlink" href="#1-constat-du-lien-physique-et-de-la-configuration-ip" title="Permanent link">&para;</a></h3>
+<p>La commande <code>ip route</code> et <code>nmcli device status</code> démontre que NetworkManager a correctement fait son travail :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>nmcli<span class="w"> </span>device<span class="w"> </span>status
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>ip<span class="w"> </span>route
 </code></pre></div>
-<h3 id="2-verifier-la-version-installee-et-le-ppa">2. Vérifier la version installée et le PPA<a class="headerlink" href="#2-verifier-la-version-installee-et-le-ppa" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>dpkg<span class="w"> </span>-l<span class="w"> </span>appimagelauncher
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># Version attendue : 2.2.0-travis995~0f91801+bionic  ← compilée pour Ubuntu 18.04</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>DEVICE     TYPE      STATE     CONNECTION 
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>enp0s31f6  ethernet  connecté  enp0s31f6  
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>default via 192.168.168.168 dev enp0s31f6 proto dhcp src 192.168.168.10 metric 100
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Vérifier que le PPA n'existe pas pour noble</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>cat<span class="w"> </span>/etc/apt/sources.list.d/appimagelauncher-team-ubuntu-stable-noble.sources<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"Enabled"</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Enabled: no  →  le PPA est configuré mais désactivé (ou renvoie 404 si activé)</span>
+<p>L'interface Ethernet est active, l'adresse IP locale est attribuée et la passerelle par défaut est bien renseignée.</p>
+<h3 id="2-examen-des-journaux-du-noyau-journalctl-k">2. Examen des journaux du noyau (<code>journalctl -k</code>)<a class="headerlink" href="#2-examen-des-journaux-du-noyau-journalctl-k" title="Permanent link">&para;</a></h3>
+<p>Le journal du noyau confirme la séquence temporelle de la panne :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>journalctl<span class="w"> </span>-k<span class="w"> </span>--grep<span class="o">=</span><span class="s2">"e1000e|NIC Link"</span><span class="w"> </span>--no-pager
 </code></pre></div>
-<h3 id="3-identifier-la-compression-de-lappimage-problematique">3. Identifier la compression de l'AppImage problématique<a class="headerlink" href="#3-identifier-la-compression-de-lappimage-problematique" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">"</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="s2">import struct</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="s2">with open('/chemin/vers/MonApp.AppImage', 'rb') as f:</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="s2">    data = f.read(1100000)</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="s2"># Chercher tous les superblocks squashfs (magic 'hsqs')</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="s2">import re</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="s2">for m in re.finditer(b'hsqs', data):</span>
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="s2">    pos = m.start()</span>
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="s2">    inodes, mtime, bsize, frags = struct.unpack_from('&lt;IIII', data, pos + 4)</span>
-<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="s2">    comp = struct.unpack_from('&lt;H', data, pos + 20)[0]</span>
-<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="s2">    comps = {0:'none', 1:'gzip', 2:'lzma', 3:'lzo', 4:'xz', 5:'lz4', 6:'zstd'}</span>
-<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="s2">    print(f'Offset 0x{pos:x}: {inodes} inodes, compression={comp} ({comps.get(comp,\"?\")})' )</span>
-<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="s2">"</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>15:08:53 kernel: e1000e 0000:00:1f.6 enp0s31f6: NIC Link is Down
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>15:13:41 kernel: e1000e 0000:00:1f.6 enp0s31f6: NIC Link is Up 1000 Mbps Full Duplex
+</code></pre></div>
+<p>La box s'est éteinte à 15:08 et le lien physique s'est rétabli à 15:13.</p>
+<h3 id="3-examen-du-demon-nordvpn-et-du-gel-openvpn">3. Examen du démon NordVPN et du gel OpenVPN<a class="headerlink" href="#3-examen-du-demon-nordvpn-et-du-gel-openvpn" title="Permanent link">&para;</a></h3>
+<p>En analysant les journaux de <code>nordvpnd</code>, le comportement défaillant apparaît distinctement :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>nordvpnd<span class="w"> </span>--since<span class="w"> </span><span class="s2">"15:13:40"</span><span class="w"> </span>--until<span class="w"> </span><span class="s2">"15:15:00"</span><span class="w"> </span>--no-pager
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>15:14:12 nordvpnd: TLS Error: TLS key negotiation failed to occur within 10 seconds
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>15:14:12 nordvpnd: SIGUSR1[soft,tls-error] received, process restarting
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>15:14:12 nordvpnd: MANAGEMENT: &gt;STATE:1789996452,RECONNECTING,tls-error,,,,,
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>15:14:17 nordvpnd: MANAGEMENT: &gt;STATE:1789996457,AUTH,,,,,,
+</code></pre></div>
+<p>Après cette ligne, plus aucun échange réseau n'a lieu. OpenVPN attend ses identifiants indéfiniment.</p>
+<h3 id="4-verification-des-regles-de-filtrage-nftables">4. Vérification des règles de filtrage nftables<a class="headerlink" href="#4-verification-des-regles-de-filtrage-nftables" title="Permanent link">&para;</a></h3>
+<p>La commande <code>sudo nft list table inet nordvpn</code> met en évidence la politique de blocage :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>table inet nordvpn {
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    chain output {
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>        type route hook output priority mangle; policy drop;
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>        oifname "lo" accept
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>        ct mark 0x0000e1f1 accept
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>        ip daddr @lan_ranges tcp dport 53 drop
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>        ip daddr @lan_ranges udp dport 53 drop
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>        oifname "nordtun" accept
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>    }
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>}
+</code></pre></div>
+<p>Tant que <code>nordtun</code> n'est pas actif, aucune trame vers Internet ne peut franchir le pare-feu.</p>
+<h3 id="5-detection-du-conflit-ipv6">5. Détection du conflit IPv6<a class="headerlink" href="#5-detection-du-conflit-ipv6" title="Permanent link">&para;</a></h3>
+<p>Un examen des journaux de NetworkManager révèle un avertissement continu toutes les deux secondes :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>NetworkManager<span class="w"> </span>-n<span class="w"> </span><span class="m">20</span><span class="w"> </span>--no-pager
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>NetworkManager[3376]: &lt;warn&gt; platform-linux: do-add-ip6-address[2: fe80::...]: failure 13 (Permission denied - ipv6: IPv6 is disabled on this device)
+</code></pre></div>
+<p>NordVPN désactivant IPv6 au niveau du noyau (<code>net.ipv6.conf.all.disable_ipv6 = 1</code>) pour empêcher les fuites d'adresses, NetworkManager échouait en boucle en tentant de configurer une adresse link-local IPv6 automatique.</p>
+<hr />
+<h2 id="procedure-de-resolution">Procédure de résolution<a class="headerlink" href="#procedure-de-resolution" title="Permanent link">&para;</a></h2>
+<p>La résolution s'articule en deux actions :
+1. Harmoniser la méthode IPv6 pour assainir les journaux système.
+2. Déployer un script NetworkManager Dispatcher pour redémarrer automatiquement le VPN en cas de désynchronisation consécutive à un reboot de box.</p>
+<h3 id="etape-1-desactiver-ipv6-dans-les-profils-networkmanager">Étape 1 : Désactiver IPv6 dans les profils NetworkManager<a class="headerlink" href="#etape-1-desactiver-ipv6-dans-les-profils-networkmanager" title="Permanent link">&para;</a></h3>
+<p>Pour aligner NetworkManager sur l'état réel du système imposé par NordVPN, configurez <code>ipv6.method</code> sur <code>disabled</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Pour la connexion Ethernet principale</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>sudo<span class="w"> </span>nmcli<span class="w"> </span>connection<span class="w"> </span>modify<span class="w"> </span><span class="s2">"enp0s31f6"</span><span class="w"> </span>ipv6.method<span class="w"> </span>disabled
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># Pour les connexions Wi-Fi existantes (évite la réapparition du problème en cas d'usage Wi-Fi)</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>sudo<span class="w"> </span>nmcli<span class="w"> </span>connection<span class="w"> </span>modify<span class="w"> </span><span class="s2">"SIGNAL_ZWIN_2.4G"</span><span class="w"> </span>ipv6.method<span class="w"> </span>disabled
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="c1"># Réappliquer immédiatement les paramètres à chaud sans couper la liaison</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>sudo<span class="w"> </span>nmcli<span class="w"> </span>device<span class="w"> </span>reapply<span class="w"> </span>enp0s31f6
+</code></pre></div>
+<p>Vérifiez que les messages d'avertissement ont cessé :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>NetworkManager<span class="w"> </span>-n<span class="w"> </span><span class="m">10</span><span class="w"> </span>--no-pager
+</code></pre></div>
+<div class="admonition success">
+<p class="admonition-title">Résultat attendu</p>
+<p>Aucun avertissement de type <code>do-add-ip6-address</code> ne doit plus être généré.</p>
+</div>
+<hr />
+<h3 id="etape-2-mettre-en-place-le-script-de-reprise-networkmanager-dispatcher">Étape 2 : Mettre en place le script de reprise NetworkManager Dispatcher<a class="headerlink" href="#etape-2-mettre-en-place-le-script-de-reprise-networkmanager-dispatcher" title="Permanent link">&para;</a></h3>
+<p>Le service <strong>NetworkManager-dispatcher</strong> exécute des scripts placés dans <code>/etc/NetworkManager/dispatcher.d/</code> lors de chaque changement d'état d'une interface réseau (connexion, déconnexion, attribution DHCP).</p>
+<p>Créez le script <code>/etc/NetworkManager/dispatcher.d/95-nordvpn-recovery.sh</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>cat<span class="w"> </span><span class="s">&lt;&lt; 'EOF' | sudo tee /etc/NetworkManager/dispatcher.d/95-nordvpn-recovery.sh &gt; /dev/null</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="s">#!/bin/sh</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="s"># /etc/NetworkManager/dispatcher.d/95-nordvpn-recovery.sh</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="s"># Script NetworkManager dispatcher pour rétablir proprement NordVPN</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="s"># lors de la reconnexion Ethernet après coupure électrique de la box Internet.</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="s">IFACE="$1"</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="s">ACTION="$2"</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="s"># Ne s'exécute que pour l'interface Ethernet physique lors de son passage à 'up'</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="s">if [ "$IFACE" != "enp0s31f6" ] || [ "$ACTION" != "up" ]; then</span>
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="s">    exit 0</span>
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="s">fi</span>
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>
+<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="s"># Ne rien faire lors du démarrage initial du système (les services systemd s'initialisent déjà)</span>
+<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a><span class="s">UPTIME_SECS=$(awk '{print int($1)}' /proc/uptime 2&gt;/dev/null || echo 0)</span>
+<a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a><span class="s">if [ "$UPTIME_SECS" -lt 120 ]; then</span>
+<a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a><span class="s">    exit 0</span>
+<a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a><span class="s">fi</span>
+<a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a>
+<a id="__codelineno-12-21" name="__codelineno-12-21" href="#__codelineno-12-21"></a><span class="s"># Ne rien faire si le démon NordVPN n'est pas actif</span>
+<a id="__codelineno-12-22" name="__codelineno-12-22" href="#__codelineno-12-22"></a><span class="s">if ! systemctl is-active --quiet nordvpnd.service; then</span>
+<a id="__codelineno-12-23" name="__codelineno-12-23" href="#__codelineno-12-23"></a><span class="s">    exit 0</span>
+<a id="__codelineno-12-24" name="__codelineno-12-24" href="#__codelineno-12-24"></a><span class="s">fi</span>
+<a id="__codelineno-12-25" name="__codelineno-12-25" href="#__codelineno-12-25"></a>
+<a id="__codelineno-12-26" name="__codelineno-12-26" href="#__codelineno-12-26"></a><span class="s"># Exécution asynchrone en sous-shell pour ne pas bloquer NetworkManager</span>
+<a id="__codelineno-12-27" name="__codelineno-12-27" href="#__codelineno-12-27"></a><span class="s">(</span>
+<a id="__codelineno-12-28" name="__codelineno-12-28" href="#__codelineno-12-28"></a><span class="s">    # Déterminer l'adresse IP de la passerelle locale (la box Internet)</span>
+<a id="__codelineno-12-29" name="__codelineno-12-29" href="#__codelineno-12-29"></a><span class="s">    GATEWAY="${IP4_GATEWAY:-$(ip route show default dev "$IFACE" 2&gt;/dev/null | awk '{print $3}' | head -n 1)}"</span>
+<a id="__codelineno-12-30" name="__codelineno-12-30" href="#__codelineno-12-30"></a><span class="s">    if [ -z "$GATEWAY" ]; then</span>
+<a id="__codelineno-12-31" name="__codelineno-12-31" href="#__codelineno-12-31"></a><span class="s">        GATEWAY="192.168.168.168"</span>
+<a id="__codelineno-12-32" name="__codelineno-12-32" href="#__codelineno-12-32"></a><span class="s">    fi</span>
+<a id="__codelineno-12-33" name="__codelineno-12-33" href="#__codelineno-12-33"></a>
+<a id="__codelineno-12-34" name="__codelineno-12-34" href="#__codelineno-12-34"></a><span class="s">    logger -t nm-dispatcher-nordvpn "Ethernet ($IFACE) reconnecté. Surveillance de la connectivité..."</span>
+<a id="__codelineno-12-35" name="__codelineno-12-35" href="#__codelineno-12-35"></a>
+<a id="__codelineno-12-36" name="__codelineno-12-36" href="#__codelineno-12-36"></a><span class="s">    # 1. Attendre que la passerelle locale réponde (démarrage du commutateur de la box)</span>
+<a id="__codelineno-12-37" name="__codelineno-12-37" href="#__codelineno-12-37"></a><span class="s">    GW_REACHABLE=0</span>
+<a id="__codelineno-12-38" name="__codelineno-12-38" href="#__codelineno-12-38"></a><span class="s">    for i in $(seq 1 12); do</span>
+<a id="__codelineno-12-39" name="__codelineno-12-39" href="#__codelineno-12-39"></a><span class="s">        if ping -c 1 -W 2 "$GATEWAY" &gt;/dev/null 2&gt;&amp;1; then</span>
+<a id="__codelineno-12-40" name="__codelineno-12-40" href="#__codelineno-12-40"></a><span class="s">            GW_REACHABLE=1</span>
+<a id="__codelineno-12-41" name="__codelineno-12-41" href="#__codelineno-12-41"></a><span class="s">            break</span>
+<a id="__codelineno-12-42" name="__codelineno-12-42" href="#__codelineno-12-42"></a><span class="s">        fi</span>
+<a id="__codelineno-12-43" name="__codelineno-12-43" href="#__codelineno-12-43"></a><span class="s">        sleep 5</span>
+<a id="__codelineno-12-44" name="__codelineno-12-44" href="#__codelineno-12-44"></a><span class="s">    done</span>
+<a id="__codelineno-12-45" name="__codelineno-12-45" href="#__codelineno-12-45"></a>
+<a id="__codelineno-12-46" name="__codelineno-12-46" href="#__codelineno-12-46"></a><span class="s">    if [ "$GW_REACHABLE" -ne 1 ]; then</span>
+<a id="__codelineno-12-47" name="__codelineno-12-47" href="#__codelineno-12-47"></a><span class="s">        logger -t nm-dispatcher-nordvpn "Passerelle locale $GATEWAY injoignable après 60s, arrêt du contrôle."</span>
+<a id="__codelineno-12-48" name="__codelineno-12-48" href="#__codelineno-12-48"></a><span class="s">        exit 0</span>
+<a id="__codelineno-12-49" name="__codelineno-12-49" href="#__codelineno-12-49"></a><span class="s">    fi</span>
+<a id="__codelineno-12-50" name="__codelineno-12-50" href="#__codelineno-12-50"></a>
+<a id="__codelineno-12-51" name="__codelineno-12-51" href="#__codelineno-12-51"></a><span class="s">    # 2. Laisser jusqu'à 30s à la box pour synchroniser sa liaison WAN et à NordVPN pour se reconnecter seul</span>
+<a id="__codelineno-12-52" name="__codelineno-12-52" href="#__codelineno-12-52"></a><span class="s">    for i in $(seq 1 6); do</span>
+<a id="__codelineno-12-53" name="__codelineno-12-53" href="#__codelineno-12-53"></a><span class="s">        sleep 5</span>
+<a id="__codelineno-12-54" name="__codelineno-12-54" href="#__codelineno-12-54"></a><span class="s">        if ping -c 1 -W 2 1.1.1.1 &gt;/dev/null 2&gt;&amp;1; then</span>
+<a id="__codelineno-12-55" name="__codelineno-12-55" href="#__codelineno-12-55"></a><span class="s">            logger -t nm-dispatcher-nordvpn "Connectivité Internet opérationnelle via NordVPN, aucune action requise."</span>
+<a id="__codelineno-12-56" name="__codelineno-12-56" href="#__codelineno-12-56"></a><span class="s">            exit 0</span>
+<a id="__codelineno-12-57" name="__codelineno-12-57" href="#__codelineno-12-57"></a><span class="s">        fi</span>
+<a id="__codelineno-12-58" name="__codelineno-12-58" href="#__codelineno-12-58"></a><span class="s">    done</span>
+<a id="__codelineno-12-59" name="__codelineno-12-59" href="#__codelineno-12-59"></a>
+<a id="__codelineno-12-60" name="__codelineno-12-60" href="#__codelineno-12-60"></a><span class="s">    # 3. Si Internet est toujours inaccessible, OpenVPN est figé en état AUTH : redémarrage propre de secours</span>
+<a id="__codelineno-12-61" name="__codelineno-12-61" href="#__codelineno-12-61"></a><span class="s">    logger -t nm-dispatcher-nordvpn "Internet toujours bloqué après retour de la box. Redémarrage propre de nordvpnd pour débloquer le VPN..."</span>
+<a id="__codelineno-12-62" name="__codelineno-12-62" href="#__codelineno-12-62"></a><span class="s">    systemctl restart nordvpnd.service</span>
+<a id="__codelineno-12-63" name="__codelineno-12-63" href="#__codelineno-12-63"></a><span class="s">) &amp;</span>
+<a id="__codelineno-12-64" name="__codelineno-12-64" href="#__codelineno-12-64"></a>
+<a id="__codelineno-12-65" name="__codelineno-12-65" href="#__codelineno-12-65"></a><span class="s">exit 0</span>
+<a id="__codelineno-12-66" name="__codelineno-12-66" href="#__codelineno-12-66"></a><span class="s">EOF</span>
+</code></pre></div>
+<p>Rendez le script exécutable et attribuez-lui les droits administrateur :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">755</span><span class="w"> </span>/etc/NetworkManager/dispatcher.d/95-nordvpn-recovery.sh
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>sudo<span class="w"> </span>chown<span class="w"> </span>root:root<span class="w"> </span>/etc/NetworkManager/dispatcher.d/95-nordvpn-recovery.sh
 </code></pre></div>
 <div class="admonition tip">
-<p class="admonition-title">Interpréter le résultat</p>
-<p>Plusieurs occurrences de <code>hsqs</code> peuvent apparaître — seule celle avec un nombre d'inodes
-cohérent (&gt; 1) correspond au vrai superblock. <code>compression=6</code> confirme du <strong>zstd</strong>.</p>
-</div>
-<h3 id="4-confirmer-que-la-bibliotheque-bundlee-est-le-coupable">4. Confirmer que la bibliothèque bundlée est le coupable<a class="headerlink" href="#4-confirmer-que-la-bibliotheque-bundlee-est-le-coupable" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>strings<span class="w"> </span>/usr/lib/x86_64-linux-gnu/appimagelauncher/libappimage.so.1.0<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">"supports only"</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># Résultat : "this version supports only"  →  ancienne bibliothèque sans zstd</span>
-</code></pre></div>
-<h2 id="solution">Solution<a class="headerlink" href="#solution" title="Permanent link">&para;</a></h2>
-<p>La correction remplace uniquement la bibliothèque interne d'AppImageLauncher par la version
-native Ubuntu 24.04 (<code>libappimage1.0abi1t64</code>), qui utilise le <code>libsquashfuse0</code> système
-supportant zstd, lz4, xz, lzo et zlib.</p>
-<h3 id="etape-1-installer-les-dependances-systeme">Étape 1 : Installer les dépendances système<a class="headerlink" href="#etape-1-installer-les-dependances-systeme" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>libappimage1.0abi1t64<span class="w"> </span>libsquashfuse0<span class="w"> </span>patchelf
-</code></pre></div>
-<div class="admonition info">
-<p class="admonition-title">Ce que chaque paquet apporte</p>
+<p class="admonition-title">Pourquoi ce script est sûr et n'engendre aucun effet de bord</p>
 <ul>
-<li><code>libappimage1.0abi1t64</code> : version native noble de libappimage (utilise squashfuse système)</li>
-<li><code>libsquashfuse0</code> : squashfuse 0.5.0 compilé avec support zstd, lz4, xz, lzo, zlib</li>
-<li><code>patchelf</code> : outil pour modifier le soname d'une bibliothèque ELF</li>
+<li><strong>Aucun ralentissement</strong> : Le bloc principal est exécuté en arrière-plan <code>( ... ) &amp;</code>. Le script rend la main à NetworkManager en quelques millisecondes.</li>
+<li><strong>Protection au démarrage (<code>uptime &lt; 120s</code>)</strong> : Lors d'un démarrage normal de la machine, systemd gère lui-même l'ordonnancement des services dans l'ordre adéquat. Le script s'interdit d'intervenir.</li>
+<li><strong>Attente passive prioritaire</strong> : Le script teste la connectivité pendant 30 secondes. Si la box synchronise vite et qu'OpenVPN réussit à se relier sans encombre, le service n'est <strong>jamais redémarré</strong>.</li>
+<li><strong>Traçabilité totale</strong> : Toutes les étapes sont horodatées et consignées dans le journal système via la commande <code>logger</code>.</li>
 </ul>
 </div>
-<h3 id="etape-2-creer-une-version-patchee-avec-le-bon-soname">Étape 2 : Créer une version patchée avec le bon soname<a class="headerlink" href="#etape-2-creer-une-version-patchee-avec-le-bon-soname" title="Permanent link">&para;</a></h3>
-<p>AppImageLauncher cherche une bibliothèque nommée <code>libappimage.so.1.0</code>, mais la version système
-s'appelle <code>libappimage.so.1.0abi1</code>. Il faut corriger ce soname :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Copier la bibliothèque système</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>cp<span class="w"> </span>/usr/lib/x86_64-linux-gnu/libappimage.so.1.0.3.abi1<span class="w"> </span>/tmp/libappimage-noble.so
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Changer le soname pour correspondre à ce qu'attend AppImageLauncher</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>sudo<span class="w"> </span>patchelf<span class="w"> </span>--set-soname<span class="w"> </span>libappimage.so.1.0<span class="w"> </span>/tmp/libappimage-noble.so
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
-<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="c1"># Vérifier</span>
-<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>readelf<span class="w"> </span>-d<span class="w"> </span>/tmp/libappimage-noble.so<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>SONAME
-<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="c1"># SONAME : [libappimage.so.1.0]  ← correct</span>
+<hr />
+<h2 id="verification-et-validation">Vérification et validation<a class="headerlink" href="#verification-et-validation" title="Permanent link">&para;</a></h2>
+<h3 id="1-test-syntaxique-du-script">1. Test syntaxique du script<a class="headerlink" href="#1-test-syntaxique-du-script" title="Permanent link">&para;</a></h3>
+<p>Vérifiez l'absence d'erreur d'interprétation dans le shell :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>sh<span class="w"> </span>-n<span class="w"> </span>/etc/NetworkManager/dispatcher.d/95-nordvpn-recovery.sh<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"Syntaxe OK"</span>
 </code></pre></div>
-<h3 id="etape-3-sauvegarder-lancienne-bibliotheque-et-installer-la-nouvelle">Étape 3 : Sauvegarder l'ancienne bibliothèque et installer la nouvelle<a class="headerlink" href="#etape-3-sauvegarder-lancienne-bibliotheque-et-installer-la-nouvelle" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Sauvegarder l'ancienne (8 Mo — tout est bundlé dedans)</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sudo<span class="w"> </span>cp<span class="w"> </span>/usr/lib/x86_64-linux-gnu/appimagelauncher/libappimage.so.1.0.3<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">        </span>/usr/lib/x86_64-linux-gnu/appimagelauncher/libappimage.so.1.0.3.backup-bionic
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="c1"># Remplacer (le .so.1.0 est un symlink vers .so.1.0.3, cp suit le symlink)</span>
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>sudo<span class="w"> </span>cp<span class="w"> </span>/tmp/libappimage-noble.so<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">        </span>/usr/lib/x86_64-linux-gnu/appimagelauncher/libappimage.so.1.0
-<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>
-<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="c1"># Nettoyer</span>
-<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>rm<span class="w"> </span>/tmp/libappimage-noble.so
-</code></pre></div>
-<h3 id="etape-4-redemarrer-le-daemon">Étape 4 : Redémarrer le daemon<a class="headerlink" href="#etape-4-redemarrer-le-daemon" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>restart<span class="w"> </span>appimagelauncherd
-</code></pre></div>
-<h2 id="verification">Vérification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
-<h3 id="tester-la-bibliotheque-directement">Tester la bibliothèque directement<a class="headerlink" href="#tester-la-bibliotheque-directement" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">"</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="s2">import ctypes</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="s2">lib = ctypes.CDLL('/usr/lib/x86_64-linux-gnu/appimagelauncher/libappimage.so.1.0')</span>
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="s2">appimage = '/chemin/vers/MonApp.AppImage'</span>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="s2">result = lib.appimage_shall_not_be_integrated(appimage.encode())</span>
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="s2">print(f'shall_not_be_integrated = {result}')</span>
-<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="s2"># 0 = OK (intégration autorisée)  /  -1 = erreur (compression non supportée)</span>
-<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="s2">result2 = lib.appimage_get_type(appimage.encode())</span>
-<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="s2">print(f'type = {result2}')</span>
-<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="s2"># 2 = AppImage Type 2 (correct)</span>
-<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="s2">"</span>
+<h3 id="2-test-a-chaud-dexecution">2. Test à chaud d'exécution<a class="headerlink" href="#2-test-a-chaud-dexecution" title="Permanent link">&para;</a></h3>
+<p>Simulez un appel de dispatcher pour valider son comportement sur une connexion saine :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>/etc/NetworkManager/dispatcher.d/95-nordvpn-recovery.sh<span class="w"> </span>enp0s31f6<span class="w"> </span>up
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>sleep<span class="w"> </span><span class="m">6</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>journalctl<span class="w"> </span>-t<span class="w"> </span>nm-dispatcher-nordvpn<span class="w"> </span>-n<span class="w"> </span><span class="m">5</span><span class="w"> </span>--no-pager
 </code></pre></div>
 <div class="admonition success">
-<p class="admonition-title">Résultat attendu</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>shall_not_be_integrated = 0
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>type = 2
+<p class="admonition-title">Résultat attendu dans les logs</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>nm-dispatcher-nordvpn: Ethernet (enp0s31f6) reconnecté. Surveillance de la connectivité...
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>nm-dispatcher-nordvpn: Connectivité Internet opérationnelle via NordVPN, aucune action requise.
 </code></pre></div>
 </div>
-<h3 id="verifier-lintegration-dans-les-journaux">Vérifier l'intégration dans les journaux<a class="headerlink" href="#verifier-lintegration-dans-les-journaux" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>journalctl<span class="w"> </span>--user<span class="w"> </span>--no-pager<span class="w"> </span>-n<span class="w"> </span><span class="m">40</span><span class="w"> </span>--since<span class="w"> </span><span class="s2">"1 minute ago"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>appimage
+<h3 id="3-test-de-connectivite-globale-sans-wi-fi">3. Test de connectivité globale sans Wi-Fi<a class="headerlink" href="#3-test-de-connectivite-globale-sans-wi-fi" title="Permanent link">&para;</a></h3>
+<p>Assurez-vous que le Wi-Fi est éteint et que l'ensemble du trafic passe par l'Ethernet et le VPN :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Vérifier l'état de la puce Wi-Fi</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>nmcli<span class="w"> </span>radio<span class="w"> </span>wifi
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="c1"># Vérifier la route et le statut NordVPN</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>ip<span class="w"> </span>route<span class="w"> </span>show<span class="w"> </span>default
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>nordvpn<span class="w"> </span>status
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="c1"># Tester la résolution de nom et le ping</span>
+<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">1</span>.1.1.1
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>resolvectl<span class="w"> </span>query<span class="w"> </span>google.com
 </code></pre></div>
-<div class="admonition success">
-<p class="admonition-title">Résultat attendu</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>appimagelauncherd: AppImage is not integrated yet, integrating
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>appimagelauncherd: Extracting usr/share/icons/hicolor/256x256/apps/...
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>appimagelauncherd: Done
-</code></pre></div>
-</div>
-<h3 id="verifier-le-raccourci-cree">Vérifier le raccourci créé<a class="headerlink" href="#verifier-le-raccourci-cree" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>ls<span class="w"> </span>~/.local/share/applications/<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>appimagekit
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>cat<span class="w"> </span>~/.local/share/applications/appimagekit_*-MonApp.desktop
-</code></pre></div>
-<h2 id="restauration-si-necessaire">Restauration (si nécessaire)<a class="headerlink" href="#restauration-si-necessaire" title="Permanent link">&para;</a></h2>
-<p>Pour revenir à l'ancienne bibliothèque bundlée :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>sudo<span class="w"> </span>cp<span class="w"> </span>/usr/lib/x86_64-linux-gnu/appimagelauncher/libappimage.so.1.0.3.backup-bionic<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">        </span>/usr/lib/x86_64-linux-gnu/appimagelauncher/libappimage.so.1.0.3
-<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>systemctl<span class="w"> </span>--user<span class="w"> </span>restart<span class="w"> </span>appimagelauncherd
-</code></pre></div>
+<hr />
+<h2 id="aide-memoire">Aide-mémoire<a class="headerlink" href="#aide-memoire" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Commande</th>
+<th style="text-align: left;">Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>nmcli device status</code></td>
+<td style="text-align: left;">Lister les interfaces réseau et leur statut de connexion</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>nmcli radio wifi off</code></td>
+<td style="text-align: left;">Couper totalement l'émission radio Wi-Fi</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>sudo nmcli connection modify &lt;conn&gt; ipv6.method disabled</code></td>
+<td style="text-align: left;">Désactiver la gestion IPv6 sur un profil de connexion</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>sudo nmcli device reapply &lt;iface&gt;</code></td>
+<td style="text-align: left;">Appliquer les changements d'un profil sans déconnecter l'interface</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>journalctl -t nm-dispatcher-nordvpn -f</code></td>
+<td style="text-align: left;">Suivre en direct les actions du script de rétablissement VPN</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>nordvpn status</code></td>
+<td style="text-align: left;">Afficher l'état du tunnel, l'IP publique et le protocole en cours</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>sudo nft list table inet nordvpn</code></td>
+<td style="text-align: left;">Inspecter les règles de pare-feu actives générées par NordVPN</td>
+</tr>
+</tbody>
+</table>
+<hr />
 <h2 id="glossaire">Glossaire<a class="headerlink" href="#glossaire" title="Permanent link">&para;</a></h2>
 <dl>
-<dt>AppImage Type 2</dt>
-<dd>Format d'application portable Linux qui embarque un système de fichiers squashfs à la suite d'un binaire ELF. Le runtime est extrait ou monté via FUSE à l'exécution.</dd>
-<dt>binfmt_misc</dt>
-<dd>Mécanisme du noyau Linux qui associe un interpréteur à un type de fichier binaire selon sa signature magique. AppImageLauncher l'utilise pour intercepter tout fichier <code>.AppImage</code> cliqué.</dd>
-<dt>squashfuse</dt>
-<dd>Bibliothèque permettant de monter un système de fichiers squashfs en espace utilisateur (FUSE). Sa version détermine les algorithmes de compression supportés.</dd>
-<dt>soname</dt>
-<dd>Identifiant de version d'une bibliothèque partagée Linux, embarqué dans le binaire ELF. Le chargeur dynamique (<code>ld.so</code>) vérifie ce nom lors du chargement.</dd>
-<dt>zstd</dt>
-<dd>Algorithme de compression rapide (Zstandard, Meta 2016). Compression ID 6 dans le format squashfs. Non supporté par squashfuse &lt; 0.4.x.</dd>
+<dt>NetworkManager Dispatcher</dt>
+<dd>Service système qui surveille les événements du gestionnaire de réseau (connexion d'un câble, attribution d'adresse IP, déconnexion) et exécute automatiquement les scripts présents dans <code>/etc/NetworkManager/dispatcher.d/</code>.</dd>
+<dt>Soft-Restart (<code>SIGUSR1</code>)</dt>
+<dd>Signal Unix standard permettant de demander à un démon de redémarrer de manière légère sans détruire son processus principal. Dans OpenVPN, il provoque une réinitialisation de la liaison TLS tout en conservant certaines options en mémoire, ce qui nécessite une ré-authentification par socket.</dd>
+<dt>Obfuscated VPN (Obfuscation)</dt>
+<dd>Technique cryptographique modifiant l'entête des paquets OpenVPN pour les faire ressembler à du trafic web sécurisé HTTPS (TLS standard), empêchant les pare-feux et les équipements d'inspection approfondie (DPI) de détecter l'usage d'un VPN.</dd>
+<dt>nftables / Firewall Mark (<code>fwmark</code>)</dt>
+<dd>Sous-système de filtrage de paquets du noyau Linux remplaçant iptables. La marque de pare-feu (<code>fwmark</code>) est une étiquette numérique interne à la pile réseau permettant d'associer un paquet à une table de routage spécifique (Policy Routing).</dd>
+<dt>Link-Local IPv6 (<code>fe80::/10</code>)</dt>
+<dd>Plage d'adresses IPv6 réservée aux communications sur le segment réseau local direct. Si le noyau a désactivé IPv6 au niveau global, toute tentative d'attribution d'adresse link-local échoue avec un code d'erreur <code>Permission denied</code> (EPERM / 13).</dd>
+<dt>Onduleur (UPS - Uninterruptible Power Supply)</dt>
+<dd>Appareil électrique muni d'une batterie permettant d'alimenter un équipement informatique sans coupure lors d'une défaillance du réseau électrique général.</dd>
 </dl>
+<hr />
 <h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="https://github.com/TheAssassin/AppImageLauncher">AppImageLauncher GitHub</a> — Projet (dernière release : 2.2.0, novembre 2022)</li>
-<li><a href="https://github.com/vasi/squashfuse">squashfuse GitHub</a> — Source de squashfuse avec changelog des compressions supportées</li>
-<li><a href="https://github.com/AppImage/AppImageSpec/blob/master/draft.md">AppImage Specification — Type 2</a> — Format officiel AppImage Type 2</li>
+<li><a href="https://networkmanager.dev/docs/api/latest/NetworkManager-dispatcher.html">Documentation officielle NetworkManager Dispatcher</a></li>
+<li><a href="https://wiki.nftables.org/">Guide de configuration nftables sous Linux</a></li>
+<li><a href="https://openvpn.net/community-resources/reference-manual-for-openvpn-2-6/">Documentation OpenVPN — Signaux et gestion de processus</a></li>
 </ul>
 
 
@@ -2877,7 +3003,7 @@ s'appelle <code>libappimage.so.1.0abi1</code>. Il faut corriger ce soname :</p>
       <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
         
           
-          <a href="../nvidia-veille-ecran-noir/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: NVIDIA — Écran noir après veille">
+          <a href="../bluetooth-sortie-audio-absente-hfp-wireplumber/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: Bluetooth — Écouteurs appairés mais absents des sorties audio (WirePlumber/HFP)">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2887,20 +3013,20 @@ s'appelle <code>libappimage.so.1.0abi1</code>. Il faut corriger ce soname :</p>
                 Précédent
               </span>
               <div class="md-ellipsis">
-                NVIDIA — Écran noir après veille
+                Bluetooth — Écouteurs appairés mais absents des sorties audio (WirePlumber/HFP)
               </div>
             </div>
           </a>
         
         
           
-          <a href="../sniffnet-appimage-ubuntu-2404/" class="md-footer__link md-footer__link--next" aria-label="Suivant: Sniffnet AppImage — Installation et lancement sur Ubuntu 24.04">
+          <a href="../../astuces/" class="md-footer__link md-footer__link--next" aria-label="Suivant: Astuces">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Suivant
               </span>
               <div class="md-ellipsis">
-                Sniffnet AppImage — Installation et lancement sur Ubuntu 24.04
+                Astuces
               </div>
             </div>
             <div class="md-footer__button md-icon">
