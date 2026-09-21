@@ -2678,14 +2678,14 @@
 </tbody>
 </table>
 <h2 id="contexte">Contexte<a class="headerlink" href="#contexte" title="Permanent link">&para;</a></h2>
-<p>Dans une installation domestique ou professionnelle, il est courant de protéger l'unité centrale par un onduleur (UPS) pour parer aux coupures d'électricité. La box Internet (Freebox, Livebox, SFR Box, Bbox, etc.) est quant à elle fréquemment branchée sur une prise murale standard.</p>
+<p>Dans une installation informatique domestique ou professionnelle, il est fréquent de protéger l'unité centrale par un onduleur (UPS) pour parer aux coupures d'électricité. La box Internet (Freebox, Livebox, SFR Box, Bbox, etc.) est quant à elle souvent branchée sur une prise murale standard.</p>
 <p>Lors d'un incident électrique :
 1. Le PC reste alimenté et continue de tourner grâce à la batterie de l'onduleur.
 2. La box Internet s'éteint brutalement.
 3. Au rétablissement du secteur, la box redémarre électriquement.
 4. L'ordinateur constate le retour du signal physique Ethernet et récupère sa configuration IP locale via DHCP.
 5. Pourtant, la navigation web, le ping externe et la résolution DNS restent inopérants.</p>
-<p>Sur cette machine, le protocole <strong>OpenVPN</strong> associé à la fonctionnalité <strong>Obfuscate</strong> (obfuscation du trafic pour contourner les blocages réseau) est strictement requis, ce qui exclut l'usage de NordLynx (WireGuard). Le Wi-Fi étant habituellement désactivé, l'objectif est d'obtenir une reconnexion Ethernet 100 % autonome et résiliente, sans aucune manipulation manuelle.</p>
+<p>Sur cette machine, le protocole <strong>OpenVPN</strong> associé à la fonctionnalité <strong>Obfuscate</strong> (obfuscation du trafic pour masquer l'usage d'un VPN face aux pare-feux et mécanismes DPI) est strictement requis, ce qui exclut l'usage de NordLynx (WireGuard). Le Wi-Fi étant habituellement désactivé, l'objectif est d'obtenir une reconnexion Ethernet 100 % autonome et résiliente, sans aucune manipulation manuelle.</p>
 <hr />
 <h2 id="comprendre-la-chaine-reseau-et-lorigine-du-blocage">Comprendre la chaîne réseau et l'origine du blocage<a class="headerlink" href="#comprendre-la-chaine-reseau-et-lorigine-du-blocage" title="Permanent link">&para;</a></h2>
 <p>Pour appréhender ce dysfonctionnement, il convient d'analyser les différentes couches logicielles impliquées et la chronologie de redémarrage des équipements :</p>
@@ -2694,8 +2694,8 @@
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  └─ Synchronisation WAN (Fibre/DSL) ─&gt; Actif en ~60-120s (Internet réel)
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>          │
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>[ PC Ubuntu ]
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  ├─ Pilote Ethernet (e1000e) ───────&gt; Détecte NIC Link Up
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  ├─ NetworkManager ─────────────────&gt; Récupère IP locale (192.168.168.10)
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  ├─ Pilote Ethernet (e1000e) ───────&gt; Détecte NIC Link Up (ex: enp3s0)
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  ├─ NetworkManager ─────────────────&gt; Récupère IP locale (ex: 192.168.1.50)
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  └─ NordVPN (OpenVPN)
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>       ├─ Tente négociation TLS ────&gt; Échoue (WAN pas encore prêt)
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>       ├─ Déclenche SIGUSR1 ─────────&gt; Fige OpenVPN en état AUTH
@@ -2707,28 +2707,29 @@
 <p><strong>OpenVPN et signal SIGUSR1</strong> : Dans l'architecture OpenVPN, le signal Unix <code>SIGUSR1</code> correspond à un « soft restart » (redémarrage doux sans libérer la mémoire). Le processus ne quitte pas le système d'exploitation, mais réinitialise sa machine à états interne. Lors de cette transition, OpenVPN redemande ses identifiants de session (<code>AUTH</code>) via son socket d'administration UNIX.</p>
 <p><strong>Le bug d'authentification du démon NordVPN</strong> : Le démon en arrière-plan <code>nordvpnd</code> n'injecte les identifiants utilisateur qu'à l'initialisation initiale d'un nouveau processus binaire. Lorsqu'OpenVPN effectue un redémarrage interne sur <code>SIGUSR1</code>, <code>nordvpnd</code> n'intercepte pas la demande d'authentification. OpenVPN se retrouve ainsi en attente passive infinie (<code>could not read Auth username/password</code>), bloquant le tunnel <code>nordtun</code>.</p>
 <p><strong>Le piège du pare-feu nftables</strong> : Pour empêcher les fuites de données hors VPN, NordVPN configure des règles de pare-feu avancées dans la table <code>inet nordvpn</code>. Sa chaîne <code>output</code> applique une politique par défaut <code>policy drop</code>. Seuls les paquets marqués spécifiquement par le socket VPN (<code>0xe1f1</code>) ou à destination du tunnel <code>nordtun</code> sont autorisés, tandis que les requêtes DNS locales (port 53 vers la box) sont expressément rejetées. Si le tunnel ne remonte pas, l'ensemble de la machine est plongé dans un trou noir réseau.</p>
-<p><strong>Pourquoi l'activation du Wi-Fi débloquait la situation</strong> : Dès que l'interface Wi-Fi (<code>wlp3s0</code>) devenait active, le moniteur d'interfaces de NordVPN détectait un changement d'état (<code>monitored interfaces changed</code>). Cet événement interne forçait <code>nordvpnd</code> à exécuter sa routine <code>refresh VPN</code>, qui tue le processus OpenVPN figé avec un signal <code>SIGINT</code>, purge les règles et relance un binaire propre avec ses identifiants.</p>
+<p><strong>Pourquoi l'activation du Wi-Fi débloquait la situation</strong> : Dès que l'interface Wi-Fi (<code>wlp2s0</code>) devenait active, le moniteur d'interfaces de NordVPN détectait un changement d'état (<code>monitored interfaces changed</code>). Cet événement interne forçait <code>nordvpnd</code> à exécuter sa routine <code>refresh VPN</code>, qui tue le processus OpenVPN figé avec un signal <code>SIGINT</code>, purge les règles et relance un binaire propre avec ses identifiants.</p>
 </div>
 <hr />
 <h2 id="diagnostic-pas-a-pas">Diagnostic pas-à-pas<a class="headerlink" href="#diagnostic-pas-a-pas" title="Permanent link">&para;</a></h2>
 <p>Lors de l'incident, plusieurs commandes de diagnostic en lecture seule permettent d'identifier précisément le phénomène.</p>
+<p><em>(Dans les exemples ci-dessous, nous utilisons l'interface Ethernet <code>enp3s0</code>, le sous-réseau <code>192.168.1.0/24</code> et la passerelle <code>192.168.1.1</code> comme valeurs d'exemple).</em></p>
 <h3 id="1-constat-du-lien-physique-et-de-la-configuration-ip">1. Constat du lien physique et de la configuration IP<a class="headerlink" href="#1-constat-du-lien-physique-et-de-la-configuration-ip" title="Permanent link">&para;</a></h3>
 <p>La commande <code>ip route</code> et <code>nmcli device status</code> démontre que NetworkManager a correctement fait son travail :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>nmcli<span class="w"> </span>device<span class="w"> </span>status
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>ip<span class="w"> </span>route
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>DEVICE     TYPE      STATE     CONNECTION 
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>enp0s31f6  ethernet  connecté  enp0s31f6  
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>enp3s0     ethernet  connecté  enp3s0  
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>default via 192.168.168.168 dev enp0s31f6 proto dhcp src 192.168.168.10 metric 100
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>default via 192.168.1.1 dev enp3s0 proto dhcp src 192.168.1.50 metric 100
 </code></pre></div>
 <p>L'interface Ethernet est active, l'adresse IP locale est attribuée et la passerelle par défaut est bien renseignée.</p>
 <h3 id="2-examen-des-journaux-du-noyau-journalctl-k">2. Examen des journaux du noyau (<code>journalctl -k</code>)<a class="headerlink" href="#2-examen-des-journaux-du-noyau-journalctl-k" title="Permanent link">&para;</a></h3>
-<p>Le journal du noyau confirme la séquence temporelle de la panne :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>journalctl<span class="w"> </span>-k<span class="w"> </span>--grep<span class="o">=</span><span class="s2">"e1000e|NIC Link"</span><span class="w"> </span>--no-pager
+<p>Le journal du noyau confirme la séquence temporelle de la coupure :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>journalctl<span class="w"> </span>-k<span class="w"> </span>--grep<span class="o">=</span><span class="s2">"NIC Link"</span><span class="w"> </span>--no-pager
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>15:08:53 kernel: e1000e 0000:00:1f.6 enp0s31f6: NIC Link is Down
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>15:13:41 kernel: e1000e 0000:00:1f.6 enp0s31f6: NIC Link is Up 1000 Mbps Full Duplex
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>15:08:53 kernel: enp3s0: NIC Link is Down
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>15:13:41 kernel: enp3s0: NIC Link is Up 1000 Mbps Full Duplex
 </code></pre></div>
 <p>La box s'est éteinte à 15:08 et le lien physique s'est rétabli à 15:13.</p>
 <h3 id="3-examen-du-demon-nordvpn-et-du-gel-openvpn">3. Examen du démon NordVPN et du gel OpenVPN<a class="headerlink" href="#3-examen-du-demon-nordvpn-et-du-gel-openvpn" title="Permanent link">&para;</a></h3>
@@ -2769,14 +2770,17 @@
 2. Déployer un script NetworkManager Dispatcher pour redémarrer automatiquement le VPN en cas de désynchronisation consécutive à un reboot de box.</p>
 <h3 id="etape-1-desactiver-ipv6-dans-les-profils-networkmanager">Étape 1 : Désactiver IPv6 dans les profils NetworkManager<a class="headerlink" href="#etape-1-desactiver-ipv6-dans-les-profils-networkmanager" title="Permanent link">&para;</a></h3>
 <p>Pour aligner NetworkManager sur l'état réel du système imposé par NordVPN, configurez <code>ipv6.method</code> sur <code>disabled</code> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Pour la connexion Ethernet principale</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>sudo<span class="w"> </span>nmcli<span class="w"> </span>connection<span class="w"> </span>modify<span class="w"> </span><span class="s2">"enp0s31f6"</span><span class="w"> </span>ipv6.method<span class="w"> </span>disabled
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Identifier le nom exact de votre connexion Ethernet</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>nmcli<span class="w"> </span>connection<span class="w"> </span>show
 <a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># Pour les connexions Wi-Fi existantes (évite la réapparition du problème en cas d'usage Wi-Fi)</span>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>sudo<span class="w"> </span>nmcli<span class="w"> </span>connection<span class="w"> </span>modify<span class="w"> </span><span class="s2">"SIGNAL_ZWIN_2.4G"</span><span class="w"> </span>ipv6.method<span class="w"> </span>disabled
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># Désactiver IPv6 pour la connexion Ethernet (adapter 'enp3s0' avec votre nom de connexion)</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>sudo<span class="w"> </span>nmcli<span class="w"> </span>connection<span class="w"> </span>modify<span class="w"> </span><span class="s2">"enp3s0"</span><span class="w"> </span>ipv6.method<span class="w"> </span>disabled
 <a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>
-<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="c1"># Réappliquer immédiatement les paramètres à chaud sans couper la liaison</span>
-<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>sudo<span class="w"> </span>nmcli<span class="w"> </span>device<span class="w"> </span>reapply<span class="w"> </span>enp0s31f6
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="c1"># Optionnel : désactiver également IPv6 sur vos profils Wi-Fi habituels</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>sudo<span class="w"> </span>nmcli<span class="w"> </span>connection<span class="w"> </span>modify<span class="w"> </span><span class="s2">"MonWiFi_2.4G"</span><span class="w"> </span>ipv6.method<span class="w"> </span>disabled
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="c1"># Réappliquer immédiatement les paramètres à chaud sans couper la liaison</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>sudo<span class="w"> </span>nmcli<span class="w"> </span>device<span class="w"> </span>reapply<span class="w"> </span>enp3s0
 </code></pre></div>
 <p>Vérifiez que les messages d'avertissement ont cessé :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>NetworkManager<span class="w"> </span>-n<span class="w"> </span><span class="m">10</span><span class="w"> </span>--no-pager
@@ -2788,7 +2792,7 @@
 <hr />
 <h3 id="etape-2-mettre-en-place-le-script-de-reprise-networkmanager-dispatcher">Étape 2 : Mettre en place le script de reprise NetworkManager Dispatcher<a class="headerlink" href="#etape-2-mettre-en-place-le-script-de-reprise-networkmanager-dispatcher" title="Permanent link">&para;</a></h3>
 <p>Le service <strong>NetworkManager-dispatcher</strong> exécute des scripts placés dans <code>/etc/NetworkManager/dispatcher.d/</code> lors de chaque changement d'état d'une interface réseau (connexion, déconnexion, attribution DHCP).</p>
-<p>Créez le script <code>/etc/NetworkManager/dispatcher.d/95-nordvpn-recovery.sh</code> :</p>
+<p>Créez le script <code>/etc/NetworkManager/dispatcher.d/95-nordvpn-recovery.sh</code> (pensez à adapter la variable <code>IFACE_TARGET</code> au nom de votre carte Ethernet, par exemple <code>eth0</code> ou <code>enp3s0</code>) :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>cat<span class="w"> </span><span class="s">&lt;&lt; 'EOF' | sudo tee /etc/NetworkManager/dispatcher.d/95-nordvpn-recovery.sh &gt; /dev/null</span>
 <a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="s">#!/bin/sh</span>
 <a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="s"># /etc/NetworkManager/dispatcher.d/95-nordvpn-recovery.sh</span>
@@ -2798,63 +2802,66 @@
 <a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="s">IFACE="$1"</span>
 <a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="s">ACTION="$2"</span>
 <a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>
-<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="s"># Ne s'exécute que pour l'interface Ethernet physique lors de son passage à 'up'</span>
-<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="s">if [ "$IFACE" != "enp0s31f6" ] || [ "$ACTION" != "up" ]; then</span>
-<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="s">    exit 0</span>
-<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="s">fi</span>
-<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>
-<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="s"># Ne rien faire lors du démarrage initial du système (les services systemd s'initialisent déjà)</span>
-<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a><span class="s">UPTIME_SECS=$(awk '{print int($1)}' /proc/uptime 2&gt;/dev/null || echo 0)</span>
-<a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a><span class="s">if [ "$UPTIME_SECS" -lt 120 ]; then</span>
-<a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a><span class="s">    exit 0</span>
-<a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a><span class="s">fi</span>
-<a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a>
-<a id="__codelineno-12-21" name="__codelineno-12-21" href="#__codelineno-12-21"></a><span class="s"># Ne rien faire si le démon NordVPN n'est pas actif</span>
-<a id="__codelineno-12-22" name="__codelineno-12-22" href="#__codelineno-12-22"></a><span class="s">if ! systemctl is-active --quiet nordvpnd.service; then</span>
-<a id="__codelineno-12-23" name="__codelineno-12-23" href="#__codelineno-12-23"></a><span class="s">    exit 0</span>
-<a id="__codelineno-12-24" name="__codelineno-12-24" href="#__codelineno-12-24"></a><span class="s">fi</span>
-<a id="__codelineno-12-25" name="__codelineno-12-25" href="#__codelineno-12-25"></a>
-<a id="__codelineno-12-26" name="__codelineno-12-26" href="#__codelineno-12-26"></a><span class="s"># Exécution asynchrone en sous-shell pour ne pas bloquer NetworkManager</span>
-<a id="__codelineno-12-27" name="__codelineno-12-27" href="#__codelineno-12-27"></a><span class="s">(</span>
-<a id="__codelineno-12-28" name="__codelineno-12-28" href="#__codelineno-12-28"></a><span class="s">    # Déterminer l'adresse IP de la passerelle locale (la box Internet)</span>
-<a id="__codelineno-12-29" name="__codelineno-12-29" href="#__codelineno-12-29"></a><span class="s">    GATEWAY="${IP4_GATEWAY:-$(ip route show default dev "$IFACE" 2&gt;/dev/null | awk '{print $3}' | head -n 1)}"</span>
-<a id="__codelineno-12-30" name="__codelineno-12-30" href="#__codelineno-12-30"></a><span class="s">    if [ -z "$GATEWAY" ]; then</span>
-<a id="__codelineno-12-31" name="__codelineno-12-31" href="#__codelineno-12-31"></a><span class="s">        GATEWAY="192.168.168.168"</span>
-<a id="__codelineno-12-32" name="__codelineno-12-32" href="#__codelineno-12-32"></a><span class="s">    fi</span>
-<a id="__codelineno-12-33" name="__codelineno-12-33" href="#__codelineno-12-33"></a>
-<a id="__codelineno-12-34" name="__codelineno-12-34" href="#__codelineno-12-34"></a><span class="s">    logger -t nm-dispatcher-nordvpn "Ethernet ($IFACE) reconnecté. Surveillance de la connectivité..."</span>
-<a id="__codelineno-12-35" name="__codelineno-12-35" href="#__codelineno-12-35"></a>
-<a id="__codelineno-12-36" name="__codelineno-12-36" href="#__codelineno-12-36"></a><span class="s">    # 1. Attendre que la passerelle locale réponde (démarrage du commutateur de la box)</span>
-<a id="__codelineno-12-37" name="__codelineno-12-37" href="#__codelineno-12-37"></a><span class="s">    GW_REACHABLE=0</span>
-<a id="__codelineno-12-38" name="__codelineno-12-38" href="#__codelineno-12-38"></a><span class="s">    for i in $(seq 1 12); do</span>
-<a id="__codelineno-12-39" name="__codelineno-12-39" href="#__codelineno-12-39"></a><span class="s">        if ping -c 1 -W 2 "$GATEWAY" &gt;/dev/null 2&gt;&amp;1; then</span>
-<a id="__codelineno-12-40" name="__codelineno-12-40" href="#__codelineno-12-40"></a><span class="s">            GW_REACHABLE=1</span>
-<a id="__codelineno-12-41" name="__codelineno-12-41" href="#__codelineno-12-41"></a><span class="s">            break</span>
-<a id="__codelineno-12-42" name="__codelineno-12-42" href="#__codelineno-12-42"></a><span class="s">        fi</span>
-<a id="__codelineno-12-43" name="__codelineno-12-43" href="#__codelineno-12-43"></a><span class="s">        sleep 5</span>
-<a id="__codelineno-12-44" name="__codelineno-12-44" href="#__codelineno-12-44"></a><span class="s">    done</span>
-<a id="__codelineno-12-45" name="__codelineno-12-45" href="#__codelineno-12-45"></a>
-<a id="__codelineno-12-46" name="__codelineno-12-46" href="#__codelineno-12-46"></a><span class="s">    if [ "$GW_REACHABLE" -ne 1 ]; then</span>
-<a id="__codelineno-12-47" name="__codelineno-12-47" href="#__codelineno-12-47"></a><span class="s">        logger -t nm-dispatcher-nordvpn "Passerelle locale $GATEWAY injoignable après 60s, arrêt du contrôle."</span>
-<a id="__codelineno-12-48" name="__codelineno-12-48" href="#__codelineno-12-48"></a><span class="s">        exit 0</span>
-<a id="__codelineno-12-49" name="__codelineno-12-49" href="#__codelineno-12-49"></a><span class="s">    fi</span>
-<a id="__codelineno-12-50" name="__codelineno-12-50" href="#__codelineno-12-50"></a>
-<a id="__codelineno-12-51" name="__codelineno-12-51" href="#__codelineno-12-51"></a><span class="s">    # 2. Laisser jusqu'à 30s à la box pour synchroniser sa liaison WAN et à NordVPN pour se reconnecter seul</span>
-<a id="__codelineno-12-52" name="__codelineno-12-52" href="#__codelineno-12-52"></a><span class="s">    for i in $(seq 1 6); do</span>
-<a id="__codelineno-12-53" name="__codelineno-12-53" href="#__codelineno-12-53"></a><span class="s">        sleep 5</span>
-<a id="__codelineno-12-54" name="__codelineno-12-54" href="#__codelineno-12-54"></a><span class="s">        if ping -c 1 -W 2 1.1.1.1 &gt;/dev/null 2&gt;&amp;1; then</span>
-<a id="__codelineno-12-55" name="__codelineno-12-55" href="#__codelineno-12-55"></a><span class="s">            logger -t nm-dispatcher-nordvpn "Connectivité Internet opérationnelle via NordVPN, aucune action requise."</span>
-<a id="__codelineno-12-56" name="__codelineno-12-56" href="#__codelineno-12-56"></a><span class="s">            exit 0</span>
-<a id="__codelineno-12-57" name="__codelineno-12-57" href="#__codelineno-12-57"></a><span class="s">        fi</span>
-<a id="__codelineno-12-58" name="__codelineno-12-58" href="#__codelineno-12-58"></a><span class="s">    done</span>
-<a id="__codelineno-12-59" name="__codelineno-12-59" href="#__codelineno-12-59"></a>
-<a id="__codelineno-12-60" name="__codelineno-12-60" href="#__codelineno-12-60"></a><span class="s">    # 3. Si Internet est toujours inaccessible, OpenVPN est figé en état AUTH : redémarrage propre de secours</span>
-<a id="__codelineno-12-61" name="__codelineno-12-61" href="#__codelineno-12-61"></a><span class="s">    logger -t nm-dispatcher-nordvpn "Internet toujours bloqué après retour de la box. Redémarrage propre de nordvpnd pour débloquer le VPN..."</span>
-<a id="__codelineno-12-62" name="__codelineno-12-62" href="#__codelineno-12-62"></a><span class="s">    systemctl restart nordvpnd.service</span>
-<a id="__codelineno-12-63" name="__codelineno-12-63" href="#__codelineno-12-63"></a><span class="s">) &amp;</span>
-<a id="__codelineno-12-64" name="__codelineno-12-64" href="#__codelineno-12-64"></a>
-<a id="__codelineno-12-65" name="__codelineno-12-65" href="#__codelineno-12-65"></a><span class="s">exit 0</span>
-<a id="__codelineno-12-66" name="__codelineno-12-66" href="#__codelineno-12-66"></a><span class="s">EOF</span>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="s"># Remplacer par le nom de votre interface Ethernet principale (identifier avec : ip -br link)</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="s">IFACE_TARGET="enp3s0"</span>
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="s"># Ne s'exécute que pour l'interface Ethernet ciblée lors de son passage à 'up'</span>
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="s">if [ "$IFACE" != "$IFACE_TARGET" ] || [ "$ACTION" != "up" ]; then</span>
+<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="s">    exit 0</span>
+<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a><span class="s">fi</span>
+<a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a>
+<a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a><span class="s"># Ne rien faire lors du démarrage initial du système (les services systemd s'initialisent déjà)</span>
+<a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a><span class="s">UPTIME_SECS=$(awk '{print int($1)}' /proc/uptime 2&gt;/dev/null || echo 0)</span>
+<a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a><span class="s">if [ "$UPTIME_SECS" -lt 120 ]; then</span>
+<a id="__codelineno-12-21" name="__codelineno-12-21" href="#__codelineno-12-21"></a><span class="s">    exit 0</span>
+<a id="__codelineno-12-22" name="__codelineno-12-22" href="#__codelineno-12-22"></a><span class="s">fi</span>
+<a id="__codelineno-12-23" name="__codelineno-12-23" href="#__codelineno-12-23"></a>
+<a id="__codelineno-12-24" name="__codelineno-12-24" href="#__codelineno-12-24"></a><span class="s"># Ne rien faire si le démon NordVPN n'est pas actif</span>
+<a id="__codelineno-12-25" name="__codelineno-12-25" href="#__codelineno-12-25"></a><span class="s">if ! systemctl is-active --quiet nordvpnd.service; then</span>
+<a id="__codelineno-12-26" name="__codelineno-12-26" href="#__codelineno-12-26"></a><span class="s">    exit 0</span>
+<a id="__codelineno-12-27" name="__codelineno-12-27" href="#__codelineno-12-27"></a><span class="s">fi</span>
+<a id="__codelineno-12-28" name="__codelineno-12-28" href="#__codelineno-12-28"></a>
+<a id="__codelineno-12-29" name="__codelineno-12-29" href="#__codelineno-12-29"></a><span class="s"># Exécution asynchrone en sous-shell pour ne pas bloquer NetworkManager</span>
+<a id="__codelineno-12-30" name="__codelineno-12-30" href="#__codelineno-12-30"></a><span class="s">(</span>
+<a id="__codelineno-12-31" name="__codelineno-12-31" href="#__codelineno-12-31"></a><span class="s">    # Déterminer dynamiquement l'adresse IP de la passerelle locale (la box Internet)</span>
+<a id="__codelineno-12-32" name="__codelineno-12-32" href="#__codelineno-12-32"></a><span class="s">    GATEWAY="${IP4_GATEWAY:-$(ip route show default dev "$IFACE" 2&gt;/dev/null | awk '{print $3}' | head -n 1)}"</span>
+<a id="__codelineno-12-33" name="__codelineno-12-33" href="#__codelineno-12-33"></a><span class="s">    if [ -z "$GATEWAY" ]; then</span>
+<a id="__codelineno-12-34" name="__codelineno-12-34" href="#__codelineno-12-34"></a><span class="s">        GATEWAY="192.168.1.1"</span>
+<a id="__codelineno-12-35" name="__codelineno-12-35" href="#__codelineno-12-35"></a><span class="s">    fi</span>
+<a id="__codelineno-12-36" name="__codelineno-12-36" href="#__codelineno-12-36"></a>
+<a id="__codelineno-12-37" name="__codelineno-12-37" href="#__codelineno-12-37"></a><span class="s">    logger -t nm-dispatcher-nordvpn "Ethernet ($IFACE) reconnecté. Surveillance de la connectivité..."</span>
+<a id="__codelineno-12-38" name="__codelineno-12-38" href="#__codelineno-12-38"></a>
+<a id="__codelineno-12-39" name="__codelineno-12-39" href="#__codelineno-12-39"></a><span class="s">    # 1. Attendre que la passerelle locale réponde (démarrage du commutateur de la box)</span>
+<a id="__codelineno-12-40" name="__codelineno-12-40" href="#__codelineno-12-40"></a><span class="s">    GW_REACHABLE=0</span>
+<a id="__codelineno-12-41" name="__codelineno-12-41" href="#__codelineno-12-41"></a><span class="s">    for i in $(seq 1 12); do</span>
+<a id="__codelineno-12-42" name="__codelineno-12-42" href="#__codelineno-12-42"></a><span class="s">        if ping -c 1 -W 2 "$GATEWAY" &gt;/dev/null 2&gt;&amp;1; then</span>
+<a id="__codelineno-12-43" name="__codelineno-12-43" href="#__codelineno-12-43"></a><span class="s">            GW_REACHABLE=1</span>
+<a id="__codelineno-12-44" name="__codelineno-12-44" href="#__codelineno-12-44"></a><span class="s">            break</span>
+<a id="__codelineno-12-45" name="__codelineno-12-45" href="#__codelineno-12-45"></a><span class="s">        fi</span>
+<a id="__codelineno-12-46" name="__codelineno-12-46" href="#__codelineno-12-46"></a><span class="s">        sleep 5</span>
+<a id="__codelineno-12-47" name="__codelineno-12-47" href="#__codelineno-12-47"></a><span class="s">    done</span>
+<a id="__codelineno-12-48" name="__codelineno-12-48" href="#__codelineno-12-48"></a>
+<a id="__codelineno-12-49" name="__codelineno-12-49" href="#__codelineno-12-49"></a><span class="s">    if [ "$GW_REACHABLE" -ne 1 ]; then</span>
+<a id="__codelineno-12-50" name="__codelineno-12-50" href="#__codelineno-12-50"></a><span class="s">        logger -t nm-dispatcher-nordvpn "Passerelle locale $GATEWAY injoignable après 60s, arrêt du contrôle."</span>
+<a id="__codelineno-12-51" name="__codelineno-12-51" href="#__codelineno-12-51"></a><span class="s">        exit 0</span>
+<a id="__codelineno-12-52" name="__codelineno-12-52" href="#__codelineno-12-52"></a><span class="s">    fi</span>
+<a id="__codelineno-12-53" name="__codelineno-12-53" href="#__codelineno-12-53"></a>
+<a id="__codelineno-12-54" name="__codelineno-12-54" href="#__codelineno-12-54"></a><span class="s">    # 2. Laisser jusqu'à 30s à la box pour synchroniser sa liaison WAN et à NordVPN pour se reconnecter seul</span>
+<a id="__codelineno-12-55" name="__codelineno-12-55" href="#__codelineno-12-55"></a><span class="s">    for i in $(seq 1 6); do</span>
+<a id="__codelineno-12-56" name="__codelineno-12-56" href="#__codelineno-12-56"></a><span class="s">        sleep 5</span>
+<a id="__codelineno-12-57" name="__codelineno-12-57" href="#__codelineno-12-57"></a><span class="s">        if ping -c 1 -W 2 1.1.1.1 &gt;/dev/null 2&gt;&amp;1; then</span>
+<a id="__codelineno-12-58" name="__codelineno-12-58" href="#__codelineno-12-58"></a><span class="s">            logger -t nm-dispatcher-nordvpn "Connectivité Internet opérationnelle via NordVPN, aucune action requise."</span>
+<a id="__codelineno-12-59" name="__codelineno-12-59" href="#__codelineno-12-59"></a><span class="s">            exit 0</span>
+<a id="__codelineno-12-60" name="__codelineno-12-60" href="#__codelineno-12-60"></a><span class="s">        fi</span>
+<a id="__codelineno-12-61" name="__codelineno-12-61" href="#__codelineno-12-61"></a><span class="s">    done</span>
+<a id="__codelineno-12-62" name="__codelineno-12-62" href="#__codelineno-12-62"></a>
+<a id="__codelineno-12-63" name="__codelineno-12-63" href="#__codelineno-12-63"></a><span class="s">    # 3. Si Internet est toujours inaccessible, OpenVPN est figé en état AUTH : redémarrage propre de secours</span>
+<a id="__codelineno-12-64" name="__codelineno-12-64" href="#__codelineno-12-64"></a><span class="s">    logger -t nm-dispatcher-nordvpn "Internet toujours bloqué après retour de la box. Redémarrage propre de nordvpnd pour débloquer le VPN..."</span>
+<a id="__codelineno-12-65" name="__codelineno-12-65" href="#__codelineno-12-65"></a><span class="s">    systemctl restart nordvpnd.service</span>
+<a id="__codelineno-12-66" name="__codelineno-12-66" href="#__codelineno-12-66"></a><span class="s">) &amp;</span>
+<a id="__codelineno-12-67" name="__codelineno-12-67" href="#__codelineno-12-67"></a>
+<a id="__codelineno-12-68" name="__codelineno-12-68" href="#__codelineno-12-68"></a><span class="s">exit 0</span>
+<a id="__codelineno-12-69" name="__codelineno-12-69" href="#__codelineno-12-69"></a><span class="s">EOF</span>
 </code></pre></div>
 <p>Rendez le script exécutable et attribuez-lui les droits administrateur :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">755</span><span class="w"> </span>/etc/NetworkManager/dispatcher.d/95-nordvpn-recovery.sh
@@ -2876,14 +2883,14 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>sh<span class="w"> </span>-n<span class="w"> </span>/etc/NetworkManager/dispatcher.d/95-nordvpn-recovery.sh<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"Syntaxe OK"</span>
 </code></pre></div>
 <h3 id="2-test-a-chaud-dexecution">2. Test à chaud d'exécution<a class="headerlink" href="#2-test-a-chaud-dexecution" title="Permanent link">&para;</a></h3>
-<p>Simulez un appel de dispatcher pour valider son comportement sur une connexion saine :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>/etc/NetworkManager/dispatcher.d/95-nordvpn-recovery.sh<span class="w"> </span>enp0s31f6<span class="w"> </span>up
+<p>Simulez un appel de dispatcher pour valider son comportement sur une connexion saine (adapter avec votre nom d'interface) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>/etc/NetworkManager/dispatcher.d/95-nordvpn-recovery.sh<span class="w"> </span>enp3s0<span class="w"> </span>up
 <a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>sleep<span class="w"> </span><span class="m">6</span>
 <a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>journalctl<span class="w"> </span>-t<span class="w"> </span>nm-dispatcher-nordvpn<span class="w"> </span>-n<span class="w"> </span><span class="m">5</span><span class="w"> </span>--no-pager
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu dans les logs</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>nm-dispatcher-nordvpn: Ethernet (enp0s31f6) reconnecté. Surveillance de la connectivité...
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>nm-dispatcher-nordvpn: Ethernet (enp3s0) reconnecté. Surveillance de la connectivité...
 <a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>nm-dispatcher-nordvpn: Connectivité Internet opérationnelle via NordVPN, aucune action requise.
 </code></pre></div>
 </div>
