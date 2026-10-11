@@ -1,0 +1,3436 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation">
+      
+      
+        <meta name="author" content="Nicolas BODAINE">
+      
+      
+        <link rel="canonical" href="https://wiki.bodaine.fr/debug/nordvpn-dns-dnssec-ksk-2024-tailscale-hors-ligne/">
+      
+      
+        <link rel="prev" href="../nordvpn-perte-connexion-ethernet-reboot-box-onduleur/">
+      
+      
+        <link rel="next" href="../../astuces/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>NordVPN — Plus aucune résolution DNS (bascule de clé racine KSK-2024) et Tailscale hors ligne - Wiki Tech — NicoBOD</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        
+        <link rel="stylesheet" href="../../assets/external/fonts.googleapis.com/css.56f7ac64.css">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+    
+    
+      
+    
+    
+
+    <!-- SEO -->
+    <meta name="author" content="Nicolas BODAINE">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph : compléments non gérés par le plugin social.     -->
+    <!-- og:type/title/description/image/url sont posés par social.   -->
+    <meta property="og:site_name" content="Wiki Tech — NicoBOD">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card : la grande image et l'image elle-même sont      -->
+    <!-- héritées des balises og:image générées par le plugin social.  -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="NordVPN — Plus aucune résolution DNS (bascule de clé racine KSK-2024) et Tailscale hors ligne — Wiki Tech — NicoBOD">
+    <meta name="twitter:description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation">
+  
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#nordvpn-plus-aucune-resolution-dns-bascule-de-cle-racine-ksk-2024-et-tailscale-hors-ligne" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../.." title="Wiki Tech — NicoBOD" class="md-header__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wiki Tech — NicoBOD
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              NordVPN — Plus aucune résolution DNS (bascule de clé racine KSK-2024) et Tailscale hors ligne
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer en mode clair"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer en mode clair" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Passer en mode sombre"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer en mode sombre" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Revenir au thème système"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Revenir au thème système" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Partager" aria-label="Partager" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../systemes/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h16v10H4m16 2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4c-1.11 0-2 .89-2 2v10a2 2 0 0 0 2 2H0v2h24v-2z"/></svg>
+    
+  
+  Systèmes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reseaux/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v2h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+    
+  
+  Réseaux
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../cloud/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 20q-2.28 0-3.89-1.57Q1 16.85 1 14.58q0-1.95 1.17-3.48 1.18-1.53 3.08-1.95.63-2.3 2.5-3.72Q9.63 4 12 4q2.93 0 4.96 2.04Q19 8.07 19 11q1.73.2 2.86 1.5 1.14 1.28 1.14 3 0 1.88-1.31 3.19T18.5 20Z"/></svg>
+    
+  
+  Cloud
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../cybersecurite/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12h7c-.53 4.11-3.28 7.78-7 8.92zH5V6.3l7-3.11M12 1 3 5v6c0 5.55 3.84 10.73 9 12 5.16-1.27 9-6.45 9-12V5z"/></svg>
+    
+  
+  Cybersécurité
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../ia/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/></svg>
+    
+  
+  IA
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../automatisation/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+    
+  
+  Automatisation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../logiciels/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m0 5H3V4h18z"/></svg>
+    
+  
+  Logiciels
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 12h-4v-2h4m0 6h-4v-2h4m6-6h-2.81a6 6 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6 6 0 0 0-2.83 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20z"/></svg>
+    
+  
+  Debug
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../astuces/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+    
+  
+  Astuces
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../tags/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tags
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Wiki Tech — NicoBOD" class="md-nav__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../assets/logo.svg" alt="logo">
+
+    </a>
+    Wiki Tech — NicoBOD
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../systemes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Systèmes
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../reseaux/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Réseaux
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../cybersecurite/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cybersécurité
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../ia/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IA
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../automatisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automatisation
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../logiciels/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logiciels
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 12h-4v-2h4m0 6h-4v-2h4m6-6h-2.81a6 6 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6 6 0 0 0-2.83 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Debug
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../diagnostiquer-erreur-502-504-bad-gateway-serveur-web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Diagnostiquer une erreur 502/504 Bad Gateway sur un serveur web
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../diagnostiquer-materiel-pilotes-linux-dmesg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Diagnostiquer les problèmes matériels et pilotes sous Linux avec dmesg
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../diagnostiquer-consommation-cpu-memoire-htop-free/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Diagnostiquer la consommation CPU et mémoire sous Linux avec htop et free
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../diagnostiquer-disque-plein-saturation-io-iostat-iotop-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Diagnostiquer un disque plein ou une saturation I/O sur Linux avec iostat et iotop
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../centraliser-exporter-journaux-linux-rsyslog-serveur-distant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Centraliser et exporter les journaux Linux avec rsyslog vers un serveur de logs distant
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../journalctl-lire-filtrer-suivre-logs-systemd-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lire, filtrer et suivre les logs avec `journalctl` pour diagnostiquer un service Linux
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../identifier-ports-ouverts-services-ecoute-ss-lsof-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Identifier les ports ouverts et les services à l’écoute avec `ss` et `lsof` sous Linux
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../capturer-diagnostiquer-trafic-reseau-tcpdump/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capturer et diagnostiquer le trafic réseau en ligne de commande avec tcpdump
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../diagnostiquer-processus-defaillant-strace/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Diagnostiquer un processus défaillant avec strace
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../diagnostiquer-conteneur-docker-en-echec-logs-inspect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Diagnostiquer un conteneur Docker en échec avec logs et inspect
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deboguer-application-python-pdb-cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Déboguer une application Python avec pdb en ligne de commande
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nvidia-veille-ecran-noir/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NVIDIA — Écran noir après veille
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appimagelauncher-compression-zstd-ubuntu-2404/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AppImageLauncher — Échec d'intégration sur Ubuntu 24.04 (compression zstd)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sniffnet-appimage-ubuntu-2404/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sniffnet AppImage — Installation et lancement sur Ubuntu 24.04
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bluetooth-sortie-audio-absente-hfp-wireplumber/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bluetooth — Écouteurs appairés mais absents des sorties audio (WirePlumber/HFP)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nordvpn-perte-connexion-ethernet-reboot-box-onduleur/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NordVPN — Perte de connexion Ethernet après reboot box (PC sur onduleur)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NordVPN — DNS cassé (bascule KSK-2024) et Tailscale hors ligne
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NordVPN — DNS cassé (bascule KSK-2024) et Tailscale hors ligne
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#contexte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contexte
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-1-dns-la-bascule-de-la-cle-racine-dnssec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 1 — DNS : la bascule de la clé racine DNSSEC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Partie 1 — DNS : la bascule de la clé racine DNSSEC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comprendre-la-chaine-de-confiance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comprendre la chaîne de confiance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#le-calendrier-de-la-bascule-2024-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Le calendrier de la bascule 2024-2026
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pourquoi-presque-personne-na-rien-vu-sauf-ce-pc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pourquoi presque personne n'a rien vu… sauf ce PC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#diagnostic-pas-a-pas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagnostic pas-à-pas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resolution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Résolution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vérification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#anticiper-les-prochaines-bascules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Anticiper les prochaines bascules
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-2-tailscale-offline-des-que-nordvpn-est-connecte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 2 — Tailscale « offline » dès que NordVPN est connecté
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Partie 2 — Tailscale « offline » dès que NordVPN est connecté">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#symptomes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Symptômes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comprendre-le-blocage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comprendre le blocage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#diagnostic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagnostic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#la-fausse-bonne-idee-nordvpn-set-fwmark-0x80000" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        La fausse bonne idée : nordvpn set fwmark 0x80000
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resolution-faire-passer-le-tcp-de-tailscaled-dans-le-tunnel-nordvpn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Résolution : faire passer le TCP de tailscaled dans le tunnel NordVPN
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bonus-le-dns-de-tailscale-en-concurrence-avec-celui-de-nordvpn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bonus : le DNS de Tailscale en concurrence avec celui de NordVPN
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verification_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vérification
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reflexes-de-diagnostic-a-retenir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Réflexes de diagnostic à retenir
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aide-memoire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aide-mémoire
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glossaire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Glossaire
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../astuces/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Astuces
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tags/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.5 7A1.5 1.5 0 0 1 4 5.5 1.5 1.5 0 0 1 5.5 4 1.5 1.5 0 0 1 7 5.5 1.5 1.5 0 0 1 5.5 7m15.91 4.58-9-9C12.05 2.22 11.55 2 11 2H4c-1.11 0-2 .89-2 2v7c0 .55.22 1.05.59 1.41l8.99 9c.37.36.87.59 1.42.59s1.05-.23 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.56-.23-1.06-.59-1.42"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#contexte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contexte
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-1-dns-la-bascule-de-la-cle-racine-dnssec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 1 — DNS : la bascule de la clé racine DNSSEC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Partie 1 — DNS : la bascule de la clé racine DNSSEC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comprendre-la-chaine-de-confiance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comprendre la chaîne de confiance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#le-calendrier-de-la-bascule-2024-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Le calendrier de la bascule 2024-2026
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pourquoi-presque-personne-na-rien-vu-sauf-ce-pc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pourquoi presque personne n'a rien vu… sauf ce PC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#diagnostic-pas-a-pas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagnostic pas-à-pas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resolution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Résolution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vérification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#anticiper-les-prochaines-bascules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Anticiper les prochaines bascules
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-2-tailscale-offline-des-que-nordvpn-est-connecte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 2 — Tailscale « offline » dès que NordVPN est connecté
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Partie 2 — Tailscale « offline » dès que NordVPN est connecté">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#symptomes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Symptômes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comprendre-le-blocage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comprendre le blocage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#diagnostic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagnostic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#la-fausse-bonne-idee-nordvpn-set-fwmark-0x80000" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        La fausse bonne idée : nordvpn set fwmark 0x80000
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resolution-faire-passer-le-tcp-de-tailscaled-dans-le-tunnel-nordvpn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Résolution : faire passer le TCP de tailscaled dans le tunnel NordVPN
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bonus-le-dns-de-tailscale-en-concurrence-avec-celui-de-nordvpn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bonus : le DNS de Tailscale en concurrence avec celui de NordVPN
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verification_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vérification
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reflexes-de-diagnostic-a-retenir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Réflexes de diagnostic à retenir
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aide-memoire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aide-mémoire
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glossaire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Glossaire
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Debug
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:dns" class="md-tag">dns</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:dnssec" class="md-tag">dnssec</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:nftables" class="md-tag">nftables</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:nordvpn" class="md-tag">nordvpn</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:reseau" class="md-tag">reseau</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:routage" class="md-tag">routage</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:systemd" class="md-tag">systemd</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:systemd-resolved" class="md-tag">systemd-resolved</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:tailscale" class="md-tag">tailscale</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:ubuntu" class="md-tag">ubuntu</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:vpn" class="md-tag">vpn</a>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/NicoBOD/wiki-tech/edit/main/docs/debug/nordvpn-dns-dnssec-ksk-2024-tailscale-hors-ligne.md" title="Editer cette page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/NicoBOD/wiki-tech/raw/main/docs/debug/nordvpn-dns-dnssec-ksk-2024-tailscale-hors-ligne.md" title="Consulter la source de cette page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<h1 id="nordvpn-plus-aucune-resolution-dns-bascule-de-cle-racine-ksk-2024-et-tailscale-hors-ligne">NordVPN — Plus aucune résolution DNS (bascule de clé racine KSK-2024) et Tailscale hors ligne<a class="headerlink" href="#nordvpn-plus-aucune-resolution-dns-bascule-de-cle-racine-ksk-2024-et-tailscale-hors-ligne" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Résumé</p>
+<p>Le <strong>11 octobre 2026</strong>, sur un PC sous Ubuntu 24.04, l'activation de <strong>NordVPN</strong> coupe toute résolution de noms : <code>ping 1.1.1.1</code> répond, mais <code>ping free.fr</code> renvoie <code>Nom ou service inconnu</code>. Sans VPN, tout fonctionne.</p>
+<p>La cause ne vient ni de NordVPN ni du réseau, mais d'un <strong>événement mondial</strong> : ce jour-là, la zone racine du DNS commence à signer avec sa nouvelle clé <strong>KSK-2024</strong> (key tag <code>38696</code>). NordVPN active la validation <strong>DNSSEC</strong> sur son interface, et le <code>systemd-resolved</code> d'Ubuntu 24.04 (version 255) ne connaît que l'ancienne clé <strong>KSK-2017</strong> (<code>20326</code>), inscrite en dur dans son binaire. Toute la chaîne de confiance échoue (<code>DNSSEC validation failed: missing-key</code>), y compris pour les domaines non signés. La correction consiste à déclarer les deux clés racine dans <code>/etc/dnssec-trust-anchors.d/</code>, via un lien vers le fichier du paquet <code>dns-root-data</code>, pour suivre automatiquement les prochaines bascules.</p>
+<p>En testant la correction, un second problème apparaît : <strong>Tailscale reste « offline » dès que NordVPN est connecté</strong>. tailscaled marque ses propres paquets (<code>0x80000</code>) pour qu'ils contournent les tunnels, et le pare-feu nftables de NordVPN (<code>policy drop</code>) les jette. Les exceptions UDP habituelles ne suffisent pas, car la coordination et les relais DERP passent en <strong>TCP 443</strong>. La solution ajoute une seule règle de routage, persistée par un service systemd, qui fait passer le TCP de tailscaled <strong>dans</strong> le tunnel NordVPN. L'option <code>nordvpn set fwmark 0x80000</code>, tentante, est écartée : elle casse le trafic entre les appareils du tailnet.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Propriété</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Difficulté</td>
+<td>Avancé</td>
+</tr>
+<tr>
+<td>OS / Environnement</td>
+<td>Ubuntu 24.04 LTS Desktop (GNOME)</td>
+</tr>
+<tr>
+<td>Composants clés</td>
+<td>systemd-resolved 255, NordVPN 5.4 (NordWhisper), Tailscale 1.104, nftables, routage par politique (<code>ip rule</code>)</td>
+</tr>
+<tr>
+<td>Élément déclencheur</td>
+<td>Bascule de la clé racine DNSSEC (KSK-2017 → KSK-2024) le 11/10/2026</td>
+</tr>
+<tr>
+<td>Dernière mise à jour</td>
+<td>2026-10-11</td>
+</tr>
+</tbody>
+</table>
+<p><em>(Dans les exemples ci-dessous, nous utilisons l'interface Ethernet <code>enp3s0</code>, le réseau local <code>192.168.1.0/24</code>, la box <code>192.168.1.1</code>, le tailnet fictif <code>tailnet-exemple.ts.net</code> et des adresses Tailscale fictives en <code>100.64.0.x</code>. Les serveurs DNS de NordVPN, les numéros de clés et les règles de pare-feu sont, eux, réels.)</em></p>
+<h2 id="contexte">Contexte<a class="headerlink" href="#contexte" title="Permanent link">&para;</a></h2>
+<ul>
+<li>PC fixe sous Ubuntu 24.04, <strong>NordVPN</strong> en connexion automatique au démarrage, technologie <strong>NordWhisper</strong> (interface <code>qtun</code> ; avec NordLynx ou OpenVPN, l'interface s'appelle <code>nordlynx</code> ou <code>nordtun</code>).</li>
+<li><strong>Tailscale</strong> installé en parallèle, avec des exceptions NordVPN prévues pour lui : ports UDP <code>41641</code> et <code>3478</code>, sous-réseau <code>100.64.0.0/10</code>.</li>
+<li>Symptômes, uniquement quand NordVPN est connecté :<ul>
+<li><code>ping 1.1.1.1</code> fonctionne, <code>ping free.fr</code> échoue (<code>Nom ou service inconnu</code>) ;</li>
+<li>même après <code>tailscale down</code>, le problème persiste : Tailscale n'est donc pas en cause pour le DNS ;</li>
+<li>plus tard : <code>tailscale status</code> affiche <strong>la machine elle-même</strong> comme <code>offline</code>, et les réglages DNS modifiés dans la console Tailscale ne sont jamais appliqués.</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="partie-1-dns-la-bascule-de-la-cle-racine-dnssec">Partie 1 — DNS : la bascule de la clé racine DNSSEC<a class="headerlink" href="#partie-1-dns-la-bascule-de-la-cle-racine-dnssec" title="Permanent link">&para;</a></h2>
+<h3 id="comprendre-la-chaine-de-confiance">Comprendre la chaîne de confiance<a class="headerlink" href="#comprendre-la-chaine-de-confiance" title="Permanent link">&para;</a></h3>
+<p>DNSSEC signe les réponses DNS. Un résolveur qui <strong>valide</strong> vérifie la signature de proche en proche : la racine <code>.</code> garantit la clé de <code>.fr</code>, <code>.fr</code> garantit celle de <code>free.fr</code>, etc. Tout en haut, il faut connaître à l'avance la clé de la racine (la <strong>KSK</strong>, <em>Key Signing Key</em>) : c'est l'<strong>ancre de confiance</strong>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Ancre de confiance (connue localement) ── doit correspondre à ──&gt; KSK de la racine
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>                                                                    │ signe
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>                                                                    ▼
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>                                                     DNSKEY de la racine (ZSK)
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                                                                    │ signent
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>                                                                    ▼
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>                                                     DS de .fr → DNSKEY de .fr → … → réponse
+</code></pre></div>
+<p>Si l'ancre locale ne correspond à aucune clé qui signe réellement la racine, <strong>rien</strong> ne peut être validé en dessous. C'est vrai aussi pour un domaine non signé : prouver qu'il n'est <em>pas</em> signé demande aussi une chaîne validée depuis la racine.</p>
+<h3 id="le-calendrier-de-la-bascule-2024-2026">Le calendrier de la bascule 2024-2026<a class="headerlink" href="#le-calendrier-de-la-bascule-2024-2026" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Étape</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>11 janvier 2025</td>
+<td>KSK-2024 (<code>38696</code>) publiée dans la racine, à côté de KSK-2017 (<code>20326</code>)</td>
+</tr>
+<tr>
+<td>10 février 2025</td>
+<td>Les résolveurs qui appliquent le RFC 5011 l'adoptent automatiquement (30 jours de délai de garde)</td>
+</tr>
+<tr>
+<td><strong>11 octobre 2026</strong></td>
+<td><strong>KSK-2024 signe seule</strong> ; KSK-2017 reste publiée mais ne signe plus</td>
+</tr>
+<tr>
+<td>11 janvier 2027</td>
+<td>KSK-2017 révoquée</td>
+</tr>
+</tbody>
+</table>
+<h3 id="pourquoi-presque-personne-na-rien-vu-sauf-ce-pc">Pourquoi presque personne n'a rien vu… sauf ce PC<a class="headerlink" href="#pourquoi-presque-personne-na-rien-vu-sauf-ce-pc" title="Permanent link">&para;</a></h3>
+<ul>
+<li>La plupart des machines <strong>ne valident pas</strong> DNSSEC elles-mêmes : elles font confiance au résolveur de la box, du FAI ou d'un service public. Ces résolveurs (Unbound, BIND, services publics…) appliquent le <strong>RFC 5011</strong> : ils ont vu la nouvelle clé apparaître en 2025 et l'ont adoptée seuls (plus de 95 % d'adoption mesurée avant la bascule).</li>
+<li>Hors VPN, toutes les interfaces de ce PC sont en <code>DNSSEC=no</code> : aucune validation locale, aucun impact.</li>
+<li><strong>Sous NordVPN</strong>, l'interface <code>qtun</code> passe en <code>DNSSEC=allow-downgrade</code> : le PC devient lui-même validateur.</li>
+<li><code>systemd-resolved</code> <strong>n'applique pas le RFC 5011</strong>. Sa clé racine est compilée dans le binaire. La version 255 livrée avec Ubuntu 24.04 est antérieure à KSK-2024 et ne la contient pas (des versions plus récentes de systemd l'intègrent).</li>
+<li>Ironie : la nouvelle clé était déjà sur le disque depuis 2024, dans <code>/usr/share/dns/root.ds</code> (paquet <code>dns-root-data</code>, utilisé par dnsmasq ou Unbound)… mais <code>systemd-resolved</code> ne lit pas ce fichier.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Pourquoi <code>allow-downgrade</code> ne « rétrograde » pas</p>
+<p>Le mode <code>allow-downgrade</code> ne renonce à la validation que si le serveur <strong>ne gère pas du tout</strong> DNSSEC (aucune signature renvoyée). Ici, les serveurs DNS de NordVPN renvoient bien les signatures ; elles sont simplement jugées invalides faute de la bonne ancre. Une réponse dont la signature ne peut être validée est <strong>refusée</strong> : sinon, un attaquant pourrait falsifier des signatures pour forcer le retour au DNS non protégé.</p>
+</div>
+<h3 id="diagnostic-pas-a-pas">Diagnostic pas-à-pas<a class="headerlink" href="#diagnostic-pas-a-pas" title="Permanent link">&para;</a></h3>
+<h4 id="1-isoler-la-couche-dns">1. Isoler la couche DNS<a class="headerlink" href="#1-isoler-la-couche-dns" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">1</span>.1.1.1<span class="w">     </span><span class="c1"># répond : le tunnel et le routage fonctionnent</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">2</span><span class="w"> </span>free.fr<span class="w">     </span><span class="c1"># « Nom ou service inconnu » : seule la résolution est cassée</span>
+</code></pre></div>
+<h4 id="2-distinguer-le-serveur-dns-du-resolveur-local">2. Distinguer le serveur DNS du résolveur local<a class="headerlink" href="#2-distinguer-le-serveur-dns-du-resolveur-local" title="Permanent link">&para;</a></h4>
+<p><code>ping</code> passe par <code>getaddrinfo()</code>, qui ramène toutes les erreurs à « Nom ou service inconnu ». Il faut interroger les deux maillons séparément :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Le serveur DNS de NordVPN, interrogé directement : il répond</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>dig<span class="w"> </span>+short<span class="w"> </span>@103.86.96.100<span class="w"> </span>free.fr
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Le résolveur local (systemd-resolved) : il échoue, et dit pourquoi</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>resolvectl<span class="w"> </span>query<span class="w"> </span>free.fr
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>212.27.48.10
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>free.fr: resolve call failed: DNSSEC validation failed: missing-key
+</code></pre></div>
+<p>Le serveur est sain : le problème est <strong>local</strong>.</p>
+<h4 id="3-reperer-qui-valide-dnssec">3. Repérer qui valide DNSSEC<a class="headerlink" href="#3-reperer-qui-valide-dnssec" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>resolvectl<span class="w"> </span>dnssec
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Global: no
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>Link 2 (enp3s0): no
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>Link 6 (tailscale0): no
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>Link 23 (qtun): allow-downgrade
+</code></pre></div>
+<p>Seule l'interface du VPN valide DNSSEC.</p>
+<h4 id="4-mesurer-lampleur-dans-le-journal">4. Mesurer l'ampleur dans le journal<a class="headerlink" href="#4-mesurer-lampleur-dans-le-journal" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Nombre d'échecs de validation par démarrage</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">for</span><span class="w"> </span>b<span class="w"> </span><span class="k">in</span><span class="w"> </span>-3<span class="w"> </span>-2<span class="w"> </span>-1<span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"boot </span><span class="nv">$b</span><span class="s2"> : </span><span class="k">$(</span>journalctl<span class="w"> </span>-u<span class="w"> </span>systemd-resolved<span class="w"> </span>-b<span class="w"> </span><span class="nv">$b</span><span class="w"> </span>--no-pager<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s1">'DNSSEC validation failed'</span><span class="k">)</span><span class="s2">"</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="k">done</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>boot -3 : 21
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>boot -2 : 43
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>boot -1 : 66877
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>boot 0 : 14128
+</code></pre></div>
+<p>Quelques dizaines d'échecs par démarrage relèvent du bruit normal (domaines mal configurés). Des dizaines de milliers, à partir d'une date précise, signent une panne de la chaîne de confiance.</p>
+<h4 id="5-verifier-quelle-cle-signe-la-racine-aujourdhui">5. Vérifier quelle clé signe la racine aujourd'hui<a class="headerlink" href="#5-verifier-quelle-cle-signe-la-racine-aujourdhui" title="Permanent link">&para;</a></h4>
+<div class="admonition warning">
+<p class="admonition-title">Interroger les serveurs racine, pas un résolveur public</p>
+<p>L'enregistrement <code>DNSKEY</code> de la racine a une durée de vie de 48 h dans les caches. Un résolveur public peut encore renvoyer l'<strong>ancienne</strong> signature pendant deux jours et masquer la bascule. Seuls les serveurs racine (sans cache) montrent l'état réel.</p>
+</div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>dig<span class="w"> </span>+dnssec<span class="w"> </span>+norec<span class="w"> </span>@a.root-servers.net<span class="w"> </span>.<span class="w"> </span>DNSKEY<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'$4=="RRSIG"{print "signé par key tag", $11, "valide du", $10}'</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>signé par key tag 38696 valide du 20261011000000
+</code></pre></div>
+<h4 id="6-verifier-quelles-cles-connait-systemd-resolved">6. Vérifier quelles clés connaît <code>systemd-resolved</code><a class="headerlink" href="#6-verifier-quelles-cles-connait-systemd-resolved" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>python3<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="s">data = open("/usr/lib/systemd/systemd-resolved", "rb").read()</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="s">cles = {</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="s">    "KSK-2017 (20326)": "E06D44B80B8F1D39A95C0B0D7C65D08458E880409BBC683457104237C7F8EC8D",</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="s">    "KSK-2024 (38696)": "683D2D0ACB8C9B712A1948B27F741219298D0A450D612C483AF444A4C0FB2B16",</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="s">}</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="s">for nom, empreinte in cles.items():</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="s">    print(nom, "présente" if bytes.fromhex(empreinte) in data else "ABSENTE")</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="s">EOF</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>KSK-2017 (20326) présente
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>KSK-2024 (38696) ABSENTE
+</code></pre></div>
+<p>Le diagnostic est complet : la racine signe avec <code>38696</code>, le résolveur local ne connaît que <code>20326</code>.</p>
+<h3 id="resolution">Résolution<a class="headerlink" href="#resolution" title="Permanent link">&para;</a></h3>
+<h4 id="1-controler-le-fichier-de-cles-du-paquet-dns-root-data">1. Contrôler le fichier de clés du paquet <code>dns-root-data</code><a class="headerlink" href="#1-controler-le-fichier-de-cles-du-paquet-dns-root-data" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>cat<span class="w"> </span>/usr/share/dns/root.ds
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>. IN DS 20326 8 2 E06D44B80B8F1D39A95C0B0D7C65D08458E880409BBC683457104237C7F8EC8D
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>. IN DS 38696 8 2 683D2D0ACB8C9B712A1948B27F741219298D0A450D612C483AF444A4C0FB2B16
+</code></pre></div>
+<p>Ces deux empreintes sont identiques à celles publiées par l'IANA dans <a href="https://data.iana.org/root-anchors/root-anchors.xml">root-anchors.xml</a>.</p>
+<h4 id="2-declarer-les-ancres-via-un-lien-symbolique">2. Déclarer les ancres via un lien symbolique<a class="headerlink" href="#2-declarer-les-ancres-via-un-lien-symbolique" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/etc/dnssec-trust-anchors.d
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>sudo<span class="w"> </span>ln<span class="w"> </span>-sf<span class="w"> </span>/usr/share/dns/root.ds<span class="w"> </span>/etc/dnssec-trust-anchors.d/root.positive
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>systemd-resolved
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Le fichier remplace la clé intégrée : il doit contenir les deux clés</p>
+<p>Dès qu'une ancre positive pour la racine est déclarée dans <code>/etc/dnssec-trust-anchors.d/</code>, <code>systemd-resolved</code> <strong>ignore sa clé intégrée</strong>. Le fichier doit donc contenir l'ancienne et la nouvelle clé pendant la transition.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Pourquoi un lien plutôt qu'une copie</p>
+<p>Une copie resterait figée et désactiverait à jamais la clé intégrée, même après une mise à jour de systemd. Le lien suit le paquet <code>dns-root-data</code>, qu'Ubuntu met à jour bien avant chaque bascule (il contenait KSK-2024 près de deux ans avant le 11 octobre 2026).</p>
+</div>
+<div class="admonition failure">
+<p class="admonition-title">Contournement temporaire (à éviter durablement)</p>
+<p>En urgence, on peut couper la validation sur l'interface du VPN jusqu'à la prochaine reconnexion : <code>sudo resolvectl dnssec qtun no</code>. C'est aussi un excellent <strong>test de confirmation</strong> : si tout remarche, DNSSEC est bien en cause. Mais la protection DNSSEC est alors perdue.</p>
+</div>
+<h3 id="verification">Vérification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Les deux ancres sont chargées au démarrage du résolveur</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>systemd-resolved<span class="w"> </span>-b<span class="w"> </span>--no-pager<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A2<span class="w"> </span><span class="s2">"Positive Trust Anchors"</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="c1"># Sous NordVPN : un domaine signé est authentifié…</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>resolvectl<span class="w"> </span>query<span class="w"> </span>isc.org<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>authenticated
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="c1"># … un domaine volontairement mal signé est refusé…</span>
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>resolvectl<span class="w"> </span>query<span class="w"> </span>dnssec-failed.org
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>
+<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="c1"># … et la navigation fonctionne</span>
+<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">2</span><span class="w"> </span>free.fr
+</code></pre></div>
+<div class="admonition success">
+<p class="admonition-title">Résultat attendu</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>Positive Trust Anchors:
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>. IN DS 20326 8 2 e06d44b8…
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>. IN DS 38696 8 2 683d2d0a…
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>-- Data is authenticated: yes; Data was acquired via local or encrypted transport: no
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>dnssec-failed.org: resolve call failed: DNSSEC validation failed: missing-key
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>2 packets transmitted, 2 received, 0% packet loss
+</code></pre></div>
+<p><code>free.fr</code> ou <code>github.com</code> affichent <code>authenticated: no</code> : c'est normal, ces domaines ne sont pas signés.</p>
+</div>
+<h3 id="anticiper-les-prochaines-bascules">Anticiper les prochaines bascules<a class="headerlink" href="#anticiper-les-prochaines-bascules" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Échéance</th>
+<th>Impact avec le lien <code>root.positive</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>11 janvier 2027 — révocation de KSK-2017</td>
+<td>Aucun : KSK-2024 est dans le fichier</td>
+</tr>
+<tr>
+<td>2027 → 2029 — changement d'algorithme RSA → ECDSA (proposition ICANN)</td>
+<td>Aucun si <code>dns-root-data</code> est mis à jour à temps</td>
+</tr>
+<tr>
+<td>Ensuite — un cycle de bascule tous les 3 ans</td>
+<td>Idem</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Les bascules sont annoncées <strong>des mois à l'avance</strong> (blog et liste <code>ksk-rollover</code> de l'ICANN, listes FRnOG ou dns-operations, presse spécialisée).</li>
+<li>À chaque annonce, se poser une question : <strong>une de mes machines valide-t-elle DNSSEC avec une ancre figée ?</strong> Les candidats habituels sont <code>systemd-resolved</code> (dès qu'un VPN ou un réglage active DNSSEC) et les résolveurs configurés sans mise à jour automatique des clés.</li>
+<li>Avant la date de bascule, vérifier que la nouvelle clé est présente :</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>grep<span class="w"> </span>&lt;key-tag-de-la-nouvelle-clé&gt;<span class="w"> </span>/usr/share/dns/root.ds
+</code></pre></div>
+<hr />
+<h2 id="partie-2-tailscale-offline-des-que-nordvpn-est-connecte">Partie 2 — Tailscale « offline » dès que NordVPN est connecté<a class="headerlink" href="#partie-2-tailscale-offline-des-que-nordvpn-est-connecte" title="Permanent link">&para;</a></h2>
+<h3 id="symptomes">Symptômes<a class="headerlink" href="#symptomes" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>tailscale<span class="w"> </span>status<span class="w"> </span>--json<span class="w"> </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s1">'import json,sys; d=json.load(sys.stdin); print(d["Self"]["Online"]); print(*d.get("Health") or [], sep="\n")'</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>False
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>Unable to connect to the Tailscale coordination server to synchronize the state of your tailnet.
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>You are logged out. The last login error was: register request: … context deadline exceeded
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>tailscaled<span class="w"> </span>--since<span class="w"> </span><span class="s2">"-10min"</span><span class="w"> </span>--no-pager<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">"timeout|failed"</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>logtail: dial "log.tailscale.com:443" failed: dial tcp …:443: i/o timeout
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>derp.Recv(derp-…): derphttp.Client.Recv connect to region …: context deadline exceeded
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>control: controlhttp: failed dialing using DialPlan … connect: cannot assign requested address
+</code></pre></div>
+<p>Conséquence sournoise : tant que tailscaled ne joint pas son serveur de coordination, <strong>aucun changement fait dans la console Tailscale n'arrive sur la machine</strong> (réglages DNS compris). <code>tailscale dns status</code> continue d'afficher l'ancienne configuration.</p>
+<h3 id="comprendre-le-blocage">Comprendre le blocage<a class="headerlink" href="#comprendre-le-blocage" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>tailscaled (sockets marqués 0x80000 = « ne pas passer par un tunnel »)
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>  │
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>  ├─ ip rule 5210 : fwmark 0x80000/0xff0000 → table main → enp3s0 (sortie directe)
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>  │
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>  └─ nftables « inet nordvpn », chaîne output, policy DROP. N'accepte que :
+<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>       • oifname "qtun"                         (le tunnel)
+<a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>       • meta mark 0xe1f1                       (marque propre à NordVPN)
+<a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>       • ip daddr @allowlist_subnets            (ex. 100.64.0.0/10)
+<a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a>       • udp sport @udp_allowlist               (ex. 41641, 3478)
+<a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a>     ⇒ UDP 41641 (WireGuard / STUN)  : accepté
+<a id="__codelineno-22-11" name="__codelineno-22-11" href="#__codelineno-22-11"></a>     ⇒ TCP 443 (coordination, DERP)  : JETÉ
+</code></pre></div>
+<p>Les exceptions NordVPN habituellement conseillées pour Tailscale laissent passer le trafic WireGuard, mais pas le TCP 443 qui sert à joindre le serveur de coordination et les relais DERP.</p>
+<h3 id="diagnostic">Diagnostic<a class="headerlink" href="#diagnostic" title="Permanent link">&para;</a></h3>
+<h4 id="1-comparer-la-route-dun-paquet-normal-et-dun-paquet-de-tailscaled">1. Comparer la route d'un paquet normal et d'un paquet de tailscaled<a class="headerlink" href="#1-comparer-la-route-dun-paquet-normal-et-dun-paquet-de-tailscaled" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>ip<span class="w"> </span>route<span class="w"> </span>get<span class="w"> </span><span class="m">1</span>.1.1.1
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>ip<span class="w"> </span>route<span class="w"> </span>get<span class="w"> </span><span class="m">1</span>.1.1.1<span class="w"> </span>mark<span class="w"> </span>0x80000
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>1.1.1.1 dev qtun table 205 src 10.3.0.2
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>1.1.1.1 via 192.168.1.1 dev enp3s0 src 192.168.1.50 mark 0x80000
+</code></pre></div>
+<h4 id="2-prouver-le-blocage-avec-une-connexion-marquee">2. Prouver le blocage avec une connexion marquée<a class="headerlink" href="#2-prouver-le-blocage-avec-une-connexion-marquee" title="Permanent link">&para;</a></h4>
+<p>Ce script ouvre une connexion TCP vers le serveur de coordination avec chacune des marques (la marque d'un socket exige les droits root) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>sudo<span class="w"> </span>python3<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="s">import socket</span>
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="s">SO_MARK = 36</span>
+<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="s">ip = socket.gethostbyname("controlplane.tailscale.com")</span>
+<a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="s">for nom, marque in [("sans marque", None), ("marque tailscaled 0x80000", 0x80000), ("marque NordVPN 0xe1f1", 0xE1F1)]:</span>
+<a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a><span class="s">    s = socket.socket(); s.settimeout(6)</span>
+<a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a><span class="s">    if marque is not None:</span>
+<a id="__codelineno-25-8" name="__codelineno-25-8" href="#__codelineno-25-8"></a><span class="s">        s.setsockopt(socket.SOL_SOCKET, SO_MARK, marque)</span>
+<a id="__codelineno-25-9" name="__codelineno-25-9" href="#__codelineno-25-9"></a><span class="s">    try:</span>
+<a id="__codelineno-25-10" name="__codelineno-25-10" href="#__codelineno-25-10"></a><span class="s">        s.connect((ip, 443)); print(f"{nom:28} -&gt; connecté via {s.getsockname()[0]}")</span>
+<a id="__codelineno-25-11" name="__codelineno-25-11" href="#__codelineno-25-11"></a><span class="s">    except OSError as e:</span>
+<a id="__codelineno-25-12" name="__codelineno-25-12" href="#__codelineno-25-12"></a><span class="s">        print(f"{nom:28} -&gt; ÉCHEC ({e})")</span>
+<a id="__codelineno-25-13" name="__codelineno-25-13" href="#__codelineno-25-13"></a><span class="s">    s.close()</span>
+<a id="__codelineno-25-14" name="__codelineno-25-14" href="#__codelineno-25-14"></a><span class="s">EOF</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>sans marque                  -&gt; connecté via 10.3.0.2
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>marque tailscaled 0x80000    -&gt; ÉCHEC (timed out)
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>marque NordVPN 0xe1f1        -&gt; connecté via 192.168.1.50
+</code></pre></div>
+<p>Le chemin réseau fonctionne : c'est bien le pare-feu de NordVPN qui jette les paquets de tailscaled.</p>
+<h3 id="la-fausse-bonne-idee-nordvpn-set-fwmark-0x80000">La fausse bonne idée : <code>nordvpn set fwmark 0x80000</code><a class="headerlink" href="#la-fausse-bonne-idee-nordvpn-set-fwmark-0x80000" title="Permanent link">&para;</a></h3>
+<p>Donner à NordVPN la même marque que Tailscale semble logique : son pare-feu accepterait alors les paquets de tailscaled. <strong>Mais cela casse le tailnet.</strong> L'exception <code>100.64.0.0/10</code> de NordVPN <strong>re-marque</strong> le trafic vers les appareils Tailscale avec la marque de NordVPN. Avec <code>0x80000</code>, ce trafic tomberait sur la règle 5210 de Tailscale et partirait vers la box au lieu de <code>tailscale0</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>ip<span class="w"> </span>route<span class="w"> </span>get<span class="w"> </span><span class="m">100</span>.64.0.20<span class="w"> </span>mark<span class="w"> </span>0xe1f1<span class="w">     </span><span class="c1"># marque actuelle de NordVPN</span>
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>ip<span class="w"> </span>route<span class="w"> </span>get<span class="w"> </span><span class="m">100</span>.64.0.20<span class="w"> </span>mark<span class="w"> </span>0x80000<span class="w">    </span><span class="c1"># marque proposée</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>100.64.0.20 dev tailscale0 table 52 src 100.64.0.10 mark 0xe1f1
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>100.64.0.20 via 192.168.1.1 dev enp3s0 src 192.168.1.50 mark 0x80000
+</code></pre></div>
+<p>Tailscale joindrait ses serveurs, mais les appareils ne se joindraient plus entre eux.</p>
+<h3 id="resolution-faire-passer-le-tcp-de-tailscaled-dans-le-tunnel-nordvpn">Résolution : faire passer le TCP de tailscaled dans le tunnel NordVPN<a class="headerlink" href="#resolution-faire-passer-le-tcp-de-tailscaled-dans-le-tunnel-nordvpn" title="Permanent link">&para;</a></h3>
+<h4 id="1-prerequis-les-exceptions-nordvpn-pour-le-trafic-tailscale">1. Prérequis : les exceptions NordVPN pour le trafic Tailscale<a class="headerlink" href="#1-prerequis-les-exceptions-nordvpn-pour-le-trafic-tailscale" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>nordvpn<span class="w"> </span>allowlist<span class="w"> </span>add<span class="w"> </span>port<span class="w"> </span><span class="m">41641</span><span class="w"> </span>protocol<span class="w"> </span>UDP
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>nordvpn<span class="w"> </span>allowlist<span class="w"> </span>add<span class="w"> </span>port<span class="w"> </span><span class="m">3478</span><span class="w"> </span>protocol<span class="w"> </span>UDP
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>nordvpn<span class="w"> </span>allowlist<span class="w"> </span>add<span class="w"> </span>subnet<span class="w"> </span><span class="m">100</span>.64.0.0/10
+</code></pre></div>
+<h4 id="2-reperer-la-table-de-routage-de-nordvpn">2. Repérer la table de routage de NordVPN<a class="headerlink" href="#2-reperer-la-table-de-routage-de-nordvpn" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>ip<span class="w"> </span>rule<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"not from all fwmark"</span>
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>ip<span class="w"> </span>route<span class="w"> </span>show<span class="w"> </span>table<span class="w"> </span><span class="m">205</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>32765:  not from all fwmark 0xe1f1 lookup 205
+<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>default dev qtun scope link
+</code></pre></div>
+<p>Ici, la table est <code>205</code>. Adaptez la suite si votre version de NordVPN en utilise une autre.</p>
+<h4 id="3-tester-la-regle-a-chaud">3. Tester la règle à chaud<a class="headerlink" href="#3-tester-la-regle-a-chaud" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>sudo<span class="w"> </span>ip<span class="w"> </span>rule<span class="w"> </span>add<span class="w"> </span>priority<span class="w"> </span><span class="m">5100</span><span class="w"> </span>fwmark<span class="w"> </span>0x80000/0xff0000<span class="w"> </span>ipproto<span class="w"> </span>tcp<span class="w"> </span>lookup<span class="w"> </span><span class="m">205</span>
+</code></pre></div>
+<p>En une minute environ, <code>tailscale status</code> doit repasser la machine en ligne. Pour annuler : <code>sudo ip rule del priority 5100</code>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Pourquoi cette règle est sûre</p>
+<ul>
+<li><strong>Priorité 5100</strong> : avant les règles de Tailscale (5210 à 5270), et hors de la plage qu'il gère lui-même, qui ne l'efface donc pas en redémarrant.</li>
+<li><strong>TCP uniquement</strong> : la coordination et les relais DERP passent dans le tunnel, le seul chemin accepté par NordVPN. L'UDP de WireGuard reste direct grâce à l'exception, ce qui préserve les connexions directes entre appareils.</li>
+<li><strong>Sans NordVPN</strong>, la table 205 est vide : la règle ne trouve aucune route et le routage continue normalement, sans effet.</li>
+<li>Le trafic de NordVPN lui-même (marque <code>0xe1f1</code>) et celui du tailnet ne sont pas concernés.</li>
+</ul>
+</div>
+<h4 id="4-rendre-la-regle-permanente-avec-un-service-systemd">4. Rendre la règle permanente avec un service systemd<a class="headerlink" href="#4-rendre-la-regle-permanente-avec-un-service-systemd" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>cat<span class="w"> </span><span class="s">&lt;&lt; 'EOF' | sudo tee /etc/systemd/system/tailscale-via-nordvpn.service &gt; /dev/null</span>
+<a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a><span class="s"># Fait passer les connexions TCP propres à tailscaled (coordination, relais DERP)</span>
+<a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a><span class="s"># dans le tunnel NordVPN (table 205), seul chemin accepté par le pare-feu NordVPN.</span>
+<a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a><span class="s"># Sans NordVPN, la table 205 est vide et la règle est sans effet.</span>
+<a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a><span class="s">[Unit]</span>
+<a id="__codelineno-33-6" name="__codelineno-33-6" href="#__codelineno-33-6"></a><span class="s">Description=Faire passer le TCP de tailscaled dans le tunnel NordVPN (table 205)</span>
+<a id="__codelineno-33-7" name="__codelineno-33-7" href="#__codelineno-33-7"></a><span class="s">After=network-pre.target</span>
+<a id="__codelineno-33-8" name="__codelineno-33-8" href="#__codelineno-33-8"></a><span class="s">Before=tailscaled.service</span>
+<a id="__codelineno-33-9" name="__codelineno-33-9" href="#__codelineno-33-9"></a>
+<a id="__codelineno-33-10" name="__codelineno-33-10" href="#__codelineno-33-10"></a><span class="s">[Service]</span>
+<a id="__codelineno-33-11" name="__codelineno-33-11" href="#__codelineno-33-11"></a><span class="s">Type=oneshot</span>
+<a id="__codelineno-33-12" name="__codelineno-33-12" href="#__codelineno-33-12"></a><span class="s">RemainAfterExit=yes</span>
+<a id="__codelineno-33-13" name="__codelineno-33-13" href="#__codelineno-33-13"></a><span class="s">ExecStartPre=-/usr/sbin/ip rule del priority 5100</span>
+<a id="__codelineno-33-14" name="__codelineno-33-14" href="#__codelineno-33-14"></a><span class="s">ExecStart=/usr/sbin/ip rule add priority 5100 fwmark 0x80000/0xff0000 ipproto tcp lookup 205</span>
+<a id="__codelineno-33-15" name="__codelineno-33-15" href="#__codelineno-33-15"></a><span class="s">ExecStop=/usr/sbin/ip rule del priority 5100</span>
+<a id="__codelineno-33-16" name="__codelineno-33-16" href="#__codelineno-33-16"></a>
+<a id="__codelineno-33-17" name="__codelineno-33-17" href="#__codelineno-33-17"></a><span class="s">[Install]</span>
+<a id="__codelineno-33-18" name="__codelineno-33-18" href="#__codelineno-33-18"></a><span class="s">WantedBy=multi-user.target</span>
+<a id="__codelineno-33-19" name="__codelineno-33-19" href="#__codelineno-33-19"></a><span class="s">EOF</span>
+<a id="__codelineno-33-20" name="__codelineno-33-20" href="#__codelineno-33-20"></a>
+<a id="__codelineno-33-21" name="__codelineno-33-21" href="#__codelineno-33-21"></a>sudo<span class="w"> </span>systemd-analyze<span class="w"> </span>verify<span class="w"> </span>/etc/systemd/system/tailscale-via-nordvpn.service
+<a id="__codelineno-33-22" name="__codelineno-33-22" href="#__codelineno-33-22"></a>sudo<span class="w"> </span>ip<span class="w"> </span>rule<span class="w"> </span>del<span class="w"> </span>priority<span class="w"> </span><span class="m">5100</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w">   </span><span class="c1"># retirer la règle de test</span>
+<a id="__codelineno-33-23" name="__codelineno-33-23" href="#__codelineno-33-23"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
+<a id="__codelineno-33-24" name="__codelineno-33-24" href="#__codelineno-33-24"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>tailscale-via-nordvpn.service
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Message <code>ExecStartPre … status=2</code> dans <code>systemctl status</code></p>
+<p>Avant de poser la règle, le service tente de supprimer une éventuelle copie existante. Quand il n'y en a pas, cette suppression échoue, et le préfixe <code>-</code> demande à systemd d'ignorer cet échec. C'est ce qui garantit l'absence de doublon lors d'un <code>restart</code>.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Ce que voient les tiers</p>
+<p>Les serveurs de Tailscale voient désormais une IP NordVPN pour la coordination. En revanche, l'UDP direct, indispensable aux connexions pair à pair, révèle toujours l'IP publique réelle aux autres appareils du tailnet et aux serveurs STUN. C'était déjà le cas avec les exceptions UDP : c'est le prix des connexions directes.</p>
+</div>
+<h3 id="bonus-le-dns-de-tailscale-en-concurrence-avec-celui-de-nordvpn">Bonus : le DNS de Tailscale en concurrence avec celui de NordVPN<a class="headerlink" href="#bonus-le-dns-de-tailscale-en-concurrence-avec-celui-de-nordvpn" title="Permanent link">&para;</a></h3>
+<p>Si l'option <strong>« Override DNS servers »</strong> (aussi appelée « Override local DNS ») est activée dans la console Tailscale, l'interface <code>tailscale0</code> réclame <strong>tous</strong> les domaines (<code>~.</code>), exactement comme NordVPN :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>resolvectl<span class="w"> </span>domain
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>Link 6 (tailscale0): tailnet-exemple.ts.net ~.
+<a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>Link 23 (qtun): ~.
+</code></pre></div>
+<p>Chaque requête part alors <strong>en parallèle</strong> vers NordVPN et vers MagicDNS (<code>100.100.100.100</code>), qui la relaie à ses propres serveurs globaux. Il n'y a pas de fuite hors tunnel (une capture le confirme), mais plusieurs résolveurs voient chaque requête, et un nom en échec fait patienter les applications au lieu d'échouer immédiatement.</p>
+<p>En désactivant cette option, <code>tailscale0</code> ne traite plus que les noms du tailnet (et les zones inverses <code>100.x</code>). Tout le reste passe par NordVPN, et MagicDNS continue de fonctionner, y compris pour les noms courts. Rappel : ce changement n'atteint la machine que si tailscaled est en ligne (voir la résolution ci-dessus).</p>
+<h3 id="verification_1">Vérification<a class="headerlink" href="#verification_1" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a><span class="c1"># 1. Tailscale en ligne, sans alerte</span>
+<a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>tailscale<span class="w"> </span>status<span class="w"> </span>--json<span class="w"> </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s1">'import json,sys; d=json.load(sys.stdin); print("Online:", d["Self"]["Online"], "| alertes:", len(d.get("Health") or []))'</span>
+<a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>
+<a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a><span class="c1"># 2. La règle est en place et gérée par systemd</span>
+<a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a>systemctl<span class="w"> </span>is-active<span class="w"> </span>tailscale-via-nordvpn.service
+<a id="__codelineno-36-6" name="__codelineno-36-6" href="#__codelineno-36-6"></a>ip<span class="w"> </span>rule<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"^5100:"</span>
+<a id="__codelineno-36-7" name="__codelineno-36-7" href="#__codelineno-36-7"></a>
+<a id="__codelineno-36-8" name="__codelineno-36-8" href="#__codelineno-36-8"></a><span class="c1"># 3. Le DNS : noms du tailnet via tailscale0, le reste via le VPN</span>
+<a id="__codelineno-36-9" name="__codelineno-36-9" href="#__codelineno-36-9"></a>resolvectl<span class="w"> </span>query<span class="w"> </span>laptop<span class="w">                </span><span class="c1"># nom court MagicDNS</span>
+<a id="__codelineno-36-10" name="__codelineno-36-10" href="#__codelineno-36-10"></a>resolvectl<span class="w"> </span>query<span class="w"> </span>free.fr
+<a id="__codelineno-36-11" name="__codelineno-36-11" href="#__codelineno-36-11"></a>
+<a id="__codelineno-36-12" name="__codelineno-36-12" href="#__codelineno-36-12"></a><span class="c1"># 4. La sortie Internet passe bien par NordVPN</span>
+<a id="__codelineno-36-13" name="__codelineno-36-13" href="#__codelineno-36-13"></a>nordvpn<span class="w"> </span>status
+<a id="__codelineno-36-14" name="__codelineno-36-14" href="#__codelineno-36-14"></a>
+<a id="__codelineno-36-15" name="__codelineno-36-15" href="#__codelineno-36-15"></a><span class="c1"># 5. Le trafic entre appareils (avec un appareil du tailnet allumé)</span>
+<a id="__codelineno-36-16" name="__codelineno-36-16" href="#__codelineno-36-16"></a>tailscale<span class="w"> </span>ping<span class="w"> </span>laptop
+</code></pre></div>
+<div class="admonition success">
+<p class="admonition-title">Résultat attendu</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>Online: True | alertes: 0
+<a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>active
+<a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a>5100:   from all fwmark 0x80000/0xff0000 ipproto tcp lookup 205
+<a id="__codelineno-37-4" name="__codelineno-37-4" href="#__codelineno-37-4"></a>laptop: 100.64.0.20                                    -- link: tailscale0
+<a id="__codelineno-37-5" name="__codelineno-37-5" href="#__codelineno-37-5"></a>free.fr: 212.27.48.10                                  -- link: qtun
+</code></pre></div>
+</div>
+<p>Tests de robustesse réalisés : la règle survit à <code>systemctl restart tailscaled</code>, à un changement de serveur NordVPN et à une coupure suivie d'une reconnexion du VPN. Tailscale revient en ligne en quelques secondes à chaque fois.</p>
+<h4 id="controler-labsence-de-fuite-hors-tunnel">Contrôler l'absence de fuite hors tunnel<a class="headerlink" href="#controler-labsence-de-fuite-hors-tunnel" title="Permanent link">&para;</a></h4>
+<p>Capturez tout ce qui sort par la carte physique, sauf le tunnel lui-même (l'IP du serveur NordVPN figure dans <code>nordvpn status</code>) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-nqi<span class="w"> </span>enp3s0<span class="w"> </span><span class="s2">"ip and not host &lt;IP_SERVEUR_NORDVPN&gt; and not arp"</span>
+</code></pre></div>
+<p>Pendant que vous naviguez et résolvez des noms, seuls doivent apparaître :</p>
+<ul>
+<li>le trafic propre au démon <code>nordvpnd</code> (son API, ses notifications), qui contourne le tunnel par conception ;</li>
+<li>l'UDP <code>41641</code> ↔ <code>3478</code> de tailscaled (WireGuard et STUN, autorisés par l'exception) ;</li>
+<li>du trafic local vers la box (NAT-PMP <code>5351</code>, UPnP <code>1900</code>, mDNS <code>5353</code>).</li>
+</ul>
+<p>Pour identifier un flux inattendu, <code>ss</code> affiche le processus et la marque de chaque socket :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-tunpe<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>&lt;IP_DESTINATION&gt;
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>tcp ESTAB … users:(("nordvpnd",pid=…)) … fwmark:0xe1f1 cgroup:/system.slice/nordvpnd.service
+</code></pre></div>
+<hr />
+<h2 id="reflexes-de-diagnostic-a-retenir">Réflexes de diagnostic à retenir<a class="headerlink" href="#reflexes-de-diagnostic-a-retenir" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>IP joignable mais noms introuvables</strong> : le problème est le DNS, pas le réseau.</li>
+<li><strong>Ne jamais diagnostiquer le DNS avec <code>ping</code></strong> : <code>resolvectl query &lt;nom&gt;</code> donne la vraie raison de l'échec.</li>
+<li><strong>Serveur ou résolveur local ?</strong> <code>dig @&lt;serveur&gt; &lt;nom&gt;</code> réussit et <code>resolvectl query</code> échoue : le problème est local.</li>
+<li><strong>Lire le journal du résolveur</strong> : <code>journalctl -u systemd-resolved -b</code>. Un volume anormal d'erreurs à partir d'une date précise oriente vers un événement extérieur.</li>
+<li><strong>Message <code>missing-key</code> ou <code>failed-auxiliary</code></strong> : penser à l'ancre de confiance DNSSEC, et vérifier la racine directement avec <code>dig @a.root-servers.net</code>.</li>
+<li><strong>Un service « offline » derrière un VPN à pare-feu</strong> : comparer <code>ip route get &lt;ip&gt;</code> avec et sans la marque du service, puis lire la chaîne <code>output</code> de nftables.</li>
+<li><strong>Avant d'appliquer un correctif de routage</strong>, simuler son effet sur <strong>tous</strong> les flux, y compris ceux qui fonctionnent déjà, avec <code>ip route get … mark …</code>.</li>
+</ol>
+<hr />
+<h2 id="aide-memoire">Aide-mémoire<a class="headerlink" href="#aide-memoire" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Commande</th>
+<th style="text-align: left;">Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>resolvectl query &lt;nom&gt;</code></td>
+<td style="text-align: left;">Résoudre un nom via systemd-resolved et afficher la cause exacte d'un échec</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>resolvectl status</code> / <code>resolvectl domain</code></td>
+<td style="text-align: left;">Voir, par interface, les serveurs DNS et les domaines de routage</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>resolvectl dnssec</code></td>
+<td style="text-align: left;">Voir le mode DNSSEC de chaque interface</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>sudo resolvectl dnssec &lt;iface&gt; no</code></td>
+<td style="text-align: left;">Couper temporairement la validation DNSSEC sur une interface (test ou urgence)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>journalctl -u systemd-resolved -b \| grep "DNSSEC validation failed"</code></td>
+<td style="text-align: left;">Repérer les échecs de validation</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>dig +dnssec +norec @a.root-servers.net . DNSKEY</code></td>
+<td style="text-align: left;">Voir quelle clé signe réellement la racine, sans cache</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>cat /usr/share/dns/root.ds</code></td>
+<td style="text-align: left;">Lister les ancres racine fournies par le paquet <code>dns-root-data</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>tailscale status --json</code></td>
+<td style="text-align: left;">État interne de Tailscale (<code>Online</code>, alertes de santé)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>tailscale dns status</code></td>
+<td style="text-align: left;">Configuration DNS reçue du serveur de coordination</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ip route get &lt;ip&gt; mark &lt;marque&gt;</code></td>
+<td style="text-align: left;">Simuler le routage d'un paquet portant une marque donnée</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>sudo nft list chain inet nordvpn output</code></td>
+<td style="text-align: left;">Lire les règles de sortie du pare-feu NordVPN</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>sudo ss -tunpe</code></td>
+<td style="text-align: left;">Lister les sockets avec leur processus et leur marque (<code>fwmark</code>)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="glossaire">Glossaire<a class="headerlink" href="#glossaire" title="Permanent link">&para;</a></h2>
+<dl>
+<dt>DNSSEC</dt>
+<dd>Extension du DNS qui signe cryptographiquement les réponses. Un résolveur validant vérifie chaque signature, de la racine jusqu'au nom demandé.</dd>
+<dt>KSK (Key Signing Key)</dt>
+<dd>Clé qui signe l'ensemble des clés d'une zone. La KSK de la racine est le point de départ de toute validation DNSSEC.</dd>
+<dt>Ancre de confiance (trust anchor)</dt>
+<dd>Clé (ou empreinte <code>DS</code> de clé) connue à l'avance par un résolveur et qui sert de point de départ à la validation. Avec systemd-resolved, elle est soit intégrée au binaire, soit déclarée dans <code>/etc/dnssec-trust-anchors.d/*.positive</code>.</dd>
+<dt>RFC 5011</dt>
+<dd>Mécanisme de mise à jour automatique des ancres de confiance : un résolveur qui voit une nouvelle KSK publiée de façon stable pendant 30 jours l'adopte. systemd-resolved ne l'implémente pas.</dd>
+<dt><code>allow-downgrade</code></dt>
+<dd>Mode de systemd-resolved qui valide DNSSEC quand le serveur le permet et y renonce s'il ne renvoie aucune signature. Une signature présente mais invalide entraîne un refus.</dd>
+<dt>Domaine de routage (<code>~domaine</code>)</dt>
+<dd>Indique à systemd-resolved d'envoyer les requêtes d'un domaine vers une interface donnée. <code>~.</code> signifie « tous les domaines ».</dd>
+<dt>Marque de pare-feu (<code>fwmark</code>)</dt>
+<dd>Étiquette numérique posée sur un paquet (par un socket avec <code>SO_MARK</code> ou par nftables) et utilisée par les règles de routage par politique (<code>ip rule</code>). Tailscale utilise <code>0x80000</code>, NordVPN <code>0xe1f1</code> par défaut.</dd>
+<dt>Routage par politique (<code>ip rule</code>)</dt>
+<dd>Liste ordonnée de règles qui choisit la table de routage à consulter selon la marque, la source, la destination ou le protocole d'un paquet.</dd>
+<dt>MagicDNS</dt>
+<dd>Résolveur DNS intégré à Tailscale (<code>100.100.100.100</code>) qui résout les noms des appareils du tailnet.</dd>
+<dt>DERP</dt>
+<dd>Relais chiffrés de Tailscale, joints en TCP 443, utilisés quand deux appareils ne peuvent pas établir de connexion UDP directe.</dd>
+</dl>
+<hr />
+<h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://www.icann.org/fr/blogs/details/preparing-for-the-root-zone-ksk-rollover-what-you-need-to-know-27-07-2026-en">ICANN — Se préparer à la bascule de la KSK de la zone racine</a></li>
+<li><a href="https://blog.cloudflare.com/root-ksk-2024-rollover/">Cloudflare — The keys to the Internet change on October 11</a></li>
+<li><a href="https://blog.verisign.com/security/2024-2026-root-zone-ksk-rollover-updates-observations/">Verisign — The 2024-2026 Root Zone KSK Rollover: updates and observations</a></li>
+<li><a href="https://www.icann.org/fr/public-comment/proceeding/proposed-root-ksk-algorithm-rollover-03-02-2026">ICANN — Proposition de changement d'algorithme de la KSK racine (consultation publique)</a></li>
+<li><a href="https://data.iana.org/root-anchors/root-anchors.xml">IANA — Ancres de confiance de la racine (root-anchors.xml)</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc5011">RFC 5011 — Automated Updates of DNS Security Trust Anchors</a></li>
+<li><a href="https://manpages.ubuntu.com/manpages/noble/man5/dnssec-trust-anchors.d.5.html">Manuel Ubuntu 24.04 — dnssec-trust-anchors.d(5)</a></li>
+<li><a href="https://manpages.ubuntu.com/manpages/noble/man1/resolvectl.1.html">Manuel Ubuntu 24.04 — resolvectl(1)</a></li>
+<li><a href="https://tailscale.com/kb/1105/other-vpns">Tailscale — Utiliser Tailscale avec d'autres VPN</a></li>
+<li><a href="https://tailscale.com/kb/1054/dns">Tailscale — DNS dans Tailscale</a></li>
+<li><a href="https://tailscale.com/kb/1082/firewall-ports">Tailscale — Ports à ouvrir dans un pare-feu</a></li>
+<li>Sur ce wiki : <a href="../nordvpn-perte-connexion-ethernet-reboot-box-onduleur/">NordVPN — Perte de connexion Ethernet après redémarrage de la box</a> (autre conséquence de la politique <code>drop</code> du pare-feu NordVPN), <a href="../journalctl-lire-filtrer-suivre-logs-systemd-linux/">Lire, filtrer et suivre les logs avec journalctl</a> et <a href="../capturer-diagnostiquer-trafic-reseau-tcpdump/">Capturer et diagnostiquer le trafic réseau avec tcpdump</a></li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../nordvpn-perte-connexion-ethernet-reboot-box-onduleur/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: NordVPN — Perte de connexion Ethernet après reboot box (PC sur onduleur)">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                NordVPN — Perte de connexion Ethernet après reboot box (PC sur onduleur)
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../astuces/" class="md-footer__link md-footer__link--next" aria-label="Suivant: Astuces">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                Astuces
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      <a href="/mentions-legales/">Mentions légales</a>
+
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/bodaine" target="_blank" rel="noopener" title="Nicolas BODAINE sur LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://github.com/NicoBOD" target="_blank" rel="noopener" title="NicoBOD sur GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://nicolas.bodaine.fr" target="_blank" rel="noopener" title="Portfolio de Nicolas BODAINE" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="/feed_rss_created.xml" target="_blank" rel="noopener" title="Flux RSS des derniers articles" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 64c0-17.7 14.3-32 32-32 229.8 0 416 186.2 416 416 0 17.7-14.3 32-32 32s-32-14.3-32-32C384 253.6 226.4 96 32 96 14.3 96 0 81.7 0 64m0 352a64 64 0 1 1 128 0 64 64 0 1 1-128 0m32-256c159.1 0 288 128.9 288 288 0 17.7-14.3 32-32 32s-32-14.3-32-32c0-123.7-100.3-224-224-224-17.7 0-32-14.3-32-32s14.3-32 32-32"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.path", "navigation.indexes", "navigation.prune", "navigation.footer", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "content.action.view", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
