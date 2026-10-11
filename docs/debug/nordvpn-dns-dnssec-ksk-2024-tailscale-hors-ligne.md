@@ -470,8 +470,9 @@ resolvectl query free.fr
 # 4. La sortie Internet passe bien par NordVPN
 nordvpn status
 
-# 5. Le trafic entre appareils (avec un appareil du tailnet allumé)
+# 5. Le tunnel vers un autre appareil du tailnet (allumé)
 tailscale ping laptop
+tailscale status | grep laptop
 ```
 
 !!! success "Résultat attendu"
@@ -481,9 +482,66 @@ tailscale ping laptop
     5100:	from all fwmark 0x80000/0xff0000 ipproto tcp lookup 205
     laptop: 100.64.0.20                                    -- link: tailscale0
     free.fr: 212.27.48.10                                  -- link: qtun
+    pong from laptop (100.64.0.20) via 192.168.1.60:41641 in 12ms
+    100.64.0.20  laptop  …  linux  active; direct 192.168.1.60:41641, tx … rx …
     ```
 
-Tests de robustesse réalisés : la règle survit à `systemctl restart tailscaled`, à un changement de serveur NordVPN et à une coupure suivie d'une reconnexion du VPN. Tailscale revient en ligne en quelques secondes à chaque fois.
+    `direct` signifie que les deux appareils échangent en UDP sans relais : l'exception NordVPN sur le port `41641` fait son travail.
+
+Tests de robustesse réalisés, NordVPN connecté : la règle survit à `systemctl restart tailscaled`, à un changement de serveur NordVPN et à une coupure suivie d'une reconnexion du VPN, et Tailscale revient en ligne en quelques secondes à chaque fois. Côté pairs, `tailscale ping` vers un smartphone du tailnet passe en connexion directe, et une page web servie par le PC s'affiche bien sur le smartphone.
+
+#### Tester le trafic entre appareils, dans les deux sens
+
+`tailscale ping` valide le tunnel WireGuard, pas le trafic applicatif : il peut réussir alors qu'un `ping` classique vers le même appareil reste sans réponse. Avant d'accuser NordVPN ou la règle de routage, il faut savoir **de quel côté** les paquets sont bloqués :
+
+```bash
+# 1. Les requêtes quittent-elles le PC par tailscale0 ? (Ctrl+C pour arrêter la capture)
+sudo tcpdump -ni tailscale0 icmp
+# … et, dans un autre terminal :
+ping -c 3 100.64.0.20
+
+# 2. La couche Tailscale de l'autre appareil répond-elle ?
+tailscale ping --tsmp laptop
+
+# 3. L'autre appareil répond-il à un ICMP injecté par tailscaled lui-même,
+#    donc sans passer par le pare-feu ni le routage du PC ?
+tailscale ping --icmp laptop
+```
+
+| Requêtes visibles sur `tailscale0` | `--tsmp` | `--icmp` | Conclusion |
+|---|---|---|---|
+| Non | — | — | Blocage **local** : routage ou pare-feu du PC (revoir la règle 5100 et les exceptions NordVPN) |
+| Oui | Répond | Muet | Blocage **côté distant** : pare-feu de l'appareil ou **ACL Tailscale** |
+| Oui | Répond | Répond | Le tunnel et le réseau fonctionnent : chercher du côté de l'application |
+
+!!! note "Des ACL à sens unique sont souvent voulues"
+    Dans ce cas précis, le PC ne pouvait pas joindre le smartphone, mais l'inverse fonctionnait : les ACL du tailnet n'autorisent que le sens « appareils clients → PC ». C'est un choix de sécurité, pas une panne. Pour voir ce que **ce PC** accepte (règles d'entrée dérivées des ACL) :
+
+    ```bash
+    sudo tailscale debug netmap | python3 -c 'import json,sys; [print(r["SrcIPs"], "->", [d["IP"] for d in r["DstPorts"]]) for r in json.load(sys.stdin)["PacketFilterRules"] or []]'
+    ```
+
+    Les règles des autres appareils ne sont pas visibles depuis le PC : elles se lisent dans la console Tailscale (onglet *Access controls*).
+
+Pour tester le sens **appareil distant → PC**, servez une page temporaire **uniquement sur l'IP Tailscale du PC** (elle n'est pas exposée sur le réseau local), ouvrez `http://<nom-du-pc>:8765` depuis l'autre appareil, puis arrêtez-la avec ++ctrl+c++ :
+
+```bash
+python3 -m http.server 8765 --bind "$(tailscale ip -4)"
+```
+
+!!! tip "Et UFW ?"
+    Même avec UFW actif et une politique `deny (incoming)`, le trafic arrivant par `tailscale0` est accepté : Tailscale installe sa chaîne `ts-input` **avant** celles d'UFW. Pour le vérifier :
+
+    ```bash
+    sudo iptables-save -t filter | grep "^-A INPUT"
+    ```
+
+    ```text
+    -A INPUT -j ts-input
+    -A INPUT -j ufw-before-logging-input
+    -A INPUT -j ufw-before-input
+    …
+    ```
 
 #### Contrôler l'absence de fuite hors tunnel
 
@@ -520,6 +578,7 @@ tcp ESTAB … users:(("nordvpnd",pid=…)) … fwmark:0xe1f1 cgroup:/system.slic
 5. **Message `missing-key` ou `failed-auxiliary`** : penser à l'ancre de confiance DNSSEC, et vérifier la racine directement avec `dig @a.root-servers.net`.
 6. **Un service « offline » derrière un VPN à pare-feu** : comparer `ip route get <ip>` avec et sans la marque du service, puis lire la chaîne `output` de nftables.
 7. **Avant d'appliquer un correctif de routage**, simuler son effet sur **tous** les flux, y compris ceux qui fonctionnent déjà, avec `ip route get … mark …`.
+8. **`tailscale ping` réussit mais `ping` échoue** : le tunnel n'est pas en cause. `tailscale ping --tsmp` et `--icmp` indiquent de quel côté se trouve le blocage ; penser aux ACL avant de toucher au réseau.
 
 ---
 
@@ -536,6 +595,9 @@ tcp ESTAB … users:(("nordvpnd",pid=…)) … fwmark:0xe1f1 cgroup:/system.slic
 | `cat /usr/share/dns/root.ds` | Lister les ancres racine fournies par le paquet `dns-root-data` |
 | `tailscale status --json` | État interne de Tailscale (`Online`, alertes de santé) |
 | `tailscale dns status` | Configuration DNS reçue du serveur de coordination |
+| `tailscale ping [--tsmp\|--icmp] <pair>` | Tester le tunnel vers un pair, puis localiser un blocage (couche Tailscale ou ICMP de bout en bout) |
+| `sudo tailscale debug netmap` | Configuration reçue, dont les règles d'entrée dérivées des ACL (`PacketFilterRules`) |
+| `tailscale ip -4` | Afficher l'adresse Tailscale IPv4 de la machine |
 | `ip route get <ip> mark <marque>` | Simuler le routage d'un paquet portant une marque donnée |
 | `sudo nft list chain inet nordvpn output` | Lire les règles de sortie du pare-feu NordVPN |
 | `sudo ss -tunpe` | Lister les sockets avec leur processus et leur marque (`fwmark`) |
