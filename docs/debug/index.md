@@ -37,4 +37,5 @@ Outils et méthodologies pour diagnostiquer et résoudre des problèmes informat
 - [Sniffnet AppImage — Installation et lancement sur Ubuntu 24.04](sniffnet-appimage-ubuntu-2404.md) — Astuce pour faire fonctionner l'interface de surveillance réseau de Sniffnet.
 - [AppImageLauncher — Échec d'intégration sur Ubuntu 24.04 (compression zstd)](appimagelauncher-compression-zstd-ubuntu-2404.md) — Contourner l'erreur de compression Zstandard qui empêche l'intégration des AppImages.
 - [NordVPN — Perte de connexion Ethernet après redémarrage de la box Internet (PC sur onduleur)](nordvpn-perte-connexion-ethernet-reboot-box-onduleur.md) — Résoudre le blocage silencieux d'OpenVPN et du pare-feu nftables lors du retour de courant grâce à un script NetworkManager Dispatcher.
+- [NordVPN — Plus aucune résolution DNS (bascule de clé racine KSK-2024) et Tailscale hors ligne](nordvpn-dns-dnssec-ksk-2024-tailscale-hors-ligne.md) — Mettre à jour l'ancre DNSSEC de systemd-resolved après la bascule de clé racine du 11 octobre 2026, puis faire cohabiter Tailscale avec le pare-feu de NordVPN grâce à une règle de routage.
 
