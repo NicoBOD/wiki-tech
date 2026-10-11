@@ -3148,8 +3148,9 @@
 <a id="__codelineno-36-12" name="__codelineno-36-12" href="#__codelineno-36-12"></a><span class="c1"># 4. La sortie Internet passe bien par NordVPN</span>
 <a id="__codelineno-36-13" name="__codelineno-36-13" href="#__codelineno-36-13"></a>nordvpn<span class="w"> </span>status
 <a id="__codelineno-36-14" name="__codelineno-36-14" href="#__codelineno-36-14"></a>
-<a id="__codelineno-36-15" name="__codelineno-36-15" href="#__codelineno-36-15"></a><span class="c1"># 5. Le trafic entre appareils (avec un appareil du tailnet allumé)</span>
+<a id="__codelineno-36-15" name="__codelineno-36-15" href="#__codelineno-36-15"></a><span class="c1"># 5. Le tunnel vers un autre appareil du tailnet (allumé)</span>
 <a id="__codelineno-36-16" name="__codelineno-36-16" href="#__codelineno-36-16"></a>tailscale<span class="w"> </span>ping<span class="w"> </span>laptop
+<a id="__codelineno-36-17" name="__codelineno-36-17" href="#__codelineno-36-17"></a>tailscale<span class="w"> </span>status<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>laptop
 </code></pre></div>
 <div class="admonition success">
 <p class="admonition-title">Résultat attendu</p>
@@ -3158,12 +3159,80 @@
 <a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a>5100:   from all fwmark 0x80000/0xff0000 ipproto tcp lookup 205
 <a id="__codelineno-37-4" name="__codelineno-37-4" href="#__codelineno-37-4"></a>laptop: 100.64.0.20                                    -- link: tailscale0
 <a id="__codelineno-37-5" name="__codelineno-37-5" href="#__codelineno-37-5"></a>free.fr: 212.27.48.10                                  -- link: qtun
+<a id="__codelineno-37-6" name="__codelineno-37-6" href="#__codelineno-37-6"></a>pong from laptop (100.64.0.20) via 192.168.1.60:41641 in 12ms
+<a id="__codelineno-37-7" name="__codelineno-37-7" href="#__codelineno-37-7"></a>100.64.0.20  laptop  …  linux  active; direct 192.168.1.60:41641, tx … rx …
+</code></pre></div>
+<p><code>direct</code> signifie que les deux appareils échangent en UDP sans relais : l'exception NordVPN sur le port <code>41641</code> fait son travail.</p>
+</div>
+<p>Tests de robustesse réalisés, NordVPN connecté : la règle survit à <code>systemctl restart tailscaled</code>, à un changement de serveur NordVPN et à une coupure suivie d'une reconnexion du VPN, et Tailscale revient en ligne en quelques secondes à chaque fois. Côté pairs, <code>tailscale ping</code> vers un smartphone du tailnet passe en connexion directe, et une page web servie par le PC s'affiche bien sur le smartphone.</p>
+<h4 id="tester-le-trafic-entre-appareils-dans-les-deux-sens">Tester le trafic entre appareils, dans les deux sens<a class="headerlink" href="#tester-le-trafic-entre-appareils-dans-les-deux-sens" title="Permanent link">&para;</a></h4>
+<p><code>tailscale ping</code> valide le tunnel WireGuard, pas le trafic applicatif : il peut réussir alors qu'un <code>ping</code> classique vers le même appareil reste sans réponse. Avant d'accuser NordVPN ou la règle de routage, il faut savoir <strong>de quel côté</strong> les paquets sont bloqués :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a><span class="c1"># 1. Les requêtes quittent-elles le PC par tailscale0 ? (Ctrl+C pour arrêter la capture)</span>
+<a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-ni<span class="w"> </span>tailscale0<span class="w"> </span>icmp
+<a id="__codelineno-38-3" name="__codelineno-38-3" href="#__codelineno-38-3"></a><span class="c1"># … et, dans un autre terminal :</span>
+<a id="__codelineno-38-4" name="__codelineno-38-4" href="#__codelineno-38-4"></a>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">100</span>.64.0.20
+<a id="__codelineno-38-5" name="__codelineno-38-5" href="#__codelineno-38-5"></a>
+<a id="__codelineno-38-6" name="__codelineno-38-6" href="#__codelineno-38-6"></a><span class="c1"># 2. La couche Tailscale de l'autre appareil répond-elle ?</span>
+<a id="__codelineno-38-7" name="__codelineno-38-7" href="#__codelineno-38-7"></a>tailscale<span class="w"> </span>ping<span class="w"> </span>--tsmp<span class="w"> </span>laptop
+<a id="__codelineno-38-8" name="__codelineno-38-8" href="#__codelineno-38-8"></a>
+<a id="__codelineno-38-9" name="__codelineno-38-9" href="#__codelineno-38-9"></a><span class="c1"># 3. L'autre appareil répond-il à un ICMP injecté par tailscaled lui-même,</span>
+<a id="__codelineno-38-10" name="__codelineno-38-10" href="#__codelineno-38-10"></a><span class="c1">#    donc sans passer par le pare-feu ni le routage du PC ?</span>
+<a id="__codelineno-38-11" name="__codelineno-38-11" href="#__codelineno-38-11"></a>tailscale<span class="w"> </span>ping<span class="w"> </span>--icmp<span class="w"> </span>laptop
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Requêtes visibles sur <code>tailscale0</code></th>
+<th><code>--tsmp</code></th>
+<th><code>--icmp</code></th>
+<th>Conclusion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Non</td>
+<td>—</td>
+<td>—</td>
+<td>Blocage <strong>local</strong> : routage ou pare-feu du PC (revoir la règle 5100 et les exceptions NordVPN)</td>
+</tr>
+<tr>
+<td>Oui</td>
+<td>Répond</td>
+<td>Muet</td>
+<td>Blocage <strong>côté distant</strong> : pare-feu de l'appareil ou <strong>ACL Tailscale</strong></td>
+</tr>
+<tr>
+<td>Oui</td>
+<td>Répond</td>
+<td>Répond</td>
+<td>Le tunnel et le réseau fonctionnent : chercher du côté de l'application</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Des ACL à sens unique sont souvent voulues</p>
+<p>Dans ce cas précis, le PC ne pouvait pas joindre le smartphone, mais l'inverse fonctionnait : les ACL du tailnet n'autorisent que le sens « appareils clients → PC ». C'est un choix de sécurité, pas une panne. Pour voir ce que <strong>ce PC</strong> accepte (règles d'entrée dérivées des ACL) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>sudo<span class="w"> </span>tailscale<span class="w"> </span>debug<span class="w"> </span>netmap<span class="w"> </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s1">'import json,sys; [print(r["SrcIPs"], "-&gt;", [d["IP"] for d in r["DstPorts"]]) for r in json.load(sys.stdin)["PacketFilterRules"] or []]'</span>
+</code></pre></div>
+<p>Les règles des autres appareils ne sont pas visibles depuis le PC : elles se lisent dans la console Tailscale (onglet <em>Access controls</em>).</p>
+</div>
+<p>Pour tester le sens <strong>appareil distant → PC</strong>, servez une page temporaire <strong>uniquement sur l'IP Tailscale du PC</strong> (elle n'est pas exposée sur le réseau local), ouvrez <code>http://&lt;nom-du-pc&gt;:8765</code> depuis l'autre appareil, puis arrêtez-la avec <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-c">C</kbd></span> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>python3<span class="w"> </span>-m<span class="w"> </span>http.server<span class="w"> </span><span class="m">8765</span><span class="w"> </span>--bind<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>tailscale<span class="w"> </span>ip<span class="w"> </span>-4<span class="k">)</span><span class="s2">"</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Et UFW ?</p>
+<p>Même avec UFW actif et une politique <code>deny (incoming)</code>, le trafic arrivant par <code>tailscale0</code> est accepté : Tailscale installe sa chaîne <code>ts-input</code> <strong>avant</strong> celles d'UFW. Pour le vérifier :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>sudo<span class="w"> </span>iptables-save<span class="w"> </span>-t<span class="w"> </span>filter<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"^-A INPUT"</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>-A INPUT -j ts-input
+<a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a>-A INPUT -j ufw-before-logging-input
+<a id="__codelineno-42-3" name="__codelineno-42-3" href="#__codelineno-42-3"></a>-A INPUT -j ufw-before-input
+<a id="__codelineno-42-4" name="__codelineno-42-4" href="#__codelineno-42-4"></a>…
 </code></pre></div>
 </div>
-<p>Tests de robustesse réalisés : la règle survit à <code>systemctl restart tailscaled</code>, à un changement de serveur NordVPN et à une coupure suivie d'une reconnexion du VPN. Tailscale revient en ligne en quelques secondes à chaque fois.</p>
 <h4 id="controler-labsence-de-fuite-hors-tunnel">Contrôler l'absence de fuite hors tunnel<a class="headerlink" href="#controler-labsence-de-fuite-hors-tunnel" title="Permanent link">&para;</a></h4>
 <p>Capturez tout ce qui sort par la carte physique, sauf le tunnel lui-même (l'IP du serveur NordVPN figure dans <code>nordvpn status</code>) :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-nqi<span class="w"> </span>enp3s0<span class="w"> </span><span class="s2">"ip and not host &lt;IP_SERVEUR_NORDVPN&gt; and not arp"</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-nqi<span class="w"> </span>enp3s0<span class="w"> </span><span class="s2">"ip and not host &lt;IP_SERVEUR_NORDVPN&gt; and not arp"</span>
 </code></pre></div>
 <p>Pendant que vous naviguez et résolvez des noms, seuls doivent apparaître :</p>
 <ul>
@@ -3172,9 +3241,9 @@
 <li>du trafic local vers la box (NAT-PMP <code>5351</code>, UPnP <code>1900</code>, mDNS <code>5353</code>).</li>
 </ul>
 <p>Pour identifier un flux inattendu, <code>ss</code> affiche le processus et la marque de chaque socket :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-tunpe<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>&lt;IP_DESTINATION&gt;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-tunpe<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>&lt;IP_DESTINATION&gt;
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>tcp ESTAB … users:(("nordvpnd",pid=…)) … fwmark:0xe1f1 cgroup:/system.slice/nordvpnd.service
+<div class="highlight"><pre><span></span><code><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a>tcp ESTAB … users:(("nordvpnd",pid=…)) … fwmark:0xe1f1 cgroup:/system.slice/nordvpnd.service
 </code></pre></div>
 <hr />
 <h2 id="reflexes-de-diagnostic-a-retenir">Réflexes de diagnostic à retenir<a class="headerlink" href="#reflexes-de-diagnostic-a-retenir" title="Permanent link">&para;</a></h2>
@@ -3186,6 +3255,7 @@
 <li><strong>Message <code>missing-key</code> ou <code>failed-auxiliary</code></strong> : penser à l'ancre de confiance DNSSEC, et vérifier la racine directement avec <code>dig @a.root-servers.net</code>.</li>
 <li><strong>Un service « offline » derrière un VPN à pare-feu</strong> : comparer <code>ip route get &lt;ip&gt;</code> avec et sans la marque du service, puis lire la chaîne <code>output</code> de nftables.</li>
 <li><strong>Avant d'appliquer un correctif de routage</strong>, simuler son effet sur <strong>tous</strong> les flux, y compris ceux qui fonctionnent déjà, avec <code>ip route get … mark …</code>.</li>
+<li><strong><code>tailscale ping</code> réussit mais <code>ping</code> échoue</strong> : le tunnel n'est pas en cause. <code>tailscale ping --tsmp</code> et <code>--icmp</code> indiquent de quel côté se trouve le blocage ; penser aux ACL avant de toucher au réseau.</li>
 </ol>
 <hr />
 <h2 id="aide-memoire">Aide-mémoire<a class="headerlink" href="#aide-memoire" title="Permanent link">&para;</a></h2>
@@ -3232,6 +3302,18 @@
 <tr>
 <td style="text-align: left;"><code>tailscale dns status</code></td>
 <td style="text-align: left;">Configuration DNS reçue du serveur de coordination</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>tailscale ping [--tsmp\|--icmp] &lt;pair&gt;</code></td>
+<td style="text-align: left;">Tester le tunnel vers un pair, puis localiser un blocage (couche Tailscale ou ICMP de bout en bout)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>sudo tailscale debug netmap</code></td>
+<td style="text-align: left;">Configuration reçue, dont les règles d'entrée dérivées des ACL (<code>PacketFilterRules</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>tailscale ip -4</code></td>
+<td style="text-align: left;">Afficher l'adresse Tailscale IPv4 de la machine</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>ip route get &lt;ip&gt; mark &lt;marque&gt;</code></td>
