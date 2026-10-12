@@ -307,6 +307,8 @@ markdown_extensions:
       permalink: true
       toc_depth: 3
   # Python Markdown Extensions
+  # Légendes d'images centrées : ![...](...) suivi d'un bloc « /// caption »
+  - pymdownx.blocks.caption
   - pymdownx.betterem:
       smart_enable: all
   - pymdownx.caret

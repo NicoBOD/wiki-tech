@@ -97,7 +97,7 @@ Il existe deux grands modes de fonctionnement :
 | **Actif/passif** | Le secondaire reste en veille tant que le primaire fonctionne, puis prend le relais en cas de panne. | Mode classique et le plus répandu. **C'est celui de ce TP.** |
 
 !!! example "Analogie"
-    Un avion de ligne a un pilote et un copilote. Le copilote suit tout ce qui se passe (la route, les échanges radio, les réglages) sans tenir les commandes. Si le pilote fait un malaise, il reprend immédiatement le vol, car il connaît déjà la situation. Dans le cluster, le primaire est le pilote et le secondaire le copilote : **XML-RPC** lui transmet les réglages et **pfsync** la situation en cours.
+    Un avion de ligne a un pilote et un copilote. Le copilote suit tout ce qui se passe (la route, les échanges radio, les réglages) sans tenir les commandes. Si le pilote fait un malaise, le copilote reprend immédiatement le vol, car il connaît déjà la situation. Dans le cluster, le primaire est le pilote et le secondaire le copilote : **XML-RPC** lui transmet les réglages et **pfsync** la situation en cours.
 
 ### 2.3 Le principe : des adresses IP virtuelles partagées
 
@@ -121,8 +121,8 @@ Chaque pare-feu garde sa propre adresse IP sur chacune de ses interfaces (`.19` 
 | **XML-RPC** | La **configuration** : règles, NAT, VIP, utilisateurs, etc. | HTTPS (TCP 443), vers l'interface web du pair | **Uniquement** du primaire vers le secondaire | Le lien dédié **PFSYNC** |
 
 - **CARP** permet à plusieurs hôtes d'un même réseau de partager une adresse IP. C'est une alternative libre aux protocoles VRRP et HSRP, créée par le projet OpenBSD pour contourner des brevets. En cas de défaillance du primaire, le secondaire reprend l'adresse IP virtuelle de façon transparente.
-- **pfsync** recopie en continu les états des connexions entre les deux pare-feux. Lorsque le primaire tombe, le secondaire connaît déjà toutes les connexions ouvertes et peut les **poursuivre sans les couper**.
-- **XML-RPC** est un protocole d'appel de procédure à distance (*Remote Procedure Call*) qui transporte des données XML sur HTTP. pfSense s'en sert pour **pousser la configuration** du primaire vers le secondaire. Pour fonctionner correctement, il doit utiliser la même interface que pfsync.
+- **pfsync** recopie en continu les états des connexions entre les deux pare-feux. Lorsque le primaire tombe, le secondaire connaît déjà les connexions ouvertes et peut les **poursuivre sans les couper** : c'est le rôle de pfsync, tel que le décrit la documentation de Netgate.
+- **XML-RPC** est un protocole d'appel de procédure à distance (*Remote Procedure Call*) qui transporte des données XML sur HTTP. pfSense s'en sert pour **pousser la configuration** du primaire vers le secondaire. Netgate recommande de le faire passer par le même lien dédié que pfsync.
 
 <figure markdown="span">
   ![Schéma des flux : XML-RPC en sens unique et pfsync dans les deux sens sur le lien dédié, CARP sur les réseaux WAN et LAN](images/cluster-pfsense/schema-flux-synchronisation.svg){ loading=lazy }
@@ -237,8 +237,14 @@ Le lab utilise trois réseaux :
     5. Cliquer sur **Apply**, puis sur **OK**.
 
     ![Éditeur de réseaux virtuels de VMware avec VMnet8 en NAT sur 192.168.8.0 et VMnet19 en Host-only sur 192.168.19.0](images/cluster-pfsense/vmware-editeur-reseaux-virtuels.png){ loading=lazy }
+    /// caption
+    VMware — éditeur de réseaux virtuels : VMnet8 en NAT (192.168.8.0) et VMnet19 en Host-only (192.168.19.0)
+    ///
 
     ![Fenêtre NAT Settings de VMnet8 avec la passerelle 192.168.8.2](images/cluster-pfsense/vmware-vmnet8-parametres-nat.png){ loading=lazy width="300" }
+    /// caption
+    VMware — paramètres NAT de VMnet8 : passerelle 192.168.8.2
+    ///
 
     !!! info "Pourquoi changer le sous-réseau de VMnet8 ?"
         À l'installation, VMware choisit **au hasard** un sous-réseau pour VMnet8 (par exemple `192.168.153.0/24`), différent d'un PC à l'autre. Le fixer à `192.168.8.0/24` permet de suivre le TP à l'identique. L'option DHCP de VMnet19 peut rester active : aucune machine du TP ne l'utilise.
@@ -275,6 +281,9 @@ Créer deux VM identiques, nommées `pfsense-19` et `pfsense-20`.
 | Cartes réseau | **3 cartes, dans cet ordre** : WAN, LAN, SYNCHRO-PFSENSE | pfSense les nommera `em0`, `em1` et `em2` dans cet ordre. |
 
 ![Assistant de création de VM VMware avec le système invité Other, version FreeBSD 64 bits](images/cluster-pfsense/vmware-assistant-os-invite-freebsd.png){ loading=lazy width="420" }
+/// caption
+VMware — choix du système invité : Other, puis FreeBSD 64 bits
+///
 
 === "VMware Workstation"
 
@@ -285,12 +294,15 @@ Créer deux VM identiques, nommées `pfsense-19` et `pfsense-20`.
     - **Network Adapter 3** : choisir **LAN segment**, cliquer sur **LAN Segments… > Add**, nommer le segment `SYNCHRO-PFSENSE`, valider, puis le sélectionner dans la liste.
 
     ![Paramètres de la VM VMware : carte réseau 3 reliée au LAN segment synchro-pfSense](images/cluster-pfsense/vmware-lan-segment-synchro.png){ loading=lazy }
+    /// caption
+    VMware — 3ᵉ carte réseau reliée au LAN segment de synchronisation
+    ///
 
     !!! info "Qu'est-ce qu'un LAN segment ?"
         Un **LAN segment** relie entre elles les VM qui y sont connectées, comme un switch privé, **sans passer par le Virtual Network Editor**.
 
         - Contrairement à un VMnet, il ne crée **aucune carte réseau virtuelle sur le PC hôte** et ne fournit **aucun service DHCP**. Il faut donc obligatoirement définir des **adresses IP statiques** dans chaque VM, ici dans pfSense.
-        - Il accepte n'importe quel masque, dont le `/30`. Les VMnets imposent au minimum un `/29` (6 hôtes), ce qui réduirait l'isolement du réseau de synchronisation.
+        - Il accepte n'importe quel masque, dont le `/30`. Un VMnet, lui, est aussi relié au PC hôte : le réseau de synchronisation ne serait plus réservé aux deux pare-feux. De plus, VMware déconseille de modifier le masque des VMnets, et les tests menés sous VMware Workstation n'ont pas permis d'y descendre en dessous d'un `/29` (6 hôtes).
 
 === "VirtualBox"
 
@@ -310,12 +322,18 @@ Créer deux VM identiques, nommées `pfsense-19` et `pfsense-20`.
     - **Mode Promiscuité** : **Tout autoriser** (*Allow All*). CARP utilise une adresse MAC virtuelle (`00:00:5e:00:01:xx`). Sans ce réglage, VirtualBox rejette les trames destinées à cette adresse et la bascule échoue. C'est la recommandation officielle de Netgate pour la virtualisation.
 
     ![Paramètres réseau VirtualBox : carte 3 en réseau interne nommé synchro-pfsense](images/cluster-pfsense/virtualbox-carte-3-reseau-interne-synchro.png){ loading=lazy }
+    /// caption
+    VirtualBox — 3ᵉ carte en « Réseau interne » dédié à la synchronisation
+    ///
 
     !!! tip "Installation automatique"
         Si l'assistant de VirtualBox propose une « installation sans surveillance » (*unattended installation*), la désactiver : pfSense s'installe manuellement.
 
 !!! warning "Ne pas modifier les adresses MAC des cartes réseau"
-    ![Champ MAC Address d'une carte réseau VMware](images/cluster-pfsense/vmware-adresse-mac.png){ loading=lazy width="380" align=right }
+    ![Champ MAC Address d'une carte réseau VMware](images/cluster-pfsense/vmware-adresse-mac.png){ loading=lazy width="380" }
+    /// caption
+    VMware — champ MAC Address d'une carte réseau : à laisser tel quel
+    ///
 
     Il peut être tentant de personnaliser l'adresse MAC de chaque carte (**VM > Settings… > Network Adapter > Advanced > MAC Address**), pour reconnaître le réseau d'une interface à la lecture de son adresse. En pratique, cela s'est révélé source de problèmes réseau dans certains cas. **Laisser les adresses générées par l'hyperviseur.**
 
@@ -331,42 +349,70 @@ Réaliser cette installation **sur les deux VM**. Elles peuvent être installée
 1. Démarrer la VM sur l'ISO. Sur l'écran **Copyright and Trademark Notices**, valider **Accept** avec ++enter++.
 
     ![Écran de copyright de l'installeur pfSense](images/cluster-pfsense/install-01-copyright.png){ loading=lazy width="420" }
+    /// caption
+    Installeur — écran de copyright : Accept
+    ///
 
 2. Sur l'écran **Welcome to pfSense!**, choisir **Install — Install pfSense**, puis **OK**.
 
     ![Menu d'accueil de l'installeur avec l'option Install sélectionnée](images/cluster-pfsense/install-02-bienvenue.png){ loading=lazy width="420" }
+    /// caption
+    Installeur — choisir Install pfSense
+    ///
 
 3. Sur l'écran de partitionnement (**How would you like to partition your disk?**), choisir **Auto (ZFS) — Guided Root-on-ZFS**, puis **OK**.
 
     ![Choix du partitionnement : Auto (ZFS) en premier](images/cluster-pfsense/install-272-partitionnement.png){ loading=lazy width="420" }
+    /// caption
+    Installeur 2.7.2 — partitionnement : Auto (ZFS)
+    ///
 
     !!! info "ZFS ou UFS ?"
         **ZFS** est un système de fichiers moderne qui résiste mieux aux coupures de courant brutales. C'est le choix par défaut depuis pfSense 2.6. Le message « *To use ZFS with less than 8GB RAM…* » est purement informatif : il ne pose aucun problème dans ce lab. Selon la version de l'installeur, l'ordre des options peut varier, ou un écran de choix du clavier (*Keymap Selection*) peut apparaître avant. Dans ce cas, garder le clavier par défaut.
 
 4. Le menu **ZFS Configuration** s'affiche. Descendre sur **T — Pool Type/Disks** et valider avec ++enter++.
 
-    ![Menu ZFS Configuration de l'installeur](images/cluster-pfsense/install-272-zfs-menu.png){ loading=lazy width="420" }
-
 5. Choisir **stripe — No Redundancy**. La VM n'a qu'un disque : la redondance n'aurait aucun sens.
 
     ![Choix du type de pool ZFS : stripe](images/cluster-pfsense/install-05-zfs-stripe.png){ loading=lazy width="420" }
+    /// caption
+    Type de pool ZFS : stripe
+    ///
 
 6. Cocher le disque `da0` avec la **barre d'espace** (une étoile `[*]` apparaît), puis valider **OK**.
 
     ![Sélection du disque da0 avec une étoile](images/cluster-pfsense/install-06-zfs-disque.png){ loading=lazy width="420" }
+    /// caption
+    Sélection du disque da0 avec la barre d'espace
+    ///
 
 7. De retour au menu, la ligne indique **stripe: 1 disk**. Remonter sur **>>> Install — Proceed with Installation** et valider.
+
+    ![Menu ZFS Configuration : stripe sur 1 disque, ligne Install sélectionnée](images/cluster-pfsense/install-272-zfs-menu.png){ loading=lazy width="420" }
+    /// caption
+    Menu ZFS Configuration : stripe sur 1 disque, prêt pour Install
+    ///
+
 8. Sur l'avertissement **Last Chance!**, choisir **YES** (flèche gauche, puis ++enter++). Le disque virtuel est vide, rien n'est perdu.
 
     ![Confirmation Last Chance : effacement du disque da0](images/cluster-pfsense/install-07-zfs-confirmation.png){ loading=lazy width="420" }
+    /// caption
+    Dernière confirmation avant l'effacement du disque : YES
+    ///
 
 9. Patienter pendant la vérification et l'extraction des fichiers (une à deux minutes).
 
     ![Barre de progression de l'extraction des fichiers](images/cluster-pfsense/install-08-copie-fichiers.png){ loading=lazy width="420" }
+    /// caption
+    Extraction des fichiers
+    ///
 
 10. Sur l'écran **Complete**, choisir **Reboot**.
 
     ![Fin de l'installation : choix Reboot](images/cluster-pfsense/install-10-redemarrage.png){ loading=lazy width="380" }
+    /// caption
+    Fin de l'installation : Reboot
+    ///
 
 !!! tip "Éjecter l'ISO"
     Si la VM redémarre sur l'installeur au lieu du système installé, éteindre la VM, **déconnecter le lecteur CD** (VMware : décocher **Connected** et **Connect at power on** ; VirtualBox : **Retirer le disque du lecteur virtuel**), puis la redémarrer.
@@ -395,6 +441,9 @@ pfSense attribue automatiquement `em0` au WAN et `em1` au LAN, mais pas `em2`. L
 | `Do you want to proceed [y\|n]?` | `y` | — |
 
 ![Console pfSense : affectation WAN em0, LAN em1, OPT1 em2](images/cluster-pfsense/console-affectation-interfaces.png){ loading=lazy width="560" }
+/// caption
+Console — affectation des interfaces : WAN em0, LAN em1, OPT1 em2
+///
 
 ### 7.2 Donner son adresse IP au LAN (option 2)
 
@@ -414,6 +463,9 @@ L'adresse LAN par défaut, `192.168.1.1`, n'est pas dans le réseau du PC hôte 
 | `Do you want to revert to HTTP as the webConfigurator protocol? (y/n)` | `n` | `n` | On garde HTTPS, chiffré. |
 
 ![Console pfSense : fin de la configuration du LAN en 192.168.19.19/24](images/cluster-pfsense/console-ip-lan.png){ loading=lazy width="560" }
+/// caption
+Console — fin de la configuration de l'adresse LAN du primaire
+///
 
 !!! success "Vérification"
     Depuis le PC hôte, la commande `ping 192.168.19.19` puis `ping 192.168.19.20` doit recevoir des réponses. Si ce n'est pas le cas, vérifier que la 2^e^ carte de la VM est bien dans VMnet19 (ou dans le réseau privé hôte de VirtualBox).
@@ -461,10 +513,12 @@ L'assistant démarre automatiquement à la première connexion. Le réaliser **s
 </figure>
 
 !!! warning "Pourquoi décocher « Block RFC1918 Private Networks » ?"
-    Cette option bloque, à l'entrée du WAN, tout trafic provenant d'une adresse **privée** (`10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`). Sur une vraie connexion Internet, c'est une bonne protection : aucune adresse privée ne devrait arriver d'Internet. Mais dans ce lab, **le WAN lui-même est un réseau privé** (`192.168.8.0/24`). Le texte d'aide de pfSense le précise : *« This option should generally be left turned on, unless the WAN network lies in such a private address space, too »*. Laissée cochée, l'option empêcherait les deux pare-feux de communiquer côté WAN.
+    Cette option bloque, à l'entrée du WAN, tout trafic provenant d'une adresse **privée** (`10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`). Sur une vraie connexion Internet, c'est une bonne protection : aucune adresse privée ne devrait arriver d'Internet. Mais dans ce lab, **le WAN lui-même est un réseau privé** (`192.168.8.0/24`), et le texte d'aide de pfSense le précise : *« This option should generally be left turned on, unless the WAN network lies in such a private address space, too »*. Laissée cochée, l'option bloquerait toute connexion **initiée depuis le WAN** du lab, par exemple l'accès à l'interface web par le WAN décrit en [annexe 16.5](#165-acceder-a-linterface-web-par-le-wan-avec-une-regle-permanente).
+
+    Elle ne gêne en revanche **ni CARP ni l'accès à Internet**. Le lab de test l'a vérifié : la règle automatique qui autorise CARP passe avant ce blocage, et les réponses aux connexions sortantes sont acceptées grâce à la table d'états.
 
 !!! danger "Ne pas relancer l'assistant sur un pare-feu déjà configuré"
-    L'assistant reste accessible dans **System > Setup Wizard**, mais il ne sert qu'à la première configuration. Dans le lab de test, le simple fait de le parcourir à nouveau sur un pare-feu en service a **effacé l'adresse IP du WAN** dans la configuration. La panne n'est apparue qu'au redémarrage suivant, ce qui la rend difficile à diagnostiquer. Pour modifier un réglage ensuite, passer par le menu concerné, par exemple **Interfaces > WAN**.
+    L'assistant reste accessible dans **System > Setup Wizard**, mais il ne sert qu'à la première configuration. Dans le lab de test, rouvrir l'assistant sur un pare-feu en service et cliquer sur **Next** à une seule étape, sans aller jusqu'au bout, a suffi à **effacer l'adresse IP du WAN** dans la configuration. La panne n'est apparue qu'au redémarrage suivant, ce qui la rend difficile à diagnostiquer. Pour modifier un réglage ensuite, passer par le menu concerné, par exemple **Interfaces > WAN**.
 
 !!! info "Pourquoi le même mot de passe admin sur les deux nœuds ?"
     L'option **Synchronize admin**, activée à l'[étape 10.2](#102-parametrer-la-synchronisation-sur-le-primaire), recopiera de toute façon le compte `admin` du primaire vers le secondaire. Choisir le même mot de passe dès maintenant évite toute confusion.
@@ -484,7 +538,7 @@ L'assistant démarre automatiquement à la première connexion. Le réaliser **s
 Cliquer sur **Save**, puis sur **Apply Changes**.
 
 !!! info "Pourquoi « None » comme passerelle ?"
-    Une passerelle (*gateway*) sert à joindre des réseaux **lointains**. Le lien de synchronisation ne mène nulle part ailleurs : les deux pare-feux sont directement reliés. Déclarer une passerelle ici risquerait même de modifier le routage du pare-feu.
+    Une passerelle (*gateway*) sert à joindre des réseaux **lointains**. Le lien de synchronisation ne mène nulle part ailleurs : les deux pare-feux sont directement reliés, une passerelle y serait inutile.
 
 ### 8.4 Distinguer les deux pare-feux d'un coup d'œil
 
@@ -499,8 +553,14 @@ Ces réglages appartiennent à **System > General Setup**, qui n'est **jamais sy
     Une fois les interfaces configurées, la console de chaque pare-feu affiche ses trois adresses.
 
     ![Console du primaire : WAN 192.168.8.19, LAN 192.168.19.19, OPT1 192.168.254.1](images/cluster-pfsense/console-pfsense-19.png){ loading=lazy width="560" }
+    /// caption
+    Console du primaire, interfaces configurées
+    ///
 
     ![Console du secondaire : WAN 192.168.8.20, LAN 192.168.19.20, PFSYNC 192.168.254.2](images/cluster-pfsense/console-pfsense-20.png){ loading=lazy width="560" }
+    /// caption
+    Console du secondaire, interfaces configurées
+    ///
 
 ---
 
@@ -522,12 +582,21 @@ Sur une interface optionnelle comme PFSYNC, pfSense **bloque tout le trafic entr
 Cliquer sur **Save**, puis sur **Apply Changes** (*Appliquer les modifications*). Tant que ce bouton n'est pas cliqué, la règle est enregistrée mais **pas active**.
 
 ![Édition de la règle ICMP sur le primaire : source 192.168.254.2, destination 192.168.254.1](images/cluster-pfsense/regle-icmp-primaire-edition.png){ loading=lazy }
+/// caption
+Primaire — règle ICMP sur PFSYNC, de 192.168.254.2 vers 192.168.254.1
+///
 
 ![Règle ICMP visible dans la liste des règles PFSYNC du primaire](images/cluster-pfsense/regle-icmp-primaire-liste.png){ loading=lazy }
+/// caption
+Primaire — la règle ICMP dans la liste des règles PFSYNC
+///
 
 **Sur le secondaire**, ouvrir **Diagnostics > Ping**, puis saisir **Hostname** `192.168.254.1`, **Source address** `PFSYNC` et cliquer sur **Ping**.
 
 ![Résultat du ping de 192.168.254.2 vers 192.168.254.1 : 3 paquets reçus, 0 % de perte](images/cluster-pfsense/diagnostic-ping-secondaire-vers-primaire.png){ loading=lazy }
+/// caption
+Secondaire — ping de 192.168.254.1 depuis l'interface PFSYNC : 0 % de perte
+///
 
 !!! question "Pourquoi créer la règle sur le primaire, alors que le ping part du secondaire ?"
     ??? success "Réponse"
@@ -539,6 +608,9 @@ Cliquer sur **Save**, puis sur **Apply Changes** (*Appliquer les modifications*)
     Si le ping ne passe toujours pas, autoriser l'ensemble du réseau **PFSYNC subnets** en source et en destination, au lieu des deux adresses, **sur les deux pare-feux**. Cette modification a réglé le problème dans certains cas.
 
     ![Règle ICMP avec PFSYNC subnets en source et destination](images/cluster-pfsense/depannage-regle-icmp-pfsync-subnets.png){ loading=lazy }
+    /// caption
+    Variante de dépannage : ICMP autorisé entre PFSYNC subnets
+    ///
 
 **Vérifier aussi l'accès à Internet** (indispensable pour la mise à jour finale) : **sur chaque pare-feu**, dans **Diagnostics > Ping**, pinguer `192.168.8.2` (la passerelle), puis `1.1.1.1`, avec **Source address** `WAN`.
 
@@ -559,10 +631,16 @@ Le primaire doit **s'authentifier** auprès du secondaire pour lui envoyer la co
 3. **Modifier à nouveau** l'utilisateur (icône crayon) : la section **Effective Privileges** n'apparaît qu'après le premier enregistrement.
 
     ![Création de l'utilisateur ha-user dans le gestionnaire d'usagers](images/cluster-pfsense/utilisateur-ha-user-creation.png){ loading=lazy }
+    /// caption
+    Création de l'utilisateur ha-user
+    ///
 
 4. Dans **Effective Privileges**, cliquer sur **Add**, sélectionner **System - HA node sync** (*Système – Synchronisation du nœud du Système HA*), puis enregistrer.
 
     ![Attribution du privilège System - HA node sync à ha-user](images/cluster-pfsense/utilisateur-ha-user-privilege.png){ loading=lazy }
+    /// caption
+    Privilège System - HA node sync attribué à ha-user
+    ///
 
 !!! warning "Un compte à protéger"
     pfSense le signale lui-même : ce privilège donne en pratique un **accès équivalent à celui d'un administrateur**, puisqu'il permet de remplacer la configuration. Le mot de passe de `ha-user` doit donc être aussi robuste que celui d'`admin`.
@@ -594,6 +672,9 @@ Le primaire doit **s'authentifier** auprès du secondaire pour lui envoyer la co
 Cliquer sur **Save**.
 
 ![Page High Availability du primaire, entièrement renseignée](images/cluster-pfsense/ha-sync-primaire.png){ loading=lazy }
+/// caption
+Primaire — page High Availability entièrement renseignée
+///
 
 **Il n'est pas nécessaire de configurer la partie XML-RPC sur le secondaire** : la réplication de la configuration du primaire s'effectuera dès que les flux seront autorisés des deux côtés.
 
@@ -617,6 +698,9 @@ Pour respecter les bonnes pratiques de sécurité, on n'autorise **que les adres
 | Description | `autoriser la synchro de configuration XML-RPC` | Une règle décrite est une règle compréhensible six mois plus tard. |
 
 ![Règle XML-RPC : TCP, PFSYNC subnets vers PFSYNC subnets, port HTTPS 443](images/cluster-pfsense/regle-xmlrpc-primaire.png){ loading=lazy }
+/// caption
+Règle XML-RPC : TCP 443 de PFSYNC subnets vers PFSYNC subnets
+///
 
 !!! info "Pourquoi « PFSYNC subnets » plutôt qu'une adresse IP ?"
     La règle va être **recopiée telle quelle** sur le secondaire. Avec une adresse propre à un nœud (par exemple « destination `192.168.254.1` »), la copie serait fausse sur l'autre nœud, puisque la règle ne serait pas adaptée à sa situation. **PFSYNC subnets** désigne le réseau `/30`, valable sur les deux pare-feux. Un **alias** contenant les deux adresses `192.168.254.1` et `192.168.254.2` conviendrait aussi.
@@ -628,6 +712,9 @@ Pour respecter les bonnes pratiques de sécurité, on n'autorise **que les adres
         Le primaire **envoie** son flux XML-RPC vers le secondaire. Ce flux **entre** donc par l'interface PFSYNC du **secondaire**. Sans règle l'autorisant sur le secondaire, il est bloqué (refus par défaut) et la synchronisation ne s'effectue pas.
 
         ![Schéma : le flux XML-RPC du primaire est bloqué à l'entrée du secondaire faute de règle](images/cluster-pfsense/schema-xmlrpc-bloque.png){ loading=lazy }
+        /// caption
+        Sans règle sur le secondaire, le flux XML-RPC est bloqué à son entrée
+        ///
 
 !!! question "Pourquoi ne pas avoir commencé par la règle sur le secondaire, alors ?"
     ??? success "Réponse"
@@ -636,10 +723,16 @@ Pour respecter les bonnes pratiques de sécurité, on n'autorise **que les adres
         Si la règle XML-RPC n'existait que sur le secondaire, la première synchronisation l'**effacerait**, puisqu'elle est absente de la configuration de référence, et toutes les synchronisations suivantes seraient bloquées. En la créant d'abord sur le primaire, on garantit qu'elle fait partie de la configuration recopiée : le secondaire reçoit une copie identique de sa propre règle et la synchronisation se maintient.
 
         ![Schéma : la règle présente sur le secondaire laisse passer le flux XML-RPC, le cluster est fonctionnel](images/cluster-pfsense/schema-xmlrpc-autorise.png){ loading=lazy }
+        /// caption
+        Avec la règle sur le secondaire, la synchronisation fonctionne
+        ///
 
 Une fois la règle XML-RPC créée sur le secondaire, la configuration se réplique. Pour une vérification rapide, il est possible de **forcer la synchronisation, uniquement depuis le primaire**, dans **Status > Filter Reload** (*État > Recharger les filtres*) avec le bouton **Force Config Sync**.
 
 ![Page Recharger les filtres avec le bouton Forcer la synchronisation de la configuration](images/cluster-pfsense/forcer-synchronisation-configuration.png){ loading=lazy }
+/// caption
+Primaire — État > Recharger les filtres : synchronisation forcée
+///
 
 #### Règle 2 — pfsync, pour la synchronisation des états
 
@@ -656,12 +749,18 @@ Une fois la règle XML-RPC créée sur le secondaire, la configuration se répli
 | Description | `autoriser la synchro des états pfsync` |
 
 ![Règle pfsync sur le primaire](images/cluster-pfsense/regle-pfsync-primaire.png){ loading=lazy }
+/// caption
+Règle pfsync : protocole PFSYNC entre PFSYNC subnets
+///
 
 #### Règle 3 — CARP
 
 Toujours **sur le primaire**, créer une troisième règle sur le même modèle, avec le protocole **CARP**.
 
 ![Règle CARP sur le primaire](images/cluster-pfsense/regle-carp-primaire.png){ loading=lazy }
+/// caption
+Règle CARP : protocole CARP entre PFSYNC subnets
+///
 
 !!! note "Pour aller plus loin : cette règle est-elle indispensable ?"
     Dès qu'une VIP CARP existe, pfSense ajoute une règle **automatique** qui autorise le protocole CARP sur toutes les interfaces. De plus, les annonces CARP circulent sur les réseaux qui portent une VIP (WAN et LAN), pas sur le lien PFSYNC. Cette troisième règle n'est donc pas strictement nécessaire. Elle ne présente aucun risque, puisqu'elle ne concerne que le `/30` des deux pare-feux, et elle **documente l'intention** de la configuration. pfsync, en revanche, n'est **jamais** autorisé automatiquement : la règle 2 est indispensable.
@@ -677,6 +776,9 @@ Toujours **sur le primaire**, créer une troisième règle sur le même modèle,
 Après toutes ces manipulations, l'interface PFSYNC du primaire présente ces règles :
 
 ![Liste des règles PFSYNC du primaire : ICMP, XML-RPC, pfsync et CARP](images/cluster-pfsense/regles-pfsync-primaire-liste.png){ loading=lazy }
+/// caption
+Primaire — règles de l'interface PFSYNC
+///
 
 **Ne pas toucher au secondaire** : les règles 2 et 3 vont y arriver toutes seules.
 
@@ -685,14 +787,18 @@ Après toutes ces manipulations, l'interface PFSYNC du primaire présente ces r�
 **Sur le secondaire**, ouvrir **Firewall > Rules > PFSYNC** : les règles 2 et 3 sont apparues **automatiquement**, grâce à la règle XML-RPC.
 
 ![Règles PFSYNC du secondaire, identiques à celles du primaire](images/cluster-pfsense/regles-pfsync-secondaire-repliquees.png){ loading=lazy }
+/// caption
+Secondaire — les mêmes règles, arrivées par réplication
+///
 
 En cas de problème de synchronisation, deux outils permettent d'en trouver la cause :
 
 - **Les journaux du pare-feu sur le secondaire** : **Status > System Logs > Firewall** (*État > Journaux système > Pare-feu*). On y repère le trafic **bloqué** en provenance de l'interface PFSYNC du primaire. Le bouton **+** (*Easy Rule*) crée en un clic une règle qui l'autorise.
 
     ![Journaux du pare-feu du secondaire montrant du trafic bloqué sur l'interface de synchronisation](images/cluster-pfsense/journaux-pare-feu-secondaire-blocages.png){ loading=lazy }
-
-    *Capture issue d'un autre lab : l'interface de synchronisation s'y appelle `SYNC` et les adresses diffèrent, mais la démarche est identique.*
+    /// caption
+    Journaux du pare-feu : trafic de synchronisation bloqué. Capture issue d'un autre lab : l'interface s'y appelle SYNC et les adresses diffèrent, mais la démarche est identique.
+    ///
 
 - **Les notifications** : l'icône en forme de **cloche**, en haut à droite. Il faut **vraiment les lire**. Elles signalent par exemple un mauvais mot de passe ou un utilisateur inexistant sur le secondaire.
 
@@ -701,19 +807,22 @@ En cas de problème de synchronisation, deux outils permettent d'en trouver la c
 Sur le secondaire, la page **System > High Avail. Sync** se présente ainsi :
 
 ![Page High Availability du secondaire : seule l'option Synchronize admin est cochée](images/cluster-pfsense/ha-sync-secondaire.png){ loading=lazy }
+/// caption
+Secondaire — page High Availability : seule l'option Synchronize admin est cochée
+///
 
 !!! question "Les cases de la partie « XMLRPC Sync » sont décochées sur le secondaire. Faut-il les remplir ?"
     ??? success "Réponse"
         **Non.** Si les tests précédents sont concluants, il n'y a aucune raison d'y toucher. La synchronisation de configuration est à **sens unique** et ne doit être configurée **que sur le primaire**.
 
-        Configurée aussi sur le secondaire, elle le ferait pousser **sa** configuration vers le primaire. Les deux nœuds s'écraseraient mutuellement, avec un risque de boucle et de perte de règles. La documentation de Netgate le rappelle : *« Do not make changes to the secondary in areas set to be synchronized! »*
+        La documentation de Netgate est formelle : ces réglages ne doivent être activés **que sur le primaire**. Renseignés sur le secondaire, ils lui feraient pousser à son tour **sa** configuration vers le primaire, qui cesserait d'être la référence. Netgate rappelle aussi : *« Do not make changes to the secondary in areas set to be synchronized! »*
 
 ### 10.5 Activer la réception des états pfsync sur le secondaire
 
-!!! warning "Étape ajoutée lors de la mise à jour de ce TP"
+!!! warning "Pourquoi cette étape est indispensable"
     La partie **haute** de la page HA (*State Synchronization Settings*, pfsync) n'est **pas synchronisée** par XML-RPC. Sur le secondaire, la case **Synchronize states** reste donc décochée.
 
-    Dans cette situation, la bascule des VIP fonctionne, mais **le secondaire n'importe aucun état** envoyé par le primaire : les connexions en cours seraient coupées lors d'une bascule. Le lab de test l'a confirmé. Sans cette étape, la table d'états du secondaire ne contenait **aucun** état créé par le primaire ; après cette étape, elle les contenait. Le texte d'aide de la case le précise d'ailleurs : *« This setting should be enabled on all members of a failover group »*. La documentation de Netgate demande d'activer pfsync sur **chaque** nœud, chacun pointant vers l'autre.
+    Dans cette situation, la bascule des VIP fonctionne, mais **le secondaire n'importe aucun état** envoyé par le primaire : il ne connaîtrait pas les connexions en cours au moment d'une bascule. Le lab de test l'a vérifié : sans cette étape, la table d'états du secondaire ne contenait **aucun** état créé par le primaire ; après cette étape, elle les contenait. Le texte d'aide de la case le précise d'ailleurs : *« This setting should be enabled on all members of a failover group »*. La documentation de Netgate demande d'activer pfsync sur **chaque** nœud, chacun pointant vers l'autre.
 
 **Sur le secondaire**, ouvrir **System > High Avail. Sync** et renseigner **uniquement la partie haute** :
 
@@ -727,6 +836,9 @@ Sur le secondaire, la page **System > High Avail. Sync** se présente ainsi :
 Cliquer sur **Save**.
 
 ![Page High Availability du secondaire : pfsync activé vers 192.168.254.1, partie XML-RPC vide](images/cluster-pfsense/ha-sync-secondaire-pfsync-active.png){ loading=lazy }
+/// caption
+Secondaire — pfsync activé vers 192.168.254.1, partie XML-RPC laissée vide
+///
 
 **Vérification (facultative)** : le contrôle le plus simple se fait dans l'interface web, à l'[étape 13.1](#131-controler-letat-normal), une fois les VIP créées. Dès maintenant, la commande suivante compte les états selon le nœud qui les a créés. Elle se lance dans **Diagnostics > Command Prompt** (*Diagnostics > Invite de commande*) de **chaque** pare-feu, champ **Execute Shell Command** :
 
@@ -766,13 +878,19 @@ Pour que le cluster soit **résilient** (tolérant à la panne), chaque pare-feu
 | Description | `carp_vip_wan` | `carp_vip_lan` | — |
 
 ![Création de la VIP CARP WAN 192.168.8.21/24, VHID 1, base 1, biais 0](images/cluster-pfsense/vip-wan.png){ loading=lazy }
+/// caption
+VIP CARP du WAN : 192.168.8.21/24, VHID 1, base 1, skew 0
+///
 
 ![Création de la VIP CARP LAN 192.168.19.21/24](images/cluster-pfsense/vip-lan.png){ loading=lazy }
+/// caption
+VIP CARP du LAN : 192.168.19.21/24
+///
 
 Cliquer sur **Save**, puis sur **Apply Changes** après chaque VIP.
 
 !!! info "Comprendre VHID, Base et Skew"
-    - Le **VHID** identifie un groupe CARP sur un réseau. Il sert aussi à fabriquer l'adresse MAC virtuelle de la VIP, `00:00:5e:00:01:<VHID>`. Deux clusters différents installés sur **le même réseau** doivent donc utiliser des VHID différents. pfSense propose automatiquement un numéro libre.
+    - Le **VHID** identifie un groupe CARP sur un réseau. Il sert aussi à fabriquer l'adresse MAC virtuelle de la VIP, `00:00:5e:00:01:<VHID>`. Deux clusters différents installés sur **le même réseau** doivent donc utiliser des VHID différents. pfSense propose automatiquement un numéro libre **sur ce pare-feu**, mais il ignore les VHID utilisés par d'autres équipements du réseau : c'est à l'administrateur de s'en assurer.
     - **Base** est l'intervalle entre deux annonces, en secondes. **Skew** (*biais*) ajoute un léger retard, en 256^e^ de seconde. **Le pare-feu dont les annonces sont les plus fréquentes gagne** : avec un skew de 0, le primaire est prioritaire.
     - Lors de la réplication vers le secondaire, pfSense **ajoute automatiquement 100 au skew**. Le secondaire annonce donc moins souvent et reste BACKUP. Le lab le confirme : la VIP du secondaire affiche `advskew 100`.
     - Le BACKUP se déclare MASTER s'il ne reçoit plus d'annonce pendant environ **3 × Base + Skew/256** secondes, soit à peu près 3,4 s ici.
@@ -783,10 +901,10 @@ La réplication vers le secondaire est automatique, mais il faut aller la vérif
 
 ## 12. Faire sortir le trafic avec la VIP (NAT sortant)
 
-Le **NAT sortant** réécrit l'adresse source des paquets qui quittent le LAN vers le WAN. Par défaut (mode *Automatic*), pfSense utilise **l'adresse propre de son interface WAN** : `192.168.8.19` sur le primaire, `192.168.8.20` sur le secondaire. Dans un cluster, c'est un problème : après une bascule, les connexions changeraient d'adresse source et le serveur distant ne les reconnaîtrait plus.
+Le **NAT sortant** réécrit l'adresse source des paquets qui quittent le LAN vers le WAN. Par défaut (mode *Automatic*), pfSense utilise **l'adresse propre de son interface WAN** : `192.168.8.19` sur le primaire, `192.168.8.20` sur le secondaire. Dans un cluster, c'est un problème. Les serveurs distants répondent à l'adresse propre du primaire (`192.168.8.19`). Après une bascule, ces réponses partent donc vers un pare-feu en panne, et le secondaire ne les reçoit pas : d'après la documentation de Netgate, un trafic adressé directement à un nœud, et non à une VIP, n'est jamais repris par les autres nœuds.
 
 <figure markdown="span">
-  ![Comparaison : sans règle, l'adresse source change à la bascule et la connexion est perdue ; avec la règle, l'adresse source reste la VIP 192.168.8.21 et la connexion continue](images/cluster-pfsense/schema-nat-sortant-vip.svg){ loading=lazy }
+  ![Comparaison : sans règle, les réponses du serveur reviennent vers l'adresse du primaire en panne et la connexion est perdue ; avec la règle, le trafic sort avec la VIP 192.168.8.21, que le secondaire reprend](images/cluster-pfsense/schema-nat-sortant-vip.svg){ loading=lazy }
   <figcaption>Traduire le LAN vers la VIP WAN garantit une adresse source identique quel que soit le pare-feu actif.</figcaption>
 </figure>
 
@@ -811,8 +929,14 @@ Le **NAT sortant** réécrit l'adresse source des paquets qui quittent le LAN ve
 3. Cliquer sur **Save**, puis sur **Apply Changes**.
 
 ![Règle de NAT sortant : interface WAN, source 192.168.19.0/24](images/cluster-pfsense/nat-sortant-regle-1.png){ loading=lazy }
+/// caption
+Règle de NAT sortant : interface WAN, source 192.168.19.0/24
+///
 
 ![Suite de la règle : traduction vers 192.168.8.21 (carp_vip_wan)](images/cluster-pfsense/nat-sortant-regle-2.png){ loading=lazy }
+/// caption
+Suite de la règle : traduction vers la VIP 192.168.8.21
+///
 
 La règle est dupliquée automatiquement sur le secondaire.
 
@@ -835,12 +959,23 @@ Ouvrir **Status > CARP (failover)** (*État > CARP (basculement)*) sur chaque pa
 - Le **primaire** (`.19`) affiche **MASTER** pour les deux VIP :
 
     ![État CARP du primaire : WAN et LAN en MASTER](images/cluster-pfsense/carp-statut-primaire-master.png){ loading=lazy }
+    /// caption
+    Primaire — les deux VIP en MASTER
+    ///
 
 - Le **secondaire** (`.20`) affiche **BACKUP** :
 
     ![État CARP du secondaire : WAN et LAN en BACKUP](images/cluster-pfsense/carp-statut-secondaire-backup.png){ loading=lazy }
+    /// caption
+    Secondaire — les deux VIP en BACKUP
+    ///
 
 La même page vérifie aussi **pfsync**. Sa section **State Synchronization Status** liste les identifiants des nœuds qui ont créé des états (*State Creator Host IDs*). Quand la synchronisation des états fonctionne dans les deux sens, **la liste est identique sur les deux pare-feux** et contient les deux identifiants. Si un nœud n'affiche que le sien, revoir l'[étape 10.5](#105-activer-la-reception-des-etats-pfsync-sur-le-secondaire).
+
+![État CARP du secondaire : VIP en BACKUP et liste des deux identifiants de synchronisation des états](images/cluster-pfsense/carp-statut-synchronisation-etats.png){ loading=lazy }
+/// caption
+État > CARP : section State Synchronization Status, avec les identifiants des deux nœuds
+///
 
 !!! note "« DISABLED » juste après une synchronisation"
     Juste après la création des VIP, la page du secondaire peut afficher brièvement **DISABLED**. Il suffit de la recharger quelques secondes plus tard pour voir **BACKUP**.
@@ -907,11 +1042,13 @@ Faire basculer le secondaire en MASTER en **éteignant le primaire**, puis véri
 Simuler une panne de l'**interface WAN** du MASTER (déconnecter sa carte WAN dans les paramètres de la VM) et vérifier si le WAN du secondaire a bien récupéré le statut MASTER. Vérifier également le statut de l'interface LAN du secondaire : est-il passé en MASTER ?
 
 ??? success "Réponse"
-    **Non** (avec la configuration réalisée jusqu'ici). Le WAN du secondaire passe bien MASTER, mais le LAN du **primaire** garde le statut MASTER. Les deux pare-feux se partagent alors les rôles : le trafic du LAN arrive sur le primaire, qui n'a plus de WAN, et **la connectivité est perdue**. Ce problème est mentionné sur plusieurs forums.
+    **Non** (avec la configuration réalisée jusqu'ici). Le WAN du secondaire passe bien MASTER, mais le LAN du **primaire** garde le statut MASTER. Les deux pare-feux se partagent alors les rôles : les postes du LAN envoient toujours leur trafic au primaire, dont le WAN est coupé, et **perdent l'accès à l'extérieur**.
+
+    Ce n'est **pas un défaut de pfSense** : c'est la conséquence d'un réglage laissé par l'assistant, que l'exercice 5 permet de corriger.
 
     **Explication (vérifiée dans le lab de test).** En théorie, pfSense active la **préemption CARP** (`net.inet.carp.preempt=1`). Quand une interface portant une VIP perd son lien, le pare-feu se **rétrograde** (*demotion* +240) sur **toutes** ses VIP, et le secondaire prend tout. Le journal système montre d'ailleurs que la VIP LAN bascule dans un premier temps. Mais l'assistant a laissé l'IPv6 du WAN en **DHCP6**. pfSense considère alors le WAN comme une interface **dynamique** et, à la perte du lien, il la « démonte » entièrement, VIP comprise. La VIP ayant disparu, la rétrogradation est **annulée** (`carp: demoted by -240 to 0 (vhid removed)`), et le primaire reprend la VIP LAN.
 
-### Exercice 5 (bonus) — Corriger le comportement de l'exercice 4
+### Exercice 5 — Corriger le comportement de l'exercice 4
 
 Sur **les deux pare-feux**, ouvrir **Interfaces > WAN**, régler **IPv6 Configuration Type** sur **None**, puis **Save** et **Apply Changes**. La configuration des interfaces n'est pas synchronisée : il faut le faire sur chaque nœud. Refaire ensuite l'exercice 4. Que se passe-t-il ?
 
@@ -926,22 +1063,23 @@ Sur **les deux pare-feux**, ouvrir **Interfaces > WAN**, régler **IPv6 Configur
 
 ### 15.1 Agréger deux liens de synchronisation (LAGG/LACP)
 
-![Schéma d'une agrégation de liens entre deux équipements](images/cluster-pfsense/schema-lagg-synchro.png){ loading=lazy width="560" }
-
 Le *Link Aggregation Control Protocol* (**LACP**, norme IEEE 802.3ad) est un protocole de **niveau 2** du modèle OSI. Il regroupe plusieurs ports physiques en **une seule voie logique**, appelée **LAGG** (*Link AGGregation*) dans pfSense.
 
 L'agrégat offre deux avantages :
 
-- il **additionne la bande passante** des liens, au-delà de la limite d'un seul câble ;
+- il **additionne la capacité** des liens : deux câbles de 1 Gbit/s offrent 2 Gbit/s au total ;
 - il apporte de la **redondance** : si un câble ou un port tombe en panne, l'autre continue de transmettre le trafic sans interruption.
 
-Appliqué au lien de synchronisation, il supprime le dernier point unique de défaillance du cluster. La même notion existe sous Linux : voir [Configurer une agrégation de liens (Bonding/LACP) avec Netplan](configurer-agregation-liens-bonding-lacp-netplan-ubuntu.md).
+Attention : LACP répartit le trafic **par flux**, et une même conversation n'utilise qu'un seul lien à la fois. La synchronisation entre deux pare-feux ne gagne donc pas de débit. Son vrai bénéfice est la **redondance** : l'agrégat supprime le dernier point unique de défaillance du cluster. La même notion existe sous Linux : voir [Configurer une agrégation de liens (Bonding/LACP) avec Netplan](configurer-agregation-liens-bonding-lacp-netplan-ubuntu.md).
 
 #### Ajouter une carte réseau et un second LAN segment
 
 **Sur chaque pare-feu** (VM éteinte), ajouter une **quatrième carte réseau**. La placer dans **un autre LAN segment** que celui utilisé pour la synchronisation : on obtient ainsi deux « câbles » indépendants entre les pare-feux, un par interface de l'agrégat.
 
 ![Schéma : deux liens SYNCHRO-PFSENSE-1 et SYNCHRO-PFSENSE-2 relient les pare-feux](images/cluster-pfsense/schema-lagg-synchro.png){ loading=lazy }
+/// caption
+Deux liens de synchronisation, chacun dans son propre LAN segment
+///
 
 !!! warning "Un segment par lien"
     Les tests ont montré qu'utiliser **le même** LAN segment pour les deux interfaces de l'agrégat provoque un problème de connectivité. Chaque lien doit avoir **son propre** segment, comme deux câbles physiques distincts.
@@ -951,12 +1089,18 @@ Appliqué au lien de synchronisation, il supprime le dernier point unique de dé
     Créer les segments depuis **VM > Settings… > Network Adapter > LAN Segments…**. Sur les captures, la 3^e^ carte est dans `SYNCHRO-PFSENSE-1` et la nouvelle 4^e^ carte dans `SYNCHRO-PFSENSE-2`.
 
     ![Carte reliée au LAN segment SYNCHRO-PFSENSE-1](images/cluster-pfsense/vmware-lan-segment-synchro-1.png){ loading=lazy width="420" } ![Carte reliée au LAN segment SYNCHRO-PFSENSE-2](images/cluster-pfsense/vmware-lan-segment-synchro-2.png){ loading=lazy width="420" }
+    /// caption
+    VMware — 3ᵉ carte dans SYNCHRO-PFSENSE-1, 4ᵉ carte dans SYNCHRO-PFSENSE-2
+    ///
 
 === "VirtualBox"
 
     Activer l'**Adapter 4** en **Réseau interne** nommé `SYNCHRO-PFSENSE-2`, avec le type d'interface Intel PRO/1000 MT Desktop et le mode promiscuité « Tout autoriser ». L'Adapter 3 reste dans le réseau interne `SYNCHRO-PFSENSE`.
 
     ![Adapter 4 de VirtualBox en réseau interne Synchro-Pfsense-2](images/cluster-pfsense/virtualbox-carte-4-reseau-interne-synchro-2.png){ loading=lazy }
+    /// caption
+    VirtualBox — 4ᵉ carte en réseau interne SYNCHRO-PFSENSE-2
+    ///
 
 #### Sauvegarder les règles de pare-feu existantes
 
@@ -967,8 +1111,14 @@ La création du LAGG va supprimer l'interface PFSYNC **et toutes ses règles**. 
 3. Cliquer sur **Download configuration as XML**. Un fichier XML est téléchargé sur le PC hôte.
 
 ![Page de sauvegarde : zone Règles du pare-feu sélectionnée](images/cluster-pfsense/sauvegarde-regles-pare-feu.png){ loading=lazy }
+/// caption
+Sauvegarde de la zone « Règles du pare-feu »
+///
 
 ![Fichier XML de sauvegarde téléchargé par le navigateur](images/cluster-pfsense/sauvegarde-fichier-xml-telecharge.png){ loading=lazy width="380" }
+/// caption
+Le fichier XML de sauvegarde téléchargé par le navigateur
+///
 
 #### Créer le LAGG
 
@@ -977,23 +1127,41 @@ Une interface ne peut entrer dans un LAGG que si elle **n'est affectée à rien*
 1. **Interfaces > Assignments** (*Interfaces > Affectations*) : supprimer la ligne **PFSYNC** (bouton **Delete**).
 
     ![Suppression de l'interface PFSYNC dans les affectations](images/cluster-pfsense/lagg-suppression-interface-pfsync.png){ loading=lazy }
+    /// caption
+    Suppression de l'interface PFSYNC dans les affectations
+    ///
 
 2. Onglet **LAGGs** > **Add** : sélectionner les **deux interfaces libres** (++ctrl++ + clic), en les reconnaissant à leur adresse MAC. Choisir le protocole **LACP**, laisser les autres options par défaut, ajouter une description pertinente, puis **Save**.
 
     ![Création du LAGG en mode LACP avec deux interfaces membres](images/cluster-pfsense/lagg-creation.png){ loading=lazy }
+    /// caption
+    Création du LAGG en mode LACP avec deux interfaces membres
+    ///
 
     ![Liste des LAGG : lagg0 avec ses deux membres](images/cluster-pfsense/lagg-liste.png){ loading=lazy }
+    /// caption
+    Le LAGG créé
+    ///
 
 3. Onglet **Interface Assignments** : choisir `lagg0` dans **Available network ports**, puis **Add**.
 4. Cliquer sur la nouvelle interface (`OPT1` dans l'exemple) et la configurer : **Enable** coché, **Description** `PFSYNC`, IPv4 statique `192.168.254.1/30`. Enregistrer, puis appliquer les changements.
 
     ![Affectation de l'interface LAGG](images/cluster-pfsense/lagg-affectation-interface.png){ loading=lazy }
+    /// caption
+    Affectation de l'interface LAGG
+    ///
 
     ![Configuration de l'interface LAGG : activée, nommée, IP statique](images/cluster-pfsense/lagg-configuration-interface.png){ loading=lazy }
+    /// caption
+    Configuration de l'interface LAGG : activée, nommée PFSYNC, IP statique
+    ///
 
 5. Répéter les mêmes étapes **sur le secondaire**, avec l'adresse `192.168.254.2`.
 
     ![Affectations du secondaire avec l'interface LAGG](images/cluster-pfsense/lagg-secondaire-affectations.png){ loading=lazy }
+    /// caption
+    Secondaire — affectations avec l'interface LAGG
+    ///
 
 6. Vérifier dans **System > High Avail. Sync** que **Synchronize Interface** vaut toujours `PFSYNC` sur les deux nœuds.
 
@@ -1005,12 +1173,22 @@ Une interface ne peut entrer dans un LAGG que si elle **n'est affectée à rien*
     2. **Restore area** : **Firewall Rules**. Avec *All*, tout le contenu du fichier serait restauré.
     3. **Configuration file** : **Parcourir…** > le fichier XML exporté précédemment.
     4. Cliquer sur **Restore Configuration** et confirmer. pfSense applique les règles et redémarre les services nécessaires. Dans certains cas, un redémarrage du pare-feu est utile pour s'assurer que tout est bien appliqué.
+    5. **Sur le secondaire**, vérifier la présence de la règle XML-RPC sur la nouvelle interface PFSYNC : ses anciennes règles ont été supprimées avec son interface. Si elle manque, la recréer comme à la [partie 10.3](#103-autoriser-les-flux-de-synchronisation) ; les autres règles arriveront ensuite par réplication.
 
     ![Restauration de la zone Règles du pare-feu à partir du fichier XML](images/cluster-pfsense/restauration-regles-pare-feu.png){ loading=lazy }
+    /// caption
+    Restauration de la zone « Règles du pare-feu »
+    ///
 
     ![Boîte de confirmation de la restauration](images/cluster-pfsense/restauration-confirmation.png){ loading=lazy width="380" }
+    /// caption
+    Confirmation de la restauration
+    ///
 
     ![Message : la configuration a été restaurée](images/cluster-pfsense/restauration-terminee.png){ loading=lazy }
+    /// caption
+    Restauration terminée
+    ///
 
 === "Option 2 — Recréer les règles"
 
@@ -1021,10 +1199,16 @@ Une interface ne peut entrer dans un LAGG que si elle **n'est affectée à rien*
 **Sur le primaire**, créer une règle de pare-feu quelconque, par exemple sur l'interface WAN :
 
 ![Règle de test créée sur le WAN du primaire](images/cluster-pfsense/verification-regle-wan-primaire.png){ loading=lazy }
+/// caption
+Primaire — règle de test sur le WAN
+///
 
 Elle doit apparaître automatiquement sur le secondaire :
 
 ![La règle de test est répliquée sur le WAN du secondaire](images/cluster-pfsense/verification-regle-wan-secondaire.png){ loading=lazy }
+/// caption
+Secondaire — la règle de test est arrivée par réplication
+///
 
 ### 15.2 Ajouter un troisième nœud au cluster
 
@@ -1052,7 +1236,7 @@ pfSense CE **2.7.2** (décembre 2023) n'est plus maintenue. À la date de rédac
     - **Internet est indispensable, et le téléchargement est long** : 187 paquets pour passer en 2.8.1, puis 184 pour passer en 2.9.0. Dans le lab, chaque saut a pris **de 25 minutes à 1 heure par nœud**, selon la charge des serveurs de Netgate. L'installation et les redémarrages ne durent que 3 à 4 minutes ; tout le reste est du téléchargement.
     - **2 Go de RAM par VM.** Avec 1 Go, la mise à jour a réussi sur le secondaire mais a échoué sur le primaire : le système a tué le processus d'installation par manque de mémoire, et pfSense est resté inutilisable (voir le dépannage ci-dessous). L'échec n'est donc pas systématique, mais le risque est réel. Avec 2 Go, les deux sauts du primaire se sont déroulés sans erreur.
     - **Tant que les versions diffèrent, la synchronisation XML-RPC se suspend d'elle-même.** Le journal système du primaire l'indique : *« The other member is on a different configuration version of pfSense. Sync will not be done to prevent problems! »*. Il ne faut donc **rien modifier** pendant la mise à jour, car les changements ne seraient pas recopiés.
-    - **Les états pfsync passent toujours vers le nœud mis à jour.** Un secondaire en 2.9.0 importait encore les états envoyés par un primaire en 2.7.2 ; l'inverse ne fonctionnait plus. La bascule vers le secondaire mis à jour conserve donc les connexions en cours.
+    - **Les états pfsync passent toujours vers le nœud mis à jour.** Un secondaire en 2.9.0 importait encore les états envoyés par un primaire en 2.7.2 ; l'inverse ne fonctionnait plus. Au moment de basculer vers le secondaire mis à jour, celui-ci dispose donc bien des états des connexions en cours.
 
 #### Étape 1 — Sauvegarder les deux nœuds et prévoir 2 Go de RAM
 
@@ -1067,18 +1251,24 @@ Si les VM ont été créées avec 1 Go, **éteindre le secondaire** (console : o
 1. Ouvrir **System > Update** (*Système > Mettre à jour*), onglet **Update Settings** (*Paramètres de mise à jour*). Choisir **Branch** : **Previous Stable Version (2.8.1)**, puis **Save**.
 
     ![Paramètres de mise à jour : branche Previous Stable Version (2.8.1)](images/cluster-pfsense/maj-parametres-branche-281.png){ loading=lazy }
+    /// caption
+    Paramètres de mise à jour : branche 2.8.1
+    ///
 
 2. Onglet **System Update** (*Mise à jour système*) : patienter jusqu'à ce que **Latest Base System** (*Dernier système de base*) affiche `2.8.1`. L'état « *Retrieving* » peut durer une à deux minutes.
 
     ![Page de mise à jour : système actuel 2.7.2, dernier système 2.8.1, bouton Confirmer](images/cluster-pfsense/maj-confirmation-281.png){ loading=lazy }
+    /// caption
+    Mise à jour système : 2.7.2 installée, 2.8.1 disponible
+    ///
 
     !!! note "Le message « pfSense-repoc: … no pfSense packages installed »"
         Ce message apparaît dans la zone **Messages** sur une pfSense CE fraîchement installée. Il est sans conséquence : dans le lab, la mise à jour a fonctionné malgré lui sur les deux nœuds.
 
 3. Cliquer sur **Confirm**. La page affiche la progression du téléchargement. Dans la console, la suite se déroule ainsi :
     1. le message *« System is going to be upgraded. Rebooting in … seconds »* annonce un **premier redémarrage** ;
-    2. le nouveau FreeBSD et les paquets s'installent pendant deux à trois minutes ; pfSense désactive CARP pendant ce temps (`net.inet.carp.allow: 1 -> 0`) ;
-    3. le message *« Rebooting now »* annonce un **second redémarrage** ;
+    2. le nouveau FreeBSD et les paquets s'installent pendant deux à trois minutes ;
+    3. le message *« Rebooting now »* annonce un **second redémarrage**, et la console affiche `net.inet.carp.allow: 1 -> 0` : pfSense désactive CARP avant de s'arrêter ;
     4. le menu habituel revient.
 
     **Ne pas éteindre la VM pendant cette phase.** Des messages inquiétants peuvent défiler, comme *« POST-INSTALL script failed »* ou *« missing file »*. Dans le lab, ils étaient sans conséquence.
@@ -1088,12 +1278,18 @@ Si les VM ont été créées avec 1 Go, **éteindre le secondaire** (console : o
 6. Vérifier la bannière `2.9.0-RELEASE` et l'état **BACKUP**.
 
     ![Console du secondaire : Welcome to pfSense 2.9.0-RELEASE](images/cluster-pfsense/console-pfsense-20-290.png){ loading=lazy width="560" }
+    /// caption
+    Console du secondaire après la mise à jour en 2.9.0
+    ///
 
 #### Étape 3 — Placer le primaire en maintenance CARP
 
 **Sur le primaire**, ouvrir **Status > CARP (failover)** et cliquer sur **Enter Persistent CARP Maintenance Mode** (*Entrer en mode de maintenance CARP persistant*).
 
 ![État CARP du primaire en maintenance : VIP en BACKUP, bouton pour quitter le mode de maintenance](images/cluster-pfsense/carp-maintenance-primaire.png){ loading=lazy }
+/// caption
+Primaire en maintenance CARP : ses VIP sont en BACKUP
+///
 
 Ce mode règle le skew de toutes les VIP du primaire à **254** (`advskew 254` dans `ifconfig`). Le secondaire, dont les annonces sont désormais plus fréquentes, devient MASTER. La bascule est **planifiée** : au lieu de disparaître brutalement, le primaire annonce sa nouvelle priorité, plus faible. Le secondaire prend donc le relais immédiatement, sans attendre le délai de détection d'une panne (environ 3,4 s). Dans le lab de test, aucun ping vers la VIP n'a été perdu.
 
@@ -1110,11 +1306,8 @@ Contrairement à *Temporarily Disable CARP*, ce mode **persiste après un redém
 !!! success "Vérifications finales"
     - Les deux consoles affichent `pfSense 2.9.0-RELEASE`.
     - Le primaire est **MASTER** et le secondaire **BACKUP** sur les deux VIP.
-    - **La synchronisation XML-RPC a repris** : une règle de test créée sur le primaire apparaît sur le secondaire, et sa suppression est elle aussi répliquée. En 2.9.0, une synchronisation réussie n'écrit plus de ligne dans le journal système : ce test est donc la vérification la plus fiable.
-    - Dans **Status > CARP (failover)**, la section **State Synchronization Status** liste **les deux mêmes identifiants** sur les deux nœuds : pfsync fonctionne de nouveau dans les deux sens.
-
-        ![État CARP du secondaire en 2.9.0 : VIP en BACKUP, et liste des deux identifiants de synchronisation des états](images/cluster-pfsense/carp-statut-synchronisation-etats.png){ loading=lazy }
-
+    - **La synchronisation XML-RPC a repris** : une règle de test créée sur le primaire apparaît sur le secondaire, et sa suppression est elle aussi répliquée. Dans le lab, en 2.9.0, une synchronisation réussie n'a ajouté aucune ligne au journal système : ce test est donc la vérification la plus fiable.
+    - Dans **Status > CARP (failover)**, la section **State Synchronization Status** liste **les deux mêmes identifiants** sur les deux nœuds (voir l'[étape 13.1](#131-controler-letat-normal)) : pfsync fonctionne de nouveau dans les deux sens.
     - Si le navigateur affiche un **nouvel avertissement de certificat**, c'est que pfSense a recréé le certificat de son interface web. Dans le lab, c'est arrivé au secondaire lors de sa mise à jour, mais pas au primaire. Il suffit d'accepter le nouveau certificat.
 
 #### Dépannage de la mise à jour
@@ -1123,7 +1316,7 @@ Contrairement à *Temporarily Disable CARP*, ce mode **persiste après un redém
     Ces trois cas ont été rencontrés dans le lab, juste après un changement de branche. Les actions suivantes ont permis d'en sortir :
 
     1. Retourner dans **Update Settings**, vérifier la branche et cliquer de nouveau sur **Save**.
-    2. Dans **Diagnostics > Command Prompt**, lancer `pfSense-upgrade -c`. La commande doit répondre `2.8.1 version of pfSense is available`.
+    2. Dans **Diagnostics > Command Prompt**, lancer `pfSense-upgrade -c`. La commande doit répondre `2.8.1 version of pfSense is available`, ou indiquer la version visée.
     3. Recharger la page **System Update**.
 
     Le message *« Another instance of pfSense-upgrade is running »* signifie qu'une vérification est déjà en cours : patienter quelques minutes, puis recharger.
@@ -1153,13 +1346,15 @@ C'est le symptôme le plus courant. On parle de **« split-brain »** : chaque n
 1. Les deux cartes WAN (et les deux cartes LAN) sont-elles bien dans le **même** réseau virtuel ? Sous VirtualBox, le mode **NAT** simple isole chaque VM : utiliser **Réseau NAT**.
 2. Sous VirtualBox, le **mode promiscuité** est-il réglé sur **Tout autoriser** ?
 3. Les VIP ont-elles bien été **répliquées** sur le secondaire, avec le même VHID et le même mot de passe ?
-4. La case **Block RFC1918 Private Networks** du WAN est-elle bien décochée ?
 
 ### 16.2 Pas de ping entre les deux pare-feux
 
 Ouvrir **Status > System Logs > Firewall** (*État > Journaux système > Pare-feu*) pour retrouver le blocage du protocole ICMP, puis créer une règle rapide avec le bouton **+** (*Easy Rule*).
 
 ![Journal du pare-feu : paquets ICMP bloqués entre les VIP et bouton Easy Rule](images/cluster-pfsense/depannage-journaux-icmp-bloque.png){ loading=lazy }
+/// caption
+Journal du pare-feu : ICMP bloqué ; le bouton + crée une règle rapide
+///
 
 ### 16.3 Pas de ping vers la passerelle
 
@@ -1169,6 +1364,9 @@ Ouvrir **Status > System Logs > Firewall** (*État > Journaux système > Pare-fe
 - En dernier recours, et **uniquement pour diagnostiquer**, créer une règle flottante (**Firewall > Rules > Floating**) qui autorise tout trafic sur toutes les interfaces, puis vérifier si la passerelle est toujours injoignable. Si elle répond, le problème vient des règles ; sinon, il vient du réseau virtuel. **Supprimer cette règle après le test.**
 
     ![Règle flottante autorisant tout le trafic sur toutes les interfaces](images/cluster-pfsense/depannage-regle-flottante.png){ loading=lazy }
+    /// caption
+    Règle flottante de diagnostic autorisant tout le trafic, à supprimer après le test
+    ///
 
 ### 16.4 Accéder à l'interface web par le WAN, temporairement, en ligne de commande
 
@@ -1203,16 +1401,28 @@ L'interface web est alors accessible depuis le WAN. Cet accès est **à usage un
 Cliquer sur **Save**, puis sur **Apply Changes**. Pour désactiver la règle plus tard, cliquer sur la coche verte (la règle devient grisée), puis appliquer.
 
 ![Règle WAN autorisant l'accès à l'adresse WAN du pare-feu](images/cluster-pfsense/annexe-regle-wan-webgui.png){ loading=lazy }
+/// caption
+Règle WAN vers l'adresse WAN du pare-feu. Sur cette capture, l'interface web était servie en HTTP, d'où le port 80.
+///
 
-La règle ne fonctionne que si la case **Block RFC1918 Private Networks** est décochée, comme demandé dans l'assistant (étape 8.2). Sinon, la décocher dans **Interfaces > WAN**, section **Reserved Networks**, puis appliquer.
+Dans ce lab, l'ordinateur qui se connecte côté WAN a une adresse **privée**. La règle ne fonctionne donc que si la case **Block RFC1918 Private Networks** est décochée, comme demandé dans l'assistant (étape 8.2) : le blocage des réseaux privés est évalué **avant** les règles écrites à la main. Si la case est cochée, la décocher dans **Interfaces > WAN**, section **Reserved Networks**, puis appliquer.
 
 ![Section Réseaux réservés : case Bloquer les réseaux privés](images/cluster-pfsense/annexe-bloquer-reseaux-prives.png){ loading=lazy }
+/// caption
+Interfaces > WAN : case de blocage des réseaux privés
+///
 
 ![Tableau de bord pfSense ouvert depuis l'adresse WAN](images/cluster-pfsense/annexe-tableau-de-bord-via-wan.png){ loading=lazy }
+/// caption
+Tableau de bord ouvert depuis l'adresse WAN
+///
 
 **Avec une redirection de port (PAT)** : une règle de **Firewall > NAT > Port Forward** peut aussi rediriger un port du WAN vers l'interface web.
 
 ![Règle de redirection de port du WAN vers l'interface web](images/cluster-pfsense/annexe-redirection-port-wan.png){ loading=lazy }
+/// caption
+Redirection de port du WAN vers l'interface web (ici en HTTP, port 80)
+///
 
 ### 16.6 Une règle a disparu du secondaire
 
@@ -1293,7 +1503,7 @@ HA (High Availability, haute disponibilité)
 :   Capacité d'un système à fonctionner en continu avec un minimum d'interruptions. Elle s'obtient par la redondance, la réplication des données et des procédures de basculement.
 
 LACP / LAGG
-:   *Link Aggregation Control Protocol* (IEEE 802.3ad) : protocole de niveau 2 qui regroupe plusieurs ports Ethernet en un seul lien logique, plus rapide et redondant. Dans pfSense, l'interface résultante s'appelle un **LAGG**.
+:   *Link Aggregation Control Protocol* (IEEE 802.3ad) : protocole de niveau 2 qui regroupe plusieurs ports Ethernet en un seul lien logique, de plus grande capacité totale et redondant. Le trafic est réparti par flux. Dans pfSense, l'interface résultante s'appelle un **LAGG**.
 
 NAT sortant
 :   Traduction de l'adresse source des paquets qui sortent d'un réseau, par exemple du LAN vers le WAN. Dans un cluster, elle doit utiliser la VIP WAN.
@@ -1302,7 +1512,7 @@ NIC
 :   *Network Interface Controller* : carte réseau, physique ou virtuelle.
 
 pfsync
-:   Protocole qui synchronise la table d'états entre plusieurs machines exécutant le pare-feu Packet Filter. Il diffuse les états des connexions actives entre le MASTER et les nœuds de secours. Il fonctionne par défaut en multicast, mais une adresse de pair (*syncpeer*) permet d'envoyer les paquets directement au nœud voulu, comme dans ce TP.
+:   Protocole qui synchronise la table d'états entre plusieurs machines exécutant le pare-feu Packet Filter. Il diffuse les états des connexions actives entre les nœuds du cluster, pour que le nœud de secours les connaisse au moment d'une bascule. Il fonctionne par défaut en multicast, mais une adresse de pair (*syncpeer*) permet d'envoyer les paquets directement au nœud voulu, comme dans ce TP.
 
 Préemption
 :   Capacité d'un nœud prioritaire à **reprendre** le rôle de MASTER dès qu'il redevient disponible. Elle est activée par défaut dans pfSense.
