@@ -46,14 +46,14 @@ status: publié
 | Système | pfSense Community Edition 2.7.2, mis à jour en 2.9.0 à la fin |
 | Machines virtuelles | 2 VM pfSense : 1 vCPU, 1 Go de RAM (2 Go pour la mise à jour), 20 Go de disque, 3 cartes réseau |
 | Organisation | Travail individuel, sur un PC disposant d'au moins 8 Go de RAM |
-| Dernière mise à jour | 2026-10-12 |
+| Dernière mise à jour | 2026-10-13 |
 
 !!! note "Convention de lecture"
     - Le **primaire** est le pare-feu `pfsense-19`, qui porte normalement le trafic. Le **secondaire** est `pfsense-20`, le pare-feu de secours.
     - Chaque étape indique en gras **sur quel pare-feu** elle se réalise. Beaucoup d'erreurs viennent d'une action faite sur le mauvais nœud : relire cette mention avant chaque manipulation.
     - Les menus sont donnés en anglais, la langue par défaut de pfSense, suivis de leur équivalent français : **Firewall > Rules** (*Pare-feu > Règles*).
     - Pour savoir sur quel pare-feu une capture a été prise, se fier au texte qui l'accompagne ou à l'adresse visible en haut de l'image : `192.168.19.19` pour le primaire, `192.168.19.20` pour le secondaire. Les captures mélangent l'interface en français et en anglais. Pour s'y retrouver soi-même, l'[étape 8.4](#84-distinguer-les-deux-pare-feux-dun-coup-dil) propose de distinguer les deux pare-feux par la langue et le thème.
-    - Le TP principal, les exercices et la mise à jour complète du cluster vers la 2.9.0 ont été rejoués de bout en bout dans un laboratoire de test (KVM) le 12 octobre 2026. Les mesures citées (temps de bascule, paquets perdus, durées) en sont issues. Les parties qui n'ont pas été rejouées sont signalées comme telles.
+    - Le TP principal, les exercices et la mise à jour complète du cluster vers la 2.9.0 ont été rejoués de bout en bout dans un laboratoire de test (KVM) les 12 et 13 octobre 2026, avec un poste client sur le LAN et un serveur côté WAN pour mesurer les coupures. Les mesures citées (temps de bascule, paquets perdus, durées) en sont issues. Les parties qui n'ont pas été rejouées sont signalées comme telles.
 
 ---
 
@@ -121,7 +121,7 @@ Chaque pare-feu garde sa propre adresse IP sur chacune de ses interfaces (`.19` 
 | **XML-RPC** | La **configuration** : règles, NAT, VIP, utilisateurs, etc. | HTTPS (TCP 443), vers l'interface web du pair | **Uniquement** du primaire vers le secondaire | Le lien dédié **PFSYNC** |
 
 - **CARP** permet à plusieurs hôtes d'un même réseau de partager une adresse IP. C'est une alternative libre aux protocoles VRRP et HSRP, créée par le projet OpenBSD pour contourner des brevets. En cas de défaillance du primaire, le secondaire reprend l'adresse IP virtuelle de façon transparente.
-- **pfsync** recopie en continu les états des connexions entre les deux pare-feux. Lorsque le primaire tombe, le secondaire connaît déjà les connexions ouvertes et peut les **poursuivre sans les couper** : c'est le rôle de pfsync, tel que le décrit la documentation de Netgate.
+- **pfsync** recopie en continu les états des connexions entre les deux pare-feux. Lorsque le primaire tombe, le secondaire connaît déjà les connexions ouvertes et peut les **poursuivre sans les couper**. Dans le lab de test, une connexion TCP en cours a ainsi survécu à l'arrêt brutal du primaire.
 - **XML-RPC** est un protocole d'appel de procédure à distance (*Remote Procedure Call*) qui transporte des données XML sur HTTP. pfSense s'en sert pour **pousser la configuration** du primaire vers le secondaire. Netgate recommande de le faire passer par le même lien dédié que pfsync.
 
 <figure markdown="span">
@@ -824,6 +824,8 @@ Secondaire — page High Availability : seule l'option Synchronize admin est coc
 
     Dans cette situation, la bascule des VIP fonctionne, mais **le secondaire n'importe aucun état** envoyé par le primaire : il ne connaîtrait pas les connexions en cours au moment d'une bascule. Le lab de test l'a vérifié : sans cette étape, la table d'états du secondaire ne contenait **aucun** état créé par le primaire ; après cette étape, elle les contenait. Le texte d'aide de la case le précise d'ailleurs : *« This setting should be enabled on all members of a failover group »*. La documentation de Netgate demande d'activer pfsync sur **chaque** nœud, chacun pointant vers l'autre.
 
+    Le lab l'a aussi vérifié en conditions réelles, avec un poste client : sans cette étape, une connexion TCP en cours a été **perdue** lors de l'arrêt brutal du primaire ; avec cette étape, elle a **survécu** (voir les [mesures de la partie 13.3](#133-pour-aller-plus-loin-verifier-depuis-un-poste-client)).
+
 **Sur le secondaire**, ouvrir **System > High Avail. Sync** et renseigner **uniquement la partie haute** :
 
 | Champ | Valeur |
@@ -902,6 +904,11 @@ La réplication vers le secondaire est automatique, mais il faut aller la vérif
 ## 12. Faire sortir le trafic avec la VIP (NAT sortant)
 
 Le **NAT sortant** réécrit l'adresse source des paquets qui quittent le LAN vers le WAN. Par défaut (mode *Automatic*), pfSense utilise **l'adresse propre de son interface WAN** : `192.168.8.19` sur le primaire, `192.168.8.20` sur le secondaire. Dans un cluster, c'est un problème. Les serveurs distants répondent à l'adresse propre du primaire (`192.168.8.19`). Après une bascule, ces réponses partent donc vers un pare-feu en panne, et le secondaire ne les reçoit pas : d'après la documentation de Netgate, un trafic adressé directement à un nœud, et non à une VIP, n'est jamais repris par les autres nœuds.
+
+!!! success "Vérifié dans le lab de test"
+    Un serveur placé côté WAN voyait le poste client sous l'adresse `192.168.8.21` (la VIP) avec la règle, et sous `192.168.8.19` sans elle.
+
+    Lors de l'arrêt brutal du primaire, la connexion TCP en cours a **survécu** avec la règle. Sans elle, elle a été **perdue** : même un ping déjà lancé ne s'est jamais rétabli, car son état, recopié par pfsync, continuait de traduire vers `192.168.8.19`. Seules les nouvelles connexions sont reparties, avec l'adresse du secondaire (`192.168.8.20`).
 
 <figure markdown="span">
   ![Comparaison : sans règle, les réponses du serveur reviennent vers l'adresse du primaire en panne et la connexion est perdue ; avec la règle, le trafic sort avec la VIP 192.168.8.21, que le secondaire reprend](images/cluster-pfsense/schema-nat-sortant-vip.svg){ loading=lazy }
@@ -1008,6 +1015,37 @@ La même page vérifie aussi **pfsync**. Sa section **State Synchronization Stat
 !!! success "Résultat attendu"
     Dans le lab de test, la bascule a coupé le ping pendant **environ 3,4 secondes** (17 réponses perdues avec un ping toutes les 0,2 s). C'est exactement le délai théorique de CARP : 3 × 1 s + 100/256 s. Aucun réglage n'a été nécessaire sur le PC hôte.
 
+    Au retour du primaire, la reprise du rôle de MASTER s'est faite **sans aucune perte**.
+
+### 13.3 Pour aller plus loin : vérifier depuis un poste client
+
+Le ping depuis le PC hôte montre que la VIP bascule. Pour vérifier qu'**une connexion en cours survit** à la panne, il faut un poste placé **derrière** le cluster, sur le LAN.
+
+1. Créer une petite VM (Linux ou Windows) dont l'unique carte réseau est dans **VMnet19** (VirtualBox : le réseau privé hôte).
+2. Lui donner une adresse fixe : IP `192.168.19.50/24`, passerelle `192.168.19.21` (la **VIP**), DNS `192.168.19.21` (le résolveur DNS de pfSense, joint lui aussi par la VIP) puis `1.1.1.1` en second DNS.
+
+    !!! note "Si la résolution DNS échoue"
+        Un VPN actif sur le PC hôte peut intercepter les requêtes DNS qui sortent des VM. Le résolveur de pfSense répond alors *SERVFAIL* : sa validation DNSSEC échoue, car les réponses ne viennent plus des vrais serveurs DNS. C'est ce qui s'est produit dans le lab de test. Le second DNS (`1.1.1.1`) permet de continuer ; le reste du TP n'en dépend pas.
+
+3. Vérifier qu'elle accède à Internet **à travers le cluster** : `ping 1.1.1.1` doit répondre.
+4. Lancer un ping continu vers Internet (`ping -t 1.1.1.1` sous Windows, `ping 1.1.1.1` sous Linux), ainsi qu'un téléchargement volumineux.
+5. **Éteindre brutalement le primaire**, comme une coupure de courant : VMware : **VM > Power > Power Off** ; VirtualBox : fermer la fenêtre de la VM et choisir **Éteindre la machine**.
+6. Observer : le ping s'interrompt quelques secondes puis reprend, et le téléchargement continue sans erreur.
+7. Rallumer le primaire : il reprend le rôle de MASTER sans que le poste ne s'en aperçoive.
+
+!!! example "Mesures réalisées dans le lab de test"
+    Les mesures ont été prises avec un poste client du LAN (`192.168.19.50`) et un serveur placé côté WAN (`192.168.8.50`). Le serveur envoyait une ligne toutes les 0,2 s sur une connexion TCP, et le poste le pinguait toutes les 0,2 s. Chaque scénario désactive volontairement un élément de la configuration, pour montrer à quoi il sert.
+
+    | Scénario | Connexion TCP en cours | Ping du poste vers le serveur WAN |
+    |----------|------------------------|-----------------------------------|
+    | Arrêt brutal du primaire, cluster complet | **intacte**, silence max 3,5 s | 12 perdus sur 299, coupure de 2,7 s |
+    | Retour du primaire (préemption) | **intacte**, aucun silence | aucune perte |
+    | Arrêt brutal du primaire, **sans pfsync sur le secondaire** (étape 10.5) | **perdue** | coupure de 3,5 s, puis reprise |
+    | Arrêt brutal du primaire, **sans la règle de NAT vers la VIP** (partie 12) | **perdue** | jamais rétabli pendant le test |
+    | Câble WAN du primaire débranché, IPv6 du WAN en DHCP6 (exercice 4) | **bloquée** pendant la panne | *Destination Host Unreachable* du primaire |
+    | Câble WAN du primaire débranché, IPv6 du WAN à *None* (exercice 5) | **intacte**, silence max 3,5 s | coupure d'environ 3 s |
+    | Entrée puis sortie du mode maintenance CARP | **intacte**, aucun silence | aucune perte |
+
 ---
 
 ## 14. Exercices
@@ -1044,6 +1082,8 @@ Simuler une panne de l'**interface WAN** du MASTER (déconnecter sa carte WAN da
 ??? success "Réponse"
     **Non** (avec la configuration réalisée jusqu'ici). Le WAN du secondaire passe bien MASTER, mais le LAN du **primaire** garde le statut MASTER. Les deux pare-feux se partagent alors les rôles : les postes du LAN envoient toujours leur trafic au primaire, dont le WAN est coupé, et **perdent l'accès à l'extérieur**.
 
+    Dans le lab de test, un poste client du LAN a vu sa connexion TCP en cours **bloquée pendant toute la panne**. Ses pings recevaient la réponse *« Destination Host Unreachable »* de la part du primaire (`192.168.19.19`), resté MASTER côté LAN mais privé de WAN.
+
     Ce n'est **pas un défaut de pfSense** : c'est la conséquence d'un réglage laissé par l'assistant, que l'exercice 5 permet de corriger.
 
     **Explication (vérifiée dans le lab de test).** En théorie, pfSense active la **préemption CARP** (`net.inet.carp.preempt=1`). Quand une interface portant une VIP perd son lien, le pare-feu se **rétrograde** (*demotion* +240) sur **toutes** ses VIP, et le secondaire prend tout. Le journal système montre d'ailleurs que la VIP LAN bascule dans un premier temps. Mais l'assistant a laissé l'IPv6 du WAN en **DHCP6**. pfSense considère alors le WAN comme une interface **dynamique** et, à la perte du lien, il la « démonte » entièrement, VIP comprise. La VIP ayant disparu, la rétrogradation est **annulée** (`carp: demoted by -240 to 0 (vhid removed)`), et le primaire reprend la VIP LAN.
@@ -1055,7 +1095,13 @@ Sur **les deux pare-feux**, ouvrir **Interfaces > WAN**, régler **IPv6 Configur
 ??? success "Réponse"
     Cette fois, **les deux VIP** passent MASTER sur le secondaire. Sur le primaire, la VIP WAN est en **INIT** (lien absent) et la VIP LAN en **BACKUP** ; `sysctl net.inet.carp.demotion` affiche `240`. Le WAN étant désormais entièrement statique, pfSense ne démonte plus l'interface et la rétrogradation reste en place.
 
-    Au retour du lien WAN, le primaire reprend automatiquement les deux VIP. Dans le lab de test, un ping continu vers la VIP LAN n'a perdu **aucun paquet** pendant toute l'opération.
+    Au retour du lien WAN, le primaire reprend automatiquement les deux VIP.
+
+    Mesures du lab de test, pour un câble WAN débranché pendant 30 s :
+
+    - un ping continu du PC hôte vers la VIP LAN n'a perdu **aucun paquet** ;
+    - un poste client du LAN a conservé sa connexion TCP en cours (3,5 s de silence au plus) ;
+    - le ping de ce poste vers un serveur côté WAN a été coupé environ 3 s, le temps que le secondaire reprenne la VIP WAN.
 
 ---
 
@@ -1224,7 +1270,7 @@ Il est possible d'ajouter un **troisième pare-feu** au cluster, en conservant l
 
 ### 15.3 Mettre à jour le cluster vers pfSense CE 2.9.0
 
-pfSense CE **2.7.2** (décembre 2023) n'est plus maintenue. À la date de rédaction, la version courante est la **2.9.0** (20 août 2026), basée sur FreeBSD 16. Mettre à jour un cluster est un savoir-faire à part entière : bien menée, l'opération se fait **sans interruption de service**. Dans le lab de test, aucun ping vers la VIP n'a été perdu lors des changements de rôle planifiés.
+pfSense CE **2.7.2** (décembre 2023) n'est plus maintenue. À la date de rédaction, la version courante est la **2.9.0** (20 août 2026), basée sur FreeBSD 16. Mettre à jour un cluster est un savoir-faire à part entière : bien menée, l'opération se fait **sans interruption de service**. Dans le lab de test, un flux TCP et un ping continus, entre un poste client du LAN et un serveur côté WAN, n'ont subi **aucune perte** lors de l'entrée et de la sortie du mode maintenance.
 
 <figure markdown="span">
   ![Frise des cinq étapes de mise à jour d'un cluster : sauvegarder, mettre à jour le secondaire, maintenance CARP sur le primaire, mettre à jour le primaire, sortir de maintenance](images/cluster-pfsense/schema-mise-a-jour-cluster.svg){ loading=lazy }
