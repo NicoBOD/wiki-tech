@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="500" viewBox="0 0 960 500" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
   <title id="t">Les trois protocoles du cluster pfSense et leurs chemins</title>
   <desc id="d">XML-RPC copie la configuration du primaire vers le secondaire, dans un seul sens, en HTTPS sur le port TCP 443 du lien de synchronisation. pfsync échange la table d'états dans les deux sens sur le même lien (protocole IP 240). CARP envoie des annonces sur les réseaux WAN et LAN, là où se trouvent les adresses IP virtuelles (protocole IP 112).</desc>
   <defs>

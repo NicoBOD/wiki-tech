@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="420" viewBox="0 0 960 420" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
   <title id="t">Pourquoi traduire le trafic sortant vers la VIP WAN</title>
   <desc id="d">Sans règle de NAT sortant, un poste du LAN sort sur Internet avec l'adresse propre du pare-feu actif (192.168.8.19) ; après une bascule, le secondaire utiliserait 192.168.8.20, le serveur distant verrait une autre adresse et la connexion serait perdue. Avec la règle, le trafic sort toujours avec la VIP 192.168.8.21, quelle que soit la machine active : la table d'états synchronisée par pfsync reste valable et la connexion continue.</desc>
   <defs>

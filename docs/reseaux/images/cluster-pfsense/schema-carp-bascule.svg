@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 470" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="470" viewBox="0 0 960 470" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
   <title id="t">Principe de la bascule CARP</title>
   <desc id="d">À gauche, en fonctionnement normal, le pare-feu primaire est MASTER : il possède l'adresse IP virtuelle et envoie une annonce CARP chaque seconde ; le secondaire est BACKUP et écoute. À droite, quand le primaire tombe en panne, les annonces s'arrêtent ; après environ trois secondes le secondaire devient MASTER, prend l'adresse IP virtuelle et prévient le réseau. Les postes clients continuent d'utiliser la même passerelle 192.168.19.21.</desc>
   <defs>

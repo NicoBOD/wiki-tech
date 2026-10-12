@@ -41,10 +41,10 @@ status: publié
 | Propriété | Valeur |
 |-----------|--------|
 | Difficulté | Intermédiaire — accessible aux débutants qui suivent les étapes dans l'ordre |
-| Durée estimée | 3 h 30 pour le TP principal et les exercices, plus 1 h 30 pour les prolongements |
+| Durée estimée | 3 h 30 pour le TP principal et les exercices ; 1 h pour l'agrégation LACP ; 2 h 30 à 4 h pour la mise à jour du cluster, surtout du temps de téléchargement |
 | Hyperviseur | VMware Workstation Pro (17, 25H2 ou 26H1) ou Oracle VirtualBox 7 |
 | Système | pfSense Community Edition 2.7.2, mis à jour en 2.9.0 à la fin |
-| Machines virtuelles | 2 VM pfSense : 1 vCPU, 1 Go de RAM, 20 Go de disque, 3 cartes réseau |
+| Machines virtuelles | 2 VM pfSense : 1 vCPU, 1 Go de RAM (2 Go pour la mise à jour), 20 Go de disque, 3 cartes réseau |
 | Organisation | Travail individuel, sur un PC disposant d'au moins 8 Go de RAM |
 | Dernière mise à jour | 2026-10-12 |
 
@@ -53,7 +53,7 @@ status: publié
     - Chaque étape indique en gras **sur quel pare-feu** elle se réalise. Beaucoup d'erreurs viennent d'une action faite sur le mauvais nœud : relire cette mention avant chaque manipulation.
     - Les menus sont donnés en anglais, la langue par défaut de pfSense, suivis de leur équivalent français : **Firewall > Rules** (*Pare-feu > Règles*).
     - Pour savoir sur quel pare-feu une capture a été prise, se fier au texte qui l'accompagne ou à l'adresse visible en haut de l'image : `192.168.19.19` pour le primaire, `192.168.19.20` pour le secondaire. Les captures mélangent l'interface en français et en anglais. Pour s'y retrouver soi-même, l'[étape 8.4](#84-distinguer-les-deux-pare-feux-dun-coup-dil) propose de distinguer les deux pare-feux par la langue et le thème.
-    - Le TP principal et les exercices ont été rejoués de bout en bout dans un laboratoire de test le 12 octobre 2026. Les mesures citées (temps de bascule, nombre de paquets perdus) en sont issues.
+    - Le TP principal, les exercices et la mise à jour complète du cluster vers la 2.9.0 ont été rejoués de bout en bout dans un laboratoire de test (KVM) le 12 octobre 2026. Les mesures citées (temps de bascule, paquets perdus, durées) en sont issues. Les parties qui n'ont pas été rejouées sont signalées comme telles.
 
 ---
 
@@ -175,7 +175,7 @@ Chaque pare-feu garde sa propre adresse IP sur chacune de ses interfaces (`.19` 
     Pour comparaison, un `/29` (masque `255.255.255.248`) offre 6 adresses utilisables, et un `/24` en offre 254.
 
 !!! warning "Utilisateurs de VirtualBox : une seule différence"
-    Dans VirtualBox, la passerelle d'un « Réseau NAT » est **toujours la première adresse** du réseau, soit `192.168.8.1`, et ce n'est pas modifiable. Partout où ce TP indique la passerelle ou le DNS `192.168.8.2`, utiliser **`192.168.8.1`** avec VirtualBox. Toutes les autres adresses sont identiques.
+    D'après la documentation d'Oracle, la passerelle d'un « Réseau NAT » VirtualBox est **toujours la première adresse** du réseau, soit `192.168.8.1`, et ce n'est pas modifiable. Partout où ce TP indique la passerelle ou le DNS `192.168.8.2`, utiliser **`192.168.8.1`** avec VirtualBox. Toutes les autres adresses sont identiques.
 
 ---
 
@@ -252,6 +252,9 @@ Le lab utilise trois réseaux :
     3. Dans l'onglet **Réseaux privés hôte**, cliquer sur **Créer**. Choisir **Configurer l'adaptateur manuellement** avec l'adresse IPv4 `192.168.19.1` et le masque `255.255.255.0`. Dans l'onglet **Serveur DHCP**, décocher **Activer le serveur**.
     4. Le réseau **SYNCHRO-PFSENSE** est un **réseau interne** : il n'a pas besoin d'être créé à l'avance. Il existe dès qu'une carte réseau est rattachée à un réseau interne portant ce nom.
 
+    !!! note "Variante non testée dans le lab de référence"
+        Les manipulations de ce TP ont été réalisées et vérifiées sous VMware Workstation et KVM. Les réglages VirtualBox ci-dessous suivent la documentation d'Oracle et les recommandations de Netgate pour la virtualisation, mais n'ont pas été rejoués dans VirtualBox.
+
     !!! warning "Ne pas utiliser le mode « NAT » simple pour le WAN"
         En mode **NAT** (et non *Réseau NAT*), VirtualBox crée un réseau **privé pour chaque VM** : les deux pare-feux ne se voient pas côté WAN. Chacun se croit alors seul et se déclare MASTER de la VIP WAN, et le cluster ne peut pas fonctionner. Le mode **Réseau NAT** place au contraire les deux VM sur le **même** réseau.
 
@@ -266,7 +269,7 @@ Créer deux VM identiques, nommées `pfsense-19` et `pfsense-20`.
 |-----------|--------|-------------|
 | Système invité | **Other > FreeBSD 14 64-bit** (VMware) ou **BSD > FreeBSD (64-bit)** (VirtualBox) | pfSense 2.7.2 repose sur FreeBSD 14. Si cette version n'est pas proposée, choisir la version 64 bits de FreeBSD la plus récente. |
 | Processeur | 1 vCPU | Largement suffisant pour un lab. |
-| Mémoire | **1 Go** | Recommandation officielle. 512 Mo suffisent en pratique pour un lab, mais 1 Go évite les surprises lors de la mise à jour. |
+| Mémoire | **1 Go** (**2 Go** si la mise à jour de la partie 15.3 est prévue) | 1 Go est le minimum officiel et suffit pour tout le TP (512 Mo fonctionnent en pratique pour un lab). La mise à jour demande plus : avec 1 Go, elle a échoué faute de mémoire dans le lab de test (voir la [partie 15.3](#153-mettre-a-jour-le-cluster-vers-pfsense-ce-290)). |
 | Disque | 20 Go | Le minimum officiel est de 8 Go. |
 | Lecteur CD | L'ISO pfSense CE 2.7.2 | — |
 | Cartes réseau | **3 cartes, dans cet ordre** : WAN, LAN, SYNCHRO-PFSENSE | pfSense les nommera `em0`, `em1` et `em2` dans cet ordre. |
@@ -290,6 +293,8 @@ Créer deux VM identiques, nommées `pfsense-19` et `pfsense-20`.
         - Il accepte n'importe quel masque, dont le `/30`. Les VMnets imposent au minimum un `/29` (6 hôtes), ce qui réduirait l'isolement du réseau de synchronisation.
 
 === "VirtualBox"
+
+    *Variante non rejouée dans le lab de test : voir la remarque de l'[étape 5.2](#52-creer-les-reseaux-virtuels).*
 
     Dans **Configuration > Réseau** :
 
@@ -457,6 +462,9 @@ L'assistant démarre automatiquement à la première connexion. Le réaliser **s
 
 !!! warning "Pourquoi décocher « Block RFC1918 Private Networks » ?"
     Cette option bloque, à l'entrée du WAN, tout trafic provenant d'une adresse **privée** (`10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`). Sur une vraie connexion Internet, c'est une bonne protection : aucune adresse privée ne devrait arriver d'Internet. Mais dans ce lab, **le WAN lui-même est un réseau privé** (`192.168.8.0/24`). Le texte d'aide de pfSense le précise : *« This option should generally be left turned on, unless the WAN network lies in such a private address space, too »*. Laissée cochée, l'option empêcherait les deux pare-feux de communiquer côté WAN.
+
+!!! danger "Ne pas relancer l'assistant sur un pare-feu déjà configuré"
+    L'assistant reste accessible dans **System > Setup Wizard**, mais il ne sert qu'à la première configuration. Dans le lab de test, le simple fait de le parcourir à nouveau sur un pare-feu en service a **effacé l'adresse IP du WAN** dans la configuration. La panne n'est apparue qu'au redémarrage suivant, ce qui la rend difficile à diagnostiquer. Pour modifier un réglage ensuite, passer par le menu concerné, par exemple **Interfaces > WAN**.
 
 !!! info "Pourquoi le même mot de passe admin sur les deux nœuds ?"
     L'option **Synchronize admin**, activée à l'[étape 10.2](#102-parametrer-la-synchronisation-sur-le-primaire), recopiera de toute façon le compte `admin` du primaire vers le secondaire. Choisir le même mot de passe dès maintenant évite toute confusion.
@@ -656,7 +664,15 @@ Toujours **sur le primaire**, créer une troisième règle sur le même modèle,
 ![Règle CARP sur le primaire](images/cluster-pfsense/regle-carp-primaire.png){ loading=lazy }
 
 !!! note "Pour aller plus loin : cette règle est-elle indispensable ?"
-    Dans le code de pfSense, une règle **automatique** autorise le protocole CARP dès qu'une VIP CARP existe. De plus, les annonces CARP circulent sur les réseaux qui portent une VIP (WAN et LAN), pas sur le lien PFSYNC. Cette troisième règle n'est donc pas strictement nécessaire. Elle ne présente aucun risque, puisqu'elle ne concerne que le `/30` des deux pare-feux, et elle **documente l'intention** de la configuration. pfsync, en revanche, n'est **jamais** autorisé automatiquement : la règle 2 est indispensable.
+    Dès qu'une VIP CARP existe, pfSense ajoute une règle **automatique** qui autorise le protocole CARP sur toutes les interfaces. De plus, les annonces CARP circulent sur les réseaux qui portent une VIP (WAN et LAN), pas sur le lien PFSYNC. Cette troisième règle n'est donc pas strictement nécessaire. Elle ne présente aucun risque, puisqu'elle ne concerne que le `/30` des deux pare-feux, et elle **documente l'intention** de la configuration. pfsync, en revanche, n'est **jamais** autorisé automatiquement : la règle 2 est indispensable.
+
+    Ces trois points ont été vérifiés dans le lab de test, en 2.7.2 comme en 2.9.0 :
+
+    - la commande `pfctl -sr | grep carp` (dans **Diagnostics > Command Prompt**) affiche la règle automatique `pass quick proto carp all no state` ;
+    - une capture (`tcpdump -ni em1 ip proto 112`) montre les annonces CARP sur `em0` et `em1` ;
+    - sur `em2`, on ne voit passer que du pfsync.
+
+    Les outils de capture (`tcpdump`, Wireshark) affichent les paquets CARP comme du **VRRPv2** : les deux protocoles utilisent le même numéro, 112.
 
 Après toutes ces manipulations, l'interface PFSYNC du primaire présente ces règles :
 
@@ -712,7 +728,7 @@ Cliquer sur **Save**.
 
 ![Page High Availability du secondaire : pfsync activé vers 192.168.254.1, partie XML-RPC vide](images/cluster-pfsense/ha-sync-secondaire-pfsync-active.png){ loading=lazy }
 
-**Vérification (facultative)** : la commande suivante compte les états selon le nœud qui les a créés. Elle se lance dans **Diagnostics > Command Prompt** (*Diagnostics > Invite de commande*) de **chaque** pare-feu, champ **Execute Shell Command** :
+**Vérification (facultative)** : le contrôle le plus simple se fait dans l'interface web, à l'[étape 13.1](#131-controler-letat-normal), une fois les VIP créées. Dès maintenant, la commande suivante compte les états selon le nœud qui les a créés. Elle se lance dans **Diagnostics > Command Prompt** (*Diagnostics > Invite de commande*) de **chaque** pare-feu, champ **Execute Shell Command** :
 
 ```bash
 pfctl -vvss | grep -o "creatorid: [0-9a-f]*" | sort | uniq -c
@@ -824,6 +840,8 @@ Ouvrir **Status > CARP (failover)** (*État > CARP (basculement)*) sur chaque pa
 
     ![État CARP du secondaire : WAN et LAN en BACKUP](images/cluster-pfsense/carp-statut-secondaire-backup.png){ loading=lazy }
 
+La même page vérifie aussi **pfsync**. Sa section **State Synchronization Status** liste les identifiants des nœuds qui ont créé des états (*State Creator Host IDs*). Quand la synchronisation des états fonctionne dans les deux sens, **la liste est identique sur les deux pare-feux** et contient les deux identifiants. Si un nœud n'affiche que le sien, revoir l'[étape 10.5](#105-activer-la-reception-des-etats-pfsync-sur-le-secondaire).
+
 !!! note "« DISABLED » juste après une synchronisation"
     Juste après la création des VIP, la page du secondaire peut afficher brièvement **DISABLED**. Il suffit de la recharger quelques secondes plus tard pour voir **BACKUP**.
 
@@ -849,7 +867,7 @@ Ouvrir **Status > CARP (failover)** (*État > CARP (basculement)*) sur chaque pa
     - ou **éteindre** la VM.
 3. Observer le ping : quelques réponses manquent, puis il reprend tout seul.
 4. **Sur le secondaire**, actualiser **Status > CARP (failover)** : les deux VIP sont passées en **MASTER**. Le cluster à basculement fonctionne.
-5. Ouvrir `https://192.168.19.21` dans le navigateur : la page de connexion est celle du **secondaire**. Le nom `pfsense-20` apparaît dans le titre de l'onglet et sur le tableau de bord.
+5. Ouvrir `https://192.168.19.21` dans le navigateur et se connecter : c'est le **secondaire** qui répond. Une fois connecté, le nom `pfsense-20.home.arpa` apparaît dans le titre de l'onglet et sur le tableau de bord. La page de connexion, elle, n'affiche pas le nom du pare-feu.
 6. Rétablir le primaire : bouton **Enable CARP**, carte reconnectée ou VM rallumée. Le primaire **reprend automatiquement** le rôle de MASTER : c'est la **préemption**.
 
 !!! success "Résultat attendu"
@@ -926,7 +944,7 @@ Appliqué au lien de synchronisation, il supprime le dernier point unique de dé
 ![Schéma : deux liens SYNCHRO-PFSENSE-1 et SYNCHRO-PFSENSE-2 relient les pare-feux](images/cluster-pfsense/schema-lagg-synchro.png){ loading=lazy }
 
 !!! warning "Un segment par lien"
-    Les tests ont montré qu'utiliser **le même** LAN segment pour les deux interfaces de l'agrégat provoque un problème de connectivité. Les deux cartes forment alors une boucle sur un même switch virtuel. Chaque lien doit avoir **son propre** segment.
+    Les tests ont montré qu'utiliser **le même** LAN segment pour les deux interfaces de l'agrégat provoque un problème de connectivité. Chaque lien doit avoir **son propre** segment, comme deux câbles physiques distincts.
 
 === "VMware Workstation"
 
@@ -1018,45 +1036,68 @@ Il est possible d'ajouter un **troisième pare-feu** au cluster, en conservant l
 
 !!! note "Points d'attention"
     - Le réseau de synchronisation en `/30` ne peut contenir que deux adresses. Le lien entre le secondaire et le tertiaire demande donc un **autre réseau dédié** (par exemple `192.168.254.4/30` sur un nouveau LAN segment) et une carte réseau supplémentaire sur le secondaire.
-    - À chaque saut de synchronisation, pfSense ajoute 100 au skew : le tertiaire aura un skew de 200 et sera le dernier à prendre la main.
+    - pfSense ajoute 100 au skew des VIP à chaque synchronisation XML-RPC (vérifié entre le primaire et le secondaire). Le tertiaire devrait donc recevoir un skew de 200 et être le dernier à prendre la main. Ce chaînage n'a pas été rejoué dans le lab de test.
 
 ### 15.3 Mettre à jour le cluster vers pfSense CE 2.9.0
 
-pfSense CE **2.7.2** (décembre 2023) n'est plus maintenue. À la date de rédaction, la version courante est la **2.9.0** (20 août 2026), basée sur FreeBSD 16. Mettre à jour un cluster est un savoir-faire à part entière : bien menée, l'opération **n'interrompt le service que quelques secondes**.
+pfSense CE **2.7.2** (décembre 2023) n'est plus maintenue. À la date de rédaction, la version courante est la **2.9.0** (20 août 2026), basée sur FreeBSD 16. Mettre à jour un cluster est un savoir-faire à part entière : bien menée, l'opération se fait **sans interruption de service**. Dans le lab de test, aucun ping vers la VIP n'a été perdu lors des changements de rôle planifiés.
 
 <figure markdown="span">
   ![Frise des cinq étapes de mise à jour d'un cluster : sauvegarder, mettre à jour le secondaire, maintenance CARP sur le primaire, mettre à jour le primaire, sortir de maintenance](images/cluster-pfsense/schema-mise-a-jour-cluster.svg){ loading=lazy }
   <figcaption>Le principe : on ne met jamais à jour le pare-feu qui porte le trafic.</figcaption>
 </figure>
 
-!!! info "Ce qu'il faut savoir avant de commencer"
-    - **Internet est indispensable** : les pare-feux téléchargent environ 185 paquets à chaque étape. Compter **20 à 30 minutes par étape et par nœud**, selon la connexion.
-    - Depuis la 2.7.2, la mise à jour se fait **en deux sauts** : **2.7.2 → 2.8.1**, puis **2.8.1 → 2.9.0**. Sur une 2.7.2, la page de mise à jour ne propose pas encore la 2.9.0 (constaté dans le lab de test).
-    - Tant que les deux nœuds n'ont pas la même version, la **synchronisation XML-RPC se met en pause d'elle-même**. Le journal système du primaire l'indique : *« The other member is on a different configuration version of pfSense. Sync will not be done to prevent problems! »*. Il ne faut donc **rien modifier** pendant la mise à jour.
-    - Deux nœuds basés sur des versions différentes de FreeBSD **peuvent ne pas réussir à échanger leurs états**. La bascule fonctionne, mais certaines connexions en cours peuvent être coupées pendant la période de transition.
+!!! info "Ce qu'il faut savoir avant de commencer (constaté dans le lab de test)"
+    - **Deux sauts sont nécessaires.** Sur une 2.7.2, la page de mise à jour ne propose que la 2.8.1, et la 2.9.0 n'apparaît qu'une fois en 2.8.1. Chaque nœud passe donc par **2.7.2 → 2.8.1 → 2.9.0**.
+    - **Internet est indispensable, et le téléchargement est long** : 187 paquets pour passer en 2.8.1, puis 184 pour passer en 2.9.0. Dans le lab, chaque saut a pris **de 25 minutes à 1 heure par nœud**, selon la charge des serveurs de Netgate. L'installation et les redémarrages ne durent que 3 à 4 minutes ; tout le reste est du téléchargement.
+    - **2 Go de RAM par VM.** Avec 1 Go, la mise à jour a réussi sur le secondaire mais a échoué sur le primaire : le système a tué le processus d'installation par manque de mémoire, et pfSense est resté inutilisable (voir le dépannage ci-dessous). L'échec n'est donc pas systématique, mais le risque est réel. Avec 2 Go, les deux sauts du primaire se sont déroulés sans erreur.
+    - **Tant que les versions diffèrent, la synchronisation XML-RPC se suspend d'elle-même.** Le journal système du primaire l'indique : *« The other member is on a different configuration version of pfSense. Sync will not be done to prevent problems! »*. Il ne faut donc **rien modifier** pendant la mise à jour, car les changements ne seraient pas recopiés.
+    - **Les états pfsync passent toujours vers le nœud mis à jour.** Un secondaire en 2.9.0 importait encore les états envoyés par un primaire en 2.7.2 ; l'inverse ne fonctionnait plus. La bascule vers le secondaire mis à jour conserve donc les connexions en cours.
 
-#### Étape 1 — Sauvegarder les deux nœuds
+#### Étape 1 — Sauvegarder les deux nœuds et prévoir 2 Go de RAM
 
-**Sur chaque pare-feu**, ouvrir **Diagnostics > Backup & Restore**, laisser **Backup area** sur **All**, puis cliquer sur **Download configuration as XML**. 🛟 Prendre aussi un instantané des deux VM : c'est le filet de sécurité le plus rapide en cas d'échec.
+**Sur chaque pare-feu**, ouvrir **Diagnostics > Backup & Restore**, laisser **Backup area** sur **All**, puis cliquer sur **Download configuration as XML**. 🛟 Prendre aussi un instantané des deux VM : en cas d'échec, c'est le moyen le plus rapide de revenir en arrière.
+
+Si les VM ont été créées avec 1 Go, **éteindre le secondaire** (console : option **6) Halt system**), porter sa mémoire à **2 Go** dans les paramètres de la VM, puis le rallumer. Comme il est BACKUP, le service n'est pas affecté. Le primaire sera traité à l'étape 3, une fois en maintenance.
 
 #### Étape 2 — Mettre à jour le secondaire (2.7.2 → 2.8.1 → 2.9.0)
 
 **Sur le secondaire** :
 
-1. Ouvrir **System > Update** (*Système > Mettre à jour*), onglet **Update Settings**. Choisir **Branch** : **Previous Stable Version (2.8.1)**, puis **Save**.
-2. Onglet **System Update** : patienter jusqu'à ce que **Latest Base System** affiche `2.8.1`. Cela peut prendre une à deux minutes (« *Retrieving* »).
-3. Cliquer sur **Confirm**. pfSense télécharge les paquets, redémarre, installe la mise à jour, puis redémarre une seconde fois. Suivre l'avancement dans la console de la VM, **sans éteindre la VM**.
-4. Une fois la console revenue au menu, vérifier la bannière : `*** Welcome to pfSense 2.8.1-RELEASE ***`. Dans **Status > CARP (failover)**, le secondaire est toujours **BACKUP**.
-5. Recommencer avec **Branch** : **Current Stable Version (2.9.0)** (cette option n'apparaît qu'une fois en 2.8.1), **Save**, puis **System Update > Confirm**.
+1. Ouvrir **System > Update** (*Système > Mettre à jour*), onglet **Update Settings** (*Paramètres de mise à jour*). Choisir **Branch** : **Previous Stable Version (2.8.1)**, puis **Save**.
+
+    ![Paramètres de mise à jour : branche Previous Stable Version (2.8.1)](images/cluster-pfsense/maj-parametres-branche-281.png){ loading=lazy }
+
+2. Onglet **System Update** (*Mise à jour système*) : patienter jusqu'à ce que **Latest Base System** (*Dernier système de base*) affiche `2.8.1`. L'état « *Retrieving* » peut durer une à deux minutes.
+
+    ![Page de mise à jour : système actuel 2.7.2, dernier système 2.8.1, bouton Confirmer](images/cluster-pfsense/maj-confirmation-281.png){ loading=lazy }
+
+    !!! note "Le message « pfSense-repoc: … no pfSense packages installed »"
+        Ce message apparaît dans la zone **Messages** sur une pfSense CE fraîchement installée. Il est sans conséquence : dans le lab, la mise à jour a fonctionné malgré lui sur les deux nœuds.
+
+3. Cliquer sur **Confirm**. La page affiche la progression du téléchargement. Dans la console, la suite se déroule ainsi :
+    1. le message *« System is going to be upgraded. Rebooting in … seconds »* annonce un **premier redémarrage** ;
+    2. le nouveau FreeBSD et les paquets s'installent pendant deux à trois minutes ; pfSense désactive CARP pendant ce temps (`net.inet.carp.allow: 1 -> 0`) ;
+    3. le message *« Rebooting now »* annonce un **second redémarrage** ;
+    4. le menu habituel revient.
+
+    **Ne pas éteindre la VM pendant cette phase.** Des messages inquiétants peuvent défiler, comme *« POST-INSTALL script failed »* ou *« missing file »*. Dans le lab, ils étaient sans conséquence.
+
+4. Vérifier la bannière de la console, `*** Welcome to pfSense 2.8.1-RELEASE ***`, et, dans **Status > CARP (failover)**, que le secondaire est toujours **BACKUP**.
+5. Recommencer avec **Branch** : **Current Stable Version (2.9.0)**. Cette option n'apparaît qu'en 2.8.1. Cliquer sur **Save**, puis sur **System Update > Confirm**.
 6. Vérifier la bannière `2.9.0-RELEASE` et l'état **BACKUP**.
+
+    ![Console du secondaire : Welcome to pfSense 2.9.0-RELEASE](images/cluster-pfsense/console-pfsense-20-290.png){ loading=lazy width="560" }
 
 #### Étape 3 — Placer le primaire en maintenance CARP
 
 **Sur le primaire**, ouvrir **Status > CARP (failover)** et cliquer sur **Enter Persistent CARP Maintenance Mode** (*Entrer en mode de maintenance CARP persistant*).
 
-Ce mode règle le skew de toutes les VIP du primaire à **254** : le secondaire devient MASTER. Contrairement à *Temporarily Disable CARP*, ce mode **persiste après un redémarrage**. Le primaire ne reprendra donc pas les VIP entre deux redémarrages de la mise à jour.
+![État CARP du primaire en maintenance : VIP en BACKUP, bouton pour quitter le mode de maintenance](images/cluster-pfsense/carp-maintenance-primaire.png){ loading=lazy }
 
-Vérifier sur le secondaire que les deux VIP sont **MASTER**, et que le ping vers `192.168.19.21` répond toujours.
+Ce mode règle le skew de toutes les VIP du primaire à **254** (`advskew 254` dans `ifconfig`). Le secondaire, dont les annonces sont désormais plus fréquentes, devient MASTER. La bascule est **planifiée** : au lieu de disparaître brutalement, le primaire annonce sa nouvelle priorité, plus faible. Le secondaire prend donc le relais immédiatement, sans attendre le délai de détection d'une panne (environ 3,4 s). Dans le lab de test, aucun ping vers la VIP n'a été perdu.
+
+Contrairement à *Temporarily Disable CARP*, ce mode **persiste après un redémarrage**. Si le primaire n'a que 1 Go, l'éteindre maintenant, lui donner 2 Go et le rallumer : dans le lab, il est bien resté BACKUP au redémarrage, sans aucune perte de ping.
 
 #### Étape 4 — Mettre à jour le primaire
 
@@ -1064,21 +1105,42 @@ Vérifier sur le secondaire que les deux VIP sont **MASTER**, et que le ping ver
 
 #### Étape 5 — Sortir du mode de maintenance
 
-**Sur le primaire**, dans **Status > CARP (failover)**, cliquer sur **Leave Persistent CARP Maintenance Mode**. Le primaire redevient MASTER.
+**Sur le primaire**, dans **Status > CARP (failover)**, cliquer sur **Leave Persistent CARP Maintenance Mode** (*Quitter le mode de maintenance CARP persistant*). Le primaire redevient MASTER grâce à la préemption ; dans le lab, sans perte de ping.
 
 !!! success "Vérifications finales"
     - Les deux consoles affichent `pfSense 2.9.0-RELEASE`.
     - Le primaire est **MASTER** et le secondaire **BACKUP** sur les deux VIP.
-    - **Status > Filter Reload > Force Config Sync** sur le primaire, puis **Status > System Logs > System** : plus aucun message « *different configuration version* ».
-    - Une règle de test créée sur le primaire apparaît sur le secondaire.
-    - Le navigateur peut afficher un **nouvel avertissement de certificat** : la 2.9.0 régénère le certificat de l'interface web s'il est jugé trop faible.
+    - **La synchronisation XML-RPC a repris** : une règle de test créée sur le primaire apparaît sur le secondaire, et sa suppression est elle aussi répliquée. En 2.9.0, une synchronisation réussie n'écrit plus de ligne dans le journal système : ce test est donc la vérification la plus fiable.
+    - Dans **Status > CARP (failover)**, la section **State Synchronization Status** liste **les deux mêmes identifiants** sur les deux nœuds : pfsync fonctionne de nouveau dans les deux sens.
 
-!!! failure "« Unable to check for updates »"
-    - Patienter une minute, puis recharger la page : la vérification est parfois longue.
-    - Le message « *Another instance of pfSense-upgrade is running* » signifie qu'une vérification est déjà en cours : patienter quelques minutes.
-    - Vérifier l'accès Internet du pare-feu : **Diagnostics > Ping** vers `1.1.1.1`, source `WAN`.
-    - En console, l'option **13) Update from console** lance la même mise à jour en mode texte.
-    - En dernier recours, Netgate recommande de réinstaller les outils de mise à jour dans **Diagnostics > Command Prompt** : `pkg-static clean -ay; pkg-static install -fy pkg pfSense-repo pfSense-upgrade`.
+        ![État CARP du secondaire en 2.9.0 : VIP en BACKUP, et liste des deux identifiants de synchronisation des états](images/cluster-pfsense/carp-statut-synchronisation-etats.png){ loading=lazy }
+
+    - Si le navigateur affiche un **nouvel avertissement de certificat**, c'est que pfSense a recréé le certificat de son interface web. Dans le lab, c'est arrivé au secondaire lors de sa mise à jour, mais pas au primaire. Il suffit d'accepter le nouveau certificat.
+
+#### Dépannage de la mise à jour
+
+!!! failure "La page indique toujours 2.7.2, « Your system is up to date » ou « Unable to check for updates »"
+    Ces trois cas ont été rencontrés dans le lab, juste après un changement de branche. Les actions suivantes ont permis d'en sortir :
+
+    1. Retourner dans **Update Settings**, vérifier la branche et cliquer de nouveau sur **Save**.
+    2. Dans **Diagnostics > Command Prompt**, lancer `pfSense-upgrade -c`. La commande doit répondre `2.8.1 version of pfSense is available`.
+    3. Recharger la page **System Update**.
+
+    Le message *« Another instance of pfSense-upgrade is running »* signifie qu'une vérification est déjà en cours : patienter quelques minutes, puis recharger.
+
+!!! failure "Après le redémarrage, la console affiche `php: not found` et une invite `login:`"
+    C'est le symptôme rencontré avec 1 Go de RAM. La console affiche notamment :
+
+    - `/etc/rc.bootup: not found` et `pfSense-upgrade: php: not found` ;
+    - une invite `FreeBSD/amd64 (Amnesiac) (ttyv0) login:` à la place du menu ;
+    - une interface web injoignable.
+
+    La commande `dmesg` (connexion en `root` avec le mot de passe `admin`) montre `pkg-static … was killed: failed to reclaim memory`. L'installation a été interrompue à mi-chemin : le nouveau FreeBSD est en place, mais pas les paquets de pfSense.
+
+    **Solution appliquée dans le lab** : restaurer l'instantané de l'étape 1, porter la RAM à 2 Go, puis recommencer la mise à jour. Sans instantané, il faut réinstaller pfSense et restaurer la sauvegarde `config.xml` de l'étape 1. Cette seconde méthode n'a pas été rejouée dans le lab.
+
+Netgate propose aussi l'option **13) Update from console**, qui lance la même mise à jour en mode texte, et des commandes de réparation (`pkg-static clean -ay; pkg-static install -fy pkg pfSense-repo pfSense-upgrade`) dans sa page [Troubleshooting upgrades](https://docs.netgate.com/pfsense/en/latest/troubleshooting/upgrades.html). Ces deux possibilités n'ont pas été nécessaires dans le lab de test.
+
 
 ---
 
