@@ -3514,7 +3514,7 @@
 </tr>
 <tr>
 <td>Durée estimée</td>
-<td>3 h 30 pour le TP principal et les exercices, plus 1 h 30 pour les prolongements</td>
+<td>3 h 30 pour le TP principal et les exercices ; 1 h pour l'agrégation <abbr title="Link Aggregation Control Protocol">LACP</abbr> ; 2 h 30 à 4 h pour la mise à jour du cluster, surtout du temps de téléchargement</td>
 </tr>
 <tr>
 <td>Hyperviseur</td>
@@ -3526,7 +3526,7 @@
 </tr>
 <tr>
 <td>Machines virtuelles</td>
-<td>2 VM pfSense : 1 vCPU, 1 Go de RAM, 20 Go de disque, 3 cartes réseau</td>
+<td>2 VM pfSense : 1 vCPU, 1 Go de RAM (2 Go pour la mise à jour), 20 Go de disque, 3 cartes réseau</td>
 </tr>
 <tr>
 <td>Organisation</td>
@@ -3545,7 +3545,7 @@
 <li>Chaque étape indique en gras <strong>sur quel pare-feu</strong> elle se réalise. Beaucoup d'erreurs viennent d'une action faite sur le mauvais nœud : relire cette mention avant chaque manipulation.</li>
 <li>Les menus sont donnés en anglais, la langue par défaut de pfSense, suivis de leur équivalent français : <strong>Firewall &gt; Rules</strong> (<em>Pare-feu &gt; Règles</em>).</li>
 <li>Pour savoir sur quel pare-feu une capture a été prise, se fier au texte qui l'accompagne ou à l'adresse visible en haut de l'image : <code>192.168.19.19</code> pour le primaire, <code>192.168.19.20</code> pour le secondaire. Les captures mélangent l'interface en français et en anglais. Pour s'y retrouver soi-même, l'<a href="#84-distinguer-les-deux-pare-feux-dun-coup-dil">étape 8.4</a> propose de distinguer les deux pare-feux par la langue et le thème.</li>
-<li>Le TP principal et les exercices ont été rejoués de bout en bout dans un laboratoire de test le 12 octobre 2026. Les mesures citées (temps de bascule, nombre de paquets perdus) en sont issues.</li>
+<li>Le TP principal, les exercices et la mise à jour complète du cluster vers la 2.9.0 ont été rejoués de bout en bout dans un laboratoire de test (KVM) le 12 octobre 2026. Les mesures citées (temps de bascule, paquets perdus, durées) en sont issues. Les parties qui n'ont pas été rejouées sont signalées comme telles.</li>
 </ul>
 </div>
 <hr />
@@ -3735,7 +3735,7 @@
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Utilisateurs de VirtualBox : une seule différence</p>
-<p>Dans VirtualBox, la passerelle d'un « Réseau <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> » est <strong>toujours la première adresse</strong> du réseau, soit <code>192.168.8.1</code>, et ce n'est pas modifiable. Partout où ce TP indique la passerelle ou le DNS <code>192.168.8.2</code>, utiliser <strong><code>192.168.8.1</code></strong> avec VirtualBox. Toutes les autres adresses sont identiques.</p>
+<p>D'après la documentation d'Oracle, la passerelle d'un « Réseau <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> » VirtualBox est <strong>toujours la première adresse</strong> du réseau, soit <code>192.168.8.1</code>, et ce n'est pas modifiable. Partout où ce TP indique la passerelle ou le DNS <code>192.168.8.2</code>, utiliser <strong><code>192.168.8.1</code></strong> avec VirtualBox. Toutes les autres adresses sont identiques.</p>
 </div>
 <hr />
 <h2 id="5-preparer-lhyperviseur">5. Préparer l'hyperviseur<a class="headerlink" href="#5-preparer-lhyperviseur" title="Permanent link">&para;</a></h2>
@@ -3825,6 +3825,10 @@
 <li>Dans l'onglet <strong>Réseaux privés hôte</strong>, cliquer sur <strong>Créer</strong>. Choisir <strong>Configurer l'adaptateur manuellement</strong> avec l'adresse IPv4 <code>192.168.19.1</code> et le masque <code>255.255.255.0</code>. Dans l'onglet <strong>Serveur DHCP</strong>, décocher <strong>Activer le serveur</strong>.</li>
 <li>Le réseau <strong>SYNCHRO-PFSENSE</strong> est un <strong>réseau interne</strong> : il n'a pas besoin d'être créé à l'avance. Il existe dès qu'une carte réseau est rattachée à un réseau interne portant ce nom.</li>
 </ol>
+<div class="admonition note">
+<p class="admonition-title">Variante non testée dans le lab de référence</p>
+<p>Les manipulations de ce TP ont été réalisées et vérifiées sous VMware Workstation et KVM. Les réglages VirtualBox ci-dessous suivent la documentation d'Oracle et les recommandations de Netgate pour la virtualisation, mais n'ont pas été rejoués dans VirtualBox.</p>
+</div>
 <div class="admonition warning">
 <p class="admonition-title">Ne pas utiliser le mode « <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> » simple pour le WAN</p>
 <p>En mode <strong><abbr title="Network Address Translation — traduction d'adresses">NAT</abbr></strong> (et non <em>Réseau <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr></em>), VirtualBox crée un réseau <strong>privé pour chaque VM</strong> : les deux pare-feux ne se voient pas côté WAN. Chacun se croit alors seul et se déclare MASTER de la <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> WAN, et le cluster ne peut pas fonctionner. Le mode <strong>Réseau <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr></strong> place au contraire les deux VM sur le <strong>même</strong> réseau.</p>
@@ -3859,8 +3863,8 @@
 </tr>
 <tr>
 <td>Mémoire</td>
-<td><strong>1 Go</strong></td>
-<td>Recommandation officielle. 512 Mo suffisent en pratique pour un lab, mais 1 Go évite les surprises lors de la mise à jour.</td>
+<td><strong>1 Go</strong> (<strong>2 Go</strong> si la mise à jour de la partie 15.3 est prévue)</td>
+<td>1 Go est le minimum officiel et suffit pour tout le TP (512 Mo fonctionnent en pratique pour un lab). La mise à jour demande plus : avec 1 Go, elle a échoué faute de mémoire dans le lab de test (voir la <a href="#153-mettre-a-jour-le-cluster-vers-pfsense-ce-290">partie 15.3</a>).</td>
 </tr>
 <tr>
 <td>Disque</td>
@@ -3900,6 +3904,7 @@
 </div>
 </div>
 <div class="tabbed-block">
+<p><em>Variante non rejouée dans le lab de test : voir la remarque de l'<a href="#52-creer-les-reseaux-virtuels">étape 5.2</a>.</em></p>
 <p>Dans <strong>Configuration &gt; Réseau</strong> :</p>
 <table>
 <thead>
@@ -4229,6 +4234,10 @@
 <div class="admonition warning">
 <p class="admonition-title">Pourquoi décocher « Block RFC1918 Private Networks » ?</p>
 <p>Cette option bloque, à l'entrée du WAN, tout trafic provenant d'une adresse <strong>privée</strong> (<code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, <code>192.168.0.0/16</code>). Sur une vraie connexion Internet, c'est une bonne protection : aucune adresse privée ne devrait arriver d'Internet. Mais dans ce lab, <strong>le WAN lui-même est un réseau privé</strong> (<code>192.168.8.0/24</code>). Le texte d'aide de pfSense le précise : <em>« This option should generally be left turned on, unless the WAN network lies in such a private address space, too »</em>. Laissée cochée, l'option empêcherait les deux pare-feux de communiquer côté WAN.</p>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">Ne pas relancer l'assistant sur un pare-feu déjà configuré</p>
+<p>L'assistant reste accessible dans <strong>System &gt; Setup Wizard</strong>, mais il ne sert qu'à la première configuration. Dans le lab de test, le simple fait de le parcourir à nouveau sur un pare-feu en service a <strong>effacé l'adresse IP du WAN</strong> dans la configuration. La panne n'est apparue qu'au redémarrage suivant, ce qui la rend difficile à diagnostiquer. Pour modifier un réglage ensuite, passer par le menu concerné, par exemple <strong>Interfaces &gt; WAN</strong>.</p>
 </div>
 <div class="admonition info">
 <p class="admonition-title">Pourquoi le même mot de passe admin sur les deux nœuds ?</p>
@@ -4575,7 +4584,14 @@
 <p><img alt="Règle CARP sur le primaire" loading="lazy" src="../images/cluster-pfsense/regle-carp-primaire.png" /></p>
 <div class="admonition note">
 <p class="admonition-title">Pour aller plus loin : cette règle est-elle indispensable ?</p>
-<p>Dans le code de pfSense, une règle <strong>automatique</strong> autorise le protocole <abbr title="Common Address Redundancy Protocol">CARP</abbr> dès qu'une <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> <abbr title="Common Address Redundancy Protocol">CARP</abbr> existe. De plus, les annonces <abbr title="Common Address Redundancy Protocol">CARP</abbr> circulent sur les réseaux qui portent une <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> (WAN et LAN), pas sur le lien PFSYNC. Cette troisième règle n'est donc pas strictement nécessaire. Elle ne présente aucun risque, puisqu'elle ne concerne que le <code>/30</code> des deux pare-feux, et elle <strong>documente l'intention</strong> de la configuration. pfsync, en revanche, n'est <strong>jamais</strong> autorisé automatiquement : la règle 2 est indispensable.</p>
+<p>Dès qu'une <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> <abbr title="Common Address Redundancy Protocol">CARP</abbr> existe, pfSense ajoute une règle <strong>automatique</strong> qui autorise le protocole <abbr title="Common Address Redundancy Protocol">CARP</abbr> sur toutes les interfaces. De plus, les annonces <abbr title="Common Address Redundancy Protocol">CARP</abbr> circulent sur les réseaux qui portent une <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> (WAN et LAN), pas sur le lien PFSYNC. Cette troisième règle n'est donc pas strictement nécessaire. Elle ne présente aucun risque, puisqu'elle ne concerne que le <code>/30</code> des deux pare-feux, et elle <strong>documente l'intention</strong> de la configuration. pfsync, en revanche, n'est <strong>jamais</strong> autorisé automatiquement : la règle 2 est indispensable.</p>
+<p>Ces trois points ont été vérifiés dans le lab de test, en 2.7.2 comme en 2.9.0 :</p>
+<ul>
+<li>la commande <code>pfctl -sr | grep carp</code> (dans <strong>Diagnostics &gt; Command Prompt</strong>) affiche la règle automatique <code>pass quick proto carp all no state</code> ;</li>
+<li>une capture (<code>tcpdump -ni em1 ip proto 112</code>) montre les annonces <abbr title="Common Address Redundancy Protocol">CARP</abbr> sur <code>em0</code> et <code>em1</code> ;</li>
+<li>sur <code>em2</code>, on ne voit passer que du pfsync.</li>
+</ul>
+<p>Les outils de capture (<code>tcpdump</code>, Wireshark) affichent les paquets <abbr title="Common Address Redundancy Protocol">CARP</abbr> comme du <strong>VRRPv2</strong> : les deux protocoles utilisent le même numéro, 112.</p>
 </div>
 <p>Après toutes ces manipulations, l'interface PFSYNC du primaire présente ces règles :</p>
 <p><img alt="Liste des règles PFSYNC du primaire : ICMP, XML-RPC, pfsync et CARP" loading="lazy" src="../images/cluster-pfsense/regles-pfsync-primaire-liste.png" /></p>
@@ -4640,7 +4656,7 @@
 </table>
 <p>Cliquer sur <strong>Save</strong>.</p>
 <p><img alt="Page High Availability du secondaire : pfsync activé vers 192.168.254.1, partie XML-RPC vide" loading="lazy" src="../images/cluster-pfsense/ha-sync-secondaire-pfsync-active.png" /></p>
-<p><strong>Vérification (facultative)</strong> : la commande suivante compte les états selon le nœud qui les a créés. Elle se lance dans <strong>Diagnostics &gt; Command Prompt</strong> (<em>Diagnostics &gt; Invite de commande</em>) de <strong>chaque</strong> pare-feu, champ <strong>Execute Shell Command</strong> :</p>
+<p><strong>Vérification (facultative)</strong> : le contrôle le plus simple se fait dans l'interface web, à l'<a href="#131-controler-letat-normal">étape 13.1</a>, une fois les <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> créées. Dès maintenant, la commande suivante compte les états selon le nœud qui les a créés. Elle se lance dans <strong>Diagnostics &gt; Command Prompt</strong> (<em>Diagnostics &gt; Invite de commande</em>) de <strong>chaque</strong> pare-feu, champ <strong>Execute Shell Command</strong> :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pfctl<span class="w"> </span>-vvss<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-o<span class="w"> </span><span class="s2">"creatorid: [0-9a-f]*"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span><span class="p">|</span><span class="w"> </span>uniq<span class="w"> </span>-c
 </code></pre></div>
 <div class="admonition success">
@@ -4816,6 +4832,7 @@
 <p><img alt="État CARP du secondaire : WAN et LAN en BACKUP" loading="lazy" src="../images/cluster-pfsense/carp-statut-secondaire-backup.png" /></p>
 </li>
 </ul>
+<p>La même page vérifie aussi <strong>pfsync</strong>. Sa section <strong>State Synchronization Status</strong> liste les identifiants des nœuds qui ont créé des états (<em>State Creator Host IDs</em>). Quand la synchronisation des états fonctionne dans les deux sens, <strong>la liste est identique sur les deux pare-feux</strong> et contient les deux identifiants. Si un nœud n'affiche que le sien, revoir l'<a href="#105-activer-la-reception-des-etats-pfsync-sur-le-secondaire">étape 10.5</a>.</p>
 <div class="admonition note">
 <p class="admonition-title">« DISABLED » juste après une synchronisation</p>
 <p>Juste après la création des <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr>, la page du secondaire peut afficher brièvement <strong>DISABLED</strong>. Il suffit de la recharger quelques secondes plus tard pour voir <strong>BACKUP</strong>.</p>
@@ -4847,7 +4864,7 @@
 </li>
 <li>Observer le ping : quelques réponses manquent, puis il reprend tout seul.</li>
 <li><strong>Sur le secondaire</strong>, actualiser <strong>Status &gt; <abbr title="Common Address Redundancy Protocol">CARP</abbr> (failover)</strong> : les deux <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> sont passées en <strong>MASTER</strong>. Le cluster à basculement fonctionne.</li>
-<li>Ouvrir <code>https://192.168.19.21</code> dans le navigateur : la page de connexion est celle du <strong>secondaire</strong>. Le nom <code>pfsense-20</code> apparaît dans le titre de l'onglet et sur le tableau de bord.</li>
+<li>Ouvrir <code>https://192.168.19.21</code> dans le navigateur et se connecter : c'est le <strong>secondaire</strong> qui répond. Une fois connecté, le nom <code>pfsense-20.home.arpa</code> apparaît dans le titre de l'onglet et sur le tableau de bord. La page de connexion, elle, n'affiche pas le nom du pare-feu.</li>
 <li>Rétablir le primaire : bouton <strong>Enable <abbr title="Common Address Redundancy Protocol">CARP</abbr></strong>, carte reconnectée ou VM rallumée. Le primaire <strong>reprend automatiquement</strong> le rôle de MASTER : c'est la <strong>préemption</strong>.</li>
 </ol>
 <div class="admonition success">
@@ -4906,7 +4923,7 @@
 <p><img alt="Schéma : deux liens SYNCHRO-PFSENSE-1 et SYNCHRO-PFSENSE-2 relient les pare-feux" loading="lazy" src="../images/cluster-pfsense/schema-lagg-synchro.png" /></p>
 <div class="admonition warning">
 <p class="admonition-title">Un segment par lien</p>
-<p>Les tests ont montré qu'utiliser <strong>le même</strong> LAN segment pour les deux interfaces de l'agrégat provoque un problème de connectivité. Les deux cartes forment alors une boucle sur un même switch virtuel. Chaque lien doit avoir <strong>son propre</strong> segment.</p>
+<p>Les tests ont montré qu'utiliser <strong>le même</strong> LAN segment pour les deux interfaces de l'agrégat provoque un problème de connectivité. Chaque lien doit avoir <strong>son propre</strong> segment, comme deux câbles physiques distincts.</p>
 </div>
 <div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">VMware Workstation</label><label for="__tabbed_5_2">VirtualBox</label></div>
 <div class="tabbed-content">
@@ -4992,65 +5009,110 @@
 <p class="admonition-title">Points d'attention</p>
 <ul>
 <li>Le réseau de synchronisation en <code>/30</code> ne peut contenir que deux adresses. Le lien entre le secondaire et le tertiaire demande donc un <strong>autre réseau dédié</strong> (par exemple <code>192.168.254.4/30</code> sur un nouveau LAN segment) et une carte réseau supplémentaire sur le secondaire.</li>
-<li>À chaque saut de synchronisation, pfSense ajoute 100 au skew : le tertiaire aura un skew de 200 et sera le dernier à prendre la main.</li>
+<li>pfSense ajoute 100 au skew des <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> à chaque synchronisation XML-RPC (vérifié entre le primaire et le secondaire). Le tertiaire devrait donc recevoir un skew de 200 et être le dernier à prendre la main. Ce chaînage n'a pas été rejoué dans le lab de test.</li>
 </ul>
 </div>
 <h3 id="153-mettre-a-jour-le-cluster-vers-pfsense-ce-290">15.3 Mettre à jour le cluster vers pfSense CE 2.9.0<a class="headerlink" href="#153-mettre-a-jour-le-cluster-vers-pfsense-ce-290" title="Permanent link">&para;</a></h3>
-<p>pfSense CE <strong>2.7.2</strong> (décembre 2023) n'est plus maintenue. À la date de rédaction, la version courante est la <strong>2.9.0</strong> (20 août 2026), basée sur FreeBSD 16. Mettre à jour un cluster est un savoir-faire à part entière : bien menée, l'opération <strong>n'interrompt le service que quelques secondes</strong>.</p>
+<p>pfSense CE <strong>2.7.2</strong> (décembre 2023) n'est plus maintenue. À la date de rédaction, la version courante est la <strong>2.9.0</strong> (20 août 2026), basée sur FreeBSD 16. Mettre à jour un cluster est un savoir-faire à part entière : bien menée, l'opération se fait <strong>sans interruption de service</strong>. Dans le lab de test, aucun ping vers la <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> n'a été perdu lors des changements de rôle planifiés.</p>
 <figure>
   <img alt="Frise des cinq étapes de mise à jour d'un cluster : sauvegarder, mettre à jour le secondaire, maintenance CARP sur le primaire, mettre à jour le primaire, sortir de maintenance" loading="lazy" src="../images/cluster-pfsense/schema-mise-a-jour-cluster.svg" />
 <br />
 <figcaption>Le principe : on ne met jamais à jour le pare-feu qui porte le trafic.</figcaption>
 </figure>
 <div class="admonition info">
-<p class="admonition-title">Ce qu'il faut savoir avant de commencer</p>
+<p class="admonition-title">Ce qu'il faut savoir avant de commencer (constaté dans le lab de test)</p>
 <ul>
-<li><strong>Internet est indispensable</strong> : les pare-feux téléchargent environ 185 paquets à chaque étape. Compter <strong>20 à 30 minutes par étape et par nœud</strong>, selon la connexion.</li>
-<li>Depuis la 2.7.2, la mise à jour se fait <strong>en deux sauts</strong> : <strong>2.7.2 → 2.8.1</strong>, puis <strong>2.8.1 → 2.9.0</strong>. Sur une 2.7.2, la page de mise à jour ne propose pas encore la 2.9.0 (constaté dans le lab de test).</li>
-<li>Tant que les deux nœuds n'ont pas la même version, la <strong>synchronisation XML-RPC se met en pause d'elle-même</strong>. Le journal système du primaire l'indique : <em>« The other member is on a different configuration version of pfSense. Sync will not be done to prevent problems! »</em>. Il ne faut donc <strong>rien modifier</strong> pendant la mise à jour.</li>
-<li>Deux nœuds basés sur des versions différentes de FreeBSD <strong>peuvent ne pas réussir à échanger leurs états</strong>. La bascule fonctionne, mais certaines connexions en cours peuvent être coupées pendant la période de transition.</li>
+<li><strong>Deux sauts sont nécessaires.</strong> Sur une 2.7.2, la page de mise à jour ne propose que la 2.8.1, et la 2.9.0 n'apparaît qu'une fois en 2.8.1. Chaque nœud passe donc par <strong>2.7.2 → 2.8.1 → 2.9.0</strong>.</li>
+<li><strong>Internet est indispensable, et le téléchargement est long</strong> : 187 paquets pour passer en 2.8.1, puis 184 pour passer en 2.9.0. Dans le lab, chaque saut a pris <strong>de 25 minutes à 1 heure par nœud</strong>, selon la charge des serveurs de Netgate. L'installation et les redémarrages ne durent que 3 à 4 minutes ; tout le reste est du téléchargement.</li>
+<li><strong>2 Go de RAM par VM.</strong> Avec 1 Go, la mise à jour a réussi sur le secondaire mais a échoué sur le primaire : le système a tué le processus d'installation par manque de mémoire, et pfSense est resté inutilisable (voir le dépannage ci-dessous). L'échec n'est donc pas systématique, mais le risque est réel. Avec 2 Go, les deux sauts du primaire se sont déroulés sans erreur.</li>
+<li><strong>Tant que les versions diffèrent, la synchronisation XML-RPC se suspend d'elle-même.</strong> Le journal système du primaire l'indique : <em>« The other member is on a different configuration version of pfSense. Sync will not be done to prevent problems! »</em>. Il ne faut donc <strong>rien modifier</strong> pendant la mise à jour, car les changements ne seraient pas recopiés.</li>
+<li><strong>Les états pfsync passent toujours vers le nœud mis à jour.</strong> Un secondaire en 2.9.0 importait encore les états envoyés par un primaire en 2.7.2 ; l'inverse ne fonctionnait plus. La bascule vers le secondaire mis à jour conserve donc les connexions en cours.</li>
 </ul>
 </div>
-<h4 id="etape-1-sauvegarder-les-deux-nuds">Étape 1 — Sauvegarder les deux nœuds<a class="headerlink" href="#etape-1-sauvegarder-les-deux-nuds" title="Permanent link">&para;</a></h4>
-<p><strong>Sur chaque pare-feu</strong>, ouvrir <strong>Diagnostics &gt; Backup &amp; Restore</strong>, laisser <strong>Backup area</strong> sur <strong>All</strong>, puis cliquer sur <strong>Download configuration as XML</strong>. 🛟 Prendre aussi un instantané des deux VM : c'est le filet de sécurité le plus rapide en cas d'échec.</p>
+<h4 id="etape-1-sauvegarder-les-deux-nuds-et-prevoir-2-go-de-ram">Étape 1 — Sauvegarder les deux nœuds et prévoir 2 Go de RAM<a class="headerlink" href="#etape-1-sauvegarder-les-deux-nuds-et-prevoir-2-go-de-ram" title="Permanent link">&para;</a></h4>
+<p><strong>Sur chaque pare-feu</strong>, ouvrir <strong>Diagnostics &gt; Backup &amp; Restore</strong>, laisser <strong>Backup area</strong> sur <strong>All</strong>, puis cliquer sur <strong>Download configuration as XML</strong>. 🛟 Prendre aussi un instantané des deux VM : en cas d'échec, c'est le moyen le plus rapide de revenir en arrière.</p>
+<p>Si les VM ont été créées avec 1 Go, <strong>éteindre le secondaire</strong> (console : option <strong>6) Halt system</strong>), porter sa mémoire à <strong>2 Go</strong> dans les paramètres de la VM, puis le rallumer. Comme il est BACKUP, le service n'est pas affecté. Le primaire sera traité à l'étape 3, une fois en maintenance.</p>
 <h4 id="etape-2-mettre-a-jour-le-secondaire-272-281-290">Étape 2 — Mettre à jour le secondaire (2.7.2 → 2.8.1 → 2.9.0)<a class="headerlink" href="#etape-2-mettre-a-jour-le-secondaire-272-281-290" title="Permanent link">&para;</a></h4>
 <p><strong>Sur le secondaire</strong> :</p>
 <ol>
-<li>Ouvrir <strong>System &gt; Update</strong> (<em>Système &gt; Mettre à jour</em>), onglet <strong>Update Settings</strong>. Choisir <strong>Branch</strong> : <strong>Previous Stable Version (2.8.1)</strong>, puis <strong>Save</strong>.</li>
-<li>Onglet <strong>System Update</strong> : patienter jusqu'à ce que <strong>Latest Base System</strong> affiche <code>2.8.1</code>. Cela peut prendre une à deux minutes (« <em>Retrieving</em> »).</li>
-<li>Cliquer sur <strong>Confirm</strong>. pfSense télécharge les paquets, redémarre, installe la mise à jour, puis redémarre une seconde fois. Suivre l'avancement dans la console de la VM, <strong>sans éteindre la VM</strong>.</li>
-<li>Une fois la console revenue au menu, vérifier la bannière : <code>*** Welcome to pfSense 2.8.1-RELEASE ***</code>. Dans <strong>Status &gt; <abbr title="Common Address Redundancy Protocol">CARP</abbr> (failover)</strong>, le secondaire est toujours <strong>BACKUP</strong>.</li>
-<li>Recommencer avec <strong>Branch</strong> : <strong>Current Stable Version (2.9.0)</strong> (cette option n'apparaît qu'une fois en 2.8.1), <strong>Save</strong>, puis <strong>System Update &gt; Confirm</strong>.</li>
-<li>Vérifier la bannière <code>2.9.0-RELEASE</code> et l'état <strong>BACKUP</strong>.</li>
+<li>
+<p>Ouvrir <strong>System &gt; Update</strong> (<em>Système &gt; Mettre à jour</em>), onglet <strong>Update Settings</strong> (<em>Paramètres de mise à jour</em>). Choisir <strong>Branch</strong> : <strong>Previous Stable Version (2.8.1)</strong>, puis <strong>Save</strong>.</p>
+<p><img alt="Paramètres de mise à jour : branche Previous Stable Version (2.8.1)" loading="lazy" src="../images/cluster-pfsense/maj-parametres-branche-281.png" /></p>
+</li>
+<li>
+<p>Onglet <strong>System Update</strong> (<em>Mise à jour système</em>) : patienter jusqu'à ce que <strong>Latest Base System</strong> (<em>Dernier système de base</em>) affiche <code>2.8.1</code>. L'état « <em>Retrieving</em> » peut durer une à deux minutes.</p>
+<p><img alt="Page de mise à jour : système actuel 2.7.2, dernier système 2.8.1, bouton Confirmer" loading="lazy" src="../images/cluster-pfsense/maj-confirmation-281.png" /></p>
+<div class="admonition note">
+<p class="admonition-title">Le message « pfSense-repoc: … no pfSense packages installed »</p>
+<p>Ce message apparaît dans la zone <strong>Messages</strong> sur une pfSense CE fraîchement installée. Il est sans conséquence : dans le lab, la mise à jour a fonctionné malgré lui sur les deux nœuds.</p>
+</div>
+</li>
+<li>
+<p>Cliquer sur <strong>Confirm</strong>. La page affiche la progression du téléchargement. Dans la console, la suite se déroule ainsi :</p>
+<ol>
+<li>le message <em>« System is going to be upgraded. Rebooting in … seconds »</em> annonce un <strong>premier redémarrage</strong> ;</li>
+<li>le nouveau FreeBSD et les paquets s'installent pendant deux à trois minutes ; pfSense désactive <abbr title="Common Address Redundancy Protocol">CARP</abbr> pendant ce temps (<code>net.inet.carp.allow: 1 -&gt; 0</code>) ;</li>
+<li>le message <em>« Rebooting now »</em> annonce un <strong>second redémarrage</strong> ;</li>
+<li>le menu habituel revient.</li>
+</ol>
+<p><strong>Ne pas éteindre la VM pendant cette phase.</strong> Des messages inquiétants peuvent défiler, comme <em>« POST-INSTALL script failed »</em> ou <em>« missing file »</em>. Dans le lab, ils étaient sans conséquence.</p>
+</li>
+<li>
+<p>Vérifier la bannière de la console, <code>*** Welcome to pfSense 2.8.1-RELEASE ***</code>, et, dans <strong>Status &gt; <abbr title="Common Address Redundancy Protocol">CARP</abbr> (failover)</strong>, que le secondaire est toujours <strong>BACKUP</strong>.</p>
+</li>
+<li>Recommencer avec <strong>Branch</strong> : <strong>Current Stable Version (2.9.0)</strong>. Cette option n'apparaît qu'en 2.8.1. Cliquer sur <strong>Save</strong>, puis sur <strong>System Update &gt; Confirm</strong>.</li>
+<li>
+<p>Vérifier la bannière <code>2.9.0-RELEASE</code> et l'état <strong>BACKUP</strong>.</p>
+<p><img alt="Console du secondaire : Welcome to pfSense 2.9.0-RELEASE" loading="lazy" src="../images/cluster-pfsense/console-pfsense-20-290.png" width="560" /></p>
+</li>
 </ol>
 <h4 id="etape-3-placer-le-primaire-en-maintenance-carp">Étape 3 — Placer le primaire en maintenance <abbr title="Common Address Redundancy Protocol">CARP</abbr><a class="headerlink" href="#etape-3-placer-le-primaire-en-maintenance-carp" title="Permanent link">&para;</a></h4>
 <p><strong>Sur le primaire</strong>, ouvrir <strong>Status &gt; <abbr title="Common Address Redundancy Protocol">CARP</abbr> (failover)</strong> et cliquer sur <strong>Enter Persistent <abbr title="Common Address Redundancy Protocol">CARP</abbr> Maintenance Mode</strong> (<em>Entrer en mode de maintenance <abbr title="Common Address Redundancy Protocol">CARP</abbr> persistant</em>).</p>
-<p>Ce mode règle le skew de toutes les <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> du primaire à <strong>254</strong> : le secondaire devient MASTER. Contrairement à <em>Temporarily Disable <abbr title="Common Address Redundancy Protocol">CARP</abbr></em>, ce mode <strong>persiste après un redémarrage</strong>. Le primaire ne reprendra donc pas les <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> entre deux redémarrages de la mise à jour.</p>
-<p>Vérifier sur le secondaire que les deux <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> sont <strong>MASTER</strong>, et que le ping vers <code>192.168.19.21</code> répond toujours.</p>
+<p><img alt="État CARP du primaire en maintenance : VIP en BACKUP, bouton pour quitter le mode de maintenance" loading="lazy" src="../images/cluster-pfsense/carp-maintenance-primaire.png" /></p>
+<p>Ce mode règle le skew de toutes les <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> du primaire à <strong>254</strong> (<code>advskew 254</code> dans <code>ifconfig</code>). Le secondaire, dont les annonces sont désormais plus fréquentes, devient MASTER. La bascule est <strong>planifiée</strong> : au lieu de disparaître brutalement, le primaire annonce sa nouvelle priorité, plus faible. Le secondaire prend donc le relais immédiatement, sans attendre le délai de détection d'une panne (environ 3,4 s). Dans le lab de test, aucun ping vers la <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> n'a été perdu.</p>
+<p>Contrairement à <em>Temporarily Disable <abbr title="Common Address Redundancy Protocol">CARP</abbr></em>, ce mode <strong>persiste après un redémarrage</strong>. Si le primaire n'a que 1 Go, l'éteindre maintenant, lui donner 2 Go et le rallumer : dans le lab, il est bien resté BACKUP au redémarrage, sans aucune perte de ping.</p>
 <h4 id="etape-4-mettre-a-jour-le-primaire">Étape 4 — Mettre à jour le primaire<a class="headerlink" href="#etape-4-mettre-a-jour-le-primaire" title="Permanent link">&para;</a></h4>
 <p><strong>Sur le primaire</strong>, refaire les deux sauts de l'étape 2 (2.8.1, puis 2.9.0). Pendant ce temps, le secondaire assure seul le service.</p>
 <h4 id="etape-5-sortir-du-mode-de-maintenance">Étape 5 — Sortir du mode de maintenance<a class="headerlink" href="#etape-5-sortir-du-mode-de-maintenance" title="Permanent link">&para;</a></h4>
-<p><strong>Sur le primaire</strong>, dans <strong>Status &gt; <abbr title="Common Address Redundancy Protocol">CARP</abbr> (failover)</strong>, cliquer sur <strong>Leave Persistent <abbr title="Common Address Redundancy Protocol">CARP</abbr> Maintenance Mode</strong>. Le primaire redevient MASTER.</p>
+<p><strong>Sur le primaire</strong>, dans <strong>Status &gt; <abbr title="Common Address Redundancy Protocol">CARP</abbr> (failover)</strong>, cliquer sur <strong>Leave Persistent <abbr title="Common Address Redundancy Protocol">CARP</abbr> Maintenance Mode</strong> (<em>Quitter le mode de maintenance <abbr title="Common Address Redundancy Protocol">CARP</abbr> persistant</em>). Le primaire redevient MASTER grâce à la préemption ; dans le lab, sans perte de ping.</p>
 <div class="admonition success">
 <p class="admonition-title">Vérifications finales</p>
 <ul>
 <li>Les deux consoles affichent <code>pfSense 2.9.0-RELEASE</code>.</li>
 <li>Le primaire est <strong>MASTER</strong> et le secondaire <strong>BACKUP</strong> sur les deux <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr>.</li>
-<li><strong>Status &gt; Filter Reload &gt; Force Config Sync</strong> sur le primaire, puis <strong>Status &gt; System Logs &gt; System</strong> : plus aucun message « <em>different configuration version</em> ».</li>
-<li>Une règle de test créée sur le primaire apparaît sur le secondaire.</li>
-<li>Le navigateur peut afficher un <strong>nouvel avertissement de certificat</strong> : la 2.9.0 régénère le certificat de l'interface web s'il est jugé trop faible.</li>
+<li><strong>La synchronisation XML-RPC a repris</strong> : une règle de test créée sur le primaire apparaît sur le secondaire, et sa suppression est elle aussi répliquée. En 2.9.0, une synchronisation réussie n'écrit plus de ligne dans le journal système : ce test est donc la vérification la plus fiable.</li>
+<li>
+<p>Dans <strong>Status &gt; <abbr title="Common Address Redundancy Protocol">CARP</abbr> (failover)</strong>, la section <strong>State Synchronization Status</strong> liste <strong>les deux mêmes identifiants</strong> sur les deux nœuds : pfsync fonctionne de nouveau dans les deux sens.</p>
+<p><img alt="État CARP du secondaire en 2.9.0 : VIP en BACKUP, et liste des deux identifiants de synchronisation des états" loading="lazy" src="../images/cluster-pfsense/carp-statut-synchronisation-etats.png" /></p>
+</li>
+<li>
+<p>Si le navigateur affiche un <strong>nouvel avertissement de certificat</strong>, c'est que pfSense a recréé le certificat de son interface web. Dans le lab, c'est arrivé au secondaire lors de sa mise à jour, mais pas au primaire. Il suffit d'accepter le nouveau certificat.</p>
+</li>
 </ul>
+</div>
+<h4 id="depannage-de-la-mise-a-jour">Dépannage de la mise à jour<a class="headerlink" href="#depannage-de-la-mise-a-jour" title="Permanent link">&para;</a></h4>
+<div class="admonition failure">
+<p class="admonition-title">La page indique toujours 2.7.2, « Your system is up to date » ou « Unable to check for updates »</p>
+<p>Ces trois cas ont été rencontrés dans le lab, juste après un changement de branche. Les actions suivantes ont permis d'en sortir :</p>
+<ol>
+<li>Retourner dans <strong>Update Settings</strong>, vérifier la branche et cliquer de nouveau sur <strong>Save</strong>.</li>
+<li>Dans <strong>Diagnostics &gt; Command Prompt</strong>, lancer <code>pfSense-upgrade -c</code>. La commande doit répondre <code>2.8.1 version of pfSense is available</code>.</li>
+<li>Recharger la page <strong>System Update</strong>.</li>
+</ol>
+<p>Le message <em>« Another instance of pfSense-upgrade is running »</em> signifie qu'une vérification est déjà en cours : patienter quelques minutes, puis recharger.</p>
 </div>
 <div class="admonition failure">
-<p class="admonition-title">« Unable to check for updates »</p>
+<p class="admonition-title">Après le redémarrage, la console affiche <code>php: not found</code> et une invite <code>login:</code></p>
+<p>C'est le symptôme rencontré avec 1 Go de RAM. La console affiche notamment :</p>
 <ul>
-<li>Patienter une minute, puis recharger la page : la vérification est parfois longue.</li>
-<li>Le message « <em>Another instance of pfSense-upgrade is running</em> » signifie qu'une vérification est déjà en cours : patienter quelques minutes.</li>
-<li>Vérifier l'accès Internet du pare-feu : <strong>Diagnostics &gt; Ping</strong> vers <code>1.1.1.1</code>, source <code>WAN</code>.</li>
-<li>En console, l'option <strong>13) Update from console</strong> lance la même mise à jour en mode texte.</li>
-<li>En dernier recours, Netgate recommande de réinstaller les outils de mise à jour dans <strong>Diagnostics &gt; Command Prompt</strong> : <code>pkg-static clean -ay; pkg-static install -fy pkg pfSense-repo pfSense-upgrade</code>.</li>
+<li><code>/etc/rc.bootup: not found</code> et <code>pfSense-upgrade: php: not found</code> ;</li>
+<li>une invite <code>FreeBSD/amd64 (Amnesiac) (ttyv0) login:</code> à la place du menu ;</li>
+<li>une interface web injoignable.</li>
 </ul>
+<p>La commande <code>dmesg</code> (connexion en <code>root</code> avec le mot de passe <code>admin</code>) montre <code>pkg-static … was killed: failed to reclaim memory</code>. L'installation a été interrompue à mi-chemin : le nouveau FreeBSD est en place, mais pas les paquets de pfSense.</p>
+<p><strong>Solution appliquée dans le lab</strong> : restaurer l'instantané de l'étape 1, porter la RAM à 2 Go, puis recommencer la mise à jour. Sans instantané, il faut réinstaller pfSense et restaurer la sauvegarde <code>config.xml</code> de l'étape 1. Cette seconde méthode n'a pas été rejouée dans le lab.</p>
 </div>
+<p>Netgate propose aussi l'option <strong>13) Update from console</strong>, qui lance la même mise à jour en mode texte, et des commandes de réparation (<code>pkg-static clean -ay; pkg-static install -fy pkg pfSense-repo pfSense-upgrade</code>) dans sa page <a href="https://docs.netgate.com/pfsense/en/latest/troubleshooting/upgrades.html">Troubleshooting upgrades</a>. Ces deux possibilités n'ont pas été nécessaires dans le lab de test.</p>
 <hr />
 <h2 id="16-depannage-et-astuces">16. Dépannage et astuces<a class="headerlink" href="#16-depannage-et-astuces" title="Permanent link">&para;</a></h2>
 <h3 id="161-les-deux-pare-feux-sont-master-en-meme-temps">16.1 Les deux pare-feux sont MASTER en même temps<a class="headerlink" href="#161-les-deux-pare-feux-sont-master-en-meme-temps" title="Permanent link">&para;</a></h3>
