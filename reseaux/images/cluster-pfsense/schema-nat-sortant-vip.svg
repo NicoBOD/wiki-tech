@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Pourquoi traduire le trafic sortant vers la VIP WAN</title>
+  <desc id="d">Sans règle de NAT sortant, un poste du LAN sort sur Internet avec l'adresse propre du pare-feu actif (192.168.8.19) ; après une bascule, le secondaire utiliserait 192.168.8.20, le serveur distant verrait une autre adresse et la connexion serait perdue. Avec la règle, le trafic sort toujours avec la VIP 192.168.8.21, quelle que soit la machine active : la table d'états synchronisée par pfsync reste valable et la connexion continue.</desc>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker>
+  </defs>
+  <rect x="0" y="0" width="960" height="420" rx="16" fill="#ffffff"/>
+
+  <!-- Bloc sans règle -->
+  <rect x="16" y="16" width="928" height="184" rx="12" fill="#fef2f2" stroke="#fca5a5"/>
+  <text x="36" y="44" font-size="16" font-weight="800" fill="#991b1b">✗ Sans règle de NAT sortant vers la VIP (NAT automatique)</text>
+
+  <rect x="36" y="70" width="170" height="58" rx="10" fill="#ffffff" stroke="#64748b"/>
+  <text x="121" y="94" text-anchor="middle" font-size="13" font-weight="700" fill="#1e293b">Poste LAN</text>
+  <text x="121" y="113" text-anchor="middle" font-size="12" fill="#475569">192.168.19.50</text>
+
+  <line x1="208" y1="99" x2="306" y2="99" stroke="#334155" stroke-width="2" marker-end="url(#ar)"/>
+  <rect x="310" y="70" width="230" height="58" rx="10" fill="#fff7ed" stroke="#ea580c"/>
+  <text x="425" y="94" text-anchor="middle" font-size="13" font-weight="700" fill="#9a3412">pfsense-19 (MASTER)</text>
+  <text x="425" y="113" text-anchor="middle" font-size="12" fill="#9a3412">source réécrite en 192.168.8.19</text>
+  <line x1="542" y1="99" x2="716" y2="99" stroke="#334155" stroke-width="2" marker-end="url(#ar)"/>
+  <rect x="720" y="70" width="200" height="58" rx="10" fill="#e0f2fe" stroke="#0284c7"/>
+  <text x="820" y="94" text-anchor="middle" font-size="13" font-weight="700" fill="#075985">Serveur Internet</text>
+  <text x="820" y="113" text-anchor="middle" font-size="12" fill="#075985">voit 192.168.8.19</text>
+
+  <text x="36" y="160" font-size="12.5" fill="#7f1d1d">Après la bascule, pfsense-20 réécrirait la source en <tspan font-weight="700">192.168.8.20</tspan> : le serveur reçoit des paquets</text>
+  <text x="36" y="180" font-size="12.5" fill="#7f1d1d">d'une adresse qu'il ne connaît pas pour cette connexion → <tspan font-weight="700">la connexion est perdue</tspan>.</text>
+
+  <!-- Bloc avec règle -->
+  <rect x="16" y="216" width="928" height="188" rx="12" fill="#f0fdf4" stroke="#86efac"/>
+  <text x="36" y="244" font-size="16" font-weight="800" fill="#166534">✓ Avec la règle : LAN 192.168.19.0/24 → traduit en VIP WAN 192.168.8.21</text>
+
+  <rect x="36" y="270" width="170" height="58" rx="10" fill="#ffffff" stroke="#64748b"/>
+  <text x="121" y="294" text-anchor="middle" font-size="13" font-weight="700" fill="#1e293b">Poste LAN</text>
+  <text x="121" y="313" text-anchor="middle" font-size="12" fill="#475569">192.168.19.50</text>
+
+  <line x1="208" y1="299" x2="306" y2="299" stroke="#334155" stroke-width="2" marker-end="url(#ar)"/>
+  <rect x="310" y="270" width="230" height="58" rx="10" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="425" y="294" text-anchor="middle" font-size="13" font-weight="700" fill="#14532d">pfsense-19 ou pfsense-20</text>
+  <text x="425" y="313" text-anchor="middle" font-size="12" fill="#14532d">source réécrite en 192.168.8.21</text>
+  <line x1="542" y1="299" x2="716" y2="299" stroke="#334155" stroke-width="2" marker-end="url(#ar)"/>
+  <rect x="720" y="270" width="200" height="58" rx="10" fill="#e0f2fe" stroke="#0284c7"/>
+  <text x="820" y="294" text-anchor="middle" font-size="13" font-weight="700" fill="#075985">Serveur Internet</text>
+  <text x="820" y="313" text-anchor="middle" font-size="12" fill="#075985">voit toujours 192.168.8.21</text>
+
+  <text x="36" y="362" font-size="12.5" fill="#14532d">La VIP suit le MASTER et pfsync a déjà copié l'état de la connexion sur le secondaire :</text>
+  <text x="36" y="382" font-size="12.5" fill="#14532d">le serveur ne voit aucun changement → <tspan font-weight="700">la connexion continue après la bascule</tspan>.</text>
+</svg>
