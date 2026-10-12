@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Les trois protocoles du cluster pfSense et leurs chemins</title>
+  <desc id="d">XML-RPC copie la configuration du primaire vers le secondaire, dans un seul sens, en HTTPS sur le port TCP 443 du lien de synchronisation. pfsync échange la table d'états dans les deux sens sur le même lien (protocole IP 240). CARP envoie des annonces sur les réseaux WAN et LAN, là où se trouvent les adresses IP virtuelles (protocole IP 112).</desc>
+  <defs>
+    <marker id="mx" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/></marker>
+    <marker id="mp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#db2777"/></marker>
+    <marker id="mc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+  </defs>
+  <rect x="0" y="0" width="960" height="500" rx="16" fill="#ffffff"/>
+
+  <!-- WAN -->
+  <line x1="60" y1="70" x2="900" y2="70" stroke="#c48a00" stroke-width="6" stroke-linecap="round"/>
+  <text x="60" y="54" font-size="13.5" font-weight="700" fill="#8a6100">WAN 192.168.8.0/24 — VIP 192.168.8.21</text>
+  <!-- LAN -->
+  <line x1="60" y1="430" x2="900" y2="430" stroke="#16a34a" stroke-width="6" stroke-linecap="round"/>
+  <text x="60" y="462" font-size="13.5" font-weight="700" fill="#166534">LAN 192.168.19.0/24 — VIP 192.168.19.21</text>
+
+  <!-- Nœuds -->
+  <line x1="190" y1="70" x2="190" y2="170" stroke="#c48a00" stroke-width="3"/>
+  <line x1="190" y1="330" x2="190" y2="430" stroke="#16a34a" stroke-width="3"/>
+  <rect x="90" y="170" width="200" height="160" rx="14" fill="#fff7ed" stroke="#ea580c" stroke-width="2.5"/>
+  <text x="190" y="200" text-anchor="middle" font-size="16" font-weight="800" fill="#9a3412">pfsense-19</text>
+  <text x="190" y="220" text-anchor="middle" font-size="12.5" fill="#9a3412">primaire (MASTER)</text>
+  <text x="190" y="252" text-anchor="middle" font-size="12" fill="#374151">configuration de référence</text>
+  <text x="190" y="270" text-anchor="middle" font-size="12" fill="#374151">« HA Sync » configuré ici</text>
+  <text x="190" y="314" text-anchor="middle" font-size="12" font-weight="700" fill="#5b21b6">PFSYNC 192.168.254.1</text>
+
+  <line x1="770" y1="70" x2="770" y2="170" stroke="#c48a00" stroke-width="3"/>
+  <line x1="770" y1="330" x2="770" y2="430" stroke="#16a34a" stroke-width="3"/>
+  <rect x="670" y="170" width="200" height="160" rx="14" fill="#fff7ed" stroke="#ea580c" stroke-width="2.5"/>
+  <text x="770" y="200" text-anchor="middle" font-size="16" font-weight="800" fill="#9a3412">pfsense-20</text>
+  <text x="770" y="220" text-anchor="middle" font-size="12.5" fill="#9a3412">secondaire (BACKUP)</text>
+  <text x="770" y="252" text-anchor="middle" font-size="12" fill="#374151">reçoit la configuration</text>
+  <text x="770" y="270" text-anchor="middle" font-size="12" fill="#374151">compte « ha-user »</text>
+  <text x="770" y="314" text-anchor="middle" font-size="12" font-weight="700" fill="#5b21b6">PFSYNC 192.168.254.2</text>
+
+  <!-- Lien de synchro -->
+  <line x1="290" y1="300" x2="670" y2="300" stroke="#a78bfa" stroke-width="10" stroke-linecap="round" opacity="0.35"/>
+  <text x="480" y="325" text-anchor="middle" font-size="11.5" fill="#6b7280">lien dédié SYNCHRO-PFSENSE 192.168.254.0/30</text>
+
+  <!-- XML-RPC -->
+  <line x1="296" y1="200" x2="662" y2="200" stroke="#7c3aed" stroke-width="3" marker-end="url(#mx)"/>
+  <text x="480" y="186" text-anchor="middle" font-size="13.5" font-weight="800" fill="#5b21b6">XML-RPC — la configuration</text>
+  <text x="480" y="218" text-anchor="middle" font-size="12" fill="#5b21b6">HTTPS, TCP 443 — sens unique primaire → secondaire</text>
+
+  <!-- pfsync -->
+  <line x1="296" y1="262" x2="662" y2="262" stroke="#db2777" stroke-width="3" marker-start="url(#mp)" marker-end="url(#mp)"/>
+  <text x="480" y="250" text-anchor="middle" font-size="13.5" font-weight="800" fill="#9d174d">pfsync — la table d'états</text>
+  <text x="480" y="280" text-anchor="middle" font-size="12" fill="#9d174d">protocole IP 240 — dans les deux sens</text>
+
+  <!-- CARP WAN -->
+  <path d="M206,110 C 330,92 610,92 754,110" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#mc)"/>
+  <text x="480" y="122" text-anchor="middle" font-size="13" font-weight="800" fill="#1d4ed8">CARP — annonces du MASTER sur le WAN</text>
+  <text x="480" y="140" text-anchor="middle" font-size="12" fill="#1d4ed8">protocole IP 112, multicast 224.0.0.18, toutes les ~1 s</text>
+  <!-- CARP LAN -->
+  <path d="M206,392 C 330,410 610,410 754,392" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#mc)"/>
+  <text x="480" y="372" text-anchor="middle" font-size="13" font-weight="800" fill="#1d4ed8">CARP — annonces du MASTER sur le LAN</text>
+</svg>

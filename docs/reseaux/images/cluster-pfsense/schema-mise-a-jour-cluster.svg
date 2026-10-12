@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Ordre de mise à jour d'un cluster pfSense</title>
+  <desc id="d">Cinq étapes : 1, sauvegarder la configuration des deux nœuds ; 2, mettre à jour le secondaire pendant que le primaire assure le service ; 3, placer le primaire en mode de maintenance CARP persistant pour que le secondaire devienne MASTER ; 4, mettre à jour le primaire ; 5, sortir du mode de maintenance, le primaire redevient MASTER. Le service n'est interrompu que quelques secondes, lors des bascules.</desc>
+  <rect x="0" y="0" width="960" height="400" rx="16" fill="#ffffff"/>
+  <line x1="96" y1="96" x2="864" y2="96" stroke="#cbd5e1" stroke-width="4"/>
+
+  <g font-size="12.5">
+    <!-- étape 1 -->
+    <circle cx="96" cy="96" r="26" fill="#0f766e"/><text x="96" y="104" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">1</text>
+    <text x="96" y="148" text-anchor="middle" font-weight="800" font-size="13.5" fill="#0f172a">Sauvegarder</text>
+    <text x="96" y="168" text-anchor="middle" fill="#334155">config.xml des</text>
+    <text x="96" y="185" text-anchor="middle" fill="#334155">deux nœuds</text>
+
+    <!-- étape 2 -->
+    <circle cx="288" cy="96" r="26" fill="#0f766e"/><text x="288" y="104" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">2</text>
+    <text x="288" y="148" text-anchor="middle" font-weight="800" font-size="13.5" fill="#0f172a">Mettre à jour</text>
+    <text x="288" y="168" text-anchor="middle" font-weight="800" font-size="13.5" fill="#0f172a">le secondaire</text>
+    <text x="288" y="188" text-anchor="middle" fill="#334155">le primaire reste</text>
+    <text x="288" y="205" text-anchor="middle" fill="#334155">MASTER</text>
+
+    <!-- étape 3 -->
+    <circle cx="480" cy="96" r="26" fill="#b45309"/><text x="480" y="104" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">3</text>
+    <text x="480" y="148" text-anchor="middle" font-weight="800" font-size="13.5" fill="#0f172a">Primaire en</text>
+    <text x="480" y="168" text-anchor="middle" font-weight="800" font-size="13.5" fill="#0f172a">maintenance CARP</text>
+    <text x="480" y="188" text-anchor="middle" fill="#334155">le secondaire</text>
+    <text x="480" y="205" text-anchor="middle" fill="#334155">devient MASTER</text>
+
+    <!-- étape 4 -->
+    <circle cx="672" cy="96" r="26" fill="#0f766e"/><text x="672" y="104" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">4</text>
+    <text x="672" y="148" text-anchor="middle" font-weight="800" font-size="13.5" fill="#0f172a">Mettre à jour</text>
+    <text x="672" y="168" text-anchor="middle" font-weight="800" font-size="13.5" fill="#0f172a">le primaire</text>
+    <text x="672" y="188" text-anchor="middle" fill="#334155">le secondaire</text>
+    <text x="672" y="205" text-anchor="middle" fill="#334155">assure le service</text>
+
+    <!-- étape 5 -->
+    <circle cx="864" cy="96" r="26" fill="#b45309"/><text x="864" y="104" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">5</text>
+    <text x="864" y="148" text-anchor="middle" font-weight="800" font-size="13.5" fill="#0f172a">Sortir de la</text>
+    <text x="864" y="168" text-anchor="middle" font-weight="800" font-size="13.5" fill="#0f172a">maintenance</text>
+    <text x="864" y="188" text-anchor="middle" fill="#334155">le primaire</text>
+    <text x="864" y="205" text-anchor="middle" fill="#334155">redevient MASTER</text>
+  </g>
+
+  <!-- Bandeau rôles -->
+  <text x="40" y="262" font-size="13" font-weight="700" fill="#0f172a">Qui porte les VIP ?</text>
+  <rect x="40" y="276" width="344" height="34" rx="8" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="212" y="298" text-anchor="middle" font-size="13" font-weight="700" fill="#14532d">étapes 1-2 : pfsense-19 MASTER</text>
+  <rect x="384" y="276" width="384" height="34" rx="8" fill="#e0e7ff" stroke="#4f46e5"/>
+  <text x="576" y="298" text-anchor="middle" font-size="13" font-weight="700" fill="#312e81">étapes 3-4 : pfsense-20 MASTER</text>
+  <rect x="768" y="276" width="152" height="34" rx="8" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="844" y="298" text-anchor="middle" font-size="13" font-weight="700" fill="#14532d">5 : pfsense-19</text>
+  <text x="40" y="346" font-size="12.5" fill="#334155">Chaque étape « Mettre à jour » se fait en deux temps depuis la 2.7.2 : <tspan font-weight="700">2.7.2 → 2.8.1</tspan>, puis <tspan font-weight="700">2.8.1 → 2.9.0</tspan>.</text>
+  <text x="40" y="368" font-size="12.5" fill="#334155">Tant que les versions diffèrent, la synchronisation XML-RPC se met en pause d'elle-même (« different configuration version »).</text>
+</svg>
