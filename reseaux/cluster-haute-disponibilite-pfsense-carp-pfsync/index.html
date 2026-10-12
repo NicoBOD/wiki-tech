@@ -1413,10 +1413,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#exercice-5-bonus-corriger-le-comportement-de-lexercice-4" class="md-nav__link">
+  <a href="#exercice-5-corriger-le-comportement-de-lexercice-4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Exercice 5 (bonus) — Corriger le comportement de l'exercice 4
+        Exercice 5 — Corriger le comportement de l'exercice 4
       
     </span>
   </a>
@@ -3140,10 +3140,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#exercice-5-bonus-corriger-le-comportement-de-lexercice-4" class="md-nav__link">
+  <a href="#exercice-5-corriger-le-comportement-de-lexercice-4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Exercice 5 (bonus) — Corriger le comportement de l'exercice 4
+        Exercice 5 — Corriger le comportement de l'exercice 4
       
     </span>
   </a>
@@ -3597,7 +3597,7 @@
 </table>
 <div class="admonition example">
 <p class="admonition-title">Analogie</p>
-<p>Un avion de ligne a un pilote et un copilote. Le copilote suit tout ce qui se passe (la route, les échanges radio, les réglages) sans tenir les commandes. Si le pilote fait un malaise, il reprend immédiatement le vol, car il connaît déjà la situation. Dans le cluster, le primaire est le pilote et le secondaire le copilote : <strong>XML-RPC</strong> lui transmet les réglages et <strong>pfsync</strong> la situation en cours.</p>
+<p>Un avion de ligne a un pilote et un copilote. Le copilote suit tout ce qui se passe (la route, les échanges radio, les réglages) sans tenir les commandes. Si le pilote fait un malaise, le copilote reprend immédiatement le vol, car il connaît déjà la situation. Dans le cluster, le primaire est le pilote et le secondaire le copilote : <strong>XML-RPC</strong> lui transmet les réglages et <strong>pfsync</strong> la situation en cours.</p>
 </div>
 <h3 id="23-le-principe-des-adresses-ip-virtuelles-partagees">2.3 Le principe : des adresses IP virtuelles partagées<a class="headerlink" href="#23-le-principe-des-adresses-ip-virtuelles-partagees" title="Permanent link">&para;</a></h3>
 <p>Chaque pare-feu garde sa propre adresse IP sur chacune de ses interfaces (<code>.19</code> pour le primaire, <code>.20</code> pour le secondaire). Le cluster ajoute une <strong>troisième adresse par réseau</strong>, l'<strong>adresse IP virtuelle</strong> ou <strong><abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr></strong> (<code>.21</code>), <strong>partagée</strong> entre les deux machines.</p>
@@ -3648,8 +3648,8 @@
 </table>
 <ul>
 <li><strong><abbr title="Common Address Redundancy Protocol">CARP</abbr></strong> permet à plusieurs hôtes d'un même réseau de partager une adresse IP. C'est une alternative libre aux protocoles VRRP et HSRP, créée par le projet OpenBSD pour contourner des brevets. En cas de défaillance du primaire, le secondaire reprend l'adresse IP virtuelle de façon transparente.</li>
-<li><strong>pfsync</strong> recopie en continu les états des connexions entre les deux pare-feux. Lorsque le primaire tombe, le secondaire connaît déjà toutes les connexions ouvertes et peut les <strong>poursuivre sans les couper</strong>.</li>
-<li><strong>XML-RPC</strong> est un protocole d'appel de procédure à distance (<em>Remote Procedure Call</em>) qui transporte des données XML sur HTTP. pfSense s'en sert pour <strong>pousser la configuration</strong> du primaire vers le secondaire. Pour fonctionner correctement, il doit utiliser la même interface que pfsync.</li>
+<li><strong>pfsync</strong> recopie en continu les états des connexions entre les deux pare-feux. Lorsque le primaire tombe, le secondaire connaît déjà les connexions ouvertes et peut les <strong>poursuivre sans les couper</strong> : c'est le rôle de pfsync, tel que le décrit la documentation de Netgate.</li>
+<li><strong>XML-RPC</strong> est un protocole d'appel de procédure à distance (<em>Remote Procedure Call</em>) qui transporte des données XML sur HTTP. pfSense s'en sert pour <strong>pousser la configuration</strong> du primaire vers le secondaire. Netgate recommande de le faire passer par le même lien dédié que pfsync.</li>
 </ul>
 <figure>
   <img alt="Schéma des flux : XML-RPC en sens unique et pfsync dans les deux sens sur le lien dédié, CARP sur les réseaux WAN et LAN" loading="lazy" src="../images/cluster-pfsense/schema-flux-synchronisation.svg" />
@@ -3810,8 +3810,18 @@
 <li>Cliquer sur <strong>Add Network…</strong>, choisir <strong>VMnet19</strong>, puis sélectionner <strong>Host-only</strong>. Saisir <strong>Subnet IP</strong> <code>192.168.19.0</code> et le masque <code>255.255.255.0</code>. Laisser cochée l'option <strong>Connect a host virtual adapter to this network</strong> : le PC hôte reçoit alors l'adresse <code>192.168.19.1</code> sur ce réseau.</li>
 <li>Cliquer sur <strong>Apply</strong>, puis sur <strong>OK</strong>.</li>
 </ol>
+<figure>
 <p><img alt="Éditeur de réseaux virtuels de VMware avec VMnet8 en NAT sur 192.168.8.0 et VMnet19 en Host-only sur 192.168.19.0" loading="lazy" src="../images/cluster-pfsense/vmware-editeur-reseaux-virtuels.png" /></p>
+<figcaption>
+<p>VMware — éditeur de réseaux virtuels : VMnet8 en <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> (192.168.8.0) et VMnet19 en Host-only (192.168.19.0)</p>
+</figcaption>
+</figure>
+<figure>
 <p><img alt="Fenêtre NAT Settings de VMnet8 avec la passerelle 192.168.8.2" loading="lazy" src="../images/cluster-pfsense/vmware-vmnet8-parametres-nat.png" width="300" /></p>
+<figcaption>
+<p>VMware — paramètres <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> de VMnet8 : passerelle 192.168.8.2</p>
+</figcaption>
+</figure>
 <div class="admonition info">
 <p class="admonition-title">Pourquoi changer le sous-réseau de VMnet8 ?</p>
 <p>À l'installation, VMware choisit <strong>au hasard</strong> un sous-réseau pour VMnet8 (par exemple <code>192.168.153.0/24</code>), différent d'un PC à l'autre. Le fixer à <code>192.168.8.0/24</code> permet de suivre le TP à l'identique. L'option DHCP de VMnet19 peut rester active : aucune machine du TP ne l'utilise.</p>
@@ -3883,7 +3893,12 @@
 </tr>
 </tbody>
 </table>
+<figure>
 <p><img alt="Assistant de création de VM VMware avec le système invité Other, version FreeBSD 64 bits" loading="lazy" src="../images/cluster-pfsense/vmware-assistant-os-invite-freebsd.png" width="420" /></p>
+<figcaption>
+<p>VMware — choix du système invité : Other, puis FreeBSD 64 bits</p>
+</figcaption>
+</figure>
 <div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">VMware Workstation</label><label for="__tabbed_3_2">VirtualBox</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -3893,13 +3908,18 @@
 <li><strong>Network Adapter 2</strong> (bouton <strong>Add… &gt; Network Adapter</strong>) : <strong>Custom</strong> &gt; <code>VMnet19</code> ;</li>
 <li><strong>Network Adapter 3</strong> : choisir <strong>LAN segment</strong>, cliquer sur <strong>LAN Segments… &gt; Add</strong>, nommer le segment <code>SYNCHRO-PFSENSE</code>, valider, puis le sélectionner dans la liste.</li>
 </ul>
+<figure>
 <p><img alt="Paramètres de la VM VMware : carte réseau 3 reliée au LAN segment synchro-pfSense" loading="lazy" src="../images/cluster-pfsense/vmware-lan-segment-synchro.png" /></p>
+<figcaption>
+<p>VMware — 3ᵉ carte réseau reliée au LAN segment de synchronisation</p>
+</figcaption>
+</figure>
 <div class="admonition info">
 <p class="admonition-title">Qu'est-ce qu'un LAN segment ?</p>
 <p>Un <strong>LAN segment</strong> relie entre elles les VM qui y sont connectées, comme un switch privé, <strong>sans passer par le Virtual Network Editor</strong>.</p>
 <ul>
 <li>Contrairement à un VMnet, il ne crée <strong>aucune carte réseau virtuelle sur le PC hôte</strong> et ne fournit <strong>aucun service DHCP</strong>. Il faut donc obligatoirement définir des <strong>adresses IP statiques</strong> dans chaque VM, ici dans pfSense.</li>
-<li>Il accepte n'importe quel masque, dont le <code>/30</code>. Les VMnets imposent au minimum un <code>/29</code> (6 hôtes), ce qui réduirait l'isolement du réseau de synchronisation.</li>
+<li>Il accepte n'importe quel masque, dont le <code>/30</code>. Un VMnet, lui, est aussi relié au PC hôte : le réseau de synchronisation ne serait plus réservé aux deux pare-feux. De plus, VMware déconseille de modifier le masque des VMnets, et les tests menés sous VMware Workstation n'ont pas permis d'y descendre en dessous d'un <code>/29</code> (6 hôtes).</li>
 </ul>
 </div>
 </div>
@@ -3937,7 +3957,12 @@
 <li><strong>Type d'interface</strong> : <code>Intel PRO/1000 MT Desktop (82540EM)</code>. pfSense nommera alors les interfaces <code>em0</code>, <code>em1</code> et <code>em2</code>, comme dans ce TP.</li>
 <li><strong>Mode Promiscuité</strong> : <strong>Tout autoriser</strong> (<em>Allow All</em>). <abbr title="Common Address Redundancy Protocol">CARP</abbr> utilise une adresse MAC virtuelle (<code>00:00:5e:00:01:xx</code>). Sans ce réglage, VirtualBox rejette les trames destinées à cette adresse et la bascule échoue. C'est la recommandation officielle de Netgate pour la virtualisation.</li>
 </ul>
+<figure>
 <p><img alt="Paramètres réseau VirtualBox : carte 3 en réseau interne nommé synchro-pfsense" loading="lazy" src="../images/cluster-pfsense/virtualbox-carte-3-reseau-interne-synchro.png" /></p>
+<figcaption>
+<p>VirtualBox — 3ᵉ carte en « Réseau interne » dédié à la synchronisation</p>
+</figcaption>
+</figure>
 <div class="admonition tip">
 <p class="admonition-title">Installation automatique</p>
 <p>Si l'assistant de VirtualBox propose une « installation sans surveillance » (<em>unattended installation</em>), la désactiver : pfSense s'installe manuellement.</p>
@@ -3947,7 +3972,12 @@
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Ne pas modifier les adresses MAC des cartes réseau</p>
-<p><img align="right" alt="Champ MAC Address d'une carte réseau VMware" loading="lazy" src="../images/cluster-pfsense/vmware-adresse-mac.png" width="380" /></p>
+<figure>
+<p><img alt="Champ MAC Address d'une carte réseau VMware" loading="lazy" src="../images/cluster-pfsense/vmware-adresse-mac.png" width="380" /></p>
+<figcaption>
+<p>VMware — champ MAC Address d'une carte réseau : à laisser tel quel</p>
+</figcaption>
+</figure>
 <p>Il peut être tentant de personnaliser l'adresse MAC de chaque carte (<strong>VM &gt; Settings… &gt; Network Adapter &gt; Advanced &gt; MAC Address</strong>), pour reconnaître le réseau d'une interface à la lecture de son adresse. En pratique, cela s'est révélé source de problèmes réseau dans certains cas. <strong>Laisser les adresses générées par l'hyperviseur.</strong></p>
 </div>
 <div class="admonition warning">
@@ -3960,15 +3990,30 @@
 <ol>
 <li>
 <p>Démarrer la VM sur l'<abbr title="Image disque d'un CD/DVD">ISO</abbr>. Sur l'écran <strong>Copyright and Trademark Notices</strong>, valider <strong>Accept</strong> avec <span class="keys"><kbd class="key-enter">Enter</kbd></span>.</p>
+<figure>
 <p><img alt="Écran de copyright de l'installeur pfSense" loading="lazy" src="../images/cluster-pfsense/install-01-copyright.png" width="420" /></p>
+<figcaption>
+<p>Installeur — écran de copyright : Accept</p>
+</figcaption>
+</figure>
 </li>
 <li>
 <p>Sur l'écran <strong>Welcome to pfSense!</strong>, choisir <strong>Install — Install pfSense</strong>, puis <strong>OK</strong>.</p>
+<figure>
 <p><img alt="Menu d'accueil de l'installeur avec l'option Install sélectionnée" loading="lazy" src="../images/cluster-pfsense/install-02-bienvenue.png" width="420" /></p>
+<figcaption>
+<p>Installeur — choisir Install pfSense</p>
+</figcaption>
+</figure>
 </li>
 <li>
 <p>Sur l'écran de partitionnement (<strong>How would you like to partition your disk?</strong>), choisir <strong>Auto (ZFS) — Guided Root-on-ZFS</strong>, puis <strong>OK</strong>.</p>
+<figure>
 <p><img alt="Choix du partitionnement : Auto (ZFS) en premier" loading="lazy" src="../images/cluster-pfsense/install-272-partitionnement.png" width="420" /></p>
+<figcaption>
+<p>Installeur 2.7.2 — partitionnement : Auto (ZFS)</p>
+</figcaption>
+</figure>
 <div class="admonition info">
 <p class="admonition-title">ZFS ou UFS ?</p>
 <p><strong>ZFS</strong> est un système de fichiers moderne qui résiste mieux aux coupures de courant brutales. C'est le choix par défaut depuis pfSense 2.6. Le message « <em>To use ZFS with less than 8GB RAM…</em> » est purement informatif : il ne pose aucun problème dans ce lab. Selon la version de l'installeur, l'ordre des options peut varier, ou un écran de choix du clavier (<em>Keymap Selection</em>) peut apparaître avant. Dans ce cas, garder le clavier par défaut.</p>
@@ -3976,30 +4021,60 @@
 </li>
 <li>
 <p>Le menu <strong>ZFS Configuration</strong> s'affiche. Descendre sur <strong>T — Pool Type/Disks</strong> et valider avec <span class="keys"><kbd class="key-enter">Enter</kbd></span>.</p>
-<p><img alt="Menu ZFS Configuration de l'installeur" loading="lazy" src="../images/cluster-pfsense/install-272-zfs-menu.png" width="420" /></p>
 </li>
 <li>
 <p>Choisir <strong>stripe — No Redundancy</strong>. La VM n'a qu'un disque : la redondance n'aurait aucun sens.</p>
+<figure>
 <p><img alt="Choix du type de pool ZFS : stripe" loading="lazy" src="../images/cluster-pfsense/install-05-zfs-stripe.png" width="420" /></p>
+<figcaption>
+<p>Type de pool ZFS : stripe</p>
+</figcaption>
+</figure>
 </li>
 <li>
 <p>Cocher le disque <code>da0</code> avec la <strong>barre d'espace</strong> (une étoile <code>[*]</code> apparaît), puis valider <strong>OK</strong>.</p>
+<figure>
 <p><img alt="Sélection du disque da0 avec une étoile" loading="lazy" src="../images/cluster-pfsense/install-06-zfs-disque.png" width="420" /></p>
+<figcaption>
+<p>Sélection du disque da0 avec la barre d'espace</p>
+</figcaption>
+</figure>
 </li>
 <li>
 <p>De retour au menu, la ligne indique <strong>stripe: 1 disk</strong>. Remonter sur <strong>&gt;&gt;&gt; Install — Proceed with Installation</strong> et valider.</p>
+<figure>
+<p><img alt="Menu ZFS Configuration : stripe sur 1 disque, ligne Install sélectionnée" loading="lazy" src="../images/cluster-pfsense/install-272-zfs-menu.png" width="420" /></p>
+<figcaption>
+<p>Menu ZFS Configuration : stripe sur 1 disque, prêt pour Install</p>
+</figcaption>
+</figure>
 </li>
 <li>
 <p>Sur l'avertissement <strong>Last Chance!</strong>, choisir <strong>YES</strong> (flèche gauche, puis <span class="keys"><kbd class="key-enter">Enter</kbd></span>). Le disque virtuel est vide, rien n'est perdu.</p>
+<figure>
 <p><img alt="Confirmation Last Chance : effacement du disque da0" loading="lazy" src="../images/cluster-pfsense/install-07-zfs-confirmation.png" width="420" /></p>
+<figcaption>
+<p>Dernière confirmation avant l'effacement du disque : YES</p>
+</figcaption>
+</figure>
 </li>
 <li>
 <p>Patienter pendant la vérification et l'extraction des fichiers (une à deux minutes).</p>
+<figure>
 <p><img alt="Barre de progression de l'extraction des fichiers" loading="lazy" src="../images/cluster-pfsense/install-08-copie-fichiers.png" width="420" /></p>
+<figcaption>
+<p>Extraction des fichiers</p>
+</figcaption>
+</figure>
 </li>
 <li>
 <p>Sur l'écran <strong>Complete</strong>, choisir <strong>Reboot</strong>.</p>
+<figure>
 <p><img alt="Fin de l'installation : choix Reboot" loading="lazy" src="../images/cluster-pfsense/install-10-redemarrage.png" width="380" /></p>
+<figcaption>
+<p>Fin de l'installation : Reboot</p>
+</figcaption>
+</figure>
 </li>
 </ol>
 <div class="admonition tip">
@@ -4054,7 +4129,12 @@
 </tr>
 </tbody>
 </table>
+<figure>
 <p><img alt="Console pfSense : affectation WAN em0, LAN em1, OPT1 em2" loading="lazy" src="../images/cluster-pfsense/console-affectation-interfaces.png" width="560" /></p>
+<figcaption>
+<p>Console — affectation des interfaces : WAN em0, LAN em1, OPT1 em2</p>
+</figcaption>
+</figure>
 <h3 id="72-donner-son-adresse-ip-au-lan-option-2">7.2 Donner son adresse IP au LAN (option 2)<a class="headerlink" href="#72-donner-son-adresse-ip-au-lan-option-2" title="Permanent link">&para;</a></h3>
 <p>L'adresse LAN par défaut, <code>192.168.1.1</code>, n'est pas dans le réseau du PC hôte (<code>192.168.19.0/24</code>). Il faut la changer pour pouvoir ouvrir l'interface web.</p>
 <p><strong>Sur chaque pare-feu</strong> : saisir <code>2</code>, puis <code>2</code> pour choisir l'interface LAN.</p>
@@ -4118,7 +4198,12 @@
 </tr>
 </tbody>
 </table>
+<figure>
 <p><img alt="Console pfSense : fin de la configuration du LAN en 192.168.19.19/24" loading="lazy" src="../images/cluster-pfsense/console-ip-lan.png" width="560" /></p>
+<figcaption>
+<p>Console — fin de la configuration de l'adresse LAN du primaire</p>
+</figcaption>
+</figure>
 <div class="admonition success">
 <p class="admonition-title">Vérification</p>
 <p>Depuis le PC hôte, la commande <code>ping 192.168.19.19</code> puis <code>ping 192.168.19.20</code> doit recevoir des réponses. Si ce n'est pas le cas, vérifier que la 2<sup>e</sup> carte de la VM est bien dans VMnet19 (ou dans le réseau privé hôte de VirtualBox).</p>
@@ -4233,11 +4318,12 @@
 </figure>
 <div class="admonition warning">
 <p class="admonition-title">Pourquoi décocher « Block RFC1918 Private Networks » ?</p>
-<p>Cette option bloque, à l'entrée du WAN, tout trafic provenant d'une adresse <strong>privée</strong> (<code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, <code>192.168.0.0/16</code>). Sur une vraie connexion Internet, c'est une bonne protection : aucune adresse privée ne devrait arriver d'Internet. Mais dans ce lab, <strong>le WAN lui-même est un réseau privé</strong> (<code>192.168.8.0/24</code>). Le texte d'aide de pfSense le précise : <em>« This option should generally be left turned on, unless the WAN network lies in such a private address space, too »</em>. Laissée cochée, l'option empêcherait les deux pare-feux de communiquer côté WAN.</p>
+<p>Cette option bloque, à l'entrée du WAN, tout trafic provenant d'une adresse <strong>privée</strong> (<code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, <code>192.168.0.0/16</code>). Sur une vraie connexion Internet, c'est une bonne protection : aucune adresse privée ne devrait arriver d'Internet. Mais dans ce lab, <strong>le WAN lui-même est un réseau privé</strong> (<code>192.168.8.0/24</code>), et le texte d'aide de pfSense le précise : <em>« This option should generally be left turned on, unless the WAN network lies in such a private address space, too »</em>. Laissée cochée, l'option bloquerait toute connexion <strong>initiée depuis le WAN</strong> du lab, par exemple l'accès à l'interface web par le WAN décrit en <a href="#165-acceder-a-linterface-web-par-le-wan-avec-une-regle-permanente">annexe 16.5</a>.</p>
+<p>Elle ne gêne en revanche <strong>ni <abbr title="Common Address Redundancy Protocol">CARP</abbr> ni l'accès à Internet</strong>. Le lab de test l'a vérifié : la règle automatique qui autorise <abbr title="Common Address Redundancy Protocol">CARP</abbr> passe avant ce blocage, et les réponses aux connexions sortantes sont acceptées grâce à la table d'états.</p>
 </div>
 <div class="admonition danger">
 <p class="admonition-title">Ne pas relancer l'assistant sur un pare-feu déjà configuré</p>
-<p>L'assistant reste accessible dans <strong>System &gt; Setup Wizard</strong>, mais il ne sert qu'à la première configuration. Dans le lab de test, le simple fait de le parcourir à nouveau sur un pare-feu en service a <strong>effacé l'adresse IP du WAN</strong> dans la configuration. La panne n'est apparue qu'au redémarrage suivant, ce qui la rend difficile à diagnostiquer. Pour modifier un réglage ensuite, passer par le menu concerné, par exemple <strong>Interfaces &gt; WAN</strong>.</p>
+<p>L'assistant reste accessible dans <strong>System &gt; Setup Wizard</strong>, mais il ne sert qu'à la première configuration. Dans le lab de test, rouvrir l'assistant sur un pare-feu en service et cliquer sur <strong>Next</strong> à une seule étape, sans aller jusqu'au bout, a suffi à <strong>effacer l'adresse IP du WAN</strong> dans la configuration. La panne n'est apparue qu'au redémarrage suivant, ce qui la rend difficile à diagnostiquer. Pour modifier un réglage ensuite, passer par le menu concerné, par exemple <strong>Interfaces &gt; WAN</strong>.</p>
 </div>
 <div class="admonition info">
 <p class="admonition-title">Pourquoi le même mot de passe admin sur les deux nœuds ?</p>
@@ -4284,7 +4370,7 @@
 <p>Cliquer sur <strong>Save</strong>, puis sur <strong>Apply Changes</strong>.</p>
 <div class="admonition info">
 <p class="admonition-title">Pourquoi « None » comme passerelle ?</p>
-<p>Une passerelle (<em>gateway</em>) sert à joindre des réseaux <strong>lointains</strong>. Le lien de synchronisation ne mène nulle part ailleurs : les deux pare-feux sont directement reliés. Déclarer une passerelle ici risquerait même de modifier le routage du pare-feu.</p>
+<p>Une passerelle (<em>gateway</em>) sert à joindre des réseaux <strong>lointains</strong>. Le lien de synchronisation ne mène nulle part ailleurs : les deux pare-feux sont directement reliés, une passerelle y serait inutile.</p>
 </div>
 <h3 id="84-distinguer-les-deux-pare-feux-dun-coup-dil">8.4 Distinguer les deux pare-feux d'un coup d'œil<a class="headerlink" href="#84-distinguer-les-deux-pare-feux-dun-coup-dil" title="Permanent link">&para;</a></h3>
 <p>Pour ne pas confondre les deux interfaces web, ouvertes côte à côte dans le navigateur :</p>
@@ -4296,8 +4382,18 @@
 <div class="admonition success">
 <p class="admonition-title">État attendu des consoles</p>
 <p>Une fois les interfaces configurées, la console de chaque pare-feu affiche ses trois adresses.</p>
+<figure>
 <p><img alt="Console du primaire : WAN 192.168.8.19, LAN 192.168.19.19, OPT1 192.168.254.1" loading="lazy" src="../images/cluster-pfsense/console-pfsense-19.png" width="560" /></p>
+<figcaption>
+<p>Console du primaire, interfaces configurées</p>
+</figcaption>
+</figure>
+<figure>
 <p><img alt="Console du secondaire : WAN 192.168.8.20, LAN 192.168.19.20, PFSYNC 192.168.254.2" loading="lazy" src="../images/cluster-pfsense/console-pfsense-20.png" width="560" /></p>
+<figcaption>
+<p>Console du secondaire, interfaces configurées</p>
+</figcaption>
+</figure>
 </div>
 <hr />
 <h2 id="9-tester-la-connectivite-entre-les-deux-pare-feux">9. Tester la connectivité entre les deux pare-feux<a class="headerlink" href="#9-tester-la-connectivite-entre-les-deux-pare-feux" title="Permanent link">&para;</a></h2>
@@ -4338,10 +4434,25 @@
 </tbody>
 </table>
 <p>Cliquer sur <strong>Save</strong>, puis sur <strong>Apply Changes</strong> (<em>Appliquer les modifications</em>). Tant que ce bouton n'est pas cliqué, la règle est enregistrée mais <strong>pas active</strong>.</p>
+<figure>
 <p><img alt="Édition de la règle ICMP sur le primaire : source 192.168.254.2, destination 192.168.254.1" loading="lazy" src="../images/cluster-pfsense/regle-icmp-primaire-edition.png" /></p>
+<figcaption>
+<p>Primaire — règle ICMP sur PFSYNC, de 192.168.254.2 vers 192.168.254.1</p>
+</figcaption>
+</figure>
+<figure>
 <p><img alt="Règle ICMP visible dans la liste des règles PFSYNC du primaire" loading="lazy" src="../images/cluster-pfsense/regle-icmp-primaire-liste.png" /></p>
+<figcaption>
+<p>Primaire — la règle ICMP dans la liste des règles PFSYNC</p>
+</figcaption>
+</figure>
 <p><strong>Sur le secondaire</strong>, ouvrir <strong>Diagnostics &gt; Ping</strong>, puis saisir <strong>Hostname</strong> <code>192.168.254.1</code>, <strong>Source address</strong> <code>PFSYNC</code> et cliquer sur <strong>Ping</strong>.</p>
+<figure>
 <p><img alt="Résultat du ping de 192.168.254.2 vers 192.168.254.1 : 3 paquets reçus, 0 % de perte" loading="lazy" src="../images/cluster-pfsense/diagnostic-ping-secondaire-vers-primaire.png" /></p>
+<figcaption>
+<p>Secondaire — ping de 192.168.254.1 depuis l'interface PFSYNC : 0 % de perte</p>
+</figcaption>
+</figure>
 <div class="admonition question">
 <p class="admonition-title">Pourquoi créer la règle sur le primaire, alors que le ping part du secondaire ?</p>
 <details class="success">
@@ -4353,7 +4464,12 @@
 <div class="admonition tip">
 <p class="admonition-title">En cas d'échec du ping</p>
 <p>Si le ping ne passe toujours pas, autoriser l'ensemble du réseau <strong>PFSYNC subnets</strong> en source et en destination, au lieu des deux adresses, <strong>sur les deux pare-feux</strong>. Cette modification a réglé le problème dans certains cas.</p>
+<figure>
 <p><img alt="Règle ICMP avec PFSYNC subnets en source et destination" loading="lazy" src="../images/cluster-pfsense/depannage-regle-icmp-pfsync-subnets.png" /></p>
+<figcaption>
+<p>Variante de dépannage : ICMP autorisé entre PFSYNC subnets</p>
+</figcaption>
+</figure>
 </div>
 <p><strong>Vérifier aussi l'accès à Internet</strong> (indispensable pour la mise à jour finale) : <strong>sur chaque pare-feu</strong>, dans <strong>Diagnostics &gt; Ping</strong>, pinguer <code>192.168.8.2</code> (la passerelle), puis <code>1.1.1.1</code>, avec <strong>Source address</strong> <code>WAN</code>.</p>
 <p>🛟 <strong>Point de sauvegarde</strong> : prendre un instantané « Configuration de base ».</p>
@@ -4367,11 +4483,21 @@
 <li>Saisir <strong>Username</strong> <code>ha-user</code> et un mot de passe robuste, puis cliquer sur <strong>Save</strong>.</li>
 <li>
 <p><strong>Modifier à nouveau</strong> l'utilisateur (icône crayon) : la section <strong>Effective Privileges</strong> n'apparaît qu'après le premier enregistrement.</p>
+<figure>
 <p><img alt="Création de l'utilisateur ha-user dans le gestionnaire d'usagers" loading="lazy" src="../images/cluster-pfsense/utilisateur-ha-user-creation.png" /></p>
+<figcaption>
+<p>Création de l'utilisateur ha-user</p>
+</figcaption>
+</figure>
 </li>
 <li>
 <p>Dans <strong>Effective Privileges</strong>, cliquer sur <strong>Add</strong>, sélectionner <strong>System - <abbr title="High Availability — haute disponibilité">HA</abbr> node sync</strong> (<em>Système – Synchronisation du nœud du Système <abbr title="High Availability — haute disponibilité">HA</abbr></em>), puis enregistrer.</p>
+<figure>
 <p><img alt="Attribution du privilège System - HA node sync à ha-user" loading="lazy" src="../images/cluster-pfsense/utilisateur-ha-user-privilege.png" /></p>
+<figcaption>
+<p>Privilège System - <abbr title="High Availability — haute disponibilité">HA</abbr> node sync attribué à ha-user</p>
+</figcaption>
+</figure>
 </li>
 </ol>
 <div class="admonition warning">
@@ -4456,7 +4582,12 @@
 </tbody>
 </table>
 <p>Cliquer sur <strong>Save</strong>.</p>
+<figure>
 <p><img alt="Page High Availability du primaire, entièrement renseignée" loading="lazy" src="../images/cluster-pfsense/ha-sync-primaire.png" /></p>
+<figcaption>
+<p>Primaire — page High Availability entièrement renseignée</p>
+</figcaption>
+</figure>
 <p><strong>Il n'est pas nécessaire de configurer la partie XML-RPC sur le secondaire</strong> : la réplication de la configuration du primaire s'effectuera dès que les flux seront autorisés des deux côtés.</p>
 <h3 id="103-autoriser-les-flux-de-synchronisation">10.3 Autoriser les flux de synchronisation<a class="headerlink" href="#103-autoriser-les-flux-de-synchronisation" title="Permanent link">&para;</a></h3>
 <p>Pour respecter les bonnes pratiques de sécurité, on n'autorise <strong>que les adresses, ports et protocoles strictement nécessaires</strong> à la synchronisation, et rien de plus. La configuration se fait dans <strong>Firewall &gt; Rules &gt; PFSYNC</strong>.</p>
@@ -4513,7 +4644,12 @@
 </tr>
 </tbody>
 </table>
+<figure>
 <p><img alt="Règle XML-RPC : TCP, PFSYNC subnets vers PFSYNC subnets, port HTTPS 443" loading="lazy" src="../images/cluster-pfsense/regle-xmlrpc-primaire.png" /></p>
+<figcaption>
+<p>Règle XML-RPC : TCP 443 de PFSYNC subnets vers PFSYNC subnets</p>
+</figcaption>
+</figure>
 <div class="admonition info">
 <p class="admonition-title">Pourquoi « PFSYNC subnets » plutôt qu'une adresse IP ?</p>
 <p>La règle va être <strong>recopiée telle quelle</strong> sur le secondaire. Avec une adresse propre à un nœud (par exemple « destination <code>192.168.254.1</code> »), la copie serait fausse sur l'autre nœud, puisque la règle ne serait pas adaptée à sa situation. <strong>PFSYNC subnets</strong> désigne le réseau <code>/30</code>, valable sur les deux pare-feux. Un <strong>alias</strong> contenant les deux adresses <code>192.168.254.1</code> et <code>192.168.254.2</code> conviendrait aussi.</p>
@@ -4524,7 +4660,12 @@
 <details class="success">
 <summary>Réponse</summary>
 <p>Le primaire <strong>envoie</strong> son flux XML-RPC vers le secondaire. Ce flux <strong>entre</strong> donc par l'interface PFSYNC du <strong>secondaire</strong>. Sans règle l'autorisant sur le secondaire, il est bloqué (refus par défaut) et la synchronisation ne s'effectue pas.</p>
+<figure>
 <p><img alt="Schéma : le flux XML-RPC du primaire est bloqué à l'entrée du secondaire faute de règle" loading="lazy" src="../images/cluster-pfsense/schema-xmlrpc-bloque.png" /></p>
+<figcaption>
+<p>Sans règle sur le secondaire, le flux XML-RPC est bloqué à son entrée</p>
+</figcaption>
+</figure>
 </details>
 </div>
 <div class="admonition question">
@@ -4533,11 +4674,21 @@
 <summary>Réponse</summary>
 <p>Parce que la configuration du <strong>primaire est la référence</strong>. Dès que la synchronisation fonctionne, les règles du secondaire sont <strong>remplacées</strong> par celles du primaire.</p>
 <p>Si la règle XML-RPC n'existait que sur le secondaire, la première synchronisation l'<strong>effacerait</strong>, puisqu'elle est absente de la configuration de référence, et toutes les synchronisations suivantes seraient bloquées. En la créant d'abord sur le primaire, on garantit qu'elle fait partie de la configuration recopiée : le secondaire reçoit une copie identique de sa propre règle et la synchronisation se maintient.</p>
+<figure>
 <p><img alt="Schéma : la règle présente sur le secondaire laisse passer le flux XML-RPC, le cluster est fonctionnel" loading="lazy" src="../images/cluster-pfsense/schema-xmlrpc-autorise.png" /></p>
+<figcaption>
+<p>Avec la règle sur le secondaire, la synchronisation fonctionne</p>
+</figcaption>
+</figure>
 </details>
 </div>
 <p>Une fois la règle XML-RPC créée sur le secondaire, la configuration se réplique. Pour une vérification rapide, il est possible de <strong>forcer la synchronisation, uniquement depuis le primaire</strong>, dans <strong>Status &gt; Filter Reload</strong> (<em>État &gt; Recharger les filtres</em>) avec le bouton <strong>Force Config Sync</strong>.</p>
+<figure>
 <p><img alt="Page Recharger les filtres avec le bouton Forcer la synchronisation de la configuration" loading="lazy" src="../images/cluster-pfsense/forcer-synchronisation-configuration.png" /></p>
+<figcaption>
+<p>Primaire — État &gt; Recharger les filtres : synchronisation forcée</p>
+</figcaption>
+</figure>
 <h4 id="regle-2-pfsync-pour-la-synchronisation-des-etats">Règle 2 — pfsync, pour la synchronisation des états<a class="headerlink" href="#regle-2-pfsync-pour-la-synchronisation-des-etats" title="Permanent link">&para;</a></h4>
 <p><strong>Retourner sur le primaire</strong> et créer une deuxième règle :</p>
 <table>
@@ -4578,10 +4729,20 @@
 </tr>
 </tbody>
 </table>
+<figure>
 <p><img alt="Règle pfsync sur le primaire" loading="lazy" src="../images/cluster-pfsense/regle-pfsync-primaire.png" /></p>
+<figcaption>
+<p>Règle pfsync : protocole PFSYNC entre PFSYNC subnets</p>
+</figcaption>
+</figure>
 <h4 id="regle-3-carp">Règle 3 — <abbr title="Common Address Redundancy Protocol">CARP</abbr><a class="headerlink" href="#regle-3-carp" title="Permanent link">&para;</a></h4>
 <p>Toujours <strong>sur le primaire</strong>, créer une troisième règle sur le même modèle, avec le protocole <strong><abbr title="Common Address Redundancy Protocol">CARP</abbr></strong>.</p>
+<figure>
 <p><img alt="Règle CARP sur le primaire" loading="lazy" src="../images/cluster-pfsense/regle-carp-primaire.png" /></p>
+<figcaption>
+<p>Règle <abbr title="Common Address Redundancy Protocol">CARP</abbr> : protocole <abbr title="Common Address Redundancy Protocol">CARP</abbr> entre PFSYNC subnets</p>
+</figcaption>
+</figure>
 <div class="admonition note">
 <p class="admonition-title">Pour aller plus loin : cette règle est-elle indispensable ?</p>
 <p>Dès qu'une <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> <abbr title="Common Address Redundancy Protocol">CARP</abbr> existe, pfSense ajoute une règle <strong>automatique</strong> qui autorise le protocole <abbr title="Common Address Redundancy Protocol">CARP</abbr> sur toutes les interfaces. De plus, les annonces <abbr title="Common Address Redundancy Protocol">CARP</abbr> circulent sur les réseaux qui portent une <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> (WAN et LAN), pas sur le lien PFSYNC. Cette troisième règle n'est donc pas strictement nécessaire. Elle ne présente aucun risque, puisqu'elle ne concerne que le <code>/30</code> des deux pare-feux, et elle <strong>documente l'intention</strong> de la configuration. pfsync, en revanche, n'est <strong>jamais</strong> autorisé automatiquement : la règle 2 est indispensable.</p>
@@ -4594,17 +4755,31 @@
 <p>Les outils de capture (<code>tcpdump</code>, Wireshark) affichent les paquets <abbr title="Common Address Redundancy Protocol">CARP</abbr> comme du <strong>VRRPv2</strong> : les deux protocoles utilisent le même numéro, 112.</p>
 </div>
 <p>Après toutes ces manipulations, l'interface PFSYNC du primaire présente ces règles :</p>
+<figure>
 <p><img alt="Liste des règles PFSYNC du primaire : ICMP, XML-RPC, pfsync et CARP" loading="lazy" src="../images/cluster-pfsense/regles-pfsync-primaire-liste.png" /></p>
+<figcaption>
+<p>Primaire — règles de l'interface PFSYNC</p>
+</figcaption>
+</figure>
 <p><strong>Ne pas toucher au secondaire</strong> : les règles 2 et 3 vont y arriver toutes seules.</p>
 <h3 id="104-verifier-la-replication-et-depanner">10.4 Vérifier la réplication et dépanner<a class="headerlink" href="#104-verifier-la-replication-et-depanner" title="Permanent link">&para;</a></h3>
 <p><strong>Sur le secondaire</strong>, ouvrir <strong>Firewall &gt; Rules &gt; PFSYNC</strong> : les règles 2 et 3 sont apparues <strong>automatiquement</strong>, grâce à la règle XML-RPC.</p>
+<figure>
 <p><img alt="Règles PFSYNC du secondaire, identiques à celles du primaire" loading="lazy" src="../images/cluster-pfsense/regles-pfsync-secondaire-repliquees.png" /></p>
+<figcaption>
+<p>Secondaire — les mêmes règles, arrivées par réplication</p>
+</figcaption>
+</figure>
 <p>En cas de problème de synchronisation, deux outils permettent d'en trouver la cause :</p>
 <ul>
 <li>
 <p><strong>Les journaux du pare-feu sur le secondaire</strong> : <strong>Status &gt; System Logs &gt; Firewall</strong> (<em>État &gt; Journaux système &gt; Pare-feu</em>). On y repère le trafic <strong>bloqué</strong> en provenance de l'interface PFSYNC du primaire. Le bouton <strong>+</strong> (<em>Easy Rule</em>) crée en un clic une règle qui l'autorise.</p>
+<figure>
 <p><img alt="Journaux du pare-feu du secondaire montrant du trafic bloqué sur l'interface de synchronisation" loading="lazy" src="../images/cluster-pfsense/journaux-pare-feu-secondaire-blocages.png" /></p>
-<p><em>Capture issue d'un autre lab : l'interface de synchronisation s'y appelle <code>SYNC</code> et les adresses diffèrent, mais la démarche est identique.</em></p>
+<figcaption>
+<p>Journaux du pare-feu : trafic de synchronisation bloqué. Capture issue d'un autre lab : l'interface s'y appelle SYNC et les adresses diffèrent, mais la démarche est identique.</p>
+</figcaption>
+</figure>
 </li>
 <li>
 <p><strong>Les notifications</strong> : l'icône en forme de <strong>cloche</strong>, en haut à droite. Il faut <strong>vraiment les lire</strong>. Elles signalent par exemple un mauvais mot de passe ou un utilisateur inexistant sur le secondaire.</p>
@@ -4612,20 +4787,25 @@
 </ul>
 <p><strong>Test de réplication</strong> : <strong>sur le primaire</strong>, ajouter une règle quelconque, par exemple autoriser le trafic IPv6 sur le LAN. Elle doit apparaître sur le secondaire quelques secondes plus tard. Si ce n'est pas le cas, reprendre attentivement les étapes 10.1 à 10.3.</p>
 <p>Sur le secondaire, la page <strong>System &gt; High Avail. Sync</strong> se présente ainsi :</p>
+<figure>
 <p><img alt="Page High Availability du secondaire : seule l'option Synchronize admin est cochée" loading="lazy" src="../images/cluster-pfsense/ha-sync-secondaire.png" /></p>
+<figcaption>
+<p>Secondaire — page High Availability : seule l'option Synchronize admin est cochée</p>
+</figcaption>
+</figure>
 <div class="admonition question">
 <p class="admonition-title">Les cases de la partie « XMLRPC Sync » sont décochées sur le secondaire. Faut-il les remplir ?</p>
 <details class="success">
 <summary>Réponse</summary>
 <p><strong>Non.</strong> Si les tests précédents sont concluants, il n'y a aucune raison d'y toucher. La synchronisation de configuration est à <strong>sens unique</strong> et ne doit être configurée <strong>que sur le primaire</strong>.</p>
-<p>Configurée aussi sur le secondaire, elle le ferait pousser <strong>sa</strong> configuration vers le primaire. Les deux nœuds s'écraseraient mutuellement, avec un risque de boucle et de perte de règles. La documentation de Netgate le rappelle : <em>« Do not make changes to the secondary in areas set to be synchronized! »</em></p>
+<p>La documentation de Netgate est formelle : ces réglages ne doivent être activés <strong>que sur le primaire</strong>. Renseignés sur le secondaire, ils lui feraient pousser à son tour <strong>sa</strong> configuration vers le primaire, qui cesserait d'être la référence. Netgate rappelle aussi : <em>« Do not make changes to the secondary in areas set to be synchronized! »</em></p>
 </details>
 </div>
 <h3 id="105-activer-la-reception-des-etats-pfsync-sur-le-secondaire">10.5 Activer la réception des états pfsync sur le secondaire<a class="headerlink" href="#105-activer-la-reception-des-etats-pfsync-sur-le-secondaire" title="Permanent link">&para;</a></h3>
 <div class="admonition warning">
-<p class="admonition-title">Étape ajoutée lors de la mise à jour de ce TP</p>
+<p class="admonition-title">Pourquoi cette étape est indispensable</p>
 <p>La partie <strong>haute</strong> de la page <abbr title="High Availability — haute disponibilité">HA</abbr> (<em>State Synchronization Settings</em>, pfsync) n'est <strong>pas synchronisée</strong> par XML-RPC. Sur le secondaire, la case <strong>Synchronize states</strong> reste donc décochée.</p>
-<p>Dans cette situation, la bascule des <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> fonctionne, mais <strong>le secondaire n'importe aucun état</strong> envoyé par le primaire : les connexions en cours seraient coupées lors d'une bascule. Le lab de test l'a confirmé. Sans cette étape, la table d'états du secondaire ne contenait <strong>aucun</strong> état créé par le primaire ; après cette étape, elle les contenait. Le texte d'aide de la case le précise d'ailleurs : <em>« This setting should be enabled on all members of a failover group »</em>. La documentation de Netgate demande d'activer pfsync sur <strong>chaque</strong> nœud, chacun pointant vers l'autre.</p>
+<p>Dans cette situation, la bascule des <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> fonctionne, mais <strong>le secondaire n'importe aucun état</strong> envoyé par le primaire : il ne connaîtrait pas les connexions en cours au moment d'une bascule. Le lab de test l'a vérifié : sans cette étape, la table d'états du secondaire ne contenait <strong>aucun</strong> état créé par le primaire ; après cette étape, elle les contenait. Le texte d'aide de la case le précise d'ailleurs : <em>« This setting should be enabled on all members of a failover group »</em>. La documentation de Netgate demande d'activer pfsync sur <strong>chaque</strong> nœud, chacun pointant vers l'autre.</p>
 </div>
 <p><strong>Sur le secondaire</strong>, ouvrir <strong>System &gt; High Avail. Sync</strong> et renseigner <strong>uniquement la partie haute</strong> :</p>
 <table>
@@ -4655,7 +4835,12 @@
 </tbody>
 </table>
 <p>Cliquer sur <strong>Save</strong>.</p>
+<figure>
 <p><img alt="Page High Availability du secondaire : pfsync activé vers 192.168.254.1, partie XML-RPC vide" loading="lazy" src="../images/cluster-pfsense/ha-sync-secondaire-pfsync-active.png" /></p>
+<figcaption>
+<p>Secondaire — pfsync activé vers 192.168.254.1, partie XML-RPC laissée vide</p>
+</figcaption>
+</figure>
 <p><strong>Vérification (facultative)</strong> : le contrôle le plus simple se fait dans l'interface web, à l'<a href="#131-controler-letat-normal">étape 13.1</a>, une fois les <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> créées. Dès maintenant, la commande suivante compte les états selon le nœud qui les a créés. Elle se lance dans <strong>Diagnostics &gt; Command Prompt</strong> (<em>Diagnostics &gt; Invite de commande</em>) de <strong>chaque</strong> pare-feu, champ <strong>Execute Shell Command</strong> :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pfctl<span class="w"> </span>-vvss<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-o<span class="w"> </span><span class="s2">"creatorid: [0-9a-f]*"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span><span class="p">|</span><span class="w"> </span>uniq<span class="w"> </span>-c
 </code></pre></div>
@@ -4732,13 +4917,23 @@
 </tr>
 </tbody>
 </table>
+<figure>
 <p><img alt="Création de la VIP CARP WAN 192.168.8.21/24, VHID 1, base 1, biais 0" loading="lazy" src="../images/cluster-pfsense/vip-wan.png" /></p>
+<figcaption>
+<p><abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> <abbr title="Common Address Redundancy Protocol">CARP</abbr> du WAN : 192.168.8.21/24, <abbr title="Virtual Host ID — numéro de groupe CARP">VHID</abbr> 1, base 1, skew 0</p>
+</figcaption>
+</figure>
+<figure>
 <p><img alt="Création de la VIP CARP LAN 192.168.19.21/24" loading="lazy" src="../images/cluster-pfsense/vip-lan.png" /></p>
+<figcaption>
+<p><abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> <abbr title="Common Address Redundancy Protocol">CARP</abbr> du LAN : 192.168.19.21/24</p>
+</figcaption>
+</figure>
 <p>Cliquer sur <strong>Save</strong>, puis sur <strong>Apply Changes</strong> après chaque <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr>.</p>
 <div class="admonition info">
 <p class="admonition-title">Comprendre <abbr title="Virtual Host ID — numéro de groupe CARP">VHID</abbr>, Base et Skew</p>
 <ul>
-<li>Le <strong><abbr title="Virtual Host ID — numéro de groupe CARP">VHID</abbr></strong> identifie un groupe <abbr title="Common Address Redundancy Protocol">CARP</abbr> sur un réseau. Il sert aussi à fabriquer l'adresse MAC virtuelle de la <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr>, <code>00:00:5e:00:01:&lt;VHID&gt;</code>. Deux clusters différents installés sur <strong>le même réseau</strong> doivent donc utiliser des <abbr title="Virtual Host ID — numéro de groupe CARP">VHID</abbr> différents. pfSense propose automatiquement un numéro libre.</li>
+<li>Le <strong><abbr title="Virtual Host ID — numéro de groupe CARP">VHID</abbr></strong> identifie un groupe <abbr title="Common Address Redundancy Protocol">CARP</abbr> sur un réseau. Il sert aussi à fabriquer l'adresse MAC virtuelle de la <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr>, <code>00:00:5e:00:01:&lt;VHID&gt;</code>. Deux clusters différents installés sur <strong>le même réseau</strong> doivent donc utiliser des <abbr title="Virtual Host ID — numéro de groupe CARP">VHID</abbr> différents. pfSense propose automatiquement un numéro libre <strong>sur ce pare-feu</strong>, mais il ignore les <abbr title="Virtual Host ID — numéro de groupe CARP">VHID</abbr> utilisés par d'autres équipements du réseau : c'est à l'administrateur de s'en assurer.</li>
 <li><strong>Base</strong> est l'intervalle entre deux annonces, en secondes. <strong>Skew</strong> (<em>biais</em>) ajoute un léger retard, en 256<sup>e</sup> de seconde. <strong>Le pare-feu dont les annonces sont les plus fréquentes gagne</strong> : avec un skew de 0, le primaire est prioritaire.</li>
 <li>Lors de la réplication vers le secondaire, pfSense <strong>ajoute automatiquement 100 au skew</strong>. Le secondaire annonce donc moins souvent et reste BACKUP. Le lab le confirme : la <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> du secondaire affiche <code>advskew 100</code>.</li>
 <li>Le BACKUP se déclare MASTER s'il ne reçoit plus d'annonce pendant environ <strong>3 × Base + Skew/256</strong> secondes, soit à peu près 3,4 s ici.</li>
@@ -4747,9 +4942,9 @@
 <p>La réplication vers le secondaire est automatique, mais il faut aller la vérifier dans <strong>Firewall &gt; Virtual IPs</strong> sur le secondaire.</p>
 <hr />
 <h2 id="12-faire-sortir-le-trafic-avec-la-vip-nat-sortant">12. Faire sortir le trafic avec la <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> (<abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> sortant)<a class="headerlink" href="#12-faire-sortir-le-trafic-avec-la-vip-nat-sortant" title="Permanent link">&para;</a></h2>
-<p>Le <strong><abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> sortant</strong> réécrit l'adresse source des paquets qui quittent le LAN vers le WAN. Par défaut (mode <em>Automatic</em>), pfSense utilise <strong>l'adresse propre de son interface WAN</strong> : <code>192.168.8.19</code> sur le primaire, <code>192.168.8.20</code> sur le secondaire. Dans un cluster, c'est un problème : après une bascule, les connexions changeraient d'adresse source et le serveur distant ne les reconnaîtrait plus.</p>
+<p>Le <strong><abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> sortant</strong> réécrit l'adresse source des paquets qui quittent le LAN vers le WAN. Par défaut (mode <em>Automatic</em>), pfSense utilise <strong>l'adresse propre de son interface WAN</strong> : <code>192.168.8.19</code> sur le primaire, <code>192.168.8.20</code> sur le secondaire. Dans un cluster, c'est un problème. Les serveurs distants répondent à l'adresse propre du primaire (<code>192.168.8.19</code>). Après une bascule, ces réponses partent donc vers un pare-feu en panne, et le secondaire ne les reçoit pas : d'après la documentation de Netgate, un trafic adressé directement à un nœud, et non à une <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr>, n'est jamais repris par les autres nœuds.</p>
 <figure>
-  <img alt="Comparaison : sans règle, l'adresse source change à la bascule et la connexion est perdue ; avec la règle, l'adresse source reste la VIP 192.168.8.21 et la connexion continue" loading="lazy" src="../images/cluster-pfsense/schema-nat-sortant-vip.svg" />
+  <img alt="Comparaison : sans règle, les réponses du serveur reviennent vers l'adresse du primaire en panne et la connexion est perdue ; avec la règle, le trafic sort avec la VIP 192.168.8.21, que le secondaire reprend" loading="lazy" src="../images/cluster-pfsense/schema-nat-sortant-vip.svg" />
 <br />
 <figcaption>Traduire le LAN vers la VIP WAN garantit une adresse source identique quel que soit le pare-feu actif.</figcaption>
 </figure>
@@ -4805,8 +5000,18 @@
 <p>Cliquer sur <strong>Save</strong>, puis sur <strong>Apply Changes</strong>.</p>
 </li>
 </ol>
+<figure>
 <p><img alt="Règle de NAT sortant : interface WAN, source 192.168.19.0/24" loading="lazy" src="../images/cluster-pfsense/nat-sortant-regle-1.png" /></p>
+<figcaption>
+<p>Règle de <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> sortant : interface WAN, source 192.168.19.0/24</p>
+</figcaption>
+</figure>
+<figure>
 <p><img alt="Suite de la règle : traduction vers 192.168.8.21 (carp_vip_wan)" loading="lazy" src="../images/cluster-pfsense/nat-sortant-regle-2.png" /></p>
+<figcaption>
+<p>Suite de la règle : traduction vers la <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> 192.168.8.21</p>
+</figcaption>
+</figure>
 <p>La règle est dupliquée automatiquement sur le secondaire.</p>
 <div class="admonition info">
 <p class="admonition-title">Les quatre modes de <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> sortant</p>
@@ -4825,14 +5030,30 @@
 <ul>
 <li>
 <p>Le <strong>primaire</strong> (<code>.19</code>) affiche <strong>MASTER</strong> pour les deux <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> :</p>
+<figure>
 <p><img alt="État CARP du primaire : WAN et LAN en MASTER" loading="lazy" src="../images/cluster-pfsense/carp-statut-primaire-master.png" /></p>
+<figcaption>
+<p>Primaire — les deux <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> en MASTER</p>
+</figcaption>
+</figure>
 </li>
 <li>
 <p>Le <strong>secondaire</strong> (<code>.20</code>) affiche <strong>BACKUP</strong> :</p>
+<figure>
 <p><img alt="État CARP du secondaire : WAN et LAN en BACKUP" loading="lazy" src="../images/cluster-pfsense/carp-statut-secondaire-backup.png" /></p>
+<figcaption>
+<p>Secondaire — les deux <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> en BACKUP</p>
+</figcaption>
+</figure>
 </li>
 </ul>
 <p>La même page vérifie aussi <strong>pfsync</strong>. Sa section <strong>State Synchronization Status</strong> liste les identifiants des nœuds qui ont créé des états (<em>State Creator Host IDs</em>). Quand la synchronisation des états fonctionne dans les deux sens, <strong>la liste est identique sur les deux pare-feux</strong> et contient les deux identifiants. Si un nœud n'affiche que le sien, revoir l'<a href="#105-activer-la-reception-des-etats-pfsync-sur-le-secondaire">étape 10.5</a>.</p>
+<figure>
+<p><img alt="État CARP du secondaire : VIP en BACKUP et liste des deux identifiants de synchronisation des états" loading="lazy" src="../images/cluster-pfsense/carp-statut-synchronisation-etats.png" /></p>
+<figcaption>
+<p>État &gt; <abbr title="Common Address Redundancy Protocol">CARP</abbr> : section State Synchronization Status, avec les identifiants des deux nœuds</p>
+</figcaption>
+</figure>
 <div class="admonition note">
 <p class="admonition-title">« DISABLED » juste après une synchronisation</p>
 <p>Juste après la création des <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr>, la page du secondaire peut afficher brièvement <strong>DISABLED</strong>. Il suffit de la recharger quelques secondes plus tard pour voir <strong>BACKUP</strong>.</p>
@@ -4897,10 +5118,11 @@
 <p>Simuler une panne de l'<strong>interface WAN</strong> du MASTER (déconnecter sa carte WAN dans les paramètres de la VM) et vérifier si le WAN du secondaire a bien récupéré le statut MASTER. Vérifier également le statut de l'interface LAN du secondaire : est-il passé en MASTER ?</p>
 <details class="success">
 <summary>Réponse</summary>
-<p><strong>Non</strong> (avec la configuration réalisée jusqu'ici). Le WAN du secondaire passe bien MASTER, mais le LAN du <strong>primaire</strong> garde le statut MASTER. Les deux pare-feux se partagent alors les rôles : le trafic du LAN arrive sur le primaire, qui n'a plus de WAN, et <strong>la connectivité est perdue</strong>. Ce problème est mentionné sur plusieurs forums.</p>
+<p><strong>Non</strong> (avec la configuration réalisée jusqu'ici). Le WAN du secondaire passe bien MASTER, mais le LAN du <strong>primaire</strong> garde le statut MASTER. Les deux pare-feux se partagent alors les rôles : les postes du LAN envoient toujours leur trafic au primaire, dont le WAN est coupé, et <strong>perdent l'accès à l'extérieur</strong>.</p>
+<p>Ce n'est <strong>pas un défaut de pfSense</strong> : c'est la conséquence d'un réglage laissé par l'assistant, que l'exercice 5 permet de corriger.</p>
 <p><strong>Explication (vérifiée dans le lab de test).</strong> En théorie, pfSense active la <strong>préemption <abbr title="Common Address Redundancy Protocol">CARP</abbr></strong> (<code>net.inet.carp.preempt=1</code>). Quand une interface portant une <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> perd son lien, le pare-feu se <strong>rétrograde</strong> (<em>demotion</em> +240) sur <strong>toutes</strong> ses <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr>, et le secondaire prend tout. Le journal système montre d'ailleurs que la <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> LAN bascule dans un premier temps. Mais l'assistant a laissé l'IPv6 du WAN en <strong>DHCP6</strong>. pfSense considère alors le WAN comme une interface <strong>dynamique</strong> et, à la perte du lien, il la « démonte » entièrement, <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> comprise. La <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> ayant disparu, la rétrogradation est <strong>annulée</strong> (<code>carp: demoted by -240 to 0 (vhid removed)</code>), et le primaire reprend la <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> LAN.</p>
 </details>
-<h3 id="exercice-5-bonus-corriger-le-comportement-de-lexercice-4">Exercice 5 (bonus) — Corriger le comportement de l'exercice 4<a class="headerlink" href="#exercice-5-bonus-corriger-le-comportement-de-lexercice-4" title="Permanent link">&para;</a></h3>
+<h3 id="exercice-5-corriger-le-comportement-de-lexercice-4">Exercice 5 — Corriger le comportement de l'exercice 4<a class="headerlink" href="#exercice-5-corriger-le-comportement-de-lexercice-4" title="Permanent link">&para;</a></h3>
 <p>Sur <strong>les deux pare-feux</strong>, ouvrir <strong>Interfaces &gt; WAN</strong>, régler <strong>IPv6 Configuration Type</strong> sur <strong>None</strong>, puis <strong>Save</strong> et <strong>Apply Changes</strong>. La configuration des interfaces n'est pas synchronisée : il faut le faire sur chaque nœud. Refaire ensuite l'exercice 4. Que se passe-t-il ?</p>
 <details class="success">
 <summary>Réponse</summary>
@@ -4910,17 +5132,21 @@
 <hr />
 <h2 id="15-pour-aller-plus-loin">15. Pour aller plus loin<a class="headerlink" href="#15-pour-aller-plus-loin" title="Permanent link">&para;</a></h2>
 <h3 id="151-agreger-deux-liens-de-synchronisation-lagglacp">15.1 Agréger deux liens de synchronisation (<abbr title="Link Aggregation — agrégation de liens">LAGG</abbr>/<abbr title="Link Aggregation Control Protocol">LACP</abbr>)<a class="headerlink" href="#151-agreger-deux-liens-de-synchronisation-lagglacp" title="Permanent link">&para;</a></h3>
-<p><img alt="Schéma d'une agrégation de liens entre deux équipements" loading="lazy" src="../images/cluster-pfsense/schema-lagg-synchro.png" width="560" /></p>
 <p>Le <em>Link Aggregation Control Protocol</em> (<strong><abbr title="Link Aggregation Control Protocol">LACP</abbr></strong>, norme IEEE 802.3ad) est un protocole de <strong>niveau 2</strong> du modèle OSI. Il regroupe plusieurs ports physiques en <strong>une seule voie logique</strong>, appelée <strong><abbr title="Link Aggregation — agrégation de liens">LAGG</abbr></strong> (<em>Link AGGregation</em>) dans pfSense.</p>
 <p>L'agrégat offre deux avantages :</p>
 <ul>
-<li>il <strong>additionne la bande passante</strong> des liens, au-delà de la limite d'un seul câble ;</li>
+<li>il <strong>additionne la capacité</strong> des liens : deux câbles de 1 Gbit/s offrent 2 Gbit/s au total ;</li>
 <li>il apporte de la <strong>redondance</strong> : si un câble ou un port tombe en panne, l'autre continue de transmettre le trafic sans interruption.</li>
 </ul>
-<p>Appliqué au lien de synchronisation, il supprime le dernier point unique de défaillance du cluster. La même notion existe sous Linux : voir <a href="../configurer-agregation-liens-bonding-lacp-netplan-ubuntu/">Configurer une agrégation de liens (Bonding/<abbr title="Link Aggregation Control Protocol">LACP</abbr>) avec Netplan</a>.</p>
+<p>Attention : <abbr title="Link Aggregation Control Protocol">LACP</abbr> répartit le trafic <strong>par flux</strong>, et une même conversation n'utilise qu'un seul lien à la fois. La synchronisation entre deux pare-feux ne gagne donc pas de débit. Son vrai bénéfice est la <strong>redondance</strong> : l'agrégat supprime le dernier point unique de défaillance du cluster. La même notion existe sous Linux : voir <a href="../configurer-agregation-liens-bonding-lacp-netplan-ubuntu/">Configurer une agrégation de liens (Bonding/<abbr title="Link Aggregation Control Protocol">LACP</abbr>) avec Netplan</a>.</p>
 <h4 id="ajouter-une-carte-reseau-et-un-second-lan-segment">Ajouter une carte réseau et un second LAN segment<a class="headerlink" href="#ajouter-une-carte-reseau-et-un-second-lan-segment" title="Permanent link">&para;</a></h4>
 <p><strong>Sur chaque pare-feu</strong> (VM éteinte), ajouter une <strong>quatrième carte réseau</strong>. La placer dans <strong>un autre LAN segment</strong> que celui utilisé pour la synchronisation : on obtient ainsi deux « câbles » indépendants entre les pare-feux, un par interface de l'agrégat.</p>
+<figure>
 <p><img alt="Schéma : deux liens SYNCHRO-PFSENSE-1 et SYNCHRO-PFSENSE-2 relient les pare-feux" loading="lazy" src="../images/cluster-pfsense/schema-lagg-synchro.png" /></p>
+<figcaption>
+<p>Deux liens de synchronisation, chacun dans son propre LAN segment</p>
+</figcaption>
+</figure>
 <div class="admonition warning">
 <p class="admonition-title">Un segment par lien</p>
 <p>Les tests ont montré qu'utiliser <strong>le même</strong> LAN segment pour les deux interfaces de l'agrégat provoque un problème de connectivité. Chaque lien doit avoir <strong>son propre</strong> segment, comme deux câbles physiques distincts.</p>
@@ -4929,11 +5155,21 @@
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p>Créer les segments depuis <strong>VM &gt; Settings… &gt; Network Adapter &gt; LAN Segments…</strong>. Sur les captures, la 3<sup>e</sup> carte est dans <code>SYNCHRO-PFSENSE-1</code> et la nouvelle 4<sup>e</sup> carte dans <code>SYNCHRO-PFSENSE-2</code>.</p>
+<figure>
 <p><img alt="Carte reliée au LAN segment SYNCHRO-PFSENSE-1" loading="lazy" src="../images/cluster-pfsense/vmware-lan-segment-synchro-1.png" width="420" /> <img alt="Carte reliée au LAN segment SYNCHRO-PFSENSE-2" loading="lazy" src="../images/cluster-pfsense/vmware-lan-segment-synchro-2.png" width="420" /></p>
+<figcaption>
+<p>VMware — 3ᵉ carte dans SYNCHRO-PFSENSE-1, 4ᵉ carte dans SYNCHRO-PFSENSE-2</p>
+</figcaption>
+</figure>
 </div>
 <div class="tabbed-block">
 <p>Activer l'<strong>Adapter 4</strong> en <strong>Réseau interne</strong> nommé <code>SYNCHRO-PFSENSE-2</code>, avec le type d'interface Intel PRO/1000 MT Desktop et le mode promiscuité « Tout autoriser ». L'Adapter 3 reste dans le réseau interne <code>SYNCHRO-PFSENSE</code>.</p>
+<figure>
 <p><img alt="Adapter 4 de VirtualBox en réseau interne Synchro-Pfsense-2" loading="lazy" src="../images/cluster-pfsense/virtualbox-carte-4-reseau-interne-synchro-2.png" /></p>
+<figcaption>
+<p>VirtualBox — 4ᵉ carte en réseau interne SYNCHRO-PFSENSE-2</p>
+</figcaption>
+</figure>
 </div>
 </div>
 </div>
@@ -4944,31 +5180,71 @@
 <li>Dans l'onglet <strong>Backup &amp; Restore</strong>, section <strong>Backup Configuration</strong>, choisir <strong>Backup area</strong> : <strong>Firewall Rules</strong> (ou toute la configuration).</li>
 <li>Cliquer sur <strong>Download configuration as XML</strong>. Un fichier XML est téléchargé sur le PC hôte.</li>
 </ol>
+<figure>
 <p><img alt="Page de sauvegarde : zone Règles du pare-feu sélectionnée" loading="lazy" src="../images/cluster-pfsense/sauvegarde-regles-pare-feu.png" /></p>
+<figcaption>
+<p>Sauvegarde de la zone « Règles du pare-feu »</p>
+</figcaption>
+</figure>
+<figure>
 <p><img alt="Fichier XML de sauvegarde téléchargé par le navigateur" loading="lazy" src="../images/cluster-pfsense/sauvegarde-fichier-xml-telecharge.png" width="380" /></p>
+<figcaption>
+<p>Le fichier XML de sauvegarde téléchargé par le navigateur</p>
+</figcaption>
+</figure>
 <h4 id="creer-le-lagg">Créer le <abbr title="Link Aggregation — agrégation de liens">LAGG</abbr><a class="headerlink" href="#creer-le-lagg" title="Permanent link">&para;</a></h4>
 <p>Une interface ne peut entrer dans un <abbr title="Link Aggregation — agrégation de liens">LAGG</abbr> que si elle <strong>n'est affectée à rien</strong>. Il faut donc d'abord supprimer l'interface PFSYNC actuelle. Cela <strong>supprime aussi toutes les règles</strong> de cette interface : il faudra les recréer, ou importer la sauvegarde.</p>
 <ol>
 <li>
 <p><strong>Interfaces &gt; Assignments</strong> (<em>Interfaces &gt; Affectations</em>) : supprimer la ligne <strong>PFSYNC</strong> (bouton <strong>Delete</strong>).</p>
+<figure>
 <p><img alt="Suppression de l'interface PFSYNC dans les affectations" loading="lazy" src="../images/cluster-pfsense/lagg-suppression-interface-pfsync.png" /></p>
+<figcaption>
+<p>Suppression de l'interface PFSYNC dans les affectations</p>
+</figcaption>
+</figure>
 </li>
 <li>
 <p>Onglet <strong>LAGGs</strong> &gt; <strong>Add</strong> : sélectionner les <strong>deux interfaces libres</strong> (<span class="keys"><kbd class="key-control">Ctrl</kbd></span> + clic), en les reconnaissant à leur adresse MAC. Choisir le protocole <strong><abbr title="Link Aggregation Control Protocol">LACP</abbr></strong>, laisser les autres options par défaut, ajouter une description pertinente, puis <strong>Save</strong>.</p>
+<figure>
 <p><img alt="Création du LAGG en mode LACP avec deux interfaces membres" loading="lazy" src="../images/cluster-pfsense/lagg-creation.png" /></p>
+<figcaption>
+<p>Création du <abbr title="Link Aggregation — agrégation de liens">LAGG</abbr> en mode <abbr title="Link Aggregation Control Protocol">LACP</abbr> avec deux interfaces membres</p>
+</figcaption>
+</figure>
+<figure>
 <p><img alt="Liste des LAGG : lagg0 avec ses deux membres" loading="lazy" src="../images/cluster-pfsense/lagg-liste.png" /></p>
+<figcaption>
+<p>Le <abbr title="Link Aggregation — agrégation de liens">LAGG</abbr> créé</p>
+</figcaption>
+</figure>
 </li>
 <li>
 <p>Onglet <strong>Interface Assignments</strong> : choisir <code>lagg0</code> dans <strong>Available network ports</strong>, puis <strong>Add</strong>.</p>
 </li>
 <li>
 <p>Cliquer sur la nouvelle interface (<code>OPT1</code> dans l'exemple) et la configurer : <strong>Enable</strong> coché, <strong>Description</strong> <code>PFSYNC</code>, IPv4 statique <code>192.168.254.1/30</code>. Enregistrer, puis appliquer les changements.</p>
+<figure>
 <p><img alt="Affectation de l'interface LAGG" loading="lazy" src="../images/cluster-pfsense/lagg-affectation-interface.png" /></p>
+<figcaption>
+<p>Affectation de l'interface <abbr title="Link Aggregation — agrégation de liens">LAGG</abbr></p>
+</figcaption>
+</figure>
+<figure>
 <p><img alt="Configuration de l'interface LAGG : activée, nommée, IP statique" loading="lazy" src="../images/cluster-pfsense/lagg-configuration-interface.png" /></p>
+<figcaption>
+<p>Configuration de l'interface <abbr title="Link Aggregation — agrégation de liens">LAGG</abbr> : activée, nommée PFSYNC, IP statique</p>
+</figcaption>
+</figure>
 </li>
 <li>
 <p>Répéter les mêmes étapes <strong>sur le secondaire</strong>, avec l'adresse <code>192.168.254.2</code>.</p>
+<figure>
 <p><img alt="Affectations du secondaire avec l'interface LAGG" loading="lazy" src="../images/cluster-pfsense/lagg-secondaire-affectations.png" /></p>
+<figcaption>
+<p>Secondaire — affectations avec l'interface <abbr title="Link Aggregation — agrégation de liens">LAGG</abbr></p>
+</figcaption>
+</figure>
 </li>
 <li>
 <p>Vérifier dans <strong>System &gt; High Avail. Sync</strong> que <strong>Synchronize Interface</strong> vaut toujours <code>PFSYNC</code> sur les deux nœuds.</p>
@@ -4983,10 +5259,26 @@
 <li><strong>Restore area</strong> : <strong>Firewall Rules</strong>. Avec <em>All</em>, tout le contenu du fichier serait restauré.</li>
 <li><strong>Configuration file</strong> : <strong>Parcourir…</strong> &gt; le fichier XML exporté précédemment.</li>
 <li>Cliquer sur <strong>Restore Configuration</strong> et confirmer. pfSense applique les règles et redémarre les services nécessaires. Dans certains cas, un redémarrage du pare-feu est utile pour s'assurer que tout est bien appliqué.</li>
+<li><strong>Sur le secondaire</strong>, vérifier la présence de la règle XML-RPC sur la nouvelle interface PFSYNC : ses anciennes règles ont été supprimées avec son interface. Si elle manque, la recréer comme à la <a href="#103-autoriser-les-flux-de-synchronisation">partie 10.3</a> ; les autres règles arriveront ensuite par réplication.</li>
 </ol>
+<figure>
 <p><img alt="Restauration de la zone Règles du pare-feu à partir du fichier XML" loading="lazy" src="../images/cluster-pfsense/restauration-regles-pare-feu.png" /></p>
+<figcaption>
+<p>Restauration de la zone « Règles du pare-feu »</p>
+</figcaption>
+</figure>
+<figure>
 <p><img alt="Boîte de confirmation de la restauration" loading="lazy" src="../images/cluster-pfsense/restauration-confirmation.png" width="380" /></p>
+<figcaption>
+<p>Confirmation de la restauration</p>
+</figcaption>
+</figure>
+<figure>
 <p><img alt="Message : la configuration a été restaurée" loading="lazy" src="../images/cluster-pfsense/restauration-terminee.png" /></p>
+<figcaption>
+<p>Restauration terminée</p>
+</figcaption>
+</figure>
 </div>
 <div class="tabbed-block">
 <p><strong>Firewall &gt; Rules &gt; PFSYNC</strong> (interface <abbr title="Link Aggregation — agrégation de liens">LAGG</abbr>) : recréer les règles XML-RPC, pfsync et <abbr title="Common Address Redundancy Protocol">CARP</abbr> de la <a href="#103-autoriser-les-flux-de-synchronisation">partie 10.3</a>. La règle XML-RPC doit être recréée <strong>aussi sur le secondaire</strong>, sinon le primaire ne peut plus lui parler. Les règles du secondaire peuvent servir de modèle. Puis <strong>Apply Changes</strong>.</p>
@@ -4995,9 +5287,19 @@
 </div>
 <h4 id="verifier">Vérifier<a class="headerlink" href="#verifier" title="Permanent link">&para;</a></h4>
 <p><strong>Sur le primaire</strong>, créer une règle de pare-feu quelconque, par exemple sur l'interface WAN :</p>
+<figure>
 <p><img alt="Règle de test créée sur le WAN du primaire" loading="lazy" src="../images/cluster-pfsense/verification-regle-wan-primaire.png" /></p>
+<figcaption>
+<p>Primaire — règle de test sur le WAN</p>
+</figcaption>
+</figure>
 <p>Elle doit apparaître automatiquement sur le secondaire :</p>
+<figure>
 <p><img alt="La règle de test est répliquée sur le WAN du secondaire" loading="lazy" src="../images/cluster-pfsense/verification-regle-wan-secondaire.png" /></p>
+<figcaption>
+<p>Secondaire — la règle de test est arrivée par réplication</p>
+</figcaption>
+</figure>
 <h3 id="152-ajouter-un-troisieme-nud-au-cluster">15.2 Ajouter un troisième nœud au cluster<a class="headerlink" href="#152-ajouter-un-troisieme-nud-au-cluster" title="Permanent link">&para;</a></h3>
 <p>Il est possible d'ajouter un <strong>troisième pare-feu</strong> au cluster, en conservant la synchronisation sur les trois nœuds. La méthode éprouvée consiste à <strong>chaîner</strong> la synchronisation :</p>
 <ol>
@@ -5026,7 +5328,7 @@
 <li><strong>Internet est indispensable, et le téléchargement est long</strong> : 187 paquets pour passer en 2.8.1, puis 184 pour passer en 2.9.0. Dans le lab, chaque saut a pris <strong>de 25 minutes à 1 heure par nœud</strong>, selon la charge des serveurs de Netgate. L'installation et les redémarrages ne durent que 3 à 4 minutes ; tout le reste est du téléchargement.</li>
 <li><strong>2 Go de RAM par VM.</strong> Avec 1 Go, la mise à jour a réussi sur le secondaire mais a échoué sur le primaire : le système a tué le processus d'installation par manque de mémoire, et pfSense est resté inutilisable (voir le dépannage ci-dessous). L'échec n'est donc pas systématique, mais le risque est réel. Avec 2 Go, les deux sauts du primaire se sont déroulés sans erreur.</li>
 <li><strong>Tant que les versions diffèrent, la synchronisation XML-RPC se suspend d'elle-même.</strong> Le journal système du primaire l'indique : <em>« The other member is on a different configuration version of pfSense. Sync will not be done to prevent problems! »</em>. Il ne faut donc <strong>rien modifier</strong> pendant la mise à jour, car les changements ne seraient pas recopiés.</li>
-<li><strong>Les états pfsync passent toujours vers le nœud mis à jour.</strong> Un secondaire en 2.9.0 importait encore les états envoyés par un primaire en 2.7.2 ; l'inverse ne fonctionnait plus. La bascule vers le secondaire mis à jour conserve donc les connexions en cours.</li>
+<li><strong>Les états pfsync passent toujours vers le nœud mis à jour.</strong> Un secondaire en 2.9.0 importait encore les états envoyés par un primaire en 2.7.2 ; l'inverse ne fonctionnait plus. Au moment de basculer vers le secondaire mis à jour, celui-ci dispose donc bien des états des connexions en cours.</li>
 </ul>
 </div>
 <h4 id="etape-1-sauvegarder-les-deux-nuds-et-prevoir-2-go-de-ram">Étape 1 — Sauvegarder les deux nœuds et prévoir 2 Go de RAM<a class="headerlink" href="#etape-1-sauvegarder-les-deux-nuds-et-prevoir-2-go-de-ram" title="Permanent link">&para;</a></h4>
@@ -5037,11 +5339,21 @@
 <ol>
 <li>
 <p>Ouvrir <strong>System &gt; Update</strong> (<em>Système &gt; Mettre à jour</em>), onglet <strong>Update Settings</strong> (<em>Paramètres de mise à jour</em>). Choisir <strong>Branch</strong> : <strong>Previous Stable Version (2.8.1)</strong>, puis <strong>Save</strong>.</p>
+<figure>
 <p><img alt="Paramètres de mise à jour : branche Previous Stable Version (2.8.1)" loading="lazy" src="../images/cluster-pfsense/maj-parametres-branche-281.png" /></p>
+<figcaption>
+<p>Paramètres de mise à jour : branche 2.8.1</p>
+</figcaption>
+</figure>
 </li>
 <li>
 <p>Onglet <strong>System Update</strong> (<em>Mise à jour système</em>) : patienter jusqu'à ce que <strong>Latest Base System</strong> (<em>Dernier système de base</em>) affiche <code>2.8.1</code>. L'état « <em>Retrieving</em> » peut durer une à deux minutes.</p>
+<figure>
 <p><img alt="Page de mise à jour : système actuel 2.7.2, dernier système 2.8.1, bouton Confirmer" loading="lazy" src="../images/cluster-pfsense/maj-confirmation-281.png" /></p>
+<figcaption>
+<p>Mise à jour système : 2.7.2 installée, 2.8.1 disponible</p>
+</figcaption>
+</figure>
 <div class="admonition note">
 <p class="admonition-title">Le message « pfSense-repoc: … no pfSense packages installed »</p>
 <p>Ce message apparaît dans la zone <strong>Messages</strong> sur une pfSense CE fraîchement installée. Il est sans conséquence : dans le lab, la mise à jour a fonctionné malgré lui sur les deux nœuds.</p>
@@ -5051,8 +5363,8 @@
 <p>Cliquer sur <strong>Confirm</strong>. La page affiche la progression du téléchargement. Dans la console, la suite se déroule ainsi :</p>
 <ol>
 <li>le message <em>« System is going to be upgraded. Rebooting in … seconds »</em> annonce un <strong>premier redémarrage</strong> ;</li>
-<li>le nouveau FreeBSD et les paquets s'installent pendant deux à trois minutes ; pfSense désactive <abbr title="Common Address Redundancy Protocol">CARP</abbr> pendant ce temps (<code>net.inet.carp.allow: 1 -&gt; 0</code>) ;</li>
-<li>le message <em>« Rebooting now »</em> annonce un <strong>second redémarrage</strong> ;</li>
+<li>le nouveau FreeBSD et les paquets s'installent pendant deux à trois minutes ;</li>
+<li>le message <em>« Rebooting now »</em> annonce un <strong>second redémarrage</strong>, et la console affiche <code>net.inet.carp.allow: 1 -&gt; 0</code> : pfSense désactive <abbr title="Common Address Redundancy Protocol">CARP</abbr> avant de s'arrêter ;</li>
 <li>le menu habituel revient.</li>
 </ol>
 <p><strong>Ne pas éteindre la VM pendant cette phase.</strong> Des messages inquiétants peuvent défiler, comme <em>« POST-INSTALL script failed »</em> ou <em>« missing file »</em>. Dans le lab, ils étaient sans conséquence.</p>
@@ -5063,12 +5375,22 @@
 <li>Recommencer avec <strong>Branch</strong> : <strong>Current Stable Version (2.9.0)</strong>. Cette option n'apparaît qu'en 2.8.1. Cliquer sur <strong>Save</strong>, puis sur <strong>System Update &gt; Confirm</strong>.</li>
 <li>
 <p>Vérifier la bannière <code>2.9.0-RELEASE</code> et l'état <strong>BACKUP</strong>.</p>
+<figure>
 <p><img alt="Console du secondaire : Welcome to pfSense 2.9.0-RELEASE" loading="lazy" src="../images/cluster-pfsense/console-pfsense-20-290.png" width="560" /></p>
+<figcaption>
+<p>Console du secondaire après la mise à jour en 2.9.0</p>
+</figcaption>
+</figure>
 </li>
 </ol>
 <h4 id="etape-3-placer-le-primaire-en-maintenance-carp">Étape 3 — Placer le primaire en maintenance <abbr title="Common Address Redundancy Protocol">CARP</abbr><a class="headerlink" href="#etape-3-placer-le-primaire-en-maintenance-carp" title="Permanent link">&para;</a></h4>
 <p><strong>Sur le primaire</strong>, ouvrir <strong>Status &gt; <abbr title="Common Address Redundancy Protocol">CARP</abbr> (failover)</strong> et cliquer sur <strong>Enter Persistent <abbr title="Common Address Redundancy Protocol">CARP</abbr> Maintenance Mode</strong> (<em>Entrer en mode de maintenance <abbr title="Common Address Redundancy Protocol">CARP</abbr> persistant</em>).</p>
+<figure>
 <p><img alt="État CARP du primaire en maintenance : VIP en BACKUP, bouton pour quitter le mode de maintenance" loading="lazy" src="../images/cluster-pfsense/carp-maintenance-primaire.png" /></p>
+<figcaption>
+<p>Primaire en maintenance <abbr title="Common Address Redundancy Protocol">CARP</abbr> : ses <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> sont en BACKUP</p>
+</figcaption>
+</figure>
 <p>Ce mode règle le skew de toutes les <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> du primaire à <strong>254</strong> (<code>advskew 254</code> dans <code>ifconfig</code>). Le secondaire, dont les annonces sont désormais plus fréquentes, devient MASTER. La bascule est <strong>planifiée</strong> : au lieu de disparaître brutalement, le primaire annonce sa nouvelle priorité, plus faible. Le secondaire prend donc le relais immédiatement, sans attendre le délai de détection d'une panne (environ 3,4 s). Dans le lab de test, aucun ping vers la <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> n'a été perdu.</p>
 <p>Contrairement à <em>Temporarily Disable <abbr title="Common Address Redundancy Protocol">CARP</abbr></em>, ce mode <strong>persiste après un redémarrage</strong>. Si le primaire n'a que 1 Go, l'éteindre maintenant, lui donner 2 Go et le rallumer : dans le lab, il est bien resté BACKUP au redémarrage, sans aucune perte de ping.</p>
 <h4 id="etape-4-mettre-a-jour-le-primaire">Étape 4 — Mettre à jour le primaire<a class="headerlink" href="#etape-4-mettre-a-jour-le-primaire" title="Permanent link">&para;</a></h4>
@@ -5080,14 +5402,9 @@
 <ul>
 <li>Les deux consoles affichent <code>pfSense 2.9.0-RELEASE</code>.</li>
 <li>Le primaire est <strong>MASTER</strong> et le secondaire <strong>BACKUP</strong> sur les deux <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr>.</li>
-<li><strong>La synchronisation XML-RPC a repris</strong> : une règle de test créée sur le primaire apparaît sur le secondaire, et sa suppression est elle aussi répliquée. En 2.9.0, une synchronisation réussie n'écrit plus de ligne dans le journal système : ce test est donc la vérification la plus fiable.</li>
-<li>
-<p>Dans <strong>Status &gt; <abbr title="Common Address Redundancy Protocol">CARP</abbr> (failover)</strong>, la section <strong>State Synchronization Status</strong> liste <strong>les deux mêmes identifiants</strong> sur les deux nœuds : pfsync fonctionne de nouveau dans les deux sens.</p>
-<p><img alt="État CARP du secondaire en 2.9.0 : VIP en BACKUP, et liste des deux identifiants de synchronisation des états" loading="lazy" src="../images/cluster-pfsense/carp-statut-synchronisation-etats.png" /></p>
-</li>
-<li>
-<p>Si le navigateur affiche un <strong>nouvel avertissement de certificat</strong>, c'est que pfSense a recréé le certificat de son interface web. Dans le lab, c'est arrivé au secondaire lors de sa mise à jour, mais pas au primaire. Il suffit d'accepter le nouveau certificat.</p>
-</li>
+<li><strong>La synchronisation XML-RPC a repris</strong> : une règle de test créée sur le primaire apparaît sur le secondaire, et sa suppression est elle aussi répliquée. Dans le lab, en 2.9.0, une synchronisation réussie n'a ajouté aucune ligne au journal système : ce test est donc la vérification la plus fiable.</li>
+<li>Dans <strong>Status &gt; <abbr title="Common Address Redundancy Protocol">CARP</abbr> (failover)</strong>, la section <strong>State Synchronization Status</strong> liste <strong>les deux mêmes identifiants</strong> sur les deux nœuds (voir l'<a href="#131-controler-letat-normal">étape 13.1</a>) : pfsync fonctionne de nouveau dans les deux sens.</li>
+<li>Si le navigateur affiche un <strong>nouvel avertissement de certificat</strong>, c'est que pfSense a recréé le certificat de son interface web. Dans le lab, c'est arrivé au secondaire lors de sa mise à jour, mais pas au primaire. Il suffit d'accepter le nouveau certificat.</li>
 </ul>
 </div>
 <h4 id="depannage-de-la-mise-a-jour">Dépannage de la mise à jour<a class="headerlink" href="#depannage-de-la-mise-a-jour" title="Permanent link">&para;</a></h4>
@@ -5096,7 +5413,7 @@
 <p>Ces trois cas ont été rencontrés dans le lab, juste après un changement de branche. Les actions suivantes ont permis d'en sortir :</p>
 <ol>
 <li>Retourner dans <strong>Update Settings</strong>, vérifier la branche et cliquer de nouveau sur <strong>Save</strong>.</li>
-<li>Dans <strong>Diagnostics &gt; Command Prompt</strong>, lancer <code>pfSense-upgrade -c</code>. La commande doit répondre <code>2.8.1 version of pfSense is available</code>.</li>
+<li>Dans <strong>Diagnostics &gt; Command Prompt</strong>, lancer <code>pfSense-upgrade -c</code>. La commande doit répondre <code>2.8.1 version of pfSense is available</code>, ou indiquer la version visée.</li>
 <li>Recharger la page <strong>System Update</strong>.</li>
 </ol>
 <p>Le message <em>« Another instance of pfSense-upgrade is running »</em> signifie qu'une vérification est déjà en cours : patienter quelques minutes, puis recharger.</p>
@@ -5121,11 +5438,15 @@
 <li>Les deux cartes WAN (et les deux cartes LAN) sont-elles bien dans le <strong>même</strong> réseau virtuel ? Sous VirtualBox, le mode <strong><abbr title="Network Address Translation — traduction d'adresses">NAT</abbr></strong> simple isole chaque VM : utiliser <strong>Réseau <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr></strong>.</li>
 <li>Sous VirtualBox, le <strong>mode promiscuité</strong> est-il réglé sur <strong>Tout autoriser</strong> ?</li>
 <li>Les <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> ont-elles bien été <strong>répliquées</strong> sur le secondaire, avec le même <abbr title="Virtual Host ID — numéro de groupe CARP">VHID</abbr> et le même mot de passe ?</li>
-<li>La case <strong>Block RFC1918 Private Networks</strong> du WAN est-elle bien décochée ?</li>
 </ol>
 <h3 id="162-pas-de-ping-entre-les-deux-pare-feux">16.2 Pas de ping entre les deux pare-feux<a class="headerlink" href="#162-pas-de-ping-entre-les-deux-pare-feux" title="Permanent link">&para;</a></h3>
 <p>Ouvrir <strong>Status &gt; System Logs &gt; Firewall</strong> (<em>État &gt; Journaux système &gt; Pare-feu</em>) pour retrouver le blocage du protocole ICMP, puis créer une règle rapide avec le bouton <strong>+</strong> (<em>Easy Rule</em>).</p>
+<figure>
 <p><img alt="Journal du pare-feu : paquets ICMP bloqués entre les VIP et bouton Easy Rule" loading="lazy" src="../images/cluster-pfsense/depannage-journaux-icmp-bloque.png" /></p>
+<figcaption>
+<p>Journal du pare-feu : ICMP bloqué ; le bouton + crée une règle rapide</p>
+</figcaption>
+</figure>
 <h3 id="163-pas-de-ping-vers-la-passerelle">16.3 Pas de ping vers la passerelle<a class="headerlink" href="#163-pas-de-ping-vers-la-passerelle" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Désactiver puis réactiver la carte réseau virtuelle du VMnet concerné sur le PC hôte Windows (raccourci <code>ncpa.cpl</code>).</li>
@@ -5133,7 +5454,12 @@
 <li>Redémarrer les pfSense.</li>
 <li>
 <p>En dernier recours, et <strong>uniquement pour diagnostiquer</strong>, créer une règle flottante (<strong>Firewall &gt; Rules &gt; Floating</strong>) qui autorise tout trafic sur toutes les interfaces, puis vérifier si la passerelle est toujours injoignable. Si elle répond, le problème vient des règles ; sinon, il vient du réseau virtuel. <strong>Supprimer cette règle après le test.</strong></p>
+<figure>
 <p><img alt="Règle flottante autorisant tout le trafic sur toutes les interfaces" loading="lazy" src="../images/cluster-pfsense/depannage-regle-flottante.png" /></p>
+<figcaption>
+<p>Règle flottante de diagnostic autorisant tout le trafic, à supprimer après le test</p>
+</figcaption>
+</figure>
 </li>
 </ul>
 <h3 id="164-acceder-a-linterface-web-par-le-wan-temporairement-en-ligne-de-commande">16.4 Accéder à l'interface web par le WAN, temporairement, en ligne de commande<a class="headerlink" href="#164-acceder-a-linterface-web-par-le-wan-temporairement-en-ligne-de-commande" title="Permanent link">&para;</a></h3>
@@ -5190,12 +5516,32 @@
 </tbody>
 </table>
 <p>Cliquer sur <strong>Save</strong>, puis sur <strong>Apply Changes</strong>. Pour désactiver la règle plus tard, cliquer sur la coche verte (la règle devient grisée), puis appliquer.</p>
+<figure>
 <p><img alt="Règle WAN autorisant l'accès à l'adresse WAN du pare-feu" loading="lazy" src="../images/cluster-pfsense/annexe-regle-wan-webgui.png" /></p>
-<p>La règle ne fonctionne que si la case <strong>Block RFC1918 Private Networks</strong> est décochée, comme demandé dans l'assistant (étape 8.2). Sinon, la décocher dans <strong>Interfaces &gt; WAN</strong>, section <strong>Reserved Networks</strong>, puis appliquer.</p>
+<figcaption>
+<p>Règle WAN vers l'adresse WAN du pare-feu. Sur cette capture, l'interface web était servie en HTTP, d'où le port 80.</p>
+</figcaption>
+</figure>
+<p>Dans ce lab, l'ordinateur qui se connecte côté WAN a une adresse <strong>privée</strong>. La règle ne fonctionne donc que si la case <strong>Block RFC1918 Private Networks</strong> est décochée, comme demandé dans l'assistant (étape 8.2) : le blocage des réseaux privés est évalué <strong>avant</strong> les règles écrites à la main. Si la case est cochée, la décocher dans <strong>Interfaces &gt; WAN</strong>, section <strong>Reserved Networks</strong>, puis appliquer.</p>
+<figure>
 <p><img alt="Section Réseaux réservés : case Bloquer les réseaux privés" loading="lazy" src="../images/cluster-pfsense/annexe-bloquer-reseaux-prives.png" /></p>
+<figcaption>
+<p>Interfaces &gt; WAN : case de blocage des réseaux privés</p>
+</figcaption>
+</figure>
+<figure>
 <p><img alt="Tableau de bord pfSense ouvert depuis l'adresse WAN" loading="lazy" src="../images/cluster-pfsense/annexe-tableau-de-bord-via-wan.png" /></p>
+<figcaption>
+<p>Tableau de bord ouvert depuis l'adresse WAN</p>
+</figcaption>
+</figure>
 <p><strong>Avec une redirection de port (<abbr title="Port Address Translation — redirection de port">PAT</abbr>)</strong> : une règle de <strong>Firewall &gt; <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> &gt; Port Forward</strong> peut aussi rediriger un port du WAN vers l'interface web.</p>
+<figure>
 <p><img alt="Règle de redirection de port du WAN vers l'interface web" loading="lazy" src="../images/cluster-pfsense/annexe-redirection-port-wan.png" /></p>
+<figcaption>
+<p>Redirection de port du WAN vers l'interface web (ici en HTTP, port 80)</p>
+</figcaption>
+</figure>
 <h3 id="166-une-regle-a-disparu-du-secondaire">16.6 Une règle a disparu du secondaire<a class="headerlink" href="#166-une-regle-a-disparu-du-secondaire" title="Permanent link">&para;</a></h3>
 <p>C'est normal si elle avait été créée <strong>sur le secondaire</strong> : la synchronisation suivante l'a effacée (voir l'exercice 3). Toute modification se fait <strong>sur le primaire</strong>.</p>
 <h3 id="167-passer-le-clavier-de-la-console-en-azerty">16.7 Passer le clavier de la console en AZERTY<a class="headerlink" href="#167-passer-le-clavier-de-la-console-en-azerty" title="Permanent link">&para;</a></h3>
@@ -5353,13 +5699,13 @@
 <dt><abbr title="High Availability — haute disponibilité">HA</abbr> (High Availability, haute disponibilité)</dt>
 <dd>Capacité d'un système à fonctionner en continu avec un minimum d'interruptions. Elle s'obtient par la redondance, la réplication des données et des procédures de basculement.</dd>
 <dt><abbr title="Link Aggregation Control Protocol">LACP</abbr> / <abbr title="Link Aggregation — agrégation de liens">LAGG</abbr></dt>
-<dd><em>Link Aggregation Control Protocol</em> (IEEE 802.3ad) : protocole de niveau 2 qui regroupe plusieurs ports Ethernet en un seul lien logique, plus rapide et redondant. Dans pfSense, l'interface résultante s'appelle un <strong><abbr title="Link Aggregation — agrégation de liens">LAGG</abbr></strong>.</dd>
+<dd><em>Link Aggregation Control Protocol</em> (IEEE 802.3ad) : protocole de niveau 2 qui regroupe plusieurs ports Ethernet en un seul lien logique, de plus grande capacité totale et redondant. Le trafic est réparti par flux. Dans pfSense, l'interface résultante s'appelle un <strong><abbr title="Link Aggregation — agrégation de liens">LAGG</abbr></strong>.</dd>
 <dt><abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> sortant</dt>
 <dd>Traduction de l'adresse source des paquets qui sortent d'un réseau, par exemple du LAN vers le WAN. Dans un cluster, elle doit utiliser la <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> WAN.</dd>
 <dt><abbr title="Network Interface Controller — carte réseau">NIC</abbr></dt>
 <dd><em>Network Interface Controller</em> : carte réseau, physique ou virtuelle.</dd>
 <dt>pfsync</dt>
-<dd>Protocole qui synchronise la table d'états entre plusieurs machines exécutant le pare-feu Packet Filter. Il diffuse les états des connexions actives entre le MASTER et les nœuds de secours. Il fonctionne par défaut en multicast, mais une adresse de pair (<em>syncpeer</em>) permet d'envoyer les paquets directement au nœud voulu, comme dans ce TP.</dd>
+<dd>Protocole qui synchronise la table d'états entre plusieurs machines exécutant le pare-feu Packet Filter. Il diffuse les états des connexions actives entre les nœuds du cluster, pour que le nœud de secours les connaisse au moment d'une bascule. Il fonctionne par défaut en multicast, mais une adresse de pair (<em>syncpeer</em>) permet d'envoyer les paquets directement au nœud voulu, comme dans ce TP.</dd>
 <dt>Préemption</dt>
 <dd>Capacité d'un nœud prioritaire à <strong>reprendre</strong> le rôle de MASTER dès qu'il redevient disponible. Elle est activée par défaut dans pfSense.</dd>
 <dt>Redondance</dt>

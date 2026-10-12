@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="960" height="420" viewBox="0 0 960 420" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
   <title id="t">Pourquoi traduire le trafic sortant vers la VIP WAN</title>
-  <desc id="d">Sans règle de NAT sortant, un poste du LAN sort sur Internet avec l'adresse propre du pare-feu actif (192.168.8.19) ; après une bascule, le secondaire utiliserait 192.168.8.20, le serveur distant verrait une autre adresse et la connexion serait perdue. Avec la règle, le trafic sort toujours avec la VIP 192.168.8.21, quelle que soit la machine active : la table d'états synchronisée par pfsync reste valable et la connexion continue.</desc>
+  <desc id="d">Sans règle de NAT sortant, un poste du LAN sort sur Internet avec l'adresse propre du pare-feu actif (192.168.8.19) ; après une bascule, le serveur continue de répondre à cette adresse, celle d'un pare-feu en panne, et le secondaire ne reçoit pas ces réponses : la connexion est perdue. Avec la règle, le trafic sort avec la VIP 192.168.8.21, que le secondaire reprend : avec l'état copié par pfsync, la connexion peut continuer.</desc>
   <defs>
     <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker>
   </defs>
@@ -23,8 +23,8 @@
   <text x="820" y="94" text-anchor="middle" font-size="13" font-weight="700" fill="#075985">Serveur Internet</text>
   <text x="820" y="113" text-anchor="middle" font-size="12" fill="#075985">voit 192.168.8.19</text>
 
-  <text x="36" y="160" font-size="12.5" fill="#7f1d1d">Après la bascule, pfsense-20 réécrirait la source en <tspan font-weight="700">192.168.8.20</tspan> : le serveur reçoit des paquets</text>
-  <text x="36" y="180" font-size="12.5" fill="#7f1d1d">d'une adresse qu'il ne connaît pas pour cette connexion → <tspan font-weight="700">la connexion est perdue</tspan>.</text>
+  <text x="36" y="160" font-size="12.5" fill="#7f1d1d">Après la bascule, le serveur répond toujours à <tspan font-weight="700">192.168.8.19</tspan>, l'adresse propre du primaire en panne :</text>
+  <text x="36" y="180" font-size="12.5" fill="#7f1d1d">le secondaire ne reçoit pas ces réponses → <tspan font-weight="700">la connexion est perdue</tspan>.</text>
 
   <!-- Bloc avec règle -->
   <rect x="16" y="216" width="928" height="188" rx="12" fill="#f0fdf4" stroke="#86efac"/>
@@ -44,5 +44,5 @@
   <text x="820" y="313" text-anchor="middle" font-size="12" fill="#075985">voit toujours 192.168.8.21</text>
 
   <text x="36" y="362" font-size="12.5" fill="#14532d">La VIP suit le MASTER et pfsync a déjà copié l'état de la connexion sur le secondaire :</text>
-  <text x="36" y="382" font-size="12.5" fill="#14532d">le serveur ne voit aucun changement → <tspan font-weight="700">la connexion continue après la bascule</tspan>.</text>
+  <text x="36" y="382" font-size="12.5" fill="#14532d">les réponses du serveur arrivent au nouveau MASTER → <tspan font-weight="700">la connexion peut continuer après la bascule</tspan>.</text>
 </svg>
