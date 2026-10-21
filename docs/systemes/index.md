@@ -38,5 +38,6 @@ Administration système, stockage, sécurité locale et gestion des utilisateurs
 
 - [virt-sysprep — préparer une image Linux au clonage](virt-sysprep-preparer-image-linux-clonage.md) — Nettoyer une VM (logs, clés SSH, MAC) avant d'en faire un template réutilisable.
 - [Sysprep d'une VM Windows 11 25H2 et création d'un template sur Proxmox VE](sysprep-windows-11-25h2-template-proxmox.md) — Généraliser une image Windows et éviter les pièges BitLocker et Appx des builds 24H2/25H2.
+- [Montée de version majeure de Proxmox VE 8 vers Proxmox VE 9](montee-de-version-majeure-proxmox-ve-8-vers-9.md) — Procédure complète, sécurisation SSH et console série, épinglage réseau et résolution de six pièges critiques sur serveur dédié.
 - [Créer et gérer des snapshots de VM avec virsh (libvirt) sur Ubuntu Server](creer-gerer-snapshots-vm-virsh-libvirt-ubuntu-server.md) — Geler l'état d'une VM avant une opération risquée et revenir en arrière en une commande.
 - [Migration de mon application Stop Repeat de Lovable vers un Coolify self-hosted](migration-stop-repeat-lovable-vers-coolify.md) — Retour d'expérience sur l'hébergement de projets avec une alternative libre à Vercel.
