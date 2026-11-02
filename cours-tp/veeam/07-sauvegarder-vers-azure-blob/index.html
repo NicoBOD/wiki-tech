@@ -1810,7 +1810,7 @@
   <span class="md-ellipsis">
     
   
-    7. Sauvegarder vers Azure Blob (non rejoué)
+    7. Sauvegarder vers Azure Blob Storage
   
 
     
@@ -1835,7 +1835,7 @@
   <span class="md-ellipsis">
     
   
-    7. Sauvegarder vers Azure Blob (non rejoué)
+    7. Sauvegarder vers Azure Blob Storage
   
 
     
@@ -2495,9 +2495,9 @@
 </tbody>
 </table>
 <div class="admonition warning">
-<p class="admonition-title">Partie illustrée, non rejouée</p>
-<p>Contrairement aux parties 3 à 6, cette partie <strong>n'a pas été rejouée</strong> dans le lab de 2026 : elle demande un abonnement Azure et génère des coûts. Les captures montrent Veeam Backup &amp; Replication <strong>12.1</strong> installé sur Windows et une version antérieure du portail Azure.</p>
-<p>Les principes et les assistants restent valables en version 13. Les différences connues sont signalées dans des encadrés « En version 13 ». L'interface du portail Azure évolue souvent : un libellé ou un onglet peut avoir légèrement changé.</p>
+<p class="admonition-title">Partie illustrée</p>
+<p>Cette partie se lit avec les captures. La réaliser demande un <strong>abonnement Azure</strong> et <strong>génère des coûts</strong>. Les captures montrent Veeam Backup &amp; Replication <strong>12.1</strong> installé sur Windows et une version antérieure du portail Azure.</p>
+<p>Les principes restent valables en version 13. Les différences d'interface sont signalées dans des encadrés « En version 13 ». Le portail Azure évolue souvent : un libellé ou un onglet peut avoir légèrement changé.</p>
 </div>
 <hr />
 <h2 id="1-comprendre-le-stockage-objet-dans-azure">1. Comprendre le stockage objet dans Azure<a class="headerlink" href="#1-comprendre-le-stockage-objet-dans-azure" title="Permanent link">&para;</a></h2>
@@ -2655,7 +2655,12 @@
 </figure>
 <div class="admonition tip">
 <p class="admonition-title">Pour des sauvegardes immuables</p>
-<p>L'immuabilité de Veeam sur Azure repose sur l'<strong>immuabilité au niveau des versions</strong> d'Azure, qui doit être activée sur le compte de stockage ou le conteneur. La case <strong>Activer la prise en charge de l'immuabilité au niveau version</strong> du panneau <strong>Avancé</strong> du conteneur sert à cela. Dans l'exemple, elle n'a pas été activée.</p>
+<p>L'immuabilité de Veeam sur Azure repose sur l'<strong>immuabilité au niveau des versions</strong> d'Azure. Deux réglages sont nécessaires :</p>
+<ul>
+<li>sur le <strong>compte de stockage</strong>, activer le <strong>contrôle de version des blobs</strong> (onglet <strong>Protection des données</strong>) ;</li>
+<li>sur le <strong>conteneur</strong>, cocher <strong>Activer la prise en charge de l'immuabilité de niveau version</strong> (<em>Enable version-level immutability support</em> dans le portail en anglais), dans le panneau <strong>Avancé</strong>, sans définir de stratégie de rétention par défaut : c'est Veeam qui fixe la durée.</li>
+</ul>
+<p>Dans l'exemple, la case n'est pas cochée : le dépôt ne sera pas immuable.</p>
 </div>
 <h3 id="24-ajouter-le-depot-dans-veeam">2.4 Ajouter le dépôt dans Veeam<a class="headerlink" href="#24-ajouter-le-depot-dans-veeam" title="Permanent link">&para;</a></h3>
 <ol>
@@ -2719,9 +2724,17 @@
 <p>Ces options méritent d'être comprises :</p>
 <ul>
 <li><strong>Limit object storage consumption to</strong> : plafond de volume, pour maîtriser la facture.</li>
-<li><strong>Make recent backups immutable for</strong> : rend les sauvegardes récentes immuables pendant <em>n</em> jours (nécessite l'immuabilité au niveau version côté Azure). C'est l'option à activer en production.</li>
+<li><strong>Make recent backups immutable for … days</strong> : rend les sauvegardes récentes immuables pendant <em>n</em> jours (nécessite l'immuabilité de niveau version côté Azure). C'est l'option à activer en production.</li>
 <li><strong>Use cool blob storage tier</strong> : stockage moins cher mais lectures plus chères ; adapté aux sauvegardes longues durées (complètes GFS).</li>
 </ul>
+<div class="admonition info">
+<p class="admonition-title">En version 13 : les options du conteneur</p>
+<p>L'étape <strong>Container</strong> garde le plafond <strong>Limit object storage consumption to</strong>, mais les deux autres options changent de forme :</p>
+<ul>
+<li>l'immuabilité se règle par la case <strong>Make backups immutable (recommended)</strong>, qui ouvre la fenêtre <strong>Immutability Settings</strong> : soit <strong>For the entire duration of their retention policy</strong> (la durée suit la rétention du job), soit <strong>For the minimum immutability period only</strong> avec une durée explicite (30 jours par défaut, de 1 à 999 jours) ;</li>
+<li>le niveau d'accès se choisit dans la section <strong>Access tier</strong>, en cliquant sur le lien <strong>Hot</strong> : la fenêtre <strong>Access Tier Settings</strong> propose <strong>Hot</strong> ou <strong>Cool</strong>.</li>
+</ul>
+</div>
 <figure>
   <img alt="Étape Apply : installation des composants et enregistrement du dépôt réussis" loading="lazy" src="../images/azure/az-20-vbr-application.png" />
 <br />
@@ -2739,7 +2752,8 @@
 </figure>
 <div class="admonition info">
 <p class="admonition-title">En version 13 avec l'appliance</p>
-<p>L'assistant est le même dans l'interface web : <strong>Backup Infrastructure &gt; Backup Repositories &gt; Add &gt; Object Storage &gt; Microsoft Azure Storage</strong>. L'appliance joue le rôle de <strong>passerelle</strong> et de <strong>serveur de montage</strong> (à moins d'en désigner d'autres). Elle doit pouvoir joindre <code>*.blob.core.windows.net</code> en HTTPS (port 443) : dans le lab, elle sort par le cluster pfSense.</p>
+<p>L'interface web de la version 13 ne sait ajouter que des dépôts Windows, Linux et durcis (<em>Hardened Repository</em>) : un dépôt Azure Blob s'ajoute depuis la <strong>console Windows</strong> installée sur <code>srv-fichiers</code> en <a href="../03-preparer-le-lab-installer-appliance/#11-installer-la-console-windows-sur-srv-fichiers">partie 3</a>. Le chemin y est <strong>Backup Infrastructure &gt; Backup Repositories &gt; Add Repository &gt; Object storage &gt; Hyperscalers &gt; Microsoft Azure Storage &gt; Azure Blob Storage</strong> (le niveau <em>Hyperscalers</em> regroupe les grands fournisseurs de cloud) ; la suite de l'assistant est celle décrite ci-dessus.</p>
+<p>L'appliance joue par défaut le rôle de <strong>passerelle</strong> et de <strong>serveur de montage</strong> (à moins d'en désigner d'autres). Elle doit pouvoir joindre <code>*.blob.core.windows.net</code> en HTTPS (port 443) : dans le lab, elle sort par le cluster pfSense.</p>
 </div>
 <hr />
 <h2 id="3-sauvegarder-un-serveur-linux-vers-azure">3. Sauvegarder un serveur Linux vers Azure<a class="headerlink" href="#3-sauvegarder-un-serveur-linux-vers-azure" title="Permanent link">&para;</a></h2>
@@ -2905,7 +2919,7 @@
 </code></pre></div>
 <div class="admonition question">
 <p class="admonition-title">Pourquoi libfuse ?</p>
-<p><strong>FUSE</strong> (<em>Filesystem in Userspace</em>) permet de monter un système de fichiers sans modifier le noyau. L'agent Veeam s'en sert pour <strong>monter le contenu d'une sauvegarde</strong> et restaurer des fichiers. Les distributions récentes installent <code>libfuse3</code> par défaut, mais l'agent dépend aussi de l'ancienne version 2. Dans le lab de la <a href="../06-sauvegarder-restaurer-serveur-linux/">partie 6</a>, l'agent 13.1 a installé seul ses dépendances (dont <code>libfuse2t64</code>) sur Debian 13 : le problème vient le plus souvent d'une machine sans accès correct aux dépôts de paquets au moment du déploiement, ou de paquets cassés (d'où le <code>apt --fix-broken install</code> de la capture).</p>
+<p><strong>FUSE</strong> (<em>Filesystem in Userspace</em>) permet de monter un système de fichiers sans modifier le noyau. L'agent Veeam s'en sert pour <strong>monter le contenu d'une sauvegarde</strong> et restaurer des fichiers. Les distributions récentes installent <code>libfuse3</code> par défaut, mais l'agent dépend aussi de l'ancienne version 2. Normalement, l'agent 13.1 installe lui-même ses dépendances pendant le déploiement, dont <code>libfuse2t64</code> sur Debian 13 (voir la <a href="../06-sauvegarder-restaurer-serveur-linux/#25-ce-que-lagent-a-installe">partie 6</a>) : quand la bibliothèque manque, la cause est le plus souvent une machine sans accès correct aux dépôts de paquets au moment du déploiement, ou des paquets cassés (d'où le <code>apt --fix-broken install</code> de la capture).</p>
 </div>
 <ol>
 <li><strong>Relancer le rescan</strong> : il réussit, et la sauvegarde vers Azure démarre.</li>

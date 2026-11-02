@@ -2249,7 +2249,7 @@
   <span class="md-ellipsis">
     
   
-    7. Sauvegarder vers Azure Blob (non rejoué)
+    7. Sauvegarder vers Azure Blob Storage
   
 
     
@@ -2922,23 +2922,11 @@
 <td>Partie 4 sur 7 du parcours <a href="../">Veeam Backup &amp; Replication</a></td>
 </tr>
 <tr>
-<td>Rejoué dans le lab</td>
-<td>2 novembre 2026 (KVM/libvirt)</td>
-</tr>
-<tr>
 <td>Dernière mise à jour</td>
 <td>2026-11-02</td>
 </tr>
 </tbody>
 </table>
-<!-- NOTE DE RÉDACTION (non affichée) : Ce qui a changé par rapport à la version 1.5 du support (juin 2024)
-- Le support décrivait VBR **12 sur Windows** : le premier dépôt était un **volume en miroir (RAID 1) de deux disques NVMe**, formaté en ReFS 64 Ko sur le serveur Windows qui portait aussi Veeam. Avec l'**appliance Linux 13.1**, ce premier dépôt existe déjà : l'appliance crée un **dépôt durci et immuable** sur son second disque (XFS). La section 2 de ce TP le découvre au lieu de le créer.
-- Le support créait le dépôt n° 2 sur un **partage SMB** d'un serveur de fichiers. Sur l'appliance (système durci, mode FIPS) installée en **groupe de travail**, cela échoue, comme le montrent les captures de la section 3. Le dépôt n° 2 devient donc un **dépôt Windows** (*direct attached storage*) sur un disque `F:` dédié, après installation du **kit de déploiement Veeam** sur le serveur Windows.
-- Les captures du support venaient de la **console Windows**. Les assistants sont ici ceux de l'**interface web** (Web UI) de la 13.1. L'interface web exige que le serveur Windows soit **déjà déclaré** dans **Managed Servers** avant de pouvoir y créer un dépôt.
-- La section 5.3 du support (dépôt sur le stockage objet Azure) est traitée dans la [partie 7](07-sauvegarder-vers-azure-blob.md) et n'est pas reprise ici.
-- Le TP signale un piège de l'interface web : après **Finish**, le dépôt est créé en arrière-plan sans que la liste se rafraîchisse, et relancer l'assistant crée un **doublon**.
--->
-
 <div class="admonition info">
 <p class="admonition-title">Convention de lecture</p>
 <p>Chaque action précise la machine sur laquelle elle se fait :</p>
@@ -3099,6 +3087,10 @@
 <figcaption>Avant tout ajout : un seul dépôt, créé par l'appliance. Type Linux, hôte vbr, chemin /var/lib/veeam/backup, 206,9 Go.</figcaption>
 </figure>
 <p>L'appliance a créé <strong>toute seule</strong> ce dépôt, <code>Default Backup Repository</code>, sur son <strong>second disque</strong> de 240 Go. Sa description indique « Created by Veeam Backup ». Avec l'appliance, ce premier dépôt n'est donc pas à créer : il suffit de le découvrir.</p>
+<div class="admonition info">
+<p class="admonition-title">Pourquoi 206,9 Go et pas 240 Go ?</p>
+<p>L'appliance partitionne ses disques elle-même, selon un schéma prédéfini. Le second disque ne sert pas qu'au dépôt : il accueille aussi, par exemple, le catalogue des fichiers invités. Le dépôt n'en reçoit donc qu'une partie. La valeur exacte dépend de la taille du disque ; avec un second disque de 240 Go, la capacité affichée est de 206,9 Go.</p>
+</div>
 <ol>
 <li>Cliquer sur <strong>Add</strong> pour voir les types de dépôts que l'interface web sait créer.</li>
 </ol>
@@ -3109,7 +3101,7 @@
 </figure>
 <div class="admonition note">
 <p class="admonition-title">Et le SMB, le NFS, le stockage objet ?</p>
-<p>Dans ce menu de l'interface web, version 13.1.2 du lab, <strong>aucune entrée SMB ou NFS</strong> n'apparaît : seuls les dépôts Windows, Linux et durcis sont proposés. Les partages réseau se créent dans la <strong>console Windows</strong> (entrée « Network attached storage » de la figure du 1.2). La documentation officielle indique les types disponibles pour chaque interface : une version ultérieure peut ajouter des entrées.</p>
+<p>Dans ce menu de l'interface web 13.1.2, <strong>aucune entrée SMB ou NFS</strong> n'apparaît : seuls les dépôts Windows, Linux et durcis sont proposés. Les partages réseau se créent dans la <strong>console Windows</strong> (entrée « Network attached storage » de la figure du 1.2). La documentation officielle indique les types disponibles pour chaque interface : une version ultérieure peut ajouter des entrées.</p>
 </div>
 <ol>
 <li>Appuyer sur <span class="keys"><kbd class="key-escape">Esc</kbd></span> pour fermer le menu.</li>
@@ -3172,10 +3164,10 @@
 <h2 id="3-pourquoi-un-partage-smb-ne-convient-pas-ici">3. Pourquoi un partage SMB ne convient pas ici<a class="headerlink" href="#3-pourquoi-un-partage-smb-ne-convient-pas-ici" title="Permanent link">&para;</a></h2>
 <div class="admonition note">
 <p class="admonition-title">Cette section se lit, elle ne se refait pas</p>
-<p>L'idée la plus simple serait de créer le dépôt n° 2 sur un <strong>partage SMB</strong> de <code>srv-fichiers</code>. Cet essai a été fait dans le lab et <strong>échoue</strong>. Les captures ci-dessous montrent les messages d'erreur : les connaître évite de perdre du temps si vous tentez la même chose. <strong>Il n'y a rien à faire dans cette section</strong> ; passer directement à la <a href="#4-ajouter-le-disque-f-a-srv-fichiers-et-le-formater-en-refs-64-ko">section 4</a> pour la procédure retenue.</p>
+<p>L'idée la plus simple serait de créer le dépôt n° 2 sur un <strong>partage SMB</strong> de <code>srv-fichiers</code>. Avec l'appliance, cette piste <strong>échoue</strong>. Les captures ci-dessous montrent les messages d'erreur : les connaître évite de perdre du temps si vous tentez la même chose. <strong>Il n'y a rien à faire dans cette section</strong> ; passer directement à la <a href="#4-ajouter-le-disque-f-a-srv-fichiers-et-le-formater-en-refs-64-ko">section 4</a> pour la procédure retenue.</p>
 </div>
 <h3 id="31-lessai-dans-la-console-windows">3.1 L'essai dans la console Windows<a class="headerlink" href="#31-lessai-dans-la-console-windows" title="Permanent link">&para;</a></h3>
-<p>Dans la console Windows de l'appliance, lancée sur <code>srv-fichiers</code>, l'essai a suivi le chemin classique : <strong>Backup Infrastructure &gt; Backup Repositories &gt; Add Repository &gt; Network attached storage &gt; SMB share</strong>. Le partage <code>\\192.168.19.22\RepoVeeam</code> (un dossier de <code>srv-fichiers</code>) était désigné avec le compte local <code>SRV-FICHIERS\Administrateur</code>.</p>
+<p>Dans la console Windows de l'appliance, lancée sur <code>srv-fichiers</code>, on suit le chemin classique : <strong>Backup Infrastructure &gt; Backup Repositories &gt; Add Repository &gt; Network attached storage &gt; SMB share</strong>. Le partage <code>\\192.168.19.22\RepoVeeam</code> (un dossier de <code>srv-fichiers</code>) est désigné avec le compte local <code>SRV-FICHIERS\Administrateur</code>.</p>
 <figure>
   <img alt="Assistant New Backup Repository de la console Windows, étape Share : dossier partagé \192.168.19.22\RepoVeeam, case « This share requires access credentials » cochée, compte SRV-FICHIERS\Administrateur, serveur passerelle en sélection automatique" loading="lazy" src="../images/04-depots/console-smb-partage-rempli.png" />
 <br />
@@ -3192,7 +3184,7 @@
 <p>Unable to investigate path '\192.168.19.22\RepoVeeam'. Reason: Kerberos authentication is not supported when accessing SMB shares via IP address. Fully qualified domain name (FQDN) is required. SMB share: [\192.168.19.22\RepoVeeam]</p>
 </div>
 <h3 id="32-lessai-avec-un-compte-local-dans-linterface-web">3.2 L'essai avec un compte local dans l'interface web<a class="headerlink" href="#32-lessai-avec-un-compte-local-dans-linterface-web" title="Permanent link">&para;</a></h3>
-<p>Autre piste : déclarer <code>srv-fichiers</code> comme serveur géré avec son <strong>compte local</strong>, c'est-à-dire un identifiant et un mot de passe (l'option <strong>Connect using admin credentials</strong> de l'assistant décrit en <a href="#6-declarer-srv-fichiers-comme-serveur-gere">section 6</a>). Dans le lab, l'essai a utilisé <code>SRV-FICHIERS\Administrateur</code> et le mot de passe <code>Popopo222@@@</code>.</p>
+<p>Autre piste : déclarer <code>srv-fichiers</code> comme serveur géré avec son <strong>compte local</strong>, c'est-à-dire un identifiant et un mot de passe (l'option <strong>Connect using admin credentials</strong> de l'assistant décrit en <a href="#6-declarer-srv-fichiers-comme-serveur-gere">section 6</a>), ici <code>SRV-FICHIERS\Administrateur</code> et le mot de passe <code>Popopo222@@@</code>.</p>
 <figure>
   <img alt="Fenêtre Credentials de l'interface web avec le nom d'utilisateur SRV-FICHIERS\Administrateur, le mot de passe masqué et la description « Administrateur local de srv-fichiers (groupe de travail) »" loading="lazy" src="../images/04-depots/ajout-serveur-identifiant-local.png" width="460" />
 <br />
@@ -3212,13 +3204,13 @@
 <p>Ces deux erreurs ont la même origine : l'appliance est un système <strong>durci, en mode FIPS</strong>, et <code>srv-fichiers</code> est en <strong>groupe de travail</strong> (aucun domaine Active Directory).</p>
 <ul>
 <li>Pour atteindre un partage Windows <strong>par adresse IP</strong>, l'appliance ne peut pas utiliser <strong>Kerberos</strong>, qui exige des <strong>noms</strong> (FQDN) et un domaine. C'est ce que dit le premier message.</li>
-<li>Avec un compte <strong>local</strong>, il reste le protocole <strong>NTLM</strong>. Dans le lab, l'ouverture de session échoue dès que l'appliance essaie, avec l'erreur <code>NT_STATUS_INVALID_PARAMETER</code>. L'explication la plus probable est que le mode <strong>FIPS</strong> (cryptographie validée par le gouvernement américain) interdit les algorithmes sur lesquels repose NTLM ; ce point n'a pas été vérifié plus avant dans le lab.</li>
+<li>Avec un compte <strong>local</strong>, il ne resterait que le protocole <strong>NTLM</strong>, que l'appliance n'utilise pas. Veeam a abandonné NTLM dans l'appliance de la version 13 : elle fonctionne selon les exigences <strong>FIPS</strong> (normes de cryptographie du gouvernement américain), et la documentation de Veeam précise qu'en mode FIPS, « NTLM est désactivé » et que <strong>Kerberos est le seul protocole d'authentification de domaine</strong>. L'ouverture de session échoue donc, avec l'erreur <code>NT_STATUS_INVALID_PARAMETER</code>.</li>
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">En entreprise</p>
-<p>Un <strong>domaine Active Directory</strong> résout le problème : les machines ont des noms complets, Kerberos fonctionne, et l'appliance peut s'authentifier avec un compte de domaine. Cette configuration n'a pas été rejouée dans le lab, qui reste en groupe de travail.</p>
+<p>Un <strong>domaine Active Directory</strong> résout le problème : les machines ont des noms complets, Kerberos fonctionne, et l'appliance peut s'authentifier avec un compte de domaine. Ce lab reste volontairement en groupe de travail, pour rester simple.</p>
 </div>
-<p>La solution retenue dans le lab évite complètement les mots de passe Windows : <strong>l'authentification par certificat</strong>, grâce au kit de déploiement (sections 5 et 6). Le dépôt n° 2 devient un dépôt <strong>Windows</strong> : le Data Mover s'exécute sur <code>srv-fichiers</code> lui-même, sans passerelle ni partage SMB.</p>
+<p>La solution retenue ici évite complètement les mots de passe Windows : <strong>l'authentification par certificat</strong>, grâce au kit de déploiement (sections 5 et 6). Le dépôt n° 2 devient un dépôt <strong>Windows</strong> : le Data Mover s'exécute sur <code>srv-fichiers</code> lui-même, sans passerelle ni partage SMB.</p>
 <hr />
 <h2 id="4-ajouter-le-disque-f-a-srv-fichiers-et-le-formater-en-refs-64-ko">4. Ajouter le disque <code>F:</code> à <code>srv-fichiers</code> et le formater en ReFS 64 Ko<a class="headerlink" href="#4-ajouter-le-disque-f-a-srv-fichiers-et-le-formater-en-refs-64-ko" title="Permanent link">&para;</a></h2>
 <h3 id="41-pourquoi-un-disque-dedie">4.1 Pourquoi un disque dédié ?<a class="headerlink" href="#41-pourquoi-un-disque-dedie" title="Permanent link">&para;</a></h3>
@@ -3232,11 +3224,8 @@
 <p>La <strong>taille de cluster</strong> (la plus petite unité d'allocation du système de fichiers) recommandée par Veeam est de <strong>64 Ko</strong>. Veeam avertit d'ailleurs lors de la création du dépôt si le volume n'est pas en ReFS (voir 7.2). Les conditions du clonage de blocs sont détaillées dans la documentation sur le <a href="https://helpcenter.veeam.com/docs/vbr/userguide/backup_repository_block_cloning.html">Fast Clone</a>.</p>
 <h3 id="43-ajouter-le-disque-virtuel-a-la-vm">4.3 Ajouter le disque virtuel à la VM<a class="headerlink" href="#43-ajouter-le-disque-virtuel-a-la-vm" title="Permanent link">&para;</a></h3>
 <p>L'ajout d'un disque se fait de préférence <strong>VM éteinte</strong>. 🪟 Éteindre <code>srv-fichiers</code> proprement (menu <strong>Démarrer &gt; Alimentation &gt; Arrêter</strong>), puis 🖥️ ajouter le disque dans l'hyperviseur.</p>
-<div class="admonition note">
-<p class="admonition-title">Variantes non rejouées dans le lab de référence</p>
-<p>Le lab a été rejoué sous <strong>KVM/libvirt</strong> ; l'onglet KVM est la seule procédure vérifiée. Les onglets VMware, VirtualBox et Proxmox suivent la documentation de chaque éditeur et n'ont pas été rejoués.</p>
-</div>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">VMware Workstation</label><label for="__tabbed_1_2">VirtualBox</label><label for="__tabbed_1_3">Proxmox VE</label><label for="__tabbed_1_4">KVM/libvirt (lab de référence)</label></div>
+<p>Les libellés peuvent varier légèrement selon la version de l'hyperviseur.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">VMware Workstation</label><label for="__tabbed_1_2">VirtualBox</label><label for="__tabbed_1_3">Proxmox VE</label><label for="__tabbed_1_4">KVM/libvirt</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <ol>
@@ -3295,7 +3284,7 @@
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Variante graphique</p>
-<p>Dans la <strong>Gestion des disques</strong> (<code>diskmgmt.msc</code>), on peut obtenir le même résultat : initialiser le disque en <strong>GPT</strong>, créer un <strong>nouveau volume simple</strong>, lui attribuer la lettre <code>F:</code>, puis choisir <strong>ReFS</strong>, une <strong>taille d'unité d'allocation</strong> de <strong>64 Ko</strong> et le nom <code>SAUVEGARDES</code>. Cette variante n'a pas été rejouée dans le lab ; la commande PowerShell ci-dessus est celle qui a été utilisée.</p>
+<p>Dans la <strong>Gestion des disques</strong> (<code>diskmgmt.msc</code>), on peut obtenir le même résultat : initialiser le disque en <strong>GPT</strong>, créer un <strong>nouveau volume simple</strong>, lui attribuer la lettre <code>F:</code>, puis choisir <strong>ReFS</strong>, une <strong>taille d'unité d'allocation</strong> de <strong>64 Ko</strong> et le nom <code>SAUVEGARDES</code>. La commande PowerShell reste plus rapide et évite les erreurs de saisie.</p>
 </div>
 <p>Vérifier le résultat :</p>
 <div class="highlight"><span class="filename">PowerShell : vérifier les volumes</span><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">Get-Volume</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="n">DriveLetter</span> <span class="p">|</span> <span class="nb">Format-Table</span> <span class="n">DriveLetter</span><span class="p">,</span><span class="n">FileSystemLabel</span><span class="p">,</span><span class="n">FileSystem</span><span class="p">,</span><span class="n">AllocationUnitSize</span><span class="p">,</span><span class="n">Size</span> <span class="n">-AutoSize</span>
@@ -3335,7 +3324,7 @@ Le volume <code>F:</code> est en <strong>ReFS</strong> avec des clusters de <str
 </ol>
 <div class="admonition warning">
 <p class="admonition-title">Le lien de téléchargement est à usage unique</p>
-<p>Le kit est généré à la demande, et son lien ne sert <strong>qu'une fois</strong>. Dans le lab, un second téléchargement avec le même lien a donné une erreur « 404 Not Found ». Si le fichier n'arrive pas ou est perdu, cliquer de nouveau sur <strong>Create Veeam Deployment Kit</strong> pour en générer un nouveau.</p>
+<p>Le kit est généré à la demande, et son lien ne sert <strong>qu'une fois</strong> : un second téléchargement avec le même lien renvoie une erreur « 404 Not Found ». Si le fichier n'arrive pas ou est perdu, cliquer de nouveau sur <strong>Create Veeam Deployment Kit</strong> pour en générer un nouveau.</p>
 </div>
 <div class="admonition danger">
 <p class="admonition-title">Le kit contient des clés</p>
@@ -3551,14 +3540,14 @@ Le volume <code>F:</code> est en <strong>ReFS</strong> avec des clusters de <str
 <h3 id="73-le-piege-du-doublon">7.3 Le piège du doublon<a class="headerlink" href="#73-le-piege-du-doublon" title="Permanent link">&para;</a></h3>
 <div class="admonition failure">
 <p class="admonition-title">Le dépôt n'apparaît pas dans la liste après « Finish » : ne pas relancer l'assistant</p>
-<p>Après <strong>Finish</strong>, l'interface web 13.1 crée le dépôt <strong>en arrière-plan</strong> et <strong>ne rafraîchit pas la liste</strong>. Dans le lab, la liste est restée sur un seul dépôt plus d'une minute alors que le dépôt existait déjà ; le premier passage de l'assistant a donc été refait, ce qui a créé un <strong>deuxième dépôt du même nom</strong> (<code>Depot-2-srv-fichiers</code> en double).</p>
+<p>Après <strong>Finish</strong>, l'interface web 13.1 crée le dépôt <strong>en arrière-plan</strong> et <strong>ne rafraîchit pas la liste</strong>. Il arrive que la liste n'affiche qu'un seul dépôt pendant plus d'une minute alors que le nouveau existe déjà. Relancer l'assistant à ce moment crée un <strong>deuxième dépôt du même nom</strong> (<code>Depot-2-srv-fichiers</code> en double).</p>
 <p>À faire à la place :</p>
 <ol>
 <li><strong>Patienter</strong> une à deux minutes.</li>
 <li>Cliquer sur la cloche <strong>Notifications</strong> et ouvrir <strong>Logs &amp; Events</strong> : une session <strong>Infrastructure Item Saving</strong> au résultat <strong>Success</strong> indique que la création est terminée.</li>
 <li>Recharger la page avec <span class="keys"><kbd class="key-f5">F5</kbd></span>, plusieurs fois si nécessaire.</li>
 </ol>
-<p>Si un doublon a déjà été créé : cocher <strong>l'un des deux dépôts</strong> (tous deux sont vides, <strong>0 B</strong> utilisés, tant qu'aucun job ne les utilise) et cliquer sur <strong>Remove</strong>. Dans le lab, le doublon a été retiré par l'API de Veeam ; la suppression par le bouton <strong>Remove</strong> n'a pas été rejouée. <strong>Ne jamais supprimer un dépôt qui contient des sauvegardes</strong> sans savoir ce que l'on fait.</p>
+<p>Si un doublon a déjà été créé : cocher <strong>l'un des deux dépôts</strong> (tous deux sont vides, <strong>0 B</strong> utilisés, tant qu'aucun job ne les utilise), cliquer sur <strong>Remove</strong> dans la barre d'outils, puis confirmer. Recharger la page : un seul <code>Depot-2-srv-fichiers</code> doit rester. <strong>Ne jamais supprimer un dépôt qui contient des sauvegardes</strong> sans savoir ce que l'on fait.</p>
 </div>
 <hr />
 <h2 id="8-verification">8. Vérification<a class="headerlink" href="#8-verification" title="Permanent link">&para;</a></h2>
@@ -3614,7 +3603,7 @@ Le volume <code>F:</code> est en <strong>ReFS</strong> avec des clusters de <str
 <li>Au choix : dépôt Windows ou Linux à disque local, dépôt durci Linux, partage réseau SMB ou NFS, stockage objet (Amazon S3, Azure Blob), appliance de déduplication.</li>
 <li>Un partage SMB ne peut pas exécuter le <strong>Data Mover</strong> : il faut une <strong>passerelle</strong> qui l'exécute à sa place. Sur un serveur Windows à disque local, le Data Mover tourne <strong>sur le serveur lui-même</strong>.</li>
 <li>À rendre les fichiers de sauvegarde <strong>immuables</strong> pendant 7 jours : ils ne peuvent ni être modifiés ni être supprimés, même par un administrateur. Cela protège contre un rançongiciel ou un compte administrateur volé.</li>
-<li>L'appliance est durcie (mode FIPS) et <code>srv-fichiers</code> est en groupe de travail. Par adresse IP, <strong>Kerberos</strong> n'est pas utilisable (un FQDN est exigé) ; avec un compte local, <strong>NTLM</strong> échoue (<code>NT_STATUS_INVALID_PARAMETER</code>). Un domaine Active Directory résoudrait le problème.</li>
+<li>L'appliance est durcie (mode FIPS) et <code>srv-fichiers</code> est en groupe de travail. Par adresse IP, <strong>Kerberos</strong> n'est pas utilisable (un FQDN est exigé) ; avec un compte local, il faudrait <strong>NTLM</strong>, que l'appliance n'utilise pas (<code>NT_STATUS_INVALID_PARAMETER</code>). Un domaine Active Directory résoudrait le problème.</li>
 <li>Il installe sur le serveur Windows un service Veeam et des <strong>certificats</strong>, ce qui permet l'<strong>authentification par certificat</strong> sans mot de passe ni domaine. Le lien est à <strong>usage unique</strong> : un second téléchargement renvoie une erreur 404 ; il faut régénérer le kit.</li>
 <li>Pour activer le <strong>clonage de blocs</strong> (<em>fast clone</em>) : les sauvegardes complètes synthétiques référencent des blocs existants au lieu de les recopier, ce qui économise temps et espace. Veeam recommande des clusters de 64 Ko et avertit si le volume est en NTFS.</li>
 <li><strong>Patienter</strong>, consulter les notifications et <strong>Logs &amp; Events</strong> (session <em>Infrastructure Item Saving</em>), puis recharger la page. Ne <strong>pas relancer l'assistant</strong> : cela crée un <strong>doublon</strong>, qu'il faudrait supprimer.</li>
@@ -3627,6 +3616,7 @@ Le volume <code>F:</code> est en <strong>ReFS</strong> avec des clusters de <str
 <li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/hardened_repository.html">Hardened Repository</a> — dépôt durci et immuabilité.</li>
 <li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/deployment_kit.html">Using Veeam Deployment Kit</a> — kit de déploiement et authentification par certificat.</li>
 <li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/backup_repository_block_cloning.html">Fast Clone</a> — clonage de blocs sur XFS et ReFS.</li>
+<li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/fips_compliance.html">FIPS Compliance</a> et <a href="https://helpcenter.veeam.com/docs/vbr/userguide/kerberos_authentication.html">Kerberos Authentication</a> — mode FIPS, NTLM désactivé, Kerberos seul protocole de domaine.</li>
 <li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/gateway_server.html">Gateway Servers</a> et <a href="https://helpcenter.veeam.com/docs/vbr/userguide/mount_server.html">Mount Servers</a> — rôles de la passerelle et du serveur de montage.</li>
 <li><a href="https://learn.microsoft.com/fr-fr/windows-server/storage/refs/block-cloning">Block cloning sur ReFS</a> — documentation Microsoft.</li>
 <li>Partie précédente : <a href="../03-preparer-le-lab-installer-appliance/">Préparer le lab et installer l'appliance</a> · Partie suivante : <a href="../05-sauvegarder-configuration-et-serveur-de-fichiers/">Sauvegarder la configuration et un serveur de fichiers</a>.</li>

@@ -2121,7 +2121,7 @@
   <span class="md-ellipsis">
     
   
-    7. Sauvegarder vers Azure Blob (non rejoué)
+    7. Sauvegarder vers Azure Blob Storage
   
 
     
@@ -2646,18 +2646,10 @@
 </tr>
 </tbody>
 </table>
-<!-- NOTE DE RÉDACTION (non affichée) : Ce qui a changé par rapport à la version 1.5 du support (juin 2024)
-- Le support décrivait la **version 12**, qui ne s'installait que sur Windows. La version 13 ajoute un serveur de sauvegarde **Linux** livré en appliance, une **interface web** et de nouveaux mécanismes de sécurité : la partie « Nouveautés » a été entièrement réécrite.
-- Les éditions et le cas particulier de la **Community Edition sur l'appliance** (restauration uniquement) ont été précisés.
-- Le positionnement de Veeam a été actualisé (Gartner 2025).
-- Les liens vers la Veeam University ont été mis à jour, l'ancien parcours n'existant plus à la même adresse.
-- La partie Veeam ONE (supervision) a été retirée du parcours.
--->
-
 <hr />
 <h2 id="1-veeam-et-sa-plateforme">1. Veeam et sa plateforme<a class="headerlink" href="#1-veeam-et-sa-plateforme" title="Permanent link">&para;</a></h2>
 <p><strong>Veeam Software</strong> est un éditeur fondé en 2006, spécialisé dans la sauvegarde et la restauration de données. Son logiciel phare, <strong>Veeam Backup &amp; Replication</strong>, est devenu une référence en entreprise, d'abord pour sauvegarder des machines virtuelles VMware, puis pour protéger à peu près tout ce qui contient des données.</p>
-<p>En 2025, le cabinet d'analystes Gartner a classé Veeam parmi les <strong>leaders</strong> de son <em>Magic Quadrant</em> des plateformes de sauvegarde et de protection des données, pour la neuvième année consécutive (<a href="https://www.veeam.com/company/press-release/veeam-positioned-as-a-leader-in-the-2025-gartner-magic-quadrant-for-backup-data-protection-platforms-for-the-ninth-consecutive-time.html">communiqué de Veeam</a>).</p>
+<p>En juin 2026, le cabinet d'analystes Gartner a classé Veeam parmi les <strong>leaders</strong> de son <em>Magic Quadrant</em> des plateformes de sauvegarde et de protection des données (<em>Backup and Data Protection Platforms</em>), pour la dixième fois consécutive. Veeam y est aussi placé, pour la septième fois de suite, le plus haut sur l'axe « capacité d'exécution » (<a href="https://www.veeam.com/company/press-release/not-just-protected-but-trusted-veeam-marks-a-decade-as-a-leader-in-the-2026-gartner-magic-quadrant-for-backup-and-data-protection-platforms.html">communiqué de Veeam, en anglais</a>).</p>
 <div class="admonition note">
 <p class="admonition-title">Lire un classement d'analystes avec recul</p>
 <p>Un <em>Magic Quadrant</em> compare des éditeurs sur leur vision et leur capacité d'exécution. C'est un indicateur de maturité, pas une preuve que le produit convient à un besoin précis. D'autres solutions sérieuses existent : Commvault, Rubrik, Cohesity, ou des solutions libres comme Bacula, Bareos, BorgBackup et Proxmox Backup Server.</p>
@@ -2689,7 +2681,13 @@
 </tr>
 </tbody>
 </table>
-<p>La plateforme est vendue en trois éditions de plus en plus complètes : <strong>Foundation</strong> (essentiellement VBR), <strong>Advanced</strong> (ajoute Veeam ONE) et <strong>Premium</strong> (ajoute Recovery Orchestrator). Veeam propose aussi des produits séparés : Veeam Backup for Microsoft 365, Kasten pour Kubernetes, Veeam Data Cloud (sauvegarde en mode service), etc.</p>
+<p>La plateforme est vendue en trois éditions, chacune reprenant la précédente :</p>
+<ul>
+<li><strong>Foundation</strong> : la sauvegarde et la restauration, c'est-à-dire Veeam Backup &amp; Replication ;</li>
+<li><strong>Advanced</strong> : ajoute Veeam ONE (supervision, rapports) et des outils de détection des menaces (Threat Hunter, recherche d'indicateurs de compromission) ;</li>
+<li><strong>Premium</strong> : ajoute Veeam Recovery Orchestrator (PRA orchestrés et testés, rapports de conformité).</li>
+</ul>
+<p>Veeam propose aussi des produits séparés : Veeam Backup for Microsoft 365, Kasten pour Kubernetes, Veeam Data Cloud (sauvegarde en mode service), etc.</p>
 <h3 id="11-ce-que-veeam-backup-replication-sait-proteger">1.1 Ce que Veeam Backup &amp; Replication sait protéger<a class="headerlink" href="#11-ce-que-veeam-backup-replication-sait-proteger" title="Permanent link">&para;</a></h3>
 <p>VBR sauvegarde et restaure des données situées dans des environnements très variés, sur site comme dans le cloud :</p>
 <table>
@@ -2725,7 +2723,7 @@
 <p>Dans ce parcours, aucun hyperviseur n'est piloté par VBR : on protège un <strong>serveur de fichiers Windows</strong> et un <strong>serveur Linux</strong> avec les <strong>agents</strong> Veeam, ce qui fonctionne quel que soit l'hyperviseur utilisé pour le lab.</p>
 <hr />
 <h2 id="2-les-nouveautes-de-la-version-13">2. Les nouveautés de la version 13<a class="headerlink" href="#2-les-nouveautes-de-la-version-13" title="Permanent link">&para;</a></h2>
-<p>Par rapport à la version 12, la version 13 (2025), puis la 13.1 (disponible depuis le 29 juillet 2026), changent profondément la façon de déployer et d'administrer VBR.</p>
+<p>Par rapport à la version 12, la version 13 (appliance Linux publiée le 3 septembre 2025, puis version 13.0.1 disponible pour Windows et pour l'appliance le 19 novembre 2025) et la 13.1 (disponible depuis le 29 juillet 2026) changent profondément la façon de déployer et d'administrer VBR.</p>
 <h3 id="21-un-serveur-de-sauvegarde-sous-linux-la-veeam-software-appliance">2.1 Un serveur de sauvegarde sous Linux : la Veeam Software Appliance<a class="headerlink" href="#21-un-serveur-de-sauvegarde-sous-linux-la-veeam-software-appliance" title="Permanent link">&para;</a></h3>
 <p>Jusqu'à la version 12, le serveur VBR s'installait <strong>uniquement sur Windows</strong>. La version 13 propose en plus la <strong>Veeam Software Appliance</strong> :</p>
 <ul>
@@ -2777,7 +2775,7 @@
 <p>Parmi les nouveautés (<a href="https://helpcenter.veeam.com/rn/veeam_backup_13_1_release_notes.html">notes de version</a>) :</p>
 <ul>
 <li>de nouveaux hyperviseurs (Citrix XenServer, XCP-ng, Sangfor aSV) et la réplication de VM Proxmox VE ;</li>
-<li>la gestion complète des <strong>agents Windows et Linux</strong> dans l'interface web, y compris la restauration <em>bare metal</em> de machines Windows ;</li>
+<li>la gestion complète des <strong>agents Windows et Linux</strong> dans l'interface web, y compris la restauration <em>bare metal</em> de machines Windows.</li>
 </ul>
 <hr />
 <h2 id="3-les-licences">3. Les licences<a class="headerlink" href="#3-les-licences" title="Permanent link">&para;</a></h2>
@@ -2827,7 +2825,7 @@
 <h2 id="4-les-composants-dune-infrastructure-veeam">4. Les composants d'une infrastructure Veeam<a class="headerlink" href="#4-les-composants-dune-infrastructure-veeam" title="Permanent link">&para;</a></h2>
 <p>Une infrastructure VBR se compose de plusieurs <strong>rôles</strong>. Dans une petite installation, tous sont regroupés sur une seule machine ; dans une grande, ils sont répartis sur des serveurs dédiés pour encaisser la charge et rapprocher les données de leur stockage.</p>
 <h3 id="41-le-serveur-de-sauvegarde-backup-server">4.1 Le serveur de sauvegarde (<em>backup server</em>)<a class="headerlink" href="#41-le-serveur-de-sauvegarde-backup-server" title="Permanent link">&para;</a></h3>
-<p>C'est le <strong>chef d'orchestre</strong>. Il conserve la configuration (dans une base de données PostgreSQL), planifie et lance les jobs, coordonne les autres composants et tient l'inventaire des sauvegardes. Il peut s'agir de l'appliance Linux ou d'un serveur Windows, physique ou virtuel.</p>
+<p>C'est le <strong>chef d'orchestre</strong>. Il conserve la configuration (dans une base de données PostgreSQL par défaut ; Microsoft SQL Server reste possible sur un serveur Windows), planifie et lance les jobs, coordonne les autres composants et tient l'inventaire des sauvegardes. Il peut s'agir de l'appliance Linux ou d'un serveur Windows, physique ou virtuel.</p>
 <h3 id="42-les-consoles">4.2 Les consoles<a class="headerlink" href="#42-les-consoles" title="Permanent link">&para;</a></h3>
 <p>La <strong>console Windows</strong>, l'<strong>interface web</strong> et <strong>Host Management</strong> (voir <a href="#22-trois-interfaces-dadministration">2.2</a>) sont les outils de l'administrateur. Elles se connectent au serveur de sauvegarde : on peut les utiliser depuis un autre poste que le serveur lui-même.</p>
 <h3 id="43-le-veeam-data-mover-demenageur-de-donnees">4.3 Le Veeam Data Mover (« déménageur de données »)<a class="headerlink" href="#43-le-veeam-data-mover-demenageur-de-donnees" title="Permanent link">&para;</a></h3>

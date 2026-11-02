@@ -1801,7 +1801,7 @@
   <span class="md-ellipsis">
     
   
-    7. Sauvegarder vers Azure Blob (non rejoué)
+    7. Sauvegarder vers Azure Blob Storage
   
 
     
@@ -2136,7 +2136,7 @@
 <h1 id="veeam-backup-replication-131-cours-et-travaux-pratiques">Veeam Backup &amp; Replication 13.1 : cours et travaux pratiques<a class="headerlink" href="#veeam-backup-replication-131-cours-et-travaux-pratiques" title="Permanent link">&para;</a></h1>
 <div class="admonition abstract">
 <p class="admonition-title">Résumé</p>
-<p>Ce parcours en sept parties apprend à <strong>protéger les données d'une petite infrastructure</strong> avec <strong>Veeam Backup &amp; Replication 13.1</strong>, l'un des logiciels de sauvegarde les plus répandus en entreprise. Il commence par deux cours (les principes de la sauvegarde, puis l'offre Veeam), continue par quatre travaux pratiques rejoués de bout en bout dans un laboratoire virtuel, et se termine par une partie illustrée sur la sauvegarde dans le cloud Azure.</p>
+<p>Ce parcours en sept parties apprend à <strong>protéger les données d'une petite infrastructure</strong> avec <strong>Veeam Backup &amp; Replication 13.1</strong>, l'un des logiciels de sauvegarde les plus répandus en entreprise. Il commence par deux cours (les principes de la sauvegarde, puis l'offre Veeam), continue par quatre travaux pratiques réalisés dans un laboratoire virtuel, et se termine par une partie illustrée sur la sauvegarde dans le cloud Azure.</p>
 <p>Au bout du parcours, un serveur de sauvegarde Veeam protège un <strong>serveur de fichiers Windows</strong> et un <strong>serveur Linux</strong>. Le serveur Linux aura été <strong>entièrement reconstruit</strong> à partir de sa sauvegarde, après une panne simulée.</p>
 <p>Cette page rassemble ce qu'il faut garder sous la main pendant tout le parcours : le plan, le schéma du lab, les adresses, les comptes et mots de passe, le dimensionnement des machines virtuelles et les instantanés conseillés.</p>
 </div>
@@ -2161,23 +2161,11 @@
 <td>Veeam Backup &amp; Replication <strong>13.1.2.57</strong> (Veeam Software Appliance, octobre 2026)</td>
 </tr>
 <tr>
-<td>Rejoué dans le lab</td>
-<td>Du 1er au 2 novembre 2026, sur KVM/libvirt (toutes les captures d'écran viennent de ce lab)</td>
-</tr>
-<tr>
 <td>Dernière mise à jour</td>
 <td>2026-11-02</td>
 </tr>
 </tbody>
 </table>
-<!-- NOTE DE RÉDACTION (non affichée) : Ce qui a changé par rapport à la version 1.5 du support (juin 2024)
-- Le support décrivait **Veeam Backup & Replication 12** installé sur un **Windows Server**. Le parcours utilise désormais la **Veeam Software Appliance 13.1**, le serveur de sauvegarde Linux durci que Veeam livre prêt à installer. L'installation et le dépôt local ont été réécrits en conséquence.
-- Toutes les parties pratiques ont été **rejouées dans un lab réel** en novembre 2026 ; les captures d'écran viennent de ce lab.
-- L'adressage reprend celui du TP [cluster pfSense en haute disponibilité](../../reseaux/cluster-haute-disponibilite-pfsense-carp-pfsync.md) du wiki : les machines du lab Veeam s'y branchent directement.
-- La partie sur **Veeam ONE** (supervision) a été retirée. La partie **Azure** n'a pas été rejouée et le signale clairement.
-- Un **test de restauration d'un fichier** a été ajouté à la partie 5 : une sauvegarde jamais restaurée n'est pas une sauvegarde fiable.
--->
-
 <hr />
 <h2 id="objectifs-du-parcours">Objectifs du parcours<a class="headerlink" href="#objectifs-du-parcours" title="Permanent link">&para;</a></h2>
 <p>À la fin du parcours, il est possible de :</p>
@@ -2248,7 +2236,7 @@
 <td style="text-align: center;"><a href="07-sauvegarder-vers-azure-blob/">7. Sauvegarder vers Azure Blob Storage</a></td>
 <td>Cours illustré</td>
 <td>1 h</td>
-<td>Dépôt objet dans Azure, job vers le cloud, dépannage <code>libfuse</code> (non rejoué)</td>
+<td>Dépôt objet dans Azure, job vers le cloud, dépannage <code>libfuse</code></td>
 <td>Aucune</td>
 </tr>
 </tbody>
@@ -2392,8 +2380,8 @@
 <thead>
 <tr>
 <th>Machine</th>
-<th>Confortable (utilisé dans le lab)</th>
-<th>Minimal (testé)</th>
+<th>Confortable (conseillé)</th>
+<th>Minimal</th>
 <th>Disques</th>
 </tr>
 </thead>
@@ -2425,7 +2413,7 @@
 </tbody>
 </table>
 <ul>
-<li>Pour l'appliance, Veeam demande au minimum <strong>8 cœurs et 16 Go de RAM</strong> (plus 500 Mo par job simultané), et accepte <strong>6 vCPU et 16 Go</strong> pour une petite infrastructure de 5 machines protégées au plus : c'est le profil <strong>confortable</strong>, celui avec lequel le lab a été rejoué. Le profil <strong>minimal</strong> (8 Go, 4 vCPU) est <strong>en dessous du minimum pris en charge par Veeam</strong> : il ne convient pas à la production, mais il a été testé dans le lab : l'appliance démarre, l'interface web reste utilisable et les deux jobs du parcours réussissent (environ 3 minutes chacun).</li>
+<li>Pour l'appliance, Veeam demande au minimum <strong>8 cœurs et 16 Go de RAM</strong> (plus 500 Mo par job simultané), et accepte <strong>6 vCPU et 16 Go</strong> pour une petite infrastructure de 5 machines protégées au plus : c'est le profil <strong>confortable</strong>, conseillé pour ce parcours. Le profil <strong>minimal</strong> (8 Go, 4 vCPU) est <strong>en dessous du minimum pris en charge par Veeam</strong> : il ne convient pas à la production, mais il suffit pour ce lab : l'appliance démarre, l'interface web reste utilisable et les deux jobs du parcours réussissent (environ 3 minutes chacun).</li>
 <li><strong>Mémoire du PC hôte</strong> : 32 Go permettent de tout allumer en profil confortable. Avec <strong>16 à 24 Go</strong>, prendre le profil minimal et n'allumer que les machines de la partie en cours (colonne « Machines allumées » du <a href="#plan-du-parcours">plan</a>), en fermant les applications inutiles du PC.</li>
 <li><strong>Disque du PC hôte</strong> : prévoir environ <strong>150 Go libres</strong>, de préférence sur un <strong>SSD</strong>. Les disques sont dynamiques : les 2 × 240 Go de l'appliance n'occupent au départ qu'une trentaine de gigaoctets ; l'espace occupé grandit ensuite avec les sauvegardes.</li>
 <li>La <strong>virtualisation matérielle</strong> (Intel VT-x ou AMD-V) doit être activée dans le BIOS/UEFI du PC.</li>

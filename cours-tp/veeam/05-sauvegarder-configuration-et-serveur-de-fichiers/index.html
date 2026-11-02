@@ -2287,7 +2287,7 @@
   <span class="md-ellipsis">
     
   
-    7. Sauvegarder vers Azure Blob (non rejoué)
+    7. Sauvegarder vers Azure Blob Storage
   
 
     
@@ -2998,24 +2998,11 @@
 <td>Partie 5 sur 7 du parcours <a href="../">Veeam Backup &amp; Replication</a></td>
 </tr>
 <tr>
-<td>Rejoué dans le lab</td>
-<td>2 novembre 2026 (KVM/libvirt)</td>
-</tr>
-<tr>
 <td>Dernière mise à jour</td>
 <td>2026-11-02</td>
 </tr>
 </tbody>
 </table>
-<!-- NOTE DE RÉDACTION (non affichée) : Ce qui a changé par rapport à la version 1.5 du support (juin 2024)
-- Le support utilisait Veeam Backup & Replication 12 **installé sur Windows**, avec la console Windows pour tout faire. Ici, le serveur est l'**appliance Linux 13.1** : le **job de sauvegarde** et le **groupe de protection** se créent dans l'**interface web**, alors que le **réglage de la sauvegarde de configuration** se fait dans la **console Windows**.
-- La **phrase secrète du Security Officer** (partie 3) est **obligatoire** pour que la sauvegarde de configuration d'une appliance réussisse : elle n'existait pas dans le support. Son absence fait échouer la tâche (voir l'encadré de dépannage de la section 2.5).
-- Le support envoyait la sauvegarde de configuration sur le dépôt local du serveur Veeam. Ce TP la dirige vers le **dépôt n° 2** (`Depot-2-srv-fichiers`), situé sur **une autre machine** : une sauvegarde de configuration stockée sur le serveur qu'elle protège disparaît avec lui.
-- Le support appelait « serveur de fichiers » une machine déclarée par son adresse et un compte administrateur. Dans ce lab, `srv-fichiers` est déjà un **serveur géré par certificat** depuis la partie 4 : le déploiement de l'agent passe par ce même mécanisme, **sans saisir de mot de passe**.
-- Le support corrigeait après coup une adresse IP erronée dans le job. Ce TP la fait saisir correctement une fois pour toutes, par le **groupe de protection**.
-- Un **test de restauration** (suppression volontaire d'un fichier, restauration, contrôle d'empreinte) a été ajouté : une sauvegarde jamais restaurée n'est pas une sauvegarde fiable.
--->
-
 <div class="admonition info">
 <p class="admonition-title">Convention de lecture</p>
 <p>Chaque action précise la machine sur laquelle elle se fait : 🖥️ PC hôte (hyperviseur), 🌐 navigateur web connecté à l'appliance, 🪟 <code>srv-fichiers</code> (Windows Server 2025), 📦 console de l'appliance <code>vbr</code>. Les menus et boutons sont écrits <strong>en anglais</strong>, comme Veeam les affiche, et traduits quand c'est utile. Les adresses, comptes et mots de passe sont ceux de la page <a href="../#plan-dadressage">d'accueil du parcours</a> ; pour mémoire :</p>
@@ -3148,7 +3135,7 @@
 <h2 id="2-sauvegarder-la-configuration-de-veeam">2. Sauvegarder la configuration de Veeam<a class="headerlink" href="#2-sauvegarder-la-configuration-de-veeam" title="Permanent link">&para;</a></h2>
 <div class="admonition info">
 <p class="admonition-title">Console Windows ou interface web ?</p>
-<p>Dans le lab, ce réglage a été fait dans la <strong>console Windows</strong>, comme le décrit la documentation de Veeam (menu principal, <strong>Configuration Backup</strong>). Les pages <strong>Configuration</strong> de l'interface web observées dans le lab ne proposaient pas ce réglage, et un article de la communauté Veeam sur la version 13 indique que la sauvegarde de configuration n'est pas encore disponible dans la console web. Ce dernier point n'a pas été vérifié plus avant : si une version ultérieure l'ajoute, la logique reste la même.</p>
+<p>Ce réglage se fait dans la <strong>console Windows</strong>, comme le décrit la documentation de Veeam (menu principal, <strong>Configuration Backup</strong>). Dans la version 13.1.2, les pages <strong>Configuration</strong> de l'interface web ne le proposent pas. Si une version ultérieure l'ajoute, la logique reste la même.</p>
 </div>
 <h3 id="21-ouvrir-les-reglages">2.1 Ouvrir les réglages<a class="headerlink" href="#21-ouvrir-les-reglages" title="Permanent link">&para;</a></h3>
 <ol>
@@ -3220,7 +3207,7 @@
 <h3 id="25-depanner-la-phrase-secrete-du-security-officer-manque">2.5 Dépanner : la phrase secrète du Security Officer manque<a class="headerlink" href="#25-depanner-la-phrase-secrete-du-security-officer-manque" title="Permanent link">&para;</a></h3>
 <div class="admonition failure">
 <p class="admonition-title">La tâche « Backup Configuration Job » échoue</p>
-<p>Si <strong>Backup now</strong> se termine en <strong>Failed</strong>, ouvrir le journal de la session. Dans le lab, avant que la phrase secrète n'existe, il contenait :</p>
+<p>Si <strong>Backup now</strong> se termine en <strong>Failed</strong>, ouvrir le journal de la session. Si la phrase secrète n'a pas encore été définie, il contient :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Failed  Processing configuration VeeamBackup at /run/postgresql
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Failed  Unable to process the configuration backup without the Security Officer's passphrase.
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>        Ask your Security Officer to configure it in the Host Management console.
@@ -3307,7 +3294,7 @@
 </figure>
 <div class="admonition question">
 <p class="admonition-title">Pourquoi l'authentification par certificat ?</p>
-<p>La seconde option, <strong>Connect using admin credentials</strong>, demande un compte administrateur de la machine. Le choix par certificat évite de saisir un mot de passe, et l'ordinateur est déjà <strong>connu</strong> de l'appliance : <code>srv-fichiers</code> a été ajouté comme <strong>serveur géré</strong> en partie 4, ce qui a installé le <em>Veeam Deployment Service</em> (le service <code>VeeamDeploySvc</code> tourne sur le serveur). La colonne <strong>Account</strong> de la liste indique d'ailleurs « Veeam Deployment Service ». Si la machine n'avait pas ce service, il faudrait passer par le compte administrateur (<code>Administrateur</code>, <code>Popopo222@@@</code>) : cette variante n'a pas été rejouée dans le lab.</p>
+<p>La seconde option, <strong>Connect using admin credentials</strong>, demande un compte administrateur de la machine. Le choix par certificat évite de saisir un mot de passe, et l'ordinateur est déjà <strong>connu</strong> de l'appliance : <code>srv-fichiers</code> a été ajouté comme <strong>serveur géré</strong> en partie 4, ce qui a installé le <em>Veeam Deployment Service</em> (le service <code>VeeamDeploySvc</code> tourne sur le serveur). La colonne <strong>Account</strong> de la liste indique d'ailleurs « Veeam Deployment Service ». Si la machine n'avait pas ce service, il faudrait passer par le compte administrateur (<code>Administrateur</code>, <code>Popopo222@@@</code>).</p>
 </div>
 <figure>
   <img alt="Étape Computers de l'assistant avec 192.168.19.22 ajouté et le compte Veeam Deployment Service" loading="lazy" src="../images/05-fichiers/groupe-protection-ordinateur-ajoute.png" />
@@ -3403,10 +3390,10 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c"># 🪟 srv-fichiers, PowerShell</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nb">Get-Service</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="n">DisplayName</span> <span class="o">-match</span> <span class="s1">'Veeam'</span> <span class="p">|</span> <span class="nb">Format-Table</span> <span class="n">Name</span><span class="p">,</span> <span class="n">DisplayName</span><span class="p">,</span> <span class="n">Status</span> <span class="n">-AutoSize</span>
 </code></pre></div>
-<p>Le résultat doit inclure le service <strong>Veeam Agent for Microsoft Windows</strong> (<code>VeeamEndpointBackupSvc</code>) à l'état <strong>Running</strong>, à côté du service d'installation <code>VeeamDeploySvc</code> et de services d'aide à la restauration (<code>VeeamExplorersRecoverySvc</code>, <code>VeeamMountSvc</code>, <code>VeeamTransportSvc</code>…). Dans le lab, tous étaient <strong>Running</strong>.</p>
+<p>Le résultat doit inclure le service <strong>Veeam Agent for Microsoft Windows</strong> (<code>VeeamEndpointBackupSvc</code>) à l'état <strong>Running</strong>, à côté du service d'installation <code>VeeamDeploySvc</code> et de services d'aide à la restauration (<code>VeeamExplorersRecoverySvc</code>, <code>VeeamMountSvc</code>, <code>VeeamTransportSvc</code>…), tous normalement à l'état <strong>Running</strong>.</p>
 <div class="admonition failure">
 <p class="admonition-title">Le rescan se termine en erreur</p>
-<p>Avant d'incriminer Veeam, vérifier dans l'ordre : l'adresse saisie (<code>192.168.19.22</code>), la communication réseau entre <code>vbr</code> et <code>srv-fichiers</code> (un <code>ping</code> depuis la VM), le <strong>pare-feu Windows</strong>, et que le service <strong>VeeamDeploySvc</strong> tourne sur <code>srv-fichiers</code>. Ouvrir le détail de la session depuis <strong>Logs &amp; Events</strong> pour lire le message complet. Ce cas ne s'est pas produit dans le lab.</p>
+<p>Avant d'incriminer Veeam, vérifier dans l'ordre : l'adresse saisie (<code>192.168.19.22</code>), la communication réseau entre <code>vbr</code> et <code>srv-fichiers</code> (un <code>ping</code> depuis la VM), le <strong>pare-feu Windows</strong>, et que le service <strong>VeeamDeploySvc</strong> tourne sur <code>srv-fichiers</code>. Ouvrir le détail de la session depuis <strong>Logs &amp; Events</strong> pour lire le message complet.</p>
 </div>
 <hr />
 <h2 id="4-creer-le-job-de-sauvegarde-du-dossier">4. Créer le job de sauvegarde du dossier<a class="headerlink" href="#4-creer-le-job-de-sauvegarde-du-dossier" title="Permanent link">&para;</a></h2>
@@ -3636,7 +3623,7 @@
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Le navigateur de restauration ne s'ouvre pas ?</p>
-<p>D'après la documentation de Veeam, la restauration de fichiers s'ouvre dans une fenêtre dédiée : si le navigateur bloque les <strong>fenêtres surgissantes</strong> (<em>pop-ups</em>), autoriser celles de <code>https://192.168.19.55</code> dans les réglages du navigateur, puis relancer <strong>Restore Guest Files</strong>.</p>
+<p>Le navigateur de restauration s'ouvre dans une <strong>nouvelle fenêtre</strong>. Si rien n'apparaît, le navigateur web bloque sans doute les <strong>fenêtres contextuelles</strong> (<em>pop-ups</em>) : cliquer sur l'icône de blocage qui s'affiche dans la barre d'adresse, autoriser les fenêtres contextuelles pour <code>https://192.168.19.55</code>, puis relancer <strong>Restore Guest Files</strong>.</p>
 </div>
 <h3 id="53-retrouver-le-fichier">5.3 Retrouver le fichier<a class="headerlink" href="#53-retrouver-le-fichier" title="Permanent link">&para;</a></h3>
 <p>Une fenêtre <strong>Browse - SRV-FICHIERS</strong> s'ouvre avec l'arborescence de la machine. Deux méthodes pour trouver le fichier :</p>
@@ -3649,7 +3636,7 @@
 <br />
 <figcaption>L'arborescence de <code>SRV-FICHIERS</code> telle qu'elle était lors de la sauvegarde, avec son disque <code>E:</code>.</figcaption>
 </figure>
-<p>La recherche a trouvé dans le lab un seul fichier : <code>factures-2026.csv</code>, de type <strong>File</strong>, d'une taille de <strong>126 octets</strong>, dans <code>E:\Documents-importants\Comptabilite</code>.</p>
+<p>La recherche renvoie un seul fichier : <code>factures-2026.csv</code>, de type <strong>File</strong>, d'une taille de <strong>126 octets</strong>, dans <code>E:\Documents-importants\Comptabilite</code>.</p>
 <figure>
   <img alt="Résultat de la recherche « factures » : le fichier factures-2026.csv de 126 octets" loading="lazy" src="../images/05-fichiers/restauration-recherche.png" />
 <br />
@@ -3674,7 +3661,7 @@
 </tr>
 <tr>
 <td><strong>Keep</strong></td>
-<td><strong>Conserve</strong> le fichier actuel et enregistre celui de la sauvegarde <strong>à côté</strong>. D'après la documentation de Veeam, s'il existe déjà un fichier de même nom, la copie restaurée reçoit le suffixe <code>_RESTORED_</code> suivi de la date et de l'heure</td>
+<td><strong>Conserve</strong> le fichier actuel et enregistre celui de la sauvegarde <strong>à côté</strong>, dans le même dossier. S'il existe déjà un fichier de même nom, la copie restaurée reçoit le suffixe <code>_RESTORED_AAAAMMJJ_HHMMSS</code> (date et heure de la restauration)</td>
 </tr>
 <tr>
 <td><strong>Permissions only</strong></td>
@@ -3725,7 +3712,7 @@
 <ul>
 <li><strong>Fichier absent</strong> : la restauration a peut-être écrit le fichier avec le suffixe <code>_RESTORED_…</code> (si un fichier du même nom existait déjà) : lister le dossier complet.</li>
 <li><strong>Empreinte différente</strong> : vérifier qu'on compare le <strong>même fichier</strong>, et que le fichier n'a pas été modifié <strong>avant</strong> la sauvegarde (le job ne conserve que ce qu'il a lu à 22 h ou au lancement manuel). Ne pas considérer la sauvegarde comme fiable avant d'avoir compris l'écart.</li>
-<li><strong>Le navigateur de restauration ne s'ouvre pas</strong> : voir l'encadré sur les fenêtres surgissantes en 5.2.</li>
+<li><strong>Le navigateur de restauration ne s'ouvre pas</strong> : voir l'encadré sur les fenêtres contextuelles en 5.2.</li>
 </ul>
 </div>
 <h3 id="56-pour-aller-plus-loin">5.6 Pour aller plus loin<a class="headerlink" href="#56-pour-aller-plus-loin" title="Permanent link">&para;</a></h3>
@@ -3739,7 +3726,7 @@
 </div>
 <div class="admonition example">
 <p class="admonition-title">Exercice : restaurer vers un autre emplacement</p>
-<p>Le menu propose aussi <strong>Restore To</strong> et <strong>Download</strong> (non testés dans le lab). Selon la liste des limites de l'interface web dans la documentation de Veeam, la restauration de fichiers invités vers <strong>un autre emplacement</strong> se fait plutôt dans la <strong>console Windows</strong> (clic droit sur la machine dans <strong>Backups</strong>, <strong>Restore guest files</strong> &gt; <strong>Microsoft Windows</strong>). Essayer d'y restaurer <code>factures-2026.csv</code> dans <code>E:\Restauration-test</code>, puis comparer l'empreinte.</p>
+<p>Le navigateur de restauration propose aussi <strong>Restore To</strong> (restaurer vers une autre machine ou un autre dossier) et <strong>Download</strong> (télécharger les éléments choisis, dans une archive <code>.zip</code>, sur le poste où le navigateur web est ouvert). Selon la liste des limites de l'interface web dans la documentation de Veeam, la restauration de fichiers invités vers <strong>un autre emplacement</strong> se fait plutôt dans la <strong>console Windows</strong> (clic droit sur la machine dans <strong>Backups</strong>, <strong>Restore guest files</strong> &gt; <strong>Microsoft Windows</strong>). Essayer d'y restaurer <code>factures-2026.csv</code> dans <code>E:\Restauration-test</code>, puis comparer l'empreinte.</p>
 </div>
 <hr />
 <h2 id="6-verification-de-fin-de-partie">6. Vérification de fin de partie<a class="headerlink" href="#6-verification-de-fin-de-partie" title="Permanent link">&para;</a></h2>
@@ -3783,7 +3770,7 @@
 <li>Le groupe permet à l'appliance de <strong>déployer et mettre à jour l'agent</strong>, de <strong>réanalyser</strong> régulièrement les machines et de <strong>suivre automatiquement</strong> celles qu'on ajoute : le job désigne le groupe, pas chaque machine.</li>
 <li><strong>Entire machine</strong> : image complète, pour reconstruire la machine. <strong>Volume-level</strong> : des volumes entiers choisis. <strong>File-level</strong> : seulement les fichiers et dossiers désignés, sans le système, adapté à un dossier précis.</li>
 <li>Pour que les données et leur copie soient sur <strong>deux machines différentes</strong>, et parce que ce dépôt est <strong>immuable</strong> (7 jours dans le lab), ce qui protège contre la suppression des sauvegardes.</li>
-<li><strong>Overwrite</strong> remplace le fichier actuel par celui de la sauvegarde. <strong>Keep</strong> garde le fichier actuel et restaure l'ancien à côté (suffixe <code>_RESTORED_</code> + date si un fichier de même nom existe). <strong>Permissions only</strong> ne restaure que les droits d'accès, pas le contenu.</li>
+<li><strong>Overwrite</strong> remplace le fichier actuel par celui de la sauvegarde. <strong>Keep</strong> garde le fichier actuel et restaure l'ancien à côté (suffixe <code>_RESTORED_</code> + date et heure si un fichier de même nom existe). <strong>Permissions only</strong> ne restaure que les droits d'accès, pas le contenu.</li>
 <li>À <strong>prouver que le fichier restauré est identique à l'original</strong> : si une seule différence existe, l'empreinte change. C'est un test objectif, plus fiable qu'un simple coup d'œil.</li>
 </ol>
 </details>
@@ -3796,6 +3783,7 @@
 <li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/protection_group.html">Groupes de protection (documentation Veeam)</a> — types de groupes et déploiement des agents.</li>
 <li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/agent_job_create_win_web.html">Créer un job de sauvegarde par agent pour Windows, console web (documentation Veeam)</a> — les étapes de l'assistant.</li>
 <li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/guest_file_recovery.html">Restauration de fichiers invités (documentation Veeam)</a> — montage, serveur de montage, Overwrite et Keep.</li>
+<li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/guest_restore_save_vm_web.html">Restaurer des fichiers invités dans l'interface web, étape Finalize Recovery (documentation Veeam)</a> — Keep, Overwrite, Download et suffixe <code>RESTORED_</code>.</li>
 <li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/web_ui_limitations.html">Limites de l'interface web (documentation Veeam)</a> — ce que l'interface web ne permet pas encore.</li>
 <li>Partie précédente : <a href="../04-ajouter-des-depots-de-sauvegarde/">Ajouter des dépôts de sauvegarde</a> · Partie suivante : <a href="../06-sauvegarder-restaurer-serveur-linux/">Sauvegarder et restaurer un serveur Linux</a> · Retour au <a href="../">sommaire du parcours</a>.</li>
 </ul>

@@ -2182,7 +2182,7 @@
   <span class="md-ellipsis">
     
   
-    7. Sauvegarder vers Azure Blob (non rejoué)
+    7. Sauvegarder vers Azure Blob Storage
   
 
     
@@ -2784,13 +2784,6 @@
 </tr>
 </tbody>
 </table>
-<!-- NOTE DE RÉDACTION (non affichée) : Ce qui a changé par rapport à la version 1.5 du support (juin 2024)
-- Toutes les illustrations ont été redessinées sous forme de schémas.
-- Plusieurs nuances ont été ajoutées ou corrigées : une réplication n'est pas toujours « en temps réel », une synchronisation et un RAID **ne sont pas** des sauvegardes, et les faits de l'incident GitLab de 2017 ont été précisés (les données ont finalement été récupérées, avec six heures de perte).
-- Nouveaux paragraphes : sauvegarde incrémentielle permanente, sauvegarde complète synthétique, rétention, chiffrement, équivalents français de RPO et RTO (PDMA et DMIA).
-- Nouveaux exercices corrigés.
--->
-
 <hr />
 <h2 id="1-sauvegarde-synchronisation-replication-raid-quelles-differences">1. Sauvegarde, synchronisation, réplication, RAID : quelles différences ?<a class="headerlink" href="#1-sauvegarde-synchronisation-replication-raid-quelles-differences" title="Permanent link">&para;</a></h2>
 <p>Ces quatre techniques copient toutes des données d'un endroit à un autre. Vues de loin, elles se ressemblent. Elles ne protègent pourtant <strong>pas contre les mêmes dangers</strong> :</p>
@@ -2973,8 +2966,8 @@
 <h2 id="2-pourquoi-sauvegarder">2. Pourquoi sauvegarder ?<a class="headerlink" href="#2-pourquoi-sauvegarder" title="Permanent link">&para;</a></h2>
 <p>La perte de données arrive pour des raisons très variées : suppression accidentelle, panne matérielle, bug logiciel, <strong>rançongiciel</strong> (<em>ransomware</em>, un logiciel malveillant qui chiffre les données et réclame une rançon), vol, incendie, inondation. Aucune entreprise n'y échappe, quelle que soit sa taille.</p>
 <p>Deux exemples célèbres :</p>
-<p><strong>MySpace (2019).</strong> Ce réseau social pionnier a reconnu qu'à la suite d'une migration de serveurs, les photos, vidéos et morceaux de musique envoyés par ses utilisateurs entre 2003 et 2015 n'étaient peut-être plus disponibles : environ 50 millions de morceaux de 14 millions d'artistes. MySpace n'en avait aucune sauvegarde exploitable ; seule une petite partie (environ 490 000 morceaux) a pu être retrouvée grâce à une copie indépendante, publiée ensuite par Internet Archive<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>.</p>
-<p><strong>GitLab (2017).</strong> En pleine nuit, un administrateur fatigué a supprimé par erreur environ 300 Go de données de la base de production, en se trompant de serveur. Sur les cinq mécanismes de sauvegarde et de réplication en place, <strong>aucun ne fonctionnait correctement</strong> : sauvegardes quotidiennes qui produisaient des fichiers vides sans que personne ne le remarque, courriels d'alerte rejetés, instantanés de disques non activés. Les données ont finalement été restaurées à partir d'un instantané fait <strong>six heures plus tôt</strong> pour un autre usage : six heures de données de la base (tickets, commentaires, nouveaux comptes…) ont été perdues — les dépôts Git eux-mêmes n'étaient pas touchés — et l'entreprise a dû s'expliquer publiquement<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>.</p>
+<p><strong>MySpace (2019).</strong> En mars 2019, ce réseau social pionnier a reconnu qu'à la suite d'une migration de serveurs, les photos, vidéos et morceaux de musique envoyés par ses utilisateurs entre 2003 et 2015 n'étaient peut-être plus disponibles : environ 50 millions de morceaux de 14 millions d'artistes, soit douze ans de musique. MySpace n'en avait aucune sauvegarde exploitable ; seule une petite partie (environ 490 000 morceaux, mis en ligne entre 2008 et 2010) a pu être retrouvée grâce à une copie indépendante, publiée en avril 2019 par Internet Archive<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>.</p>
+<p><strong>GitLab (2017).</strong> Tard dans la soirée du 31 janvier 2017, un administrateur a supprimé par erreur environ 300 Go de données de la base de production, en se trompant de serveur. Sur les cinq mécanismes de sauvegarde et de réplication en place, <strong>aucun ne fonctionnait correctement</strong> : sauvegardes quotidiennes qui produisaient des fichiers de quelques octets sans que personne ne le remarque, courriels d'alerte rejetés, instantanés de disques non activés. Les données ont finalement été restaurées à partir d'un instantané fait <strong>six heures plus tôt</strong> pour un autre usage : six heures de données de la base (tickets, commentaires, nouveaux comptes…) ont été perdues — les dépôts Git eux-mêmes n'étaient pas touchés — et l'entreprise a dû s'expliquer publiquement<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>.</p>
 <div class="admonition example">
 <p class="admonition-title">La leçon de GitLab</p>
 <p>Avoir des sauvegardes ne suffit pas : il faut <strong>surveiller</strong> qu'elles se font et <strong>tester</strong> régulièrement les restaurations. C'est exactement le « 0 » de la règle 3-2-1-1-0 vue plus bas.</p>
@@ -3221,16 +3214,16 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p>À ses débuts, en 1987 à l'université de Berkeley, l'acronyme signifiait <em>Redundant Array of Inexpensive Disks</em>, « regroupement redondant de disques peu onéreux ».&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>Le terme a été forgé à l'université de Berkeley par David Patterson, Garth Gibson et Randy Katz, et rendu public par leur article de 1988, <em>A Case for Redundant Arrays of Inexpensive Disks (RAID)</em>. À l'origine, l'acronyme signifiait donc <em>Redundant Array of Inexpensive Disks</em>, « regroupement redondant de disques peu onéreux ».&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
 <p>Pour approfondir les niveaux imbriqués : <a href="https://en.wikipedia.org/wiki/Nested_RAID_levels"><em>Nested RAID levels</em> sur Wikipédia (en anglais)</a>.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:3">
-<p>Sources : <a href="https://www.lepoint.fr/high-tech-internet/myspace-a-perdu-douze-annees-de-musique-18-03-2019-2302123_47.php">Le Point, 18 mars 2019</a> ; <a href="https://www.lefigaro.fr/secteur/high-tech/2019/03/18/32001-20190318ARTFIG00142-myspace-a-perdu-12-ans-de-morceaux-de-musique.php">Le Figaro, 18 mars 2019</a>.&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p>Sources : <a href="https://www.lefigaro.fr/secteur/high-tech/2019/03/18/32001-20190318ARTFIG00142-myspace-a-perdu-12-ans-de-morceaux-de-musique.php">Le Figaro, 18 mars 2019</a> ; <a href="https://archive.org/details/myspace_dragon_hoard_2010">la collection <em>MySpace Dragon Hoard</em> d'Internet Archive (en anglais)</a>.&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 <li id="fn:4">
-<p>Sources : <a href="https://about.gitlab.com/blog/postmortem-of-database-outage-of-january-31/">le compte rendu officiel de GitLab (en anglais)</a> ; <a href="https://www.nextinpact.com/article/25411/103135-gitlab-erreur-humaine-et-sauvegardes-defaillantes-entrainent-perte-300-go-donnees">Next INpact, 1er février 2017</a>.&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+<p>Sources : <a href="https://about.gitlab.com/blog/postmortem-of-database-outage-of-january-31/">le compte rendu officiel de GitLab (en anglais)</a> ; <a href="https://next.ink/10864/103135-gitlab-erreur-humaine-et-sauvegardes-defaillantes-entrainent-perte-300-go-donnees/">Next, 2 février 2017</a>.&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -2354,7 +2354,7 @@
   <span class="md-ellipsis">
     
   
-    7. Sauvegarder vers Azure Blob (non rejoué)
+    7. Sauvegarder vers Azure Blob Storage
   
 
     
@@ -3135,25 +3135,11 @@
 <td>Partie 6 sur 7 du parcours <a href="../">Veeam Backup &amp; Replication</a></td>
 </tr>
 <tr>
-<td>Rejoué dans le lab</td>
-<td>2 novembre 2026 (KVM/libvirt)</td>
-</tr>
-<tr>
 <td>Dernière mise à jour</td>
 <td>2026-11-02</td>
 </tr>
 </tbody>
 </table>
-<!-- NOTE DE RÉDACTION (non affichée) : Ce qui a changé par rapport à la version 1.5 du support (juin 2024)
-- Le support utilisait un serveur Veeam 12 sous **Windows** et un dépôt en **RAID 1** créé sur ce serveur. Ici, c'est l'**appliance Linux 13.1** et son **dépôt par défaut** (`Default Backup Repository`, immuable 7 jours) qui jouent ce rôle : aucune création de RAID ni de dépôt n'est nécessaire.
-- Le groupe de protection, le job et les restaurations se font dans l'**interface web** (`https://192.168.19.55`) et non plus dans la console Windows.
-- Le support affirmait qu'un **compte Veeam est indispensable** pour télécharger l'ISO de récupération : c'est **faux**. L'ISO est téléchargeable **sans compte** depuis le dépôt public de Veeam (lien et vérification en [section 7](#7-telecharger-et-attacher-liso-de-recuperation) de ce TP).
-- Le support demandait de taper **`sudo veeam`** au démarrage du support de récupération : c'est **dépassé**. Avec la version 13, l'écran de licence s'affiche directement, puis le menu principal.
-- Pour se connecter au serveur Veeam depuis le support de récupération, le support utilisait le compte Windows du serveur (champ *Domain* `WORKGROUP`). La version 13 propose un **jeton de récupération** (*recovery token*) créé dans l'interface web : plus besoin de communiquer le mot de passe administrateur à une machine en panne.
-- **Nouveau** : le dépannage de **Secure Boot** (module noyau DKMS refusé) et celui de la résolution du nom `vbr`, rencontrés dans le lab.
-- Le support d'origine avait été rédigé par une autre personne, avec un lab légèrement différent : les valeurs (adresses, tailles de disques) ont été harmonisées avec le reste du parcours.
--->
-
 <div class="admonition note">
 <p class="admonition-title">Convention de lecture</p>
 <p>Chaque action est précédée de la machine sur laquelle elle se fait :</p>
@@ -3387,7 +3373,7 @@
 <figcaption>Rescan réussi : l'agent est en place sur srv-debian.</figcaption>
 </figure>
 <h3 id="25-ce-que-lagent-a-installe">2.5 Ce que l'agent a installé<a class="headerlink" href="#25-ce-que-lagent-a-installe" title="Permanent link">&para;</a></h3>
-<p>Sur 🐧 <strong>srv-debian</strong>, on peut constater ce que le déploiement a ajouté (le journal du lab en témoigne) :</p>
+<p>Sur 🐧 <strong>srv-debian</strong>, on peut constater ce que le déploiement a ajouté :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">$ </span>dpkg<span class="w"> </span>-l<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">"veeam|fuse|blksnap"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $1,$2,$3}'</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="go">ii blksnap 13.1.2.11</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="go">ii libfuse2t64:amd64 2.9.9-9</span>
@@ -3427,8 +3413,8 @@
 </table>
 <p>Le journal d'installation de Debian montre aussi que l'agent a fait installer, par <code>apt</code>, tout le nécessaire à la compilation : <strong>les en-têtes du noyau</strong> (<code>linux-headers-6.12.113+deb13-amd64</code>), <strong><code>dkms</code></strong>, <strong><code>build-essential</code></strong> (compilateur <code>gcc</code>, <code>make</code>…), <strong><code>lvm2</code></strong> et <strong><code>libfuse2t64</code></strong>.</p>
 <div class="admonition success">
-<p class="admonition-title">L'article 7 disait vrai : <code>libfuse</code> s'installe seule sur Debian 13</p>
-<p>Dans le lab, c'est bien <strong>l'agent</strong> qui a installé <code>libfuse2t64</code> (paquet de la bibliothèque FUSE 2) pendant le déploiement : aucune commande manuelle. <code>libfuse3-4</code> était déjà présent. Le problème de <code>libfuse</code> décrit en <a href="../07-sauvegarder-vers-azure-blob/#33-depanner-lechec-du-rescan-la-bibliotheque-libfuse">partie 7</a> concerne une machine qui n'avait <strong>pas accès</strong> aux dépôts de paquets au moment du déploiement. Deux conséquences : <code>srv-debian</code> doit <strong>sortir sur Internet</strong> pendant l'installation, et le déploiement est plus long qu'on l'imagine (plusieurs dizaines de paquets).</p>
+<p class="admonition-title"><code>libfuse</code> s'installe seule sur Debian 13</p>
+<p>C'est bien <strong>l'agent</strong> qui installe <code>libfuse2t64</code> (paquet de la bibliothèque FUSE 2) pendant le déploiement : aucune commande manuelle. <code>libfuse3-4</code> était déjà présent. Le problème de <code>libfuse</code> décrit en <a href="../07-sauvegarder-vers-azure-blob/#33-depanner-lechec-du-rescan-la-bibliotheque-libfuse">partie 7</a> concerne une machine qui n'avait <strong>pas accès</strong> aux dépôts de paquets au moment du déploiement. Deux conséquences : <code>srv-debian</code> doit <strong>sortir sur Internet</strong> pendant l'installation, et le déploiement est plus long qu'on l'imagine (plusieurs dizaines de paquets).</p>
 </div>
 <hr />
 <h2 id="3-creer-le-job-de-sauvegarde-machine-entiere">3. Créer le job de sauvegarde « machine entière »<a class="headerlink" href="#3-creer-le-job-de-sauvegarde-machine-entiere" title="Permanent link">&para;</a></h2>
@@ -3532,7 +3518,7 @@
 <br />
 <figcaption>Résumé du job. Le résumé donne aussi la commande PowerShell équivalente, pratique pour automatiser.</figcaption>
 </figure>
-<p>Le job démarre. Dans le lab, <strong>le premier essai a échoué</strong>.</p>
+<p>Le job démarre. Il arrive que <strong>le premier essai échoue</strong>, comme ici.</p>
 <figure>
   <img alt="Liste des jobs : le job Linux Agent Backup est au statut Failed" loading="lazy" src="../images/06-linux/job-08-echec.png" />
 <br />
@@ -3553,7 +3539,7 @@
 </code></pre></div>
 </li>
 </ol>
-<p>Deux messages importants apparaissent dans le journal du lab.</p>
+<p>Deux messages importants peuvent y apparaître.</p>
 <h3 id="42-erreur-n-1-secure-boot-refuse-le-module-noyau">4.2 Erreur n° 1 : Secure Boot refuse le module noyau<a class="headerlink" href="#42-erreur-n-1-secure-boot-refuse-le-module-noyau" title="Permanent link">&para;</a></h3>
 <div class="admonition failure">
 <p class="admonition-title">Message d'erreur</p>
@@ -3575,9 +3561,9 @@
 <p>Vérification : <code>dkms status</code> indique que le module est bien <strong>installed</strong>, et <code>modinfo veeamblksnap</code> le trouve dans <code>/lib/modules/…/updates/dkms/</code>.</p>
 </div>
 <p>Deux solutions existent.</p>
-<h4 id="solution-a-retenue-dans-le-lab-desactiver-secure-boot">Solution A (retenue dans le lab) : désactiver Secure Boot<a class="headerlink" href="#solution-a-retenue-dans-le-lab-desactiver-secure-boot" title="Permanent link">&para;</a></h4>
+<h4 id="solution-a-la-plus-simple-pour-un-lab-desactiver-secure-boot">Solution A (la plus simple pour un lab) : désactiver Secure Boot<a class="headerlink" href="#solution-a-la-plus-simple-pour-un-lab-desactiver-secure-boot" title="Permanent link">&para;</a></h4>
 <p>C'est la plus simple pour un lab. <strong>Éteindre</strong> la VM, puis :</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">VMware Workstation</label><label for="__tabbed_1_2">VirtualBox</label><label for="__tabbed_1_3">Proxmox VE</label><label for="__tabbed_1_4">KVM / libvirt (rejoué dans le lab)</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">VMware Workstation</label><label for="__tabbed_1_2">VirtualBox</label><label for="__tabbed_1_3">Proxmox VE</label><label for="__tabbed_1_4">KVM / libvirt</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <ol>
@@ -3612,10 +3598,7 @@
 </div>
 </div>
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Les réglages VMware, VirtualBox et Proxmox n'ont pas été rejoués</p>
-<p>Le lab de 2026 tourne sous KVM/libvirt. Les trois premiers onglets s'appuient sur la documentation de chaque produit : les libellés peuvent différer légèrement selon la version. Seul l'onglet KVM a été exécuté.</p>
-</div>
+<p>Les libellés peuvent varier légèrement selon la version de l'hyperviseur.</p>
 <p>Vérification, une fois la VM redémarrée :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="gp">$ </span>mokutil<span class="w"> </span>--sb-state
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="go">This system doesn't support Secure Boot</span>
@@ -3623,54 +3606,81 @@
 <a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="go">veeamblksnap          155648  0</span>
 <a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="go">bdevfilter             94208  1 veeamblksnap</span>
 </code></pre></div>
-<p>Dans le lab, le message est « <em>This system doesn't support Secure Boot</em> » parce que le firmware utilisé n'a pas de Secure Boot du tout ; avec un firmware qui le propose mais désactivé (VMware, par exemple), on lit plutôt <code>SecureBoot disabled</code>. L'important est que <code>modprobe</code> <strong>réussisse</strong> et que <code>veeamblksnap</code> apparaisse dans <code>lsmod</code>.</p>
+<p>Avec KVM/libvirt et le réglage ci-dessus, le message est « <em>This system doesn't support Secure Boot</em> » parce que le firmware choisi n'a pas de Secure Boot du tout ; avec un firmware qui le propose mais désactivé (VMware, par exemple), on lit plutôt <code>SecureBoot disabled</code>. L'important est que <code>modprobe</code> <strong>réussisse</strong> et que <code>veeamblksnap</code> apparaisse dans <code>lsmod</code>.</p>
 <div class="admonition danger">
 <p class="admonition-title">Désactiver Secure Boot n'est pas innocent</p>
 <p>Sur un serveur de production, Secure Boot protège le démarrage. La bonne pratique est de <strong>garder</strong> Secure Boot et d'<strong>inscrire la clé</strong> du module, voir la solution B. Désactiver est acceptable pour un lab.</p>
 </div>
-<h4 id="solution-b-inscrire-la-cle-mok-de-dkms-na-pas-abouti-dans-le-lab">Solution B : inscrire la clé MOK de DKMS (n'a pas abouti dans le lab)<a class="headerlink" href="#solution-b-inscrire-la-cle-mok-de-dkms-na-pas-abouti-dans-le-lab" title="Permanent link">&para;</a></h4>
-<p>C'est la méthode que décrit la <a href="https://helpcenter.veeam.com/docs/agentforlinux/userguide/installation_uefi_secure_boot.html">documentation Veeam</a> : demander au firmware de faire confiance à la clé qui signe le module.</p>
+<h4 id="solution-b-recommandee-en-production-inscrire-la-cle-mok-de-dkms">Solution B (recommandée en production) : inscrire la clé MOK de DKMS<a class="headerlink" href="#solution-b-recommandee-en-production-inscrire-la-cle-mok-de-dkms" title="Permanent link">&para;</a></h4>
+<p>C'est la procédure que décrivent la <a href="https://helpcenter.veeam.com/docs/agentforlinux/userguide/installation_uefi_secure_boot.html">documentation Veeam</a> et le <a href="https://wiki.debian.org/SecureBoot">wiki Debian</a> : demander au firmware de faire confiance à la clé qui signe le module. Sur Debian 12 et suivantes, la clé générée par DKMS doit être importée à la main.</p>
 <ol>
 <li>
-<p>🐧 Demander l'inscription de la clé et choisir un <strong>mot de passe temporaire</strong> (il ne sert qu'une fois, au prochain démarrage) :</p>
+<p>🐧 Demander l'inscription de la clé et choisir un <strong>mot de passe temporaire</strong> (il ne sert qu'une fois, au prochain démarrage), puis vérifier que la demande est bien en attente :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="gp">$ </span>sudo<span class="w"> </span>mokutil<span class="w"> </span>--import<span class="w"> </span>/var/lib/dkms/mok.pub
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="go">input password:</span>
 <a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="go">input password again:</span>
 <a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="gp">$ </span>sudo<span class="w"> </span>mokutil<span class="w"> </span>--list-new
 </code></pre></div>
+<p><code>mokutil --list-new</code> (ou <code>mokutil -N</code>) affiche la clé en attente d'inscription.</p>
 </li>
 <li>
-<p>Redémarrer la machine. Un <strong>écran bleu</strong> (le gestionnaire <strong>MokManager</strong>) s'affiche brièvement avec un compte à rebours : <strong>appuyer sur une touche</strong> avant la fin, sinon le démarrage continue normalement et la demande est <strong>perdue</strong> (il faut alors refaire l'étape 1).</p>
+<p>Redémarrer la machine : <code>sudo systemctl reboot</code>.</p>
 </li>
-<li>Choisir <strong>Enroll MOK &gt; Continue &gt; Yes</strong>, saisir le mot de passe temporaire, puis <strong>Reboot</strong>.</li>
-<li>Vérifier : <code>sudo mokutil --test-key /var/lib/dkms/mok.pub</code> doit répondre que la clé est <strong>already enrolled</strong>, puis relancer le job (<strong>Retry</strong>).</li>
+<li>Avant Debian, un <strong>écran bleu</strong> s'affiche : c'est le gestionnaire de clés <strong>MokManager</strong>, avec un compte à rebours d'une dizaine de secondes. <strong>Appuyer sur une touche</strong> avant la fin.</li>
+<li>Dans MokManager, enchaîner les écrans :<ol>
+<li><strong>Enroll MOK</strong> (inscrire la clé), puis <strong>Entrée</strong> ;</li>
+<li><strong>Continue</strong> (on peut d'abord choisir <em>View key 0</em> pour afficher la clé) ;</li>
+<li>à la question <em>Enroll the key(s)?</em>, choisir <strong>Yes</strong> ;</li>
+<li>saisir le <strong>mot de passe temporaire</strong> de l'étape 1 ;</li>
+<li>choisir <strong>Reboot</strong>.</li>
 </ol>
-<div class="admonition warning">
-<p class="admonition-title">Non vérifié : cette voie n'a pas abouti dans le lab</p>
-<p>Deux tentatives ont été faites sur KVM. La première a échoué parce qu'une touche automatique a <strong>validé l'option par défaut</strong> (« Continue boot ») au lieu d'<strong>Enroll MOK</strong> : la demande a été consommée sans inscrire la clé (<code>/var/lib/dkms/mok.pub is not enrolled</code>). À la seconde, l'écran bleu est apparu mais la VM s'est ensuite arrêtée sur le menu GRUB sans démarrer ; la cause n'a pas été élucidée dans le temps imparti et le lab a basculé sur la solution A. Les étapes 3 et 4 ci-dessus suivent la documentation et <strong>n'ont pas été rejouées</strong>. Au besoin, saisir ces étapes à la main, sans automatisation, dans la console de la VM.</p>
+</li>
+<li>
+<p>Debian redémarre. Vérifier que la clé est inscrite, puis que le module se charge :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="gp">$ </span>sudo<span class="w"> </span>mokutil<span class="w"> </span>--test-key<span class="w"> </span>/var/lib/dkms/mok.pub
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="go">/var/lib/dkms/mok.pub is already enrolled</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="gp">$ </span>sudo<span class="w"> </span>modprobe<span class="w"> </span>veeamblksnap<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>lsmod<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>blksnap
+</code></pre></div>
+</li>
+<li>
+<p>🌐 Relancer le job (<strong>Retry</strong>, voir la <a href="#44-relancer-le-job">section 4.4</a>).</p>
+</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Deux pièges dans MokManager</p>
+<ul>
+<li><strong>Ne pas laisser passer le compte à rebours</strong> : sans appui sur une touche, la machine démarre normalement <strong>sans</strong> inscrire la clé. Il faut alors refaire l'étape 1 (<code>mokutil --import</code>) et redémarrer.</li>
+<li><strong>Choisir <em>Enroll MOK</em>, pas <em>Continue boot</em></strong> : <em>Continue boot</em> est l'option sélectionnée au départ ; la valider poursuit le démarrage sans rien inscrire. Si <code>mokutil --test-key</code> répond <code>is not enrolled</code>, c'est ce qui s'est passé : refaire l'étape 1.</li>
+</ul>
+<p>MokManager fonctionne avant Debian, avec le clavier du firmware, généralement en <strong>QWERTY</strong> : choisir un mot de passe temporaire simple, fait de lettres qui ne changent pas de place entre AZERTY et QWERTY (éviter <code>a</code>, <code>q</code>, <code>z</code>, <code>w</code>, <code>m</code>, les chiffres et les symboles).</p>
 </div>
 <h3 id="43-erreur-n-2-le-nom-vbr-ne-se-resout-pas">4.3 Erreur n° 2 : le nom <code>vbr</code> ne se résout pas<a class="headerlink" href="#43-erreur-n-2-le-nom-vbr-ne-se-resout-pas" title="Permanent link">&para;</a></h3>
 <div class="admonition failure">
 <p class="admonition-title">Message d'erreur (journal du job sur srv-debian)</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>WARN|Failed to resolve endpoint [vbr:10006].
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>&gt;&gt;  |Failed to resolve name: vbr. Error: Name or service not known
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>WARN|Failed to resolve endpoint [vbr:10006].
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>&gt;&gt;  |Failed to resolve name: vbr. Error: Name or service not known
 </code></pre></div>
 </div>
-<p><strong>Pourquoi l'agent cherche-t-il <code>vbr</code> ?</strong> L'appliance s'annonce à ses clients <strong>par son nom d'hôte</strong> (<code>vbr</code>), et non par son adresse IP. Quand l'agent doit joindre le serveur Veeam (port TCP <code>10006</code>), il cherche donc <code>vbr</code>. Or <code>srv-debian</code> ne connaît que l'adresse du résolveur DNS de pfSense, et pfSense <strong>ne connaît pas</strong> <code>vbr</code> : la résolution échoue. Le journal classe ce message en <code>WARN</code> (avertissement) et pas en <code>ERR</code> : dans le lab, le premier job s'est arrêté sur Secure Boot, mais les <strong>deux correctifs</strong> (Secure Boot et nom) ont été appliqués <strong>avant</strong> le second essai : on ne sait donc pas si le nom seul aurait suffi à bloquer le job. Ne pas le négliger : une machine qui ne trouve pas son serveur de sauvegarde ne peut pas communiquer avec lui.</p>
+<p><strong>Pourquoi l'agent cherche-t-il <code>vbr</code> ?</strong> L'appliance s'annonce à ses clients <strong>par son nom d'hôte</strong> (<code>vbr</code>), et non par son adresse IP. Quand l'agent doit joindre le serveur Veeam (port TCP <code>10006</code>), il cherche donc <code>vbr</code>. Or <code>srv-debian</code> ne connaît que l'adresse du résolveur DNS de pfSense, et pfSense <strong>ne connaît pas</strong> <code>vbr</code> : la résolution échoue. Le journal classe ce message en <code>WARN</code> (avertissement) et pas en <code>ERR</code>, mais il ne faut pas le négliger : une machine qui ne trouve pas son serveur de sauvegarde ne peut pas communiquer avec lui. Corriger le nom <strong>en même temps</strong> que Secure Boot, avant de relancer le job.</p>
 <p>Deux façons de le corriger :</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Rapide : /etc/hosts (retenu dans le lab)</label><label for="__tabbed_2_2">Propre : un enregistrement DNS sur pfSense</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Rapide : /etc/hosts (utilisé dans ce TP)</label><label for="__tabbed_2_2">Propre : un enregistrement DNS sur pfSense</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p>🐧 Sur <code>srv-debian</code>, ajouter une ligne d'association nom-adresse :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="gp">$ </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"192.168.19.55 vbr"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>-a<span class="w"> </span>/etc/hosts
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="gp">$ </span>getent<span class="w"> </span>hosts<span class="w"> </span>vbr
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="go">192.168.19.55   vbr</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="gp">$ </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"192.168.19.55 vbr"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>-a<span class="w"> </span>/etc/hosts
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="gp">$ </span>getent<span class="w"> </span>hosts<span class="w"> </span>vbr
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="go">192.168.19.55   vbr</span>
 </code></pre></div>
 <p>Simple et immédiat, mais à refaire <strong>sur chaque machine</strong> protégée.</p>
 </div>
 <div class="tabbed-block">
-<p>Déclarer <code>vbr</code> <strong>une fois</strong>, dans le DNS qui sert tous les clients du LAN. Dans pfSense : <strong>Services &gt; DNS Resolver &gt; Host Overrides &gt; Add</strong>, avec <strong>Host</strong> <code>vbr</code>, <strong>Domain</strong> le domaine du lab, <strong>IP Address</strong> <code>192.168.19.55</code>. Toutes les machines (dont celles ajoutées plus tard) résoudront <code>vbr</code> sans autre réglage.</p>
-<p>Cette variante est la bonne pratique, mais <strong>elle n'a pas été testée dans le lab</strong> : le lab a utilisé le fichier <code>hosts</code>. Après l'ajout, vérifier avec <code>getent hosts vbr</code> depuis <code>srv-debian</code>.</p>
+<p>Déclarer <code>vbr</code> <strong>une fois</strong>, dans le DNS qui sert tous les clients du LAN. C'est la bonne pratique en production.</p>
+<ol>
+<li>Dans pfSense : <strong>Services &gt; DNS Resolver</strong>, section <strong>Host Overrides</strong>, bouton <strong>Add</strong>.</li>
+<li>Renseigner <strong>Host</strong> <code>vbr</code>, <strong>Domain</strong> le domaine du lab (champ obligatoire), <strong>IP Address</strong> <code>192.168.19.55</code> et une <strong>Description</strong> (<code>Appliance Veeam</code>).</li>
+<li><strong>Save</strong>, puis <strong>Apply Changes</strong>.</li>
+</ol>
+<p>Toutes les machines qui utilisent pfSense comme DNS (dont celles ajoutées plus tard) résolvent alors <code>vbr.&lt;domaine&gt;</code>. Pour que le nom court <code>vbr</code> suffise, ce domaine doit être le <strong>domaine de recherche</strong> du client (ligne <code>search</code> de <code>/etc/resolv.conf</code>). Vérifier depuis <code>srv-debian</code> avec <code>getent hosts vbr</code>.</p>
 </div>
 </div>
 </div>
@@ -3683,7 +3693,7 @@
 <hr />
 <h2 id="5-verifier-la-sauvegarde-puis-prendre-linstantane">5. Vérifier la sauvegarde, puis prendre l'instantané<a class="headerlink" href="#5-verifier-la-sauvegarde-puis-prendre-linstantane" title="Permanent link">&para;</a></h2>
 <h3 id="51-lire-le-resultat">5.1 Lire le résultat<a class="headerlink" href="#51-lire-le-resultat" title="Permanent link">&para;</a></h3>
-<p>Dans le lab, le second essai a duré environ <strong>3 minutes</strong> et le statut est passé à <strong>Success</strong>.</p>
+<p>Le second essai dure environ <strong>3 minutes</strong> dans ce lab, et le statut passe à <strong>Success</strong>.</p>
 <figure>
   <img alt="Liste des jobs : le job Linux Agent Backup est au statut Success, cible Default Backup Repository" loading="lazy" src="../images/06-linux/job-09-reussite.png" />
 <br />
@@ -3691,14 +3701,14 @@
 </figure>
 <h3 id="52-relever-les-preuves-avant-panne">5.2 Relever les « preuves avant panne »<a class="headerlink" href="#52-relever-les-preuves-avant-panne" title="Permanent link">&para;</a></h3>
 <p>Pour pouvoir comparer <strong>après</strong> la restauration, relever ces valeurs sur 🐧 <strong>srv-debian</strong> et les noter :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="gp">$ </span>hostname
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="go">srv-debian</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="gp">$ </span>grep<span class="w"> </span>vbr<span class="w"> </span>/etc/hosts
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="go">192.168.19.55 vbr</span>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="gp">$ </span>dpkg<span class="w"> </span>-l<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span>^ii
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="go">397</span>
-<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="gp">$ </span>ssh-keygen<span class="w"> </span>-lf<span class="w"> </span>/etc/ssh/ssh_host_ed25519_key.pub
-<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="go">256 SHA256:5Im5cNqiO6PCyJKPME/rSa5XR3MQf3V4RnvRUa4D69c root@srv-debian (ED25519)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="gp">$ </span>hostname
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="go">srv-debian</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="gp">$ </span>grep<span class="w"> </span>vbr<span class="w"> </span>/etc/hosts
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="go">192.168.19.55 vbr</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="gp">$ </span>dpkg<span class="w"> </span>-l<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span>^ii
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="go">397</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="gp">$ </span>ssh-keygen<span class="w"> </span>-lf<span class="w"> </span>/etc/ssh/ssh_host_ed25519_key.pub
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="go">256 SHA256:5Im5cNqiO6PCyJKPME/rSa5XR3MQf3V4RnvRUa4D69c root@srv-debian (ED25519)</span>
 </code></pre></div>
 <div class="admonition question">
 <p class="admonition-title">Pourquoi la clé d'hôte SSH ?</p>
@@ -3711,12 +3721,12 @@
 </ol>
 <div class="admonition tip">
 <p class="admonition-title">Pourquoi ce point de retour ?</p>
-<p>La suite détruit volontairement le disque de <code>srv-debian</code>. Avec cet instantané, vous pourrez <strong>rejouer</strong> toute la restauration autant de fois que nécessaire, en revenant ici. Ce n'est <strong>pas</strong> la sauvegarde elle-même (voir l'avertissement de la page d'accueil du parcours) : la vraie sauvegarde est sur l'appliance.</p>
+<p>La suite détruit volontairement le disque de <code>srv-debian</code>. Avec cet instantané, vous pourrez <strong>refaire</strong> toute la restauration autant de fois que nécessaire, en revenant ici. Ce n'est <strong>pas</strong> la sauvegarde elle-même (voir l'avertissement de la page d'accueil du parcours) : la vraie sauvegarde est sur l'appliance.</p>
 </div>
 <hr />
 <h2 id="6-simuler-la-panne-remplacer-le-disque-systeme">6. Simuler la panne : remplacer le disque système<a class="headerlink" href="#6-simuler-la-panne-remplacer-le-disque-systeme" title="Permanent link">&para;</a></h2>
 <p><strong>Éteindre</strong> la VM <code>srv-debian</code> (déjà fait), puis remplacer son disque système par un disque <strong>vierge de même taille ou plus grand</strong> (20 Go ici).</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="3:4"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><input id="__tabbed_3_4" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">VMware Workstation</label><label for="__tabbed_3_2">VirtualBox</label><label for="__tabbed_3_3">Proxmox VE</label><label for="__tabbed_3_4">KVM / libvirt (rejoué dans le lab)</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:4"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><input id="__tabbed_3_4" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">VMware Workstation</label><label for="__tabbed_3_2">VirtualBox</label><label for="__tabbed_3_3">Proxmox VE</label><label for="__tabbed_3_4">KVM / libvirt</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <ol>
@@ -3738,8 +3748,8 @@
 </div>
 <div class="tabbed-block">
 <p>Créer un volume vierge de 20 Go, puis remplacer la source du disque <code>vda</code> dans la définition de la VM :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="gp">$ </span>virsh<span class="w"> </span>vol-create-as<span class="w"> </span>lab-veeam<span class="w"> </span>veeam-srv-debian-disque-vierge.qcow2<span class="w"> </span>20G<span class="w"> </span>--format<span class="w"> </span>qcow2<span class="w"> </span>--prealloc-metadata
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="gp">$ </span>virsh<span class="w"> </span>edit<span class="w"> </span>veeam-srv-debian<span class="w">    </span><span class="c1"># remplacer &lt;source file='…'/&gt; du disque vda</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="gp">$ </span>virsh<span class="w"> </span>vol-create-as<span class="w"> </span>lab-veeam<span class="w"> </span>veeam-srv-debian-disque-vierge.qcow2<span class="w"> </span>20G<span class="w"> </span>--format<span class="w"> </span>qcow2<span class="w"> </span>--prealloc-metadata
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="gp">$ </span>virsh<span class="w"> </span>edit<span class="w"> </span>veeam-srv-debian<span class="w">    </span><span class="c1"># remplacer &lt;source file='…'/&gt; du disque vda</span>
 </code></pre></div>
 </div>
 </div>
@@ -3756,28 +3766,28 @@
 <ol>
 <li>
 <p>🖥️ Le dépôt est à l'adresse <a href="https://repository.veeam.com/backup/linux/agent/veeam-recovery-media/x64/">https://repository.veeam.com/backup/linux/agent/veeam-recovery-media/x64/</a>. Vérifier qu'il répond, puis télécharger :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="gp">$ </span>curl<span class="w"> </span>-sIL<span class="w"> </span>https://repository.veeam.com/backup/linux/agent/veeam-recovery-media/x64/veeam-recovery-amd64-13.0.0.iso<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">'^HTTP|content-length|last-modified'</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="go">HTTP/1.1 200 OK</span>
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="go">Content-Length: 762314752</span>
-<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="go">Last-Modified: Tue, 27 Oct 2026 16:17:55 GMT</span>
-<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="gp">$ </span>curl<span class="w"> </span>-L<span class="w"> </span>-O<span class="w"> </span>https://repository.veeam.com/backup/linux/agent/veeam-recovery-media/x64/veeam-recovery-amd64-13.0.0.iso
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="gp">$ </span>curl<span class="w"> </span>-sIL<span class="w"> </span>https://repository.veeam.com/backup/linux/agent/veeam-recovery-media/x64/veeam-recovery-amd64-13.0.0.iso<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">'^HTTP|content-length|last-modified'</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="go">HTTP/1.1 200 OK</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="go">Content-Length: 762314752</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="go">Last-Modified: Tue, 27 Oct 2026 16:17:55 GMT</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="gp">$ </span>curl<span class="w"> </span>-L<span class="w"> </span>-O<span class="w"> </span>https://repository.veeam.com/backup/linux/agent/veeam-recovery-media/x64/veeam-recovery-amd64-13.0.0.iso
 </code></pre></div>
 </li>
 <li>
 <p>Vérifier le fichier :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="gp">$ </span>ls<span class="w"> </span>-l<span class="w"> </span>veeam-recovery-amd64-13.0.0.iso
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="go">-rw-rw-r-- 1 user user 762314752 ... veeam-recovery-amd64-13.0.0.iso</span>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="gp">$ </span>sha256sum<span class="w"> </span>veeam-recovery-amd64-13.0.0.iso
-<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="go">b866ce121b2d5d30ecba84cf640bc2e00112e4e9467594a2993f502427912724  veeam-recovery-amd64-13.0.0.iso</span>
-<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="gp">$ </span>file<span class="w"> </span>veeam-recovery-amd64-13.0.0.iso
-<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="go">veeam-recovery-amd64-13.0.0.iso: ISO 9660 CD-ROM filesystem data (DOS/MBR boot sector) 'veeam-recovery-iso-13.1.2.11' (bootable)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="gp">$ </span>ls<span class="w"> </span>-l<span class="w"> </span>veeam-recovery-amd64-13.0.0.iso
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="go">-rw-rw-r-- 1 user user 762314752 ... veeam-recovery-amd64-13.0.0.iso</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="gp">$ </span>sha256sum<span class="w"> </span>veeam-recovery-amd64-13.0.0.iso
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="go">b866ce121b2d5d30ecba84cf640bc2e00112e4e9467594a2993f502427912724  veeam-recovery-amd64-13.0.0.iso</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="gp">$ </span>file<span class="w"> </span>veeam-recovery-amd64-13.0.0.iso
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="go">veeam-recovery-amd64-13.0.0.iso: ISO 9660 CD-ROM filesystem data (DOS/MBR boot sector) 'veeam-recovery-iso-13.1.2.11' (bootable)</span>
 </code></pre></div>
 </li>
 </ol>
 <div class="admonition warning">
 <p class="admonition-title">Un nom de fichier qui ment : « 13.0.0 » contient la version 13.1.2.11</p>
 <p>Ce qui est <strong>sûr</strong> : le dépôt n'offre qu'<strong>un seul fichier pour la série 13</strong>, nommé <code>veeam-recovery-amd64-13.0.0.iso</code> ; il pèse <strong>762 314 752 octets</strong> et son <strong>étiquette de volume</strong> (celle que lit la commande <code>file</code>) est <code>veeam-recovery-iso-13.1.2.11</code>. L'ISO est donc <strong>assortie à l'agent 13.1.2.11</strong> installé en section 2 : c'est cette version qu'il faut retenir.</p>
-<p>Ce qui n'est <strong>pas</strong> établi : pourquoi Veeam laisse <code>13.0.0</code> dans le nom (probablement le nom de la série, mais ce n'est pas documenté). Ne <strong>pas</strong> vous fier au nom du fichier : renommer la copie en <code>veeam-recovery-amd64-13.1.2.11.iso</code> évite toute confusion. Le <strong>SHA-256</strong> ci-dessus est celui de l'ISO du lab ; si Veeam la republie, il changera, et seule la comparaison avec le fichier du dépôt public a un sens.</p>
+<p>Le nom du fichier ne donne donc <strong>pas</strong> la version exacte : ne pas vous y fier. Renommer la copie en <code>veeam-recovery-amd64-13.1.2.11.iso</code> évite toute confusion. Le <strong>SHA-256</strong> ci-dessus est celui de l'ISO du lab ; si Veeam la republie, il changera, et seule la comparaison avec le fichier du dépôt public a un sens.</p>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Veeam documente aussi ces ISO</p>
@@ -3792,17 +3802,17 @@
 <li>VMware : <strong>VM &gt; Power &gt; Power On to Firmware</strong>, puis menu <strong>Boot</strong>, ou <strong>CD-ROM</strong> déplacé en tête dans <strong>Settings &gt; Options &gt; Boot Options</strong> ;</li>
 <li>VirtualBox : <strong>Settings &gt; System &gt; Motherboard &gt; Boot Order</strong>, cocher <strong>Optical</strong> et le monter en tête ;</li>
 <li>Proxmox VE : <strong>Options &gt; Boot Order</strong>, activer <strong>ide2</strong> (le lecteur CD) et le glisser en premier ;</li>
-<li>KVM/libvirt (lab) : <code>&lt;boot order='1'/&gt;</code> sur le CD-ROM, <code>&lt;boot order='2'/&gt;</code> sur le disque.</li>
+<li>KVM/libvirt : <code>&lt;boot order='1'/&gt;</code> sur le CD-ROM, <code>&lt;boot order='2'/&gt;</code> sur le disque.</li>
 </ul>
 </li>
 <li>
-<p>Démarrer la VM. Le menu <strong>GRUB</strong> de l'ISO propose les entrées « Veeam recovery … » : laisser la première, le démarrage se fait seul au bout de quelques secondes.</p>
+<p>Démarrer la VM. Le menu <strong>GRUB</strong> de l'ISO propose deux entrées, une par noyau Linux embarqué : <strong>Veeam recovery 6.12.100+deb13-amd64</strong> (le noyau standard de Debian 13) et <strong>Veeam recovery 7.1.3+deb13-amd64</strong> (un noyau plus récent, à essayer si un disque ou une carte réseau n'est pas reconnu avec le premier). Laisser la première, le démarrage se fait seul au bout de quelques secondes.</p>
 </li>
 </ol>
 <figure>
-  <img alt="Menu GRUB du support de récupération Veeam : deux entrées Veeam recovery 6.12.100+deb13 et 7.1.3+deb13" loading="lazy" src="../images/06-linux/rec-01-grub-recuperation.png" />
+  <img alt="Menu GRUB 2.12 du support de récupération Veeam : deux entrées, Veeam recovery 6.12.100+deb13-amd64 (sélectionnée) et Veeam recovery 7.1.3+deb13-amd64" loading="lazy" src="../images/06-linux/rec-01-grub-recuperation.png" />
 <br />
-<figcaption>Le menu GRUB du support de récupération. La première entrée, mise en évidence, démarre seule.</figcaption>
+<figcaption>Le menu GRUB du support de récupération : une entrée par noyau. La première, mise en évidence, démarre seule.</figcaption>
 </figure>
 <hr />
 <h2 id="8-restaurer-le-serveur-avec-le-support-de-recuperation">8. Restaurer le serveur avec le support de récupération<a class="headerlink" href="#8-restaurer-le-serveur-avec-le-support-de-recuperation" title="Permanent link">&para;</a></h2>
@@ -3810,12 +3820,12 @@
 <div class="admonition warning">
 <p class="admonition-title">Clavier : deux pièges possibles</p>
 <ul>
-<li><strong>Disposition QWERTY probable</strong> : le clavier du support de récupération est vraisemblablement en <strong>QWERTY</strong> (touches de l'anglais américain). Ce point <strong>n'a pas pu être vérifié</strong> dans le lab, où la saisie passait par un clavier virtuel déjà en QWERTY. Avant de taper un mot de passe, une adresse ou un jeton, <strong>lire à l'écran</strong> ce qui s'est écrit, car <code>:</code>, <code>-</code> ou <code>@</code> peuvent être ailleurs sur un clavier AZERTY.</li>
-<li><strong>Clavier qui ne répond pas</strong> : dans le lab (KVM), le support de récupération <strong>ignorait le clavier virtuel PS/2</strong> de la VM. Ajouter un <strong>clavier USB</strong> à la VM a réglé le problème. Avec VMware, VirtualBox ou Proxmox, ce défaut n'a pas été testé : si les touches sont sans effet, essayer d'ajouter un contrôleur/clavier USB à la VM.</li>
+<li><strong>Disposition QWERTY</strong> : le clavier du support de récupération peut être en <strong>QWERTY</strong> (disposition américaine). Avant de valider un mot de passe, une adresse ou un jeton, <strong>lire à l'écran</strong> ce qui s'est écrit : sur un clavier AZERTY, <code>a</code>, <code>q</code>, <code>z</code>, <code>w</code>, <code>m</code>, les chiffres, <code>-</code> ou <code>:</code> peuvent sortir autrement.</li>
+<li><strong>Clavier qui ne répond pas</strong> : il arrive que le support de récupération <strong>ignore le clavier virtuel PS/2</strong> de la VM (cas rencontré sous KVM). Ajouter un <strong>clavier USB</strong> à la VM (ou un contrôleur USB) règle le problème.</li>
 </ul>
 </div>
 <h3 id="81-identifiants-ssh-temporaires-et-licence">8.1 Identifiants SSH temporaires et licence<a class="headerlink" href="#81-identifiants-ssh-temporaires-et-licence" title="Permanent link">&para;</a></h3>
-<p>Après quelques dizaines de secondes, une fenêtre <strong>SSH Connection Info</strong> s'affiche. C'est une nouveauté de la version 13 : le support de récupération ouvre un <strong>accès SSH temporaire</strong> (nom d'utilisateur <code>veeamuser</code>, mot de passe aléatoire propre à ce démarrage) pour pouvoir le piloter à distance. On n'en a pas besoin ici. Le lab n'a obtenu <strong>aucune adresse IPv4</strong> (pas de DHCP sur ce réseau) : seule une adresse IPv6 locale s'affiche, ce qui est normal.</p>
+<p>Après quelques dizaines de secondes, une fenêtre <strong>SSH Connection Info</strong> s'affiche. C'est une nouveauté de la version 13 : le support de récupération ouvre un <strong>accès SSH temporaire</strong> (nom d'utilisateur <code>veeamuser</code>, mot de passe aléatoire propre à ce démarrage) pour pouvoir le piloter à distance. On n'en a pas besoin ici. Sans serveur DHCP sur le réseau, ce qui est le cas de ce lab, <strong>aucune adresse IPv4</strong> n'apparaît : seule une adresse IPv6 locale s'affiche, ce qui est normal.</p>
 <figure>
   <img alt="Fenêtre SSH Connection Info : utilisateur veeamuser, mot de passe temporaire flouté, nom d'hôte veeam-recovery-iso, empreintes SSH" loading="lazy" src="../images/06-linux/rec-02-identifiants-ssh-temporaires.png" width="420" />
 <br />
@@ -3828,7 +3838,7 @@
 <figure>
   <img alt="Écran Accept license agreement avec les deux cases cochées" loading="lazy" src="../images/06-linux/rec-03-licence.png" width="420" />
 <br />
-<figcaption>Les deux cases doivent être cochées ; dans ce menu, les flèches étaient ignorées dans le lab, seuls Espace et Tab répondent.</figcaption>
+<figcaption>Les deux cases doivent être cochées. Si les flèches ne répondent pas dans cet écran, utiliser Tab et Espace.</figcaption>
 </figure>
 <p>Le <strong>menu principal</strong> s'affiche :</p>
 <figure>
@@ -3921,7 +3931,7 @@
 </figure>
 <ol>
 <li>Descendre jusqu'à <strong><code>&lt;OK&gt;</code></strong> (en bas, <strong>Tab</strong> plusieurs fois) et valider. Appuyer ensuite sur <strong>Échap</strong> autant de fois que nécessaire pour quitter <code>nmtui</code> et retrouver le menu principal.</li>
-<li>Vérifier depuis 🖥️ le PC hôte : <code>ping 192.168.19.170</code> doit répondre. Dans le lab, il répondait immédiatement après <strong>OK</strong>.</li>
+<li>Vérifier depuis 🖥️ le PC hôte : <code>ping 192.168.19.170</code> doit répondre, normalement dès la validation de <strong>OK</strong>.</li>
 </ol>
 <h3 id="83-creer-le-jeton-de-recuperation">8.3 Créer le jeton de récupération<a class="headerlink" href="#83-creer-le-jeton-de-recuperation" title="Permanent link">&para;</a></h3>
 <p>Le support de récupération doit se <strong>connecter à l'appliance</strong> pour lire la sauvegarde. Au lieu de lui confier le mot de passe de <code>veeamadmin</code>, on lui donne un <strong>jeton de récupération</strong> (<em>recovery token</em>) : un accès <strong>limité dans le temps</strong> (<strong>24 heures</strong>) et limité aux <strong>sauvegardes pour lesquelles il a été généré</strong> (ici, une seule). Selon la documentation Veeam, il évite justement de partager les identifiants du serveur de sauvegarde pendant une restauration à nu.</p>
@@ -3938,10 +3948,10 @@
 <figure>
   <img alt="Boîte Create Recovery Token : un jeton est affiché, flouté, avec la date d'expiration 24 heures plus tard" loading="lazy" src="../images/06-linux/tok-02-jeton-cree.png" width="420" />
 <br />
-<figcaption>Le jeton (flouté ici, sous la forme de quatre groupes de quatre caractères) et sa date d'expiration, le lendemain à la même heure.</figcaption>
+<figcaption>Le jeton (flouté ici) et sa date d'expiration : le lendemain à la même heure, soit 24 heures plus tard.</figcaption>
 </figure>
 <ol>
-<li>Noter le jeton (<strong>Copy to Clipboard</strong>) : on le recopie à la main dans le support de récupération (pas de copier-coller possible dans une VM en mode texte).</li>
+<li>Noter le jeton (<strong>Copy to Clipboard</strong>) : on le recopie à la main dans le support de récupération (pas de copier-coller possible dans une VM en mode texte). Il se compose de <strong>quatre groupes de quatre caractères séparés par des tirets</strong>, sur le modèle <code>XXXX-XXXX-XXXX-XXXX</code>, et mélange <strong>chiffres, majuscules et minuscules</strong> : recopier chaque caractère en respectant la casse, et se méfier des confusions <code>0</code>/<code>O</code> et <code>1</code>/<code>l</code>/<code>I</code>.</li>
 </ol>
 <div class="admonition question">
 <p class="admonition-title">Pourquoi un jeton plutôt que le compte <code>veeamadmin</code> ?</p>
@@ -4068,11 +4078,11 @@
 </figure>
 <div class="admonition info">
 <p class="admonition-title">« Failed to export logs to the repository »</p>
-<p>Une dernière ligne indique, <strong>après</strong> le succès, que le support n'a pas pu envoyer ses journaux de restauration vers le dépôt. La cause n'a pas été étudiée dans le lab. La restauration elle-même est terminée (<code>Status: Success</code>) et le serveur redémarre correctement, comme le montre la section suivante.</p>
+<p>Une dernière ligne indique, <strong>après</strong> le succès, que le support n'a pas pu envoyer ses journaux de restauration vers le dépôt. C'est un <strong>avertissement sans conséquence</strong> : il concerne seulement la copie des journaux, pas les données. La restauration elle-même est terminée (<code>Status: Success</code>) et le serveur redémarre correctement, comme le montre la section suivante.</p>
 </div>
 <h3 id="88-redemarrer-sans-liso">8.8 Redémarrer sans l'ISO<a class="headerlink" href="#88-redemarrer-sans-liso" title="Permanent link">&para;</a></h3>
 <ol>
-<li>Appuyer sur <strong>Échap</strong> pour revenir au menu principal, puis choisir <strong>Reboot</strong> (ou <strong>Shutdown</strong>, ce qu'a fait le lab).</li>
+<li>Appuyer sur <strong>Échap</strong> pour revenir au menu principal, puis choisir <strong>Reboot</strong> (ou <strong>Shutdown</strong>, comme sur la capture).</li>
 </ol>
 <figure>
   <img alt="Menu principal avec l'entrée Shutdown sélectionnée" loading="lazy" src="../images/06-linux/rec-18-eteindre.png" width="360" />
@@ -4098,23 +4108,23 @@
 </figure>
 <hr />
 <h2 id="9-verifier-la-restauration">9. Vérifier la restauration<a class="headerlink" href="#9-verifier-la-restauration" title="Permanent link">&para;</a></h2>
-<p>🐧 Une fois <code>srv-debian</code> démarré (attendre que SSH réponde), rejouer les mêmes commandes qu'en <a href="#52-relever-les-preuves-avant-panne">section 5.2</a> et comparer.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="gp">$ </span>hostname
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="go">srv-debian</span>
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="gp">$ </span>grep<span class="w"> </span>vbr<span class="w"> </span>/etc/hosts
-<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="go">192.168.19.55 vbr</span>
-<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="gp">$ </span>dpkg<span class="w"> </span>-l<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span>^ii
-<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="go">397</span>
-<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="gp">$ </span>ssh-keygen<span class="w"> </span>-lf<span class="w"> </span>/etc/ssh/ssh_host_ed25519_key.pub
-<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="go">256 SHA256:5Im5cNqiO6PCyJKPME/rSa5XR3MQf3V4RnvRUa4D69c root@srv-debian (ED25519)</span>
-<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="gp">$ </span>systemctl<span class="w"> </span>is-active<span class="w"> </span>veeamservice
-<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="go">active</span>
-<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="gp">$ </span>lsblk<span class="w"> </span>-o<span class="w"> </span>NAME,SIZE,FSTYPE,MOUNTPOINTS
-<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a><span class="go">NAME    SIZE FSTYPE MOUNTPOINTS</span>
-<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a><span class="go">vda      20G</span>
-<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a><span class="go">├─vda1  966M vfat   /boot/efi</span>
-<a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a><span class="go">├─vda2   18G ext4   /</span>
-<a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a><span class="go">└─vda3    1G swap   [SWAP]</span>
+<p>🐧 Une fois <code>srv-debian</code> démarré (attendre que SSH réponde), relancer les mêmes commandes qu'en <a href="#52-relever-les-preuves-avant-panne">section 5.2</a> et comparer.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="gp">$ </span>hostname
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="go">srv-debian</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="gp">$ </span>grep<span class="w"> </span>vbr<span class="w"> </span>/etc/hosts
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="go">192.168.19.55 vbr</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="gp">$ </span>dpkg<span class="w"> </span>-l<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span>^ii
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="go">397</span>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="gp">$ </span>ssh-keygen<span class="w"> </span>-lf<span class="w"> </span>/etc/ssh/ssh_host_ed25519_key.pub
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="go">256 SHA256:5Im5cNqiO6PCyJKPME/rSa5XR3MQf3V4RnvRUa4D69c root@srv-debian (ED25519)</span>
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="gp">$ </span>systemctl<span class="w"> </span>is-active<span class="w"> </span>veeamservice
+<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="go">active</span>
+<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="gp">$ </span>lsblk<span class="w"> </span>-o<span class="w"> </span>NAME,SIZE,FSTYPE,MOUNTPOINTS
+<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a><span class="go">NAME    SIZE FSTYPE MOUNTPOINTS</span>
+<a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a><span class="go">vda      20G</span>
+<a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a><span class="go">├─vda1  966M vfat   /boot/efi</span>
+<a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a><span class="go">├─vda2   18G ext4   /</span>
+<a id="__codelineno-15-16" name="__codelineno-15-16" href="#__codelineno-15-16"></a><span class="go">└─vda3    1G swap   [SWAP]</span>
 </code></pre></div>
 <table>
 <thead>
@@ -4160,13 +4170,13 @@
 <p>Un serveur restauré est dans l'état du <strong>dernier point</strong>, pas dans celui du moment de la panne : tout ce qui a été écrit depuis la dernière sauvegarde est perdu. C'est le sens du RPO (voir ci-dessous). Après toute restauration :</p>
 <ol>
 <li>🌐 Dans <strong>Jobs</strong>, sélectionner <code>Sauvegarde-srv-debian-machine-entiere</code> et cliquer sur <strong>Start</strong> pour lancer une sauvegarde <strong>tout de suite</strong>, sans attendre 22:00.</li>
-<li>Vérifier qu'elle se termine en <strong>Success</strong>. Si le job signale un avertissement ou une erreur, lire le message : le comportement exact de l'agent juste après une restauration à nu n'a <strong>pas</strong> été étudié dans le lab.</li>
+<li>Vérifier qu'elle se termine en <strong>Success</strong>. Si le job signale un avertissement ou une erreur, lire le message dans la fenêtre de session et dans le journal de l'agent, comme en <a href="#41-comment-trouver-la-cause">section 4.1</a>.</li>
 </ol>
 <div class="admonition tip">
 <p class="admonition-title">🛟 Point d'instantané en fin de TP</p>
 <ul>
-<li>L'instantané <strong><code>04-avant-panne</code></strong> (section 5.3) est votre point de départ pour <strong>rejouer</strong> la panne et la restauration : y revenir, retirer le disque vierge restauré, replacer un nouveau disque vierge, et recommencer la section 6.</li>
-<li>Il n'y a <strong>pas</strong> de nouvel instantané à prendre pour la suite : la <a href="../07-sauvegarder-vers-azure-blob/">partie 7</a> est illustrée et n'a pas été rejouée dans le lab.</li>
+<li>L'instantané <strong><code>04-avant-panne</code></strong> (section 5.3) est votre point de départ pour <strong>refaire</strong> la panne et la restauration : y revenir, retirer le disque vierge restauré, replacer un nouveau disque vierge, et recommencer la section 6.</li>
+<li>Il n'y a <strong>pas</strong> de nouvel instantané à prendre pour la <a href="../07-sauvegarder-vers-azure-blob/">partie 7</a>.</li>
 <li>L'<strong>ISO</strong> peut être supprimée du PC hôte ; le <strong>jeton</strong> n'a pas besoin d'être supprimé : il expire de lui-même au bout de 24 h.</li>
 </ul>
 </div>
@@ -4188,7 +4198,7 @@
 <summary>Corrigé</summary>
 <ol>
 <li>Pour figer une image cohérente du disque pendant que le serveur travaille, l'agent charge un <strong>module noyau</strong> (<code>blksnap</code>) compilé sur place par DKMS. Avec Secure Boot, le noyau n'accepte que des modules <strong>signés par une clé connue du firmware</strong> : la clé locale de DKMS (MOK) ne l'est pas, d'où « <em>Key was rejected by service</em> ».</li>
-<li><strong>Désactiver Secure Boot</strong> (simple, adapté au lab) ou <strong>inscrire la clé MOK de DKMS</strong> avec <code>mokutil --import</code> puis MokManager au redémarrage. En production, on recommande l'<strong>inscription de la clé</strong>, qui conserve la protection au démarrage. (Dans le lab, seule la désactivation a abouti.)</li>
+<li><strong>Désactiver Secure Boot</strong> (simple, adapté au lab) ou <strong>inscrire la clé MOK de DKMS</strong> avec <code>mokutil --import</code> puis MokManager au redémarrage. En production, on recommande l'<strong>inscription de la clé</strong>, qui conserve la protection au démarrage.</li>
 <li>L'appliance s'annonce à ses clients par son <strong>nom d'hôte</strong> ; l'agent doit pouvoir le résoudre pour la joindre sur le port 10006. Solution rapide : une ligne dans <code>/etc/hosts</code> de chaque machine. Solution propre : un <strong>enregistrement DNS</strong> (pfSense : <em>Services &gt; DNS Resolver &gt; Host Overrides</em>) valable pour tout le réseau.</li>
 <li><strong>Machine entière</strong> : tous les volumes, y compris le démarrage, ce qui permet la restauration à nu. <strong>Volumes</strong> : seulement ceux que l'on coche. <strong>Fichiers</strong> : seulement des dossiers, sans instantané du disque ; impossible de reconstruire le serveur.</li>
 <li>Le support de récupération tourne sur une machine <strong>en panne</strong>. Un jeton <strong>expire au bout de 24 h</strong> et n'ouvre que <strong>la sauvegarde pour laquelle il a été créé</strong>, alors que <code>veeamadmin</code> donne <strong>tous les droits</strong> sur la plateforme de sauvegarde. C'est le <strong>moindre privilège</strong>.</li>
@@ -4272,13 +4282,13 @@
         
         
           
-          <a href="../07-sauvegarder-vers-azure-blob/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 7. Sauvegarder vers Azure Blob (non rejoué)">
+          <a href="../07-sauvegarder-vers-azure-blob/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 7. Sauvegarder vers Azure Blob Storage">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Suivant
               </span>
               <div class="md-ellipsis">
-                7. Sauvegarder vers Azure Blob (non rejoué)
+                7. Sauvegarder vers Azure Blob Storage
               </div>
             </div>
             <div class="md-footer__button md-icon">
