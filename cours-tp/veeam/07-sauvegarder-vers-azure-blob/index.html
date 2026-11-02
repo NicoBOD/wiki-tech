@@ -2496,7 +2496,7 @@
 </table>
 <div class="admonition warning">
 <p class="admonition-title">Partie illustrée, non rejouée</p>
-<p>Contrairement aux parties 3 à 6, cette partie <strong>n'a pas été rejouée</strong> dans le lab de 2026 : elle demande un abonnement Azure et génère des coûts. Les captures datent de <strong>juin 2024</strong> (Veeam Backup &amp; Replication <strong>12.1</strong> installé sur Windows, portail Azure de l'époque).</p>
+<p>Contrairement aux parties 3 à 6, cette partie <strong>n'a pas été rejouée</strong> dans le lab de 2026 : elle demande un abonnement Azure et génère des coûts. Les captures montrent Veeam Backup &amp; Replication <strong>12.1</strong> installé sur Windows et une version antérieure du portail Azure.</p>
 <p>Les principes et les assistants restent valables en version 13. Les différences connues sont signalées dans des encadrés « En version 13 ». L'interface du portail Azure évolue souvent : un libellé ou un onglet peut avoir légèrement changé.</p>
 </div>
 <hr />
@@ -2743,7 +2743,7 @@
 </div>
 <hr />
 <h2 id="3-sauvegarder-un-serveur-linux-vers-azure">3. Sauvegarder un serveur Linux vers Azure<a class="headerlink" href="#3-sauvegarder-un-serveur-linux-vers-azure" title="Permanent link">&para;</a></h2>
-<p>L'exemple d'origine sauvegarde d'abord une VM <strong>Kali Linux</strong>, puis, après des erreurs, un <strong>serveur Ubuntu sans interface graphique</strong>. Les étapes suivent le même assistant que la <a href="../06-sauvegarder-restaurer-serveur-linux/">partie 6</a>, avec un dépôt Azure comme destination.</p>
+<p>Les captures montrent d'abord la sauvegarde d'une VM <strong>Kali Linux</strong>, puis, après des erreurs, celle d'un <strong>serveur Ubuntu sans interface graphique</strong>. Les étapes suivent le même assistant que la <a href="../06-sauvegarder-restaurer-serveur-linux/">partie 6</a>, avec un dépôt Azure comme destination.</p>
 <h3 id="31-verifier-lacces-ssh">3.1 Vérifier l'accès SSH<a class="headerlink" href="#31-verifier-lacces-ssh" title="Permanent link">&para;</a></h3>
 <p>Veeam installe et pilote l'agent Linux <strong>par SSH</strong> : le service SSH doit être démarré sur la machine à protéger, joignable depuis le serveur Veeam, et la machine doit accéder à Internet pour télécharger ses dépendances.</p>
 <figure>
@@ -2867,7 +2867,7 @@
 <br />
 <figcaption>Le rescan de la machine échoue.</figcaption>
 </figure>
-<p>La démarche de dépannage est exemplaire :</p>
+<p>La démarche de dépannage, à reproduire face à ce type d'échec :</p>
 <ol>
 <li><strong>Vérifier le service</strong> de l'agent sur la machine Linux : <code>sudo systemctl status veeamservice</code>. Il est arrêté et refuse de démarrer.</li>
 </ol>
@@ -2905,7 +2905,7 @@
 </code></pre></div>
 <div class="admonition question">
 <p class="admonition-title">Pourquoi libfuse ?</p>
-<p><strong>FUSE</strong> (<em>Filesystem in Userspace</em>) permet de monter un système de fichiers sans modifier le noyau. L'agent Veeam s'en sert pour <strong>monter le contenu d'une sauvegarde</strong> et restaurer des fichiers. Les distributions récentes installent <code>libfuse3</code> par défaut, mais l'agent dépend aussi de l'ancienne version 2. Dans le lab de la <a href="../06-sauvegarder-restaurer-serveur-linux/">partie 6</a>, l'agent 13 a installé seul ses dépendances sur Debian 13 : le problème venait surtout d'une machine sans accès correct aux dépôts de paquets au moment du déploiement.</p>
+<p><strong>FUSE</strong> (<em>Filesystem in Userspace</em>) permet de monter un système de fichiers sans modifier le noyau. L'agent Veeam s'en sert pour <strong>monter le contenu d'une sauvegarde</strong> et restaurer des fichiers. Les distributions récentes installent <code>libfuse3</code> par défaut, mais l'agent dépend aussi de l'ancienne version 2. Dans le lab de la <a href="../06-sauvegarder-restaurer-serveur-linux/">partie 6</a>, l'agent 13.1 a installé seul ses dépendances (dont <code>libfuse2t64</code>) sur Debian 13 : le problème vient le plus souvent d'une machine sans accès correct aux dépôts de paquets au moment du déploiement, ou de paquets cassés (d'où le <code>apt --fix-broken install</code> de la capture).</p>
 </div>
 <ol>
 <li><strong>Relancer le rescan</strong> : il réussit, et la sauvegarde vers Azure démarre.</li>

@@ -2136,7 +2136,7 @@
 <h1 id="veeam-backup-replication-131-cours-et-travaux-pratiques">Veeam Backup &amp; Replication 13.1 : cours et travaux pratiques<a class="headerlink" href="#veeam-backup-replication-131-cours-et-travaux-pratiques" title="Permanent link">&para;</a></h1>
 <div class="admonition abstract">
 <p class="admonition-title">Résumé</p>
-<p>Ce parcours en sept parties apprend à <strong>protéger les données d'une petite infrastructure</strong> avec <strong>Veeam Backup &amp; Replication 13.1</strong>, le logiciel de sauvegarde le plus répandu en entreprise. Il commence par deux cours (les principes de la sauvegarde, puis l'offre Veeam), continue par quatre travaux pratiques rejoués de bout en bout dans un laboratoire virtuel, et se termine par une partie illustrée sur la sauvegarde dans le cloud Azure.</p>
+<p>Ce parcours en sept parties apprend à <strong>protéger les données d'une petite infrastructure</strong> avec <strong>Veeam Backup &amp; Replication 13.1</strong>, l'un des logiciels de sauvegarde les plus répandus en entreprise. Il commence par deux cours (les principes de la sauvegarde, puis l'offre Veeam), continue par quatre travaux pratiques rejoués de bout en bout dans un laboratoire virtuel, et se termine par une partie illustrée sur la sauvegarde dans le cloud Azure.</p>
 <p>Au bout du parcours, un serveur de sauvegarde Veeam protège un <strong>serveur de fichiers Windows</strong> et un <strong>serveur Linux</strong>. Le serveur Linux aura été <strong>entièrement reconstruit</strong> à partir de sa sauvegarde, après une panne simulée.</p>
 <p>Cette page rassemble ce qu'il faut garder sous la main pendant tout le parcours : le plan, le schéma du lab, les adresses, les comptes et mots de passe, le dimensionnement des machines virtuelles et les instantanés conseillés.</p>
 </div>
@@ -2162,7 +2162,7 @@
 </tr>
 <tr>
 <td>Rejoué dans le lab</td>
-<td>Du 1er au 2 novembre 2026, sur KVM/libvirt</td>
+<td>Du 1er au 2 novembre 2026, sur KVM/libvirt (toutes les captures d'écran viennent de ce lab)</td>
 </tr>
 <tr>
 <td>Dernière mise à jour</td>
@@ -2170,16 +2170,14 @@
 </tr>
 </tbody>
 </table>
-<details class="info">
-<summary>Ce qui a changé par rapport à la version 1.5 du support (juin 2024)</summary>
-<ul>
-<li>Le support décrivait <strong>Veeam Backup &amp; Replication 12</strong> installé sur un <strong>Windows Server</strong>. Le parcours utilise désormais la <strong>Veeam Software Appliance 13.1</strong>, le serveur de sauvegarde Linux durci que Veeam livre prêt à installer. L'installation et le dépôt local ont été réécrits en conséquence.</li>
-<li>Toutes les parties pratiques ont été <strong>rejouées dans un lab réel</strong> en novembre 2026 ; les captures d'écran viennent de ce lab.</li>
-<li>L'adressage reprend celui du TP <a href="../../reseaux/cluster-haute-disponibilite-pfsense-carp-pfsync/">cluster pfSense en haute disponibilité</a> du wiki : les machines du lab Veeam s'y branchent directement.</li>
-<li>La partie sur <strong>Veeam ONE</strong> (supervision) a été retirée. La partie <strong>Azure</strong> n'a pas été rejouée et le signale clairement.</li>
-<li>Un <strong>test de restauration d'un fichier</strong> a été ajouté à la partie 5 : une sauvegarde jamais restaurée n'est pas une sauvegarde fiable.</li>
-</ul>
-</details>
+<!-- NOTE DE RÉDACTION (non affichée) : Ce qui a changé par rapport à la version 1.5 du support (juin 2024)
+- Le support décrivait **Veeam Backup & Replication 12** installé sur un **Windows Server**. Le parcours utilise désormais la **Veeam Software Appliance 13.1**, le serveur de sauvegarde Linux durci que Veeam livre prêt à installer. L'installation et le dépôt local ont été réécrits en conséquence.
+- Toutes les parties pratiques ont été **rejouées dans un lab réel** en novembre 2026 ; les captures d'écran viennent de ce lab.
+- L'adressage reprend celui du TP [cluster pfSense en haute disponibilité](../../reseaux/cluster-haute-disponibilite-pfsense-carp-pfsync.md) du wiki : les machines du lab Veeam s'y branchent directement.
+- La partie sur **Veeam ONE** (supervision) a été retirée. La partie **Azure** n'a pas été rejouée et le signale clairement.
+- Un **test de restauration d'un fichier** a été ajouté à la partie 5 : une sauvegarde jamais restaurée n'est pas une sauvegarde fiable.
+-->
+
 <hr />
 <h2 id="objectifs-du-parcours">Objectifs du parcours<a class="headerlink" href="#objectifs-du-parcours" title="Permanent link">&para;</a></h2>
 <p>À la fin du parcours, il est possible de :</p>
@@ -2316,7 +2314,7 @@
 </tr>
 </tbody>
 </table>
-<p>Le dernier octet reprend celui du support d'origine (<code>.55</code> pour Veeam, <code>.22</code> pour le serveur de fichiers, <code>.170</code> pour Debian). Toutes les machines du lab sont branchées sur le <strong>même réseau LAN</strong>, dont le nom dépend de l'hyperviseur :</p>
+<p>Les derniers octets sont faciles à retenir : <code>.55</code> pour Veeam, <code>.22</code> pour le serveur de fichiers, <code>.170</code> pour Debian. L'adressage est celui du <a href="../../reseaux/cluster-haute-disponibilite-pfsense-carp-pfsync/">TP pfSense</a>, sur lequel les machines du lab se branchent directement. Toutes les machines du lab sont branchées sur le <strong>même réseau LAN</strong>, dont le nom dépend de l'hyperviseur :</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">VMware Workstation</label><label for="__tabbed_1_2">VirtualBox</label><label for="__tabbed_1_3">Proxmox VE</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -2395,7 +2393,7 @@
 <tr>
 <th>Machine</th>
 <th>Confortable (utilisé dans le lab)</th>
-<th>Minimal (testé)</th>
+<th>Minimal</th>
 <th>Disques</th>
 </tr>
 </thead>
@@ -2427,9 +2425,9 @@
 </tbody>
 </table>
 <ul>
-<li>Pour l'appliance, Veeam recommande <strong>8 cœurs et 16 Go de RAM</strong> (plus 500 Mo par job simultané), et accepte <strong>6 vCPU et 16 Go</strong> pour une petite infrastructure de 5 machines protégées au plus : c'est le profil <strong>confortable</strong> du lab. Le profil <strong>minimal</strong> (8 Go, 4 vCPU) est <strong>en dessous du minimum pris en charge par Veeam</strong> : il ne convient pas à la production, mais il a été testé dans le lab : l'appliance démarre, l'interface web reste utilisable et les deux jobs du parcours réussissent, plus lentement.</li>
+<li>Pour l'appliance, Veeam demande au minimum <strong>8 cœurs et 16 Go de RAM</strong> (plus 500 Mo par job simultané), et accepte <strong>6 vCPU et 16 Go</strong> pour une petite infrastructure de 5 machines protégées au plus : c'est le profil <strong>confortable</strong>, celui avec lequel le lab a été rejoué. Le profil <strong>minimal</strong> (8 Go, 4 vCPU) est <strong>en dessous du minimum pris en charge par Veeam</strong> : il ne convient pas à la production et n'a pas été validé de bout en bout dans ce lab ; il dépanne un PC à la mémoire comptée, au prix de lenteurs et sans garantie.</li>
 <li><strong>Mémoire du PC hôte</strong> : 32 Go permettent de tout allumer en profil confortable. Avec <strong>16 à 24 Go</strong>, prendre le profil minimal et n'allumer que les machines de la partie en cours (colonne « Machines allumées » du <a href="#plan-du-parcours">plan</a>), en fermant les applications inutiles du PC.</li>
-<li><strong>Disque du PC hôte</strong> : prévoir environ <strong>150 Go libres</strong>, de préférence sur un <strong>SSD</strong>. Les disques sont dynamiques : les 2 × 240 Go de l'appliance n'occupent au départ qu'une trentaine de gigaoctets, et l'ensemble du lab en occupait 132 Go à la fin du parcours.</li>
+<li><strong>Disque du PC hôte</strong> : prévoir environ <strong>150 Go libres</strong>, de préférence sur un <strong>SSD</strong>. Les disques sont dynamiques : les 2 × 240 Go de l'appliance n'occupent au départ qu'une trentaine de gigaoctets ; l'espace occupé grandit ensuite avec les sauvegardes.</li>
 <li>La <strong>virtualisation matérielle</strong> (Intel VT-x ou AMD-V) doit être activée dans le BIOS/UEFI du PC.</li>
 </ul>
 <h2 id="instantanes-conseilles">Instantanés conseillés<a class="headerlink" href="#instantanes-conseilles" title="Permanent link">&para;</a></h2>
@@ -2467,7 +2465,7 @@
 </table>
 <div class="admonition warning">
 <p class="admonition-title">Un instantané n'est pas une sauvegarde</p>
-<p>L'instantané reste <strong>sur le même disque</strong> que la machine virtuelle : si le disque du PC hôte tombe en panne, les instantanés disparaissent avec elle. C'est exactement la différence entre une copie de confort et une vraie sauvegarde, expliquée dans la <a href="01-comprendre-la-sauvegarde/">partie 1</a>.</p>
+<p>L'instantané reste <strong>sur le même disque</strong> que la machine virtuelle : si le disque du PC hôte tombe en panne, les instantanés disparaissent avec lui. C'est exactement la différence entre une copie de confort et une vraie sauvegarde, expliquée dans la <a href="01-comprendre-la-sauvegarde/">partie 1</a>.</p>
 </div>
 <h2 id="logiciels-a-telecharger">Logiciels à télécharger<a class="headerlink" href="#logiciels-a-telecharger" title="Permanent link">&para;</a></h2>
 <table>
@@ -2480,7 +2478,7 @@
 </thead>
 <tbody>
 <tr>
-<td>Veeam Software Appliance 13.1 (ISO d'environ 16 Go)</td>
+<td>Veeam Software Appliance 13.1 (ISO d'environ 16,7 Go, soit 15,6 Gio)</td>
 <td><a href="https://www.veeam.com/products/downloads.html">Téléchargements Veeam</a></td>
 <td>Compte Veeam gratuit obligatoire ; la clé d'essai de 30 jours se demande au même endroit</td>
 </tr>

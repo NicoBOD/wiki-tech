@@ -2784,15 +2784,13 @@
 </tr>
 </tbody>
 </table>
-<details class="info">
-<summary>Ce qui a changé par rapport à la version 1.5 du support (juin 2024)</summary>
-<ul>
-<li>Toutes les illustrations ont été redessinées sous forme de schémas.</li>
-<li>Plusieurs nuances ont été ajoutées ou corrigées : une réplication n'est pas toujours « en temps réel », une synchronisation et un RAID <strong>ne sont pas</strong> des sauvegardes, et les faits de l'incident GitLab de 2017 ont été précisés (les données ont finalement été récupérées, avec six heures de perte).</li>
-<li>Nouveaux paragraphes : sauvegarde incrémentielle permanente, sauvegarde complète synthétique, rétention, chiffrement, équivalents français de RPO et RTO (PDMA et DMIA).</li>
-<li>Nouveaux exercices corrigés.</li>
-</ul>
-</details>
+<!-- NOTE DE RÉDACTION (non affichée) : Ce qui a changé par rapport à la version 1.5 du support (juin 2024)
+- Toutes les illustrations ont été redessinées sous forme de schémas.
+- Plusieurs nuances ont été ajoutées ou corrigées : une réplication n'est pas toujours « en temps réel », une synchronisation et un RAID **ne sont pas** des sauvegardes, et les faits de l'incident GitLab de 2017 ont été précisés (les données ont finalement été récupérées, avec six heures de perte).
+- Nouveaux paragraphes : sauvegarde incrémentielle permanente, sauvegarde complète synthétique, rétention, chiffrement, équivalents français de RPO et RTO (PDMA et DMIA).
+- Nouveaux exercices corrigés.
+-->
+
 <hr />
 <h2 id="1-sauvegarde-synchronisation-replication-raid-quelles-differences">1. Sauvegarde, synchronisation, réplication, RAID : quelles différences ?<a class="headerlink" href="#1-sauvegarde-synchronisation-replication-raid-quelles-differences" title="Permanent link">&para;</a></h2>
 <p>Ces quatre techniques copient toutes des données d'un endroit à un autre. Vues de loin, elles se ressemblent. Elles ne protègent pourtant <strong>pas contre les mêmes dangers</strong> :</p>
@@ -2975,8 +2973,8 @@
 <h2 id="2-pourquoi-sauvegarder">2. Pourquoi sauvegarder ?<a class="headerlink" href="#2-pourquoi-sauvegarder" title="Permanent link">&para;</a></h2>
 <p>La perte de données arrive pour des raisons très variées : suppression accidentelle, panne matérielle, bug logiciel, <strong>rançongiciel</strong> (<em>ransomware</em>, un logiciel malveillant qui chiffre les données et réclame une rançon), vol, incendie, inondation. Aucune entreprise n'y échappe, quelle que soit sa taille.</p>
 <p>Deux exemples célèbres :</p>
-<p><strong>MySpace (2019).</strong> Ce réseau social pionnier a annoncé qu'à la suite d'une migration de serveurs, les photos, vidéos et morceaux de musique envoyés par ses utilisateurs entre 2003 et 2015 n'étaient peut-être plus disponibles : environ 50 millions de morceaux de 14 millions d'artistes. Aucune copie n'existait ailleurs<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>.</p>
-<p><strong>GitLab (2017).</strong> En pleine nuit, un administrateur fatigué a supprimé par erreur environ 300 Go de données de la base de production, en se trompant de serveur. Sur les cinq mécanismes de sauvegarde et de réplication en place, <strong>aucun ne fonctionnait correctement</strong> : sauvegardes vides depuis des mois sans que personne ne le remarque, alertes bloquées, instantanés non activés. Les données ont finalement été restaurées à partir d'une copie faite <strong>six heures plus tôt</strong> pour un autre usage : six heures de travail des utilisateurs ont été perdues, et l'entreprise a dû s'expliquer publiquement<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>.</p>
+<p><strong>MySpace (2019).</strong> Ce réseau social pionnier a reconnu qu'à la suite d'une migration de serveurs, les photos, vidéos et morceaux de musique envoyés par ses utilisateurs entre 2003 et 2015 n'étaient peut-être plus disponibles : environ 50 millions de morceaux de 14 millions d'artistes. MySpace n'en avait aucune sauvegarde exploitable ; seule une petite partie (environ 490 000 morceaux) a pu être retrouvée grâce à une copie indépendante, publiée ensuite par Internet Archive<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>.</p>
+<p><strong>GitLab (2017).</strong> En pleine nuit, un administrateur fatigué a supprimé par erreur environ 300 Go de données de la base de production, en se trompant de serveur. Sur les cinq mécanismes de sauvegarde et de réplication en place, <strong>aucun ne fonctionnait correctement</strong> : sauvegardes quotidiennes qui produisaient des fichiers vides sans que personne ne le remarque, courriels d'alerte rejetés, instantanés de disques non activés. Les données ont finalement été restaurées à partir d'un instantané fait <strong>six heures plus tôt</strong> pour un autre usage : six heures de données de la base (tickets, commentaires, nouveaux comptes…) ont été perdues — les dépôts Git eux-mêmes n'étaient pas touchés — et l'entreprise a dû s'expliquer publiquement<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>.</p>
 <div class="admonition example">
 <p class="admonition-title">La leçon de GitLab</p>
 <p>Avoir des sauvegardes ne suffit pas : il faut <strong>surveiller</strong> qu'elles se font et <strong>tester</strong> régulièrement les restaurations. C'est exactement le « 0 » de la règle 3-2-1-1-0 vue plus bas.</p>
@@ -3025,7 +3023,7 @@
 <li><strong>Complète synthétique</strong> (<em>synthetic full</em>) : le serveur de sauvegarde <strong>fabrique</strong> une nouvelle sauvegarde complète à partir de la complète précédente et des incrémentielles qu'il possède déjà, <strong>sans relire</strong> la machine protégée. On obtient les avantages d'une complète sans charger la production ni le réseau.</li>
 <li><strong>Complète active</strong> (<em>active full</em>) : une vraie nouvelle sauvegarde complète, relue depuis la machine protégée. Plus lente, mais elle repart de données fraîches.</li>
 </ul>
-<p>Sur un système de fichiers qui le permet (<strong>XFS</strong> sous Linux, <strong>ReFS</strong> sous Windows), Veeam utilise le <strong>clonage de blocs</strong> (<em>Fast Clone</em>) : la complète synthétique <strong>référence</strong> les blocs déjà présents au lieu de les recopier. Elle se crée en quelques secondes et n'occupe presque pas de place supplémentaire.</p>
+<p>Sur un système de fichiers qui le permet (<strong>XFS</strong> sous Linux, <strong>ReFS</strong> sous Windows), Veeam utilise le <strong>clonage de blocs</strong> (<em>Fast Clone</em>) : la complète synthétique <strong>référence</strong> les blocs déjà présents au lieu de les recopier. Elle se crée beaucoup plus vite et n'occupe presque pas de place supplémentaire.</p>
 <h3 id="45-sauvegarde-immuable">4.5 Sauvegarde immuable<a class="headerlink" href="#45-sauvegarde-immuable" title="Permanent link">&para;</a></h3>
 <p>Une sauvegarde <strong>immuable</strong> ne peut <strong>ni être modifiée, ni être supprimée</strong> pendant une période de rétention définie, <strong>même par un administrateur</strong>. Même un attaquant qui a volé les identifiants du serveur de sauvegarde ne peut pas la détruire avant l'échéance. Elle répond au « 1 hors ligne ou immuable » de la règle 3-2-1-1-0.</p>
 <p>Ce principe s'appelle <strong>WORM</strong> (<em>Write Once, Read Many</em>, « écrire une fois, lire plusieurs fois »). On le trouve par exemple :</p>
@@ -3120,7 +3118,7 @@
 <hr />
 <h2 id="7-exercices">7. Exercices<a class="headerlink" href="#7-exercices" title="Permanent link">&para;</a></h2>
 <h3 id="exercice-1-identifier-un-type-de-sauvegarde">Exercice 1 : identifier un type de sauvegarde<a class="headerlink" href="#exercice-1-identifier-un-type-de-sauvegarde" title="Permanent link">&para;</a></h3>
-<p>Une entreprise sauvegarde un serveur de fichiers de 900 Go. Chaque jour, de nouvelles données sont modifiées : 100 Go le mardi, 200 Go le mercredi, 100 Go le jeudi, 300 Go le vendredi et 100 Go le samedi. Le schéma montre le contenu de chaque sauvegarde de la semaine.</p>
+<p>Une entreprise sauvegarde un serveur de fichiers de 900 Go. La sauvegarde complète est faite le lundi ; ensuite, chaque jour, des données différentes sont modifiées : 100 Go le mardi, 200 Go le mercredi, 100 Go le jeudi, 300 Go le vendredi et 100 Go le samedi. Le schéma montre le contenu de chaque sauvegarde de la semaine.</p>
 <figure>
   <img alt="Six colonnes du lundi au samedi : 900 Go le lundi, puis des blocs qui s'empilent chaque jour (100, puis 200 et 100, jusqu'à 100, 300, 100, 200 et 100 le samedi)" loading="lazy" src="../images/exercice-type-sauvegarde.svg" />
 <br />
