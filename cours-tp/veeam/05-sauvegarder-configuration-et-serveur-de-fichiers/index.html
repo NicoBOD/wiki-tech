@@ -1,0 +1,3950 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+      
+      
+        <meta name="author" content="Nicolas BODAINE">
+      
+      
+        <link rel="canonical" href="https://wiki.bodaine.fr/cours-tp/veeam/05-sauvegarder-configuration-et-serveur-de-fichiers/">
+      
+      
+        <link rel="prev" href="../04-ajouter-des-depots-de-sauvegarde/">
+      
+      
+        <link rel="next" href="../06-sauvegarder-restaurer-serveur-linux/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Sauvegarder la configuration de Veeam et le serveur de fichiers (TP Veeam Backup & Replication 13.1) - Wiki Tech — NicoBOD</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        
+        <link rel="stylesheet" href="../../../assets/external/fonts.googleapis.com/css.56f7ac64.css">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+    
+    
+      
+    
+    
+
+    <!-- SEO -->
+    <meta name="author" content="Nicolas BODAINE">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph : compléments non gérés par le plugin social.     -->
+    <!-- og:type/title/description/image/url sont posés par social.   -->
+    <meta property="og:site_name" content="Wiki Tech — NicoBOD">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card : la grande image et l'image elle-même sont      -->
+    <!-- héritées des balises og:image générées par le plugin social.  -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Sauvegarder la configuration de Veeam et le serveur de fichiers (TP Veeam Backup & Replication 13.1) — Wiki Tech — NicoBOD">
+    <meta name="twitter:description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+  
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#sauvegarder-la-configuration-de-veeam-et-le-serveur-de-fichiers" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-header__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wiki Tech — NicoBOD
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Sauvegarder la configuration de Veeam et le serveur de fichiers (TP Veeam Backup & Replication 13.1)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer en mode clair"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer en mode clair" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Passer en mode sombre"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer en mode sombre" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Revenir au thème système"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Revenir au thème système" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Partager" aria-label="Partager" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../systemes/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h16v10H4m16 2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4c-1.11 0-2 .89-2 2v10a2 2 0 0 0 2 2H0v2h24v-2z"/></svg>
+    
+  
+  Systèmes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../reseaux/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v2h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+    
+  
+  Réseaux
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cloud/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 20q-2.28 0-3.89-1.57Q1 16.85 1 14.58q0-1.95 1.17-3.48 1.18-1.53 3.08-1.95.63-2.3 2.5-3.72Q9.63 4 12 4q2.93 0 4.96 2.04Q19 8.07 19 11q1.73.2 2.86 1.5 1.14 1.28 1.14 3 0 1.88-1.31 3.19T18.5 20Z"/></svg>
+    
+  
+  Cloud
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cybersecurite/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12h7c-.53 4.11-3.28 7.78-7 8.92zH5V6.3l7-3.11M12 1 3 5v6c0 5.55 3.84 10.73 9 12 5.16-1.27 9-6.45 9-12V5z"/></svg>
+    
+  
+  Cybersécurité
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../ia/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/></svg>
+    
+  
+  IA
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../automatisation/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+    
+  
+  Automatisation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../logiciels/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m0 5H3V4h18z"/></svg>
+    
+  
+  Logiciels
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../debug/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 12h-4v-2h4m0 6h-4v-2h4m6-6h-2.81a6 6 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6 6 0 0 0-2.83 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20z"/></svg>
+    
+  
+  Debug
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../astuces/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+    
+  
+  Astuces
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+    
+  
+  Cours et TP
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../tags/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tags
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-nav__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    Wiki Tech — NicoBOD
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../systemes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Systèmes
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../reseaux/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Réseaux
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cybersecurite/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cybersécurité
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../ia/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IA
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../automatisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automatisation
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../logiciels/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logiciels
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../debug/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../astuces/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Astuces
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cours et TP
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cours et TP
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Veeam Backup & Replication
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_2" id="__nav_11_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Veeam Backup & Replication
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-comprendre-la-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-decouvrir-veeam-data-platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Découvrir Veeam Data Platform 13
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-preparer-le-lab-installer-appliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Préparer le lab et installer l'appliance
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-ajouter-des-depots-de-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Ajouter des dépôts de sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Sauvegarder la configuration et un serveur de fichiers
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Sauvegarder la configuration et un serveur de fichiers
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objectifs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objectifs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prérequis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-comprendre-ce-quil-faut-proteger" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Comprendre ce qu'il faut protéger
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Comprendre ce qu&#39;il faut protéger">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-quest-ce-quune-sauvegarde-de-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Qu'est-ce qu'une sauvegarde de configuration ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-ou-la-stocker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Où la stocker ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-une-double-protection-mot-de-passe-et-phrase-secrete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Une double protection : mot de passe et phrase secrète
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-sauvegarder-la-configuration-de-veeam" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Sauvegarder la configuration de Veeam
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Sauvegarder la configuration de Veeam">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-ouvrir-les-reglages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Ouvrir les réglages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-choisir-le-depot-n-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Choisir le dépôt n° 2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-activer-le-chiffrement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Activer le chiffrement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-lancer-la-sauvegarde-backup-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Lancer la sauvegarde (Backup now)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-depanner-la-phrase-secrete-du-security-officer-manque" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 Dépanner : la phrase secrète du Security Officer manque
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26-verifier-le-fichier-de-sauvegarde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.6 Vérifier le fichier de sauvegarde
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-creer-le-groupe-de-protection-de-srv-fichiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Créer le groupe de protection de srv-fichiers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Créer le groupe de protection de srv-fichiers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-pourquoi-un-groupe-de-protection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Pourquoi un groupe de protection ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-creer-le-groupe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Créer le groupe
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-suivre-le-deploiement-de-lagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Suivre le déploiement de l'agent
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-creer-le-job-de-sauvegarde-du-dossier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Créer le job de sauvegarde du dossier
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Créer le job de sauvegarde du dossier">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-lancer-lassistant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Lancer l'assistant
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-choisir-le-mode-de-sauvegarde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Choisir le mode de sauvegarde
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-designer-le-dossier-a-sauvegarder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Désigner le dossier à sauvegarder
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-choisir-le-depot-et-la-retention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Choisir le dépôt et la rétention
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#45-traitement-invite-et-planification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.5 Traitement invité et planification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#46-resume-et-premier-lancement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.6 Résumé et premier lancement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#47-lire-le-resultat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.7 Lire le résultat
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-tester-la-restauration-dun-fichier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Tester la restauration d'un fichier
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Tester la restauration d&#39;un fichier">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-relever-lempreinte-puis-supprimer-le-fichier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Relever l'empreinte puis supprimer le fichier
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-choisir-le-point-de-restauration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Choisir le point de restauration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-retrouver-le-fichier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Retrouver le fichier
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-choisir-comment-restaurer-overwrite-keep-ou-permissions-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Choisir comment restaurer : Overwrite, Keep ou Permissions only
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#55-verifier-que-le-fichier-est-identique" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.5 Vérifier que le fichier est identique
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#56-pour-aller-plus-loin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.6 Pour aller plus loin
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-verification-de-fin-de-partie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Vérification de fin de partie
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Vérification de fin de partie">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instantane-03-fichiers-sauvegardes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛟 Instantané : 03-fichiers-sauvegardes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-sauvegarder-restaurer-serveur-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Sauvegarder et restaurer un serveur Linux
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-sauvegarder-vers-azure-blob/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Sauvegarder vers Azure Blob (non rejoué)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tags/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.5 7A1.5 1.5 0 0 1 4 5.5 1.5 1.5 0 0 1 5.5 4 1.5 1.5 0 0 1 7 5.5 1.5 1.5 0 0 1 5.5 7m15.91 4.58-9-9C12.05 2.22 11.55 2 11 2H4c-1.11 0-2 .89-2 2v7c0 .55.22 1.05.59 1.41l8.99 9c.37.36.87.59 1.42.59s1.05-.23 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.56-.23-1.06-.59-1.42"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objectifs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objectifs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prérequis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-comprendre-ce-quil-faut-proteger" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Comprendre ce qu'il faut protéger
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Comprendre ce qu&#39;il faut protéger">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-quest-ce-quune-sauvegarde-de-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Qu'est-ce qu'une sauvegarde de configuration ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-ou-la-stocker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Où la stocker ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-une-double-protection-mot-de-passe-et-phrase-secrete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Une double protection : mot de passe et phrase secrète
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-sauvegarder-la-configuration-de-veeam" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Sauvegarder la configuration de Veeam
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Sauvegarder la configuration de Veeam">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-ouvrir-les-reglages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Ouvrir les réglages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-choisir-le-depot-n-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Choisir le dépôt n° 2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-activer-le-chiffrement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Activer le chiffrement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-lancer-la-sauvegarde-backup-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Lancer la sauvegarde (Backup now)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-depanner-la-phrase-secrete-du-security-officer-manque" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 Dépanner : la phrase secrète du Security Officer manque
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26-verifier-le-fichier-de-sauvegarde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.6 Vérifier le fichier de sauvegarde
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-creer-le-groupe-de-protection-de-srv-fichiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Créer le groupe de protection de srv-fichiers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Créer le groupe de protection de srv-fichiers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-pourquoi-un-groupe-de-protection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Pourquoi un groupe de protection ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-creer-le-groupe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Créer le groupe
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-suivre-le-deploiement-de-lagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Suivre le déploiement de l'agent
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-creer-le-job-de-sauvegarde-du-dossier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Créer le job de sauvegarde du dossier
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Créer le job de sauvegarde du dossier">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-lancer-lassistant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Lancer l'assistant
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-choisir-le-mode-de-sauvegarde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Choisir le mode de sauvegarde
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-designer-le-dossier-a-sauvegarder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Désigner le dossier à sauvegarder
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-choisir-le-depot-et-la-retention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Choisir le dépôt et la rétention
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#45-traitement-invite-et-planification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.5 Traitement invité et planification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#46-resume-et-premier-lancement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.6 Résumé et premier lancement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#47-lire-le-resultat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.7 Lire le résultat
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-tester-la-restauration-dun-fichier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Tester la restauration d'un fichier
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Tester la restauration d&#39;un fichier">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-relever-lempreinte-puis-supprimer-le-fichier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Relever l'empreinte puis supprimer le fichier
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-choisir-le-point-de-restauration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Choisir le point de restauration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-retrouver-le-fichier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Retrouver le fichier
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-choisir-comment-restaurer-overwrite-keep-ou-permissions-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Choisir comment restaurer : Overwrite, Keep ou Permissions only
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#55-verifier-que-le-fichier-est-identique" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.5 Vérifier que le fichier est identique
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#56-pour-aller-plus-loin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.6 Pour aller plus loin
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-verification-de-fin-de-partie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Vérification de fin de partie
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Vérification de fin de partie">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instantane-03-fichiers-sauvegardes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛟 Instantané : 03-fichiers-sauvegardes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Cours et TP
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Veeam Backup & Replication
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:agent-windows" class="md-tag">agent-windows</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:configuration-backup" class="md-tag">configuration-backup</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:restauration" class="md-tag">restauration</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:sauvegarde" class="md-tag">sauvegarde</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:travaux-pratiques" class="md-tag">travaux-pratiques</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:veeam" class="md-tag">veeam</a>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/NicoBOD/wiki-tech/edit/main/docs/cours-tp/veeam/05-sauvegarder-configuration-et-serveur-de-fichiers.md" title="Editer cette page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/NicoBOD/wiki-tech/raw/main/docs/cours-tp/veeam/05-sauvegarder-configuration-et-serveur-de-fichiers.md" title="Consulter la source de cette page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<!-- ============================================================ -->
+<!-- ⚠️ RAPPEL IMPORTANT :                                          -->
+<!-- Pensez TOUJOURS à ajouter une entrée dans le fichier d'index  -->
+<!-- (index.md) du dossier correspondant (ex: docs/cloud/index.md) -->
+<!-- afin de référencer ce nouvel article et permettre aux         -->
+<!-- visiteurs de le trouver et de cliquer dessus !                -->
+<!-- ============================================================ -->
+
+<h1 id="sauvegarder-la-configuration-de-veeam-et-le-serveur-de-fichiers">Sauvegarder la configuration de Veeam et le serveur de fichiers<a class="headerlink" href="#sauvegarder-la-configuration-de-veeam-et-le-serveur-de-fichiers" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Résumé</p>
+<p>Ce TP met en route les <strong>premières sauvegardes réelles</strong> du lab. Il commence par protéger <strong>Veeam lui-même</strong> : la <em>sauvegarde de configuration</em> (la « carte d'identité » du serveur de sauvegarde), chiffrée et envoyée sur le dépôt du serveur de fichiers. Il continue avec la sauvegarde d'un <strong>dossier de documents importants</strong> du serveur Windows <code>srv-fichiers</code> : création d'un <strong>groupe de protection</strong>, déploiement automatique de l'<strong>agent Veeam pour Windows</strong>, création du <strong>job</strong> en mode fichiers, premier lancement.</p>
+<p>Il se termine par ce que beaucoup oublient : un <strong>test de restauration</strong>. Un fichier est supprimé volontairement, puis récupéré depuis la sauvegarde, et son <strong>empreinte SHA-256</strong> prouve qu'il est identique à l'original.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Propriété</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Difficulté</td>
+<td>Intermédiaire</td>
+</tr>
+<tr>
+<td>Durée estimée</td>
+<td>2 h 30 (dont environ 10 minutes d'attente des traitements)</td>
+</tr>
+<tr>
+<td>Version décrite</td>
+<td>Veeam Backup &amp; Replication <strong>13.1.2.57</strong> (Veeam Software Appliance), agent Veeam pour Windows installé par l'appliance</td>
+</tr>
+<tr>
+<td>Prérequis</td>
+<td>Parties <a href="../03-preparer-le-lab-installer-appliance/">3</a> et <a href="../04-ajouter-des-depots-de-sauvegarde/">4</a> terminées ; instantané <code>02-depots</code></td>
+</tr>
+<tr>
+<td>Place dans le parcours</td>
+<td>Partie 5 sur 7 du parcours <a href="../">Veeam Backup &amp; Replication</a></td>
+</tr>
+<tr>
+<td>Rejoué dans le lab</td>
+<td>2 novembre 2026 (KVM/libvirt)</td>
+</tr>
+<tr>
+<td>Dernière mise à jour</td>
+<td>2026-11-02</td>
+</tr>
+</tbody>
+</table>
+<details class="info">
+<summary>Ce qui a changé par rapport à la version 1.5 du support (juin 2024)</summary>
+<ul>
+<li>Le support utilisait Veeam Backup &amp; Replication 12 <strong>installé sur Windows</strong>, avec la console Windows pour tout faire. Ici, le serveur est l'<strong>appliance Linux 13.1</strong> : le <strong>job de sauvegarde</strong> et le <strong>groupe de protection</strong> se créent dans l'<strong>interface web</strong>, alors que le <strong>réglage de la sauvegarde de configuration</strong> se fait dans la <strong>console Windows</strong>.</li>
+<li>La <strong>phrase secrète du Security Officer</strong> (partie 3) est <strong>obligatoire</strong> pour que la sauvegarde de configuration d'une appliance réussisse : elle n'existait pas dans le support. Son absence fait échouer la tâche (voir l'encadré de dépannage de la section 2.5).</li>
+<li>Le support envoyait la sauvegarde de configuration sur le dépôt local du serveur Veeam. Ce TP la dirige vers le <strong>dépôt n° 2</strong> (<code>Depot-2-srv-fichiers</code>), situé sur <strong>une autre machine</strong> : une sauvegarde de configuration stockée sur le serveur qu'elle protège disparaît avec lui.</li>
+<li>Le support appelait « serveur de fichiers » une machine déclarée par son adresse et un compte administrateur. Dans ce lab, <code>srv-fichiers</code> est déjà un <strong>serveur géré par certificat</strong> depuis la partie 4 : le déploiement de l'agent passe par ce même mécanisme, <strong>sans saisir de mot de passe</strong>.</li>
+<li>Le support corrigeait après coup une adresse IP erronée dans le job. Ce TP la fait saisir correctement une fois pour toutes, par le <strong>groupe de protection</strong>.</li>
+<li>Un <strong>test de restauration</strong> (suppression volontaire d'un fichier, restauration, contrôle d'empreinte) a été ajouté : une sauvegarde jamais restaurée n'est pas une sauvegarde fiable.</li>
+</ul>
+</details>
+<div class="admonition info">
+<p class="admonition-title">Convention de lecture</p>
+<p>Chaque action précise la machine sur laquelle elle se fait : 🖥️ PC hôte (hyperviseur), 🌐 navigateur web connecté à l'appliance, 🪟 <code>srv-fichiers</code> (Windows Server 2025), 📦 console de l'appliance <code>vbr</code>. Les menus et boutons sont écrits <strong>en anglais</strong>, comme Veeam les affiche, et traduits quand c'est utile. Les adresses, comptes et mots de passe sont ceux de la page <a href="../#plan-dadressage">d'accueil du parcours</a> ; pour mémoire :</p>
+<table>
+<thead>
+<tr>
+<th>Élément</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Interface web et console Windows</td>
+<td><code>https://192.168.19.55</code>, compte <code>veeamadmin</code>, mot de passe <code>PoPoPo000@@@Lab</code> + code MFA</td>
+</tr>
+<tr>
+<td><code>srv-fichiers</code></td>
+<td><code>192.168.19.22</code>, compte <code>Administrateur</code>, mot de passe <code>Popopo222@@@</code></td>
+</tr>
+<tr>
+<td>Mot de passe de chiffrement de la sauvegarde de configuration</td>
+<td><code>Popopo444@@@</code> (indice « Mot de passe du lab Veeam »)</td>
+</tr>
+<tr>
+<td>Phrase secrète du Security Officer (partie 3)</td>
+<td><code>PoPoPo666@@@Lab</code> (indice « Phrase secrete du lab Veeam »)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr />
+<h2 id="objectifs">Objectifs<a class="headerlink" href="#objectifs" title="Permanent link">&para;</a></h2>
+<p>À la fin de ce TP, il est possible de :</p>
+<ul>
+<li>expliquer ce que contient une <strong>sauvegarde de configuration</strong> et pourquoi elle ne doit <strong>jamais</strong> rester sur le serveur qu'elle protège ;</li>
+<li>régler, chiffrer et lancer la sauvegarde de configuration depuis la console Windows ;</li>
+<li>créer un <strong>groupe de protection</strong> et laisser l'appliance <strong>déployer l'agent</strong> sur un serveur Windows ;</li>
+<li>créer un <strong>job de sauvegarde par agent</strong> en mode fichiers, le lancer et lire son résultat ;</li>
+<li><strong>restaurer un fichier supprimé</strong> et prouver, par son empreinte, que la restauration est fidèle.</li>
+</ul>
+<h2 id="prerequis">Prérequis<a class="headerlink" href="#prerequis" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Les parties <a href="../03-preparer-le-lab-installer-appliance/">3</a> et <a href="../04-ajouter-des-depots-de-sauvegarde/">4</a> sont terminées : l'appliance <code>vbr</code> fonctionne, <code>srv-fichiers</code> est un <strong>serveur géré</strong> et possède le dépôt <code>Depot-2-srv-fichiers</code> (disque <code>F:</code>, chemin <code>F:\RepoVeeam</code>).</li>
+<li>La <strong>console Windows</strong> de Veeam est installée sur <code>srv-fichiers</code> (fin de la partie 3).</li>
+<li>Le <strong>Security Officer</strong> de l'appliance a été initialisé, avec sa <strong>phrase secrète</strong> de sauvegarde de configuration (section « Initialiser le compte Security Officer » de la <a href="../03-preparer-le-lab-installer-appliance/#9-initialiser-le-compte-security-officer">partie 3</a>).</li>
+<li>Machines allumées : <code>pfsense-19</code>, <code>vbr</code>, <code>srv-fichiers</code>. <code>srv-debian</code> n'est pas encore utile.</li>
+<li>Le dossier <code>E:\Documents-importants</code> existe sur <code>srv-fichiers</code> (voir l'encadré ci-dessous).</li>
+<li><strong>Instantané conseillé</strong> : <code>02-depots</code>, pris à la fin de la partie 4. Il permet de recommencer cette partie sans refaire les précédentes (voir <a href="../#instantanes-conseilles">Instantanés conseillés</a>).</li>
+</ul>
+<details class="example">
+<summary>Préparer le dossier de documents à protéger (si absent)</summary>
+<p>Sur <code>srv-fichiers</code>, le disque <code>E:</code> (40 Go, NTFS, nommé « DONNEES ») doit contenir quelques documents fictifs. Dans <strong>PowerShell</strong> ouvert en administrateur :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">$base</span> <span class="p">=</span> <span class="s1">'E:\Documents-importants'</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">foreach</span> <span class="p">(</span><span class="nv">$s</span> <span class="k">in</span> <span class="s1">'Comptabilite'</span><span class="p">,</span><span class="s1">'Contrats'</span><span class="p">,</span><span class="s1">'Ressources-humaines'</span><span class="p">)</span> <span class="p">{</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">-Path</span> <span class="s2">"$base\$s"</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">}</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="nb">Set-Content</span> <span class="s2">"$base\Comptabilite\factures-2026.csv"</span> <span class="s2">"Numero;Client;Montant</span><span class="se">`n</span><span class="s2">F2026-001;Boulangerie Martin;1250,00</span><span class="se">`n</span><span class="s2">F2026-002;Garage Durand;3480,50</span><span class="se">`n</span><span class="s2">F2026-003;Cabinet Leroy;890,00"</span> <span class="n">-Encoding</span> <span class="n">UTF8</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="nb">Set-Content</span> <span class="s2">"$base\Comptabilite\bilan-previsionnel.txt"</span> <span class="s2">"Bilan previsionnel 2026 - document confidentiel"</span> <span class="n">-Encoding</span> <span class="n">UTF8</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="nb">Set-Content</span> <span class="s2">"$base\Contrats\contrat-maintenance-2026.txt"</span> <span class="s2">"Contrat de maintenance informatique - signe le 05/01/2026"</span> <span class="n">-Encoding</span> <span class="n">UTF8</span>
+</code></pre></div>
+<p>Le fichier de la section 5 est <code>factures-2026.csv</code>. Peu importe le contenu des autres fichiers.</p>
+</details>
+<hr />
+<h2 id="1-comprendre-ce-quil-faut-proteger">1. Comprendre ce qu'il faut protéger<a class="headerlink" href="#1-comprendre-ce-quil-faut-proteger" title="Permanent link">&para;</a></h2>
+<p>Un serveur de sauvegarde Veeam protège les données <strong>des autres machines</strong>. Mais il a lui-même besoin d'être protégé : s'il disparaît, il faut pouvoir le reconstruire sans tout reconfigurer.</p>
+<h3 id="11-quest-ce-quune-sauvegarde-de-configuration">1.1 Qu'est-ce qu'une sauvegarde de configuration ?<a class="headerlink" href="#11-quest-ce-quune-sauvegarde-de-configuration" title="Permanent link">&para;</a></h3>
+<p>Veeam enregistre sa configuration dans une <strong>base de données</strong> (PostgreSQL sur l'appliance) : la liste des dépôts, des serveurs gérés, des jobs, des groupes de protection, les identifiants enregistrés, les historiques de sessions et le catalogue des points de restauration. La <strong>sauvegarde de configuration</strong> (<em>configuration backup</em>) en fait une copie, dans un fichier au format <code>.bco</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Contenu</th>
+<th>Dans la sauvegarde de configuration ?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Jobs, planifications, dépôts, serveurs gérés, groupes de protection</td>
+<td>Oui</td>
+</tr>
+<tr>
+<td>Historique des sessions, catalogue des points de restauration</td>
+<td>Oui</td>
+</tr>
+<tr>
+<td>Identifiants, certificats, clés de chiffrement</td>
+<td><strong>Seulement si la sauvegarde est chiffrée</strong></td>
+</tr>
+<tr>
+<td><strong>Les données sauvegardées</strong> (fichiers, images de machines)</td>
+<td><strong>Non</strong> : elles restent dans les dépôts</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi est-ce vital ?</p>
+<p>Sans configuration, un nouveau serveur Veeam, même branché sur les bons dépôts, ne connaît ni les jobs ni les mots de passe, et les sauvegardes chiffrées deviennent illisibles. Avec elle, il suffit de réinstaller l'appliance puis de <strong>restaurer la configuration</strong> : en quelques minutes, jobs, dépôts et historique reviennent. C'est l'équivalent de la <strong>carte grise et du carnet d'entretien</strong> d'une voiture : ils ne remplacent pas la voiture, mais sans eux, la remplacer est un cauchemar.</p>
+</div>
+<h3 id="12-ou-la-stocker">1.2 Où la stocker ?<a class="headerlink" href="#12-ou-la-stocker" title="Permanent link">&para;</a></h3>
+<p>Par défaut, Veeam propose le dépôt <code>Default Backup Repository</code>, qui se trouve <strong>sur l'appliance elle-même</strong> (<code>/var/lib/veeam/backup</code>). C'est une <strong>mauvaise idée</strong> : si l'appliance est détruite ou chiffrée par un rançongiciel, la sauvegarde de sa configuration disparaît avec elle. C'est exactement la situation contre laquelle elle doit protéger.</p>
+<p>Ce TP envoie donc la sauvegarde de configuration vers <code>Depot-2-srv-fichiers</code>, un dépôt situé sur <strong>une autre machine</strong> (<code>srv-fichiers</code>, disque <code>F:</code>). En production, on la copierait en plus <strong>hors site</strong> (autre bâtiment, cloud, dépôt immuable) : la règle <a href="../01-comprendre-la-sauvegarde/#32-la-regle-3-2-1-1-0">3-2-1-1-0</a> s'applique aussi à la configuration de Veeam.</p>
+<h3 id="13-une-double-protection-mot-de-passe-et-phrase-secrete">1.3 Une double protection : mot de passe et phrase secrète<a class="headerlink" href="#13-une-double-protection-mot-de-passe-et-phrase-secrete" title="Permanent link">&para;</a></h3>
+<p>Sur une appliance avec un compte <strong>Security Officer</strong>, la sauvegarde de configuration est protégée par <strong>deux secrets</strong> :</p>
+<table>
+<thead>
+<tr>
+<th>Secret</th>
+<th>Qui le définit, où</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Mot de passe de chiffrement</strong></td>
+<td>Le gestionnaire de sauvegarde, dans la console Windows (section 2.3)</td>
+<td>Chiffre le fichier <code>.bco</code> ; il faut le fournir pour restaurer</td>
+</tr>
+<tr>
+<td><strong>Phrase secrète</strong> (<em>passphrase</em>)</td>
+<td>Le Security Officer, dans <strong>Host Management</strong> (partie 3)</td>
+<td>Ajoute un <strong>second chiffrement</strong> : un administrateur seul ne peut plus restaurer ni lire la configuration</td>
+</tr>
+</tbody>
+</table>
+<p>L'idée est la <strong>séparation des pouvoirs</strong> : celui qui administre Veeam au quotidien ne détient pas, à lui seul, tout ce qu'il faut pour exploiter une sauvegarde de configuration volée. D'après la documentation de Veeam, si cette protection est active, la tâche de sauvegarde de configuration <strong>échoue</strong> tant que le chiffrement n'est pas activé.</p>
+<div class="admonition warning">
+<p class="admonition-title">Conserver ces secrets hors de l'appliance</p>
+<p>Le mot de passe et la phrase secrète <strong>ne se récupèrent pas</strong> : sans eux, le fichier <code>.bco</code> est inutilisable, et le support de Veeam ne peut pas les retrouver (la console le rappelle à l'écran). Les noter dans un <strong>gestionnaire de mots de passe</strong> ou un coffre <strong>qui ne dépend pas de l'appliance</strong>. Les stocker sur le serveur de sauvegarde lui-même reviendrait à ranger la clé du coffre <strong>dans</strong> le coffre. Dans ce lab pédagogique, les valeurs sont publiées en clair dans la page d'accueil du parcours : ce n'est acceptable que parce que le lab ne contient aucune donnée réelle.</p>
+</div>
+<hr />
+<h2 id="2-sauvegarder-la-configuration-de-veeam">2. Sauvegarder la configuration de Veeam<a class="headerlink" href="#2-sauvegarder-la-configuration-de-veeam" title="Permanent link">&para;</a></h2>
+<div class="admonition info">
+<p class="admonition-title">Console Windows ou interface web ?</p>
+<p>Dans le lab, ce réglage a été fait dans la <strong>console Windows</strong>, comme le décrit la documentation de Veeam (menu principal, <strong>Configuration Backup</strong>). Les pages <strong>Configuration</strong> de l'interface web observées dans le lab ne proposaient pas ce réglage, et un article de la communauté Veeam sur la version 13 indique que la sauvegarde de configuration n'est pas encore disponible dans la console web. Ce dernier point n'a pas été vérifié plus avant : si une version ultérieure l'ajoute, la logique reste la même.</p>
+</div>
+<h3 id="21-ouvrir-les-reglages">2.1 Ouvrir les réglages<a class="headerlink" href="#21-ouvrir-les-reglages" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🪟 Sur <code>srv-fichiers</code>, ouvrir la <strong>console Veeam Backup &amp; Replication</strong> et se connecter à <code>192.168.19.55</code> avec <code>veeamadmin</code> (mot de passe <code>PoPoPo000@@@Lab</code> + code MFA), comme en fin de partie 3.</li>
+<li>Cliquer sur le <strong>menu principal</strong> (l'icône ≡ en haut à gauche), puis sur <strong>Configuration Backup</strong>.</li>
+</ol>
+<figure>
+  <img alt="Menu principal de la console Windows de Veeam, avec la ligne Configuration Backup entourée en rouge" loading="lazy" src="../images/05-fichiers/console-menu-configuration-backup.png" />
+<br />
+<figcaption>Le menu principal (≡) de la console Windows : <strong>Configuration Backup</strong> est entre <strong>Malware Detection</strong>… et <strong>Global Exclusions</strong>.</figcaption>
+</figure>
+<p>La fenêtre <strong>Configuration Backup Settings</strong> s'ouvre. Au départ, le dépôt choisi est <code>Default Backup Repository</code>, la rétention est de <strong>10</strong> points de restauration et la sauvegarde est planifiée <strong>tous les jours à 10:00</strong>. Une alerte jaune prévient que les identifiants enregistrés, les certificats et les données de l'appliance <strong>ne seront pas inclus tant que le chiffrement n'est pas activé</strong>.</p>
+<figure>
+  <img alt="Fenêtre Configuration Backup Settings avec le dépôt par défaut, aucune sauvegarde, et l'avertissement sur les identifiants non inclus" loading="lazy" src="../images/05-fichiers/config-backup-reglages-par-defaut.png" />
+<br />
+<figcaption>Réglages par défaut. L'avertissement entouré en rouge disparaît quand le chiffrement est activé (section 2.3).</figcaption>
+</figure>
+<h3 id="22-choisir-le-depot-n-2">2.2 Choisir le dépôt n° 2<a class="headerlink" href="#22-choisir-le-depot-n-2" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Cocher <strong>Enable configuration backup to the following repository</strong> si ce n'est pas fait.</li>
+<li>Dans la liste <strong>Enable configuration backup to the following repository</strong>, remplacer <code>Default Backup Repository</code> par <strong><code>Depot-2-srv-fichiers</code></strong> (« Dépôt n° 2 : disque F: (ReFS 64 Ko) du serveur de fichiers srv-fichiers »).</li>
+<li>Laisser <strong>Restore points to keep</strong> à <strong>10</strong> : Veeam conserve les 10 dernières sauvegardes de configuration et supprime les plus anciennes.</li>
+</ol>
+<figure>
+  <img alt="Liste déroulante des dépôts avec Depot-2-srv-fichiers entouré en rouge" loading="lazy" src="../images/05-fichiers/config-backup-choix-depot-2.png" />
+<br />
+<figcaption>Choisir le dépôt n° 2, situé sur <code>srv-fichiers</code>, et non celui de l'appliance.</figcaption>
+</figure>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi 10 points de restauration et une sauvegarde quotidienne ?</p>
+<p>La configuration change à chaque nouveau job ou dépôt. Une sauvegarde <strong>quotidienne</strong> garde au pire une journée de modifications à refaire ; 10 points permettent de remonter jusqu'à 10 jours en arrière si une erreur de configuration passe inaperçue. Le fichier est petit (environ 227 Ko dans le lab) : conserver davantage de points coûte très peu.</p>
+</div>
+<h3 id="23-activer-le-chiffrement">2.3 Activer le chiffrement<a class="headerlink" href="#23-activer-le-chiffrement" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Cocher <strong>Enable configuration backup file encryption</strong>.</li>
+<li>Cliquer sur <strong>Add...</strong> à droite du champ <strong>Password</strong>.</li>
+<li>Dans la fenêtre <strong>Password</strong>, saisir :<ul>
+<li><strong>Hint</strong> (indice) : <code>Mot de passe du lab Veeam</code> ;</li>
+<li><strong>Password</strong> : <code>Popopo444@@@</code>.</li>
+</ul>
+</li>
+<li>Cliquer sur <strong>OK</strong>.</li>
+</ol>
+<figure>
+  <img alt="Fenêtre Password avec l'indice « Mot de passe du lab Veeam » et un mot de passe masqué" loading="lazy" src="../images/05-fichiers/config-backup-mot-de-passe-chiffrement.png" />
+<br />
+<figcaption>L'<strong>indice</strong> n'est pas un secret : il rappelle quel mot de passe a été utilisé. Il ne doit jamais contenir le mot de passe.</figcaption>
+</figure>
+<div class="admonition tip">
+<p class="admonition-title">Écrire l'indice avec soin</p>
+<p>Un indice trop vague (« le mot de passe habituel ») est inutile le jour de la reconstruction. Un indice trop précis (« nom du chien + année ») aide un attaquant. Le bon indice permet de <strong>retrouver dans le gestionnaire de mots de passe</strong> la bonne entrée.</p>
+</div>
+<h3 id="24-lancer-la-sauvegarde-backup-now">2.4 Lancer la sauvegarde (Backup now)<a class="headerlink" href="#24-lancer-la-sauvegarde-backup-now" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Cliquer sur <strong>Apply</strong> pour enregistrer les réglages. Veeam interroge le dépôt et affiche son espace libre (dans le lab : <code>38,6 GB free of 39,9 GB</code>).</li>
+<li>Cliquer sur <strong>Backup now</strong> à droite de <strong>Last successful backup</strong>.</li>
+</ol>
+<figure>
+  <img alt="Fenêtre Configuration Backup Settings avec le dépôt n° 2, le chiffrement activé et le bouton Backup now entouré en rouge" loading="lazy" src="../images/05-fichiers/config-backup-reglages-finaux.png" />
+<br />
+<figcaption>Réglages finaux : dépôt n° 2, chiffrement activé, mot de passe choisi. <strong>Backup now</strong> lance la sauvegarde sans attendre 10:00.</figcaption>
+</figure>
+<p>Au bout d'une minute environ, la ligne <strong>Last successful backup</strong> affiche la date et l'heure de la sauvegarde. Cliquer sur <strong>OK</strong> pour fermer la fenêtre.</p>
+<figure>
+  <img alt="Fenêtre Configuration Backup Settings avec la ligne Last successful backup renseignée et entourée en rouge" loading="lazy" src="../images/05-fichiers/config-backup-reussie.png" />
+<br />
+<figcaption>La ligne <strong>Last successful backup</strong> porte désormais une date : la sauvegarde de configuration a réussi.</figcaption>
+</figure>
+<h3 id="25-depanner-la-phrase-secrete-du-security-officer-manque">2.5 Dépanner : la phrase secrète du Security Officer manque<a class="headerlink" href="#25-depanner-la-phrase-secrete-du-security-officer-manque" title="Permanent link">&para;</a></h3>
+<div class="admonition failure">
+<p class="admonition-title">La tâche « Backup Configuration Job » échoue</p>
+<p>Si <strong>Backup now</strong> se termine en <strong>Failed</strong>, ouvrir le journal de la session. Dans le lab, avant que la phrase secrète n'existe, il contenait :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Failed  Processing configuration VeeamBackup at /run/postgresql
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Failed  Unable to process the configuration backup without the Security Officer's passphrase.
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>        Ask your Security Officer to configure it in the Host Management console.
+</code></pre></div>
+<p><strong>Cause</strong> : sur une appliance, la sauvegarde de configuration est protégée par la <strong>phrase secrète du Security Officer</strong>. Si elle n'a pas été définie lors de la première connexion du Security Officer (partie 3), la sauvegarde ne peut pas être produite.</p>
+<p><strong>Correction</strong> :</p>
+<ol>
+<li>🌐 Ouvrir <strong>Host Management</strong> de l'appliance et se connecter avec le compte du Security Officer <code>veeamso</code> (mot de passe <code>PoPoPo555@@@Lab</code> + code MFA, voir la <a href="../03-preparer-le-lab-installer-appliance/#9-initialiser-le-compte-security-officer">partie 3</a>).</li>
+<li>Si l'assistant d'initialisation s'affiche, le terminer jusqu'à l'étape <strong>Configuration Backup</strong>. Saisir la <strong>Passphrase</strong> <code>PoPoPo666@@@Lab</code> et l'indice <code>Phrase secrete du lab Veeam</code>.</li>
+<li>Vérifier, dans <strong>Configuration</strong>, la ligne <strong>Passphrase created</strong> (voir la capture ci-dessous).</li>
+<li>🪟 Retourner dans la console Windows et cliquer de nouveau sur <strong>Backup now</strong>.</li>
+</ol>
+</div>
+<figure>
+  <img alt="Page Configuration de Host Management, rubrique Configuration Backup : passphrase créée le 02/11/2026 avec son indice" loading="lazy" src="../images/05-fichiers/host-management-phrase-secrete-security-officer.png" />
+<br />
+<figcaption>Dans Host Management, la rubrique <strong>Configuration Backup</strong> indique <strong>Passphrase created</strong> et son indice : la sauvegarde de configuration peut réussir.</figcaption>
+</figure>
+<h3 id="26-verifier-le-fichier-de-sauvegarde">2.6 Vérifier le fichier de sauvegarde<a class="headerlink" href="#26-verifier-le-fichier-de-sauvegarde" title="Permanent link">&para;</a></h3>
+<p>Vérifier que le fichier existe bien <strong>sur le dépôt n° 2</strong>, donc sur une autre machine que l'appliance.</p>
+<ol>
+<li>
+<p>🪟 Sur <code>srv-fichiers</code>, ouvrir <strong>PowerShell</strong> et lancer :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">Get-ChildItem</span> <span class="n">F</span><span class="p">:\</span><span class="n">RepoVeeam</span><span class="p">\</span><span class="n">VeeamConfigBackup</span> <span class="n">-Recurse</span> <span class="o">-File</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">FullName</span><span class="p">,</span> <span class="n">Length</span>
+</code></pre></div>
+</li>
+<li>
+<p>Un fichier <code>.bco</code> apparaît, dans un sous-dossier portant le nom du serveur de sauvegarde. Dans le lab :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>FullName                                                       Length
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>--------                                                       ------
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>F:\RepoVeeam\VeeamConfigBackup\vbr\vbr_2026-11-02_07-29-09.bco 232832
+</code></pre></div>
+</li>
+</ol>
+<p>Le nom contient la date et l'heure de la sauvegarde ; la taille (environ <strong>227 Ko</strong>) est faible puisqu'il ne contient que la configuration, pas les données.</p>
+<div class="admonition note">
+<p class="admonition-title">Et la restauration de la configuration ?</p>
+<p>Ce TP <strong>crée</strong> la sauvegarde de configuration mais ne la <strong>restaure pas</strong> : une restauration remplace la configuration du serveur de sauvegarde en cours, ce qui n'a pas sa place ici. Elle se fait avec l'assistant <strong>Restore</strong> de la console Windows, en fournissant le mot de passe de chiffrement et la phrase secrète du Security Officer. Retenir surtout ceci : <strong>sans ces deux secrets, la sauvegarde est inutilisable</strong>.</p>
+</div>
+<hr />
+<h2 id="3-creer-le-groupe-de-protection-de-srv-fichiers">3. Créer le groupe de protection de <code>srv-fichiers</code><a class="headerlink" href="#3-creer-le-groupe-de-protection-de-srv-fichiers" title="Permanent link">&para;</a></h2>
+<h3 id="31-pourquoi-un-groupe-de-protection">3.1 Pourquoi un groupe de protection ?<a class="headerlink" href="#31-pourquoi-un-groupe-de-protection" title="Permanent link">&para;</a></h3>
+<p>Pour sauvegarder un serveur physique ou une machine virtuelle <strong>sans passer par l'hyperviseur</strong>, Veeam installe un petit logiciel sur la machine : l'<strong>agent Veeam pour Windows</strong>. Les <strong>groupes de protection</strong> (<em>protection groups</em>) permettent de le faire de façon automatisée :</p>
+<ul>
+<li>un groupe regroupe les machines à protéger (ici, une seule) ;</li>
+<li>l'appliance <strong>découvre</strong> les machines du groupe, installe l'agent et le <strong>tient à jour</strong> ;</li>
+<li>le groupe est <strong>réanalysé</strong> (<em>rescan</em>) chaque jour : une machine ajoutée plus tard au groupe est détectée et équipée toute seule.</li>
+</ul>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi l'agent et pas une simple copie de fichiers ?</p>
+<p>Copier un dossier avec l'Explorateur ne garde ni l'historique, ni la déduplication, ni la compression, ni le chiffrement, et bloque sur les fichiers ouverts. L'agent s'appuie sur le <strong>service d'instantanés de volume de Windows</strong> (VSS) pour lire un état cohérent même si des fichiers sont ouverts, puis envoie les blocs modifiés au dépôt.</p>
+</div>
+<h3 id="32-creer-le-groupe">3.2 Créer le groupe<a class="headerlink" href="#32-creer-le-groupe" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🌐 Ouvrir <code>https://192.168.19.55</code> dans le navigateur et se connecter (<code>veeamadmin</code>, <code>PoPoPo000@@@Lab</code> + code MFA).</li>
+<li>Dans le menu de gauche, ouvrir <strong>Inventory</strong> &gt; <strong>Protection Groups</strong>, puis cliquer sur <strong>Add New</strong>.</li>
+<li>Choisir <strong>Individual Computers</strong> : un groupe où l'on liste les machines une par une, adapté aux petits parcs sans annuaire. L'autre choix, <strong>Microsoft Active Directory Objects</strong>, suit dynamiquement des unités d'organisation d'un domaine Active Directory ; ce lab est en groupe de travail.</li>
+</ol>
+<figure>
+  <img alt="Fenêtre Add Protection Group proposant Individual Computers et Microsoft Active Directory Objects" loading="lazy" src="../images/05-fichiers/groupe-protection-type.png" />
+<br />
+<figcaption>Le type de groupe. <strong>Individual Computers</strong> convient aux petits parcs, sans Active Directory.</figcaption>
+</figure>
+<ol>
+<li>À l'étape <strong>Name</strong>, saisir :<ul>
+<li><strong>Name</strong> : <code>GP-srv-fichiers</code></li>
+<li><strong>Description</strong> : <code>Groupe de protection du serveur de fichiers Windows (agent Veeam)</code></li>
+</ul>
+</li>
+</ol>
+<figure>
+  <img alt="Assistant Add Protection Group, étape Name, avec le nom GP-srv-fichiers et sa description" loading="lazy" src="../images/05-fichiers/groupe-protection-nom.png" />
+<br />
+<figcaption>Étape <strong>Name</strong> : un nom explicite (« GP » pour groupe de protection, puis la machine).</figcaption>
+</figure>
+<ol>
+<li>Cliquer sur <strong>Next</strong>, puis sur <strong>Add</strong> pour ajouter un ordinateur.</li>
+<li>Saisir <code>192.168.19.22</code> dans <strong>Hostname or IP address</strong>, puis choisir <strong>Connect using certificate-based authentication</strong> (« se connecter par certificat »), et cliquer sur <strong>OK</strong>.</li>
+</ol>
+<figure>
+  <img alt="Fenêtre Add Computer avec l'adresse 192.168.19.22 et l'option d'authentification par certificat sélectionnée" loading="lazy" src="../images/05-fichiers/groupe-protection-ajout-ordinateur-certificat.png" />
+<br />
+<figcaption>L'option par certificat s'appuie sur le <em>deployment kit</em> déjà présent sur la machine : aucun mot de passe à saisir.</figcaption>
+</figure>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi l'authentification par certificat ?</p>
+<p>La seconde option, <strong>Connect using admin credentials</strong>, demande un compte administrateur de la machine. Le choix par certificat évite de saisir un mot de passe, et l'ordinateur est déjà <strong>connu</strong> de l'appliance : <code>srv-fichiers</code> a été ajouté comme <strong>serveur géré</strong> en partie 4, ce qui a installé le <em>Veeam Deployment Service</em> (le service <code>VeeamDeploySvc</code> tourne sur le serveur). La colonne <strong>Account</strong> de la liste indique d'ailleurs « Veeam Deployment Service ». Si la machine n'avait pas ce service, il faudrait passer par le compte administrateur (<code>Administrateur</code>, <code>Popopo222@@@</code>) : cette variante n'a pas été rejouée dans le lab.</p>
+</div>
+<figure>
+  <img alt="Étape Computers de l'assistant avec 192.168.19.22 ajouté et le compte Veeam Deployment Service" loading="lazy" src="../images/05-fichiers/groupe-protection-ordinateur-ajoute.png" />
+<br />
+<figcaption>L'ordinateur est ajouté. Le <em>Veeam Deployment Service</em> joue le rôle de compte de déploiement.</figcaption>
+</figure>
+<ol>
+<li>
+<p>Cliquer sur <strong>Next</strong>. À l'étape <strong>Options</strong>, <strong>garder les valeurs par défaut</strong> :</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Valeur</th>
+<th>Signification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Rescan protection group</strong></td>
+<td>Chaque jour à 21:00</td>
+<td>Quand l'appliance revérifie le groupe</td>
+</tr>
+<tr>
+<td><strong>Distribution server</strong></td>
+<td><code>vbr</code></td>
+<td>Le serveur qui fournit le logiciel de l'agent</td>
+</tr>
+<tr>
+<td><strong>Install backup agent</strong></td>
+<td>Coché</td>
+<td>Installe l'agent sur la machine</td>
+</tr>
+<tr>
+<td><strong>Install changed block tracking driver</strong></td>
+<td>Décoché</td>
+<td>Pilote optionnel qui suit les blocs modifiés (utile pour les sauvegardes de volumes)</td>
+</tr>
+<tr>
+<td><strong>Install nosnap backup agent</strong></td>
+<td>Décoché</td>
+<td>Pour Linux uniquement</td>
+</tr>
+<tr>
+<td><strong>Auto-update backup agents</strong></td>
+<td>Coché</td>
+<td>Met l'agent à jour automatiquement</td>
+</tr>
+<tr>
+<td><strong>Reboot automatically if required</strong></td>
+<td>Décoché</td>
+<td>Évite un redémarrage inattendu d'un serveur en production</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ol>
+<figure>
+  <img alt="Étape Options de l'assistant : planification du rescan à 21:00, serveur de distribution vbr, installation de l'agent cochée" loading="lazy" src="../images/05-fichiers/groupe-protection-options.png" />
+<br />
+<figcaption>Les options par défaut conviennent : l'agent est installé depuis <code>vbr</code> et mis à jour automatiquement.</figcaption>
+</figure>
+<ol>
+<li>Cliquer sur <strong>Next</strong> : l'étape <strong>Review</strong> annonce que le composant <strong>Veeam Distribution Service</strong> « sera installé » sur la machine. Cliquer encore sur <strong>Next</strong>.</li>
+</ol>
+<figure>
+  <img alt="Étape Review annonçant que Veeam Distribution Service sera installé sur la machine" loading="lazy" src="../images/05-fichiers/groupe-protection-revue.png" />
+<br />
+<figcaption>L'étape <strong>Review</strong> : le composant qui permettra à l'appliance d'installer l'agent sera mis en place sur la machine.</figcaption>
+</figure>
+<ol>
+<li>À l'étape <strong>Summary</strong>, laisser coché <strong>Run discovery when I click Finish</strong> (« lancer la découverte à la fin »), puis cliquer sur <strong>Finish</strong>.</li>
+</ol>
+<figure>
+  <img alt="Étape Summary de l'assistant avec le nom du groupe, l'ordinateur et les options choisies" loading="lazy" src="../images/05-fichiers/groupe-protection-resume.png" />
+<br />
+<figcaption>Le résumé reprend toute la configuration. Garder la case <strong>Run discovery when I click Finish</strong> cochée.</figcaption>
+</figure>
+<h3 id="33-suivre-le-deploiement-de-lagent">3.3 Suivre le déploiement de l'agent<a class="headerlink" href="#33-suivre-le-deploiement-de-lagent" title="Permanent link">&para;</a></h3>
+<p>Une fenêtre <strong>Machine Rescan</strong> s'ouvre. Veeam se connecte à <code>srv-fichiers</code>, installe l'agent et ses composants. Compter <strong>environ 2 minutes</strong> (dans le lab : 1 min 39). Attendre l'état <strong>Success</strong> puis cliquer sur <strong>Close</strong>.</p>
+<figure>
+  <img alt="Fenêtre Machine Rescan avec 192.168.19.22 en état Success et le journal de la découverte" loading="lazy" src="../images/05-fichiers/groupe-protection-rescan-reussi.png" />
+<br />
+<figcaption>Le <em>rescan</em> a réussi : « Performing rescan » puis « 1 host processed ».</figcaption>
+</figure>
+<p>Dans la liste <strong>Protection Groups</strong> &gt; <code>GP-srv-fichiers</code>, la machine <code>SRV-FICHIERS</code> apparaît avec son système (<strong>Microsoft Windows Server 2025</strong>), son adresse <code>192.168.19.22</code> et la colonne <strong>Backup Agent Status</strong> à <strong>Installed</strong>.</p>
+<figure>
+  <img alt="Liste des ordinateurs du groupe GP-srv-fichiers avec SRV-FICHIERS" loading="lazy" src="../images/05-fichiers/groupe-protection-srv-fichiers.png" />
+<br />
+<figcaption>La machine est maintenant gérée par le groupe de protection.</figcaption>
+</figure>
+<p><strong>Vérifier</strong> que l'agent est bien installé et démarré sur le serveur :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c"># 🪟 srv-fichiers, PowerShell</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nb">Get-Service</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="n">DisplayName</span> <span class="o">-match</span> <span class="s1">'Veeam'</span> <span class="p">|</span> <span class="nb">Format-Table</span> <span class="n">Name</span><span class="p">,</span> <span class="n">DisplayName</span><span class="p">,</span> <span class="n">Status</span> <span class="n">-AutoSize</span>
+</code></pre></div>
+<p>Le résultat doit inclure le service <strong>Veeam Agent for Microsoft Windows</strong> (<code>VeeamEndpointBackupSvc</code>) à l'état <strong>Running</strong>, à côté du service d'installation <code>VeeamDeploySvc</code> et de services d'aide à la restauration (<code>VeeamExplorersRecoverySvc</code>, <code>VeeamMountSvc</code>, <code>VeeamTransportSvc</code>…). Dans le lab, tous étaient <strong>Running</strong>.</p>
+<div class="admonition failure">
+<p class="admonition-title">Le rescan se termine en erreur</p>
+<p>Avant d'incriminer Veeam, vérifier dans l'ordre : l'adresse saisie (<code>192.168.19.22</code>), la communication réseau entre <code>vbr</code> et <code>srv-fichiers</code> (un <code>ping</code> depuis la VM), le <strong>pare-feu Windows</strong>, et que le service <strong>VeeamDeploySvc</strong> tourne sur <code>srv-fichiers</code>. Ouvrir le détail de la session depuis <strong>Logs &amp; Events</strong> pour lire le message complet. Ce cas ne s'est pas produit dans le lab.</p>
+</div>
+<hr />
+<h2 id="4-creer-le-job-de-sauvegarde-du-dossier">4. Créer le job de sauvegarde du dossier<a class="headerlink" href="#4-creer-le-job-de-sauvegarde-du-dossier" title="Permanent link">&para;</a></h2>
+<p>Le job indique <strong>quoi</strong> sauvegarder, <strong>où</strong>, <strong>quand</strong> et <strong>combien de temps</strong> conserver les données.</p>
+<h3 id="41-lancer-lassistant">4.1 Lancer l'assistant<a class="headerlink" href="#41-lancer-lassistant" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🌐 Dans le menu de gauche, ouvrir <strong>Home</strong> &gt; <strong>Jobs</strong>.</li>
+<li>Cliquer sur <strong>New Job</strong>, puis choisir <strong>Agent Backup Job</strong>.</li>
+<li>Choisir le mode <strong>Server job</strong>.</li>
+</ol>
+<figure>
+  <img alt="Fenêtre New Agent Backup Job proposant Server job, Failover cluster job, Server policy et Workstation policy" loading="lazy" src="../images/05-fichiers/job-type-serveur.png" />
+<br />
+<figcaption>Le mode du job : <strong>Server job</strong> est géré par le serveur de sauvegarde ; les <em>policy</em> sont gérées par l'agent local.</figcaption>
+</figure>
+<div class="admonition question">
+<p class="admonition-title">Server job ou Server policy ?</p>
+<p>Dans un <strong>Server job</strong>, c'est le <strong>serveur de sauvegarde</strong> qui commande l'agent : il convient aux serveurs <strong>toujours allumés et joignables</strong>, comme <code>srv-fichiers</code>. Une <strong>policy</strong> donne à l'agent ses réglages : l'agent sauvegarde ensuite seul, même si le serveur est injoignable. C'est le bon choix pour des postes ou des portables <strong>nomades</strong>. Le <strong>Failover cluster job</strong> protège un cluster Windows : hors du sujet ici.</p>
+</div>
+<ol>
+<li>À l'étape <strong>Name</strong>, saisir :<ul>
+<li><strong>Name</strong> : <code>Sauvegarde-Documents-importants-srv-fichiers</code></li>
+<li><strong>Description</strong> : <code>Sauvegarde au niveau fichiers du dossier E:\Documents-importants de srv-fichiers</code></li>
+</ul>
+</li>
+</ol>
+<figure>
+  <img alt="Assistant New Agent Backup Job, étape Name, avec le nom du job et sa description" loading="lazy" src="../images/05-fichiers/job-nom.png" />
+<br />
+<figcaption>Le nom du job dit ce qui est sauvegardé et d'où : il reste lisible des mois plus tard.</figcaption>
+</figure>
+<ol>
+<li>À l'étape <strong>Workloads</strong>, cliquer sur <strong>Add</strong>, cocher le groupe <strong><code>GP-srv-fichiers</code></strong> puis valider. Le groupe apparaît avec le type <strong>Physical infrastructure</strong>.</li>
+</ol>
+<figure>
+  <img alt="Étape Workloads avec le groupe GP-srv-fichiers de type Physical infrastructure" loading="lazy" src="../images/05-fichiers/job-ordinateurs.png" />
+<br />
+<figcaption>On désigne le <strong>groupe</strong>, pas la machine : une machine ajoutée plus tard au groupe sera sauvegardée sans modifier le job.</figcaption>
+</figure>
+<h3 id="42-choisir-le-mode-de-sauvegarde">4.2 Choisir le mode de sauvegarde<a class="headerlink" href="#42-choisir-le-mode-de-sauvegarde" title="Permanent link">&para;</a></h3>
+<p>À l'étape <strong>Backup Mode</strong>, trois choix s'offrent :</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Ce qu'il sauvegarde</th>
+<th>Quand le choisir</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Entire machine backup</strong></td>
+<td>L'image complète de la machine (système et données)</td>
+<td>Pour reconstruire la machine entière (c'est le mode du serveur Linux de la <a href="../06-sauvegarder-restaurer-serveur-linux/">partie 6</a>)</td>
+</tr>
+<tr>
+<td><strong>Volume-level backup</strong></td>
+<td>Les volumes choisis, par exemple le seul disque de données</td>
+<td>Pour protéger un disque entier sans le système</td>
+</tr>
+<tr>
+<td><strong>File-level backup</strong> (<em>slower</em>)</td>
+<td>Uniquement les <strong>fichiers et dossiers</strong> choisis</td>
+<td>Pour un dossier précis, comme ici</td>
+</tr>
+</tbody>
+</table>
+<p>Sélectionner <strong>File-level backup (slower)</strong>, puis <strong>Next</strong>.</p>
+<figure>
+  <img alt="Étape Backup Mode avec les trois modes et File-level backup (slower) sélectionné" loading="lazy" src="../images/05-fichiers/job-mode-sauvegarde.png" />
+<br />
+<figcaption>Le mode fichiers. Veeam précise « <em>slower</em> » : il est plus lent qu'une sauvegarde d'image, mais il ne retient que les objets demandés.</figcaption>
+</figure>
+<div class="admonition warning">
+<p class="admonition-title">Un mode fichiers ne permet pas de reconstruire la machine</p>
+<p>Avec ce mode, on retrouve <strong>les fichiers</strong>, pas le système Windows. Ce n'est pas un problème ici, car les documents sont l'objet de la protection. Pour protéger le <strong>serveur entier</strong>, utiliser <strong>Entire machine backup</strong>.</p>
+</div>
+<h3 id="43-designer-le-dossier-a-sauvegarder">4.3 Désigner le dossier à sauvegarder<a class="headerlink" href="#43-designer-le-dossier-a-sauvegarder" title="Permanent link">&para;</a></h3>
+<p>À l'étape <strong>Objects</strong>, trois cases sont proposées : <strong>Operating system</strong>, <strong>Personal files</strong> et <strong>The following file system objects</strong>. Les deux premières sont décochées.</p>
+<figure>
+  <img alt="Étape Objects avec les cases Operating system, Personal files et The following file system objects, toutes décochées" loading="lazy" src="../images/05-fichiers/job-objets-vide.png" />
+<br />
+<figcaption>Au départ, rien n'est sélectionné.</figcaption>
+</figure>
+<ol>
+<li>Cocher <strong>The following file system objects</strong>.</li>
+<li>Cliquer sur <strong>Add</strong> à côté de <strong>Objects to back up</strong>, saisir <code>E:\Documents-importants</code>, puis valider avec <strong>Add</strong>.</li>
+<li>Cliquer sur <strong>Next</strong>.</li>
+</ol>
+<figure>
+  <img alt="Étape Objects avec E:\Documents-importants ajouté sous The following file system objects" loading="lazy" src="../images/05-fichiers/job-objets-dossier.png" />
+<br />
+<figcaption>Le dossier <code>E:\Documents-importants</code> est dans la liste : tout son contenu, sous-dossiers compris, sera sauvegardé.</figcaption>
+</figure>
+<h3 id="44-choisir-le-depot-et-la-retention">4.4 Choisir le dépôt et la rétention<a class="headerlink" href="#44-choisir-le-depot-et-la-retention" title="Permanent link">&para;</a></h3>
+<p>À l'étape <strong>Storage</strong> :</p>
+<ol>
+<li>Cliquer sur <strong>Select</strong> et choisir <strong><code>Default Backup Repository</code></strong> (l'appliance), pas <code>Depot-2-srv-fichiers</code>.</li>
+</ol>
+<figure>
+  <img alt="Fenêtre Select Backup Repository avec Default Backup Repository (206,9 Go) et Depot-2-srv-fichiers (39,9 Go)" loading="lazy" src="../images/05-fichiers/job-choix-depot.png" />
+<br />
+<figcaption>Les deux dépôts du lab. Ici, on choisit celui de l'appliance : <strong>Default Backup Repository</strong>.</figcaption>
+</figure>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi le dépôt de l'appliance, et pas celui de srv-fichiers ?</p>
+<p>Les documents à protéger <strong>sont sur <code>srv-fichiers</code></strong>. Les sauvegarder sur <code>F:</code> du même serveur laisserait les données et leur copie sur <strong>la même machine</strong> : un incendie, un vol ou un rançongiciel emporterait les deux. En les envoyant sur l'appliance, les données se trouvent sur <strong>deux machines différentes</strong>. De plus, ce dépôt est <strong>immuable</strong> (7 jours dans ce lab, voir la <a href="../04-ajouter-des-depots-de-sauvegarde/">partie 4</a>) : même un attaquant qui contrôle Veeam ne peut pas supprimer les fichiers de sauvegarde pendant cette durée. À l'inverse, le dépôt n° 2 reçoit la sauvegarde de <strong>configuration</strong> de Veeam, pour la raison inverse : celle-ci doit se trouver <strong>hors</strong> de l'appliance.</p>
+</div>
+<ol>
+<li>Laisser <strong>Retention policy</strong> à <strong>7 days</strong>.</li>
+</ol>
+<figure>
+  <img alt="Étape Storage avec Default Backup Repository, 205,39 Go libres sur 206,9 Go, et une rétention de 7 jours" loading="lazy" src="../images/05-fichiers/job-stockage.png" />
+<br />
+<figcaption>Dépôt et rétention : on garde <strong>7 jours</strong> de points de restauration.</figcaption>
+</figure>
+<div class="admonition question">
+<p class="admonition-title">Que signifie une rétention de 7 jours ?</p>
+<p>Veeam conserve les points de restauration des <strong>7 derniers jours</strong> et supprime les plus anciens. Chaque sauvegarde étant planifiée une fois par jour, cela revient à pouvoir <strong>remonter une semaine en arrière</strong>. Cette durée est alignée sur celle de l'immuabilité du dépôt (7 jours) : un point plus ancien que 7 jours peut être supprimé, un point plus récent est verrouillé. Dans un vrai projet, la rétention découle des <strong>besoins métier et réglementaires</strong> (30 jours, 12 mois…). Le lien <strong>Configure…</strong> (<em>Keep certain full backups longer for archival purposes</em>) permet d'ajouter des sauvegardes complètes à long terme.</p>
+</div>
+<ol>
+<li>Ne pas toucher à <strong>Advanced settings</strong> et cliquer sur <strong>Next</strong>.</li>
+</ol>
+<h3 id="45-traitement-invite-et-planification">4.5 Traitement invité et planification<a class="headerlink" href="#45-traitement-invite-et-planification" title="Permanent link">&para;</a></h3>
+<p>À l'étape <strong>Guest Processing</strong>, laisser les valeurs par défaut :</p>
+<ul>
+<li><strong>Enable application-aware processing</strong> : activé. Veeam détecte les applications (bases de données par exemple) et prépare une sauvegarde <strong>cohérente</strong>. Sans effet gênant ici : <code>srv-fichiers</code> n'héberge pas d'application particulière.</li>
+<li><strong>Enable guest file system indexing and malware detection</strong> : désactivé. L'indexation permettrait une recherche globale de fichiers et la détection d'activités suspectes, mais elle ralentit le traitement.</li>
+</ul>
+<figure>
+  <img alt="Étape Guest Processing avec le traitement applicatif activé et l'indexation désactivée" loading="lazy" src="../images/05-fichiers/job-traitement-invite.png" />
+<br />
+<figcaption>Traitement invité par défaut : cohérence applicative activée, indexation désactivée.</figcaption>
+</figure>
+<p>À l'étape <strong>Schedule</strong>, laisser :</p>
+<ul>
+<li><strong>Run job on schedule</strong> activé, <strong>Daily at this time</strong> <code>22:00</code>, <strong>Every day</strong> : le job tourne chaque soir à 22 h, quand les utilisateurs ont quitté leurs postes ;</li>
+<li><strong>Enable automatic retries</strong> activé : en cas d'échec, trois nouvelles tentatives (<strong>3 times</strong>), à 10 minutes d'intervalle ;</li>
+<li><strong>Backup window</strong> désactivé : aucune heure limite pour terminer.</li>
+</ul>
+<figure>
+  <img alt="Étape Schedule avec une exécution quotidienne à 22:00, trois tentatives automatiques et la fenêtre de sauvegarde désactivée" loading="lazy" src="../images/05-fichiers/job-planification.png" />
+<br />
+<figcaption>Planification : tous les jours à 22:00, avec trois nouvelles tentatives en cas d'échec.</figcaption>
+</figure>
+<div class="admonition tip">
+<p class="admonition-title">Pourquoi choisir la nuit ?</p>
+<p>Une sauvegarde lit beaucoup de données et sollicite le disque et le réseau. La lancer <strong>en dehors des heures de travail</strong> évite de ralentir les utilisateurs. Elle fixe aussi le <strong>RPO</strong> (voir la <a href="../01-comprendre-la-sauvegarde/">partie 1</a>) : avec une sauvegarde quotidienne, on accepte de perdre au pire <strong>24 heures</strong> de données.</p>
+</div>
+<h3 id="46-resume-et-premier-lancement">4.6 Résumé et premier lancement<a class="headerlink" href="#46-resume-et-premier-lancement" title="Permanent link">&para;</a></h3>
+<p>À l'étape <strong>Summary</strong>, relire les réglages : mode <strong>Server</strong>, type <strong>Agent backup job</strong>, mode <strong>File-level backup (slower)</strong>, dépôt <code>/var/lib/veeam/backup</code>, périmètre <strong>GP-srv-fichiers (Agent)</strong>. Veeam affiche aussi la commande PowerShell qui lance le job.</p>
+<ol>
+<li><strong>Laisser cochée</strong> la case <strong>Run the job after I click Finish</strong> : le job démarre tout de suite, sans attendre 22 h.</li>
+<li>Cliquer sur <strong>Finish</strong>.</li>
+</ol>
+<figure>
+  <img alt="Étape Summary du job avec ses réglages et la case Run the job after I click Finish cochée" loading="lazy" src="../images/05-fichiers/job-resume.png" />
+<br />
+<figcaption>Le résumé. La commande <code>Start-VBRComputerBackupJob</code> permet de lancer le même job par script.</figcaption>
+</figure>
+<h3 id="47-lire-le-resultat">4.7 Lire le résultat<a class="headerlink" href="#47-lire-le-resultat" title="Permanent link">&para;</a></h3>
+<p>Le job apparaît dans <strong>Home</strong> &gt; <strong>Jobs</strong>. Attendre que la colonne <strong>Last Result</strong> passe à <strong>Success</strong>. Dans le lab, le premier passage a duré <strong>2 min 59</strong>. La prochaine exécution est annoncée dans <strong>Next Run</strong> (à 22:00).</p>
+<figure>
+  <img alt="Liste des jobs avec Sauvegarde-Documents-importants-srv-fichiers, dernier résultat Success, prochaine exécution à 22:00" loading="lazy" src="../images/05-fichiers/job-resultat-success.png" />
+<br />
+<figcaption>Le job a réussi : <strong>Last Result</strong> = <strong>Success</strong>, prochaine exécution à 22:00.</figcaption>
+</figure>
+<p>Cliquer sur <strong>Success</strong> pour ouvrir le détail de la session.</p>
+<figure>
+  <img alt="Détail de la session du job : protection à 100 %, durée 00:02:59, statuts Success" loading="lazy" src="../images/05-fichiers/job-details-session.png" />
+<br />
+<figcaption>Le détail de la session : <strong>Protection Overview</strong> à 100 %, durée de <strong>00:02:59</strong>, quatre étapes en <strong>Success</strong> (le traitement de <code>SRV-FICHIERS</code> a duré 2 min 22).</figcaption>
+</figure>
+<div class="admonition note">
+<p class="admonition-title">Les statistiques d'une toute petite sauvegarde</p>
+<p>Les compteurs <strong>Read</strong> et <strong>Transferred</strong> sont très faibles (318 octets dans la capture, alors que <strong>Processed</strong> affiche 84,49 Mo) : le dossier ne contient que quelques fichiers de quelques lignes, et Veeam compresse et ne transfère que les blocs utiles. Ces valeurs n'ont rien d'anormal pour ce lab. Les durées et les volumes d'un vrai serveur seront bien supérieurs.</p>
+</div>
+<hr />
+<h2 id="5-tester-la-restauration-dun-fichier">5. Tester la restauration d'un fichier<a class="headerlink" href="#5-tester-la-restauration-dun-fichier" title="Permanent link">&para;</a></h2>
+<p>Une sauvegarde qui n'a jamais été restaurée est une <strong>promesse non vérifiée</strong>. C'est le « <strong>0</strong> » de la règle <a href="../01-comprendre-la-sauvegarde/#32-la-regle-3-2-1-1-0">3-2-1-1-0</a> : zéro erreur à la restauration. On simule ici l'accident le plus courant : la suppression d'un fichier par erreur.</p>
+<h3 id="51-relever-lempreinte-puis-supprimer-le-fichier">5.1 Relever l'empreinte puis supprimer le fichier<a class="headerlink" href="#51-relever-lempreinte-puis-supprimer-le-fichier" title="Permanent link">&para;</a></h3>
+<p>L'<strong>empreinte</strong> (<em>hash</em>) SHA-256 est une signature calculée à partir du contenu d'un fichier : si un seul octet change, l'empreinte change complètement. Elle permet de prouver que le fichier restauré est <strong>identique</strong> à l'original.</p>
+<ol>
+<li>
+<p>🪟 Sur <code>srv-fichiers</code>, ouvrir <strong>PowerShell</strong> et relever l'empreinte :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">(</span><span class="nb">Get-FileHash</span> <span class="n">E</span><span class="p">:\</span><span class="n">Documents-importants</span><span class="p">\</span><span class="n">Comptabilite</span><span class="p">\</span><span class="n">factures</span><span class="p">-</span><span class="n">2026</span><span class="p">.</span><span class="n">csv</span> <span class="n">-Algorithm</span> <span class="n">SHA256</span><span class="p">).</span><span class="n">Hash</span>
+</code></pre></div>
+<p>Dans le lab, avec le contenu proposé plus haut :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>1646D545EF0DCCD77A0C88BEF952B13A24B941CE553B8DDADB0E29A6B49B18F8
+</code></pre></div>
+<p>Si le fichier a un autre contenu, l'empreinte sera différente : <strong>la noter</strong>.</p>
+</li>
+<li>
+<p>Supprimer le fichier, puis vérifier qu'il a disparu :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">Remove-Item</span> <span class="n">E</span><span class="p">:\</span><span class="n">Documents-importants</span><span class="p">\</span><span class="n">Comptabilite</span><span class="p">\</span><span class="n">factures</span><span class="p">-</span><span class="n">2026</span><span class="p">.</span><span class="n">csv</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nb">Get-ChildItem</span> <span class="n">E</span><span class="p">:\</span><span class="n">Documents-importants</span><span class="p">\</span><span class="n">Comptabilite</span>
+</code></pre></div>
+<p>Il ne reste que <code>bilan-previsionnel.txt</code>.</p>
+</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Une suppression « normale » n'est pas annulable</p>
+<p><code>Remove-Item</code> supprime le fichier <strong>sans passer par la corbeille</strong>. Il n'existe plus que dans la sauvegarde : c'est ce que le test vérifie.</p>
+</div>
+<h3 id="52-choisir-le-point-de-restauration">5.2 Choisir le point de restauration<a class="headerlink" href="#52-choisir-le-point-de-restauration" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🌐 Dans l'interface web, ouvrir <strong>Home</strong> &gt; <strong>Backups</strong>.</li>
+<li>Déplier la ligne <code>Sauvegarde-Documents-importants-srv-fichiers</code> et sélectionner la machine <strong>SRV-FICHIERS</strong>.</li>
+</ol>
+<figure>
+  <img alt="Liste des sauvegardes avec la machine SRV-FICHIERS sélectionnée sous le job Sauvegarde-Documents-importants-srv-fichiers" loading="lazy" src="../images/05-fichiers/restauration-selection-machine.png" />
+<br />
+<figcaption>Sélectionner la <strong>machine</strong> (sous le nom du job) : la barre d'outils propose alors <strong>Restore Guest Files</strong>.</figcaption>
+</figure>
+<ol>
+<li>Cliquer sur <strong>Restore Guest Files</strong> (« restaurer des fichiers invités »).</li>
+<li>Dans la fenêtre <strong>Select Restore Point</strong>, choisir le point de restauration (ici, un seul : <em>latest</em>, de type <strong>Full</strong>) puis cliquer sur <strong>Select</strong>.</li>
+</ol>
+<figure>
+  <img alt="Fenêtre Select Restore Point avec un calendrier et un point de restauration du 02/11/2026 de type Full" loading="lazy" src="../images/05-fichiers/restauration-choix-point.png" />
+<br />
+<figcaption>Les points de restauration disponibles. Le <strong>Mount server</strong> est choisi automatiquement : <code>192.168.19.22</code>.</figcaption>
+</figure>
+<div class="admonition question">
+<p class="admonition-title">Que se passe-t-il pendant le montage ?</p>
+<p>Veeam ne <strong>décompresse pas</strong> toute la sauvegarde. Il <strong>monte</strong> son contenu sur un <strong>serveur de montage</strong> (<em>mount server</em>), ici <code>srv-fichiers</code> lui-même, ce qui permet de <strong>parcourir</strong> les fichiers comme un disque et de n'en récupérer qu'un. L'écran affiche « Starting restore session… » quelques secondes.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Le navigateur de restauration ne s'ouvre pas ?</p>
+<p>D'après la documentation de Veeam, la restauration de fichiers s'ouvre dans une fenêtre dédiée : si le navigateur bloque les <strong>fenêtres surgissantes</strong> (<em>pop-ups</em>), autoriser celles de <code>https://192.168.19.55</code> dans les réglages du navigateur, puis relancer <strong>Restore Guest Files</strong>.</p>
+</div>
+<h3 id="53-retrouver-le-fichier">5.3 Retrouver le fichier<a class="headerlink" href="#53-retrouver-le-fichier" title="Permanent link">&para;</a></h3>
+<p>Une fenêtre <strong>Browse - SRV-FICHIERS</strong> s'ouvre avec l'arborescence de la machine. Deux méthodes pour trouver le fichier :</p>
+<ul>
+<li><strong>parcourir</strong> : développer <code>SRV-FICHIERS</code> &gt; <code>E:</code> &gt; <code>Documents-importants</code> &gt; <code>Comptabilite</code> ;</li>
+<li><strong>rechercher</strong> : saisir <code>factures</code> dans la zone <strong>Search</strong> et valider par <strong>Entrée</strong>.</li>
+</ul>
+<figure>
+  <img alt="Navigateur de restauration avec le point de restauration choisi et l'arborescence SRV-FICHIERS, disque E:" loading="lazy" src="../images/05-fichiers/restauration-navigation.png" />
+<br />
+<figcaption>L'arborescence de <code>SRV-FICHIERS</code> telle qu'elle était lors de la sauvegarde, avec son disque <code>E:</code>.</figcaption>
+</figure>
+<p>La recherche a trouvé dans le lab un seul fichier : <code>factures-2026.csv</code>, de type <strong>File</strong>, d'une taille de <strong>126 octets</strong>, dans <code>E:\Documents-importants\Comptabilite</code>.</p>
+<figure>
+  <img alt="Résultat de la recherche « factures » : le fichier factures-2026.csv de 126 octets" loading="lazy" src="../images/05-fichiers/restauration-recherche.png" />
+<br />
+<figcaption>La recherche « factures » ne renvoie que <code>factures-2026.csv</code>, avec sa taille et ses dates.</figcaption>
+</figure>
+<h3 id="54-choisir-comment-restaurer-overwrite-keep-ou-permissions-only">5.4 Choisir comment restaurer : Overwrite, Keep ou Permissions only<a class="headerlink" href="#54-choisir-comment-restaurer-overwrite-keep-ou-permissions-only" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Cocher</strong> le fichier <code>factures-2026.csv</code>.</li>
+<li>Cliquer sur <strong>Restore</strong> : un menu propose trois choix.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Choix</th>
+<th>Effet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Overwrite</strong></td>
+<td><strong>Remplace</strong> le fichier actuel par celui de la sauvegarde, à son emplacement d'origine</td>
+</tr>
+<tr>
+<td><strong>Keep</strong></td>
+<td><strong>Conserve</strong> le fichier actuel et enregistre celui de la sauvegarde <strong>à côté</strong>. D'après la documentation de Veeam, s'il existe déjà un fichier de même nom, la copie restaurée reçoit le suffixe <code>_RESTORED_</code> suivi de la date et de l'heure</td>
+</tr>
+<tr>
+<td><strong>Permissions only</strong></td>
+<td>Ne restaure <strong>que les droits d'accès</strong> (NTFS) du fichier, pas son contenu ; le fichier doit exister</td>
+</tr>
+</tbody>
+</table>
+<figure>
+  <img alt="Menu Restore déroulé avec les trois choix Overwrite, Keep et Permissions only" loading="lazy" src="../images/05-fichiers/restauration-menu-restore.png" />
+<br />
+<figcaption>Le menu <strong>Restore</strong> : <strong>Overwrite</strong>, <strong>Keep</strong>, <strong>Permissions only</strong>.</figcaption>
+</figure>
+<ol>
+<li>Choisir <strong>Keep</strong>.</li>
+</ol>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi Keep ?</p>
+<p><strong>Keep</strong> est le choix <strong>prudent</strong> : il n'écrase jamais rien. Ici le fichier <strong>n'existe plus</strong>, donc il n'y a rien à conserver et la restauration le recrée sous son nom d'origine. Si un fichier du même nom avait existé (par exemple une version modifiée entre-temps), les deux auraient coexisté, et on aurait comparé avant de supprimer l'un des deux. <strong>Overwrite</strong> est plus rapide, mais <strong>irréversible</strong> : à réserver aux cas où l'on est sûr de vouloir revenir à l'ancienne version.</p>
+</div>
+<p>Une fenêtre <strong>Restoring files to 192.168.19.22</strong> affiche la progression. Dans le lab, la restauration a duré <strong>21 secondes</strong> et s'est terminée par <strong>Status: Success</strong>. Le journal indique <code>Restored file "E:\Documents-importants\Comptabilite\factures-2026.csv"</code>, <code>Restored files: 1</code>, <code>Restored data size: 126,0 B</code> et <code>Restore completed</code>. Il indique aussi, sur l'appliance, le chemin d'un <strong>journal d'audit</strong> de la restauration (<code>/var/lib/veeam/VeeamBackupLogFolder/Audit/…</code>) : une trace de <strong>qui</strong> a restauré <strong>quoi</strong> et <strong>quand</strong>. Cliquer sur <strong>OK</strong>, puis quitter le navigateur de restauration avec <strong>Exit File-level Restore</strong>.</p>
+<figure>
+  <img alt="Fenêtre Restoring files to 192.168.19.22 avec le statut Success, le fichier restauré et Restore completed" loading="lazy" src="../images/05-fichiers/restauration-terminee.png" />
+<br />
+<figcaption>La restauration est terminée : un fichier, 126 octets, <strong>Status: Success</strong>.</figcaption>
+</figure>
+<h3 id="55-verifier-que-le-fichier-est-identique">5.5 Vérifier que le fichier est identique<a class="headerlink" href="#55-verifier-que-le-fichier-est-identique" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>🪟 Dans <strong>PowerShell</strong> sur <code>srv-fichiers</code>, contrôler que le fichier est revenu et recalculer son empreinte :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nb">Get-ChildItem</span> <span class="n">E</span><span class="p">:\</span><span class="n">Documents-importants</span><span class="p">\</span><span class="n">Comptabilite</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="p">(</span><span class="nb">Get-FileHash</span> <span class="n">E</span><span class="p">:\</span><span class="n">Documents-importants</span><span class="p">\</span><span class="n">Comptabilite</span><span class="p">\</span><span class="n">factures</span><span class="p">-</span><span class="n">2026</span><span class="p">.</span><span class="n">csv</span> <span class="n">-Algorithm</span> <span class="n">SHA256</span><span class="p">).</span><span class="n">Hash</span>
+</code></pre></div>
+</li>
+<li>
+<p><strong>Comparer</strong> avec l'empreinte relevée en 5.1. Dans le lab :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>Name                   Length
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>----                   ------
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>bilan-previsionnel.txt     52
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>factures-2026.csv         126
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>1646D545EF0DCCD77A0C88BEF952B13A24B941CE553B8DDADB0E29A6B49B18F8
+</code></pre></div>
+<p>L'empreinte est <strong>identique</strong> à celle d'avant la suppression : le fichier restauré est, bit pour bit, celui de l'original. <strong>Le test est réussi.</strong></p>
+</li>
+</ol>
+<div class="admonition failure">
+<p class="admonition-title">Les empreintes sont différentes, ou le fichier n'est pas revenu</p>
+<ul>
+<li><strong>Fichier absent</strong> : la restauration a peut-être écrit le fichier avec le suffixe <code>_RESTORED_…</code> (si un fichier du même nom existait déjà) : lister le dossier complet.</li>
+<li><strong>Empreinte différente</strong> : vérifier qu'on compare le <strong>même fichier</strong>, et que le fichier n'a pas été modifié <strong>avant</strong> la sauvegarde (le job ne conserve que ce qu'il a lu à 22 h ou au lancement manuel). Ne pas considérer la sauvegarde comme fiable avant d'avoir compris l'écart.</li>
+<li><strong>Le navigateur de restauration ne s'ouvre pas</strong> : voir l'encadré sur les fenêtres surgissantes en 5.2.</li>
+</ul>
+</div>
+<h3 id="56-pour-aller-plus-loin">5.6 Pour aller plus loin<a class="headerlink" href="#56-pour-aller-plus-loin" title="Permanent link">&para;</a></h3>
+<div class="admonition example">
+<p class="admonition-title">Exercice : restaurer avec Overwrite</p>
+<ol>
+<li>Modifier <code>E:\Documents-importants\Contrats\contrat-maintenance-2026.txt</code> (ajouter une ligne dans le Bloc-notes).</li>
+<li>Relancer <strong>Restore Guest Files</strong> sur le <strong>même</strong> point de restauration, retrouver ce fichier et choisir <strong>Restore</strong> &gt; <strong>Overwrite</strong>.</li>
+<li>Vérifier que le contenu est revenu à la version sauvegardée. Que serait-il arrivé avec <strong>Keep</strong> ?</li>
+</ol>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Exercice : restaurer vers un autre emplacement</p>
+<p>Le menu propose aussi <strong>Restore To</strong> et <strong>Download</strong> (non testés dans le lab). Selon la liste des limites de l'interface web dans la documentation de Veeam, la restauration de fichiers invités vers <strong>un autre emplacement</strong> se fait plutôt dans la <strong>console Windows</strong> (clic droit sur la machine dans <strong>Backups</strong>, <strong>Restore guest files</strong> &gt; <strong>Microsoft Windows</strong>). Essayer d'y restaurer <code>factures-2026.csv</code> dans <code>E:\Restauration-test</code>, puis comparer l'empreinte.</p>
+</div>
+<hr />
+<h2 id="6-verification-de-fin-de-partie">6. Vérification de fin de partie<a class="headerlink" href="#6-verification-de-fin-de-partie" title="Permanent link">&para;</a></h2>
+<p>Cocher chaque point avant de passer à la partie suivante :</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Un fichier <code>.bco</code> existe dans <code>F:\RepoVeeam\VeeamConfigBackup\vbr\</code> (section 2.6) ;</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> la console affiche une date à côté de <strong>Last successful backup</strong>, avec le chiffrement activé ;</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> le groupe <code>GP-srv-fichiers</code> est en état <strong>Installed</strong> pour <code>SRV-FICHIERS</code> et le service <code>VeeamEndpointBackupSvc</code> est <strong>Running</strong> ;</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> le job <code>Sauvegarde-Documents-importants-srv-fichiers</code> est en <strong>Success</strong>, avec une prochaine exécution à 22:00 ;</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> dans <strong>Home</strong> &gt; <strong>Backups</strong>, la machine <code>SRV-FICHIERS</code> possède un point de restauration ;</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>factures-2026.csv</code> a été restauré et son empreinte SHA-256 est identique à celle d'origine.</li>
+</ul>
+<h3 id="instantane-03-fichiers-sauvegardes">🛟 Instantané : <code>03-fichiers-sauvegardes</code><a class="headerlink" href="#instantane-03-fichiers-sauvegardes" title="Permanent link">&para;</a></h3>
+<div class="admonition success">
+<p class="admonition-title">Prendre l'instantané <code>03-fichiers-sauvegardes</code></p>
+<ol>
+<li><strong>Éteindre</strong> proprement les machines du lab (<code>vbr</code>, <code>srv-fichiers</code>, <code>pfsense-19</code>) ;</li>
+<li>prendre l'instantané <strong><code>03-fichiers-sauvegardes</code></strong> sur <strong>toutes</strong> les machines (sauf <code>srv-debian</code> si elle n'est pas encore installée) ;</li>
+<li>rallumer : pfSense d'abord, puis <code>vbr</code>, puis <code>srv-fichiers</code>.</li>
+</ol>
+<p>Il permet de <strong>recommencer la partie 6</strong> sans refaire celle-ci. Rappel : un instantané n'est pas une sauvegarde, il reste sur le même disque que la machine (voir <a href="../#instantanes-conseilles">Instantanés conseillés</a>).</p>
+</div>
+<hr />
+<h2 id="7-questions-de-revision">7. Questions de révision<a class="headerlink" href="#7-questions-de-revision" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Que contient une sauvegarde de configuration, et que ne contient-elle <strong>pas</strong> ?</li>
+<li>Pourquoi ne faut-il pas la laisser sur le dépôt de l'appliance ?</li>
+<li>Quels sont les <strong>deux secrets</strong> qui protègent la sauvegarde de configuration d'une appliance, et qui les détient ?</li>
+<li>Pourquoi crée-t-on un <strong>groupe de protection</strong> plutôt que d'ajouter la machine directement au job ?</li>
+<li>Quelle différence entre <strong>Entire machine backup</strong>, <strong>Volume-level backup</strong> et <strong>File-level backup</strong> ?</li>
+<li>Pourquoi avoir choisi le dépôt de l'appliance pour sauvegarder les documents de <code>srv-fichiers</code> ?</li>
+<li>Quelle est la différence entre <strong>Overwrite</strong>, <strong>Keep</strong> et <strong>Permissions only</strong> ?</li>
+<li>À quoi sert l'<strong>empreinte SHA-256</strong> dans un test de restauration ?</li>
+</ol>
+<details class="success">
+<summary>Corrigé</summary>
+<ol>
+<li>Les <strong>réglages</strong> de Veeam (jobs, dépôts, serveurs gérés, groupes de protection), l'historique et le catalogue des points de restauration, et, <strong>si elle est chiffrée</strong>, les identifiants, certificats et clés. Elle ne contient <strong>pas les données sauvegardées</strong>, qui restent dans les dépôts.</li>
+<li>Parce qu'elle disparaîtrait avec l'appliance si celle-ci était détruite, volée ou chiffrée par un rançongiciel, c'est-à-dire dans la situation même où on en a besoin. On la place sur <strong>une autre machine</strong>, idéalement aussi <strong>hors site</strong>.</li>
+<li>Le <strong>mot de passe de chiffrement</strong> (défini par l'administrateur Veeam dans la console) et la <strong>phrase secrète</strong> (définie par le <strong>Security Officer</strong> dans Host Management). Sans la phrase secrète, la tâche échoue avec « Unable to process the configuration backup without the Security Officer's passphrase ».</li>
+<li>Le groupe permet à l'appliance de <strong>déployer et mettre à jour l'agent</strong>, de <strong>réanalyser</strong> régulièrement les machines et de <strong>suivre automatiquement</strong> celles qu'on ajoute : le job désigne le groupe, pas chaque machine.</li>
+<li><strong>Entire machine</strong> : image complète, pour reconstruire la machine. <strong>Volume-level</strong> : des volumes entiers choisis. <strong>File-level</strong> : seulement les fichiers et dossiers désignés, sans le système, adapté à un dossier précis.</li>
+<li>Pour que les données et leur copie soient sur <strong>deux machines différentes</strong>, et parce que ce dépôt est <strong>immuable</strong> (7 jours dans le lab), ce qui protège contre la suppression des sauvegardes.</li>
+<li><strong>Overwrite</strong> remplace le fichier actuel par celui de la sauvegarde. <strong>Keep</strong> garde le fichier actuel et restaure l'ancien à côté (suffixe <code>_RESTORED_</code> + date si un fichier de même nom existe). <strong>Permissions only</strong> ne restaure que les droits d'accès, pas le contenu.</li>
+<li>À <strong>prouver que le fichier restauré est identique à l'original</strong> : si une seule différence existe, l'empreinte change. C'est un test objectif, plus fiable qu'un simple coup d'œil.</li>
+</ol>
+</details>
+<hr />
+<h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/config_backup_encrypted.html">Création de sauvegardes de configuration chiffrées (documentation Veeam)</a> — pourquoi chiffrer, rôle de la phrase secrète du Security Officer (en anglais).</li>
+<li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/vbr_config_manually.html">Lancer une sauvegarde de configuration manuellement (documentation Veeam)</a> — menu <strong>Configuration Backup</strong>, <strong>Backup now</strong> (en anglais).</li>
+<li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/config_backup_immutable.html">Sauvegardes de configuration immuables (documentation Veeam)</a> — conserver la configuration sur un dépôt immuable.</li>
+<li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/protection_group.html">Groupes de protection (documentation Veeam)</a> — types de groupes et déploiement des agents.</li>
+<li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/agent_job_create_win_web.html">Créer un job de sauvegarde par agent pour Windows, console web (documentation Veeam)</a> — les étapes de l'assistant.</li>
+<li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/guest_file_recovery.html">Restauration de fichiers invités (documentation Veeam)</a> — montage, serveur de montage, Overwrite et Keep.</li>
+<li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/web_ui_limitations.html">Limites de l'interface web (documentation Veeam)</a> — ce que l'interface web ne permet pas encore.</li>
+<li>Partie précédente : <a href="../04-ajouter-des-depots-de-sauvegarde/">Ajouter des dépôts de sauvegarde</a> · Partie suivante : <a href="../06-sauvegarder-restaurer-serveur-linux/">Sauvegarder et restaurer un serveur Linux</a> · Retour au <a href="../">sommaire du parcours</a>.</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../04-ajouter-des-depots-de-sauvegarde/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 4. Ajouter des dépôts de sauvegarde">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                4. Ajouter des dépôts de sauvegarde
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../06-sauvegarder-restaurer-serveur-linux/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 6. Sauvegarder et restaurer un serveur Linux">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                6. Sauvegarder et restaurer un serveur Linux
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      <a href="/mentions-legales/">Mentions légales</a>
+
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/bodaine" target="_blank" rel="noopener" title="Nicolas BODAINE sur LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://github.com/NicoBOD" target="_blank" rel="noopener" title="NicoBOD sur GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://nicolas.bodaine.fr" target="_blank" rel="noopener" title="Portfolio de Nicolas BODAINE" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="/feed_rss_created.xml" target="_blank" rel="noopener" title="Flux RSS des derniers articles" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 64c0-17.7 14.3-32 32-32 229.8 0 416 186.2 416 416 0 17.7-14.3 32-32 32s-32-14.3-32-32C384 253.6 226.4 96 32 96 14.3 96 0 81.7 0 64m0 352a64 64 0 1 1 128 0 64 64 0 1 1-128 0m32-256c159.1 0 288 128.9 288 288 0 17.7-14.3 32-32 32s-32-14.3-32-32c0-123.7-100.3-224-224-224-17.7 0-32-14.3-32-32s14.3-32 32-32"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.path", "navigation.indexes", "navigation.prune", "navigation.footer", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "content.action.view", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,4614 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+      
+      
+        <meta name="author" content="Nicolas BODAINE">
+      
+      
+        <link rel="canonical" href="https://wiki.bodaine.fr/cours-tp/veeam/03-preparer-le-lab-installer-appliance/">
+      
+      
+        <link rel="prev" href="../02-decouvrir-veeam-data-platform/">
+      
+      
+        <link rel="next" href="../04-ajouter-des-depots-de-sauvegarde/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>TP Veeam : préparer le lab et installer la Veeam Software Appliance 13.1 - Wiki Tech — NicoBOD</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        
+        <link rel="stylesheet" href="../../../assets/external/fonts.googleapis.com/css.56f7ac64.css">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+    
+    
+      
+    
+    
+
+    <!-- SEO -->
+    <meta name="author" content="Nicolas BODAINE">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph : compléments non gérés par le plugin social.     -->
+    <!-- og:type/title/description/image/url sont posés par social.   -->
+    <meta property="og:site_name" content="Wiki Tech — NicoBOD">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card : la grande image et l'image elle-même sont      -->
+    <!-- héritées des balises og:image générées par le plugin social.  -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="TP Veeam : préparer le lab et installer la Veeam Software Appliance 13.1 — Wiki Tech — NicoBOD">
+    <meta name="twitter:description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+  
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#tp-veeam-preparer-le-lab-et-installer-la-veeam-software-appliance" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-header__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wiki Tech — NicoBOD
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              TP Veeam : préparer le lab et installer la Veeam Software Appliance 13.1
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer en mode clair"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer en mode clair" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Passer en mode sombre"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer en mode sombre" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Revenir au thème système"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Revenir au thème système" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Partager" aria-label="Partager" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../systemes/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h16v10H4m16 2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4c-1.11 0-2 .89-2 2v10a2 2 0 0 0 2 2H0v2h24v-2z"/></svg>
+    
+  
+  Systèmes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../reseaux/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v2h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+    
+  
+  Réseaux
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cloud/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 20q-2.28 0-3.89-1.57Q1 16.85 1 14.58q0-1.95 1.17-3.48 1.18-1.53 3.08-1.95.63-2.3 2.5-3.72Q9.63 4 12 4q2.93 0 4.96 2.04Q19 8.07 19 11q1.73.2 2.86 1.5 1.14 1.28 1.14 3 0 1.88-1.31 3.19T18.5 20Z"/></svg>
+    
+  
+  Cloud
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cybersecurite/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12h7c-.53 4.11-3.28 7.78-7 8.92zH5V6.3l7-3.11M12 1 3 5v6c0 5.55 3.84 10.73 9 12 5.16-1.27 9-6.45 9-12V5z"/></svg>
+    
+  
+  Cybersécurité
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../ia/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/></svg>
+    
+  
+  IA
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../automatisation/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+    
+  
+  Automatisation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../logiciels/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m0 5H3V4h18z"/></svg>
+    
+  
+  Logiciels
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../debug/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 12h-4v-2h4m0 6h-4v-2h4m6-6h-2.81a6 6 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6 6 0 0 0-2.83 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20z"/></svg>
+    
+  
+  Debug
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../astuces/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+    
+  
+  Astuces
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+    
+  
+  Cours et TP
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../tags/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tags
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-nav__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    Wiki Tech — NicoBOD
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../systemes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Systèmes
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../reseaux/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Réseaux
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cybersecurite/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cybersécurité
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../ia/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IA
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../automatisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automatisation
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../logiciels/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logiciels
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../debug/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../astuces/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Astuces
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cours et TP
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cours et TP
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Veeam Backup & Replication
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_2" id="__nav_11_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Veeam Backup & Replication
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-comprendre-la-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-decouvrir-veeam-data-platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Découvrir Veeam Data Platform 13
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Préparer le lab et installer l'appliance
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Préparer le lab et installer l'appliance
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-vue-densemble" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Vue d'ensemble
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Vue d&#39;ensemble">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-ce-quon-construit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Ce qu'on construit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-les-comptes-utilises-dans-cette-partie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Les comptes utilisés dans cette partie
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-prerequis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Prérequis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-preparer-le-reseau" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Préparer le réseau
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Préparer le réseau">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-verifier-le-lan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Vérifier le LAN
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-telecharger-liso-et-obtenir-une-licence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Télécharger l'ISO et obtenir une licence
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Télécharger l&#39;ISO et obtenir une licence">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-creer-un-compte-veeam-et-telecharger-liso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Créer un compte Veeam et télécharger l'ISO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-obtenir-la-licence-dessai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Obtenir la licence d'essai
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-creer-la-vm-vbr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Créer la VM vbr
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Créer la VM vbr">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-les-exigences-de-lappliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Les exigences de l'appliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-creer-la-machine-virtuelle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Créer la machine virtuelle
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-installer-lappliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Installer l'appliance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-lassistant-de-configuration-initiale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. L'assistant de configuration initiale
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. L&#39;assistant de configuration initiale">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-licence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Licence
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-nom-dhote-et-disposition-du-clavier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Nom d'hôte et disposition du clavier
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-reseau" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 Réseau
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#64-heure-et-fuseau-horaire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4 Heure et fuseau horaire
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#65-compte-administrateur-et-politique-stig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.5 Compte administrateur et politique STIG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#66-authentification-multifacteur-mfa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.6 Authentification multifacteur (MFA)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#67-compte-security-officer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.7 Compte Security Officer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#68-resume-et-fin-de-lassistant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.8 Résumé et fin de l'assistant
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-premiere-connexion-a-linterface-web" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Première connexion à l'interface web
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Première connexion à l&#39;interface web">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-ouvrir-linterface-web" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Ouvrir l'interface web
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-se-connecter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Se connecter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-la-mise-a-jour-des-composants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 La mise à jour des composants
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#74-installer-la-licence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4 Installer la licence
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#75-les-mises-a-jour-critiques" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.5 Les mises à jour critiques
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#76-le-tableau-de-bord-et-la-page-licence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.6 Le tableau de bord et la page Licence
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-decouvrir-host-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Découvrir Host Management
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-initialiser-le-compte-security-officer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Initialiser le compte Security Officer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-preparer-srv-fichiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Préparer srv-fichiers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. Préparer srv-fichiers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#101-creer-la-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1 Créer la VM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#102-installer-windows-server-2025" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2 Installer Windows Server 2025
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#103-nom-adresse-ip-reseau-et-ping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3 Nom, adresse IP, réseau et ping
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#104-le-disque-e-et-les-documents-dexemple" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.4 Le disque E: et les documents d'exemple
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-installer-la-console-windows-sur-srv-fichiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Installer la console Windows sur srv-fichiers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-preparer-srv-debian" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Préparer srv-debian
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12. Préparer srv-debian">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#121-creer-la-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.1 Créer la VM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#122-installer-debian-13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.2 Installer Debian 13
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#123-verifier-lacces-ssh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.3 Vérifier l'accès SSH
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-verification-de-fin-de-partie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Vérification de fin de partie
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13. Vérification de fin de partie">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instantane-01-lab-pret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛟 Instantané 01-lab-pret
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-ajouter-des-depots-de-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Ajouter des dépôts de sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-sauvegarder-configuration-et-serveur-de-fichiers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Sauvegarder la configuration et un serveur de fichiers
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-sauvegarder-restaurer-serveur-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Sauvegarder et restaurer un serveur Linux
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-sauvegarder-vers-azure-blob/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Sauvegarder vers Azure Blob (non rejoué)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tags/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.5 7A1.5 1.5 0 0 1 4 5.5 1.5 1.5 0 0 1 5.5 4 1.5 1.5 0 0 1 7 5.5 1.5 1.5 0 0 1 5.5 7m15.91 4.58-9-9C12.05 2.22 11.55 2 11 2H4c-1.11 0-2 .89-2 2v7c0 .55.22 1.05.59 1.41l8.99 9c.37.36.87.59 1.42.59s1.05-.23 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.56-.23-1.06-.59-1.42"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-vue-densemble" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Vue d'ensemble
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Vue d&#39;ensemble">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-ce-quon-construit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Ce qu'on construit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-les-comptes-utilises-dans-cette-partie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Les comptes utilisés dans cette partie
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-prerequis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Prérequis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-preparer-le-reseau" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Préparer le réseau
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Préparer le réseau">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-verifier-le-lan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Vérifier le LAN
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-telecharger-liso-et-obtenir-une-licence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Télécharger l'ISO et obtenir une licence
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Télécharger l&#39;ISO et obtenir une licence">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-creer-un-compte-veeam-et-telecharger-liso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Créer un compte Veeam et télécharger l'ISO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-obtenir-la-licence-dessai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Obtenir la licence d'essai
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-creer-la-vm-vbr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Créer la VM vbr
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Créer la VM vbr">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-les-exigences-de-lappliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Les exigences de l'appliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-creer-la-machine-virtuelle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Créer la machine virtuelle
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-installer-lappliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Installer l'appliance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-lassistant-de-configuration-initiale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. L'assistant de configuration initiale
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. L&#39;assistant de configuration initiale">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-licence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Licence
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-nom-dhote-et-disposition-du-clavier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Nom d'hôte et disposition du clavier
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-reseau" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 Réseau
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#64-heure-et-fuseau-horaire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4 Heure et fuseau horaire
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#65-compte-administrateur-et-politique-stig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.5 Compte administrateur et politique STIG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#66-authentification-multifacteur-mfa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.6 Authentification multifacteur (MFA)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#67-compte-security-officer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.7 Compte Security Officer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#68-resume-et-fin-de-lassistant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.8 Résumé et fin de l'assistant
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-premiere-connexion-a-linterface-web" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Première connexion à l'interface web
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Première connexion à l&#39;interface web">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-ouvrir-linterface-web" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Ouvrir l'interface web
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-se-connecter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Se connecter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-la-mise-a-jour-des-composants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 La mise à jour des composants
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#74-installer-la-licence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4 Installer la licence
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#75-les-mises-a-jour-critiques" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.5 Les mises à jour critiques
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#76-le-tableau-de-bord-et-la-page-licence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.6 Le tableau de bord et la page Licence
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-decouvrir-host-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Découvrir Host Management
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-initialiser-le-compte-security-officer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Initialiser le compte Security Officer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-preparer-srv-fichiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Préparer srv-fichiers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. Préparer srv-fichiers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#101-creer-la-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1 Créer la VM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#102-installer-windows-server-2025" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2 Installer Windows Server 2025
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#103-nom-adresse-ip-reseau-et-ping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3 Nom, adresse IP, réseau et ping
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#104-le-disque-e-et-les-documents-dexemple" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.4 Le disque E: et les documents d'exemple
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-installer-la-console-windows-sur-srv-fichiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Installer la console Windows sur srv-fichiers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-preparer-srv-debian" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Préparer srv-debian
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12. Préparer srv-debian">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#121-creer-la-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.1 Créer la VM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#122-installer-debian-13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.2 Installer Debian 13
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#123-verifier-lacces-ssh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.3 Vérifier l'accès SSH
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-verification-de-fin-de-partie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Vérification de fin de partie
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13. Vérification de fin de partie">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instantane-01-lab-pret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛟 Instantané 01-lab-pret
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Cours et TP
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Veeam Backup & Replication
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:appliance" class="md-tag">appliance</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:installation" class="md-tag">installation</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:sauvegarde" class="md-tag">sauvegarde</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:security-officer" class="md-tag">security-officer</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:travaux-pratiques" class="md-tag">travaux-pratiques</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:veeam" class="md-tag">veeam</a>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/NicoBOD/wiki-tech/edit/main/docs/cours-tp/veeam/03-preparer-le-lab-installer-appliance.md" title="Editer cette page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/NicoBOD/wiki-tech/raw/main/docs/cours-tp/veeam/03-preparer-le-lab-installer-appliance.md" title="Consulter la source de cette page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<!-- ============================================================ -->
+<!-- ⚠️ RAPPEL IMPORTANT :                                          -->
+<!-- Pensez TOUJOURS à ajouter une entrée dans le fichier d'index  -->
+<!-- (index.md) du dossier correspondant (ex: docs/cloud/index.md) -->
+<!-- afin de référencer ce nouvel article et permettre aux         -->
+<!-- visiteurs de le trouver et de cliquer dessus !                -->
+<!-- ============================================================ -->
+
+<h1 id="tp-veeam-preparer-le-lab-et-installer-la-veeam-software-appliance">TP Veeam : préparer le lab et installer la Veeam Software Appliance<a class="headerlink" href="#tp-veeam-preparer-le-lab-et-installer-la-veeam-software-appliance" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Résumé</p>
+<p>Ce premier TP construit le <strong>laboratoire</strong> utilisé par tout le parcours : trois machines virtuelles branchées sur le LAN du TP pfSense. L'<strong>appliance Veeam <code>vbr</code></strong> (le serveur de sauvegarde, livré par Veeam sous forme d'ISO Linux durci), un <strong>serveur de fichiers Windows</strong> <code>srv-fichiers</code> (la donnée à protéger, et la machine qui porte la console Veeam), un <strong>serveur Linux</strong> <code>srv-debian</code> (une seconde donnée à protéger).</p>
+<p>On installe l'appliance, on déroule son assistant de configuration (réseau, heure, mots de passe conformes à la politique STIG, authentification multifacteur), on se connecte à l'interface web, on installe la licence, puis on initialise le compte <strong>Security Officer</strong>. On finit par la console Windows, la vérification du lab et un <strong>instantané</strong> de toutes les machines.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Propriété</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Difficulté</td>
+<td>Débutant à intermédiaire</td>
+</tr>
+<tr>
+<td>Durée estimée</td>
+<td>4 h, dont environ 1 h d'attente (installation de l'appliance, téléchargements, mises à jour)</td>
+</tr>
+<tr>
+<td>Version décrite</td>
+<td>Veeam Software Appliance 13.1.2.57 (octobre 2026), Windows Server 2025, Debian 13</td>
+</tr>
+<tr>
+<td>Place dans le parcours</td>
+<td>Partie 3 sur 7 du parcours <a href="../">Veeam Backup &amp; Replication</a></td>
+</tr>
+<tr>
+<td>Rejoué dans le lab</td>
+<td>2 novembre 2026 (KVM/libvirt)</td>
+</tr>
+<tr>
+<td>Dernière mise à jour</td>
+<td>2026-11-02</td>
+</tr>
+</tbody>
+</table>
+<details class="info">
+<summary>Ce qui a changé par rapport à la version 1.5 du support (juin 2024)</summary>
+<ul>
+<li>Le support installait <strong>Veeam Backup &amp; Replication 12 sur un Windows Server</strong>, avec l'assistant d'installation Windows (SQL Server, comptes de service, ports…). Tout cela disparaît : le serveur de sauvegarde est maintenant l'<strong>appliance Linux</strong> <code>vbr</code>, installée depuis une ISO, avec un assistant en mode texte. Il n'y a plus de licence Windows, de base de données ni de pare-feu Windows à configurer pour le serveur de sauvegarde.</li>
+<li>L'administration se fait par l'<strong>interface web</strong> (<code>https://192.168.19.55</code>) et par <strong>Host Management</strong> (<code>https://192.168.19.55:10443</code>), la page d'administration du système. La <strong>console Windows</strong> existe toujours, mais elle s'installe sur <code>srv-fichiers</code> et se télécharge depuis l'appliance.</li>
+<li>Nouveautés de sécurité à connaître dès l'installation : mots de passe soumis à la politique <strong>DISA STIG</strong> (15 caractères minimum, pas plus de 4 caractères de la même catégorie à la suite…), <strong>authentification multifacteur</strong> (MFA) sur Host Management, et compte <strong>Security Officer</strong> à initialiser. Ces étapes n'existaient pas dans le support.</li>
+<li>Sans clé de licence, l'appliance passe en <strong>Community Edition restauration seule</strong> : une clé d'essai de 30 jours est indispensable (voir la <a href="../02-decouvrir-veeam-data-platform/#32-le-piege-de-la-community-edition">partie 2</a>).</li>
+<li>Les adresses viennent du TP <a href="../../../reseaux/cluster-haute-disponibilite-pfsense-carp-pfsync/">cluster pfSense</a> (LAN <code>192.168.19.0/24</code>) au lieu du réseau du support. Le serveur Debian est en Debian 13 et le serveur de fichiers en Windows Server 2025.</li>
+<li>Cette partie a été <strong>entièrement rejouée</strong> en novembre 2026 sur KVM/libvirt. Les onglets VMware Workstation, VirtualBox et Proxmox VE suivent la documentation des éditeurs et les réglages standards : ils <strong>n'ont pas été rejoués</strong>.</li>
+</ul>
+</details>
+<hr />
+<div class="admonition note">
+<p class="admonition-title">Convention de lecture</p>
+<p>Chaque action précise la machine sur laquelle elle se fait :</p>
+<table>
+<thead>
+<tr>
+<th>Repère</th>
+<th>Machine</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🖥️</td>
+<td>PC hôte (l'hyperviseur : création des VM, réseaux, instantanés)</td>
+</tr>
+<tr>
+<td>🌐</td>
+<td>Navigateur web connecté à l'appliance (Edge sur <code>srv-fichiers</code>, ou le PC hôte en <code>192.168.19.1</code>)</td>
+</tr>
+<tr>
+<td>🪟</td>
+<td><code>srv-fichiers</code> (Windows Server 2025)</td>
+</tr>
+<tr>
+<td>🐧</td>
+<td><code>srv-debian</code> (Debian 13)</td>
+</tr>
+<tr>
+<td>📦</td>
+<td>Écran de la VM <code>vbr</code> (console de l'appliance)</td>
+</tr>
+</tbody>
+</table>
+<p>Les menus et boutons sont écrits <strong>en anglais</strong>, comme à l'écran, avec une traduction quand c'est utile.</p>
+</div>
+<h2 id="1-vue-densemble">1. Vue d'ensemble<a class="headerlink" href="#1-vue-densemble" title="Permanent link">&para;</a></h2>
+<h3 id="11-ce-quon-construit">1.1 Ce qu'on construit<a class="headerlink" href="#11-ce-quon-construit" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Machine</th>
+<th>Rôle</th>
+<th>Adresse</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pfsense-19</code></td>
+<td>Passerelle, NAT et DNS du LAN (TP pfSense)</td>
+<td>VIP <code>192.168.19.21</code></td>
+</tr>
+<tr>
+<td><code>vbr</code></td>
+<td>Serveur de sauvegarde : Veeam Software Appliance 13.1</td>
+<td><code>192.168.19.55/24</code></td>
+</tr>
+<tr>
+<td><code>srv-fichiers</code></td>
+<td>Serveur de fichiers Windows, futur dépôt n° 2, console Veeam</td>
+<td><code>192.168.19.22/24</code></td>
+</tr>
+<tr>
+<td><code>srv-debian</code></td>
+<td>Serveur Linux à protéger</td>
+<td><code>192.168.19.170/24</code></td>
+</tr>
+<tr>
+<td>PC hôte</td>
+<td>Navigateur (variante)</td>
+<td><code>192.168.19.1</code></td>
+</tr>
+</tbody>
+</table>
+<p>Passerelle et DNS de toutes les VM : <code>192.168.19.21</code>. Le <a href="../#schema-du-lab">schéma du lab</a>, le <a href="../#plan-dadressage">plan d'adressage</a>, les <a href="../#comptes-et-mots-de-passe">comptes et mots de passe</a> et le <a href="../#dimensionnement-des-machines-virtuelles">dimensionnement</a> sont détaillés sur la page d'accueil du parcours : <strong>la garder ouverte</strong> pendant le TP.</p>
+<h3 id="12-les-comptes-utilises-dans-cette-partie">1.2 Les comptes utilisés dans cette partie<a class="headerlink" href="#12-les-comptes-utilises-dans-cette-partie" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Où</th>
+<th>Compte</th>
+<th>Mot de passe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Appliance <code>vbr</code> (interface web, Host Management, console Windows)</td>
+<td><code>veeamadmin</code> (nom imposé)</td>
+<td><code>PoPoPo000@@@Lab</code> + code MFA (Host Management)</td>
+</tr>
+<tr>
+<td>Appliance <code>vbr</code> (Security Officer)</td>
+<td><code>veeamso</code></td>
+<td><code>PoPoPo111@@@Lab</code> à l'assistant, remplacé à la première connexion par <code>PoPoPo555@@@Lab</code> + MFA</td>
+</tr>
+<tr>
+<td>Phrase secrète de sauvegarde de configuration</td>
+<td>—</td>
+<td><code>PoPoPo666@@@Lab</code></td>
+</tr>
+<tr>
+<td><code>srv-fichiers</code></td>
+<td><code>Administrateur</code></td>
+<td><code>Popopo222@@@</code></td>
+</tr>
+<tr>
+<td><code>srv-debian</code></td>
+<td><code>user</code></td>
+<td><code>Popopo333@@@</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="13-prerequis">1.3 Prérequis<a class="headerlink" href="#13-prerequis" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Un PC avec <strong>32 Go de RAM</strong> (profil confortable) ou 16 à 24 Go (profil minimal, voir le <a href="../#dimensionnement-des-machines-virtuelles">dimensionnement</a>), environ <strong>150 Go libres</strong> sur un SSD, et la virtualisation matérielle activée dans le BIOS/UEFI.</li>
+<li>Un hyperviseur : <strong>VMware Workstation</strong>, <strong>VirtualBox</strong> ou <strong>Proxmox VE</strong>.</li>
+<li>Le <strong>réseau LAN du TP pfSense</strong> en service : la VM <code>pfsense-19</code> allumée, qui répond sur <code>192.168.19.21</code> (voir l'<a href="#2-preparer-le-reseau">étape 2</a>).</li>
+<li>Un téléphone avec une <strong>application d'authentification</strong> (Microsoft Authenticator, Google Authenticator, FreeOTP…) : indispensable dès l'<a href="#6-lassistant-de-configuration-initiale">étape 6</a>.</li>
+<li>Les ISO et la licence de l'<a href="#3-telecharger-liso-et-obtenir-une-licence">étape 3</a>.</li>
+<li>Les parties <a href="../01-comprendre-la-sauvegarde/">1</a> et <a href="../02-decouvrir-veeam-data-platform/">2</a> lues (ou en cours de lecture pendant les longues attentes).</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Pendant les attentes</p>
+<p>L'installation de l'appliance et celles de Windows et de Debian peuvent tourner <strong>en parallèle</strong> si le PC a assez de mémoire. Profiter des attentes pour lire les parties 1 et 2.</p>
+</div>
+<hr />
+<h2 id="2-preparer-le-reseau">2. Préparer le réseau<a class="headerlink" href="#2-preparer-le-reseau" title="Permanent link">&para;</a></h2>
+<p>Les trois VM se branchent sur le <strong>même réseau LAN</strong> que le cluster pfSense du wiki : <code>192.168.19.0/24</code>, passerelle et DNS <code>192.168.19.21</code> (la VIP du cluster). Ce réseau n'a <strong>pas de serveur DHCP</strong> : toutes les adresses sont saisies à la main.</p>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi réutiliser le réseau du TP pfSense ?</p>
+<p>pfSense fait office de <strong>box</strong> du lab : il donne l'accès à Internet (NAT) et répond aux requêtes DNS. L'appliance en a besoin pour télécharger ses mises à jour, Windows pour installer la console, Debian pour ses paquets. Réutiliser le TP évite de reconstruire un routeur.</p>
+</div>
+<h3 id="21-verifier-le-lan">2.1 Vérifier le LAN<a class="headerlink" href="#21-verifier-le-lan" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🖥️ Allumer <code>pfsense-19</code> (et <code>pfsense-20</code> si le cluster est en place). Ne rien y modifier.</li>
+<li>
+<p>🖥️ Vérifier que la VIP répond. Depuis un terminal du PC hôte (sous VMware et VirtualBox, il a l'adresse <code>192.168.19.1</code> sur le LAN) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ping<span class="w"> </span><span class="m">192</span>.168.19.21
+</code></pre></div>
+</li>
+</ol>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">VMware Workstation</label><label for="__tabbed_1_2">VirtualBox</label><label for="__tabbed_1_3">Proxmox VE</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Le LAN est le réseau <strong>VMnet19</strong>, de type <strong>Host-only</strong>, créé dans <strong>Edit &gt; Virtual Network Editor</strong> pendant le TP pfSense (sous-réseau <code>192.168.19.0</code>, masque <code>255.255.255.0</code>, option <strong>Connect a host virtual adapter to this network</strong> cochée : le PC hôte reçoit <code>192.168.19.1</code>). Chaque VM de ce TP aura une carte réseau en <strong>Custom : VMnet19</strong>.</p>
+</div>
+<div class="tabbed-block">
+<p>Le LAN est le <strong>réseau privé hôte</strong> (<em>host-only</em>) <code>192.168.19.0/24</code>, créé dans le gestionnaire de réseau pendant le TP pfSense (adresse de l'adaptateur <code>192.168.19.1</code>, serveur DHCP désactivé). Chaque VM aura une carte réseau en <strong>Réseau privé hôte</strong> sur cet adaptateur.</p>
+</div>
+<div class="tabbed-block">
+<p>Le LAN est un <strong>pont Linux sans port physique</strong> (par exemple <code>vmbr19</code>), créé dans <strong>Datacenter &gt; nœud &gt; System &gt; Network</strong> pendant le TP pfSense. Chaque VM aura une carte réseau sur <code>vmbr19</code>. Le PC de l'administrateur n'est pas sur ce réseau : le navigateur du lab sera celui de <code>srv-fichiers</code>.</p>
+</div>
+</div>
+</div>
+<div class="admonition info">
+<p class="admonition-title">Pas fait le TP pfSense ?</p>
+<p>Un seul pfSense suffit, ou n'importe quel routeur qui offre la passerelle et le DNS. À défaut, brancher les trois VM sur le <strong>réseau NAT</strong> de l'hyperviseur et garder les <strong>mêmes derniers octets</strong> (<code>.55</code>, <code>.22</code>, <code>.170</code>) dans le sous-réseau de ce NAT. La <strong>passerelle dépend de l'hyperviseur</strong> (par exemple <code>.2</code> pour le NAT de VMware, <code>.1</code> pour le « Réseau NAT » de VirtualBox : à vérifier dans les réglages réseau de l'hyperviseur). Il faut alors remplacer <strong>partout</strong> <code>192.168.19.x</code> par les adresses de ce sous-réseau, y compris la passerelle et le DNS <code>192.168.19.21</code>. Ce cas de repli n'a pas été rejoué.</p>
+</div>
+<hr />
+<h2 id="3-telecharger-liso-et-obtenir-une-licence">3. Télécharger l'ISO et obtenir une licence<a class="headerlink" href="#3-telecharger-liso-et-obtenir-une-licence" title="Permanent link">&para;</a></h2>
+<h3 id="31-creer-un-compte-veeam-et-telecharger-liso">3.1 Créer un compte Veeam et télécharger l'ISO<a class="headerlink" href="#31-creer-un-compte-veeam-et-telecharger-liso" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🖥️ Créer un <strong>compte Veeam</strong> gratuit sur <a href="https://www.veeam.com/products/downloads.html">veeam.com</a>, puis télécharger l'ISO de la <strong>Veeam Software Appliance</strong> : dans le lab, <code>VeeamSoftwareAppliance_13.1.2.57_20261023.iso</code>, soit <strong>16 707 616 768 octets (environ 15,6 Gio)</strong>. Prévoir un téléchargement long et vérifier la place sur le disque.</li>
+<li>🖥️ Télécharger aussi les ISO de <strong>Windows Server 2025</strong> (évaluation de 180 jours, en français) et de <strong>Debian 13</strong> (image <em>netinst</em>) : voir le tableau <a href="../#logiciels-a-telecharger">Logiciels à télécharger</a>.</li>
+</ol>
+<h3 id="32-obtenir-la-licence-dessai">3.2 Obtenir la licence d'essai<a class="headerlink" href="#32-obtenir-la-licence-dessai" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🖥️ Depuis le compte Veeam, demander une <strong>clé d'essai de 30 jours</strong> de Veeam Data Platform (le fichier obtenu porte l'extension <code>.lic</code>). La demande se fait au même endroit que le téléchargement.</li>
+<li>🖥️ Enregistrer ce fichier <code>.lic</code> dans un dossier connu. <strong>Ne jamais le publier</strong> (dépôt Git, capture d'écran, forum) : il contient le nom de son titulaire et une adresse électronique.</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Sans clé, pas de sauvegarde</p>
+<p>Sans licence, l'appliance fonctionne en <strong>Community Edition</strong>, qui ne permet <strong>que de restaurer</strong> des données existantes : aucune nouvelle sauvegarde ne sera possible. Le piège est expliqué dans la <a href="../02-decouvrir-veeam-data-platform/#32-le-piege-de-la-community-edition">partie 2</a>. Une clé d'essai est donc <strong>indispensable</strong> pour la suite du parcours.</p>
+</div>
+<hr />
+<h2 id="4-creer-la-vm-vbr">4. Créer la VM <code>vbr</code><a class="headerlink" href="#4-creer-la-vm-vbr" title="Permanent link">&para;</a></h2>
+<h3 id="41-les-exigences-de-lappliance">4.1 Les exigences de l'appliance<a class="headerlink" href="#41-les-exigences-de-lappliance" title="Permanent link">&para;</a></h3>
+<p>Selon la <a href="https://helpcenter.veeam.com/docs/vbr/userguide/system_requirements.html">documentation officielle</a> (section « Linux-Based Backup Server (Veeam Software Appliance) ») :</p>
+<table>
+<thead>
+<tr>
+<th>Élément</th>
+<th>Exigence officielle</th>
+<th>Utilisé dans le lab</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Processeur</td>
+<td>8 cœurs (vCPU) minimum ; 6 vCPU suffisent pour un petit environnement de 5 charges de travail au plus</td>
+<td>6 vCPU</td>
+</tr>
+<tr>
+<td>Mémoire</td>
+<td>16 Go plus 500 Mo par job simultané ; 16 Go suffisent pour 5 charges de travail</td>
+<td>16 Go</td>
+</tr>
+<tr>
+<td>Disque 1</td>
+<td>240 Go minimum : système, logiciel, base de configuration, cache</td>
+<td>240 Go</td>
+</tr>
+<tr>
+<td>Disque 2</td>
+<td>240 Go minimum : catalogues et sauvegardes</td>
+<td>240 Go</td>
+</tr>
+<tr>
+<td>Réseau</td>
+<td>1 Gbit/s ou plus pour la sauvegarde sur site</td>
+<td>1 carte sur le LAN</td>
+</tr>
+</tbody>
+</table>
+<p>Le minimum de 4 vCPU et 8 Go de RAM, utilisable dans un lab à la mémoire comptée, est <strong>en dessous du minimum pris en charge</strong> : voir le <a href="../#dimensionnement-des-machines-virtuelles">dimensionnement</a>. Les 2 disques peuvent être <strong>dynamiques</strong> (<em>thin</em>) : le lab n'a occupé qu'une trentaine de Go au départ. Le démarrage en <strong>UEFI</strong> est requis ; le <strong>Secure Boot</strong> a été activé dans le lab et l'appliance l'accepte.</p>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi deux disques ?</p>
+<p>Le premier héberge le système et le logiciel Veeam, le second les sauvegardes (le <strong>dépôt par défaut</strong>, <code>Default Backup Repository</code>, y est créé). Le séparer évite que des sauvegardes volumineuses remplissent le disque système.</p>
+</div>
+<h3 id="42-creer-la-machine-virtuelle">4.2 Créer la machine virtuelle<a class="headerlink" href="#42-creer-la-machine-virtuelle" title="Permanent link">&para;</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">VMware Workstation</label><label for="__tabbed_2_2">VirtualBox</label><label for="__tabbed_2_3">Proxmox VE</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<ol>
+<li>🖥️ <strong>File &gt; New Virtual Machine…</strong>, choisir <strong>Custom (advanced)</strong>, puis <strong>I will install the operating system later</strong>.</li>
+<li>Système invité : <strong>Linux</strong>, version <strong>Rocky Linux 64-bit</strong> si elle est proposée, sinon <strong>Red Hat Enterprise Linux 9 64-bit</strong>.</li>
+<li>Nom : <code>vbr</code>. Processeurs : <strong>6</strong> (1 processeur, 6 cœurs). Mémoire : <strong>16384 Mo</strong>.</li>
+<li>Réseau : <strong>Use host-only networking</strong>, puis après création, dans les réglages, <strong>Network Adapter &gt; Custom : VMnet19</strong>.</li>
+<li>Créer un premier disque de <strong>240 Go</strong> (décocher <strong>Allocate all disk space now</strong>, choisir <strong>Store virtual disk as a single file</strong>), puis ajouter un <strong>second disque</strong> identique (<strong>Add &gt; Hard Disk</strong>).</li>
+<li><strong>CD/DVD &gt; Use ISO image file</strong> : choisir l'ISO de l'appliance.</li>
+<li><strong>Options &gt; Advanced &gt; Firmware type</strong> : choisir <strong>UEFI</strong>. Cocher <strong>Enable secure boot</strong> est possible.</li>
+</ol>
+</div>
+<div class="tabbed-block">
+<ol>
+<li>🖥️ <strong>Machine &gt; Nouvelle</strong> : nom <code>vbr</code>, ISO de l'appliance, type <strong>Linux</strong>, version <strong>Red Hat (64-bit)</strong>. Cocher <strong>Passer l'installation automatique</strong> si l'assistant la propose.</li>
+<li>Mémoire : <strong>16384 Mo</strong>, processeurs : <strong>6</strong>, cocher <strong>Activer EFI (OS spéciaux uniquement)</strong>.</li>
+<li>Disque : créer un disque <strong>VDI</strong> de <strong>240 Go</strong>, <strong>alloué dynamiquement</strong>. Une fois la VM créée, ouvrir <strong>Configuration &gt; Stockage</strong> et ajouter un <strong>second disque</strong> identique.</li>
+<li><strong>Configuration &gt; Réseau &gt; Carte 1</strong> : <strong>Mode d'accès réseau : Réseau privé hôte</strong>, sur l'adaptateur du LAN du TP pfSense.</li>
+<li>Le Secure Boot de VirtualBox se règle dans <strong>Configuration &gt; Système</strong> ; il est facultatif pour ce TP et n'a pas été testé.</li>
+</ol>
+</div>
+<div class="tabbed-block">
+<ol>
+<li>🖥️ <strong>Create VM</strong> : <strong>General</strong> : nom <code>vbr</code>. <strong>OS</strong> : l'ISO de l'appliance, type <strong>Linux</strong>, version <strong>6.x - 2.6 Kernel</strong>.</li>
+<li><strong>System</strong> : <strong>Machine</strong> <code>q35</code>, <strong>BIOS</strong> <code>OVMF (UEFI)</code>, cocher <strong>Add EFI Disk</strong>. Décocher <strong>Pre-Enroll keys</strong> désactive le Secure Boot ; le laisser coché l'active (accepté par l'appliance dans le lab, mais non vérifié sous Proxmox). <strong>SCSI Controller</strong> : <code>VirtIO SCSI single</code>.</li>
+<li><strong>Disks</strong> : un premier disque de <strong>240 Go</strong>, puis <strong>Add</strong> un second de <strong>240 Go</strong>. L'allocation dynamique dépend du stockage choisi (LVM-thin, ZFS, fichiers qcow2).</li>
+<li><strong>CPU</strong> : <strong>6</strong> cœurs, type <code>host</code>. <strong>Memory</strong> : <strong>16384</strong> Mo.</li>
+<li><strong>Network</strong> : <strong>Bridge</strong> <code>vmbr19</code>, modèle <strong>VirtIO</strong>.</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Prendre de l'avance</p>
+<p>Ne pas démarrer la VM tout de suite si les VM <code>srv-fichiers</code> et <code>srv-debian</code> ne sont pas créées : l'installation de l'appliance sera longue et se déroule seule, autant lancer les trois installations ensemble (voir les étapes <a href="#10-preparer-srv-fichiers">10</a> et <a href="#12-preparer-srv-debian">12</a>).</p>
+</div>
+<hr />
+<h2 id="5-installer-lappliance">5. Installer l'appliance<a class="headerlink" href="#5-installer-lappliance" title="Permanent link">&para;</a></h2>
+<ol>
+<li>🖥️ Démarrer la VM <code>vbr</code>. Le menu de démarrage de l'ISO s'affiche (en cas de Secure Boot, il démarre sans erreur). Appuyer sur <strong>Entrée</strong> pour entrer dans le menu d'installation.</li>
+</ol>
+<div class="admonition failure">
+<p class="admonition-title">Piège : l'entrée sélectionnée par défaut est « Reinstall »</p>
+<p>Le menu propose deux entrées :</p>
+<ul>
+<li><strong>Install</strong> : installation neuve, <strong>efface tout</strong> (y compris les sauvegardes locales) ;</li>
+<li><strong>Reinstall</strong> : conserve les sauvegardes, efface les réglages et réinstalle le système.</li>
+</ul>
+<p>L'entrée sélectionnée au départ est <strong>Reinstall</strong>. Sur une machine neuve, elle ne convient pas : il n'y a rien à conserver.</p>
+</div>
+<figure>
+<p><img alt="Menu de démarrage de la Veeam Software Appliance : l'entrée Reinstall est mise en évidence" loading="lazy" src="../images/03-installation/grub-entree-reinstall-par-defaut.png" /></p>
+<figcaption>
+<p>L'entrée <strong>Reinstall</strong> (en blanc) est sélectionnée par défaut.</p>
+</figcaption>
+</figure>
+<ol>
+<li>📦 Appuyer sur la <strong>flèche haut</strong> pour sélectionner <strong>Install</strong> (« Install - fresh install, wipes everything (including local backups) »), puis sur <strong>Entrée</strong>.</li>
+</ol>
+<figure>
+<p><img alt="Menu de démarrage : l'entrée Install est maintenant sélectionnée" loading="lazy" src="../images/03-installation/grub-entree-install.png" /></p>
+<figcaption>
+<p>Après la flèche haut, <strong>Install</strong> est sélectionnée.</p>
+</figcaption>
+</figure>
+<ol>
+<li>📦 Patienter <strong>quelques minutes</strong> : l'installeur graphique démarre. Il affiche une <strong>confirmation d'effacement des disques</strong> : « Proceeding with the installation will irreversibly wipe all data currently residing on the drives… ». Vérifier qu'il s'agit bien de la bonne VM, puis cliquer sur <strong>Yes</strong>.</li>
+</ol>
+<figure>
+<p><img alt="Boîte de confirmation de l'effacement des disques avec les boutons Yes et No" loading="lazy" src="../images/03-installation/confirmation-effacement-disques.png" /></p>
+<figcaption>
+<p>La confirmation d'effacement : sans danger sur une VM neuve.</p>
+</figcaption>
+</figure>
+<ol>
+<li>📦 Laisser l'installation se dérouler seule : partitionnement, puis installation d'environ <strong>774 paquets</strong>. Dans le lab elle a pris <strong>une trentaine de minutes</strong>, et jusqu'à <strong>1 h</strong> selon la vitesse du disque. La VM <strong>redémarre toute seule</strong> à la fin.</li>
+</ol>
+<hr />
+<h2 id="6-lassistant-de-configuration-initiale">6. L'assistant de configuration initiale<a class="headerlink" href="#6-lassistant-de-configuration-initiale" title="Permanent link">&para;</a></h2>
+<p>Au premier démarrage (comptez quelques instants), l'appliance affiche en mode texte (bandeau vert <strong>Veeam Host Management</strong>) l'<strong>Initial Configuration Wizard</strong>. Ses étapes, listées à gauche, sont : <strong>License</strong>, <strong>Hostname</strong>, <strong>Network</strong>, <strong>Time</strong>, <strong>Host Administrator</strong>, <strong>Security Officer</strong>, <strong>Summary</strong>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Naviguer dans une interface texte</p>
+<p>Pas de souris. <strong>Tab</strong> passe au champ ou au bouton suivant, <strong>Maj+Tab</strong> au précédent, les <strong>flèches</strong> déplacent la sélection dans une liste, <strong>Entrée</strong> valide. La barre du bas rappelle les touches utiles. Les captures du lab (écran de la VM) sont prises avec le clavier <strong>US</strong> de l'assistant : voir l'étape 6.2 pour passer en AZERTY.</p>
+</div>
+<h3 id="61-licence">6.1 Licence<a class="headerlink" href="#61-licence" title="Permanent link">&para;</a></h3>
+<ol>
+<li>📦 Sur l'étape <strong>License</strong>, sélectionner <strong>[Veeam End User License Agreement (EULA)]</strong> et appuyer sur <strong>Entrée</strong> pour lire le contrat, puis recommencer avec les autres documents si on le souhaite.</li>
+<li>📦 Se déplacer avec <strong>Tab</strong> jusqu'au bouton <strong>[Accept]</strong> et appuyer sur <strong>Entrée</strong>.</li>
+</ol>
+<figure>
+<p><img alt="Étape License de l'assistant de configuration initiale, avec les liens vers le contrat de licence et le bouton Accept" loading="lazy" src="../images/03-installation/assistant-licence.png" /></p>
+<figcaption>
+<p>L'étape <strong>License</strong> : lire les contrats puis valider <strong>[Accept]</strong>. Il s'agit du contrat, pas de la clé de licence : celle-ci s'installe plus tard, dans l'interface web.</p>
+</figcaption>
+</figure>
+<h3 id="62-nom-dhote-et-disposition-du-clavier">6.2 Nom d'hôte et disposition du clavier<a class="headerlink" href="#62-nom-dhote-et-disposition-du-clavier" title="Permanent link">&para;</a></h3>
+<ol>
+<li>📦 Sur l'étape <strong>Hostname</strong>, effacer le nom proposé avec <strong>Retour arrière</strong> et saisir <code>vbr</code>.</li>
+<li>📦 Appuyer sur <strong>Ctrl+K</strong> (<em>Keyboard</em>) pour changer la <strong>disposition du clavier</strong> : taper <code>fr</code> dans le champ de recherche, sélectionner la disposition française (AZERTY) avec les flèches, puis <strong>[OK]</strong>. Le clavier <strong>AZERTY</strong> est alors actif pour les saisies suivantes. Dans le lab (clavier QWERTY simulé), la disposition <strong>US</strong> a été conservée.</li>
+</ol>
+<figure>
+<p><img alt="Étape Hostname de l'assistant : nom vbr saisi" loading="lazy" src="../images/03-installation/assistant-nom-hote.png" /></p>
+<figcaption>
+<p>Le nom d'hôte <code>vbr</code>.</p>
+</figcaption>
+</figure>
+<figure>
+<p><img alt="Fenêtre Keyboard Layout ouverte par Ctrl+K, avec un champ de recherche et une liste de dispositions" loading="lazy" src="../images/03-installation/assistant-disposition-clavier.png" /></p>
+<figcaption>
+<p><strong>Ctrl+K</strong> ouvre la liste des dispositions : chercher <code>fr</code> pour l'AZERTY.</p>
+</figcaption>
+</figure>
+<div class="admonition warning">
+<p class="admonition-title">Choisir le clavier avant de taper les mots de passe</p>
+<p>Les mots de passe contiennent des <code>@</code>. Avec un clavier mal réglé, ils seront saisis différemment de ce qui est affiché, et on ne pourra plus se connecter. Régler le clavier <strong>maintenant</strong>, puis cocher <strong>Show password</strong> (au besoin) pour vérifier ce qui est tapé.</p>
+</div>
+<ol>
+<li>📦 Valider avec <strong>[Next]</strong>.</li>
+</ol>
+<h3 id="63-reseau">6.3 Réseau<a class="headerlink" href="#63-reseau" title="Permanent link">&para;</a></h3>
+<ol>
+<li>📦 Sur l'étape <strong>Network</strong>, la carte (par exemple <code>enp1s0</code>) essaie d'abord le DHCP, qui n'existe pas sur ce LAN. Sélectionner la carte, puis <strong>[Static]</strong>.</li>
+<li>
+<p>📦 Remplir la fenêtre de réglages :</p>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IP4 address</td>
+<td><code>192.168.19.55</code></td>
+</tr>
+<tr>
+<td>IP4 mask</td>
+<td><code>255.255.255.0</code></td>
+</tr>
+<tr>
+<td>IP4 gateway</td>
+<td><code>192.168.19.21</code></td>
+</tr>
+<tr>
+<td>DNS list</td>
+<td><code>192.168.19.21,1.1.1.1</code></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>📦 Descendre sur <strong>[Apply]</strong>, appuyer sur <strong>Entrée</strong>, puis <strong>[Next]</strong>.</p>
+</li>
+</ol>
+<figure>
+<p><img alt="Fenêtre de réglage statique de la carte enp1s0 avec l'adresse 192.168.19.55, le masque, la passerelle et la liste DNS" loading="lazy" src="../images/03-installation/assistant-reseau-statique.png" /></p>
+<figcaption>
+<p>Les réglages statiques de la carte. Après <strong>[Apply]</strong>, l'adresse est active : l'appliance répond au ping.</p>
+</figcaption>
+</figure>
+<div class="admonition warning">
+<p class="admonition-title">Relire chaque champ</p>
+<p>Une faute de frappe dans l'adresse, le masque ou la passerelle oblige à reprendre la configuration réseau. Relire les quatre champs avant <strong>[Apply]</strong>.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Vérifier tout de suite</p>
+<p>Depuis le PC hôte, <code>ping 192.168.19.55</code> doit répondre dès que l'adresse est appliquée. Dans le lab, il répondait sans perte.</p>
+</div>
+<h3 id="64-heure-et-fuseau-horaire">6.4 Heure et fuseau horaire<a class="headerlink" href="#64-heure-et-fuseau-horaire" title="Permanent link">&para;</a></h3>
+<p>L'étape <strong>Time</strong> propose par défaut le fuseau <strong>UTC</strong> et un serveur NTP (<code>time.nist.gov</code> dans le lab).</p>
+<ol>
+<li>📦 Sélectionner <strong>[Change]</strong> à côté du fuseau, taper <code>Paris</code> dans le filtre, choisir <strong>Europe/Paris</strong> puis <strong>[Select]</strong>.</li>
+<li>📦 Garder le serveur NTP proposé, puis <strong>[Next]</strong>.</li>
+</ol>
+<figure>
+<p><img alt="Étape Time avec le fuseau Europe/Paris et le serveur NTP time.nist.gov" loading="lazy" src="../images/03-installation/assistant-fuseau-ntp.png" /></p>
+<figcaption>
+<p>Fuseau <strong>Europe/Paris</strong> et serveur NTP : ce sont eux qui règlent l'heure de l'appliance.</p>
+</figcaption>
+</figure>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi l'heure exacte est-elle vitale ?</p>
+<p>Les codes d'authentification multifacteur sont des codes <strong>TOTP</strong> (<em>Time-based One-Time Password</em>) : l'appliance et le téléphone calculent le même code à partir d'un secret partagé <strong>et de l'heure</strong> (un nouveau code toutes les 30 secondes). Si l'horloge de l'appliance dérive de plus de quelques dizaines de secondes, les codes sont refusés. L'appliance a donc besoin d'un <strong>serveur NTP</strong> joignable (d'où le DNS et la sortie Internet du TP pfSense) et du bon fuseau pour que les plannings de jobs soient à l'heure locale.</p>
+</div>
+<h3 id="65-compte-administrateur-et-politique-stig">6.5 Compte administrateur et politique STIG<a class="headerlink" href="#65-compte-administrateur-et-politique-stig" title="Permanent link">&para;</a></h3>
+<p>L'administrateur de l'appliance se nomme obligatoirement <strong><code>veeamadmin</code></strong> (nom imposé, non modifiable). Il faut lui choisir un mot de passe conforme à la politique <strong>DISA STIG</strong>, qui est stricte.</p>
+<ol>
+<li>
+<p>📦 Sur l'étape <strong>Host Administrator</strong>, vérifier la disposition du clavier, puis saisir le mot de passe dans le champ <strong>Password</strong>. Les essais du lab illustrent les trois règles :</p>
+<table>
+<thead>
+<tr>
+<th>Essai</th>
+<th>Résultat</th>
+<th>Message</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Popopo000@@@</code></td>
+<td>refusé</td>
+<td><code>The password contains more than 4 characters of the same class consecutively.</code></td>
+</tr>
+<tr>
+<td><code>PoPoPo000@@@</code></td>
+<td>refusé</td>
+<td><code>The password is shorter than 15 characters.</code></td>
+</tr>
+<tr>
+<td><code>PoPoPo000@@@000</code></td>
+<td>refusé</td>
+<td><code>The password fails the dictionary check - it does not contain enough DIFFERENT characters.</code></td>
+</tr>
+<tr>
+<td><strong><code>PoPoPo000@@@Lab</code></strong></td>
+<td><strong>accepté</strong></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ol>
+<figure>
+<p><img alt="Erreur de l'assistant : le mot de passe contient plus de 4 caractères de la même classe consécutivement" loading="lazy" src="../images/03-installation/assistant-erreur-stig.png" /></p>
+<figcaption>
+<p><code>Popopo000@@@</code> : « opopo » fait cinq minuscules d'affilée.</p>
+</figcaption>
+</figure>
+<figure>
+<p><img alt="Erreur de l'assistant : le mot de passe fait moins de 15 caractères" loading="lazy" src="../images/03-installation/assistant-erreur-longueur.png" /></p>
+<figcaption>
+<p>Variante <code>PoPoPo000@@@</code> : seulement 12 caractères.</p>
+</figcaption>
+</figure>
+<figure>
+<p><img alt="Erreur de l'assistant : le mot de passe ne contient pas assez de caractères différents" loading="lazy" src="../images/03-installation/assistant-erreur-dictionnaire.png" /></p>
+<figcaption>
+<p>Variante <code>PoPoPo000@@@000</code> : 15 caractères, mais pas assez de caractères <strong>différents</strong>.</p>
+</figcaption>
+</figure>
+<div class="admonition failure">
+<p class="admonition-title">Message d'erreur : The supplied password does not meet DISA STIG requirements</p>
+<p>Le texte complet est <code>The supplied password does not meet DISA STIG requirements:</code> suivi de la règle enfreinte (voir le tableau). Cliquer sur <strong>[Ok]</strong>, effacer le champ et retaper un mot de passe qui respecte <strong>toutes</strong> les règles à la fois : au moins <strong>15 caractères</strong>, des majuscules, des minuscules, des chiffres et des caractères spéciaux, <strong>pas plus de 4 caractères de la même catégorie à la suite</strong>, et assez de caractères différents.</p>
+<p>La variante retenue pour tout le parcours : <strong><code>PoPoPo000@@@Lab</code></strong>.</p>
+</div>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi un mot de passe aussi contraignant ?</p>
+<p>L'appliance applique des règles de durcissement du référentiel <strong>DISA STIG</strong> (le même que les administrations américaines). Un mot de passe long, varié et sans suites de même catégorie résiste mieux aux attaques par dictionnaire. C'est la contrepartie de la sécurité renforcée par défaut dont parle la <a href="../02-decouvrir-veeam-data-platform/#23-une-securite-renforcee-par-defaut">partie 2</a>.</p>
+</div>
+<h3 id="66-authentification-multifacteur-mfa">6.6 Authentification multifacteur (MFA)<a class="headerlink" href="#66-authentification-multifacteur-mfa" title="Permanent link">&para;</a></h3>
+<p>Après le mot de passe, l'appliance impose le <strong>MFA</strong> et affiche la fenêtre <strong>Configure Multi-Factor Authentication (MFA)</strong> en trois étapes : ouvrir l'application d'authentification, <strong>ajouter le compte</strong>, taper le code à usage unique.</p>
+<ol>
+<li>🖥️ Sur le téléphone, ouvrir l'application d'authentification (Microsoft Authenticator, Google Authenticator, FreeOTP…) et choisir <strong>Ajouter un compte</strong> (compte « autre » / scanner un QR code).</li>
+<li>📦 Dans la fenêtre, sélectionner <strong>[Show QR-code]</strong> et appuyer sur <strong>Entrée</strong> : un QR code s'affiche sur l'écran de la VM. Le <strong>scanner</strong> avec le téléphone. Appuyer sur <strong>Échap</strong> pour revenir à la fenêtre.</li>
+<li>📦 Se placer dans le champ <strong>Step 3. Enter a one-time password provided by your app</strong> et saisir le <strong>code à 6 chiffres</strong> affiché par l'application, puis <strong>[Ok]</strong>.</li>
+</ol>
+<figure>
+<p><img alt="Fenêtre Configure Multi-Factor Authentication avec la clé secrète (floutée), le bouton Show QR-code et le champ du code à usage unique" loading="lazy" src="../images/03-installation/assistant-mfa-cle-floutee.png" /></p>
+<figcaption>
+<p>La fenêtre MFA. La clé secrète affichée sur la ligne du dessus a été <strong>floutée</strong> dans cette capture : elle est propre à chaque appliance. Le QR code (non reproduit ici) contient cette même clé.</p>
+</figcaption>
+</figure>
+<div class="admonition failure">
+<p class="admonition-title">Piège : le « O » ressemble à un « D » dans la police de la console</p>
+<p>Si l'on préfère recopier la <strong>clé secrète</strong> à la main plutôt que scanner le QR code, attention : dans la police de la console, la lettre <strong>O</strong> ressemble à un <strong>D</strong> (dans le lab, un « O » a été lu « D » à la 15<sup>e</sup> position). Le téléphone calcule alors des codes <strong>faux</strong>, et l'appliance les refuse sans explication. <strong>Préférer le QR code.</strong></p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Si le code est refusé</p>
+<p>Vérifier d'abord l'<strong>heure</strong> du téléphone (réglage automatique) et du PC, puis attendre le code suivant (il change toutes les 30 secondes) et le retaper <strong>dans le bon champ</strong> : dans le lab, un premier code est parti sur un bouton parce qu'un <strong>Tab</strong> de trop avait déplacé la sélection.</p>
+</div>
+<h3 id="67-compte-security-officer">6.7 Compte Security Officer<a class="headerlink" href="#67-compte-security-officer" title="Permanent link">&para;</a></h3>
+<ol>
+<li>📦 L'étape suivante demande les identifiants du <strong>Security Officer</strong> : nom <code>veeamso</code>, mot de passe <code>PoPoPo111@@@Lab</code> (mêmes règles STIG).</li>
+<li>📦 <strong>[Next]</strong> pour continuer. Ne pas cocher <strong>Skip setting up Security Officer</strong>.</li>
+</ol>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi un second compte ?</p>
+<p>Le <strong>Security Officer</strong> (officier de sécurité) <strong>approuve</strong> les actions sensibles demandées par l'administrateur, comme l'ouverture de l'accès <code>root</code> : c'est le principe des <strong>quatre yeux</strong> (<em>Zero Trust</em>) vu en <a href="../02-decouvrir-veeam-data-platform/">partie 2</a>. Dans une entreprise, ce rôle revient à une autre personne que l'administrateur. Dans le lab, c'est le même lecteur qui joue les deux rôles.</p>
+<p>Ce mot de passe de départ n'est valable que pour la <strong>première connexion</strong>. On le change à l'<a href="#9-initialiser-le-compte-security-officer">étape 9</a>.</p>
+</div>
+<h3 id="68-resume-et-fin-de-lassistant">6.8 Résumé et fin de l'assistant<a class="headerlink" href="#68-resume-et-fin-de-lassistant" title="Permanent link">&para;</a></h3>
+<ol>
+<li>📦 L'étape <strong>Summary</strong> récapitule la configuration : nom d'hôte <code>vbr</code>, adresse <code>192.168.19.55</code>, serveur NTP, administrateur <code>veeamadmin</code>. Vérifier, puis sélectionner <strong>[Finish]</strong>.</li>
+</ol>
+<figure>
+<p><img alt="Résumé de l'assistant : nom d'hôte vbr, adresse IPv4 192.168.19.55, serveur NTP et administrateur veeamadmin" loading="lazy" src="../images/03-installation/assistant-resume.png" /></p>
+<figcaption>
+<p>Le résumé avant d'appliquer la configuration.</p>
+</figcaption>
+</figure>
+<ol>
+<li>📦 L'appliance applique alors la configuration en <strong>14 étapes</strong> (génération du certificat, démarrage des services…). Compter <strong>quelques minutes</strong> (environ 3 minutes dans le lab, puis le temps que l'interface web réponde).</li>
+<li>📦 À la fin, l'<strong>écran final</strong> affiche les adresses d'accès. Les noter, ainsi que les <strong>empreintes de certificat</strong> (<em>Certificate thumbprint</em>) :</li>
+</ol>
+<figure>
+<p><img alt="Écran final de l'appliance : adresses de la console Host Management sur le port 10443 et de l'interface web sur le port 443, avec leurs empreintes de certificat" loading="lazy" src="../images/03-installation/ecran-final-adresses-empreintes.png" /></p>
+<figcaption>
+<p>Host Management sur le port <strong>10443</strong>, l'interface web sur le port <strong>443</strong>, chacun avec son <strong>empreinte</strong> (SHA-256). Celle de l'interface web (<code>A263ED…E552</code> dans le lab) servira à l'<a href="#11-installer-la-console-windows-sur-srv-fichiers">étape 11</a>.</p>
+</figcaption>
+</figure>
+<div class="admonition tip">
+<p class="admonition-title">Noter l'empreinte</p>
+<p>Prendre l'empreinte en photo avec le téléphone, ou la noter : elle permet de vérifier plus tard qu'on se connecte bien à <strong>sa</strong> machine (étapes 7 et 11). Les empreintes de votre appliance seront <strong>différentes</strong> de celles de la capture.</p>
+</div>
+<hr />
+<h2 id="7-premiere-connexion-a-linterface-web">7. Première connexion à l'interface web<a class="headerlink" href="#7-premiere-connexion-a-linterface-web" title="Permanent link">&para;</a></h2>
+<h3 id="71-ouvrir-linterface-web">7.1 Ouvrir l'interface web<a class="headerlink" href="#71-ouvrir-linterface-web" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🌐 Sur <code>srv-fichiers</code> (une fois préparé, <a href="#10-preparer-srv-fichiers">étape 10</a>) ou sur le PC hôte (<code>192.168.19.1</code>), ouvrir un navigateur et aller sur <code>https://192.168.19.55</code>.</li>
+</ol>
+<div class="admonition failure">
+<p class="admonition-title">Avertissement de certificat : « Votre connexion n'est pas privée »</p>
+<p>Le navigateur affiche un avertissement (<code>NET::ERR_CERT_AUTHORITY_INVALID</code> ou équivalent). C'est <strong>normal</strong> : l'appliance a <strong>généré elle-même</strong> son certificat (certificat <strong>auto-signé</strong>) pendant l'assistant, et aucune autorité reconnue par le navigateur ne l'a signé. Le chiffrement HTTPS fonctionne, mais le navigateur ne peut pas être sûr de parler à la bonne machine.</p>
+<p>Cliquer sur <strong>Avancé</strong>, puis <strong>Continuer vers 192.168.19.55</strong>. Pour une vérification sérieuse, on compare l'<strong>empreinte</strong> du certificat (cadenas &gt; détails du certificat) à celle de l'écran final de l'appliance, comme à l'<a href="#11-installer-la-console-windows-sur-srv-fichiers">étape 11</a>.</p>
+</div>
+<h3 id="72-se-connecter">7.2 Se connecter<a class="headerlink" href="#72-se-connecter" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🌐 Saisir <code>veeamadmin</code> et <code>PoPoPo000@@@Lab</code>, puis cliquer sur <strong>Sign in</strong>.</li>
+</ol>
+<figure>
+<p><img alt="Page de connexion de l'interface web Veeam Backup &amp; Replication avec les champs Username et Password et le lien de téléchargement de la console Windows" loading="lazy" src="../images/03-installation/web-connexion.png" /></p>
+<figcaption>
+<p>La page de connexion de l'interface web. Le lien en bas, <strong>Download Windows-based backup console for full experience</strong>, sert à l'<a href="#11-installer-la-console-windows-sur-srv-fichiers">étape 11</a>.</p>
+</figcaption>
+</figure>
+<div class="admonition note">
+<p class="admonition-title">Où est demandé le code MFA ?</p>
+<p>Dans le lab, l'interface web et la console Windows n'ont demandé <strong>que le mot de passe</strong>. Le <strong>code MFA</strong> est demandé à l'ouverture de <strong>Host Management</strong> (<a href="#8-decouvrir-host-management">étape 8</a>). Si une page de connexion demande un code, le calculer avec l'application d'authentification.</p>
+</div>
+<h3 id="73-la-mise-a-jour-des-composants">7.3 La mise à jour des composants<a class="headerlink" href="#73-la-mise-a-jour-des-composants" title="Permanent link">&para;</a></h3>
+<p>Dès la première connexion, la fenêtre <strong>Host Components Update</strong> apparaît : l'appliance configure ses composants (par exemple le serveur Samba). Laisser la fenêtre travailler, puis cliquer sur <strong>OK</strong> quand elle se termine. Dans le lab, elle s'est terminée avec le statut <strong>Warning</strong> (« All components have been upgraded with warnings ») <strong>avant</strong> l'installation de la licence, sans conséquence pour la suite. Une fenêtre d'information <strong>Web UI</strong> rappelle que l'interface web ne couvre pas encore toutes les fonctions de la console Windows : c'est pourquoi on installe cette dernière à l'<a href="#11-installer-la-console-windows-sur-srv-fichiers">étape 11</a>.</p>
+<h3 id="74-installer-la-licence">7.4 Installer la licence<a class="headerlink" href="#74-installer-la-licence" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🌐 Le tableau de bord (<strong>Overview</strong>) s'affiche avec une fenêtre qui demande d'installer une licence valide : « To start using Veeam Backup &amp; Replication web UI, please install a valid product license ». Cliquer sur <strong>Install</strong>.</li>
+<li>🌐 Choisir le fichier <code>.lic</code> de l'<a href="#32-obtenir-la-licence-dessai">étape 3.2</a>. L'appliance l'accepte.</li>
+</ol>
+<figure>
+<p><img alt="Tableau de bord de l'interface web avec la fenêtre demandant d'installer une licence valide et le bouton Install" loading="lazy" src="../images/03-installation/web-licence-requise.png" /></p>
+<figcaption>
+<p>La fenêtre qui demande la licence au premier affichage du tableau de bord.</p>
+</figcaption>
+</figure>
+<div class="admonition warning">
+<p class="admonition-title">Sans licence : Community Edition, restauration seule</p>
+<p>La fenêtre rappelle aussi : « If you are a Community Edition user, please use a Windows-based backup console ». Ne pas fermer cette fenêtre sans installer le fichier <code>.lic</code> : sans lui, aucune sauvegarde ne sera possible (<a href="../02-decouvrir-veeam-data-platform/#32-le-piege-de-la-community-edition">partie 2</a>).</p>
+</div>
+<h3 id="75-les-mises-a-jour-critiques">7.5 Les mises à jour critiques<a class="headerlink" href="#75-les-mises-a-jour-critiques" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🌐 Après l'installation de la licence, l'appliance <strong>vérifie ses mises à jour</strong> (<strong>Checking for updates</strong>, 1 à 2 minutes dans le lab). Elle propose alors d'installer des <strong>mises à jour critiques</strong> : « The system requires critical updates to be installed. Install updates now? ». Cliquer sur <strong>Yes</strong>.</li>
+<li>🌐 Les services de l'appliance <strong>redémarrent</strong> : pendant quelques minutes, l'interface peut afficher une erreur interne ou rester vide. Attendre, puis recharger la page.</li>
+</ol>
+<figure>
+<p><img alt="Fenêtre Install Updates de l'interface web : le système demande d'installer des mises à jour critiques, boutons Yes et No" loading="lazy" src="../images/03-installation/web-mises-a-jour-critiques.png" /></p>
+<figcaption>
+<p>Les mises à jour critiques : répondre <strong>Yes</strong> (bonne pratique de sécurité).</p>
+</figcaption>
+</figure>
+<div class="admonition tip">
+<p class="admonition-title">Pourquoi accepter ?</p>
+<p>Installer les mises à jour critiques dès l'installation corrige les failles connues. C'est aussi ce qui oblige la console Windows à mettre ses <strong>modules</strong> à jour à la première connexion (étape 11).</p>
+</div>
+<h3 id="76-le-tableau-de-bord-et-la-page-licence">7.6 Le tableau de bord et la page Licence<a class="headerlink" href="#76-le-tableau-de-bord-et-la-page-licence" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🌐 Après les mises à jour, le tableau de bord <strong>Overview</strong> s'affiche. Y repérer le <strong>dépôt par défaut</strong> : <code>Default Backup Repository</code>, sur <code>vbr</code>, <strong>206,9 Go</strong> (le second disque).</li>
+<li>🌐 Cliquer sur <strong>Configuration</strong> (en haut à droite), puis <strong>License Information</strong> : la page indique le statut (<strong>Valid</strong>), le type (<strong>Evaluation</strong> pour une clé d'essai), le nombre d'<strong>instances</strong> (charges de travail) et la <strong>date d'expiration</strong>.</li>
+</ol>
+<figure>
+<p><img alt="Tableau de bord Overview de l'interface web : résilience, santé de l'infrastructure, dépôt par défaut" loading="lazy" src="../images/03-installation/web-tableau-de-bord.png" /></p>
+<figcaption>
+<p>Le tableau de bord. En bas à droite, <strong>Default Backup Repository</strong> : le dépôt local créé sur le second disque.</p>
+</figcaption>
+</figure>
+<figure>
+<p><img alt="Page License Information : statut Valid, type Evaluation, nombre d'instances et date d'expiration" loading="lazy" src="../images/03-installation/web-page-licence.png" /></p>
+<figcaption>
+<p>La page <strong>License Information</strong> : vérifier que le statut est <strong>Valid</strong> et noter la date d'expiration. Les valeurs dépendent de votre clé (dans le lab : 1 000 instances, expiration le 01/12/2026).</p>
+</figcaption>
+</figure>
+<div class="admonition failure">
+<p class="admonition-title">Message : « Your trial license will expire on … »</p>
+<p>Une notification annonce la date d'expiration de la licence d'essai. C'est une information, pas une erreur. Une clé d'essai de 30 jours limite la durée de <strong>validité du lab</strong> : prévoir de finir le parcours dans ce délai.</p>
+</div>
+<hr />
+<h2 id="8-decouvrir-host-management">8. Découvrir Host Management<a class="headerlink" href="#8-decouvrir-host-management" title="Permanent link">&para;</a></h2>
+<p><strong>Host Management</strong> est la page d'administration du <strong>système</strong> de l'appliance, distincte de l'interface web qui gère les sauvegardes. On y gère notamment le système, le réseau, l'heure, les certificats, les <strong>mises à jour</strong>, les utilisateurs et rôles et l'accès distant. Le <strong>SSH</strong> y est <strong>désactivé par défaut</strong>, et l'accès <strong><code>root</code></strong> n'est accordé que sur <strong>demande approuvée par le Security Officer</strong>. Voir la <a href="https://helpcenter.veeam.com/docs/vbr/userguide/hmc_about.html">documentation officielle</a>.</p>
+<ol>
+<li>🌐 Aller sur <code>https://192.168.19.55:10443</code> (même avertissement de certificat qu'à l'étape 7.1).</li>
+<li>🌐 Se connecter avec <code>veeamadmin</code> et <code>PoPoPo000@@@Lab</code>.</li>
+<li>🌐 La page suivante demande le <strong>code MFA</strong> : ouvrir l'application d'authentification et saisir le code à 6 chiffres affiché pour l'appliance, puis <strong>Sign in</strong>.</li>
+</ol>
+<figure>
+<p><img alt="Page de connexion de Veeam Host Management" loading="lazy" src="../images/03-installation/hm-connexion.png" width="420" /></p>
+<figcaption>
+<p>Connexion à Host Management : identifiant et mot de passe.</p>
+</figcaption>
+</figure>
+<figure>
+<p><img alt="Page Confirm Multi-Factor Authentication (MFA) de Host Management avec le champ du code" loading="lazy" src="../images/03-installation/hm-code-mfa.png" width="420" /></p>
+<figcaption>
+<p>Le code MFA à 6 chiffres, calculé par l'application d'authentification.</p>
+</figcaption>
+</figure>
+<ol>
+<li>🌐 La page <strong>Overview</strong> résume le système : type d'appliance, serveur SSH (<strong>Disabled</strong>), empreintes des certificats, réseau (<code>enp1s0</code>, <code>192.168.19.55</code>), heure et serveur NTP, charge CPU et mémoire. À gauche, le menu : <strong>Network</strong>, <strong>Time</strong>, <strong>Storage</strong>, <strong>Remote Access</strong>, <strong>Users and Roles</strong>, <strong>Certificates</strong>, <strong>Backup Infrastructure</strong>, <strong>Updates</strong>, <strong>Logs and Services</strong>…</li>
+</ol>
+<figure>
+<p><img alt="Page Overview de Host Management : type d'appliance, SSH désactivé, empreintes des certificats, réseau, heure, utilisation CPU et mémoire" loading="lazy" src="../images/03-installation/hm-apercu.png" /></p>
+<figcaption>
+<p><strong>Overview</strong> : noter <strong>SSH Server : Disabled</strong>, le lien <strong>Show</strong> des empreintes de certificats, et l'utilisation des ressources.</p>
+</figcaption>
+</figure>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi le SSH est-il désactivé ?</p>
+<p>Un accès SSH au système d'un serveur de sauvegarde est une porte d'entrée de choix pour un attaquant. L'appliance le <strong>ferme</strong> et ne l'ouvre que pour une durée limitée, sur une demande <strong>approuvée par le Security Officer</strong> (menu <strong>Remote Access</strong>). Dans ce parcours, on n'en a pas besoin : tout se fait par l'interface web, Host Management et la console.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Installer les mises à jour système</p>
+<p>Le menu <strong>Updates</strong> de Host Management permet de rechercher et d'installer les mises à jour du système (dans le lab, l'installation affiche ses étapes : vérification et téléchargement des paquets, installation, redémarrage des services).</p>
+</div>
+<hr />
+<h2 id="9-initialiser-le-compte-security-officer">9. Initialiser le compte Security Officer<a class="headerlink" href="#9-initialiser-le-compte-security-officer" title="Permanent link">&para;</a></h2>
+<p>Le compte <code>veeamso</code> a été créé à l'assistant avec un mot de passe <strong>provisoire</strong>. Sa première connexion déclenche l'assistant <strong>Security Officer Initialization Wizard</strong> en quatre étapes : <strong>Password</strong>, <strong>Multi-Factor Authentication (MFA)</strong>, <strong>Recovery Token</strong>, <strong>Configuration Backup</strong>.</p>
+<ol>
+<li>🌐 Se déconnecter de Host Management (menu du compte <code>veeamadmin</code> en haut à droite), ou ouvrir une fenêtre de navigation privée, puis aller sur <code>https://192.168.19.55:10443</code>.</li>
+<li>🌐 Se connecter avec <strong><code>veeamso</code></strong> et <strong><code>PoPoPo111@@@Lab</code></strong> (le mot de passe de l'assistant).</li>
+<li>🌐 <strong>Étape Password</strong> : l'assistant impose de changer le mot de passe (« You must change your password now »). Saisir <strong><code>PoPoPo555@@@Lab</code></strong> deux fois, puis <strong>Next</strong>.</li>
+</ol>
+<figure>
+<p><img alt="Assistant Security Officer, étape Password : champs de nouveau mot de passe et de confirmation" loading="lazy" src="../images/03-installation/so-nouveau-mot-de-passe.png" /></p>
+<figcaption>
+<p>Première connexion de <code>veeamso</code> : le mot de passe provisoire doit être remplacé.</p>
+</figcaption>
+</figure>
+<ol>
+<li>🌐 <strong>Étape Multi-Factor Authentication (MFA)</strong> : ajouter <strong>un nouveau compte</strong> dans l'application d'authentification en scannant le QR code de <strong>cette</strong> page (c'est un second secret, distinct de celui de <code>veeamadmin</code>), puis saisir le code à 6 chiffres dans <strong>Enter the one-time code shown in the app</strong>. Cliquer sur <strong>Next</strong>.</li>
+</ol>
+<figure>
+<p><img alt="Assistant Security Officer, étape MFA : QR code (flouté), clé manuelle (floutée) et champ du code" loading="lazy" src="../images/03-installation/so-mfa-qr-floute.png" /></p>
+<figcaption>
+<p>Le QR code et la clé de cet écran ont été <strong>floutés</strong> : chaque appliance génère les siens. Scanner le QR code de <strong>votre</strong> écran.</p>
+</figcaption>
+</figure>
+<ol>
+<li>🌐 <strong>Étape Recovery Token</strong> : l'assistant affiche un <strong>jeton de récupération</strong> (une suite de caractères du type <code>xxxxxxxx-xxxx-…</code>) qui permet de <strong>retrouver l'accès</strong> au compte si le mot de passe ou le MFA sont perdus. <strong>L'écrire sur papier ou l'enregistrer dans un gestionnaire de mots de passe</strong>, puis <strong>Next</strong>.</li>
+</ol>
+<figure>
+<p><img alt="Assistant Security Officer, étape Recovery Token : le jeton de récupération (flouté) et le bouton Copy" loading="lazy" src="../images/03-installation/so-jeton-recuperation-floute.png" /></p>
+<figcaption>
+<p>Le jeton de récupération (flouté ici) s'affiche <strong>une seule fois</strong>. À conserver hors de l'appliance.</p>
+</figcaption>
+</figure>
+<div class="admonition danger">
+<p class="admonition-title">Le jeton de récupération ne se réaffiche pas</p>
+<p>Il est montré une seule fois. Sans lui, il peut devenir impossible de rouvrir le compte du Security Officer si le mot de passe ou le MFA sont perdus. Host Management propose, dans ses <strong>Quick Actions</strong>, l'entrée <strong>Create password recovery token</strong> pour en créer un nouveau.</p>
+</div>
+<ol>
+<li>🌐 <strong>Étape Configuration Backup</strong> : l'assistant demande une <strong>phrase secrète de sauvegarde de configuration</strong> (<em>passphrase</em>) et un indice (<em>hint</em>). Saisir <code>PoPoPo666@@@Lab</code>, avec l'indice <code>Phrase secrete du lab Veeam</code>, puis <strong>Finish</strong>.</li>
+</ol>
+<figure>
+<p><img alt="Assistant Security Officer, étape Configuration Backup : champs Passphrase et Hint remplis" loading="lazy" src="../images/03-installation/so-phrase-secrete.png" /></p>
+<figcaption>
+<p>La phrase secrète de sauvegarde de configuration, avec son indice. Elle protège les mots de passe et clés de chiffrement contenus dans la sauvegarde de configuration.</p>
+</figcaption>
+</figure>
+<ol>
+<li>🌐 Vérifier le résultat : dans Host Management, le menu <strong>Configuration</strong> du Security Officer affiche <strong>Configuration Backup</strong>, la date de création, l'indice <strong>Phrase secrete du lab Veeam</strong> et le lien <strong>Change Passphrase</strong>.</li>
+</ol>
+<figure>
+<p><img alt="Page Configuration de Host Management côté Security Officer : phrase secrète créée avec son indice" loading="lazy" src="../images/03-installation/so-configuration-sauvegarde.png" /></p>
+<figcaption>
+<p>La phrase secrète est enregistrée (date, indice).</p>
+</figcaption>
+</figure>
+<div class="admonition failure">
+<p class="admonition-title">Message d'erreur si on saute cette étape : « Unable to process the configuration backup without the Security Officer's passphrase… »</p>
+<p>En <a href="../05-sauvegarder-configuration-et-serveur-de-fichiers/">partie 5</a>, la <strong>sauvegarde de configuration chiffrée</strong> du serveur de sauvegarde <strong>échoue</strong> si le Security Officer n'a pas créé sa phrase secrète. Le journal du lab affiche exactement :</p>
+<p><code>Unable to process the configuration backup without the Security Officer's passphrase. Ask your Security Officer to configure it in the Host Management console.</code></p>
+<p>Il faut alors se connecter à Host Management avec <code>veeamso</code>, créer la phrase secrète (cette étape 9), et relancer la sauvegarde. Autant le faire <strong>maintenant</strong>.</p>
+</div>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi une phrase secrète en plus du mot de passe de chiffrement ?</p>
+<p>La sauvegarde de configuration contient les identifiants et clés de chiffrement de toute l'infrastructure. Elle est chiffrée par un mot de passe choisi dans la console (<code>Popopo444@@@</code> en partie 5) <strong>et</strong> liée à la phrase secrète du Security Officer : un administrateur seul ne peut pas restaurer cette configuration sans l'accord de l'officier de sécurité. Même principe des « quatre yeux » qu'à l'<a href="#67-compte-security-officer">étape 6.7</a>.</p>
+</div>
+<hr />
+<h2 id="10-preparer-srv-fichiers">10. Préparer <code>srv-fichiers</code><a class="headerlink" href="#10-preparer-srv-fichiers" title="Permanent link">&para;</a></h2>
+<p><code>srv-fichiers</code> est le <strong>serveur de fichiers Windows</strong> à protéger. Il héberge aussi la <strong>console</strong> Veeam et le navigateur du lab.</p>
+<h3 id="101-creer-la-vm">10.1 Créer la VM<a class="headerlink" href="#101-creer-la-vm" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Réglage</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nom</td>
+<td><code>srv-fichiers</code></td>
+</tr>
+<tr>
+<td>Système</td>
+<td>Windows Server 2025</td>
+</tr>
+<tr>
+<td>Processeurs / mémoire</td>
+<td>2 vCPU, 4 Go</td>
+</tr>
+<tr>
+<td>Disque 1</td>
+<td>60 Go (C:)</td>
+</tr>
+<tr>
+<td>Disque 2</td>
+<td>40 Go (futur E:)</td>
+</tr>
+<tr>
+<td>Réseau</td>
+<td>LAN du TP pfSense</td>
+</tr>
+<tr>
+<td>Démarrage</td>
+<td>UEFI</td>
+</tr>
+</tbody>
+</table>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:3"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">VMware Workstation</label><label for="__tabbed_3_2">VirtualBox</label><label for="__tabbed_3_3">Proxmox VE</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><strong>New Virtual Machine… &gt; Custom</strong>, système invité <strong>Windows Server 2025</strong> (ou <strong>Windows Server 2022</strong> si 2025 n'est pas proposé), nom <code>srv-fichiers</code>, 2 processeurs, <strong>4096 Mo</strong>. <strong>Firmware type : UEFI</strong> dans <strong>Options &gt; Advanced</strong>. Disque de <strong>60 Go</strong>, puis <strong>Add &gt; Hard Disk</strong> de <strong>40 Go</strong>. Réseau <strong>Custom : VMnet19</strong>. ISO de Windows Server.</p>
+</div>
+<div class="tabbed-block">
+<p><strong>Machine &gt; Nouvelle</strong>, type <strong>Microsoft Windows</strong>, version <strong>Windows 2022 (64-bit)</strong>, 4096 Mo, 2 processeurs, <strong>Activer EFI</strong>. Disque <strong>VDI de 60 Go</strong> dynamique, puis un second de <strong>40 Go</strong>. <strong>Réseau privé hôte</strong>. Cocher <strong>Passer l'installation automatique</strong> : l'installation se fait à la main.</p>
+</div>
+<div class="tabbed-block">
+<p><strong>Create VM</strong> : type <strong>Microsoft Windows</strong>, version <strong>11/2022/2025</strong>, <strong>BIOS OVMF (UEFI)</strong> avec <strong>Add EFI Disk</strong>, <strong>Machine</strong> <code>q35</code>. <strong>SATA</strong> pour les disques et carte réseau <strong>Intel E1000</strong> (pour éviter d'installer les pilotes VirtIO pendant l'installation ; les pilotes VirtIO sont un choix valable pour les connaisseurs). Disques de <strong>60 Go</strong> et <strong>40 Go</strong>, <strong>2 cœurs</strong>, <strong>4096 Mo</strong>, pont <code>vmbr19</code>.</p>
+</div>
+</div>
+</div>
+<h3 id="102-installer-windows-server-2025">10.2 Installer Windows Server 2025<a class="headerlink" href="#102-installer-windows-server-2025" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🪟 Démarrer la VM sur l'ISO (appuyer sur une touche au message « Press any key to boot from CD or DVD »). Choisir <strong>Français</strong> (langue, format de l'heure, clavier français), puis <strong>Suivant &gt; Installer maintenant</strong>.</li>
+<li>🪟 Si la clé de produit est demandée, cliquer sur <strong>Je n'ai pas de clé de produit</strong> (version d'évaluation).</li>
+<li>🪟 Choisir <strong>Windows Server 2025 Standard (expérience de bureau)</strong> (<em>Desktop Experience</em>). Ne pas prendre la première ligne sans « expérience de bureau » : c'est la version sans interface graphique.</li>
+<li>🪟 Accepter les termes de licence, choisir <strong>Personnalisé : installer uniquement Windows</strong>, et sélectionner le <strong>disque de 60 Go</strong> (le <strong>Lecteur 0</strong>, pas celui de 40 Go).</li>
+<li>🪟 Après redémarrage, définir le mot de passe de l'<strong>Administrateur</strong> : <code>Popopo222@@@</code>, puis ouvrir la session avec <strong>Ctrl+Alt+Suppr</strong> (dans la console de l'hyperviseur, utiliser son menu <strong>Envoyer Ctrl+Alt+Suppr</strong>).</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Fermer le Gestionnaire de serveur</p>
+<p>Au premier démarrage, la fenêtre « Essayez Windows Admin Center… » peut s'afficher : la fermer avec la croix, après avoir coché <strong>Ne plus afficher ce message</strong>.</p>
+</div>
+<h3 id="103-nom-adresse-ip-reseau-et-ping">10.3 Nom, adresse IP, réseau et ping<a class="headerlink" href="#103-nom-adresse-ip-reseau-et-ping" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🪟 Ouvrir <strong>Windows PowerShell en tant qu'administrateur</strong> (clic droit sur <strong>Démarrer &gt; Windows PowerShell (admin)</strong>).</li>
+<li>
+<p>🪟 Coller le script suivant : il donne l'<strong>adresse IP fixe</strong>, passe le réseau en <strong>profil privé</strong>, autorise le <strong>ping</strong> (ICMP) et renomme le serveur, qui redémarre.</p>
+<div class="highlight"><span class="filename">Réseau et nom de srv-fichiers</span><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c"># 1. Choisir la carte réseau connectée et la renommer « LAN »</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nv">$nic</span> <span class="p">=</span> <span class="nb">Get-NetAdapter</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="n">Status</span> <span class="o">-eq</span> <span class="s1">'Up'</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-First</span> <span class="n">1</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nb">Rename-NetAdapter</span> <span class="n">-Name</span> <span class="nv">$nic</span><span class="p">.</span><span class="n">Name</span> <span class="n">-NewName</span> <span class="s1">'LAN'</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nv">$nic</span> <span class="p">=</span> <span class="nb">Get-NetAdapter</span> <span class="n">-Name</span> <span class="s1">'LAN'</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c"># 2. Adresse IP fixe : pas de DHCP sur ce LAN</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="nb">Set-NetIPInterface</span> <span class="n">-InterfaceIndex</span> <span class="nv">$nic</span><span class="p">.</span><span class="n">ifIndex</span> <span class="n">-Dhcp</span> <span class="n">Disabled</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="nb">New-NetIPAddress</span> <span class="n">-InterfaceIndex</span> <span class="nv">$nic</span><span class="p">.</span><span class="n">ifIndex</span> <span class="n">-IPAddress</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">19</span><span class="p">.</span><span class="n">22</span> <span class="p">`</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="n">-PrefixLength</span> <span class="n">24</span> <span class="n">-DefaultGateway</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">19</span><span class="p">.</span><span class="n">21</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="nb">Set-DnsClientServerAddress</span> <span class="n">-InterfaceIndex</span> <span class="nv">$nic</span><span class="p">.</span><span class="n">ifIndex</span> <span class="p">`</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="n">-ServerAddresses</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">19</span><span class="p">.</span><span class="n">21</span><span class="p">,</span><span class="n">1</span><span class="p">.</span><span class="n">1</span><span class="p">.</span><span class="n">1</span><span class="p">.</span><span class="n">1</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="c"># 3. Profil réseau « privé » (le pare-feu est moins restrictif)</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="nb">Start-Sleep</span> <span class="n">-Seconds</span> <span class="n">5</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="nb">Get-NetConnectionProfile</span> <span class="p">|</span> <span class="nb">Set-NetConnectionProfile</span> <span class="n">-NetworkCategory</span> <span class="n">Private</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="c"># 4. Autoriser le ping entrant (règle ICMPv4)</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="nb">Enable-NetFirewallRule</span> <span class="n">-Name</span> <span class="n">FPS-ICMP4-ERQ-In</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="c"># 5. Renommer le serveur et redémarrer</span>
+<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="nb">Rename-Computer</span> <span class="n">-NewName</span> <span class="n">SRV-FICHIERS</span> <span class="n">-Restart</span>
+</code></pre></div>
+</li>
+</ol>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi un profil réseau privé et le ping autorisé ?</p>
+<p>Windows classe un réseau inconnu en <strong>Public</strong> et y bloque presque tout, y compris le ping. Sur un LAN de confiance, le profil <strong>Privé</strong> s'applique à un pare-feu moins strict, et la règle ICMP permet de tester la connexion depuis les autres machines (<code>ping 192.168.19.22</code>). Sans elle, la vérification de fin de partie échoue sans qu'il y ait de véritable panne.</p>
+</div>
+<ol>
+<li>🪟 Après redémarrage, ouvrir une session et vérifier : <code>ipconfig</code> doit afficher <code>192.168.19.22</code>, et <code>ping 192.168.19.21</code> doit répondre.</li>
+</ol>
+<h3 id="104-le-disque-e-et-les-documents-dexemple">10.4 Le disque E: et les documents d'exemple<a class="headerlink" href="#104-le-disque-e-et-les-documents-dexemple" title="Permanent link">&para;</a></h3>
+<p>Le deuxième disque de 40 Go est encore vierge. Le script ci-dessous le formate en <strong>NTFS</strong>, lui donne la lettre <strong>E:</strong> et le nom <strong>DONNEES</strong>, et crée le dossier <code>E:\Documents-importants</code> avec quelques fichiers d'exemple (le « patrimoine » à protéger en <a href="../05-sauvegarder-configuration-et-serveur-de-fichiers/">partie 5</a>). Le disque <strong>F:</strong> est ajouté en <a href="../04-ajouter-des-depots-de-sauvegarde/">partie 4</a> : ne pas le créer ici.</p>
+<div class="admonition failure">
+<p class="admonition-title">Message : « New-Partition : The requested access path is already in use »</p>
+<p>La lettre <strong>E:</strong> est déjà prise, en général par le <strong>lecteur DVD</strong> d'un second ISO ou de l'ISO d'installation encore monté. Dans le lab, un second lecteur CD occupait <code>E:</code> : le retirer de la VM (ou <strong>éjecter</strong> l'ISO dans l'hyperviseur), <strong>redémarrer Windows</strong>, puis relancer le script. La commande <code>Get-Volume</code> montre les lettres déjà utilisées.</p>
+</div>
+<ol>
+<li>
+<p>🪟 Dans <strong>PowerShell (admin)</strong>, coller :</p>
+<div class="highlight"><span class="filename">prep-fichiers.ps1 : disque E: et documents d&#x27;exemple</span><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nv">$ErrorActionPreference</span> <span class="p">=</span> <span class="s1">'Stop'</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c"># 1. Repérer le disque de données : ni le disque système (n° 0), ni un disque déjà partitionné</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="nv">$d</span> <span class="p">=</span> <span class="nb">Get-Disk</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="nv">$_</span><span class="p">.</span><span class="n">Number</span> <span class="o">-ne</span> <span class="n">0</span> <span class="o">-and</span> <span class="p">(</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        <span class="nv">$_</span><span class="p">.</span><span class="n">PartitionStyle</span> <span class="o">-eq</span> <span class="s1">'RAW'</span> <span class="o">-or</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>        <span class="p">((</span><span class="nb">Get-Partition</span> <span class="n">-DiskNumber</span> <span class="nv">$_</span><span class="p">.</span><span class="n">Number</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span> <span class="p">|</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>          <span class="nb">Where-Object</span> <span class="nb">Type </span><span class="o">-eq</span> <span class="s1">'Basic'</span><span class="p">).</span><span class="n">Count</span> <span class="o">-eq</span> <span class="n">0</span><span class="p">))</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="p">}</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-First</span> <span class="n">1</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="c"># 2. Le formater : GPT, une seule partition NTFS, lettre E:, nom DONNEES</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="k">if</span> <span class="p">(</span><span class="nv">$d</span><span class="p">)</span> <span class="p">{</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    <span class="k">if</span> <span class="p">(</span><span class="nv">$d</span><span class="p">.</span><span class="n">PartitionStyle</span> <span class="o">-eq</span> <span class="s1">'RAW'</span><span class="p">)</span> <span class="p">{</span> <span class="nb">Initialize-Disk</span> <span class="n">-Number</span> <span class="nv">$d</span><span class="p">.</span><span class="n">Number</span> <span class="n">-PartitionStyle</span> <span class="n">GPT</span> <span class="p">}</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>    <span class="nb">New-Partition</span> <span class="n">-DiskNumber</span> <span class="nv">$d</span><span class="p">.</span><span class="n">Number</span> <span class="n">-UseMaximumSize</span> <span class="n">-DriveLetter</span> <span class="n">E</span> <span class="p">|</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>        <span class="nb">Format-Volume</span> <span class="n">-FileSystem</span> <span class="n">NTFS</span> <span class="n">-NewFileSystemLabel</span> <span class="s1">'DONNEES'</span> <span class="n">-Confirm</span><span class="p">:</span><span class="nv">$false</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="p">}</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="c"># 3. Les documents « très importants » à protéger</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="nv">$base</span> <span class="p">=</span> <span class="s1">'E:\Documents-importants'</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="k">foreach</span> <span class="p">(</span><span class="nv">$s</span> <span class="k">in</span> <span class="s1">'Comptabilite'</span><span class="p">,</span><span class="s1">'Contrats'</span><span class="p">,</span><span class="s1">'Ressources-humaines'</span><span class="p">)</span> <span class="p">{</span>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>    <span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">-Path</span> <span class="s2">"$base\$s"</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="p">}</span>
+<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="nb">Set-Content</span> <span class="s2">"$base\Comptabilite\factures-2026.csv"</span> <span class="p">`</span>
+<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>    <span class="s2">"Numero;Client;Montant</span><span class="se">`n</span><span class="s2">F2026-001;Boulangerie Martin;1250,00</span><span class="se">`n</span><span class="s2">F2026-002;Garage Durand;3480,50</span><span class="se">`n</span><span class="s2">F2026-003;Cabinet Leroy;890,00"</span> <span class="n">-Encoding</span> <span class="n">UTF8</span>
+<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a><span class="nb">Set-Content</span> <span class="s2">"$base\Comptabilite\bilan-previsionnel.txt"</span> <span class="p">`</span>
+<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>    <span class="s2">"Bilan previsionnel 2026 - document confidentiel"</span> <span class="n">-Encoding</span> <span class="n">UTF8</span>
+<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="nb">Set-Content</span> <span class="s2">"$base\Contrats\contrat-maintenance-2026.txt"</span> <span class="p">`</span>
+<a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>    <span class="s2">"Contrat de maintenance informatique - signe le 05/01/2026"</span> <span class="n">-Encoding</span> <span class="n">UTF8</span>
+<a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a><span class="nb">Set-Content</span> <span class="s2">"$base\Ressources-humaines\planning-conges.csv"</span> <span class="p">`</span>
+<a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a>    <span class="s2">"Salarie;Debut;Fin</span><span class="se">`n</span><span class="s2">Alice;2026-07-15;2026-08-05</span><span class="se">`n</span><span class="s2">Bruno;2026-08-01;2026-08-20"</span> <span class="n">-Encoding</span> <span class="n">UTF8</span>
+<a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a>
+<a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a><span class="c"># 4. Contrôle</span>
+<a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a><span class="nb">Get-Volume</span> <span class="n">-DriveLetter</span> <span class="n">E</span> <span class="p">|</span> <span class="nb">Format-Table</span> <span class="n">DriveLetter</span><span class="p">,</span><span class="n">FileSystemLabel</span><span class="p">,</span><span class="n">FileSystem</span><span class="p">,</span><span class="n">Size</span> <span class="n">-AutoSize</span>
+<a id="__codelineno-2-34" name="__codelineno-2-34" href="#__codelineno-2-34"></a><span class="nb">Get-ChildItem</span> <span class="n">-Recurse</span> <span class="nv">$base</span> <span class="p">|</span> <span class="nb">Format-Table</span> <span class="n">FullName</span><span class="p">,</span><span class="n">Length</span> <span class="n">-AutoSize</span>
+</code></pre></div>
+</li>
+<li>
+<p>🪟 Vérifier : <code>E:</code> apparaît dans l'<strong>Explorateur de fichiers</strong> sous le nom <strong>DONNEES</strong>, et contient <code>Documents-importants</code> avec trois sous-dossiers.</p>
+</li>
+</ol>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi un script ?</p>
+<p>Le formatage se ferait aussi dans <strong>Gestion des disques</strong> (<code>diskmgmt.msc</code>) à la souris. Le script a l'avantage d'être <strong>reproductible</strong> et de produire des fichiers connus d'avance : en partie 5, on supprimera l'un d'eux pour le restaurer, et il faudra le reconnaître.</p>
+</div>
+<hr />
+<h2 id="11-installer-la-console-windows-sur-srv-fichiers">11. Installer la console Windows sur <code>srv-fichiers</code><a class="headerlink" href="#11-installer-la-console-windows-sur-srv-fichiers" title="Permanent link">&para;</a></h2>
+<p>La <strong>console Windows</strong> (Veeam Backup &amp; Replication Console) est le programme historique de Veeam. On la <strong>télécharge depuis l'appliance</strong> elle-même, ce qui garantit une version identique. Elle reste nécessaire pour certaines fonctions que l'interface web 13.1 ne couvre pas encore.</p>
+<ol>
+<li>🪟 Ouvrir <strong>Microsoft Edge</strong> sur <code>srv-fichiers</code>, aller sur <code>https://192.168.19.55</code>, accepter l'avertissement de certificat (<a href="#71-ouvrir-linterface-web">étape 7.1</a>).</li>
+<li>🪟 Sur la page de connexion, cliquer sur le lien <strong>Download Windows-based backup console for full experience</strong> (en bas). Le fichier <code>VeeamBackup&amp;ReplicationConsole_13.1.2.57.exe</code> (environ <strong>2 Go</strong>) est téléchargé dans le dossier <strong>Téléchargements</strong>. Dans le lab, la copie a pris moins d'une minute sur le réseau local.</li>
+</ol>
+<figure>
+<p><img alt="Explorateur de fichiers de srv-fichiers : dossier Téléchargements avec l'installeur VeeamBackup&amp;ReplicationConsole_13.1.2.57.exe d'environ 1,9 Go" loading="lazy" src="../images/03-installation/win-installeur-console-telecharge.png" /></p>
+<figcaption>
+<p>L'installeur de la console, téléchargé depuis l'appliance.</p>
+</figcaption>
+</figure>
+<ol>
+<li>🪟 Double-cliquer sur le fichier. Dans l'assistant : accepter le contrat (<strong>I Accept</strong>), laisser le programme <strong>vérifier la configuration</strong> (il active les composants Windows manquants), puis <strong>Install</strong>. L'installation a pris environ <strong>7 minutes</strong> dans le lab. Terminer avec <strong>Finish</strong>. Si un redémarrage est demandé, l'accepter et relancer l'installeur.</li>
+<li>🪟 Lancer <strong>Veeam Backup &amp; Replication Console</strong> depuis le menu <strong>Démarrer</strong>.</li>
+<li>🪟 Dans <strong>Specify backup server</strong>, saisir <code>192.168.19.55</code> à la place de <code>localhost</code>, puis <strong>Connect</strong>.</li>
+</ol>
+<figure>
+<p><img alt="Console Windows, fenêtre Specify backup server avec localhost et le bouton Connect" loading="lazy" src="../images/03-installation/console-choix-serveur.png" width="420" /></p>
+<figcaption>
+<p>Remplacer <code>localhost</code> par <code>192.168.19.55</code>.</p>
+</figcaption>
+</figure>
+<ol>
+<li>🪟 Une fenêtre <strong>Untrusted server certificate</strong> apparaît : « Server 192.168.19.55 has an untrusted certificate ». <strong>Avant</strong> de cliquer sur <strong>Yes</strong>, vérifier l'empreinte : passer la souris sur <strong>Copy fingerprints to clipboard</strong> ou <strong>View certificate</strong> pour afficher l'<strong>empreinte SHA256</strong>, puis la <strong>comparer</strong> à celle de l'écran final de l'appliance (étape 6.8). Les premiers caractères doivent correspondre (<code>A263ED…</code> dans le lab).</li>
+</ol>
+<figure>
+<p><img alt="Fenêtre Untrusted server certificate de la console, avec l'empreinte SHA256 du serveur affichée en infobulle" loading="lazy" src="../images/03-installation/console-empreinte-certificat.png" /></p>
+<figcaption>
+<p>L'empreinte SHA256 (<code>A263ED…E552</code> dans le lab) est <strong>identique</strong> à celle de l'écran final de l'appliance : on parle bien à <code>vbr</code>.</p>
+</figcaption>
+</figure>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi comparer l'empreinte ?</p>
+<p>Le certificat est <strong>auto-signé</strong>, la console ne peut donc pas le vérifier seule. Si un intrus se plaçait entre <code>srv-fichiers</code> et l'appliance (attaque de l'homme du milieu), il présenterait un <strong>autre certificat</strong>, donc une <strong>autre empreinte</strong>. Comparer les deux empreintes, c'est l'équivalent de vérifier une pièce d'identité. En lab on la contrôle une fois par principe ; en production, c'est un vrai contrôle de sécurité.</p>
+</div>
+<ol>
+<li>🪟 Cliquer sur <strong>Yes</strong>, puis se connecter avec <code>veeamadmin</code> et <code>PoPoPo000@@@Lab</code> (<strong>Sign in</strong>).</li>
+<li>🪟 La console demande une <strong>mise à jour de ses modules</strong> (« Plug-ins update is required ») : cliquer sur <strong>Update</strong> (environ <strong>164 Mo</strong> dans le lab, suite à la mise à jour critique de l'appliance). La console revient à l'écran de connexion : se reconnecter avec les mêmes identifiants.</li>
+</ol>
+<figure>
+<p><img alt="Console Windows, fenêtre Plug-ins update is required avec le bouton Update et la taille du téléchargement" loading="lazy" src="../images/03-installation/console-maj-modules.png" width="420" /></p>
+<figcaption>
+<p>Les modules de la console doivent correspondre à la version de l'appliance.</p>
+</figcaption>
+</figure>
+<ol>
+<li>🪟 La console s'ouvre sur l'écran <strong>Home</strong>. Une fenêtre peut rappeler l'expiration de la licence d'essai : cliquer sur <strong>OK</strong>.</li>
+</ol>
+<figure>
+<p><img alt="Console Veeam Backup &amp; Replication ouverte sur srv-fichiers : ruban, arborescence Jobs et Backups, avertissement d'expiration de la licence d'essai" loading="lazy" src="../images/03-installation/console-ouverte.png" /></p>
+<figcaption>
+<p>La console ouverte sur <code>vbr</code> depuis <code>srv-fichiers</code>.</p>
+</figcaption>
+</figure>
+<hr />
+<h2 id="12-preparer-srv-debian">12. Préparer <code>srv-debian</code><a class="headerlink" href="#12-preparer-srv-debian" title="Permanent link">&para;</a></h2>
+<p><code>srv-debian</code> est le <strong>serveur Linux</strong> qui sera sauvegardé puis restauré en <a href="../06-sauvegarder-restaurer-serveur-linux/">partie 6</a>.</p>
+<h3 id="121-creer-la-vm">12.1 Créer la VM<a class="headerlink" href="#121-creer-la-vm" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Réglage</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nom</td>
+<td><code>srv-debian</code></td>
+</tr>
+<tr>
+<td>Système</td>
+<td>Debian 13 (64 bits)</td>
+</tr>
+<tr>
+<td>Processeurs / mémoire</td>
+<td>2 vCPU, 2 Go</td>
+</tr>
+<tr>
+<td>Disque</td>
+<td>20 Go</td>
+</tr>
+<tr>
+<td>Démarrage</td>
+<td><strong>BIOS</strong> ou <strong>UEFI sans Secure Boot</strong></td>
+</tr>
+<tr>
+<td>Réseau</td>
+<td>LAN du TP pfSense</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Pas de Secure Boot sur <code>srv-debian</code></p>
+<p>L'agent de sauvegarde de Veeam pour Linux utilise un <strong>module noyau</strong> non signé par une clé que Secure Boot reconnaît. Avec Secure Boot actif, ce module est refusé ou demande d'enregistrer une clé (<em>MOK</em>, procédure de la <a href="../06-sauvegarder-restaurer-serveur-linux/">partie 6</a>). Pour que la partie 6 se passe sans détour, <strong>désactiver Secure Boot</strong> sur cette VM.</p>
+</div>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:3"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">VMware Workstation</label><label for="__tabbed_4_2">VirtualBox</label><label for="__tabbed_4_3">Proxmox VE</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><strong>New Virtual Machine… &gt; Custom</strong>, système invité <strong>Debian 12.x 64-bit</strong> (ou <strong>Debian 11.x 64-bit</strong> à défaut), 2 processeurs, <strong>2048 Mo</strong>, disque de <strong>20 Go</strong>, réseau <strong>Custom : VMnet19</strong>. Laisser le <strong>Firmware type</strong> sur <strong>BIOS</strong> (valeur par défaut, aucun réglage de Secure Boot).</p>
+</div>
+<div class="tabbed-block">
+<p><strong>Machine &gt; Nouvelle</strong>, type <strong>Linux</strong>, version <strong>Debian (64-bit)</strong>, 2048 Mo, 2 processeurs, disque <strong>VDI de 20 Go</strong> dynamique. Ne <strong>pas</strong> cocher <strong>Activer EFI</strong> (BIOS par défaut). <strong>Réseau privé hôte</strong>.</p>
+</div>
+<div class="tabbed-block">
+<p><strong>Create VM</strong> : type <strong>Linux</strong>, version <strong>6.x - 2.6 Kernel</strong>, <strong>BIOS</strong> <code>SeaBIOS</code> (par défaut : pas d'UEFI, donc pas de Secure Boot), 2 cœurs, <strong>2048 Mo</strong>, disque de <strong>20 Go</strong>, carte réseau <strong>VirtIO</strong> sur <code>vmbr19</code>.</p>
+</div>
+</div>
+</div>
+<h3 id="122-installer-debian-13">12.2 Installer Debian 13<a class="headerlink" href="#122-installer-debian-13" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🐧 Démarrer sur l'ISO <em>netinst</em> de Debian 13 et choisir <strong>Install</strong> (installation en mode texte, pas l'installation graphique).</li>
+<li>🐧 <strong>Langue</strong> : Français. <strong>Pays</strong> : France. <strong>Clavier</strong> : Français.</li>
+<li>
+<p>🐧 <strong>Configuration du réseau</strong> : l'installeur cherche un serveur DHCP, qui n'existe pas sur ce LAN. Quand il échoue, choisir <strong>Configurer le réseau manuellement</strong> et saisir :</p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Réponse</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Adresse IP</td>
+<td><code>192.168.19.170</code></td>
+</tr>
+<tr>
+<td>Masque de réseau</td>
+<td><code>255.255.255.0</code></td>
+</tr>
+<tr>
+<td>Passerelle</td>
+<td><code>192.168.19.21</code></td>
+</tr>
+<tr>
+<td>Serveurs de noms</td>
+<td><code>192.168.19.21 1.1.1.1</code> (séparés par une espace)</td>
+</tr>
+<tr>
+<td>Nom de machine</td>
+<td><code>srv-debian</code></td>
+</tr>
+<tr>
+<td>Domaine</td>
+<td>laisser vide</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>🐧 <strong>Mot de passe du superutilisateur (root)</strong> : laisser <strong>vide</strong> (deux fois). Debian désactive alors la connexion <code>root</code> et donne au premier utilisateur le droit d'utiliser <strong><code>sudo</code></strong>.</p>
+</li>
+<li>🐧 <strong>Compte utilisateur</strong> : nom complet <code>user</code>, identifiant <code>user</code>, mot de passe <code>Popopo333@@@</code>.</li>
+<li>🐧 <strong>Fuseau horaire</strong> : Paris. <strong>Partitionnement</strong> : <strong>Assisté - utiliser un disque entier</strong>, le disque de 20 Go, <strong>Tout dans une seule partition</strong>, puis terminer et <strong>valider</strong> l'écriture sur le disque.</li>
+<li>🐧 <strong>Miroir</strong> : France, <code>deb.debian.org</code>, sans proxy. <strong>Étude statistique</strong> (<em>popularity-contest</em>) : <strong>Non</strong>.</li>
+<li>🐧 <strong>Sélection des logiciels</strong> : <strong>décocher</strong> « environnement de bureau Debian » et « GNOME » (ou tout autre bureau), <strong>cocher</strong> <strong>serveur SSH</strong> et <strong>utilitaires usuels du système</strong> (<em>standard system utilities</em>), puis <strong>Continuer</strong>.</li>
+<li>🐧 <strong>GRUB</strong> : accepter l'installation sur le disque. À la fin, <strong>Continuer</strong> pour redémarrer ; éjecter l'ISO si l'hyperviseur le propose.</li>
+</ol>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi root sans mot de passe ?</p>
+<p>C'est une bonne pratique : personne ne peut se connecter en <code>root</code> directement (ni par SSH, ni à la console). Pour une tâche d'administration, on fait <code>sudo</code> devant la commande, avec le mot de passe de <code>user</code>. Cela laisse une trace de qui a fait quoi, et réduit la surface d'attaque. Veeam en aura besoin en partie 6 pour installer l'agent.</p>
+</div>
+<h3 id="123-verifier-lacces-ssh">12.3 Vérifier l'accès SSH<a class="headerlink" href="#123-verifier-lacces-ssh" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>🐧 Ouvrir la session sur la console de la VM : <code>user</code> / <code>Popopo333@@@</code>. Vérifier l'adresse et la sortie vers Internet :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ip<span class="w"> </span>-br<span class="w"> </span>a
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">192</span>.168.19.21
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">2</span><span class="w"> </span>deb.debian.org
+</code></pre></div>
+</li>
+</ol>
+<figure>
+<p><img alt="Écran de connexion de srv-debian : « Debian GNU/Linux 13 srv-debian tty1 »" loading="lazy" src="../images/03-installation/debian-premier-demarrage.png" /></p>
+<figcaption>
+<p>Le premier démarrage de <code>srv-debian</code> : l'invite de connexion indique la version 13 et le nom <code>srv-debian</code>.</p>
+</figcaption>
+</figure>
+<ol>
+<li>
+<p>🖥️ Depuis un terminal du PC hôte (ou, sous Proxmox, depuis <code>srv-fichiers</code> si l'outil <code>ssh</code> y est présent), se connecter en SSH :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ssh<span class="w"> </span>user@192.168.19.170
+</code></pre></div>
+<p>Accepter l'empreinte de la machine (<code>yes</code>), saisir <code>Popopo333@@@</code>, puis vérifier le droit <code>sudo</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sudo<span class="w"> </span>whoami
+</code></pre></div>
+</li>
+</ol>
+<div class="admonition success">
+<p class="admonition-title">Résultat attendu</p>
+<p>La commande <code>sudo whoami</code> renvoie <code>root</code>. L'invite SSH affiche <code>user@srv-debian</code>. Si <code>ssh</code> refuse la connexion (« Connection refused »), le paquet <code>openssh-server</code> n'est pas installé : le réinstaller avec <code>sudo apt install openssh-server</code>.</p>
+</div>
+<hr />
+<h2 id="13-verification-de-fin-de-partie">13. Vérification de fin de partie<a class="headerlink" href="#13-verification-de-fin-de-partie" title="Permanent link">&para;</a></h2>
+<p>Avec les quatre VM allumées (<code>pfsense-19</code>, <code>vbr</code>, <code>srv-fichiers</code>, <code>srv-debian</code>), dérouler la vérification.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Test</th>
+<th>Depuis</th>
+<th>Commande ou action</th>
+<th>Résultat attendu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Ping de la passerelle</td>
+<td>🪟 <code>srv-fichiers</code></td>
+<td><code>ping 192.168.19.21</code></td>
+<td>Réponses</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Ping de l'appliance</td>
+<td>🪟 <code>srv-fichiers</code></td>
+<td><code>ping 192.168.19.55</code></td>
+<td>Réponses (le ping est ouvert sur l'appliance)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Ping du serveur de fichiers</td>
+<td>🐧 <code>srv-debian</code></td>
+<td><code>ping -c 2 192.168.19.22</code></td>
+<td>Réponses (règle ICMP activée à l'étape 10.3)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Ping de Debian</td>
+<td>🪟 <code>srv-fichiers</code></td>
+<td><code>ping 192.168.19.170</code></td>
+<td>Réponses</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Interface web</td>
+<td>🌐</td>
+<td><code>https://192.168.19.55</code></td>
+<td>Page de connexion, puis le tableau de bord</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Licence</td>
+<td>🌐</td>
+<td><strong>Configuration &gt; License Information</strong></td>
+<td>Statut <strong>Valid</strong></td>
+</tr>
+<tr>
+<td>7</td>
+<td>Host Management</td>
+<td>🌐</td>
+<td><code>https://192.168.19.55:10443</code></td>
+<td>Connexion <code>veeamadmin</code> + code MFA</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Security Officer</td>
+<td>🌐</td>
+<td><code>veeamso</code> dans Host Management</td>
+<td><strong>Configuration Backup</strong> indique une phrase secrète créée</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Console</td>
+<td>🪟 <code>srv-fichiers</code></td>
+<td>Console Veeam, serveur <code>192.168.19.55</code></td>
+<td>Écran <strong>Home</strong></td>
+</tr>
+<tr>
+<td>10</td>
+<td>SSH</td>
+<td>🖥️</td>
+<td><code>ssh user@192.168.19.170</code>, puis <code>sudo whoami</code></td>
+<td><code>root</code></td>
+</tr>
+<tr>
+<td>11</td>
+<td>Disque de données</td>
+<td>🪟 <code>srv-fichiers</code></td>
+<td><code>Get-Volume -DriveLetter E</code></td>
+<td><code>DONNEES</code>, <code>NTFS</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition success">
+<p class="admonition-title">Résultat attendu</p>
+<p>Les onze tests réussissent. Si l'un échoue, reprendre l'étape correspondante avant de continuer : la partie 4 suppose un lab sain.</p>
+</div>
+<div class="admonition failure">
+<p class="admonition-title">Le ping vers <code>192.168.19.22</code> ne répond pas</p>
+<p>Presque toujours, la règle ICMP n'est pas active sur Windows (profil réseau <strong>Public</strong> au lieu de <strong>Privé</strong>). Revenir à l'étape 10.3 : <code>Get-NetConnectionProfile</code> doit afficher <code>NetworkCategory : Private</code>, et <code>Get-NetFirewallRule -Name FPS-ICMP4-ERQ-In | Select Enabled</code> doit afficher <code>True</code>.</p>
+</div>
+<h3 id="instantane-01-lab-pret">🛟 Instantané <code>01-lab-pret</code><a class="headerlink" href="#instantane-01-lab-pret" title="Permanent link">&para;</a></h3>
+<p><strong>Éteindre proprement</strong> les trois VM <code>vbr</code>, <code>srv-fichiers</code> et <code>srv-debian</code> (et <code>pfsense-19</code>, de préférence, pour garder un lab cohérent), puis prendre sur <strong>chacune</strong> un instantané nommé <strong><code>01-lab-pret</code></strong>. Il permet de <strong>recommencer les parties 4, 5 et 6</strong> avec un lab propre.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:3"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><input id="__tabbed_5_3" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">VMware Workstation</label><label for="__tabbed_5_2">VirtualBox</label><label for="__tabbed_5_3">Proxmox VE</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><strong>VM &gt; Snapshot &gt; Take Snapshot…</strong>, nom <code>01-lab-pret</code>, sur chaque VM éteinte.</p>
+</div>
+<div class="tabbed-block">
+<p>Onglet <strong>Instantanés</strong> de la VM (menu <strong>Machine &gt; Outils &gt; Instantanés</strong>) puis <strong>Prendre</strong>, nom <code>01-lab-pret</code>, sur chaque VM éteinte.</p>
+</div>
+<div class="tabbed-block">
+<p>VM sélectionnée &gt; <strong>Snapshots &gt; Take Snapshot</strong>, nom <code>01-lab-pret</code> (si Proxmox refuse un nom qui commence par un chiffre, utiliser <code>lab-pret-01</code>). Le snapshot Proxmox dépend du stockage choisi : avec un stockage qui ne le gère pas (certains répertoires bruts), utiliser une <strong>sauvegarde</strong> de la VM à la place.</p>
+</div>
+</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Un instantané n'est pas une sauvegarde</p>
+<p>L'instantané reste <strong>sur le même disque</strong> que la VM : voir l'<a href="../#instantanes-conseilles">encadré de la page d'accueil du parcours</a>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Reprendre le travail</p>
+<p>Rallumer ensuite <code>pfsense-19</code>, <code>vbr</code> et les autres machines pour continuer. La partie 4 demande <code>pfsense-19</code>, <code>vbr</code> et <code>srv-fichiers</code>.</p>
+</div>
+<hr />
+<h2 id="14-questions-de-revision">14. Questions de révision<a class="headerlink" href="#14-questions-de-revision" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Quelle entrée du menu de démarrage de l'ISO est sélectionnée par défaut, et pourquoi faut-il la changer pour une première installation ?</li>
+<li>Pourquoi le mot de passe <code>Popopo000@@@</code> est-il refusé par l'appliance ?</li>
+<li>Pourquoi l'heure exacte de l'appliance est-elle indispensable à l'authentification multifacteur ?</li>
+<li>Pourquoi préférer le QR code à la saisie manuelle de la clé secrète MFA ?</li>
+<li>Que se passe-t-il si l'on n'installe pas de licence sur l'appliance ?</li>
+<li>À quoi sert le compte Security Officer, et que se passe-t-il en partie 5 si sa phrase secrète n'a pas été créée ?</li>
+<li>Pourquoi compare-t-on l'empreinte du certificat à celle de l'écran de l'appliance avant de se connecter avec la console ?</li>
+<li>Pourquoi désactive-t-on Secure Boot sur <code>srv-debian</code> mais pas sur <code>vbr</code> ?</li>
+</ol>
+<details class="success">
+<summary>Corrigé</summary>
+<ol>
+<li><strong>Reinstall</strong> : elle conserve les sauvegardes et ne fait que réinstaller le système. Pour une première installation, il faut <strong>Install</strong>, qui installe à neuf et efface les disques.</li>
+<li>Il contient <strong>5 minuscules à la suite</strong> (« opopo ») et fait moins de <strong>15 caractères</strong>, ce que la politique <strong>DISA STIG</strong> de l'appliance interdit. <code>PoPoPo000@@@Lab</code> respecte toutes les règles.</li>
+<li>Les codes <strong>TOTP</strong> sont calculés à partir d'un secret partagé <strong>et de l'heure</strong> (un code toutes les 30 secondes). Si l'horloge de l'appliance dérive, ses codes ne correspondent plus à ceux du téléphone : ils sont refusés. D'où le serveur <strong>NTP</strong> et le bon fuseau.</li>
+<li>Dans la police de la console, la lettre <strong>O</strong> ressemble à un <strong>D</strong> : une clé recopiée à la main peut être fausse, et les codes calculés ensuite aussi. Le QR code transmet la clé exacte.</li>
+<li>L'appliance fonctionne en <strong>Community Edition</strong> : elle ne permet <strong>que la restauration</strong> de données existantes, <strong>aucune nouvelle sauvegarde</strong>.</li>
+<li>Le <strong>Security Officer</strong> approuve les actions sensibles de l'administrateur (principe des quatre yeux). Sans sa <strong>phrase secrète de sauvegarde de configuration</strong>, la sauvegarde de configuration chiffrée échoue avec « Unable to process the configuration backup without the Security Officer's passphrase… ».</li>
+<li>Le certificat est <strong>auto-signé</strong>, donc non vérifiable automatiquement. Un attaquant placé entre les deux machines présenterait un autre certificat, donc une autre <strong>empreinte</strong> : la comparaison garantit qu'on se connecte bien à <code>vbr</code>.</li>
+<li>Sur <code>vbr</code>, le système est celui de Veeam, signé et accepté avec Secure Boot. Sur <code>srv-debian</code>, l'agent Veeam installe un <strong>module noyau</strong> que Secure Boot refuserait ou obligerait à signer (clé <em>MOK</em>) : le désactiver évite ce détour en partie 6.</li>
+</ol>
+</details>
+<hr />
+<h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/system_requirements.html">Exigences système de Veeam Backup &amp; Replication 13</a> — matériel de l'appliance (section « Linux-Based Backup Server »).</li>
+<li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/deployment_linux_iso_install.html">Installer la Veeam Software Appliance depuis l'ISO</a> — les dix étapes de l'assistant.</li>
+<li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/deployment_linux_iso_install_security_officer.html">Configurer le compte Security Officer à l'installation</a> — étape 9 de l'assistant.</li>
+<li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/hmc_about.html">Veeam Host Management</a> — le rôle de la console d'administration du système.</li>
+<li><a href="https://helpcenter.veeam.com/docs/vbr/userguide/deploy_console.html">Installer la console Veeam</a> — installation de la console Windows.</li>
+<li><a href="https://www.veeam.com/products/downloads.html">Téléchargements Veeam</a> — ISO de l'appliance et licence d'essai (compte gratuit).</li>
+<li><a href="../../../reseaux/cluster-haute-disponibilite-pfsense-carp-pfsync/">TP : cluster de pare-feux pfSense en haute disponibilité</a> — le réseau du lab.</li>
+<li>Partie précédente : <a href="../02-decouvrir-veeam-data-platform/">Découvrir Veeam Data Platform</a> · Partie suivante : <a href="../04-ajouter-des-depots-de-sauvegarde/">Ajouter des dépôts de sauvegarde</a>.</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../02-decouvrir-veeam-data-platform/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 2. Découvrir Veeam Data Platform 13">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                2. Découvrir Veeam Data Platform 13
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../04-ajouter-des-depots-de-sauvegarde/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 4. Ajouter des dépôts de sauvegarde">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                4. Ajouter des dépôts de sauvegarde
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      <a href="/mentions-legales/">Mentions légales</a>
+
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/bodaine" target="_blank" rel="noopener" title="Nicolas BODAINE sur LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://github.com/NicoBOD" target="_blank" rel="noopener" title="NicoBOD sur GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://nicolas.bodaine.fr" target="_blank" rel="noopener" title="Portfolio de Nicolas BODAINE" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="/feed_rss_created.xml" target="_blank" rel="noopener" title="Flux RSS des derniers articles" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 64c0-17.7 14.3-32 32-32 229.8 0 416 186.2 416 416 0 17.7-14.3 32-32 32s-32-14.3-32-32C384 253.6 226.4 96 32 96 14.3 96 0 81.7 0 64m0 352a64 64 0 1 1 128 0 64 64 0 1 1-128 0m32-256c159.1 0 288 128.9 288 288 0 17.7-14.3 32-32 32s-32-14.3-32-32c0-123.7-100.3-224-224-224-17.7 0-32-14.3-32-32s14.3-32 32-32"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.path", "navigation.indexes", "navigation.prune", "navigation.footer", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "content.action.view", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+    
+  </body>
+</html>

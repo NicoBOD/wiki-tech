@@ -1,0 +1,3385 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+      
+      
+        <meta name="author" content="Nicolas BODAINE">
+      
+      
+        <link rel="canonical" href="https://wiki.bodaine.fr/cours-tp/veeam/01-comprendre-la-sauvegarde/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../02-decouvrir-veeam-data-platform/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Comprendre la sauvegarde : RAID, 3-2-1-1-0, types de sauvegardes, PCA et PRA - Wiki Tech — NicoBOD</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        
+        <link rel="stylesheet" href="../../../assets/external/fonts.googleapis.com/css.56f7ac64.css">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+    
+    
+      
+    
+    
+
+    <!-- SEO -->
+    <meta name="author" content="Nicolas BODAINE">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph : compléments non gérés par le plugin social.     -->
+    <!-- og:type/title/description/image/url sont posés par social.   -->
+    <meta property="og:site_name" content="Wiki Tech — NicoBOD">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card : la grande image et l'image elle-même sont      -->
+    <!-- héritées des balises og:image générées par le plugin social.  -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Comprendre la sauvegarde : RAID, 3-2-1-1-0, types de sauvegardes, PCA et PRA — Wiki Tech — NicoBOD">
+    <meta name="twitter:description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+  
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#comprendre-la-sauvegarde" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-header__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wiki Tech — NicoBOD
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Comprendre la sauvegarde : RAID, 3-2-1-1-0, types de sauvegardes, PCA et PRA
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer en mode clair"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer en mode clair" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Passer en mode sombre"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer en mode sombre" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Revenir au thème système"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Revenir au thème système" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Partager" aria-label="Partager" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../systemes/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h16v10H4m16 2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4c-1.11 0-2 .89-2 2v10a2 2 0 0 0 2 2H0v2h24v-2z"/></svg>
+    
+  
+  Systèmes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../reseaux/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v2h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+    
+  
+  Réseaux
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cloud/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 20q-2.28 0-3.89-1.57Q1 16.85 1 14.58q0-1.95 1.17-3.48 1.18-1.53 3.08-1.95.63-2.3 2.5-3.72Q9.63 4 12 4q2.93 0 4.96 2.04Q19 8.07 19 11q1.73.2 2.86 1.5 1.14 1.28 1.14 3 0 1.88-1.31 3.19T18.5 20Z"/></svg>
+    
+  
+  Cloud
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cybersecurite/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12h7c-.53 4.11-3.28 7.78-7 8.92zH5V6.3l7-3.11M12 1 3 5v6c0 5.55 3.84 10.73 9 12 5.16-1.27 9-6.45 9-12V5z"/></svg>
+    
+  
+  Cybersécurité
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../ia/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/></svg>
+    
+  
+  IA
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../automatisation/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+    
+  
+  Automatisation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../logiciels/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m0 5H3V4h18z"/></svg>
+    
+  
+  Logiciels
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../debug/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 12h-4v-2h4m0 6h-4v-2h4m6-6h-2.81a6 6 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6 6 0 0 0-2.83 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20z"/></svg>
+    
+  
+  Debug
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../astuces/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+    
+  
+  Astuces
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+    
+  
+  Cours et TP
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../tags/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tags
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-nav__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    Wiki Tech — NicoBOD
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../systemes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Systèmes
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../reseaux/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Réseaux
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cybersecurite/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cybersécurité
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../ia/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IA
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../automatisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automatisation
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../logiciels/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logiciels
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../debug/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../astuces/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Astuces
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cours et TP
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cours et TP
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Veeam Backup & Replication
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_2" id="__nav_11_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Veeam Backup & Replication
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-sauvegarde-synchronisation-replication-raid-quelles-differences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Sauvegarde, synchronisation, réplication, RAID : quelles différences ?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Sauvegarde, synchronisation, réplication, RAID : quelles différences ?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-quest-ce-quune-sauvegarde-backup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Qu'est-ce qu'une sauvegarde (backup) ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-quest-ce-quune-synchronisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Qu'est-ce qu'une synchronisation ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-quest-ce-quune-replication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Qu'est-ce qu'une réplication ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-quest-ce-que-le-raid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 Qu'est-ce que le RAID ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-pourquoi-sauvegarder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Pourquoi sauvegarder ?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-les-strategies-de-sauvegarde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Les stratégies de sauvegarde
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Les stratégies de sauvegarde">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-la-regle-3-2-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 La règle 3-2-1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-la-regle-3-2-1-1-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 La règle 3-2-1-1-0
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-les-types-de-sauvegardes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Les types de sauvegardes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Les types de sauvegardes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-sauvegarde-complete-full-backup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Sauvegarde complète (full backup)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-sauvegarde-incrementielle-incremental-backup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Sauvegarde incrémentielle (incremental backup)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-sauvegarde-differentielle-differential-backup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Sauvegarde différentielle (differential backup)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-incrementielle-permanente-et-complete-synthetique" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Incrémentielle permanente et complète synthétique
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#45-sauvegarde-immuable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.5 Sauvegarde immuable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#46-avantages-et-inconvenients" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.6 Avantages et inconvénients
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#47-retention-et-chiffrement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.7 Rétention et chiffrement
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-pca-pra-rpo-et-rto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. PCA, PRA, RPO et RTO
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. PCA, PRA, RPO et RTO">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-le-plan-de-continuite-dactivite-pca" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Le plan de continuité d'activité (PCA)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-le-plan-de-reprise-dactivite-pra" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Le plan de reprise d'activité (PRA)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-pour-aller-plus-loin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Pour aller plus loin
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-exercices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Exercices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Exercices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exercice-1-identifier-un-type-de-sauvegarde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercice 1 : identifier un type de sauvegarde
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercice-2-calculer-une-capacite-raid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercice 2 : calculer une capacité RAID
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercice-3-sauvegarde-ou-pas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercice 3 : sauvegarde ou pas ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercice-4-rpo-et-rto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercice 4 : RPO et RTO
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-decouvrir-veeam-data-platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Découvrir Veeam Data Platform 13
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-preparer-le-lab-installer-appliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Préparer le lab et installer l'appliance
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-ajouter-des-depots-de-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Ajouter des dépôts de sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-sauvegarder-configuration-et-serveur-de-fichiers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Sauvegarder la configuration et un serveur de fichiers
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-sauvegarder-restaurer-serveur-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Sauvegarder et restaurer un serveur Linux
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-sauvegarder-vers-azure-blob/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Sauvegarder vers Azure Blob (non rejoué)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tags/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.5 7A1.5 1.5 0 0 1 4 5.5 1.5 1.5 0 0 1 5.5 4 1.5 1.5 0 0 1 7 5.5 1.5 1.5 0 0 1 5.5 7m15.91 4.58-9-9C12.05 2.22 11.55 2 11 2H4c-1.11 0-2 .89-2 2v7c0 .55.22 1.05.59 1.41l8.99 9c.37.36.87.59 1.42.59s1.05-.23 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.56-.23-1.06-.59-1.42"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-sauvegarde-synchronisation-replication-raid-quelles-differences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Sauvegarde, synchronisation, réplication, RAID : quelles différences ?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Sauvegarde, synchronisation, réplication, RAID : quelles différences ?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-quest-ce-quune-sauvegarde-backup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Qu'est-ce qu'une sauvegarde (backup) ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-quest-ce-quune-synchronisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Qu'est-ce qu'une synchronisation ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-quest-ce-quune-replication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Qu'est-ce qu'une réplication ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-quest-ce-que-le-raid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 Qu'est-ce que le RAID ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-pourquoi-sauvegarder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Pourquoi sauvegarder ?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-les-strategies-de-sauvegarde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Les stratégies de sauvegarde
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Les stratégies de sauvegarde">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-la-regle-3-2-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 La règle 3-2-1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-la-regle-3-2-1-1-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 La règle 3-2-1-1-0
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-les-types-de-sauvegardes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Les types de sauvegardes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Les types de sauvegardes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-sauvegarde-complete-full-backup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Sauvegarde complète (full backup)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-sauvegarde-incrementielle-incremental-backup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Sauvegarde incrémentielle (incremental backup)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-sauvegarde-differentielle-differential-backup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Sauvegarde différentielle (differential backup)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-incrementielle-permanente-et-complete-synthetique" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Incrémentielle permanente et complète synthétique
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#45-sauvegarde-immuable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.5 Sauvegarde immuable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#46-avantages-et-inconvenients" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.6 Avantages et inconvénients
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#47-retention-et-chiffrement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.7 Rétention et chiffrement
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-pca-pra-rpo-et-rto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. PCA, PRA, RPO et RTO
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. PCA, PRA, RPO et RTO">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-le-plan-de-continuite-dactivite-pca" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Le plan de continuité d'activité (PCA)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-le-plan-de-reprise-dactivite-pra" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Le plan de reprise d'activité (PRA)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-pour-aller-plus-loin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Pour aller plus loin
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-exercices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Exercices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Exercices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exercice-1-identifier-un-type-de-sauvegarde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercice 1 : identifier un type de sauvegarde
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercice-2-calculer-une-capacite-raid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercice 2 : calculer une capacité RAID
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercice-3-sauvegarde-ou-pas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercice 3 : sauvegarde ou pas ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercice-4-rpo-et-rto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercice 4 : RPO et RTO
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Cours et TP
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Veeam Backup & Replication
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:cours" class="md-tag">cours</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:pca-pra" class="md-tag">pca-pra</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:raid" class="md-tag">raid</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:sauvegarde" class="md-tag">sauvegarde</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:veeam" class="md-tag">veeam</a>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/NicoBOD/wiki-tech/edit/main/docs/cours-tp/veeam/01-comprendre-la-sauvegarde.md" title="Editer cette page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/NicoBOD/wiki-tech/raw/main/docs/cours-tp/veeam/01-comprendre-la-sauvegarde.md" title="Consulter la source de cette page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<!-- ============================================================ -->
+<!-- ⚠️ RAPPEL IMPORTANT :                                          -->
+<!-- Pensez TOUJOURS à ajouter une entrée dans le fichier d'index  -->
+<!-- (index.md) du dossier correspondant (ex: docs/cloud/index.md) -->
+<!-- afin de référencer ce nouvel article et permettre aux         -->
+<!-- visiteurs de le trouver et de cliquer dessus !                -->
+<!-- ============================================================ -->
+
+<h1 id="comprendre-la-sauvegarde">Comprendre la sauvegarde<a class="headerlink" href="#comprendre-la-sauvegarde" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Résumé</p>
+<p>Ce cours pose les bases indispensables avant de manipuler un logiciel de sauvegarde comme Veeam Backup &amp; Replication. Il répond à quatre questions :</p>
+<ol>
+<li><strong>Quelle différence</strong> entre une sauvegarde, une synchronisation, une réplication et un RAID ?</li>
+<li><strong>Comment organiser</strong> ses copies pour survivre à une panne, un incendie ou un rançongiciel (règles 3-2-1 et 3-2-1-1-0) ?</li>
+<li><strong>Quels types de sauvegardes</strong> existent (complète, incrémentielle, différentielle, synthétique, immuable) et comment choisir ?</li>
+<li><strong>Comment une entreprise prépare la reprise</strong> après un sinistre (PCA, PRA, RPO, RTO) ?</li>
+</ol>
+<p>Des exercices corrigés terminent le cours. Les corrigés sont repliés : il vaut mieux chercher la réponse avant de les ouvrir.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Propriété</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Difficulté</td>
+<td>Débutant — aucun prérequis technique</td>
+</tr>
+<tr>
+<td>Durée estimée</td>
+<td>2 h 30 de lecture et d'exercices</td>
+</tr>
+<tr>
+<td>Place dans le parcours</td>
+<td>Partie 1 sur 7 du parcours <a href="../">Veeam Backup &amp; Replication</a></td>
+</tr>
+<tr>
+<td>Dernière mise à jour</td>
+<td>2026-11-02</td>
+</tr>
+</tbody>
+</table>
+<details class="info">
+<summary>Ce qui a changé par rapport à la version 1.5 du support (juin 2024)</summary>
+<ul>
+<li>Toutes les illustrations ont été redessinées sous forme de schémas.</li>
+<li>Plusieurs nuances ont été ajoutées ou corrigées : une réplication n'est pas toujours « en temps réel », une synchronisation et un RAID <strong>ne sont pas</strong> des sauvegardes, et les faits de l'incident GitLab de 2017 ont été précisés (les données ont finalement été récupérées, avec six heures de perte).</li>
+<li>Nouveaux paragraphes : sauvegarde incrémentielle permanente, sauvegarde complète synthétique, rétention, chiffrement, équivalents français de RPO et RTO (PDMA et DMIA).</li>
+<li>Nouveaux exercices corrigés.</li>
+</ul>
+</details>
+<hr />
+<h2 id="1-sauvegarde-synchronisation-replication-raid-quelles-differences">1. Sauvegarde, synchronisation, réplication, RAID : quelles différences ?<a class="headerlink" href="#1-sauvegarde-synchronisation-replication-raid-quelles-differences" title="Permanent link">&para;</a></h2>
+<p>Ces quatre techniques copient toutes des données d'un endroit à un autre. Vues de loin, elles se ressemblent. Elles ne protègent pourtant <strong>pas contre les mêmes dangers</strong> :</p>
+<table>
+<thead>
+<tr>
+<th>Technique</th>
+<th>Protège contre…</th>
+<th>Ne protège pas contre…</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Sauvegarde</strong></td>
+<td>La perte de données : suppression, panne, rançongiciel, sinistre</td>
+<td>Une interruption de service (restaurer prend du temps)</td>
+</tr>
+<tr>
+<td><strong>Synchronisation</strong></td>
+<td>La divergence entre appareils : les mêmes fichiers partout</td>
+<td>Une suppression ou un chiffrement, qui sont <strong>recopiés partout</strong></td>
+</tr>
+<tr>
+<td><strong>Réplication</strong></td>
+<td>L'indisponibilité d'un site ou d'un serveur : on bascule sur la copie</td>
+<td>Une erreur logique, recopiée sur la réplique au cycle suivant</td>
+</tr>
+<tr>
+<td><strong>RAID</strong></td>
+<td>La panne d'un (ou deux) disques dans un serveur</td>
+<td>Tout le reste : suppression, rançongiciel, vol, incendie, panne du serveur entier</td>
+</tr>
+</tbody>
+</table>
+<p>Une entreprise combine souvent plusieurs de ces techniques selon la nature de ses données, la fréquence à laquelle elles changent et l'importance de leur disponibilité. Par exemple :</p>
+<ul>
+<li>une entreprise qui manipule des données sensibles et souvent modifiées a besoin d'une <strong>sauvegarde régulière</strong> et, pour le travail en équipe, d'une <strong>synchronisation</strong> ;</li>
+<li>une entreprise qui ne peut pas s'arrêter (vente en ligne, hôpital) ajoute une <strong>réplication</strong> vers un second site pour basculer rapidement ;</li>
+<li>un serveur qui doit offrir beaucoup de capacité et de performances repose sur un <strong>RAID</strong>.</li>
+</ul>
+<figure>
+  <img alt="Quatre panneaux comparent sauvegarde, synchronisation, réplication et RAID : seule la sauvegarde conserve des versions anciennes dans un emplacement séparé" loading="lazy" src="../images/schema-sauvegarde-sync-replication-raid.svg" />
+<br />
+<figcaption>Seule la sauvegarde garde plusieurs versions passées, à l'écart de la production.</figcaption>
+</figure>
+<h3 id="11-quest-ce-quune-sauvegarde-backup">1.1 Qu'est-ce qu'une sauvegarde (<em>backup</em>) ?<a class="headerlink" href="#11-quest-ce-quune-sauvegarde-backup" title="Permanent link">&para;</a></h3>
+<p>Une <strong>sauvegarde</strong> est une <strong>copie des données, stockée à un emplacement séparé du système de production</strong> et conservée pendant une durée choisie (la <strong>rétention</strong>). Si les données d'origine sont perdues (panne, erreur humaine, logiciel malveillant, catastrophe naturelle), on les <strong>restaure</strong> à partir de la sauvegarde.</p>
+<p>Trois idées comptent :</p>
+<ul>
+<li><strong>Séparée</strong> : une copie posée sur le même disque que l'original disparaît avec lui.</li>
+<li><strong>Datée</strong> : chaque sauvegarde est un <strong>point de restauration</strong>, une photo des données à un instant précis. On peut revenir à la version d'hier ou à celle de la semaine dernière.</li>
+<li><strong>Automatique</strong> : une sauvegarde qui dépend de la mémoire de quelqu'un finit par ne plus être faite. On la <strong>planifie</strong> selon le volume de données et la fréquence des modifications.</li>
+</ul>
+<p>Les supports possibles sont variés : disque externe, NAS, serveur de sauvegarde, bande magnétique (<em>tape</em>, encore très utilisée pour l'archivage), stockage dans le cloud (<em>Azure Backup</em>, <em>AWS Backup</em>, ou un stockage objet comme Azure Blob ou Amazon S3 utilisé par un logiciel comme Veeam).</p>
+<div class="admonition tip">
+<p class="admonition-title">La règle d'or</p>
+<p>Une sauvegarde ne vaut que par sa <strong>capacité à être restaurée</strong>. Une sauvegarde jamais testée est une hypothèse, pas une protection. Les TP de ce parcours terminent donc toujours par une restauration.</p>
+</div>
+<h3 id="12-quest-ce-quune-synchronisation">1.2 Qu'est-ce qu'une synchronisation ?<a class="headerlink" href="#12-quest-ce-quune-synchronisation" title="Permanent link">&para;</a></h3>
+<p>La <strong>synchronisation</strong> maintient <strong>les mêmes données à plusieurs endroits</strong>. Quand un fichier change à un endroit, la modification est reportée sur les autres, dans un sens ou dans les deux.</p>
+<p>Exemples courants : contacts et agendas entre un téléphone et un ordinateur, dossiers <em>OneDrive</em>, <em>Google Drive</em> ou <em>Dropbox</em>. Pour se passer d'un fournisseur, des logiciels libres comme <a href="https://syncthing.net/">Syncthing</a> synchronisent directement plusieurs ordinateurs entre eux.</p>
+<div class="admonition danger">
+<p class="admonition-title">Une synchronisation n'est pas une sauvegarde</p>
+<p>Si un fichier est supprimé ou chiffré par un rançongiciel sur un appareil, la synchronisation <strong>reproduit fidèlement le désastre</strong> sur tous les autres. Certains services gardent une corbeille ou un historique de versions pendant quelques jours : c'est utile, mais cela ne remplace pas une vraie sauvegarde séparée et conservée longtemps.</p>
+</div>
+<h3 id="13-quest-ce-quune-replication">1.3 Qu'est-ce qu'une réplication ?<a class="headerlink" href="#13-quest-ce-quune-replication" title="Permanent link">&para;</a></h3>
+<p>La <strong>réplication</strong> copie des données (ou des machines virtuelles entières) <strong>d'une source vers une destination</strong>, généralement un autre serveur ou un autre site, pour pouvoir <strong>basculer</strong> dessus en cas de panne. Elle vise la <strong>haute disponibilité</strong> : réduire le temps d'arrêt.</p>
+<p>Il en existe deux grandes familles :</p>
+<ul>
+<li><strong>Synchrone</strong> : chaque écriture est confirmée seulement quand elle est faite des deux côtés. C'est du vrai « temps réel », réservé aux baies de stockage et aux sites proches (latence faible).</li>
+<li><strong>Asynchrone</strong> : les modifications sont envoyées avec un léger décalage, de quelques secondes à quelques heures. C'est le cas le plus courant. Veeam Backup &amp; Replication réplique ainsi des VM à intervalles réguliers, ou en continu avec sa fonction <strong>CDP</strong> (<em>Continuous Data Protection</em>) pour VMware.</li>
+</ul>
+<figure>
+  <img alt="Un site de production réplique ses VM vers un site de secours ; en cas de sinistre, l'activité bascule sur les répliques" loading="lazy" src="../images/schema-replication-sites.svg" />
+<br />
+<figcaption>La réplication prépare une bascule rapide vers un second site.</figcaption>
+</figure>
+<div class="admonition warning">
+<p class="admonition-title">Une réplique n'est pas une sauvegarde non plus</p>
+<p>Une suppression accidentelle ou un chiffrement par rançongiciel est répliqué au cycle suivant. Les solutions sérieuses (dont Veeam) conservent donc <strong>plusieurs points de restauration</strong> sur la réplique et s'utilisent <strong>en complément</strong> des sauvegardes.</p>
+</div>
+<p>Pour approfondir : <a href="https://www.veeam.com/fr/products/veeam-data-platform/capability/advanced-replication.html">la réplication dans Veeam Data Platform</a>.</p>
+<h3 id="14-quest-ce-que-le-raid">1.4 Qu'est-ce que le RAID ?<a class="headerlink" href="#14-quest-ce-que-le-raid" title="Permanent link">&para;</a></h3>
+<p>Le <strong>RAID</strong> (<em>Redundant Array of Independent Disks</em>, « regroupement redondant de disques indépendants »<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>) est une technologie qui <strong>assemble plusieurs disques physiques en une seule unité logique</strong>. Selon le niveau choisi, il sert à :</p>
+<ul>
+<li><strong>améliorer les performances</strong>, en lisant et écrivant sur plusieurs disques à la fois ;</li>
+<li><strong>augmenter la capacité</strong>, en additionnant les disques ;</li>
+<li><strong>créer une redondance</strong>, pour que la panne d'un disque ne fasse perdre aucune donnée.</li>
+</ul>
+<p>Le RAID peut être <strong>matériel</strong> (une carte contrôleur RAID dans le serveur) ou <strong>logiciel</strong> (géré par le système : <em>mdadm</em> sous Linux, <em>Espaces de stockage</em> ou volumes en miroir sous Windows, ZFS…).</p>
+<figure>
+  <img alt="Répartition des blocs de données et de parité sur les disques pour les RAID 0, 1, 5, 6 et 10" loading="lazy" src="../images/schema-niveaux-raid.svg" />
+<br />
+<figcaption>A, B, C… sont des blocs de données ; P et Q sont des blocs de parité.</figcaption>
+</figure>
+<h4 id="raid-0-agregat-par-bandes-striping">RAID 0 : agrégat par bandes (<em>striping</em>)<a class="headerlink" href="#raid-0-agregat-par-bandes-striping" title="Permanent link">&para;</a></h4>
+<p>Les données sont découpées en blocs répartis sur tous les disques. Lecture et écriture sont très rapides et <strong>toute la capacité est utilisable</strong> (6 disques de 1 To donnent 6 To). Mais il n'y a <strong>aucune redondance</strong> : si un seul disque tombe en panne, <strong>toutes</strong> les données sont perdues. Plus il y a de disques, plus le risque augmente. Usage : données temporaires et facilement reconstituables (montage vidéo, calcul).</p>
+<h4 id="raid-1-miroir-mirroring">RAID 1 : miroir (<em>mirroring</em>)<a class="headerlink" href="#raid-1-miroir-mirroring" title="Permanent link">&para;</a></h4>
+<p>Les mêmes données sont écrites à l'identique sur deux disques (parfois plus). Si un disque tombe en panne, l'autre contient tout. La capacité utile est celle <strong>d'un seul disque</strong> (2 disques de 1 To donnent 1 To). Usage : disque système d'un serveur, petits serveurs. <a href="https://www.ionos.fr/digitalguide/serveur/securite/raid-1/">Pour approfondir</a>.</p>
+<h4 id="raid-5-bandes-avec-parite-repartie">RAID 5 : bandes avec parité répartie<a class="headerlink" href="#raid-5-bandes-avec-parite-repartie" title="Permanent link">&para;</a></h4>
+<p>Les données sont réparties sur les disques avec un <strong>bloc de parité</strong> calculé à partir des autres et réparti à tour de rôle sur chaque disque. Grâce à ce calcul, les données d'un disque manquant peuvent être reconstruites. Il faut <strong>au moins 3 disques</strong> ; la capacité utile est celle de <strong>n − 1 disques</strong> (6 disques de 1 To donnent 5 To) ; il <strong>tolère la panne d'un seul disque</strong>. <a href="https://www.ionos.fr/digitalguide/serveur/securite/raid-5/">Pour approfondir</a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Le RAID 5 et les gros disques</p>
+<p>Après une panne, la <strong>reconstruction</strong> relit l'intégralité des disques restants pendant des heures, voire des jours, avec des disques de plusieurs To. Pendant ce temps, l'ensemble n'est plus protégé, et une seconde panne ou une erreur de lecture fait tout perdre. Pour de gros volumes, on préfère le RAID 6 ou le RAID 10.</p>
+</div>
+<h4 id="raid-6-bandes-avec-double-parite">RAID 6 : bandes avec double parité<a class="headerlink" href="#raid-6-bandes-avec-double-parite" title="Permanent link">&para;</a></h4>
+<p>Comme le RAID 5, mais avec <strong>deux blocs de parité</strong> (P et Q) sur deux disques différents. Il faut <strong>au moins 4 disques</strong>, la capacité utile est celle de <strong>n − 2 disques</strong> (6 disques de 1 To donnent 4 To) et il <strong>tolère la panne de deux disques simultanément</strong>. L'écriture est plus lente, car il faut calculer deux parités. <a href="https://www.ionos.fr/digitalguide/serveur/securite/raid-6/">Pour approfondir</a>.</p>
+<h4 id="raid-10-ou-10-miroirs-agreges-par-bandes">RAID 10 (ou 1+0) : miroirs agrégés par bandes<a class="headerlink" href="#raid-10-ou-10-miroirs-agreges-par-bandes" title="Permanent link">&para;</a></h4>
+<p>On crée des paires de disques en miroir (RAID 1), puis on répartit les données sur ces paires (RAID 0). Il faut <strong>au moins 4 disques</strong> et seule <strong>la moitié de la capacité</strong> est utilisable (6 disques de 1 To donnent 3 To). Il est rapide et résistant (il survit à une panne par paire), mais coûteux. Usage : bases de données, virtualisation.</p>
+<h4 id="autres-niveaux-et-tableau-recapitulatif">Autres niveaux et tableau récapitulatif<a class="headerlink" href="#autres-niveaux-et-tableau-recapitulatif" title="Permanent link">&para;</a></h4>
+<p>Il existe d'autres niveaux (RAID 2, 3, 4, rarement utilisés) et des combinaisons comme le RAID 50 ou le RAID 60 (plusieurs RAID 5 ou 6 agrégés par bandes)<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>RAID 0</th>
+<th>RAID 1</th>
+<th>RAID 5</th>
+<th>RAID 6</th>
+<th>RAID 10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Disques minimum</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Capacité utile (n disques de taille T)</td>
+<td>n × T</td>
+<td>T</td>
+<td>(n − 1) × T</td>
+<td>(n − 2) × T</td>
+<td>n/2 × T</td>
+</tr>
+<tr>
+<td>Pannes de disque tolérées</td>
+<td>0</td>
+<td>n − 1</td>
+<td>1</td>
+<td>2</td>
+<td>1 par paire en miroir</td>
+</tr>
+<tr>
+<td>Écriture</td>
+<td>Très rapide</td>
+<td>Normale</td>
+<td>Moyenne</td>
+<td>Lente</td>
+<td>Rapide</td>
+</tr>
+<tr>
+<td>Lecture</td>
+<td>Très rapide</td>
+<td>Rapide</td>
+<td>Rapide</td>
+<td>Rapide</td>
+<td>Très rapide</td>
+</tr>
+<tr>
+<td>Coût par To utile</td>
+<td>Faible</td>
+<td>Élevé</td>
+<td>Modéré</td>
+<td>Modéré</td>
+<td>Élevé</td>
+</tr>
+</tbody>
+</table>
+<p>Des calculateurs en ligne donnent la capacité utile selon le nombre de disques et le niveau, par exemple <a href="https://www.raid-calculator.com/">https://www.raid-calculator.com/</a>.</p>
+<div class="admonition danger">
+<p class="admonition-title">Le RAID n'est pas une sauvegarde</p>
+<p>Le RAID protège contre <strong>une panne matérielle de disque</strong>, rien d'autre. Un fichier supprimé, écrasé ou chiffré par un rançongiciel l'est <strong>instantanément sur tous les disques</strong> de l'ensemble. Une panne de contrôleur, un vol ou un incendie emportent tout l'ensemble d'un coup.</p>
+</div>
+<hr />
+<h2 id="2-pourquoi-sauvegarder">2. Pourquoi sauvegarder ?<a class="headerlink" href="#2-pourquoi-sauvegarder" title="Permanent link">&para;</a></h2>
+<p>La perte de données arrive pour des raisons très variées : suppression accidentelle, panne matérielle, bug logiciel, <strong>rançongiciel</strong> (<em>ransomware</em>, un logiciel malveillant qui chiffre les données et réclame une rançon), vol, incendie, inondation. Aucune entreprise n'y échappe, quelle que soit sa taille.</p>
+<p>Deux exemples célèbres :</p>
+<p><strong>MySpace (2019).</strong> Ce réseau social pionnier a annoncé qu'à la suite d'une migration de serveurs, les photos, vidéos et morceaux de musique envoyés par ses utilisateurs entre 2003 et 2015 n'étaient peut-être plus disponibles : environ 50 millions de morceaux de 14 millions d'artistes. Aucune copie n'existait ailleurs<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>.</p>
+<p><strong>GitLab (2017).</strong> En pleine nuit, un administrateur fatigué a supprimé par erreur environ 300 Go de données de la base de production, en se trompant de serveur. Sur les cinq mécanismes de sauvegarde et de réplication en place, <strong>aucun ne fonctionnait correctement</strong> : sauvegardes vides depuis des mois sans que personne ne le remarque, alertes bloquées, instantanés non activés. Les données ont finalement été restaurées à partir d'une copie faite <strong>six heures plus tôt</strong> pour un autre usage : six heures de travail des utilisateurs ont été perdues, et l'entreprise a dû s'expliquer publiquement<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>.</p>
+<div class="admonition example">
+<p class="admonition-title">La leçon de GitLab</p>
+<p>Avoir des sauvegardes ne suffit pas : il faut <strong>surveiller</strong> qu'elles se font et <strong>tester</strong> régulièrement les restaurations. C'est exactement le « 0 » de la règle 3-2-1-1-0 vue plus bas.</p>
+</div>
+<hr />
+<h2 id="3-les-strategies-de-sauvegarde">3. Les stratégies de sauvegarde<a class="headerlink" href="#3-les-strategies-de-sauvegarde" title="Permanent link">&para;</a></h2>
+<p>Il existe plusieurs règles pour organiser ses copies (3-2-1, 3-2-1-1-0, 4-3-2…). Les deux premières sont les plus connues.</p>
+<h3 id="31-la-regle-3-2-1">3.1 La règle 3-2-1<a class="headerlink" href="#31-la-regle-3-2-1" title="Permanent link">&para;</a></h3>
+<p>Formulée par le photographe Peter Krogh, elle reste la référence :</p>
+<ul>
+<li><strong>3</strong> copies des données : les données de production et deux sauvegardes ;</li>
+<li>sur <strong>2</strong> supports de stockage différents (par exemple un serveur de sauvegarde et une bande, ou un NAS et le cloud), pour qu'un défaut propre à un type de support ne touche pas toutes les copies ;</li>
+<li>dont <strong>1</strong> copie <strong>hors site</strong> (dans un autre bâtiment ou dans le cloud), pour survivre à un incendie, une inondation ou un vol.</li>
+</ul>
+<p>Pour approfondir : <a href="https://www.it-connect.fr/sauvegarde-quest-ce-que-la-regle-du-3-2-1/">la règle du 3-2-1 sur IT-Connect</a>.</p>
+<h3 id="32-la-regle-3-2-1-1-0">3.2 La règle 3-2-1-1-0<a class="headerlink" href="#32-la-regle-3-2-1-1-0" title="Permanent link">&para;</a></h3>
+<p>Proposée par Veeam, elle ajoute deux exigences à la règle 3-2-1, en réponse à la montée des rançongiciels :</p>
+<ul>
+<li><strong>1</strong> copie <strong>hors ligne</strong> (<em>offline</em>, <em>air-gapped</em>) <strong>ou immuable</strong> : une copie déconnectée du réseau (bande retirée de la librairie, disque débranché) ou une copie qui ne peut être ni modifiée ni supprimée pendant une durée donnée. Un attaquant qui prend le contrôle du réseau ne peut pas l'atteindre ou ne peut pas la détruire.</li>
+<li><strong>0</strong> erreur à la restauration : les sauvegardes sont <strong>vérifiées</strong> (contrôle d'intégrité, tests de restauration automatiques ou manuels) pour s'assurer qu'elles sont réellement exploitables.</li>
+</ul>
+<figure>
+  <img alt="Schéma de la règle 3-2-1-1-0 : trois copies, deux supports, une copie hors site, une copie hors ligne ou immuable, zéro erreur de restauration" loading="lazy" src="../images/schema-regle-3-2-1-1-0.svg" />
+<br />
+<figcaption>La règle 3-2-1-1-0 : les deux derniers chiffres visent les rançongiciels et les sauvegardes inutilisables.</figcaption>
+</figure>
+<p>Pour approfondir : <a href="https://stonefly.com/blog/3-2-1-vs-3-2-1-1-0-vs-4-3-2-backup-strategies">comparaison 3-2-1, 3-2-1-1-0 et 4-3-2</a>.</p>
+<hr />
+<h2 id="4-les-types-de-sauvegardes">4. Les types de sauvegardes<a class="headerlink" href="#4-les-types-de-sauvegardes" title="Permanent link">&para;</a></h2>
+<h3 id="41-sauvegarde-complete-full-backup">4.1 Sauvegarde complète (<em>full backup</em>)<a class="headerlink" href="#41-sauvegarde-complete-full-backup" title="Permanent link">&para;</a></h3>
+<p>Elle copie <strong>la totalité</strong> des données sélectionnées à chaque exécution. C'est la plus simple et la <strong>plus rapide à restaurer</strong> (un seul jeu de données suffit), mais la plus <strong>longue</strong> à réaliser et la plus <strong>gourmande en espace</strong>.</p>
+<h3 id="42-sauvegarde-incrementielle-incremental-backup">4.2 Sauvegarde incrémentielle (<em>incremental backup</em>)<a class="headerlink" href="#42-sauvegarde-incrementielle-incremental-backup" title="Permanent link">&para;</a></h3>
+<p>Après une sauvegarde complète initiale, chaque sauvegarde incrémentielle copie uniquement <strong>ce qui a changé depuis la dernière sauvegarde, quelle qu'elle soit</strong> (complète ou incrémentielle). Elle est rapide et économe en espace. En contrepartie, la restauration a besoin de la complète <strong>et de toutes les incrémentielles qui suivent</strong> : si l'une d'elles est abîmée, les suivantes deviennent inutilisables.</p>
+<h3 id="43-sauvegarde-differentielle-differential-backup">4.3 Sauvegarde différentielle (<em>differential backup</em>)<a class="headerlink" href="#43-sauvegarde-differentielle-differential-backup" title="Permanent link">&para;</a></h3>
+<p>Après une sauvegarde complète initiale, chaque sauvegarde différentielle copie <strong>tout ce qui a changé depuis la dernière sauvegarde complète</strong>. Chaque différentielle est donc plus grosse que la précédente, mais la restauration ne demande que <strong>deux jeux</strong> : la complète et la dernière différentielle.</p>
+<figure>
+  <img alt="Comparaison sur une semaine des volumes sauvegardés chaque jour en mode complet, incrémentiel et différentiel" loading="lazy" src="../images/schema-types-sauvegarde.svg" />
+<br />
+<figcaption>Pour les mêmes modifications quotidiennes, chaque type de sauvegarde copie un volume différent.</figcaption>
+</figure>
+<p>Pour approfondir : <a href="https://www.it-connect.fr/comprendre-la-sauvegarde-incrementielle-et-differentielle/">sauvegardes incrémentielles et différentielles sur IT-Connect</a>.</p>
+<h3 id="44-incrementielle-permanente-et-complete-synthetique">4.4 Incrémentielle permanente et complète synthétique<a class="headerlink" href="#44-incrementielle-permanente-et-complete-synthetique" title="Permanent link">&para;</a></h3>
+<p>Les logiciels modernes comme Veeam combinent intelligemment ces méthodes :</p>
+<ul>
+<li><strong>Incrémentielle permanente</strong> (<em>forever forward incremental</em>) : une seule complète au départ, puis uniquement des incrémentielles. Quand un point de restauration dépasse la durée de rétention, il est <strong>fusionné</strong> dans la complète. C'est le mode par défaut des jobs Veeam.</li>
+<li><strong>Complète synthétique</strong> (<em>synthetic full</em>) : le serveur de sauvegarde <strong>fabrique</strong> une nouvelle sauvegarde complète à partir de la complète précédente et des incrémentielles qu'il possède déjà, <strong>sans relire</strong> la machine protégée. On obtient les avantages d'une complète sans charger la production ni le réseau.</li>
+<li><strong>Complète active</strong> (<em>active full</em>) : une vraie nouvelle sauvegarde complète, relue depuis la machine protégée. Plus lente, mais elle repart de données fraîches.</li>
+</ul>
+<p>Sur un système de fichiers qui le permet (<strong>XFS</strong> sous Linux, <strong>ReFS</strong> sous Windows), Veeam utilise le <strong>clonage de blocs</strong> (<em>Fast Clone</em>) : la complète synthétique <strong>référence</strong> les blocs déjà présents au lieu de les recopier. Elle se crée en quelques secondes et n'occupe presque pas de place supplémentaire.</p>
+<h3 id="45-sauvegarde-immuable">4.5 Sauvegarde immuable<a class="headerlink" href="#45-sauvegarde-immuable" title="Permanent link">&para;</a></h3>
+<p>Une sauvegarde <strong>immuable</strong> ne peut <strong>ni être modifiée, ni être supprimée</strong> pendant une période de rétention définie, <strong>même par un administrateur</strong>. Même un attaquant qui a volé les identifiants du serveur de sauvegarde ne peut pas la détruire avant l'échéance. Elle répond au « 1 hors ligne ou immuable » de la règle 3-2-1-1-0.</p>
+<p>Ce principe s'appelle <strong>WORM</strong> (<em>Write Once, Read Many</em>, « écrire une fois, lire plusieurs fois »). On le trouve par exemple :</p>
+<ul>
+<li>dans les <strong>dépôts durcis Linux</strong> de Veeam (<em>Hardened Repository</em>), qui verrouillent les fichiers au niveau du système de fichiers. L'appliance Veeam installée dans ce parcours en est un ;</li>
+<li>dans le <strong>stockage objet</strong> avec verrouillage (<em>Object Lock</em> d'Amazon S3, stockage immuable d'Azure Blob) ;</li>
+<li>dans les <strong>instantanés immuables</strong> de certains NAS (Synology, QNAP…).</li>
+</ul>
+<p>Pour approfondir : <a href="https://www.it-connect.fr/les-sauvegardes-immuables-pour-les-debutants/">les sauvegardes immuables pour les débutants</a> et <a href="https://www.it-connect.fr/tuto-synology-snapshots-immuables-protection-ransomware/">les instantanés immuables sur un NAS Synology</a>.</p>
+<h3 id="46-avantages-et-inconvenients">4.6 Avantages et inconvénients<a class="headerlink" href="#46-avantages-et-inconvenients" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Complète</th>
+<th>Incrémentielle</th>
+<th>Différentielle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Durée de la sauvegarde</td>
+<td>Longue</td>
+<td>Courte</td>
+<td>Moyenne, puis de plus en plus longue</td>
+</tr>
+<tr>
+<td>Espace occupé</td>
+<td>Maximal</td>
+<td>Minimal</td>
+<td>Important</td>
+</tr>
+<tr>
+<td>Durée de la restauration</td>
+<td>Courte (1 jeu)</td>
+<td>Longue (la complète + toutes les incrémentielles)</td>
+<td>Moyenne (la complète + la dernière différentielle)</td>
+</tr>
+<tr>
+<td>Fragilité de la chaîne</td>
+<td>Aucune</td>
+<td>Un maillon abîmé casse la suite</td>
+<td>Faible</td>
+</tr>
+</tbody>
+</table>
+<h3 id="47-retention-et-chiffrement">4.7 Rétention et chiffrement<a class="headerlink" href="#47-retention-et-chiffrement" title="Permanent link">&para;</a></h3>
+<p>Deux réglages accompagnent toujours un job de sauvegarde :</p>
+<ul>
+<li>La <strong>rétention</strong> fixe combien de points de restauration (ou combien de jours) sont conservés. Elle dépend des besoins métier et des <strong>obligations légales</strong> (factures, données de santé, etc.). Une politique classique est <strong>GFS</strong> (<em>Grandfather-Father-Son</em>, « grand-père, père, fils ») : des points quotidiens gardés quelques jours, des hebdomadaires quelques semaines, des mensuels et des annuels plus longtemps.</li>
+<li>Le <strong>chiffrement</strong> rend la sauvegarde illisible sans son mot de passe. Il est indispensable dès qu'une copie quitte l'entreprise (cloud, bande transportée). <strong>Perdre le mot de passe, c'est perdre la sauvegarde</strong> : il doit être conservé en lieu sûr, par exemple dans un gestionnaire de mots de passe.</li>
+</ul>
+<hr />
+<h2 id="5-pca-pra-rpo-et-rto">5. PCA, PRA, RPO et RTO<a class="headerlink" href="#5-pca-pra-rpo-et-rto" title="Permanent link">&para;</a></h2>
+<p>Sans sauvegardes adaptées, une entreprise peut perdre des données essentielles, avec des conséquences sur son activité, sa réputation, sa rentabilité, voire sa survie. Elle s'y prépare avec deux plans.</p>
+<h3 id="51-le-plan-de-continuite-dactivite-pca">5.1 Le plan de continuité d'activité (PCA)<a class="headerlink" href="#51-le-plan-de-continuite-dactivite-pca" title="Permanent link">&para;</a></h3>
+<p>Le <strong>PCA</strong> est l'ensemble des mesures qui permettent à une organisation de <strong>continuer à fonctionner</strong> pendant un incident majeur, éventuellement en mode dégradé. Son objectif est de <strong>réduire au minimum l'interruption</strong> des activités essentielles. Il couvre l'informatique, mais aussi les locaux, les personnes, les fournisseurs et la communication.</p>
+<p>Sa construction suit généralement six étapes :</p>
+<ol>
+<li><strong>Analyse d'impact sur l'activité</strong> (<em>BIA</em>, <em>Business Impact Analysis</em>) : identifier les activités et les systèmes critiques, et ce que coûte leur arrêt.</li>
+<li><strong>Identification des menaces</strong> : panne, cyberattaque, incendie, pandémie, défaillance d'un fournisseur…</li>
+<li><strong>Stratégies de continuité</strong> : comment maintenir ou rétablir chaque activité critique (redondance, site de secours, procédures manuelles).</li>
+<li><strong>Rédaction du plan</strong> : procédures, responsabilités, contacts, cellule de crise.</li>
+<li><strong>Tests du plan</strong> : exercices réguliers, du test sur table à la simulation grandeur nature.</li>
+<li><strong>Maintien du plan</strong> : mise à jour à chaque changement de l'entreprise ou de son informatique.</li>
+</ol>
+<h3 id="52-le-plan-de-reprise-dactivite-pra">5.2 Le plan de reprise d'activité (PRA)<a class="headerlink" href="#52-le-plan-de-reprise-dactivite-pra" title="Permanent link">&para;</a></h3>
+<p>Le <strong>PRA</strong> est la partie du PCA qui organise le <strong>redémarrage de l'informatique après un sinistre</strong> : comment restaurer les données depuis les sauvegardes, reconstruire les serveurs, basculer vers un site de secours, et dans quel ordre.</p>
+<p>Exemple de PRA : dupliquer l'infrastructure de production sur un site distant, relier les deux sites par un VPN site à site, et permettre aux salariés de se connecter au site de secours par un VPN nomade.</p>
+<p>On définit un PRA <strong>application par application</strong>, en fixant deux objectifs :</p>
+<ul>
+<li>Le <strong>RPO</strong> (<em>Recovery Point Objective</em>) répond à la question « <strong>combien de données accepte-t-on de perdre ?</strong> ». Il s'exprime en durée. Avec une sauvegarde par nuit, le RPO est de 24 heures : tout ce qui a été fait depuis la dernière sauvegarde peut être perdu. En français, on parle de <strong>PDMA</strong> (perte de données maximale admissible).</li>
+<li>Le <strong>RTO</strong> (<em>Recovery Time Objective</em>) répond à la question « <strong>en combien de temps doit-on redémarrer ?</strong> ». C'est la durée entre l'incident et le retour du service. En français : <strong>DMIA</strong> (durée maximale d'interruption admissible).</li>
+</ul>
+<figure>
+  <img alt="Frise chronologique : le RPO va du dernier point de restauration jusqu'à l'incident, le RTO de l'incident jusqu'au retour du service" loading="lazy" src="../images/schema-rpo-rto.svg" />
+<br />
+<figcaption>Le RPO regarde en arrière (les données perdues), le RTO regarde en avant (le temps d'arrêt).</figcaption>
+</figure>
+<p>Ces objectifs se choisissent avec les métiers et peuvent différer d'une application à l'autre : on veut sans doute retrouver le logiciel de gestion (ERP) en une heure, alors que l'intranet peut attendre le lendemain. <strong>Réduire le RPO et le RTO coûte cher</strong> : sauvegardes plus fréquentes, réplication, stockage rapide, réseau performant, site de secours. Le budget doit rester proportionné à la valeur des données.</p>
+<hr />
+<h2 id="6-pour-aller-plus-loin">6. Pour aller plus loin<a class="headerlink" href="#6-pour-aller-plus-loin" title="Permanent link">&para;</a></h2>
+<p>Quelques sujets à approfondir pour une compréhension plus complète de la sauvegarde et de la reprise après sinistre :</p>
+<ul>
+<li><strong>Le stockage des sauvegardes</strong> : sur site, hors site, dans le cloud, sur bande ; coûts et délais de restauration de chaque option.</li>
+<li><strong>La rétention</strong> : combien de temps garder les sauvegardes pour répondre aux exigences légales et opérationnelles.</li>
+<li><strong>Les tests de restauration</strong> : à quelle fréquence, et comment les automatiser (Veeam propose <em>SureBackup</em> pour démarrer automatiquement des VM sauvegardées et vérifier qu'elles fonctionnent).</li>
+<li><strong>Le chiffrement</strong> : protéger les sauvegardes qui contiennent des données personnelles ou sensibles, et gérer les mots de passe.</li>
+<li><strong>Les services de sauvegarde dans le cloud</strong> : avantages (pas de matériel, copie hors site immédiate) et limites (coûts de sortie des données, dépendance à un fournisseur, débit Internet).</li>
+<li><strong>Le cadre réglementaire</strong> : RGPD, norme ISO 22301 sur la continuité d'activité, recommandations de l'ANSSI.</li>
+</ul>
+<hr />
+<h2 id="7-exercices">7. Exercices<a class="headerlink" href="#7-exercices" title="Permanent link">&para;</a></h2>
+<h3 id="exercice-1-identifier-un-type-de-sauvegarde">Exercice 1 : identifier un type de sauvegarde<a class="headerlink" href="#exercice-1-identifier-un-type-de-sauvegarde" title="Permanent link">&para;</a></h3>
+<p>Une entreprise sauvegarde un serveur de fichiers de 900 Go. Chaque jour, de nouvelles données sont modifiées : 100 Go le mardi, 200 Go le mercredi, 100 Go le jeudi, 300 Go le vendredi et 100 Go le samedi. Le schéma montre le contenu de chaque sauvegarde de la semaine.</p>
+<figure>
+  <img alt="Six colonnes du lundi au samedi : 900 Go le lundi, puis des blocs qui s'empilent chaque jour (100, puis 200 et 100, jusqu'à 100, 300, 100, 200 et 100 le samedi)" loading="lazy" src="../images/exercice-type-sauvegarde.svg" />
+<br />
+<figcaption>Contenu de chaque sauvegarde de la semaine. De quel type de sauvegarde s'agit-il ?</figcaption>
+</figure>
+<ol>
+<li>De quel type de sauvegarde s'agit-il ? Justifier.</li>
+<li>Quel volume total occupent les six sauvegardes de la semaine ?</li>
+<li>Le samedi soir, le serveur tombe en panne. Quelles sauvegardes faut-il pour le restaurer ?</li>
+<li>Mêmes questions 2 et 3 si l'entreprise avait utilisé des sauvegardes incrémentielles.</li>
+</ol>
+<details class="success">
+<summary>Corrigé de l'exercice 1</summary>
+<ol>
+<li>C'est une <strong>sauvegarde différentielle</strong> : chaque jour, la sauvegarde contient <strong>toutes les modifications depuis la complète du lundi</strong> (les blocs des jours précédents se retrouvent dans les colonnes suivantes), et elle grossit au fil de la semaine.</li>
+<li>900 (lundi) + 100 + 300 + 400 + 700 + 800 = <strong>3 200 Go</strong>.</li>
+<li>La <strong>complète du lundi</strong> et la <strong>différentielle du samedi</strong> : deux jeux seulement.</li>
+<li>En incrémentiel, chaque jour ne contient que ses propres modifications : 900 + 100 + 200 + 100 + 300 + 100 = <strong>1 700 Go</strong>. La restauration du samedi demande la complète <strong>et les cinq incrémentielles</strong> de mardi à samedi, soit six jeux, à appliquer dans l'ordre.</li>
+</ol>
+</details>
+<h3 id="exercice-2-calculer-une-capacite-raid">Exercice 2 : calculer une capacité RAID<a class="headerlink" href="#exercice-2-calculer-une-capacite-raid" title="Permanent link">&para;</a></h3>
+<p>Un serveur reçoit six disques de 4 To. Calculer la capacité utile et le nombre de pannes de disque tolérées en RAID 0, RAID 5, RAID 6 et RAID 10.</p>
+<details class="success">
+<summary>Corrigé de l'exercice 2</summary>
+<table>
+<thead>
+<tr>
+<th>Niveau</th>
+<th>Capacité utile</th>
+<th>Pannes tolérées</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RAID 0</td>
+<td>6 × 4 = <strong>24 To</strong></td>
+<td>0</td>
+</tr>
+<tr>
+<td>RAID 5</td>
+<td>(6 − 1) × 4 = <strong>20 To</strong></td>
+<td>1</td>
+</tr>
+<tr>
+<td>RAID 6</td>
+<td>(6 − 2) × 4 = <strong>16 To</strong></td>
+<td>2</td>
+</tr>
+<tr>
+<td>RAID 10</td>
+<td>6 / 2 × 4 = <strong>12 To</strong></td>
+<td>1 par paire (jusqu'à 3 si elles touchent trois paires différentes)</td>
+</tr>
+</tbody>
+</table>
+</details>
+<h3 id="exercice-3-sauvegarde-ou-pas">Exercice 3 : sauvegarde ou pas ?<a class="headerlink" href="#exercice-3-sauvegarde-ou-pas" title="Permanent link">&para;</a></h3>
+<p>Pour chaque situation, dire si les données sont réellement sauvegardées et pourquoi.</p>
+<ol>
+<li>Les documents d'un cabinet comptable sont sur un serveur en RAID 1.</li>
+<li>Les fichiers de chaque salarié sont synchronisés avec OneDrive.</li>
+<li>Chaque soir, un disque externe toujours branché au serveur reçoit une copie complète des données.</li>
+<li>Chaque soir, Veeam sauvegarde le serveur sur un NAS dans la même pièce ; chaque semaine, une copie part vers un stockage cloud immuable, et une restauration de test est faite chaque mois.</li>
+</ol>
+<details class="success">
+<summary>Corrigé de l'exercice 3</summary>
+<ol>
+<li><strong>Non.</strong> Le RAID 1 protège contre la panne d'un disque, pas contre une suppression ou un rançongiciel, recopiés instantanément sur les deux disques.</li>
+<li><strong>Non.</strong> Une suppression ou un chiffrement est synchronisé partout. La corbeille et l'historique de versions de OneDrive aident pendant quelques jours, mais ce n'est pas une sauvegarde maîtrisée et séparée.</li>
+<li><strong>Partiellement.</strong> C'est bien une copie datée, mais le disque est toujours branché (un rançongiciel le chiffrera aussi) et il est dans la même pièce (incendie, vol). Il ne garde de plus qu'une seule version.</li>
+<li><strong>Oui</strong>, et c'est proche de la règle 3-2-1-1-0 : trois copies (production, NAS, cloud), deux supports, une copie hors site, une copie immuable et des restaurations testées.</li>
+</ol>
+</details>
+<h3 id="exercice-4-rpo-et-rto">Exercice 4 : RPO et RTO<a class="headerlink" href="#exercice-4-rpo-et-rto" title="Permanent link">&para;</a></h3>
+<p>Une PME sauvegarde son serveur de gestion chaque nuit à 22 h. Restaurer le serveur complet prend 3 heures. Un mardi à 16 h, le serveur est chiffré par un rançongiciel ; l'équipe décide de restaurer dès 16 h 30.</p>
+<ol>
+<li>Quelle période de travail est perdue ? À quel objectif cela correspond-il ?</li>
+<li>À quelle heure, au plus tôt, le service peut-il revenir ? Quelle est la durée d'interruption ?</li>
+<li>La direction exige de ne jamais perdre plus d'une heure de travail. Que proposer ?</li>
+</ol>
+<details class="success">
+<summary>Corrigé de l'exercice 4</summary>
+<ol>
+<li>Tout ce qui a été fait <strong>depuis lundi 22 h</strong>, soit 18 heures de données. Le <strong>RPO</strong> effectif de cette PME est donc de 24 heures au pire (une sauvegarde par jour).</li>
+<li>Restauration de 16 h 30 à 19 h 30 : retour du service vers <strong>19 h 30</strong>, soit <strong>3 h 30 d'interruption</strong> (le temps de décider compris). C'est le <strong>RTO</strong> constaté.</li>
+<li>Il faut au moins une sauvegarde <strong>par heure</strong> (sauvegardes incrémentielles fréquentes, ou journaux de transactions pour une base de données), voire une réplication. Et, vu le scénario, une copie <strong>immuable</strong> pour que le rançongiciel ne puisse pas détruire aussi les sauvegardes.</li>
+</ol>
+</details>
+<hr />
+<h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://fr.wikipedia.org/wiki/RAID_(informatique)">RAID (informatique) sur Wikipédia</a> — histoire et détails de tous les niveaux.</li>
+<li><a href="https://www.ionos.fr/digitalguide/serveur/securite/comparaison-des-niveaux-raid/">Comparaison des niveaux RAID (IONOS)</a> — tableau comparatif.</li>
+<li><a href="https://www.it-connect.fr/sauvegarde-quest-ce-que-la-regle-du-3-2-1/">La règle du 3-2-1 (IT-Connect)</a> — présentation détaillée.</li>
+<li><a href="https://www.it-connect.fr/comprendre-la-sauvegarde-incrementielle-et-differentielle/">Sauvegardes incrémentielles et différentielles (IT-Connect)</a> — exemples chiffrés.</li>
+<li><a href="https://www.it-connect.fr/les-sauvegardes-immuables-pour-les-debutants/">Les sauvegardes immuables pour les débutants (IT-Connect)</a> — principe WORM.</li>
+<li>Partie suivante : <a href="../02-decouvrir-veeam-data-platform/">Découvrir Veeam Data Platform</a>.</li>
+</ul>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>À ses débuts, en 1987 à l'université de Berkeley, l'acronyme signifiait <em>Redundant Array of Inexpensive Disks</em>, « regroupement redondant de disques peu onéreux ».&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>Pour approfondir les niveaux imbriqués : <a href="https://en.wikipedia.org/wiki/Nested_RAID_levels"><em>Nested RAID levels</em> sur Wikipédia (en anglais)</a>.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>Sources : <a href="https://www.lepoint.fr/high-tech-internet/myspace-a-perdu-douze-annees-de-musique-18-03-2019-2302123_47.php">Le Point, 18 mars 2019</a> ; <a href="https://www.lefigaro.fr/secteur/high-tech/2019/03/18/32001-20190318ARTFIG00142-myspace-a-perdu-12-ans-de-morceaux-de-musique.php">Le Figaro, 18 mars 2019</a>.&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p>Sources : <a href="https://about.gitlab.com/blog/postmortem-of-database-outage-of-january-31/">le compte rendu officiel de GitLab (en anglais)</a> ; <a href="https://www.nextinpact.com/article/25411/103135-gitlab-erreur-humaine-et-sauvegardes-defaillantes-entrainent-perte-300-go-donnees">Next INpact, 1er février 2017</a>.&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Précédent: Parcours Veeam Backup &amp; Replication 13.1 : cours et travaux pratiques">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                Parcours Veeam Backup & Replication 13.1 : cours et travaux pratiques
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../02-decouvrir-veeam-data-platform/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 2. Découvrir Veeam Data Platform 13">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                2. Découvrir Veeam Data Platform 13
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      <a href="/mentions-legales/">Mentions légales</a>
+
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/bodaine" target="_blank" rel="noopener" title="Nicolas BODAINE sur LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://github.com/NicoBOD" target="_blank" rel="noopener" title="NicoBOD sur GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://nicolas.bodaine.fr" target="_blank" rel="noopener" title="Portfolio de Nicolas BODAINE" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="/feed_rss_created.xml" target="_blank" rel="noopener" title="Flux RSS des derniers articles" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 64c0-17.7 14.3-32 32-32 229.8 0 416 186.2 416 416 0 17.7-14.3 32-32 32s-32-14.3-32-32C384 253.6 226.4 96 32 96 14.3 96 0 81.7 0 64m0 352a64 64 0 1 1 128 0 64 64 0 1 1-128 0m32-256c159.1 0 288 128.9 288 288 0 17.7-14.3 32-32 32s-32-14.3-32-32c0-123.7-100.3-224-224-224-17.7 0-32-14.3-32-32s14.3-32 32-32"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.path", "navigation.indexes", "navigation.prune", "navigation.footer", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "content.action.view", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+    
+  </body>
+</html>

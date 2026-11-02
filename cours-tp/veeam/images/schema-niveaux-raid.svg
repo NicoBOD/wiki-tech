@@ -1,0 +1,176 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="824" viewBox="0 0 1000 824" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Niveaux de RAID 0, 1, 5, 6 et 10</title>
+  <desc id="d">Cinq panneaux montrant la répartition des blocs sur les disques. RAID 0 : les blocs A1 à A6 sont répartis sur deux disques, capacité 100 %, aucune panne tolérée. RAID 1 : les mêmes blocs sont écrits sur deux disques, capacité 50 %, une panne tolérée. RAID 5 : données et un bloc de parité P réparti sur trois disques, capacité n moins 1, une panne tolérée. RAID 6 : données et deux blocs de parité P et Q répartis sur quatre disques, capacité n moins 2, deux pannes tolérées. RAID 10 : deux miroirs de deux disques, les blocs étant répartis entre les miroirs, capacité 50 %, une panne tolérée par miroir.</desc>
+  <defs>
+    <marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+    <marker id="flb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+    <marker id="flr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+    <marker id="flg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+  </defs>
+  <rect x="0" y="0" width="1000" height="824" rx="16" fill="#ffffff"/>
+  <rect x="16" y="16" width="476" height="252" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="36" y="48" text-anchor="start" font-size="17" font-weight="800" fill="#dc2626">RAID 0</text>
+  <text x="126" y="48" text-anchor="start" font-size="13" font-weight="600" fill="#475569">— bandes, aucune redondance</text>
+  <path d="M156.0,93.0 L156.0,189.0 A39.0,27.0 0 0 0 234.0,189.0 L234.0,93.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <ellipse cx="195.0" cy="93.0" rx="39.0" ry="27.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <rect x="166.0" y="100" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="195.0" y="118" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A1</text>
+  <rect x="166.0" y="134" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="195.0" y="152" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A3</text>
+  <rect x="166.0" y="168" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="195.0" y="186" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A5</text>
+  <text x="195.0" y="238" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Disque 1</text>
+  <path d="M274.0,93.0 L274.0,189.0 A39.0,27.0 0 0 0 352.0,189.0 L352.0,93.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <ellipse cx="313.0" cy="93.0" rx="39.0" ry="27.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <rect x="284.0" y="100" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="313.0" y="118" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A2</text>
+  <rect x="284.0" y="134" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="313.0" y="152" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A4</text>
+  <rect x="284.0" y="168" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="313.0" y="186" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A6</text>
+  <text x="313.0" y="238" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Disque 2</text>
+  <text x="36" y="258" text-anchor="start" font-size="12" font-weight="700" fill="#0f172a">Capacité : 100 %</text>
+  <text x="472" y="258" text-anchor="end" font-size="12" font-weight="700" fill="#dc2626">0 panne tolérée</text>
+  <rect x="508" y="16" width="476" height="252" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="528" y="48" text-anchor="start" font-size="17" font-weight="800" fill="#16a34a">RAID 1</text>
+  <text x="618" y="48" text-anchor="start" font-size="13" font-weight="600" fill="#475569">— miroir</text>
+  <path d="M648.0,93.0 L648.0,189.0 A39.0,27.0 0 0 0 726.0,189.0 L726.0,93.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <ellipse cx="687.0" cy="93.0" rx="39.0" ry="27.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <rect x="658.0" y="100" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="687.0" y="118" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A1</text>
+  <rect x="658.0" y="134" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="687.0" y="152" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A2</text>
+  <rect x="658.0" y="168" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="687.0" y="186" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A3</text>
+  <text x="687.0" y="238" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Disque 1</text>
+  <path d="M766.0,93.0 L766.0,189.0 A39.0,27.0 0 0 0 844.0,189.0 L844.0,93.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <ellipse cx="805.0" cy="93.0" rx="39.0" ry="27.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <rect x="776.0" y="100" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="805.0" y="118" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A1</text>
+  <rect x="776.0" y="134" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="805.0" y="152" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A2</text>
+  <rect x="776.0" y="168" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="805.0" y="186" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A3</text>
+  <text x="805.0" y="238" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Disque 2</text>
+  <text x="528" y="258" text-anchor="start" font-size="12" font-weight="700" fill="#0f172a">Capacité : 50 % (2 disques)</text>
+  <text x="964" y="258" text-anchor="end" font-size="12" font-weight="700" fill="#16a34a">1 panne tolérée</text>
+  <rect x="16" y="284" width="476" height="252" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="36" y="316" text-anchor="start" font-size="17" font-weight="800" fill="#d97706">RAID 5</text>
+  <text x="126" y="316" text-anchor="start" font-size="13" font-weight="600" fill="#475569">— bandes + parité répartie</text>
+  <path d="M97.0,361.0 L97.0,457.0 A39.0,27.0 0 0 0 175.0,457.0 L175.0,361.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <ellipse cx="136.0" cy="361.0" rx="39.0" ry="27.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <rect x="107.0" y="368" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="136.0" y="386" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A1</text>
+  <rect x="107.0" y="402" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="136.0" y="420" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">B1</text>
+  <rect x="107.0" y="436" width="58" height="26" rx="4" fill="#fde68a" stroke="#64748b" stroke-width="1"/>
+  <text x="136.0" y="454" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">P3</text>
+  <text x="136.0" y="506" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Disque 1</text>
+  <path d="M215.0,361.0 L215.0,457.0 A39.0,27.0 0 0 0 293.0,457.0 L293.0,361.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <ellipse cx="254.0" cy="361.0" rx="39.0" ry="27.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <rect x="225.0" y="368" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="254.0" y="386" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A2</text>
+  <rect x="225.0" y="402" width="58" height="26" rx="4" fill="#fde68a" stroke="#64748b" stroke-width="1"/>
+  <text x="254.0" y="420" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">P2</text>
+  <rect x="225.0" y="436" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="254.0" y="454" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">C1</text>
+  <text x="254.0" y="506" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Disque 2</text>
+  <path d="M333.0,361.0 L333.0,457.0 A39.0,27.0 0 0 0 411.0,457.0 L411.0,361.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <ellipse cx="372.0" cy="361.0" rx="39.0" ry="27.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <rect x="343.0" y="368" width="58" height="26" rx="4" fill="#fde68a" stroke="#64748b" stroke-width="1"/>
+  <text x="372.0" y="386" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">P1</text>
+  <rect x="343.0" y="402" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="372.0" y="420" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">B2</text>
+  <rect x="343.0" y="436" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="372.0" y="454" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">C2</text>
+  <text x="372.0" y="506" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Disque 3</text>
+  <text x="36" y="526" text-anchor="start" font-size="12" font-weight="700" fill="#0f172a">Capacité : n – 1 disques</text>
+  <text x="472" y="526" text-anchor="end" font-size="12" font-weight="700" fill="#d97706">1 panne tolérée</text>
+  <rect x="508" y="284" width="476" height="252" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="528" y="316" text-anchor="start" font-size="17" font-weight="800" fill="#2563eb">RAID 6</text>
+  <text x="618" y="316" text-anchor="start" font-size="13" font-weight="600" fill="#475569">— bandes + double parité</text>
+  <path d="M530.0,361.0 L530.0,457.0 A39.0,27.0 0 0 0 608.0,457.0 L608.0,361.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <ellipse cx="569.0" cy="361.0" rx="39.0" ry="27.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <rect x="540.0" y="368" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="569.0" y="386" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A1</text>
+  <rect x="540.0" y="402" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="569.0" y="420" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">B1</text>
+  <rect x="540.0" y="436" width="58" height="26" rx="4" fill="#fde68a" stroke="#64748b" stroke-width="1"/>
+  <text x="569.0" y="454" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">P3</text>
+  <text x="569.0" y="506" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Disque 1</text>
+  <path d="M648.0,361.0 L648.0,457.0 A39.0,27.0 0 0 0 726.0,457.0 L726.0,361.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <ellipse cx="687.0" cy="361.0" rx="39.0" ry="27.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <rect x="658.0" y="368" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="687.0" y="386" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A2</text>
+  <rect x="658.0" y="402" width="58" height="26" rx="4" fill="#fde68a" stroke="#64748b" stroke-width="1"/>
+  <text x="687.0" y="420" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">P2</text>
+  <rect x="658.0" y="436" width="58" height="26" rx="4" fill="#bfdbfe" stroke="#64748b" stroke-width="1"/>
+  <text x="687.0" y="454" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">Q3</text>
+  <text x="687.0" y="506" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Disque 2</text>
+  <path d="M766.0,361.0 L766.0,457.0 A39.0,27.0 0 0 0 844.0,457.0 L844.0,361.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <ellipse cx="805.0" cy="361.0" rx="39.0" ry="27.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <rect x="776.0" y="368" width="58" height="26" rx="4" fill="#fde68a" stroke="#64748b" stroke-width="1"/>
+  <text x="805.0" y="386" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">P1</text>
+  <rect x="776.0" y="402" width="58" height="26" rx="4" fill="#bfdbfe" stroke="#64748b" stroke-width="1"/>
+  <text x="805.0" y="420" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">Q2</text>
+  <rect x="776.0" y="436" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="805.0" y="454" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">C1</text>
+  <text x="805.0" y="506" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Disque 3</text>
+  <path d="M884.0,361.0 L884.0,457.0 A39.0,27.0 0 0 0 962.0,457.0 L962.0,361.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <ellipse cx="923.0" cy="361.0" rx="39.0" ry="27.0" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <rect x="894.0" y="368" width="58" height="26" rx="4" fill="#bfdbfe" stroke="#64748b" stroke-width="1"/>
+  <text x="923.0" y="386" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">Q1</text>
+  <rect x="894.0" y="402" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="923.0" y="420" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">B2</text>
+  <rect x="894.0" y="436" width="58" height="26" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="923.0" y="454" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">C2</text>
+  <text x="923.0" y="506" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Disque 4</text>
+  <text x="528" y="526" text-anchor="start" font-size="12" font-weight="700" fill="#0f172a">Capacité : n – 2 disques</text>
+  <text x="964" y="526" text-anchor="end" font-size="12" font-weight="700" fill="#2563eb">2 pannes tolérées</text>
+  <rect x="16" y="552" width="968" height="256" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="36" y="584" text-anchor="start" font-size="17" font-weight="800" fill="#7c3aed">RAID 10</text>
+  <text x="126" y="584" text-anchor="start" font-size="13" font-weight="600" fill="#475569">— miroirs (RAID 1) agrégés par bandes (RAID 0)</text>
+  <path d="M230,627.2 L230,716.8 A39.0,25.2 0 0 0 308,716.8 L308,627.2" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <ellipse cx="269.0" cy="627.2" rx="39.0" ry="25.2" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <rect x="240" y="634" width="58" height="24" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="269" y="651" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A1</text>
+  <rect x="240" y="666" width="58" height="24" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="269" y="683" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A3</text>
+  <rect x="240" y="698" width="58" height="24" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="269" y="715" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A5</text>
+  <text x="269" y="760" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Disque 1</text>
+  <path d="M340,627.2 L340,716.8 A39.0,25.2 0 0 0 418,716.8 L418,627.2" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <ellipse cx="379.0" cy="627.2" rx="39.0" ry="25.2" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <rect x="350" y="634" width="58" height="24" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="379" y="651" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A1</text>
+  <rect x="350" y="666" width="58" height="24" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="379" y="683" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A3</text>
+  <rect x="350" y="698" width="58" height="24" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="379" y="715" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A5</text>
+  <text x="379" y="760" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Disque 2</text>
+  <path d="M510,627.2 L510,716.8 A39.0,25.2 0 0 0 588,716.8 L588,627.2" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <ellipse cx="549.0" cy="627.2" rx="39.0" ry="25.2" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <rect x="520" y="634" width="58" height="24" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="549" y="651" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A2</text>
+  <rect x="520" y="666" width="58" height="24" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="549" y="683" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A4</text>
+  <rect x="520" y="698" width="58" height="24" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="549" y="715" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A6</text>
+  <text x="549" y="760" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Disque 3</text>
+  <path d="M620,627.2 L620,716.8 A39.0,25.2 0 0 0 698,716.8 L698,627.2" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <ellipse cx="659.0" cy="627.2" rx="39.0" ry="25.2" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <rect x="630" y="634" width="58" height="24" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="659" y="651" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A2</text>
+  <rect x="630" y="666" width="58" height="24" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="659" y="683" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A4</text>
+  <rect x="630" y="698" width="58" height="24" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <text x="659" y="715" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">A6</text>
+  <text x="659" y="760" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Disque 4</text>
+  <rect x="220" y="596" width="208" height="172" rx="10" fill="none" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="324" y="786" text-anchor="middle" font-size="11.5" font-weight="700" fill="#7c3aed">miroir 1</text>
+  <rect x="500" y="596" width="208" height="172" rx="10" fill="none" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="604" y="786" text-anchor="middle" font-size="11.5" font-weight="700" fill="#7c3aed">miroir 2</text>
+  <text x="964" y="652" text-anchor="end" font-size="12" font-weight="700" fill="#0f172a">Capacité : 50 %</text>
+  <text x="964" y="674" text-anchor="end" font-size="12" font-weight="400" fill="#475569">4 disques minimum</text>
+  <text x="964" y="702" text-anchor="end" font-size="12" font-weight="700" fill="#7c3aed">1 panne tolérée par miroir</text>
+</svg>

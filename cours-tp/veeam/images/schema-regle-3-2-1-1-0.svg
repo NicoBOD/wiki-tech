@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="330" viewBox="0 0 1000 330" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">La règle de sauvegarde 3-2-1-1-0</title>
+  <desc id="d">Cinq cases : 3 copies (la production et deux sauvegardes), 2 supports différents, 1 copie hors site, 1 copie hors ligne ou immuable, 0 erreur à la restauration. Les trois premières forment la règle 3-2-1 classique ; les deux dernières sont les ajouts de la règle 3-2-1-1-0 contre les rançongiciels.</desc>
+  <defs>
+    <marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+    <marker id="flb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+    <marker id="flr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+    <marker id="flg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+  </defs>
+  <rect x="0" y="0" width="1000" height="330" rx="16" fill="#ffffff"/>
+  <rect x="16" y="16" width="184" height="210" rx="12" fill="#f8fafc" stroke="#11948e" stroke-width="2"/>
+  <text x="108.0" y="96" text-anchor="middle" font-size="64" font-weight="800" fill="#11948e">3</text>
+  <text x="108.0" y="130" text-anchor="middle" font-size="14" font-weight="800" fill="#0f172a">copies</text>
+  <text x="108.0" y="166" text-anchor="middle" font-size="12" font-weight="400" fill="#475569">la production + 2</text>
+  <text x="108.0" y="184" text-anchor="middle" font-size="12" font-weight="400" fill="#475569">sauvegardes</text>
+  <rect x="210" y="16" width="184" height="210" rx="12" fill="#f8fafc" stroke="#2563eb" stroke-width="2"/>
+  <text x="302.0" y="96" text-anchor="middle" font-size="64" font-weight="800" fill="#2563eb">2</text>
+  <text x="302.0" y="130" text-anchor="middle" font-size="14" font-weight="800" fill="#0f172a">supports différents</text>
+  <text x="302.0" y="166" text-anchor="middle" font-size="12" font-weight="400" fill="#475569">ex. : disque du serveur</text>
+  <text x="302.0" y="184" text-anchor="middle" font-size="12" font-weight="400" fill="#475569">+ bande ou cloud</text>
+  <rect x="404" y="16" width="184" height="210" rx="12" fill="#f8fafc" stroke="#7c3aed" stroke-width="2"/>
+  <text x="496.0" y="96" text-anchor="middle" font-size="64" font-weight="800" fill="#7c3aed">1</text>
+  <text x="496.0" y="130" text-anchor="middle" font-size="14" font-weight="800" fill="#0f172a">copie hors site</text>
+  <text x="496.0" y="166" text-anchor="middle" font-size="12" font-weight="400" fill="#475569">autre bâtiment ou cloud</text>
+  <text x="496.0" y="184" text-anchor="middle" font-size="12" font-weight="400" fill="#475569"></text>
+  <rect x="598" y="16" width="184" height="210" rx="12" fill="#f8fafc" stroke="#d97706" stroke-width="2"/>
+  <text x="690.0" y="96" text-anchor="middle" font-size="64" font-weight="800" fill="#d97706">1</text>
+  <text x="690.0" y="122" text-anchor="middle" font-size="14" font-weight="800" fill="#0f172a">copie hors ligne</text>
+  <text x="690.0" y="139" text-anchor="middle" font-size="14" font-weight="800" fill="#0f172a">ou immuable</text>
+  <text x="690.0" y="166" text-anchor="middle" font-size="12" font-weight="400" fill="#475569">bande retirée, dépôt</text>
+  <text x="690.0" y="184" text-anchor="middle" font-size="12" font-weight="400" fill="#475569">durci, Object Lock</text>
+  <rect x="792" y="16" width="184" height="210" rx="12" fill="#f8fafc" stroke="#16a34a" stroke-width="2"/>
+  <text x="884.0" y="96" text-anchor="middle" font-size="64" font-weight="800" fill="#16a34a">0</text>
+  <text x="884.0" y="122" text-anchor="middle" font-size="14" font-weight="800" fill="#0f172a">erreur à la</text>
+  <text x="884.0" y="139" text-anchor="middle" font-size="14" font-weight="800" fill="#0f172a">restauration</text>
+  <text x="884.0" y="166" text-anchor="middle" font-size="12" font-weight="400" fill="#475569">sauvegardes vérifiées,</text>
+  <text x="884.0" y="184" text-anchor="middle" font-size="12" font-weight="400" fill="#475569">restaurations testées</text>
+  <rect x="16" y="240" width="572" height="74" rx="10" fill="#ecfeff" stroke="#11948e" stroke-width="1.5"/>
+  <text x="302.0" y="270" text-anchor="middle" font-size="15" font-weight="800" fill="#134e4a">Règle 3-2-1 (classique)</text>
+  <text x="302.0" y="292" text-anchor="middle" font-size="12" font-weight="400" fill="#134e4a">survivre à une panne de support et à un sinistre sur le site</text>
+  <rect x="598" y="240" width="378" height="74" rx="10" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+  <text x="787.0" y="270" text-anchor="middle" font-size="15" font-weight="800" fill="#78350f">Ajouts de la règle 3-2-1-1-0</text>
+  <text x="787.0" y="292" text-anchor="middle" font-size="12" font-weight="400" fill="#78350f">résister aux rançongiciels, prouver la restauration</text>
+</svg>

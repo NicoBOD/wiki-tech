@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="420" viewBox="0 0 1000 420" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Volumes copiés selon le type de sauvegarde</title>
+  <desc id="d">Trois graphiques sur une semaine (valeurs en Go), pour un serveur de 900 Go qui change de 100, 200, 100, 300 puis 100 Go du mardi au samedi. Complète chaque jour : chaque sauvegarde copie les 900 Go, soit 5 400 Go au total, restauration en un jeu. Incrémentielle : chaque jour ne copie que ses propres changements, 1 700 Go au total, restauration en six jeux. Différentielle : chaque jour copie tous les changements depuis lundi, 3 200 Go au total, restauration en deux jeux.</desc>
+  <defs>
+    <marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+    <marker id="flb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+    <marker id="flr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+    <marker id="flg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+  </defs>
+  <rect x="0" y="0" width="1000" height="420" rx="16" fill="#ffffff"/>
+  <rect x="16" y="16" width="310" height="388" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="171.0" y="58" text-anchor="middle" font-size="15" font-weight="800" fill="#1e3a8a">Complète chaque jour</text>
+  <rect x="32.0" y="70" width="38.0" height="270" rx="2" fill="#e5e7eb"/>
+  <rect x="32.0" y="96.99999999999997" width="38.0" height="243.00000000000003" fill="#1d4ed8" stroke="#ffffff" stroke-width="1"/>
+  <text x="51.0" y="223.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">900</text>
+  <text x="51.0" y="358" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Lun.</text>
+  <rect x="80.0" y="70" width="38.0" height="270" rx="2" fill="#e5e7eb"/>
+  <rect x="80.0" y="96.99999999999997" width="38.0" height="243.00000000000003" fill="#1d4ed8" stroke="#ffffff" stroke-width="1"/>
+  <text x="99.0" y="223.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">900</text>
+  <text x="99.0" y="358" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Mar.</text>
+  <rect x="128.0" y="70" width="38.0" height="270" rx="2" fill="#e5e7eb"/>
+  <rect x="128.0" y="96.99999999999997" width="38.0" height="243.00000000000003" fill="#1d4ed8" stroke="#ffffff" stroke-width="1"/>
+  <text x="147.0" y="223.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">900</text>
+  <text x="147.0" y="358" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Mer.</text>
+  <rect x="176.0" y="70" width="38.0" height="270" rx="2" fill="#e5e7eb"/>
+  <rect x="176.0" y="96.99999999999997" width="38.0" height="243.00000000000003" fill="#1d4ed8" stroke="#ffffff" stroke-width="1"/>
+  <text x="195.0" y="223.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">900</text>
+  <text x="195.0" y="358" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Jeu.</text>
+  <rect x="224.0" y="70" width="38.0" height="270" rx="2" fill="#e5e7eb"/>
+  <rect x="224.0" y="96.99999999999997" width="38.0" height="243.00000000000003" fill="#1d4ed8" stroke="#ffffff" stroke-width="1"/>
+  <text x="243.0" y="223.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">900</text>
+  <text x="243.0" y="358" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Ven.</text>
+  <rect x="272.0" y="70" width="38.0" height="270" rx="2" fill="#e5e7eb"/>
+  <rect x="272.0" y="96.99999999999997" width="38.0" height="243.00000000000003" fill="#1d4ed8" stroke="#ffffff" stroke-width="1"/>
+  <text x="291.0" y="223.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">900</text>
+  <text x="291.0" y="358" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Sam.</text>
+  <text x="171.0" y="386" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">Total : 5 400 Go — restauration : 1 jeu</text>
+  <rect x="343" y="16" width="310" height="388" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="498.0" y="58" text-anchor="middle" font-size="15" font-weight="800" fill="#dc2626">Incrémentielle</text>
+  <rect x="359.0" y="70" width="38.0" height="270" rx="2" fill="#e5e7eb"/>
+  <rect x="359.0" y="96.99999999999997" width="38.0" height="243.00000000000003" fill="#1d4ed8" stroke="#ffffff" stroke-width="1"/>
+  <text x="378.0" y="223.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">900</text>
+  <text x="378.0" y="358" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Lun.</text>
+  <rect x="407.0" y="70" width="38.0" height="270" rx="2" fill="#e5e7eb"/>
+  <rect x="407.0" y="313.0" width="38.0" height="27.0" fill="#b91c1c" stroke="#ffffff" stroke-width="1"/>
+  <text x="426.0" y="331.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">100</text>
+  <text x="426.0" y="358" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Mar.</text>
+  <rect x="455.0" y="70" width="38.0" height="270" rx="2" fill="#e5e7eb"/>
+  <rect x="455.0" y="286.0" width="38.0" height="54.0" fill="#16a34a" stroke="#ffffff" stroke-width="1"/>
+  <text x="474.0" y="318.0" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">200</text>
+  <text x="474.0" y="358" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Mer.</text>
+  <rect x="503.0" y="70" width="38.0" height="270" rx="2" fill="#e5e7eb"/>
+  <rect x="503.0" y="313.0" width="38.0" height="27.0" fill="#eab308" stroke="#ffffff" stroke-width="1"/>
+  <text x="522.0" y="331.5" text-anchor="middle" font-size="12" font-weight="700" fill="#422006">100</text>
+  <text x="522.0" y="358" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Jeu.</text>
+  <rect x="551.0" y="70" width="38.0" height="270" rx="2" fill="#e5e7eb"/>
+  <rect x="551.0" y="259.0" width="38.0" height="81.0" fill="#93c5fd" stroke="#ffffff" stroke-width="1"/>
+  <text x="570.0" y="304.5" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a8a">300</text>
+  <text x="570.0" y="358" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Ven.</text>
+  <rect x="599.0" y="70" width="38.0" height="270" rx="2" fill="#e5e7eb"/>
+  <rect x="599.0" y="313.0" width="38.0" height="27.0" fill="#7c3aed" stroke="#ffffff" stroke-width="1"/>
+  <text x="618.0" y="331.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">100</text>
+  <text x="618.0" y="358" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Sam.</text>
+  <text x="498.0" y="386" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">Total : 1 700 Go — restauration : 6 jeux</text>
+  <rect x="670" y="16" width="310" height="388" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="825.0" y="58" text-anchor="middle" font-size="15" font-weight="800" fill="#16a34a">Différentielle</text>
+  <rect x="686.0" y="70" width="38.0" height="270" rx="2" fill="#e5e7eb"/>
+  <rect x="686.0" y="96.99999999999997" width="38.0" height="243.00000000000003" fill="#1d4ed8" stroke="#ffffff" stroke-width="1"/>
+  <text x="705.0" y="223.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">900</text>
+  <text x="705.0" y="358" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Lun.</text>
+  <rect x="734.0" y="70" width="38.0" height="270" rx="2" fill="#e5e7eb"/>
+  <rect x="734.0" y="313.0" width="38.0" height="27.0" fill="#b91c1c" stroke="#ffffff" stroke-width="1"/>
+  <text x="753.0" y="331.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">100</text>
+  <text x="753.0" y="358" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Mar.</text>
+  <rect x="782.0" y="70" width="38.0" height="270" rx="2" fill="#e5e7eb"/>
+  <rect x="782.0" y="313.0" width="38.0" height="27.0" fill="#b91c1c" stroke="#ffffff" stroke-width="1"/>
+  <text x="801.0" y="331.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">100</text>
+  <rect x="782.0" y="259.0" width="38.0" height="54.0" fill="#16a34a" stroke="#ffffff" stroke-width="1"/>
+  <text x="801.0" y="291.0" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">200</text>
+  <text x="801.0" y="358" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Mer.</text>
+  <rect x="830.0" y="70" width="38.0" height="270" rx="2" fill="#e5e7eb"/>
+  <rect x="830.0" y="313.0" width="38.0" height="27.0" fill="#b91c1c" stroke="#ffffff" stroke-width="1"/>
+  <text x="849.0" y="331.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">100</text>
+  <rect x="830.0" y="259.0" width="38.0" height="54.0" fill="#16a34a" stroke="#ffffff" stroke-width="1"/>
+  <text x="849.0" y="291.0" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">200</text>
+  <rect x="830.0" y="232.0" width="38.0" height="27.0" fill="#eab308" stroke="#ffffff" stroke-width="1"/>
+  <text x="849.0" y="250.5" text-anchor="middle" font-size="12" font-weight="700" fill="#422006">100</text>
+  <text x="849.0" y="358" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Jeu.</text>
+  <rect x="878.0" y="70" width="38.0" height="270" rx="2" fill="#e5e7eb"/>
+  <rect x="878.0" y="313.0" width="38.0" height="27.0" fill="#b91c1c" stroke="#ffffff" stroke-width="1"/>
+  <text x="897.0" y="331.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">100</text>
+  <rect x="878.0" y="259.0" width="38.0" height="54.0" fill="#16a34a" stroke="#ffffff" stroke-width="1"/>
+  <text x="897.0" y="291.0" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">200</text>
+  <rect x="878.0" y="232.0" width="38.0" height="27.0" fill="#eab308" stroke="#ffffff" stroke-width="1"/>
+  <text x="897.0" y="250.5" text-anchor="middle" font-size="12" font-weight="700" fill="#422006">100</text>
+  <rect x="878.0" y="151.0" width="38.0" height="81.0" fill="#93c5fd" stroke="#ffffff" stroke-width="1"/>
+  <text x="897.0" y="196.5" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a8a">300</text>
+  <text x="897.0" y="358" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Ven.</text>
+  <rect x="926.0" y="70" width="38.0" height="270" rx="2" fill="#e5e7eb"/>
+  <rect x="926.0" y="313.0" width="38.0" height="27.0" fill="#b91c1c" stroke="#ffffff" stroke-width="1"/>
+  <text x="945.0" y="331.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">100</text>
+  <rect x="926.0" y="259.0" width="38.0" height="54.0" fill="#16a34a" stroke="#ffffff" stroke-width="1"/>
+  <text x="945.0" y="291.0" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">200</text>
+  <rect x="926.0" y="232.0" width="38.0" height="27.0" fill="#eab308" stroke="#ffffff" stroke-width="1"/>
+  <text x="945.0" y="250.5" text-anchor="middle" font-size="12" font-weight="700" fill="#422006">100</text>
+  <rect x="926.0" y="151.0" width="38.0" height="81.0" fill="#93c5fd" stroke="#ffffff" stroke-width="1"/>
+  <text x="945.0" y="196.5" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a8a">300</text>
+  <rect x="926.0" y="124.0" width="38.0" height="27.0" fill="#7c3aed" stroke="#ffffff" stroke-width="1"/>
+  <text x="945.0" y="142.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">100</text>
+  <text x="945.0" y="358" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Sam.</text>
+  <text x="825.0" y="386" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">Total : 3 200 Go — restauration : 2 jeux</text>
+</svg>

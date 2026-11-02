@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" viewBox="0 0 1000 600" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Topologie du lab Veeam</title>
+  <desc id="d">Le cluster pfSense du TP de haute disponibilité relie le WAN 192.168.8.0/24, ouvert sur Internet, au LAN 192.168.19.0/24. Sur le LAN, la VIP 192.168.19.21 sert de passerelle et de DNS. Trois VM y sont branchées : l'appliance Veeam vbr en 192.168.19.55, le serveur de fichiers Windows Server 2025 srv-fichiers en 192.168.19.22 et le serveur Debian 13 srv-debian en 192.168.19.170. Le PC hôte peut aussi joindre le LAN en 192.168.19.1 par la carte host-only.</desc>
+  <defs>
+    <marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+    <marker id="flb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+    <marker id="flr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+    <marker id="flg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+  </defs>
+  <rect x="0" y="0" width="1000" height="600" rx="16" fill="#ffffff"/>
+  <rect x="400" y="16" width="200" height="44" rx="22" fill="#f1f5f9" stroke="#475569" stroke-width="1.5"/>
+  <text x="500" y="44" text-anchor="middle" font-size="15" font-weight="800" fill="#0f172a">Internet</text>
+  <line x1="500" y1="62" x2="500" y2="92" stroke="#475569" stroke-width="2"/>
+  <rect x="40" y="92" width="920" height="44" rx="10" fill="#fff7ed" stroke="#d97706" stroke-width="2"/>
+  <text x="60" y="112" text-anchor="start" font-size="14" font-weight="800" fill="#7c2d12">WAN — 192.168.8.0/24</text>
+  <text x="60" y="128" text-anchor="start" font-size="11.5" font-weight="400" fill="#7c2d12">VMnet8 (NAT) — passerelle 192.168.8.2 (VMware) ou 192.168.8.1 (VirtualBox, KVM)</text>
+  <line x1="380" y1="136" x2="380" y2="168" stroke="#d97706" stroke-width="2"/>
+  <rect x="300" y="168" width="160" height="84" rx="10" fill="#ecfeff" stroke="#11948e" stroke-width="2"/>
+  <text x="380" y="192" text-anchor="middle" font-size="14" font-weight="800" fill="#134e4a">pfsense-19</text>
+  <text x="380" y="210" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">primaire</text>
+  <text x="380" y="228" text-anchor="middle" font-size="11.5" font-weight="400" fill="#0f172a">WAN .19 · LAN .19</text>
+  <line x1="380" y1="252" x2="380" y2="300" stroke="#11948e" stroke-width="2"/>
+  <line x1="600" y1="136" x2="600" y2="168" stroke="#d97706" stroke-width="2"/>
+  <rect x="520" y="168" width="160" height="84" rx="10" fill="#ecfeff" stroke="#11948e" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="600" y="192" text-anchor="middle" font-size="14" font-weight="800" fill="#134e4a">pfsense-20</text>
+  <text x="600" y="210" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">secondaire (facultatif)</text>
+  <text x="600" y="228" text-anchor="middle" font-size="11.5" font-weight="400" fill="#0f172a">WAN .20 · LAN .20</text>
+  <line x1="600" y1="252" x2="600" y2="300" stroke="#11948e" stroke-width="2"/>
+  <rect x="330" y="262" width="340" height="26" rx="13" fill="#ccfbf1" stroke="#11948e" stroke-width="1.5"/>
+  <text x="500" y="280" text-anchor="middle" font-size="12" font-weight="800" fill="#134e4a">VIP LAN 192.168.19.21 = passerelle et DNS des VM</text>
+  <rect x="40" y="300" width="920" height="44" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="60" y="320" text-anchor="start" font-size="14" font-weight="800" fill="#1e3a8a">LAN — 192.168.19.0/24</text>
+  <text x="60" y="336" text-anchor="start" font-size="11.5" font-weight="400" fill="#1e3a8a">VMnet19 (host-only) · réseau host-only VirtualBox · pont vmbr19 Proxmox · PFSENSE-LAN-19 (KVM)</text>
+  <line x1="155" y1="344" x2="155" y2="380" stroke="#2563eb" stroke-width="2"/>
+  <rect x="60" y="380" width="190" height="120" rx="12" fill="#f8fafc" stroke="#475569" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="155" y="408" text-anchor="middle" font-size="16" font-weight="800" fill="#475569">PC hôte</text>
+  <text x="155" y="430" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">192.168.19.1</text>
+  <text x="155" y="452" text-anchor="middle" font-size="11.5" font-weight="400" fill="#475569">navigateur (variante)</text>
+  <line x1="385" y1="344" x2="385" y2="380" stroke="#2563eb" stroke-width="2"/>
+  <rect x="290" y="380" width="190" height="120" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="385" y="408" text-anchor="middle" font-size="16" font-weight="800" fill="#16a34a">vbr</text>
+  <text x="385" y="430" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">192.168.19.55</text>
+  <text x="385" y="452" text-anchor="middle" font-size="11.5" font-weight="400" fill="#475569">Veeam Software Appliance 13.1</text>
+  <line x1="615" y1="344" x2="615" y2="380" stroke="#2563eb" stroke-width="2"/>
+  <rect x="520" y="380" width="190" height="120" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="615" y="408" text-anchor="middle" font-size="16" font-weight="800" fill="#2563eb">srv-fichiers</text>
+  <text x="615" y="430" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">192.168.19.22</text>
+  <text x="615" y="452" text-anchor="middle" font-size="11.5" font-weight="400" fill="#475569">Windows Server 2025</text>
+  <line x1="845" y1="344" x2="845" y2="380" stroke="#2563eb" stroke-width="2"/>
+  <rect x="750" y="380" width="190" height="120" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+  <text x="845" y="408" text-anchor="middle" font-size="16" font-weight="800" fill="#7c3aed">srv-debian</text>
+  <text x="845" y="430" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">192.168.19.170</text>
+  <text x="845" y="452" text-anchor="middle" font-size="11.5" font-weight="400" fill="#475569">Debian 13</text>
+  <text x="385" y="474" text-anchor="middle" font-size="11" font-weight="600" fill="#475569">6 vCPU · 16 Go · 2 × 240 Go</text>
+  <text x="385" y="490" text-anchor="middle" font-size="11" font-weight="400" fill="#475569">UEFI</text>
+  <text x="615" y="474" text-anchor="middle" font-size="11" font-weight="600" fill="#475569">2 vCPU · 4 Go</text>
+  <text x="615" y="490" text-anchor="middle" font-size="11" font-weight="400" fill="#475569">60 Go + E: 40 Go + F: 40 Go</text>
+  <text x="845" y="474" text-anchor="middle" font-size="11" font-weight="600" fill="#475569">2 vCPU · 2 Go · 20 Go</text>
+  <text x="845" y="490" text-anchor="middle" font-size="11" font-weight="400" fill="#475569">sans Secure Boot</text>
+  <text x="155" y="474" text-anchor="middle" font-size="11" font-weight="600" fill="#475569">carte host-only</text>
+  <text x="155" y="490" text-anchor="middle" font-size="11" font-weight="400" fill="#475569">de l'hyperviseur</text>
+  <text x="500" y="540" text-anchor="middle" font-size="12" font-weight="400" fill="#475569">Le dernier octet reprend celui du lab d'origine du support : Veeam en .55, serveur de fichiers en .22, Debian en .170.</text>
+  <text x="500" y="562" text-anchor="middle" font-size="12" font-weight="400" fill="#475569">Les VM du lab Veeam ne sont branchées que sur le LAN ; elles sortent sur Internet par le cluster pfSense.</text>
+</svg>
