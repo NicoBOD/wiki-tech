@@ -124,14 +124,14 @@ Les **codes MFA** sont générés par une application d'authentification install
 
 ## Dimensionnement des machines virtuelles
 
-| Machine | Confortable (utilisé dans le lab) | Minimal | Disques |
+| Machine | Confortable (utilisé dans le lab) | Minimal (testé) | Disques |
 |---|---|---|---|
 | `vbr` | 6 vCPU, 16 Go | 4 vCPU, 8 Go | 2 disques de 240 Go, dynamiques, UEFI |
 | `srv-fichiers` | 2 vCPU, 4 Go | 2 vCPU, 4 Go | 60 Go (C:) + 40 Go (E:) + 40 Go (F:, partie 4) |
 | `srv-debian` | 2 vCPU, 2 Go | 2 vCPU, 2 Go | 20 Go (+ un disque vierge de 20 Go en partie 6) |
 | `pfsense-19` | 1 vCPU, 2 Go | 1 vCPU, 1 Go | 20 Go |
 
-- Pour l'appliance, Veeam demande au minimum **8 cœurs et 16 Go de RAM** (plus 500 Mo par job simultané), et accepte **6 vCPU et 16 Go** pour une petite infrastructure de 5 machines protégées au plus : c'est le profil **confortable**, celui avec lequel le lab a été rejoué. Le profil **minimal** (8 Go, 4 vCPU) est **en dessous du minimum pris en charge par Veeam** : il ne convient pas à la production et n'a pas été validé de bout en bout dans ce lab ; il dépanne un PC à la mémoire comptée, au prix de lenteurs et sans garantie.
+- Pour l'appliance, Veeam demande au minimum **8 cœurs et 16 Go de RAM** (plus 500 Mo par job simultané), et accepte **6 vCPU et 16 Go** pour une petite infrastructure de 5 machines protégées au plus : c'est le profil **confortable**, celui avec lequel le lab a été rejoué. Le profil **minimal** (8 Go, 4 vCPU) est **en dessous du minimum pris en charge par Veeam** : il ne convient pas à la production, mais il a été testé dans le lab : l'appliance démarre, l'interface web reste utilisable et les deux jobs du parcours réussissent (environ 3 minutes chacun).
 - **Mémoire du PC hôte** : 32 Go permettent de tout allumer en profil confortable. Avec **16 à 24 Go**, prendre le profil minimal et n'allumer que les machines de la partie en cours (colonne « Machines allumées » du [plan](#plan-du-parcours)), en fermant les applications inutiles du PC.
 - **Disque du PC hôte** : prévoir environ **150 Go libres**, de préférence sur un **SSD**. Les disques sont dynamiques : les 2 × 240 Go de l'appliance n'occupent au départ qu'une trentaine de gigaoctets ; l'espace occupé grandit ensuite avec les sauvegardes.
 - La **virtualisation matérielle** (Intel VT-x ou AMD-V) doit être activée dans le BIOS/UEFI du PC.
