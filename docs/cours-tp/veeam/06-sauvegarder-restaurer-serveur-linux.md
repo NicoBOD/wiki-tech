@@ -39,14 +39,15 @@ status: publié
 | Rejoué dans le lab | 2 novembre 2026 (KVM/libvirt) |
 | Dernière mise à jour | 2026-11-02 |
 
-??? info "Ce qui a changé par rapport à la version 1.5 du support (juin 2024)"
-    - Le support utilisait un serveur Veeam 12 sous **Windows** et un dépôt en **RAID 1** créé sur ce serveur. Ici, c'est l'**appliance Linux 13.1** et son **dépôt par défaut** (`Default Backup Repository`, immuable 7 jours) qui jouent ce rôle : aucune création de RAID ni de dépôt n'est nécessaire.
-    - Le groupe de protection, le job et les restaurations se font dans l'**interface web** (`https://192.168.19.55`) et non plus dans la console Windows.
-    - Le support affirmait qu'un **compte Veeam est indispensable** pour télécharger l'ISO de récupération : c'est **faux**. L'ISO est téléchargeable **sans compte** depuis le dépôt public de Veeam (lien et vérification en [section 7](#7-telecharger-et-attacher-liso-de-recuperation) de ce TP).
-    - Le support demandait de taper **`sudo veeam`** au démarrage du support de récupération : c'est **dépassé**. Avec la version 13, l'écran de licence s'affiche directement, puis le menu principal.
-    - Pour se connecter au serveur Veeam depuis le support de récupération, le support utilisait le compte Windows du serveur (champ *Domain* `WORKGROUP`). La version 13 propose un **jeton de récupération** (*recovery token*) créé dans l'interface web : plus besoin de communiquer le mot de passe administrateur à une machine en panne.
-    - **Nouveau** : le dépannage de **Secure Boot** (module noyau DKMS refusé) et celui de la résolution du nom `vbr`, rencontrés dans le lab.
-    - Le support d'origine avait été rédigé par une autre personne, avec un lab légèrement différent : les valeurs (adresses, tailles de disques) ont été harmonisées avec le reste du parcours.
+<!-- NOTE DE RÉDACTION (non affichée) : Ce qui a changé par rapport à la version 1.5 du support (juin 2024)
+- Le support utilisait un serveur Veeam 12 sous **Windows** et un dépôt en **RAID 1** créé sur ce serveur. Ici, c'est l'**appliance Linux 13.1** et son **dépôt par défaut** (`Default Backup Repository`, immuable 7 jours) qui jouent ce rôle : aucune création de RAID ni de dépôt n'est nécessaire.
+- Le groupe de protection, le job et les restaurations se font dans l'**interface web** (`https://192.168.19.55`) et non plus dans la console Windows.
+- Le support affirmait qu'un **compte Veeam est indispensable** pour télécharger l'ISO de récupération : c'est **faux**. L'ISO est téléchargeable **sans compte** depuis le dépôt public de Veeam (lien et vérification en [section 7](#7-telecharger-et-attacher-liso-de-recuperation) de ce TP).
+- Le support demandait de taper **`sudo veeam`** au démarrage du support de récupération : c'est **dépassé**. Avec la version 13, l'écran de licence s'affiche directement, puis le menu principal.
+- Pour se connecter au serveur Veeam depuis le support de récupération, le support utilisait le compte Windows du serveur (champ *Domain* `WORKGROUP`). La version 13 propose un **jeton de récupération** (*recovery token*) créé dans l'interface web : plus besoin de communiquer le mot de passe administrateur à une machine en panne.
+- **Nouveau** : le dépannage de **Secure Boot** (module noyau DKMS refusé) et celui de la résolution du nom `vbr`, rencontrés dans le lab.
+- Le support d'origine avait été rédigé par une autre personne, avec un lab légèrement différent : les valeurs (adresses, tailles de disques) ont été harmonisées avec le reste du parcours.
+-->
 
 !!! note "Convention de lecture"
     Chaque action est précédée de la machine sur laquelle elle se fait :
@@ -109,7 +110,7 @@ Veeam ne sait pas lire seul l'intérieur d'un serveur Linux : un petit logiciel,
 
 ### 1.3 La destination : le dépôt par défaut de l'appliance
 
-Le job écrit dans `Default Backup Repository` (`/var/lib/veeam/backup`, 206,9 Go, **immuable 7 jours**). Un fichier de sauvegarde ne peut ni être modifié ni être supprimé pendant 7 jours, même par un administrateur : c'est la protection contre un rançongiciel qui chercherait à effacer les sauvegardes. Dans le support d'origine, un RAID 1 sur le serveur Windows jouait ce rôle de dépôt sûr.
+Le job écrit dans `Default Backup Repository` (`/var/lib/veeam/backup`, 206,9 Go, **immuable 7 jours**). Un fichier de sauvegarde ne peut ni être modifié ni être supprimé pendant 7 jours, même par un administrateur : c'est la protection contre un rançongiciel qui chercherait à effacer les sauvegardes. Aucun dépôt supplémentaire n'est à créer pour ce TP.
 
 ---
 
@@ -558,7 +559,7 @@ Démarrer ensuite la VM : **elle ne démarre plus**. Il n'y a plus de système s
 
 ### 7.1 Télécharger l'ISO (sans compte)
 
-Le support de récupération est une **ISO amorçable** : un petit système Debian 13 qui sait parler à Veeam. Le support d'origine affirmait qu'un compte était nécessaire pour la télécharger. **C'est inexact** : Veeam publie ces ISO dans un dépôt **public**.
+Le support de récupération est une **ISO amorçable** : un petit système Debian 13 qui sait parler à Veeam. Elle se télécharge **sans compte Veeam** : Veeam publie ces ISO dans un dépôt **public**.
 
 1. 🖥️ Le dépôt est à l'adresse <https://repository.veeam.com/backup/linux/agent/veeam-recovery-media/x64/>. Vérifier qu'il répond, puis télécharger :
 
@@ -587,7 +588,7 @@ Le support de récupération est une **ISO amorçable** : un petit système Debi
     Ce qui n'est **pas** établi : pourquoi Veeam laisse `13.0.0` dans le nom (probablement le nom de la série, mais ce n'est pas documenté). Ne **pas** vous fier au nom du fichier : renommer la copie en `veeam-recovery-amd64-13.1.2.11.iso` évite toute confusion. Le **SHA-256** ci-dessus est celui de l'ISO du lab ; si Veeam la republie, il changera, et seule la comparaison avec le fichier du dépôt public a un sens.
 
 !!! tip "Veeam documente aussi ces ISO"
-    La page [Veeam Recovery Media](https://helpcenter.veeam.com/docs/agentforlinux/userguide/recovery_media.html) explique le contenu du support et la page [Veeam Recovery Media Versions](https://helpcenter.veeam.com/docs/agentforlinux/userguide/recovery_media_versions.html) liste les versions publiées.
+    La page [Veeam Recovery Media](https://helpcenter.veeam.com/docs/agentforlinux/userguide/recovery_media.html) explique le contenu du support de récupération et la page [Veeam Recovery Media Versions](https://helpcenter.veeam.com/docs/agentforlinux/userguide/recovery_media_versions.html) liste les versions publiées.
 
 ### 7.2 Attacher l'ISO et démarrer dessus
 
@@ -602,7 +603,7 @@ Le support de récupération est une **ISO amorçable** : un petit système Debi
 3. Démarrer la VM. Le menu **GRUB** de l'ISO propose les entrées « Veeam recovery … » : laisser la première, le démarrage se fait seul au bout de quelques secondes.
 
 <figure markdown="span">
-  ![Menu GRUB du support Veeam : deux entrées Veeam recovery 6.12.100+deb13 et 7.1.3+deb13](images/06-linux/rec-01-grub-recuperation.png){ loading=lazy }
+  ![Menu GRUB du support de récupération Veeam : deux entrées Veeam recovery 6.12.100+deb13 et 7.1.3+deb13](images/06-linux/rec-01-grub-recuperation.png){ loading=lazy }
   <figcaption>Le menu GRUB du support de récupération. La première entrée, mise en évidence, démarre seule.</figcaption>
 </figure>
 
@@ -613,7 +614,7 @@ Le support de récupération est une **ISO amorçable** : un petit système Debi
 Le support de récupération est en **mode texte** : on navigue avec le clavier. Les **flèches** déplacent la sélection, **Entrée** valide, **Tab** passe à l'élément suivant, **Échap** revient en arrière.
 
 !!! warning "Clavier : deux pièges possibles"
-    - **Disposition QWERTY probable** : le support d'origine signalait que le clavier du support de récupération était en **QWERTY** (touches de l'anglais américain). Ce point **n'a pas pu être vérifié** dans le lab, où la saisie passait par un clavier virtuel déjà en QWERTY. Avant de taper un mot de passe, une adresse ou un jeton, **lire à l'écran** ce qui s'est écrit, car `:`, `-` ou `@` peuvent être ailleurs sur un clavier AZERTY.
+    - **Disposition QWERTY probable** : le clavier du support de récupération est vraisemblablement en **QWERTY** (touches de l'anglais américain). Ce point **n'a pas pu être vérifié** dans le lab, où la saisie passait par un clavier virtuel déjà en QWERTY. Avant de taper un mot de passe, une adresse ou un jeton, **lire à l'écran** ce qui s'est écrit, car `:`, `-` ou `@` peuvent être ailleurs sur un clavier AZERTY.
     - **Clavier qui ne répond pas** : dans le lab (KVM), le support de récupération **ignorait le clavier virtuel PS/2** de la VM. Ajouter un **clavier USB** à la VM a réglé le problème. Avec VMware, VirtualBox ou Proxmox, ce défaut n'a pas été testé : si les touches sont sans effet, essayer d'ajouter un contrôleur/clavier USB à la VM.
 
 ### 8.1 Identifiants SSH temporaires et licence
@@ -626,7 +627,7 @@ Après quelques dizaines de secondes, une fenêtre **SSH Connection Info** s'aff
 </figure>
 
 1. Valider **[Continue]**.
-2. L'écran **Accept license agreement** s'affiche directement : **plus besoin de taper `sudo veeam`** comme le disait le support d'origine. Il faut cocher les **deux cases** (contrat de licence Veeam et composants tiers) : **Espace** coche la case sélectionnée, **Tab** passe à la case suivante puis aux boutons. Puis **[Continue]**.
+2. L'écran **Accept license agreement** s'affiche directement, sans commande à taper (pas de `sudo veeam` avec la version 13). Il faut cocher les **deux cases** (contrat de licence Veeam et composants tiers) : **Espace** coche la case sélectionnée, **Tab** passe à la case suivante puis aux boutons. Puis **[Continue]**.
 
 <figure markdown="span">
   ![Écran Accept license agreement avec les deux cases cochées](images/06-linux/rec-03-licence.png){ loading=lazy width="420" }
@@ -636,7 +637,7 @@ Après quelques dizaines de secondes, une fenêtre **SSH Connection Info** s'aff
 Le **menu principal** s'affiche :
 
 <figure markdown="span">
-  ![Menu principal du support : Restore volumes, Restore files, Configure network, Exit to shell, Reboot, Shutdown](images/06-linux/rec-04-menu-principal.png){ loading=lazy width="360" }
+  ![Menu principal du support de récupération : Restore volumes, Restore files, Configure network, Exit to shell, Reboot, Shutdown](images/06-linux/rec-04-menu-principal.png){ loading=lazy width="360" }
   <figcaption>Menu principal du support de récupération.</figcaption>
 </figure>
 
@@ -873,7 +874,7 @@ Un serveur restauré est dans l'état du **dernier point**, pas dans celui du mo
 !!! tip "🛟 Point d'instantané en fin de TP"
     - L'instantané **`04-avant-panne`** (section 5.3) est votre point de départ pour **rejouer** la panne et la restauration : y revenir, retirer le disque vierge restauré, replacer un nouveau disque vierge, et recommencer la section 6.
     - Il n'y a **pas** de nouvel instantané à prendre pour la suite : la [partie 7](07-sauvegarder-vers-azure-blob.md) est illustrée et n'a pas été rejouée dans le lab.
-    - N'oubliez pas : l'**ISO** et le **jeton** (valable 24 h) peuvent être supprimés ; le jeton expire de lui-même.
+    - L'**ISO** peut être supprimée du PC hôte ; le **jeton** n'a pas besoin d'être supprimé : il expire de lui-même au bout de 24 h.
 
 ---
 

@@ -37,7 +37,7 @@ status: publié
 | Dernière mise à jour | 2026-11-02 |
 
 !!! warning "Partie illustrée, non rejouée"
-    Contrairement aux parties 3 à 6, cette partie **n'a pas été rejouée** dans le lab de 2026 : elle demande un abonnement Azure et génère des coûts. Les captures datent de **juin 2024** (Veeam Backup & Replication **12.1** installé sur Windows, portail Azure de l'époque).
+    Contrairement aux parties 3 à 6, cette partie **n'a pas été rejouée** dans le lab de 2026 : elle demande un abonnement Azure et génère des coûts. Les captures montrent Veeam Backup & Replication **12.1** installé sur Windows et une version antérieure du portail Azure.
 
     Les principes et les assistants restent valables en version 13. Les différences connues sont signalées dans des encadrés « En version 13 ». L'interface du portail Azure évolue souvent : un libellé ou un onglet peut avoir légèrement changé.
 
@@ -247,7 +247,7 @@ Ces options méritent d'être comprises :
 
 ## 3. Sauvegarder un serveur Linux vers Azure
 
-L'exemple d'origine sauvegarde d'abord une VM **Kali Linux**, puis, après des erreurs, un **serveur Ubuntu sans interface graphique**. Les étapes suivent le même assistant que la [partie 6](06-sauvegarder-restaurer-serveur-linux.md), avec un dépôt Azure comme destination.
+Les captures montrent d'abord la sauvegarde d'une VM **Kali Linux**, puis, après des erreurs, celle d'un **serveur Ubuntu sans interface graphique**. Les étapes suivent le même assistant que la [partie 6](06-sauvegarder-restaurer-serveur-linux.md), avec un dépôt Azure comme destination.
 
 ### 3.1 Vérifier l'accès SSH
 
@@ -367,7 +367,7 @@ Le premier essai a échoué à l'étape de **rescan**, l'inventaire que fait Vee
   <figcaption>Le rescan de la machine échoue.</figcaption>
 </figure>
 
-La démarche de dépannage est exemplaire :
+La démarche de dépannage, à reproduire face à ce type d'échec :
 
 1. **Vérifier le service** de l'agent sur la machine Linux : `sudo systemctl status veeamservice`. Il est arrêté et refuse de démarrer.
 
@@ -404,7 +404,7 @@ sudo systemctl restart veeamservice
 ```
 
 !!! question "Pourquoi libfuse ?"
-    **FUSE** (*Filesystem in Userspace*) permet de monter un système de fichiers sans modifier le noyau. L'agent Veeam s'en sert pour **monter le contenu d'une sauvegarde** et restaurer des fichiers. Les distributions récentes installent `libfuse3` par défaut, mais l'agent dépend aussi de l'ancienne version 2. Dans le lab de la [partie 6](06-sauvegarder-restaurer-serveur-linux.md), l'agent 13 a installé seul ses dépendances sur Debian 13 : le problème venait surtout d'une machine sans accès correct aux dépôts de paquets au moment du déploiement.
+    **FUSE** (*Filesystem in Userspace*) permet de monter un système de fichiers sans modifier le noyau. L'agent Veeam s'en sert pour **monter le contenu d'une sauvegarde** et restaurer des fichiers. Les distributions récentes installent `libfuse3` par défaut, mais l'agent dépend aussi de l'ancienne version 2. Dans le lab de la [partie 6](06-sauvegarder-restaurer-serveur-linux.md), l'agent 13.1 a installé seul ses dépendances (dont `libfuse2t64`) sur Debian 13 : le problème vient le plus souvent d'une machine sans accès correct aux dépôts de paquets au moment du déploiement, ou de paquets cassés (d'où le `apt --fix-broken install` de la capture).
 
 4. **Relancer le rescan** : il réussit, et la sauvegarde vers Azure démarre.
 

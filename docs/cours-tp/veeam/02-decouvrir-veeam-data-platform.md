@@ -34,12 +34,13 @@ status: publié
 | Place dans le parcours | Partie 2 sur 7 du parcours [Veeam Backup & Replication](index.md) |
 | Dernière mise à jour | 2026-11-02 |
 
-??? info "Ce qui a changé par rapport à la version 1.5 du support (juin 2024)"
-    - Le support décrivait la **version 12**, qui ne s'installait que sur Windows. La version 13 ajoute un serveur de sauvegarde **Linux** livré en appliance, une **interface web** et de nouveaux mécanismes de sécurité : la partie « Nouveautés » a été entièrement réécrite.
-    - Les éditions et le cas particulier de la **Community Edition sur l'appliance** (restauration uniquement) ont été précisés.
-    - Le positionnement de Veeam a été actualisé (Gartner 2025).
-    - Les liens vers la Veeam University ont été mis à jour, l'ancien parcours n'existant plus à la même adresse.
-    - La partie Veeam ONE (supervision) a été retirée du parcours.
+<!-- NOTE DE RÉDACTION (non affichée) : Ce qui a changé par rapport à la version 1.5 du support (juin 2024)
+- Le support décrivait la **version 12**, qui ne s'installait que sur Windows. La version 13 ajoute un serveur de sauvegarde **Linux** livré en appliance, une **interface web** et de nouveaux mécanismes de sécurité : la partie « Nouveautés » a été entièrement réécrite.
+- Les éditions et le cas particulier de la **Community Edition sur l'appliance** (restauration uniquement) ont été précisés.
+- Le positionnement de Veeam a été actualisé (Gartner 2025).
+- Les liens vers la Veeam University ont été mis à jour, l'ancien parcours n'existant plus à la même adresse.
+- La partie Veeam ONE (supervision) a été retirée du parcours.
+-->
 
 ---
 
@@ -81,7 +82,7 @@ Dans ce parcours, aucun hyperviseur n'est piloté par VBR : on protège un **ser
 
 ## 2. Les nouveautés de la version 13
 
-Le support d'origine portait sur la version 12. La version 13 (fin 2025), puis la 13.1 (juillet 2026), changent profondément la façon de déployer et d'administrer VBR.
+Par rapport à la version 12, la version 13 (2025), puis la 13.1 (disponible depuis le 29 juillet 2026), changent profondément la façon de déployer et d'administrer VBR.
 
 ### 2.1 Un serveur de sauvegarde sous Linux : la Veeam Software Appliance
 
@@ -102,7 +103,7 @@ L'intérêt est double : moins de travail pour l'administrateur, et une surface 
 | Interface | Où ? | Sert à… |
 |-----------|------|---------|
 | **Veeam Web UI** | Navigateur, `https://<appliance>/` | Administrer VBR : dépôts, jobs, restaurations. Nouveau en version 13, enrichi en 13.1 (agents Windows et Linux, groupes de protection). |
-| **Console Veeam Backup & Replication** | Application Windows, téléchargeable depuis l'appliance | Toutes les fonctions, y compris les plus avancées. C'est la console historique, celle des captures du support v12. |
+| **Console Veeam Backup & Replication** | Application Windows, téléchargeable depuis l'appliance | Toutes les fonctions, y compris les plus avancées. C'est la console historique de VBR. |
 | **Host Management** | Navigateur, `https://<appliance>:10443/` | Administrer le **système** de l'appliance : réseau, heure, mises à jour, comptes, journaux. |
 
 À cela s'ajoute la **console texte** de l'appliance (sur l'écran de la VM), utilisée pour l'assistant de configuration initiale et le dépannage.
@@ -110,18 +111,15 @@ L'intérêt est double : moins de travail pour l'administrateur, et une surface 
 ### 2.3 Une sécurité renforcée par défaut
 
 - **Authentification multifacteur (MFA)** obligatoire pour l'administrateur de l'appliance, avec une application de type Google Authenticator ou Microsoft Authenticator (codes à usage unique **TOTP**).
-- Rôle de **Security Officer** (« responsable de la sécurité ») : un second compte, distinct de l'administrateur, qui doit **approuver** les opérations sensibles (réinitialiser le MFA de l'administrateur, ouvrir un accès de support, supprimer des sauvegardes…). C'est le principe des **quatre yeux** : un attaquant qui vole un seul compte ne peut pas tout détruire.
+- Rôle de **Security Officer** (« responsable de la sécurité ») : un second compte, distinct de l'administrateur, qui doit **approuver**, dans Host Management, les opérations sensibles demandées par l'administrateur de l'appliance (activer SSH, accorder un accès `root` temporaire, arrêter un service Veeam, importer une configuration, changer l'appartenance au domaine, réinitialiser le mot de passe d'un administrateur bloqué…). C'est le principe des **quatre yeux** : un attaquant qui vole un seul compte ne peut pas ouvrir le système ni désactiver ses protections.
 - **Veeam Infrastructure Appliance** : une appliance Linux durcie du même type, destinée aux proxys et aux dépôts supplémentaires.
 
 ### 2.4 Les apports de la version 13.1
 
-Parmi plus de 70 nouveautés ([notes de version](https://helpcenter.veeam.com/rn/veeam_backup_13_1_release_notes.html)) :
+Parmi les nouveautés ([notes de version](https://helpcenter.veeam.com/rn/veeam_backup_13_1_release_notes.html)) :
 
 - de nouveaux hyperviseurs (Citrix XenServer, XCP-ng, Sangfor aSV) et la réplication de VM Proxmox VE ;
 - la gestion complète des **agents Windows et Linux** dans l'interface web, y compris la restauration *bare metal* de machines Windows ;
-- la restauration automatisée d'une **forêt Active Directory** ;
-- **Veeam Intelligence**, un assistant à base d'IA pour diagnostiquer les problèmes ;
-- un transport réseau sur **un seul port**, plus simple à autoriser dans les pare-feux.
 
 ---
 
@@ -147,7 +145,7 @@ Sans clé de licence, Veeam Backup & Replication fonctionne en **Community Editi
 - sur **l'appliance Linux**, la Community Edition ne permet **que la restauration** de données existantes : **aucune nouvelle sauvegarde** n'est possible.
 
 !!! warning "Une clé d'essai est donc indispensable pour ce parcours"
-    Le support v12 indiquait qu'à défaut de licence, le produit fonctionnait en Community Edition. C'est toujours vrai pour un serveur Windows, mais pas pour l'appliance utilisée ici : sans la clé d'évaluation de 30 jours, les TP de sauvegarde sont impossibles. La [partie 3](03-preparer-le-lab-installer-appliance.md) explique comment l'obtenir.
+    Sur un serveur Windows, l'absence de licence laisse un produit utilisable en Community Edition. Ce n'est pas le cas de l'appliance utilisée ici : sans la clé d'évaluation de 30 jours, les TP de sauvegarde sont impossibles. La [partie 3](03-preparer-le-lab-installer-appliance.md) explique comment l'obtenir.
 
 ---
 
@@ -206,7 +204,7 @@ Les fichiers de sauvegarde Veeam portent des extensions propres : `.vbk` pour un
 
 ## 5. Se former gratuitement : la Veeam University
 
-Veeam propose une formation en ligne gratuite, la [**Veeam University**](https://www.veeam.com/support/training/veeam-university-free.html), accessible avec un compte Veeam. Le parcours consacré à Veeam Data Platform commence par un module sur **les comptes, les rôles et les licences**, suivi d'un petit quiz.
+Veeam propose une formation en ligne gratuite, la [**Veeam University**](https://www.veeam.com/support/training/veeam-university-free.html), accessible avec un compte Veeam. Elle propose notamment des modules d'introduction à Veeam Data Platform (comptes, rôles, licences), complétés par des quiz.
 
 !!! tip "Conseil"
     Créer son compte Veeam dès maintenant : il sert aussi à télécharger l'ISO et à obtenir la clé d'évaluation dans la partie suivante. Une adresse électronique d'école ou professionnelle est parfois demandée pour la clé d'essai.
@@ -226,7 +224,7 @@ Veeam propose une formation en ligne gratuite, la [**Veeam University**](https:/
 ??? success "Corrigé"
     1. **Veeam Data Platform** est la suite commerciale (VBR, Veeam ONE, Recovery Orchestrator…). **VBR** est le logiciel de sauvegarde et de restauration qui en est le cœur.
     2. Au choix : installation clé en main, système durci (STIG, pas de `root`, FIPS), dépôt immuable intégré, mises à jour gérées par Veeam, pas de licence Windows.
-    3. À **approuver** les opérations sensibles demandées par l'administrateur (principe des quatre yeux). Un attaquant qui vole le compte administrateur ne peut pas, seul, supprimer les sauvegardes ou désactiver la sécurité.
+    3. À **approuver** les opérations sensibles demandées par l'administrateur de l'appliance (activer SSH, accès `root` temporaire, arrêt d'un service, import de configuration…), selon le principe des quatre yeux. Un attaquant qui vole le compte administrateur ne peut pas, seul, ouvrir le système ni désactiver ses protections.
     4. Sans clé, l'appliance fonctionne en **Community Edition**, qui ne permet **que les restaurations** sur l'appliance. Il faut installer une clé d'évaluation (ou une licence payante).
     5. Le **Veeam Data Mover**.
     6. Parce qu'un partage SMB ne peut pas exécuter de Data Mover : la **passerelle** exécute le Data Mover à sa place et écrit dans le partage.

@@ -15,7 +15,7 @@ status: publié
 # Veeam Backup & Replication 13.1 : cours et travaux pratiques
 
 !!! abstract "Résumé"
-    Ce parcours en sept parties apprend à **protéger les données d'une petite infrastructure** avec **Veeam Backup & Replication 13.1**, le logiciel de sauvegarde le plus répandu en entreprise. Il commence par deux cours (les principes de la sauvegarde, puis l'offre Veeam), continue par quatre travaux pratiques rejoués de bout en bout dans un laboratoire virtuel, et se termine par une partie illustrée sur la sauvegarde dans le cloud Azure.
+    Ce parcours en sept parties apprend à **protéger les données d'une petite infrastructure** avec **Veeam Backup & Replication 13.1**, l'un des logiciels de sauvegarde les plus répandus en entreprise. Il commence par deux cours (les principes de la sauvegarde, puis l'offre Veeam), continue par quatre travaux pratiques rejoués de bout en bout dans un laboratoire virtuel, et se termine par une partie illustrée sur la sauvegarde dans le cloud Azure.
 
     Au bout du parcours, un serveur de sauvegarde Veeam protège un **serveur de fichiers Windows** et un **serveur Linux**. Le serveur Linux aura été **entièrement reconstruit** à partir de sa sauvegarde, après une panne simulée.
 
@@ -26,15 +26,16 @@ status: publié
 | Public | Débutants en administration système : aucune connaissance de Veeam n'est demandée |
 | Durée totale | Environ 15 h (cours, TP et questions de révision) |
 | Version décrite | Veeam Backup & Replication **13.1.2.57** (Veeam Software Appliance, octobre 2026) |
-| Rejoué dans le lab | Du 1er au 2 novembre 2026, sur KVM/libvirt |
+| Rejoué dans le lab | Du 1er au 2 novembre 2026, sur KVM/libvirt (toutes les captures d'écran viennent de ce lab) |
 | Dernière mise à jour | 2026-11-02 |
 
-??? info "Ce qui a changé par rapport à la version 1.5 du support (juin 2024)"
-    - Le support décrivait **Veeam Backup & Replication 12** installé sur un **Windows Server**. Le parcours utilise désormais la **Veeam Software Appliance 13.1**, le serveur de sauvegarde Linux durci que Veeam livre prêt à installer. L'installation et le dépôt local ont été réécrits en conséquence.
-    - Toutes les parties pratiques ont été **rejouées dans un lab réel** en novembre 2026 ; les captures d'écran viennent de ce lab.
-    - L'adressage reprend celui du TP [cluster pfSense en haute disponibilité](../../reseaux/cluster-haute-disponibilite-pfsense-carp-pfsync.md) du wiki : les machines du lab Veeam s'y branchent directement.
-    - La partie sur **Veeam ONE** (supervision) a été retirée. La partie **Azure** n'a pas été rejouée et le signale clairement.
-    - Un **test de restauration d'un fichier** a été ajouté à la partie 5 : une sauvegarde jamais restaurée n'est pas une sauvegarde fiable.
+<!-- NOTE DE RÉDACTION (non affichée) : Ce qui a changé par rapport à la version 1.5 du support (juin 2024)
+- Le support décrivait **Veeam Backup & Replication 12** installé sur un **Windows Server**. Le parcours utilise désormais la **Veeam Software Appliance 13.1**, le serveur de sauvegarde Linux durci que Veeam livre prêt à installer. L'installation et le dépôt local ont été réécrits en conséquence.
+- Toutes les parties pratiques ont été **rejouées dans un lab réel** en novembre 2026 ; les captures d'écran viennent de ce lab.
+- L'adressage reprend celui du TP [cluster pfSense en haute disponibilité](../../reseaux/cluster-haute-disponibilite-pfsense-carp-pfsync.md) du wiki : les machines du lab Veeam s'y branchent directement.
+- La partie sur **Veeam ONE** (supervision) a été retirée. La partie **Azure** n'a pas été rejouée et le signale clairement.
+- Un **test de restauration d'un fichier** a été ajouté à la partie 5 : une sauvegarde jamais restaurée n'est pas une sauvegarde fiable.
+-->
 
 ---
 
@@ -86,7 +87,7 @@ Le rôle de chaque composant Veeam dans ce lab est détaillé dans la [partie 2]
 | `srv-debian` | Serveur Linux à protéger | `192.168.19.170/24` | `192.168.19.21` | Debian 13 |
 | PC hôte | Navigateur web (variante) | `192.168.19.1` | — | Celui du PC |
 
-Le dernier octet reprend celui du support d'origine (`.55` pour Veeam, `.22` pour le serveur de fichiers, `.170` pour Debian). Toutes les machines du lab sont branchées sur le **même réseau LAN**, dont le nom dépend de l'hyperviseur :
+Les derniers octets sont faciles à retenir : `.55` pour Veeam, `.22` pour le serveur de fichiers, `.170` pour Debian. L'adressage est celui du [TP pfSense](../../reseaux/cluster-haute-disponibilite-pfsense-carp-pfsync.md), sur lequel les machines du lab se branchent directement. Toutes les machines du lab sont branchées sur le **même réseau LAN**, dont le nom dépend de l'hyperviseur :
 
 === "VMware Workstation"
 
@@ -123,16 +124,16 @@ Les **codes MFA** sont générés par une application d'authentification install
 
 ## Dimensionnement des machines virtuelles
 
-| Machine | Confortable (utilisé dans le lab) | Minimal (testé) | Disques |
+| Machine | Confortable (utilisé dans le lab) | Minimal | Disques |
 |---|---|---|---|
 | `vbr` | 6 vCPU, 16 Go | 4 vCPU, 8 Go | 2 disques de 240 Go, dynamiques, UEFI |
 | `srv-fichiers` | 2 vCPU, 4 Go | 2 vCPU, 4 Go | 60 Go (C:) + 40 Go (E:) + 40 Go (F:, partie 4) |
 | `srv-debian` | 2 vCPU, 2 Go | 2 vCPU, 2 Go | 20 Go (+ un disque vierge de 20 Go en partie 6) |
 | `pfsense-19` | 1 vCPU, 2 Go | 1 vCPU, 1 Go | 20 Go |
 
-- Pour l'appliance, Veeam recommande **8 cœurs et 16 Go de RAM** (plus 500 Mo par job simultané), et accepte **6 vCPU et 16 Go** pour une petite infrastructure de 5 machines protégées au plus : c'est le profil **confortable** du lab. Le profil **minimal** (8 Go, 4 vCPU) est **en dessous du minimum pris en charge par Veeam** : il ne convient pas à la production, mais il a été testé dans le lab : l'appliance démarre, l'interface web reste utilisable et les deux jobs du parcours réussissent, plus lentement.
+- Pour l'appliance, Veeam demande au minimum **8 cœurs et 16 Go de RAM** (plus 500 Mo par job simultané), et accepte **6 vCPU et 16 Go** pour une petite infrastructure de 5 machines protégées au plus : c'est le profil **confortable**, celui avec lequel le lab a été rejoué. Le profil **minimal** (8 Go, 4 vCPU) est **en dessous du minimum pris en charge par Veeam** : il ne convient pas à la production et n'a pas été validé de bout en bout dans ce lab ; il dépanne un PC à la mémoire comptée, au prix de lenteurs et sans garantie.
 - **Mémoire du PC hôte** : 32 Go permettent de tout allumer en profil confortable. Avec **16 à 24 Go**, prendre le profil minimal et n'allumer que les machines de la partie en cours (colonne « Machines allumées » du [plan](#plan-du-parcours)), en fermant les applications inutiles du PC.
-- **Disque du PC hôte** : prévoir environ **150 Go libres**, de préférence sur un **SSD**. Les disques sont dynamiques : les 2 × 240 Go de l'appliance n'occupent au départ qu'une trentaine de gigaoctets, et l'ensemble du lab en occupait 132 Go à la fin du parcours.
+- **Disque du PC hôte** : prévoir environ **150 Go libres**, de préférence sur un **SSD**. Les disques sont dynamiques : les 2 × 240 Go de l'appliance n'occupent au départ qu'une trentaine de gigaoctets ; l'espace occupé grandit ensuite avec les sauvegardes.
 - La **virtualisation matérielle** (Intel VT-x ou AMD-V) doit être activée dans le BIOS/UEFI du PC.
 
 ## Instantanés conseillés
@@ -147,13 +148,13 @@ Un **instantané** (*snapshot*) fige l'état d'une machine virtuelle. En cas d'e
 | `04-avant-panne` | Partie 6, juste avant de simuler la panne | La restauration *bare metal* autant de fois que nécessaire |
 
 !!! warning "Un instantané n'est pas une sauvegarde"
-    L'instantané reste **sur le même disque** que la machine virtuelle : si le disque du PC hôte tombe en panne, les instantanés disparaissent avec elle. C'est exactement la différence entre une copie de confort et une vraie sauvegarde, expliquée dans la [partie 1](01-comprendre-la-sauvegarde.md).
+    L'instantané reste **sur le même disque** que la machine virtuelle : si le disque du PC hôte tombe en panne, les instantanés disparaissent avec lui. C'est exactement la différence entre une copie de confort et une vraie sauvegarde, expliquée dans la [partie 1](01-comprendre-la-sauvegarde.md).
 
 ## Logiciels à télécharger
 
 | Logiciel | Où le trouver | Remarque |
 |---|---|---|
-| Veeam Software Appliance 13.1 (ISO d'environ 16 Go) | [Téléchargements Veeam](https://www.veeam.com/products/downloads.html) | Compte Veeam gratuit obligatoire ; la clé d'essai de 30 jours se demande au même endroit |
+| Veeam Software Appliance 13.1 (ISO d'environ 16,7 Go, soit 15,6 Gio) | [Téléchargements Veeam](https://www.veeam.com/products/downloads.html) | Compte Veeam gratuit obligatoire ; la clé d'essai de 30 jours se demande au même endroit |
 | Windows Server 2025 (ISO d'évaluation) | [Microsoft Evaluation Center](https://www.microsoft.com/fr-fr/evalcenter/download-windows-server-2025) | Évaluation gratuite de 180 jours, en français |
 | Debian 13 (image *netinst*) | [debian.org](https://www.debian.org/distrib/netinst) | Image d'installation par le réseau, environ 800 Mo |
 | Support de récupération Veeam pour Linux | Lien donné dans la [partie 6](06-sauvegarder-restaurer-serveur-linux.md) | Téléchargement public, sans compte |

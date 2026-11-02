@@ -30,7 +30,7 @@ status: publié
     1. le **dépôt par défaut** que l'appliance Veeam crée toute seule : un dépôt Linux **durci et immuable** (7 jours), à découvrir ;
     2. un **second dépôt**, `Depot-2-srv-fichiers`, sur un nouveau disque `F:` du serveur Windows `srv-fichiers`, formaté en **ReFS avec des clusters de 64 Ko** pour profiter du *fast clone*.
 
-    Pour y parvenir, le serveur Windows est d'abord installé comme **serveur géré** grâce au **kit de déploiement Veeam** et à l'**authentification par certificat**. Le TP explique aussi, captures à l'appui, pourquoi le partage SMB prévu par le support d'origine ne fonctionne pas avec l'appliance dans un lab sans domaine Active Directory.
+    Pour y parvenir, le serveur Windows est d'abord installé comme **serveur géré** grâce au **kit de déploiement Veeam** et à l'**authentification par certificat**. Le TP explique aussi, captures à l'appui, pourquoi un dépôt sur partage SMB ne fonctionne pas avec l'appliance dans un lab sans domaine Active Directory.
 
 | Propriété | Valeur |
 |-----------|--------|
@@ -41,12 +41,13 @@ status: publié
 | Rejoué dans le lab | 2 novembre 2026 (KVM/libvirt) |
 | Dernière mise à jour | 2026-11-02 |
 
-??? info "Ce qui a changé par rapport à la version 1.5 du support (juin 2024)"
-    - Le support décrivait VBR **12 sur Windows** : le premier dépôt était un **volume en miroir (RAID 1) de deux disques NVMe**, formaté en ReFS 64 Ko sur le serveur Windows qui portait aussi Veeam. Avec l'**appliance Linux 13.1**, ce premier dépôt existe déjà : l'appliance crée un **dépôt durci et immuable** sur son second disque (XFS). La section 2 de ce TP le découvre au lieu de le créer.
-    - Le support créait le dépôt n° 2 sur un **partage SMB** d'un serveur de fichiers. Sur l'appliance (système durci, mode FIPS) installée en **groupe de travail**, cela échoue, comme le montrent les captures de la section 3. Le dépôt n° 2 devient donc un **dépôt Windows** (*direct attached storage*) sur un disque `F:` dédié, après installation du **kit de déploiement Veeam** sur le serveur Windows.
-    - Les captures du support venaient de la **console Windows**. Les assistants sont ici ceux de l'**interface web** (Web UI) de la 13.1. L'interface web exige que le serveur Windows soit **déjà déclaré** dans **Managed Servers** avant de pouvoir y créer un dépôt.
-    - La section 5.3 du support (dépôt sur le stockage objet Azure) est traitée dans la [partie 7](07-sauvegarder-vers-azure-blob.md) et n'est pas reprise ici.
-    - Le TP signale un piège de l'interface web : après **Finish**, le dépôt est créé en arrière-plan sans que la liste se rafraîchisse, et relancer l'assistant crée un **doublon**.
+<!-- NOTE DE RÉDACTION (non affichée) : Ce qui a changé par rapport à la version 1.5 du support (juin 2024)
+- Le support décrivait VBR **12 sur Windows** : le premier dépôt était un **volume en miroir (RAID 1) de deux disques NVMe**, formaté en ReFS 64 Ko sur le serveur Windows qui portait aussi Veeam. Avec l'**appliance Linux 13.1**, ce premier dépôt existe déjà : l'appliance crée un **dépôt durci et immuable** sur son second disque (XFS). La section 2 de ce TP le découvre au lieu de le créer.
+- Le support créait le dépôt n° 2 sur un **partage SMB** d'un serveur de fichiers. Sur l'appliance (système durci, mode FIPS) installée en **groupe de travail**, cela échoue, comme le montrent les captures de la section 3. Le dépôt n° 2 devient donc un **dépôt Windows** (*direct attached storage*) sur un disque `F:` dédié, après installation du **kit de déploiement Veeam** sur le serveur Windows.
+- Les captures du support venaient de la **console Windows**. Les assistants sont ici ceux de l'**interface web** (Web UI) de la 13.1. L'interface web exige que le serveur Windows soit **déjà déclaré** dans **Managed Servers** avant de pouvoir y créer un dépôt.
+- La section 5.3 du support (dépôt sur le stockage objet Azure) est traitée dans la [partie 7](07-sauvegarder-vers-azure-blob.md) et n'est pas reprise ici.
+- Le TP signale un piège de l'interface web : après **Finish**, le dépôt est créé en arrière-plan sans que la liste se rafraîchisse, et relancer l'assistant crée un **doublon**.
+-->
 
 !!! info "Convention de lecture"
     Chaque action précise la machine sur laquelle elle se fait :
@@ -102,7 +103,7 @@ L'assistant de la console Windows regroupe les dépôts en familles. On y retrou
 |------|----------|----------|
 | **Stockage à disque local** (*direct attached storage*) | Un dossier sur un disque d'un serveur **Windows** ou **Linux** qui est un serveur géré par Veeam. Le *Data Mover* (le composant qui déplace les données, voir la [partie 2](02-decouvrir-veeam-data-platform.md#43-le-veeam-data-mover-demenageur-de-donnees)) s'exécute **sur ce serveur** : c'est le cas le plus rapide. | Dépôt n° 2 de ce TP (Windows). |
 | **Dépôt durci** (*hardened repository*) | Un serveur **Linux** dont le système de fichiers verrouille les sauvegardes contre la modification et la suppression pendant une durée donnée (**immuabilité**). | Le dépôt par défaut de l'appliance en est un. |
-| **Partage réseau** (*network attached storage*) | Un partage **SMB** (Windows) ou **NFS** (Linux, NAS). Le stockage ne peut pas exécuter de Data Mover : une **passerelle** le fait à sa place. | Disponible dans la console Windows. Voir la [section 3](#3-pourquoi-le-partage-smb-du-support-ne-fonctionne-pas-ici) de ce TP. |
+| **Partage réseau** (*network attached storage*) | Un partage **SMB** (Windows) ou **NFS** (Linux, NAS). Le stockage ne peut pas exécuter de Data Mover : une **passerelle** le fait à sa place. | Disponible dans la console Windows. Voir la [section 3](#3-pourquoi-un-partage-smb-ne-convient-pas-ici) de ce TP. |
 | **Appliance de déduplication** | Dell Data Domain, HPE StoreOnce, etc. | Hors parcours. |
 | **Stockage objet** | Amazon S3, Azure Blob, etc. | Voir la [partie 7](07-sauvegarder-vers-azure-blob.md). |
 | **Veeam Data Cloud Vault** | Stockage cloud proposé par Veeam. | Hors parcours. |
@@ -140,7 +141,7 @@ La règle [3-2-1](01-comprendre-la-sauvegarde.md#31-la-regle-3-2-1) demande **pl
   <figcaption>Avant tout ajout : un seul dépôt, créé par l'appliance. Type Linux, hôte vbr, chemin /var/lib/veeam/backup, 206,9 Go.</figcaption>
 </figure>
 
-L'appliance a créé **toute seule** ce dépôt, `Default Backup Repository`, sur son **second disque** de 240 Go. Sa description indique « Created by Veeam Backup ». Il remplace le « dépôt local en miroir ReFS » du support d'origine.
+L'appliance a créé **toute seule** ce dépôt, `Default Backup Repository`, sur son **second disque** de 240 Go. Sa description indique « Created by Veeam Backup ». Avec l'appliance, ce premier dépôt n'est donc pas à créer : il suffit de le découvrir.
 
 3. Cliquer sur **Add** pour voir les types de dépôts que l'interface web sait créer.
 
@@ -178,21 +179,21 @@ Chaque réglage se comprend ainsi :
 !!! question "Pourquoi 7 jours d'immuabilité ?"
     Un rançongiciel qui prend le contrôle du serveur de sauvegarde essaie d'abord de détruire les sauvegardes. Avec l'immuabilité, même avec un compte administrateur volé, les fichiers récents restent intacts pendant la durée choisie. Le principe est expliqué dans le cours : [sauvegarde immuable](01-comprendre-la-sauvegarde.md#45-sauvegarde-immuable). Ce dépôt est un **dépôt durci** (*hardened repository*), c'est-à-dire configuré pour ce rôle par l'appliance : le système est verrouillé (pas de `root` utilisable, SSH désactivé par défaut) et les fichiers sont protégés au niveau du système de fichiers.
 
-!!! info "Et le RAID du support ?"
-    Le support protégeait son dépôt avec un **miroir RAID 1** de deux disques NVMe : si un disque tombe en panne, l'autre contient toujours les données (voir [Qu'est-ce que le RAID ?](01-comprendre-la-sauvegarde.md#14-quest-ce-que-le-raid)). Le RAID protège contre la **panne d'un disque**, pas contre une suppression, un rançongiciel ou un incendie : ce n'est pas une sauvegarde.
+!!! info "Et le RAID ?"
+    Sur un serveur Windows qui porte Veeam, on protège souvent le dépôt avec un **miroir RAID 1** de deux disques : si un disque tombe en panne, l'autre contient toujours les données (voir [Qu'est-ce que le RAID ?](01-comprendre-la-sauvegarde.md#14-quest-ce-que-le-raid)). Le RAID protège contre la **panne d'un disque**, pas contre une suppression, un rançongiciel ou un incendie : ce n'est pas une sauvegarde.
 
     Avec l'appliance, la redondance des disques se règle **sous l'appliance** : en production, par une **carte RAID** du serveur ou par le **stockage** qui héberge les disques virtuels. Dans le lab, le second disque de `vbr` est un **seul disque virtuel** de 240 Go : aucune redondance, ce qui est acceptable pour un lab.
 
 ---
 
-## 3. Pourquoi le partage SMB du support ne fonctionne pas ici
+## 3. Pourquoi un partage SMB ne convient pas ici
 
 !!! note "Cette section se lit, elle ne se refait pas"
-    Le support d'origine créait le dépôt n° 2 sur un **partage SMB** de `srv-fichiers`. Cet essai a été rejoué dans le lab et **échoue**. Les captures ci-dessous montrent les messages d'erreur : les connaître évite de perdre du temps si vous tentez la même chose. **Il n'y a rien à faire dans cette section** ; passer directement à la [section 4](#4-ajouter-le-disque-f-a-srv-fichiers-et-le-formater-en-refs-64-ko) pour la procédure retenue.
+    L'idée la plus simple serait de créer le dépôt n° 2 sur un **partage SMB** de `srv-fichiers`. Cet essai a été fait dans le lab et **échoue**. Les captures ci-dessous montrent les messages d'erreur : les connaître évite de perdre du temps si vous tentez la même chose. **Il n'y a rien à faire dans cette section** ; passer directement à la [section 4](#4-ajouter-le-disque-f-a-srv-fichiers-et-le-formater-en-refs-64-ko) pour la procédure retenue.
 
 ### 3.1 L'essai dans la console Windows
 
-Dans la console Windows de l'appliance, lancée sur `srv-fichiers`, l'essai suivait le support : **Backup Infrastructure > Backup Repositories > Add Repository > Network attached storage > SMB share**. Le partage `\\192.168.19.22\RepoVeeam` (un dossier de `srv-fichiers`) était désigné avec le compte local `SRV-FICHIERS\Administrateur`.
+Dans la console Windows de l'appliance, lancée sur `srv-fichiers`, l'essai a suivi le chemin classique : **Backup Infrastructure > Backup Repositories > Add Repository > Network attached storage > SMB share**. Le partage `\\192.168.19.22\RepoVeeam` (un dossier de `srv-fichiers`) était désigné avec le compte local `SRV-FICHIERS\Administrateur`.
 
 <figure markdown="span">
   ![Assistant New Backup Repository de la console Windows, étape Share : dossier partagé \\192.168.19.22\RepoVeeam, case « This share requires access credentials » cochée, compte SRV-FICHIERS\Administrateur, serveur passerelle en sélection automatique](images/04-depots/console-smb-partage-rempli.png){ loading=lazy }
@@ -424,6 +425,7 @@ Restarting Veeam Installer service
 4. Supprimer maintenant le zip et le dossier (voir l'encadré ci-dessus) :
 
     ```powershell title="PowerShell (administrateur) : nettoyer"
+    cd $env:USERPROFILE   # sortir du dossier avant de le supprimer
     Remove-Item C:\veeam-deployment-kit -Recurse -Force
     Remove-Item $zip -Force
     ```
@@ -522,10 +524,10 @@ Un **serveur géré** (*managed server*) est une machine que Veeam connaît, adm
 
 <figure markdown="span">
   ![Étape Review : case d'import automatique décochée et liste de composants dont la plupart « already exists » et un « will be installed » sur 192.168.19.22](images/04-depots/depot-revue.png){ loading=lazy width="620" }
-  <figcaption>Composants nécessaires : seul le Veeam Standby service doit encore être installé sur srv-fichiers.</figcaption>
+  <figcaption>Composants nécessaires : presque tous sont déjà présents, un seul reste à installer sur srv-fichiers.</figcaption>
 </figure>
 
-7. Cliquer sur **Next** : Veeam applique les réglages (installation du composant manquant sur `srv-fichiers`), puis affiche l'étape **Summary**. Attendre la fin, vérifier le récapitulatif, puis cliquer **une seule fois** sur **Finish**.
+7. Veeam applique alors les réglages (installation du composant manquant sur `srv-fichiers`). Attendre la fin, cliquer sur **Next** pour afficher l'étape **Summary**, vérifier le récapitulatif, puis cliquer **une seule fois** sur **Finish**.
 
 <figure markdown="span">
   ![Étape Summary : nom Depot-2-srv-fichiers, serveur de montage Windows 192.168.19.22, serveur de montage Linux vbr, dossier F:\RepoVeeam, débit illimité, 4 tâches parallèles](images/04-depots/depot-resume.png){ loading=lazy width="620" }
@@ -537,7 +539,7 @@ Un **serveur géré** (*managed server*) est une machine que Veeam connaît, adm
 Si le dossier se trouve sur un volume **NTFS** (c'est ce qui arrive si l'on choisit `E:` par erreur), Veeam affiche une fenêtre d'avertissement après l'étape **Repository**.
 
 <figure markdown="span">
-  ![Fenêtre Validation : The file system on the specified volume does not support fast cloning. We recommend using ReFS volume formatted with 64 KB cluster size. Proceed anyway ?](images/04-depots/avertissement-ntfs-refs.png){ loading=lazy width="500" }
+  ![Fenêtre Validation : The file system on the specified volume does not support fast cloning. We recommend using ReFS volume formatted with 64 KB cluster size. Proceed anyway?](images/04-depots/avertissement-ntfs-refs.png){ loading=lazy width="500" }
   <figcaption>Cet avertissement apparaît avec un volume NTFS. Avec F: en ReFS 64 Ko, il ne s'affiche pas.</figcaption>
 </figure>
 

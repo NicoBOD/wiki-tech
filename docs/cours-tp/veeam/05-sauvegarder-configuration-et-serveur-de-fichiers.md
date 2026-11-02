@@ -39,13 +39,14 @@ status: publié
 | Rejoué dans le lab | 2 novembre 2026 (KVM/libvirt) |
 | Dernière mise à jour | 2026-11-02 |
 
-??? info "Ce qui a changé par rapport à la version 1.5 du support (juin 2024)"
-    - Le support utilisait Veeam Backup & Replication 12 **installé sur Windows**, avec la console Windows pour tout faire. Ici, le serveur est l'**appliance Linux 13.1** : le **job de sauvegarde** et le **groupe de protection** se créent dans l'**interface web**, alors que le **réglage de la sauvegarde de configuration** se fait dans la **console Windows**.
-    - La **phrase secrète du Security Officer** (partie 3) est **obligatoire** pour que la sauvegarde de configuration d'une appliance réussisse : elle n'existait pas dans le support. Son absence fait échouer la tâche (voir l'encadré de dépannage de la section 2.5).
-    - Le support envoyait la sauvegarde de configuration sur le dépôt local du serveur Veeam. Ce TP la dirige vers le **dépôt n° 2** (`Depot-2-srv-fichiers`), situé sur **une autre machine** : une sauvegarde de configuration stockée sur le serveur qu'elle protège disparaît avec lui.
-    - Le support appelait « serveur de fichiers » une machine déclarée par son adresse et un compte administrateur. Dans ce lab, `srv-fichiers` est déjà un **serveur géré par certificat** depuis la partie 4 : le déploiement de l'agent passe par ce même mécanisme, **sans saisir de mot de passe**.
-    - Le support corrigeait après coup une adresse IP erronée dans le job. Ce TP la fait saisir correctement une fois pour toutes, par le **groupe de protection**.
-    - Un **test de restauration** (suppression volontaire d'un fichier, restauration, contrôle d'empreinte) a été ajouté : une sauvegarde jamais restaurée n'est pas une sauvegarde fiable.
+<!-- NOTE DE RÉDACTION (non affichée) : Ce qui a changé par rapport à la version 1.5 du support (juin 2024)
+- Le support utilisait Veeam Backup & Replication 12 **installé sur Windows**, avec la console Windows pour tout faire. Ici, le serveur est l'**appliance Linux 13.1** : le **job de sauvegarde** et le **groupe de protection** se créent dans l'**interface web**, alors que le **réglage de la sauvegarde de configuration** se fait dans la **console Windows**.
+- La **phrase secrète du Security Officer** (partie 3) est **obligatoire** pour que la sauvegarde de configuration d'une appliance réussisse : elle n'existait pas dans le support. Son absence fait échouer la tâche (voir l'encadré de dépannage de la section 2.5).
+- Le support envoyait la sauvegarde de configuration sur le dépôt local du serveur Veeam. Ce TP la dirige vers le **dépôt n° 2** (`Depot-2-srv-fichiers`), situé sur **une autre machine** : une sauvegarde de configuration stockée sur le serveur qu'elle protège disparaît avec lui.
+- Le support appelait « serveur de fichiers » une machine déclarée par son adresse et un compte administrateur. Dans ce lab, `srv-fichiers` est déjà un **serveur géré par certificat** depuis la partie 4 : le déploiement de l'agent passe par ce même mécanisme, **sans saisir de mot de passe**.
+- Le support corrigeait après coup une adresse IP erronée dans le job. Ce TP la fait saisir correctement une fois pour toutes, par le **groupe de protection**.
+- Un **test de restauration** (suppression volontaire d'un fichier, restauration, contrôle d'empreinte) a été ajouté : une sauvegarde jamais restaurée n'est pas une sauvegarde fiable.
+-->
 
 !!! info "Convention de lecture"
     Chaque action précise la machine sur laquelle elle se fait : 🖥️ PC hôte (hyperviseur), 🌐 navigateur web connecté à l'appliance, 🪟 `srv-fichiers` (Windows Server 2025), 📦 console de l'appliance `vbr`. Les menus et boutons sont écrits **en anglais**, comme Veeam les affiche, et traduits quand c'est utile. Les adresses, comptes et mots de passe sont ceux de la page [d'accueil du parcours](index.md#plan-dadressage) ; pour mémoire :
@@ -111,7 +112,7 @@ Veeam enregistre sa configuration dans une **base de données** (PostgreSQL sur 
 | **Les données sauvegardées** (fichiers, images de machines) | **Non** : elles restent dans les dépôts |
 
 !!! question "Pourquoi est-ce vital ?"
-    Sans configuration, un nouveau serveur Veeam, même branché sur les bons dépôts, ne connaît ni les jobs ni les mots de passe, et les sauvegardes chiffrées deviennent illisibles. Avec elle, il suffit de réinstaller l'appliance puis de **restaurer la configuration** : en quelques minutes, jobs, dépôts et historique reviennent. C'est l'équivalent de la **carte grise et du carnet d'entretien** d'une voiture : ils ne remplacent pas la voiture, mais sans eux, la remplacer est un cauchemar.
+    Sans configuration, un nouveau serveur Veeam, même branché sur les bons dépôts, ne connaît ni les jobs ni les mots de passe : il faut tout recréer à la main et retrouver le mot de passe de chaque sauvegarde chiffrée pour pouvoir la relire. Avec elle, il suffit de réinstaller l'appliance puis de **restaurer la configuration** : en quelques minutes, jobs, dépôts et historique reviennent. C'est l'équivalent de la **carte grise et du carnet d'entretien** d'une voiture : ils ne remplacent pas la voiture, mais sans eux, la remplacer est un cauchemar.
 
 ### 1.2 Où la stocker ?
 
@@ -131,7 +132,7 @@ Sur une appliance avec un compte **Security Officer**, la sauvegarde de configur
 L'idée est la **séparation des pouvoirs** : celui qui administre Veeam au quotidien ne détient pas, à lui seul, tout ce qu'il faut pour exploiter une sauvegarde de configuration volée. D'après la documentation de Veeam, si cette protection est active, la tâche de sauvegarde de configuration **échoue** tant que le chiffrement n'est pas activé.
 
 !!! warning "Conserver ces secrets hors de l'appliance"
-    Le mot de passe et la phrase secrète **ne se récupèrent pas** : sans eux, le fichier `.bco` est inutilisable, et le support de Veeam ne peut pas les retrouver (la console le rappelle à l'écran). Les noter dans un **gestionnaire de mots de passe** ou un coffre **qui ne dépend pas de l'appliance**. Les stocker sur le serveur de sauvegarde lui-même reviendrait à ranger la clé du coffre **dans** le coffre. Dans ce lab pédagogique, les valeurs sont publiées en clair dans la page d'accueil du parcours : ce n'est acceptable que parce que le lab ne contient aucune donnée réelle.
+    Le mot de passe et la phrase secrète **ne se récupèrent pas** : sans eux, le fichier `.bco` est inutilisable, et l'assistance technique de Veeam ne peut pas les retrouver (la console le rappelle à l'écran). Les noter dans un **gestionnaire de mots de passe** ou un coffre **qui ne dépend pas de l'appliance**. Les stocker sur le serveur de sauvegarde lui-même reviendrait à ranger la clé du coffre **dans** le coffre. Dans ce lab pédagogique, les valeurs sont publiées en clair dans la page d'accueil du parcours : ce n'est acceptable que parce que le lab ne contient aucune donnée réelle.
 
 ---
 
@@ -160,7 +161,7 @@ La fenêtre **Configuration Backup Settings** s'ouvre. Au départ, le dépôt ch
 ### 2.2 Choisir le dépôt n° 2
 
 1. Cocher **Enable configuration backup to the following repository** si ce n'est pas fait.
-2. Dans la liste **Enable configuration backup to the following repository**, remplacer `Default Backup Repository` par **`Depot-2-srv-fichiers`** (« Dépôt n° 2 : disque F: (ReFS 64 Ko) du serveur de fichiers srv-fichiers »).
+2. Dans la liste **Backup repository** située sous cette case, remplacer `Default Backup Repository` par **`Depot-2-srv-fichiers`** (« Dépôt n° 2 : disque F: (ReFS 64 Ko) du serveur de fichiers srv-fichiers »).
 3. Laisser **Restore points to keep** à **10** : Veeam conserve les 10 dernières sauvegardes de configuration et supprime les plus anciennes.
 
 <figure markdown="span">

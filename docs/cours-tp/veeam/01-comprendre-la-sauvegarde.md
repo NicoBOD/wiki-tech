@@ -40,11 +40,12 @@ status: publié
 | Place dans le parcours | Partie 1 sur 7 du parcours [Veeam Backup & Replication](index.md) |
 | Dernière mise à jour | 2026-11-02 |
 
-??? info "Ce qui a changé par rapport à la version 1.5 du support (juin 2024)"
-    - Toutes les illustrations ont été redessinées sous forme de schémas.
-    - Plusieurs nuances ont été ajoutées ou corrigées : une réplication n'est pas toujours « en temps réel », une synchronisation et un RAID **ne sont pas** des sauvegardes, et les faits de l'incident GitLab de 2017 ont été précisés (les données ont finalement été récupérées, avec six heures de perte).
-    - Nouveaux paragraphes : sauvegarde incrémentielle permanente, sauvegarde complète synthétique, rétention, chiffrement, équivalents français de RPO et RTO (PDMA et DMIA).
-    - Nouveaux exercices corrigés.
+<!-- NOTE DE RÉDACTION (non affichée) : Ce qui a changé par rapport à la version 1.5 du support (juin 2024)
+- Toutes les illustrations ont été redessinées sous forme de schémas.
+- Plusieurs nuances ont été ajoutées ou corrigées : une réplication n'est pas toujours « en temps réel », une synchronisation et un RAID **ne sont pas** des sauvegardes, et les faits de l'incident GitLab de 2017 ont été précisés (les données ont finalement été récupérées, avec six heures de perte).
+- Nouveaux paragraphes : sauvegarde incrémentielle permanente, sauvegarde complète synthétique, rétention, chiffrement, équivalents français de RPO et RTO (PDMA et DMIA).
+- Nouveaux exercices corrigés.
+-->
 
 ---
 
@@ -177,9 +178,9 @@ La perte de données arrive pour des raisons très variées : suppression accide
 
 Deux exemples célèbres :
 
-**MySpace (2019).** Ce réseau social pionnier a annoncé qu'à la suite d'une migration de serveurs, les photos, vidéos et morceaux de musique envoyés par ses utilisateurs entre 2003 et 2015 n'étaient peut-être plus disponibles : environ 50 millions de morceaux de 14 millions d'artistes. Aucune copie n'existait ailleurs[^3].
+**MySpace (2019).** Ce réseau social pionnier a reconnu qu'à la suite d'une migration de serveurs, les photos, vidéos et morceaux de musique envoyés par ses utilisateurs entre 2003 et 2015 n'étaient peut-être plus disponibles : environ 50 millions de morceaux de 14 millions d'artistes. MySpace n'en avait aucune sauvegarde exploitable ; seule une petite partie (environ 490 000 morceaux) a pu être retrouvée grâce à une copie indépendante, publiée ensuite par Internet Archive[^3].
 
-**GitLab (2017).** En pleine nuit, un administrateur fatigué a supprimé par erreur environ 300 Go de données de la base de production, en se trompant de serveur. Sur les cinq mécanismes de sauvegarde et de réplication en place, **aucun ne fonctionnait correctement** : sauvegardes vides depuis des mois sans que personne ne le remarque, alertes bloquées, instantanés non activés. Les données ont finalement été restaurées à partir d'une copie faite **six heures plus tôt** pour un autre usage : six heures de travail des utilisateurs ont été perdues, et l'entreprise a dû s'expliquer publiquement[^4].
+**GitLab (2017).** En pleine nuit, un administrateur fatigué a supprimé par erreur environ 300 Go de données de la base de production, en se trompant de serveur. Sur les cinq mécanismes de sauvegarde et de réplication en place, **aucun ne fonctionnait correctement** : sauvegardes quotidiennes qui produisaient des fichiers vides sans que personne ne le remarque, courriels d'alerte rejetés, instantanés de disques non activés. Les données ont finalement été restaurées à partir d'un instantané fait **six heures plus tôt** pour un autre usage : six heures de données de la base (tickets, commentaires, nouveaux comptes…) ont été perdues — les dépôts Git eux-mêmes n'étaient pas touchés — et l'entreprise a dû s'expliquer publiquement[^4].
 
 !!! example "La leçon de GitLab"
     Avoir des sauvegardes ne suffit pas : il faut **surveiller** qu'elles se font et **tester** régulièrement les restaurations. C'est exactement le « 0 » de la règle 3-2-1-1-0 vue plus bas.
@@ -245,7 +246,7 @@ Les logiciels modernes comme Veeam combinent intelligemment ces méthodes :
 - **Complète synthétique** (*synthetic full*) : le serveur de sauvegarde **fabrique** une nouvelle sauvegarde complète à partir de la complète précédente et des incrémentielles qu'il possède déjà, **sans relire** la machine protégée. On obtient les avantages d'une complète sans charger la production ni le réseau.
 - **Complète active** (*active full*) : une vraie nouvelle sauvegarde complète, relue depuis la machine protégée. Plus lente, mais elle repart de données fraîches.
 
-Sur un système de fichiers qui le permet (**XFS** sous Linux, **ReFS** sous Windows), Veeam utilise le **clonage de blocs** (*Fast Clone*) : la complète synthétique **référence** les blocs déjà présents au lieu de les recopier. Elle se crée en quelques secondes et n'occupe presque pas de place supplémentaire.
+Sur un système de fichiers qui le permet (**XFS** sous Linux, **ReFS** sous Windows), Veeam utilise le **clonage de blocs** (*Fast Clone*) : la complète synthétique **référence** les blocs déjà présents au lieu de les recopier. Elle se crée beaucoup plus vite et n'occupe presque pas de place supplémentaire.
 
 ### 4.5 Sauvegarde immuable
 
@@ -331,7 +332,7 @@ Quelques sujets à approfondir pour une compréhension plus complète de la sauv
 
 ### Exercice 1 : identifier un type de sauvegarde
 
-Une entreprise sauvegarde un serveur de fichiers de 900 Go. Chaque jour, de nouvelles données sont modifiées : 100 Go le mardi, 200 Go le mercredi, 100 Go le jeudi, 300 Go le vendredi et 100 Go le samedi. Le schéma montre le contenu de chaque sauvegarde de la semaine.
+Une entreprise sauvegarde un serveur de fichiers de 900 Go. La sauvegarde complète est faite le lundi ; ensuite, chaque jour, des données différentes sont modifiées : 100 Go le mardi, 200 Go le mercredi, 100 Go le jeudi, 300 Go le vendredi et 100 Go le samedi. Le schéma montre le contenu de chaque sauvegarde de la semaine.
 
 <figure markdown="span">
   ![Six colonnes du lundi au samedi : 900 Go le lundi, puis des blocs qui s'empilent chaque jour (100, puis 200 et 100, jusqu'à 100, 300, 100, 200 et 100 le samedi)](images/exercice-type-sauvegarde.svg){ loading=lazy }

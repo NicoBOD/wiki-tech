@@ -35,16 +35,17 @@ status: publié
 | Durée estimée | 4 h, dont environ 1 h d'attente (installation de l'appliance, téléchargements, mises à jour) |
 | Version décrite | Veeam Software Appliance 13.1.2.57 (octobre 2026), Windows Server 2025, Debian 13 |
 | Place dans le parcours | Partie 3 sur 7 du parcours [Veeam Backup & Replication](index.md) |
-| Rejoué dans le lab | 2 novembre 2026 (KVM/libvirt) |
+| Rejoué dans le lab | 2 novembre 2026 (KVM/libvirt). Les onglets VMware Workstation, VirtualBox et Proxmox VE suivent la documentation des éditeurs et n'ont pas été rejoués |
 | Dernière mise à jour | 2026-11-02 |
 
-??? info "Ce qui a changé par rapport à la version 1.5 du support (juin 2024)"
-    - Le support installait **Veeam Backup & Replication 12 sur un Windows Server**, avec l'assistant d'installation Windows (SQL Server, comptes de service, ports…). Tout cela disparaît : le serveur de sauvegarde est maintenant l'**appliance Linux** `vbr`, installée depuis une ISO, avec un assistant en mode texte. Il n'y a plus de licence Windows, de base de données ni de pare-feu Windows à configurer pour le serveur de sauvegarde.
-    - L'administration se fait par l'**interface web** (`https://192.168.19.55`) et par **Host Management** (`https://192.168.19.55:10443`), la page d'administration du système. La **console Windows** existe toujours, mais elle s'installe sur `srv-fichiers` et se télécharge depuis l'appliance.
-    - Nouveautés de sécurité à connaître dès l'installation : mots de passe soumis à la politique **DISA STIG** (15 caractères minimum, pas plus de 4 caractères de la même catégorie à la suite…), **authentification multifacteur** (MFA) sur Host Management, et compte **Security Officer** à initialiser. Ces étapes n'existaient pas dans le support.
-    - Sans clé de licence, l'appliance passe en **Community Edition restauration seule** : une clé d'essai de 30 jours est indispensable (voir la [partie 2](02-decouvrir-veeam-data-platform.md#32-le-piege-de-la-community-edition)).
-    - Les adresses viennent du TP [cluster pfSense](../../reseaux/cluster-haute-disponibilite-pfsense-carp-pfsync.md) (LAN `192.168.19.0/24`) au lieu du réseau du support. Le serveur Debian est en Debian 13 et le serveur de fichiers en Windows Server 2025.
-    - Cette partie a été **entièrement rejouée** en novembre 2026 sur KVM/libvirt. Les onglets VMware Workstation, VirtualBox et Proxmox VE suivent la documentation des éditeurs et les réglages standards : ils **n'ont pas été rejoués**.
+<!-- NOTE DE RÉDACTION (non affichée) : Ce qui a changé par rapport à la version 1.5 du support (juin 2024)
+- Le support installait **Veeam Backup & Replication 12 sur un Windows Server**, avec l'assistant d'installation Windows (SQL Server, comptes de service, ports…). Tout cela disparaît : le serveur de sauvegarde est maintenant l'**appliance Linux** `vbr`, installée depuis une ISO, avec un assistant en mode texte. Il n'y a plus de licence Windows, de base de données ni de pare-feu Windows à configurer pour le serveur de sauvegarde.
+- L'administration se fait par l'**interface web** (`https://192.168.19.55`) et par **Host Management** (`https://192.168.19.55:10443`), la page d'administration du système. La **console Windows** existe toujours, mais elle s'installe sur `srv-fichiers` et se télécharge depuis l'appliance.
+- Nouveautés de sécurité à connaître dès l'installation : mots de passe soumis à la politique **DISA STIG** (15 caractères minimum, pas plus de 4 caractères de la même catégorie à la suite…), **authentification multifacteur** (MFA) sur Host Management, et compte **Security Officer** à initialiser. Ces étapes n'existaient pas dans le support.
+- Sans clé de licence, l'appliance passe en **Community Edition restauration seule** : une clé d'essai de 30 jours est indispensable (voir la [partie 2](02-decouvrir-veeam-data-platform.md#32-le-piege-de-la-community-edition)).
+- Les adresses viennent du TP [cluster pfSense](../../reseaux/cluster-haute-disponibilite-pfsense-carp-pfsync.md) (LAN `192.168.19.0/24`) au lieu du réseau du support. Le serveur Debian est en Debian 13 et le serveur de fichiers en Windows Server 2025.
+- Cette partie a été **entièrement rejouée** en novembre 2026 sur KVM/libvirt. Les onglets VMware Workstation, VirtualBox et Proxmox VE suivent la documentation des éditeurs et les réglages standards : ils **n'ont pas été rejoués**.
+-->
 
 ---
 
@@ -72,6 +73,8 @@ status: publié
 | `srv-fichiers` | Serveur de fichiers Windows, futur dépôt n° 2, console Veeam | `192.168.19.22/24` |
 | `srv-debian` | Serveur Linux à protéger | `192.168.19.170/24` |
 | PC hôte | Navigateur (variante) | `192.168.19.1` |
+
+Le serveur de sauvegarde est une appliance Linux livrée complète : ni licence Windows, ni base de données, ni pare-feu Windows à configurer pour lui.
 
 Passerelle et DNS de toutes les VM : `192.168.19.21`. Le [schéma du lab](index.md#schema-du-lab), le [plan d'adressage](index.md#plan-dadressage), les [comptes et mots de passe](index.md#comptes-et-mots-de-passe) et le [dimensionnement](index.md#dimensionnement-des-machines-virtuelles) sont détaillés sur la page d'accueil du parcours : **la garder ouverte** pendant le TP.
 
@@ -163,7 +166,7 @@ Selon la [documentation officielle](https://helpcenter.veeam.com/docs/vbr/usergu
 | Disque 2 | 240 Go minimum : catalogues et sauvegardes | 240 Go |
 | Réseau | 1 Gbit/s ou plus pour la sauvegarde sur site | 1 carte sur le LAN |
 
-Le minimum de 4 vCPU et 8 Go de RAM, utilisable dans un lab à la mémoire comptée, est **en dessous du minimum pris en charge** : voir le [dimensionnement](index.md#dimensionnement-des-machines-virtuelles). Les 2 disques peuvent être **dynamiques** (*thin*) : le lab n'a occupé qu'une trentaine de Go au départ. Le démarrage en **UEFI** est requis ; le **Secure Boot** a été activé dans le lab et l'appliance l'accepte.
+Un profil réduit à 4 vCPU et 8 Go de RAM, utilisable dans un lab à la mémoire comptée, est **en dessous du minimum pris en charge** : voir le [dimensionnement](index.md#dimensionnement-des-machines-virtuelles). Les 2 disques peuvent être **dynamiques** (*thin*) : le lab n'a occupé qu'une trentaine de Go au départ. Le démarrage en **UEFI** est requis ; le **Secure Boot** a été activé dans le lab et l'appliance l'accepte.
 
 !!! question "Pourquoi deux disques ?"
     Le premier héberge le système et le logiciel Veeam, le second les sauvegardes (le **dépôt par défaut**, `Default Backup Repository`, y est créé). Le séparer évite que des sauvegardes volumineuses remplissent le disque système.
@@ -238,7 +241,7 @@ La confirmation d'effacement : sans danger sur une VM neuve.
 
 ## 6. L'assistant de configuration initiale
 
-Au premier démarrage (comptez quelques instants), l'appliance affiche en mode texte (bandeau vert **Veeam Host Management**) l'**Initial Configuration Wizard**. Ses étapes, listées à gauche, sont : **License**, **Hostname**, **Network**, **Time**, **Host Administrator**, **Security Officer**, **Summary**.
+Au premier démarrage, après quelques instants, l'appliance affiche en mode texte (bandeau vert **Veeam Host Management**) l'**Initial Configuration Wizard**. Ses étapes, listées à gauche, sont : **License**, **Hostname**, **Network**, **Time**, **Host Administrator**, **Security Officer**, **Summary**.
 
 !!! tip "Naviguer dans une interface texte"
     Pas de souris. **Tab** passe au champ ou au bouton suivant, **Maj+Tab** au précédent, les **flèches** déplacent la sélection dans une liste, **Entrée** valide. La barre du bas rappelle les touches utiles. Les captures du lab (écran de la VM) sont prises avec le clavier **US** de l'assistant : voir l'étape 6.2 pour passer en AZERTY.
@@ -598,12 +601,12 @@ La phrase secrète est enregistrée (date, indice).
 4. 🪟 Accepter les termes de licence, choisir **Personnalisé : installer uniquement Windows**, et sélectionner le **disque de 60 Go** (le **Lecteur 0**, pas celui de 40 Go).
 5. 🪟 Après redémarrage, définir le mot de passe de l'**Administrateur** : `Popopo222@@@`, puis ouvrir la session avec **Ctrl+Alt+Suppr** (dans la console de l'hyperviseur, utiliser son menu **Envoyer Ctrl+Alt+Suppr**).
 
-!!! tip "Fermer le Gestionnaire de serveur"
+!!! tip "Fermer la fenêtre Windows Admin Center"
     Au premier démarrage, la fenêtre « Essayez Windows Admin Center… » peut s'afficher : la fermer avec la croix, après avoir coché **Ne plus afficher ce message**.
 
 ### 10.3 Nom, adresse IP, réseau et ping
 
-1. 🪟 Ouvrir **Windows PowerShell en tant qu'administrateur** (clic droit sur **Démarrer > Windows PowerShell (admin)**).
+1. 🪟 Ouvrir **Windows PowerShell en tant qu'administrateur** (clic droit sur **Démarrer**, puis **Terminal (admin)** ou **Windows PowerShell (admin)** selon l'entrée proposée).
 2. 🪟 Coller le script suivant : il donne l'**adresse IP fixe**, passe le réseau en **profil privé**, autorise le **ping** (ICMP) et renomme le serveur, qui redémarre.
 
     ```powershell title="Réseau et nom de srv-fichiers"
@@ -819,7 +822,7 @@ Le premier démarrage de `srv-debian` : l'invite de connexion indique la version
     ```
 
 !!! success "Résultat attendu"
-    La commande `sudo whoami` renvoie `root`. L'invite SSH affiche `user@srv-debian`. Si `ssh` refuse la connexion (« Connection refused »), le paquet `openssh-server` n'est pas installé : le réinstaller avec `sudo apt install openssh-server`.
+    La commande `sudo whoami` renvoie `root`. L'invite SSH affiche `user@srv-debian`. Si `ssh` refuse la connexion (« Connection refused »), le paquet `openssh-server` n'est pas installé : l'installer avec `sudo apt install openssh-server`.
 
 ---
 
@@ -861,7 +864,7 @@ Avec les quatre VM allumées (`pfsense-19`, `vbr`, `srv-fichiers`, `srv-debian`)
 
 === "Proxmox VE"
 
-    VM sélectionnée > **Snapshots > Take Snapshot**, nom `01-lab-pret` (si Proxmox refuse un nom qui commence par un chiffre, utiliser `lab-pret-01`). Le snapshot Proxmox dépend du stockage choisi : avec un stockage qui ne le gère pas (certains répertoires bruts), utiliser une **sauvegarde** de la VM à la place.
+    VM sélectionnée > **Snapshots > Take Snapshot**, nom `lab-pret-01`, l'équivalent de `01-lab-pret` (Proxmox exige qu'un nom d'instantané commence par une lettre). Le snapshot Proxmox dépend du stockage choisi : avec un stockage qui ne le gère pas (certains répertoires bruts), utiliser une **sauvegarde** de la VM à la place.
 
 !!! warning "Un instantané n'est pas une sauvegarde"
     L'instantané reste **sur le même disque** que la VM : voir l'[encadré de la page d'accueil du parcours](index.md#instantanes-conseilles).
@@ -897,8 +900,8 @@ Avec les quatre VM allumées (`pfsense-19`, `vbr`, `srv-fichiers`, `srv-debian`)
 ## Ressources
 
 - [Exigences système de Veeam Backup & Replication 13](https://helpcenter.veeam.com/docs/vbr/userguide/system_requirements.html) — matériel de l'appliance (section « Linux-Based Backup Server »).
-- [Installer la Veeam Software Appliance depuis l'ISO](https://helpcenter.veeam.com/docs/vbr/userguide/deployment_linux_iso_install.html) — les dix étapes de l'assistant.
-- [Configurer le compte Security Officer à l'installation](https://helpcenter.veeam.com/docs/vbr/userguide/deployment_linux_iso_install_security_officer.html) — étape 9 de l'assistant.
+- [Installer la Veeam Software Appliance depuis l'ISO](https://helpcenter.veeam.com/docs/vbr/userguide/deployment_linux_iso_install.html) — le déroulé de l'assistant de configuration initiale.
+- [Configurer le compte Security Officer à l'installation](https://helpcenter.veeam.com/docs/vbr/userguide/deployment_linux_iso_install_security_officer.html) — l'étape **Security Officer** de l'assistant.
 - [Veeam Host Management](https://helpcenter.veeam.com/docs/vbr/userguide/hmc_about.html) — le rôle de la console d'administration du système.
 - [Installer la console Veeam](https://helpcenter.veeam.com/docs/vbr/userguide/deploy_console.html) — installation de la console Windows.
 - [Téléchargements Veeam](https://www.veeam.com/products/downloads.html) — ISO de l'appliance et licence d'essai (compte gratuit).
