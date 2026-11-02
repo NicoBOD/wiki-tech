@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="330" viewBox="0 0 920 330" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Réplication vers un site de secours</title>
+  <desc id="d">Trois VM en service sur le site de production sont recopiées régulièrement, de façon asynchrone, vers des répliques éteintes sur le site de secours. En cas de sinistre sur le site de production, on bascule : les répliques démarrent sur le site de secours.</desc>
+  <defs>
+    <marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+    <marker id="flb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+    <marker id="flr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+    <marker id="flg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+  </defs>
+  <rect x="0" y="0" width="920" height="330" rx="16" fill="#ffffff"/>
+  <rect x="16" y="16" width="360" height="298" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="196" y="46" text-anchor="middle" font-size="16" font-weight="800" fill="#1e3a8a">Site de production</text>
+  <rect x="544" y="16" width="360" height="298" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="724" y="46" text-anchor="middle" font-size="16" font-weight="800" fill="#14532d">Site de secours (PRA)</text>
+  <rect x="56" y="76" width="280" height="48" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="196" y="106" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a8a">VM 1 — en service</text>
+  <rect x="584" y="76" width="280" height="48" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="724" y="106" text-anchor="middle" font-size="13" font-weight="700" fill="#14532d">Réplique VM 1 — éteinte, prête</text>
+  <line x1="338" y1="100" x2="580" y2="100" stroke="#2563eb" stroke-width="2.5" marker-end="url(#flb)"/>
+  <rect x="56" y="140" width="280" height="48" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="196" y="170" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a8a">VM 2 — en service</text>
+  <rect x="584" y="140" width="280" height="48" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="724" y="170" text-anchor="middle" font-size="13" font-weight="700" fill="#14532d">Réplique VM 2 — éteinte, prête</text>
+  <line x1="338" y1="164" x2="580" y2="164" stroke="#2563eb" stroke-width="2.5" marker-end="url(#flb)"/>
+  <rect x="56" y="204" width="280" height="48" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="196" y="234" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a8a">VM 3 — en service</text>
+  <rect x="584" y="204" width="280" height="48" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="724" y="234" text-anchor="middle" font-size="13" font-weight="700" fill="#14532d">Réplique VM 3 — éteinte, prête</text>
+  <line x1="338" y1="228" x2="580" y2="228" stroke="#2563eb" stroke-width="2.5" marker-end="url(#flb)"/>
+  <text x="460" y="62" text-anchor="middle" font-size="12.5" font-weight="700" fill="#2563eb">copie régulière</text>
+  <text x="460" y="78" text-anchor="middle" font-size="11.5" font-weight="400" fill="#475569">(asynchrone, via</text>
+  <text x="460" y="92" text-anchor="middle" font-size="11.5" font-weight="400" fill="#475569">le WAN ou un VPN)</text>
+  <rect x="56" y="272" width="280" height="30" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="196" y="292" text-anchor="middle" font-size="12.5" font-weight="700" fill="#7f1d1d">Sinistre : le site est perdu</text>
+  <rect x="584" y="272" width="280" height="30" rx="8" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="724" y="292" text-anchor="middle" font-size="12" font-weight="700" fill="#14532d">Bascule (failover) : les répliques démarrent</text>
+</svg>

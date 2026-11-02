@@ -1,6 +1,6 @@
 site_name: Wiki Tech — NicoBOD
 site_url: https://wiki.bodaine.fr/
-site_description: Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation
+site_description: Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques
 edit_uri: https://github.com/NicoBOD/wiki-tech/edit/main/docs/
 
 # Fichiers présents dans docs/ mais exclus du site généré
@@ -98,7 +98,7 @@ plugins:
   # - glightbox
   # RSS — désactivé (plugin externe)
   # - rss:
-  #     match_path: "(systemes|reseaux|cloud|cybersecurite|ia|automatisation|logiciels|debug|astuces)/.*"
+  #     match_path: "(systemes|reseaux|cloud|cybersecurite|ia|automatisation|logiciels|debug|astuces|cours-tp)/.*"
   #     date_from_meta:
   #       as_creation: date
   #     categories:
@@ -271,6 +271,17 @@ nav:
     - Analyser et extraire des colonnes de texte sous Linux avec awk: astuces/analyser-extraire-colonnes-texte-awk.md
     - Extraire et formater des données JSON avec la commande jq: astuces/extraire-formater-donnees-json-commande-jq.md
     - Manipuler et transformer des flux de texte avec sed: astuces/manipuler-transformer-flux-texte-sed.md
+  - Cours et TP:
+    - cours-tp/index.md
+    - Veeam Backup & Replication:
+      - cours-tp/veeam/index.md
+      - "1. Comprendre la sauvegarde": cours-tp/veeam/01-comprendre-la-sauvegarde.md
+      - "2. Découvrir Veeam Data Platform 13": cours-tp/veeam/02-decouvrir-veeam-data-platform.md
+      - "3. Préparer le lab et installer l'appliance": cours-tp/veeam/03-preparer-le-lab-installer-appliance.md
+      - "4. Ajouter des dépôts de sauvegarde": cours-tp/veeam/04-ajouter-des-depots-de-sauvegarde.md
+      - "5. Sauvegarder la configuration et un serveur de fichiers": cours-tp/veeam/05-sauvegarder-configuration-et-serveur-de-fichiers.md
+      - "6. Sauvegarder et restaurer un serveur Linux": cours-tp/veeam/06-sauvegarder-restaurer-serveur-linux.md
+      - "7. Sauvegarder vers Azure Blob (non rejoué)": cours-tp/veeam/07-sauvegarder-vers-azure-blob.md
   - Tags: tags.md
 
 copyright: >

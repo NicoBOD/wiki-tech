@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">RPO et RTO</title>
+  <desc id="d">Frise chronologique. Entre la dernière sauvegarde et l'incident s'étend le RPO : les données perdues, en français PDMA. Entre l'incident et le rétablissement du service s'étend le RTO : le temps d'arrêt, en français DMIA.</desc>
+  <defs>
+    <marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+    <marker id="flb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+    <marker id="flr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+    <marker id="flg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+  </defs>
+  <rect x="0" y="0" width="960" height="300" rx="16" fill="#ffffff"/>
+  <line x1="40" y1="150" x2="920" y2="150" stroke="#0f172a" stroke-width="3" marker-end="url(#fl)"/>
+  <text x="920" y="176" text-anchor="end" font-size="12" font-weight="600" fill="#475569">temps</text>
+  <circle cx="170" cy="150" r="11" fill="#16a34a" stroke="#ffffff" stroke-width="3"/>
+  <text x="170" y="112" text-anchor="middle" font-size="14" font-weight="800" fill="#16a34a">Dernière sauvegarde</text>
+  <text x="170" y="130" text-anchor="middle" font-size="12" font-weight="400" fill="#475569">(point de restauration)</text>
+  <circle cx="520" cy="150" r="11" fill="#dc2626" stroke="#ffffff" stroke-width="3"/>
+  <text x="520" y="112" text-anchor="middle" font-size="14" font-weight="800" fill="#dc2626">Incident</text>
+  <text x="520" y="130" text-anchor="middle" font-size="12" font-weight="400" fill="#475569">panne, rançongiciel…</text>
+  <circle cx="800" cy="150" r="11" fill="#2563eb" stroke="#ffffff" stroke-width="3"/>
+  <text x="800" y="112" text-anchor="middle" font-size="14" font-weight="800" fill="#2563eb">Service rétabli</text>
+  <line x1="170" y1="200" x2="520" y2="200" stroke="#d97706" stroke-width="3" marker-end="url(#fl)" marker-start="url(#fl)"/>
+  <text x="345" y="228" text-anchor="middle" font-size="15" font-weight="800" fill="#78350f">RPO — données perdues</text>
+  <text x="345" y="248" text-anchor="middle" font-size="12" font-weight="400" fill="#475569">« combien de travail accepte-t-on de perdre ? »</text>
+  <text x="345" y="266" text-anchor="middle" font-size="12" font-weight="600" fill="#475569">en français : PDMA</text>
+  <line x1="520" y1="200" x2="800" y2="200" stroke="#2563eb" stroke-width="3" marker-end="url(#flb)" marker-start="url(#flb)"/>
+  <text x="660" y="228" text-anchor="middle" font-size="15" font-weight="800" fill="#1e3a8a">RTO — temps d'arrêt</text>
+  <text x="660" y="248" text-anchor="middle" font-size="12" font-weight="400" fill="#475569">« en combien de temps redémarre-t-on ? »</text>
+  <text x="660" y="266" text-anchor="middle" font-size="12" font-weight="600" fill="#475569">en français : DMIA</text>
+  <text x="480" y="46" text-anchor="middle" font-size="16" font-weight="800" fill="#0f172a">Deux objectifs fixés pour chaque application dans le PRA</text>
+</svg>

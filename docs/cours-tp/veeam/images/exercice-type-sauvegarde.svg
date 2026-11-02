@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="470" viewBox="0 0 760 470" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Exercice : identifier le type de sauvegarde</title>
+  <desc id="d">Six colonnes du lundi au samedi. Lundi : 900 Go. Mardi : 100 Go. Mercredi : 100 et 200 Go. Jeudi : 100, 200 et 100 Go. Vendredi : 100, 200, 100 et 300 Go. Samedi : 100, 200, 100, 300 et 100 Go. Chaque jour reprend les blocs des jours précédents depuis lundi.</desc>
+  <defs>
+    <marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+    <marker id="flb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+    <marker id="flr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+    <marker id="flg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+  </defs>
+  <rect x="0" y="0" width="760" height="470" rx="16" fill="#ffffff"/>
+  <rect x="16" y="16" width="728" height="438" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="150" y="34" width="460" height="40" rx="8" fill="#ffffff" stroke="#1e3a8a" stroke-width="2"/>
+  <text x="380" y="60" text-anchor="middle" font-size="17" font-weight="800" fill="#1e3a8a">Exemple de sauvegarde ………………… ?</text>
+  <rect x="40.0" y="100" width="105.0" height="320" rx="2" fill="#e5e7eb"/>
+  <rect x="40.0" y="132.0" width="105.0" height="288.0" fill="#1d4ed8" stroke="#ffffff" stroke-width="1"/>
+  <text x="92.5" y="281.0" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">900 Go</text>
+  <text x="92.5" y="438" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Lundi</text>
+  <rect x="155.0" y="100" width="105.0" height="320" rx="2" fill="#e5e7eb"/>
+  <rect x="155.0" y="388.0" width="105.0" height="32.0" fill="#b91c1c" stroke="#ffffff" stroke-width="1"/>
+  <text x="207.5" y="409.0" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">100 Go</text>
+  <text x="207.5" y="438" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Mardi</text>
+  <rect x="270.0" y="100" width="105.0" height="320" rx="2" fill="#e5e7eb"/>
+  <rect x="270.0" y="388.0" width="105.0" height="32.0" fill="#b91c1c" stroke="#ffffff" stroke-width="1"/>
+  <text x="322.5" y="409.0" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">100 Go</text>
+  <rect x="270.0" y="324.0" width="105.0" height="64.0" fill="#16a34a" stroke="#ffffff" stroke-width="1"/>
+  <text x="322.5" y="361.0" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">200 Go</text>
+  <text x="322.5" y="438" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Mercredi</text>
+  <rect x="385.0" y="100" width="105.0" height="320" rx="2" fill="#e5e7eb"/>
+  <rect x="385.0" y="388.0" width="105.0" height="32.0" fill="#b91c1c" stroke="#ffffff" stroke-width="1"/>
+  <text x="437.5" y="409.0" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">100 Go</text>
+  <rect x="385.0" y="324.0" width="105.0" height="64.0" fill="#16a34a" stroke="#ffffff" stroke-width="1"/>
+  <text x="437.5" y="361.0" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">200 Go</text>
+  <rect x="385.0" y="292.0" width="105.0" height="32.0" fill="#eab308" stroke="#ffffff" stroke-width="1"/>
+  <text x="437.5" y="313.0" text-anchor="middle" font-size="12" font-weight="700" fill="#422006">100 Go</text>
+  <text x="437.5" y="438" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Jeudi</text>
+  <rect x="500.0" y="100" width="105.0" height="320" rx="2" fill="#e5e7eb"/>
+  <rect x="500.0" y="388.0" width="105.0" height="32.0" fill="#b91c1c" stroke="#ffffff" stroke-width="1"/>
+  <text x="552.5" y="409.0" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">100 Go</text>
+  <rect x="500.0" y="324.0" width="105.0" height="64.0" fill="#16a34a" stroke="#ffffff" stroke-width="1"/>
+  <text x="552.5" y="361.0" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">200 Go</text>
+  <rect x="500.0" y="292.0" width="105.0" height="32.0" fill="#eab308" stroke="#ffffff" stroke-width="1"/>
+  <text x="552.5" y="313.0" text-anchor="middle" font-size="12" font-weight="700" fill="#422006">100 Go</text>
+  <rect x="500.0" y="196.0" width="105.0" height="96.0" fill="#93c5fd" stroke="#ffffff" stroke-width="1"/>
+  <text x="552.5" y="249.0" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a8a">300 Go</text>
+  <text x="552.5" y="438" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Vendredi</text>
+  <rect x="615.0" y="100" width="105.0" height="320" rx="2" fill="#e5e7eb"/>
+  <rect x="615.0" y="388.0" width="105.0" height="32.0" fill="#b91c1c" stroke="#ffffff" stroke-width="1"/>
+  <text x="667.5" y="409.0" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">100 Go</text>
+  <rect x="615.0" y="324.0" width="105.0" height="64.0" fill="#16a34a" stroke="#ffffff" stroke-width="1"/>
+  <text x="667.5" y="361.0" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">200 Go</text>
+  <rect x="615.0" y="292.0" width="105.0" height="32.0" fill="#eab308" stroke="#ffffff" stroke-width="1"/>
+  <text x="667.5" y="313.0" text-anchor="middle" font-size="12" font-weight="700" fill="#422006">100 Go</text>
+  <rect x="615.0" y="196.0" width="105.0" height="96.0" fill="#93c5fd" stroke="#ffffff" stroke-width="1"/>
+  <text x="667.5" y="249.0" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a8a">300 Go</text>
+  <rect x="615.0" y="164.0" width="105.0" height="32.0" fill="#7c3aed" stroke="#ffffff" stroke-width="1"/>
+  <text x="667.5" y="185.0" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">100 Go</text>
+  <text x="667.5" y="438" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">Samedi</text>
+</svg>

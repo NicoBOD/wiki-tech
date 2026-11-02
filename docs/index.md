@@ -9,7 +9,7 @@ hide:
 
 Wiki technique personnel de **Nicolas BODAINE** — administrateur systèmes et réseaux, cloud & cybersécurité.
 
-Ce wiki centralise mes notes techniques, découvertes, résolutions de problèmes et astuces du quotidien.
+Ce wiki centralise mes notes techniques, découvertes, résolutions de problèmes, astuces du quotidien et supports de formation.
 
 ---
 
@@ -88,5 +88,13 @@ Ce wiki centralise mes notes techniques, découvertes, résolutions de problème
     Tips & tricks divers pour gagner du temps.
 
     [:octicons-arrow-right-24: Consulter](astuces/index.md)
+
+- :material-school:{ .lg .middle } __Cours et Travaux Pratiques__
+
+    ---
+
+    Parcours de formation complets : cours, TP rejoués en laboratoire et exercices corrigés.
+
+    [:octicons-arrow-right-24: Consulter](cours-tp/index.md)
 
 </div>

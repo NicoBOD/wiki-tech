@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="520" viewBox="0 0 1000 520" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Rôles Veeam dans le lab</title>
+  <desc id="d">L'appliance vbr cumule les rôles de serveur de sauvegarde avec sa base PostgreSQL, de proxy et de serveur de montage pour Linux, et porte l'interface web et Host Management, ainsi que le dépôt n° 1, un disque local immuable. Sur srv-fichiers, l'agent Veeam pour Windows protège le dossier E:\Documents-importants et le disque F: formaté en ReFS sert de dépôt n° 2, qui reçoit aussi la sauvegarde de configuration. Sur srv-debian, l'agent Veeam pour Linux sauvegarde la machine entière. Un navigateur, sur srv-fichiers ou sur le PC hôte, administre l'appliance par l'interface web.</desc>
+  <defs>
+    <marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+    <marker id="flb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+    <marker id="flr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+    <marker id="flg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+  </defs>
+  <rect x="0" y="0" width="1000" height="520" rx="16" fill="#ffffff"/>
+  <rect x="330" y="20" width="340" height="300" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="500" y="48" text-anchor="middle" font-size="15" font-weight="800" fill="#14532d">vbr — Veeam Software Appliance</text>
+  <rect x="350" y="62" width="300" height="28" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <text x="500" y="81" text-anchor="middle" font-size="12" font-weight="700" fill="#14532d">Serveur de sauvegarde (+ PostgreSQL)</text>
+  <rect x="350" y="96" width="300" height="28" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <text x="500" y="115" text-anchor="middle" font-size="12" font-weight="700" fill="#14532d">Proxy de sauvegarde</text>
+  <rect x="350" y="130" width="300" height="28" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <text x="500" y="149" text-anchor="middle" font-size="12" font-weight="700" fill="#14532d">Serveur de montage (Linux)</text>
+  <rect x="350" y="164" width="300" height="28" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <text x="500" y="183" text-anchor="middle" font-size="12" font-weight="700" fill="#14532d">Interface web et Host Management</text>
+  <path d="M400,222.0 L400,286.0 A100.0,18.0 0 0 0 600,286.0 L600,222.0" fill="#16a34a" stroke="#14532d" stroke-width="1.5"/>
+  <ellipse cx="500.0" cy="222.0" rx="100.0" ry="18.0" fill="#16a34a" stroke="#14532d" stroke-width="1.5"/>
+  <text x="500" y="252" text-anchor="middle" font-size="12.5" font-weight="800" fill="#ffffff">Dépôt n° 1 : disque local</text>
+  <text x="500" y="270" text-anchor="middle" font-size="12" font-weight="600" fill="#ffffff">immuable (dépôt durci)</text>
+  <rect x="370" y="400" width="260" height="90" rx="12" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+  <text x="500" y="428" text-anchor="middle" font-size="14" font-weight="800" fill="#0f172a">Navigateur web</text>
+  <text x="500" y="448" text-anchor="middle" font-size="11.5" font-weight="400" fill="#475569">Edge sur srv-fichiers ou PC hôte</text>
+  <text x="500" y="468" text-anchor="middle" font-size="12" font-weight="700" fill="#2563eb">https://192.168.19.55</text>
+  <line x1="500" y1="398" x2="500" y2="324" stroke="#475569" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#fl)"/>
+  <text x="512" y="366" text-anchor="start" font-size="11.5" font-weight="600" fill="#475569">administration (Web UI)</text>
+  <rect x="24" y="60" width="270" height="250" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="159" y="88" text-anchor="middle" font-size="14" font-weight="800" fill="#1e3a8a">srv-fichiers — Windows Server</text>
+  <rect x="44" y="104" width="230" height="50" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1"/>
+  <text x="159" y="126" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e3a8a">Agent Veeam pour Windows</text>
+  <text x="159" y="143" text-anchor="middle" font-size="11" font-weight="400" fill="#475569">kit de déploiement · console Windows</text>
+  <text x="159" y="176" text-anchor="middle" font-size="11.5" font-weight="600" fill="#0f172a">protège E:\Documents-importants</text>
+  <path d="M74,209.28 L74,270.72 A85.0,17.28 0 0 0 244,270.72 L244,209.28" fill="#2563eb" stroke="#1e3a8a" stroke-width="1.5"/>
+  <ellipse cx="159.0" cy="209.28" rx="85.0" ry="17.28" fill="#2563eb" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="159" y="238" text-anchor="middle" font-size="12" font-weight="800" fill="#ffffff">Dépôt n° 2 : disque F:</text>
+  <text x="159" y="256" text-anchor="middle" font-size="11.5" font-weight="600" fill="#ffffff">ReFS 64 Ko · F:\RepoVeeam</text>
+  <rect x="706" y="60" width="270" height="250" rx="14" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+  <text x="841" y="88" text-anchor="middle" font-size="14" font-weight="800" fill="#4c1d95">srv-debian — Debian 13</text>
+  <rect x="726" y="104" width="230" height="50" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="1"/>
+  <text x="841" y="126" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4c1d95">Agent Veeam pour Linux</text>
+  <text x="841" y="143" text-anchor="middle" font-size="11" font-weight="400" fill="#475569">installé via SSH par l'appliance</text>
+  <text x="841" y="176" text-anchor="middle" font-size="11.5" font-weight="600" fill="#0f172a">sauvegarde de la machine entière</text>
+  <text x="841" y="196" text-anchor="middle" font-size="11.5" font-weight="400" fill="#475569">restauration bare metal avec</text>
+  <text x="841" y="212" text-anchor="middle" font-size="11.5" font-weight="400" fill="#475569">le support de récupération (ISO)</text>
+  <line x1="276" y1="130" x2="396" y2="236" stroke="#2563eb" stroke-width="2.5" marker-end="url(#flb)"/>
+  <text x="318" y="196" text-anchor="middle" font-size="11.5" font-weight="700" fill="#2563eb">sauvegarde</text>
+  <line x1="724" y1="130" x2="604" y2="236" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#fl)"/>
+  <text x="684" y="196" text-anchor="middle" font-size="11.5" font-weight="700" fill="#7c3aed">sauvegarde</text>
+  <line x1="398" y1="290" x2="246" y2="264" stroke="#16a34a" stroke-width="2.5" marker-end="url(#flg)"/>
+  <text x="320" y="300" text-anchor="middle" font-size="11.5" font-weight="700" fill="#16a34a">sauvegarde de configuration</text>
+</svg>
