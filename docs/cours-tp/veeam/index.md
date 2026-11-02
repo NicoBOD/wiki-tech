@@ -15,7 +15,7 @@ status: publié
 # Veeam Backup & Replication 13.1 : cours et travaux pratiques
 
 !!! abstract "Résumé"
-    Ce parcours en sept parties apprend à **protéger les données d'une petite infrastructure** avec **Veeam Backup & Replication 13.1**, l'un des logiciels de sauvegarde les plus répandus en entreprise. Il commence par deux cours (les principes de la sauvegarde, puis l'offre Veeam), continue par quatre travaux pratiques rejoués de bout en bout dans un laboratoire virtuel, et se termine par une partie illustrée sur la sauvegarde dans le cloud Azure.
+    Ce parcours en sept parties apprend à **protéger les données d'une petite infrastructure** avec **Veeam Backup & Replication 13.1**, l'un des logiciels de sauvegarde les plus répandus en entreprise. Il commence par deux cours (les principes de la sauvegarde, puis l'offre Veeam), continue par quatre travaux pratiques réalisés dans un laboratoire virtuel, et se termine par une partie illustrée sur la sauvegarde dans le cloud Azure.
 
     Au bout du parcours, un serveur de sauvegarde Veeam protège un **serveur de fichiers Windows** et un **serveur Linux**. Le serveur Linux aura été **entièrement reconstruit** à partir de sa sauvegarde, après une panne simulée.
 
@@ -26,7 +26,6 @@ status: publié
 | Public | Débutants en administration système : aucune connaissance de Veeam n'est demandée |
 | Durée totale | Environ 15 h (cours, TP et questions de révision) |
 | Version décrite | Veeam Backup & Replication **13.1.2.57** (Veeam Software Appliance, octobre 2026) |
-| Rejoué dans le lab | Du 1er au 2 novembre 2026, sur KVM/libvirt (toutes les captures d'écran viennent de ce lab) |
 | Dernière mise à jour | 2026-11-02 |
 
 <!-- NOTE DE RÉDACTION (non affichée) : Ce qui a changé par rapport à la version 1.5 du support (juin 2024)
@@ -61,7 +60,7 @@ status: publié
 | [4. Ajouter des dépôts de sauvegarde](04-ajouter-des-depots-de-sauvegarde.md) | TP | 1 h 30 | Dépôt immuable de l'appliance, serveur Windows géré, dépôt ReFS | pfSense, `vbr`, `srv-fichiers` |
 | [5. Sauvegarder la configuration et le serveur de fichiers](05-sauvegarder-configuration-et-serveur-de-fichiers.md) | TP | 2 h | Sauvegarde de configuration chiffrée, agent Veeam pour Windows, restauration d'un fichier | pfSense, `vbr`, `srv-fichiers` |
 | [6. Sauvegarder et restaurer un serveur Linux](06-sauvegarder-restaurer-serveur-linux.md) | TP | 2 h 30 | Agent Veeam pour Linux, panne totale, restauration *bare metal* avec le support de récupération | pfSense, `vbr`, `srv-debian` (+ `srv-fichiers` pour le navigateur) |
-| [7. Sauvegarder vers Azure Blob Storage](07-sauvegarder-vers-azure-blob.md) | Cours illustré | 1 h | Dépôt objet dans Azure, job vers le cloud, dépannage `libfuse` (non rejoué) | Aucune |
+| [7. Sauvegarder vers Azure Blob Storage](07-sauvegarder-vers-azure-blob.md) | Cours illustré | 1 h | Dépôt objet dans Azure, job vers le cloud, dépannage `libfuse` | Aucune |
 
 Les durées sont indicatives : la première installation de l'appliance prend à elle seule environ une heure, dont une bonne partie d'attente.
 
@@ -124,14 +123,14 @@ Les **codes MFA** sont générés par une application d'authentification install
 
 ## Dimensionnement des machines virtuelles
 
-| Machine | Confortable (utilisé dans le lab) | Minimal (testé) | Disques |
+| Machine | Confortable (conseillé) | Minimal | Disques |
 |---|---|---|---|
 | `vbr` | 6 vCPU, 16 Go | 4 vCPU, 8 Go | 2 disques de 240 Go, dynamiques, UEFI |
 | `srv-fichiers` | 2 vCPU, 4 Go | 2 vCPU, 4 Go | 60 Go (C:) + 40 Go (E:) + 40 Go (F:, partie 4) |
 | `srv-debian` | 2 vCPU, 2 Go | 2 vCPU, 2 Go | 20 Go (+ un disque vierge de 20 Go en partie 6) |
 | `pfsense-19` | 1 vCPU, 2 Go | 1 vCPU, 1 Go | 20 Go |
 
-- Pour l'appliance, Veeam demande au minimum **8 cœurs et 16 Go de RAM** (plus 500 Mo par job simultané), et accepte **6 vCPU et 16 Go** pour une petite infrastructure de 5 machines protégées au plus : c'est le profil **confortable**, celui avec lequel le lab a été rejoué. Le profil **minimal** (8 Go, 4 vCPU) est **en dessous du minimum pris en charge par Veeam** : il ne convient pas à la production, mais il a été testé dans le lab : l'appliance démarre, l'interface web reste utilisable et les deux jobs du parcours réussissent (environ 3 minutes chacun).
+- Pour l'appliance, Veeam demande au minimum **8 cœurs et 16 Go de RAM** (plus 500 Mo par job simultané), et accepte **6 vCPU et 16 Go** pour une petite infrastructure de 5 machines protégées au plus : c'est le profil **confortable**, conseillé pour ce parcours. Le profil **minimal** (8 Go, 4 vCPU) est **en dessous du minimum pris en charge par Veeam** : il ne convient pas à la production, mais il suffit pour ce lab : l'appliance démarre, l'interface web reste utilisable et les deux jobs du parcours réussissent (environ 3 minutes chacun).
 - **Mémoire du PC hôte** : 32 Go permettent de tout allumer en profil confortable. Avec **16 à 24 Go**, prendre le profil minimal et n'allumer que les machines de la partie en cours (colonne « Machines allumées » du [plan](#plan-du-parcours)), en fermant les applications inutiles du PC.
 - **Disque du PC hôte** : prévoir environ **150 Go libres**, de préférence sur un **SSD**. Les disques sont dynamiques : les 2 × 240 Go de l'appliance n'occupent au départ qu'une trentaine de gigaoctets ; l'espace occupé grandit ensuite avec les sauvegardes.
 - La **virtualisation matérielle** (Intel VT-x ou AMD-V) doit être activée dans le BIOS/UEFI du PC.

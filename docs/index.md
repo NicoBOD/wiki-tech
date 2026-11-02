@@ -93,7 +93,7 @@ Ce wiki centralise mes notes techniques, découvertes, résolutions de problème
 
     ---
 
-    Parcours de formation complets : cours, TP rejoués en laboratoire et exercices corrigés.
+    Parcours de formation complets : cours, TP en laboratoire virtuel et exercices corrigés.
 
     [:octicons-arrow-right-24: Consulter](cours-tp/index.md)
 

@@ -36,7 +36,6 @@ status: publié
 | Version décrite | Veeam Backup & Replication **13.1.2.57** (Veeam Software Appliance), agent Veeam pour Windows installé par l'appliance |
 | Prérequis | Parties [3](03-preparer-le-lab-installer-appliance.md) et [4](04-ajouter-des-depots-de-sauvegarde.md) terminées ; instantané `02-depots` |
 | Place dans le parcours | Partie 5 sur 7 du parcours [Veeam Backup & Replication](index.md) |
-| Rejoué dans le lab | 2 novembre 2026 (KVM/libvirt) |
 | Dernière mise à jour | 2026-11-02 |
 
 <!-- NOTE DE RÉDACTION (non affichée) : Ce qui a changé par rapport à la version 1.5 du support (juin 2024)
@@ -139,7 +138,7 @@ L'idée est la **séparation des pouvoirs** : celui qui administre Veeam au quot
 ## 2. Sauvegarder la configuration de Veeam
 
 !!! info "Console Windows ou interface web ?"
-    Dans le lab, ce réglage a été fait dans la **console Windows**, comme le décrit la documentation de Veeam (menu principal, **Configuration Backup**). Les pages **Configuration** de l'interface web observées dans le lab ne proposaient pas ce réglage, et un article de la communauté Veeam sur la version 13 indique que la sauvegarde de configuration n'est pas encore disponible dans la console web. Ce dernier point n'a pas été vérifié plus avant : si une version ultérieure l'ajoute, la logique reste la même.
+    Ce réglage se fait dans la **console Windows**, comme le décrit la documentation de Veeam (menu principal, **Configuration Backup**). Dans la version 13.1.2, les pages **Configuration** de l'interface web ne le proposent pas. Si une version ultérieure l'ajoute, la logique reste la même.
 
 ### 2.1 Ouvrir les réglages
 
@@ -209,7 +208,7 @@ Au bout d'une minute environ, la ligne **Last successful backup** affiche la dat
 ### 2.5 Dépanner : la phrase secrète du Security Officer manque
 
 !!! failure "La tâche « Backup Configuration Job » échoue"
-    Si **Backup now** se termine en **Failed**, ouvrir le journal de la session. Dans le lab, avant que la phrase secrète n'existe, il contenait :
+    Si **Backup now** se termine en **Failed**, ouvrir le journal de la session. Si la phrase secrète n'a pas encore été définie, il contient :
 
     ```text
     Failed  Processing configuration VeeamBackup at /run/postgresql
@@ -298,7 +297,7 @@ Pour sauvegarder un serveur physique ou une machine virtuelle **sans passer par 
 </figure>
 
 !!! question "Pourquoi l'authentification par certificat ?"
-    La seconde option, **Connect using admin credentials**, demande un compte administrateur de la machine. Le choix par certificat évite de saisir un mot de passe, et l'ordinateur est déjà **connu** de l'appliance : `srv-fichiers` a été ajouté comme **serveur géré** en partie 4, ce qui a installé le *Veeam Deployment Service* (le service `VeeamDeploySvc` tourne sur le serveur). La colonne **Account** de la liste indique d'ailleurs « Veeam Deployment Service ». Si la machine n'avait pas ce service, il faudrait passer par le compte administrateur (`Administrateur`, `Popopo222@@@`) : cette variante n'a pas été rejouée dans le lab.
+    La seconde option, **Connect using admin credentials**, demande un compte administrateur de la machine. Le choix par certificat évite de saisir un mot de passe, et l'ordinateur est déjà **connu** de l'appliance : `srv-fichiers` a été ajouté comme **serveur géré** en partie 4, ce qui a installé le *Veeam Deployment Service* (le service `VeeamDeploySvc` tourne sur le serveur). La colonne **Account** de la liste indique d'ailleurs « Veeam Deployment Service ». Si la machine n'avait pas ce service, il faudrait passer par le compte administrateur (`Administrateur`, `Popopo222@@@`).
 
 <figure markdown="span">
   ![Étape Computers de l'assistant avec 192.168.19.22 ajouté et le compte Veeam Deployment Service](images/05-fichiers/groupe-protection-ordinateur-ajoute.png){ loading=lazy }
@@ -359,10 +358,10 @@ Dans la liste **Protection Groups** > `GP-srv-fichiers`, la machine `SRV-FICHIER
 Get-Service | Where-Object DisplayName -match 'Veeam' | Format-Table Name, DisplayName, Status -AutoSize
 ```
 
-Le résultat doit inclure le service **Veeam Agent for Microsoft Windows** (`VeeamEndpointBackupSvc`) à l'état **Running**, à côté du service d'installation `VeeamDeploySvc` et de services d'aide à la restauration (`VeeamExplorersRecoverySvc`, `VeeamMountSvc`, `VeeamTransportSvc`…). Dans le lab, tous étaient **Running**.
+Le résultat doit inclure le service **Veeam Agent for Microsoft Windows** (`VeeamEndpointBackupSvc`) à l'état **Running**, à côté du service d'installation `VeeamDeploySvc` et de services d'aide à la restauration (`VeeamExplorersRecoverySvc`, `VeeamMountSvc`, `VeeamTransportSvc`…), tous normalement à l'état **Running**.
 
 !!! failure "Le rescan se termine en erreur"
-    Avant d'incriminer Veeam, vérifier dans l'ordre : l'adresse saisie (`192.168.19.22`), la communication réseau entre `vbr` et `srv-fichiers` (un `ping` depuis la VM), le **pare-feu Windows**, et que le service **VeeamDeploySvc** tourne sur `srv-fichiers`. Ouvrir le détail de la session depuis **Logs & Events** pour lire le message complet. Ce cas ne s'est pas produit dans le lab.
+    Avant d'incriminer Veeam, vérifier dans l'ordre : l'adresse saisie (`192.168.19.22`), la communication réseau entre `vbr` et `srv-fichiers` (un `ping` depuis la VM), le **pare-feu Windows**, et que le service **VeeamDeploySvc** tourne sur `srv-fichiers`. Ouvrir le détail de la session depuis **Logs & Events** pour lire le message complet.
 
 ---
 
@@ -579,7 +578,7 @@ L'**empreinte** (*hash*) SHA-256 est une signature calculée à partir du conten
     Veeam ne **décompresse pas** toute la sauvegarde. Il **monte** son contenu sur un **serveur de montage** (*mount server*), ici `srv-fichiers` lui-même, ce qui permet de **parcourir** les fichiers comme un disque et de n'en récupérer qu'un. L'écran affiche « Starting restore session… » quelques secondes.
 
 !!! tip "Le navigateur de restauration ne s'ouvre pas ?"
-    D'après la documentation de Veeam, la restauration de fichiers s'ouvre dans une fenêtre dédiée : si le navigateur bloque les **fenêtres surgissantes** (*pop-ups*), autoriser celles de `https://192.168.19.55` dans les réglages du navigateur, puis relancer **Restore Guest Files**.
+    Le navigateur de restauration s'ouvre dans une **nouvelle fenêtre**. Si rien n'apparaît, le navigateur web bloque sans doute les **fenêtres contextuelles** (*pop-ups*) : cliquer sur l'icône de blocage qui s'affiche dans la barre d'adresse, autoriser les fenêtres contextuelles pour `https://192.168.19.55`, puis relancer **Restore Guest Files**.
 
 ### 5.3 Retrouver le fichier
 
@@ -593,7 +592,7 @@ Une fenêtre **Browse - SRV-FICHIERS** s'ouvre avec l'arborescence de la machine
   <figcaption>L'arborescence de <code>SRV-FICHIERS</code> telle qu'elle était lors de la sauvegarde, avec son disque <code>E:</code>.</figcaption>
 </figure>
 
-La recherche a trouvé dans le lab un seul fichier : `factures-2026.csv`, de type **File**, d'une taille de **126 octets**, dans `E:\Documents-importants\Comptabilite`.
+La recherche renvoie un seul fichier : `factures-2026.csv`, de type **File**, d'une taille de **126 octets**, dans `E:\Documents-importants\Comptabilite`.
 
 <figure markdown="span">
   ![Résultat de la recherche « factures » : le fichier factures-2026.csv de 126 octets](images/05-fichiers/restauration-recherche.png){ loading=lazy }
@@ -608,7 +607,7 @@ La recherche a trouvé dans le lab un seul fichier : `factures-2026.csv`, de typ
 | Choix | Effet |
 |---|---|
 | **Overwrite** | **Remplace** le fichier actuel par celui de la sauvegarde, à son emplacement d'origine |
-| **Keep** | **Conserve** le fichier actuel et enregistre celui de la sauvegarde **à côté**. D'après la documentation de Veeam, s'il existe déjà un fichier de même nom, la copie restaurée reçoit le suffixe `_RESTORED_` suivi de la date et de l'heure |
+| **Keep** | **Conserve** le fichier actuel et enregistre celui de la sauvegarde **à côté**, dans le même dossier. S'il existe déjà un fichier de même nom, la copie restaurée reçoit le suffixe `_RESTORED_AAAAMMJJ_HHMMSS` (date et heure de la restauration) |
 | **Permissions only** | Ne restaure **que les droits d'accès** (NTFS) du fichier, pas son contenu ; le fichier doit exister |
 
 <figure markdown="span">
@@ -653,7 +652,7 @@ Une fenêtre **Restoring files to 192.168.19.22** affiche la progression. Dans l
 !!! failure "Les empreintes sont différentes, ou le fichier n'est pas revenu"
     - **Fichier absent** : la restauration a peut-être écrit le fichier avec le suffixe `_RESTORED_…` (si un fichier du même nom existait déjà) : lister le dossier complet.
     - **Empreinte différente** : vérifier qu'on compare le **même fichier**, et que le fichier n'a pas été modifié **avant** la sauvegarde (le job ne conserve que ce qu'il a lu à 22 h ou au lancement manuel). Ne pas considérer la sauvegarde comme fiable avant d'avoir compris l'écart.
-    - **Le navigateur de restauration ne s'ouvre pas** : voir l'encadré sur les fenêtres surgissantes en 5.2.
+    - **Le navigateur de restauration ne s'ouvre pas** : voir l'encadré sur les fenêtres contextuelles en 5.2.
 
 ### 5.6 Pour aller plus loin
 
@@ -663,7 +662,7 @@ Une fenêtre **Restoring files to 192.168.19.22** affiche la progression. Dans l
     3. Vérifier que le contenu est revenu à la version sauvegardée. Que serait-il arrivé avec **Keep** ?
 
 !!! example "Exercice : restaurer vers un autre emplacement"
-    Le menu propose aussi **Restore To** et **Download** (non testés dans le lab). Selon la liste des limites de l'interface web dans la documentation de Veeam, la restauration de fichiers invités vers **un autre emplacement** se fait plutôt dans la **console Windows** (clic droit sur la machine dans **Backups**, **Restore guest files** > **Microsoft Windows**). Essayer d'y restaurer `factures-2026.csv` dans `E:\Restauration-test`, puis comparer l'empreinte.
+    Le navigateur de restauration propose aussi **Restore To** (restaurer vers une autre machine ou un autre dossier) et **Download** (télécharger les éléments choisis, dans une archive `.zip`, sur le poste où le navigateur web est ouvert). Selon la liste des limites de l'interface web dans la documentation de Veeam, la restauration de fichiers invités vers **un autre emplacement** se fait plutôt dans la **console Windows** (clic droit sur la machine dans **Backups**, **Restore guest files** > **Microsoft Windows**). Essayer d'y restaurer `factures-2026.csv` dans `E:\Restauration-test`, puis comparer l'empreinte.
 
 ---
 
@@ -707,7 +706,7 @@ Cocher chaque point avant de passer à la partie suivante :
     4. Le groupe permet à l'appliance de **déployer et mettre à jour l'agent**, de **réanalyser** régulièrement les machines et de **suivre automatiquement** celles qu'on ajoute : le job désigne le groupe, pas chaque machine.
     5. **Entire machine** : image complète, pour reconstruire la machine. **Volume-level** : des volumes entiers choisis. **File-level** : seulement les fichiers et dossiers désignés, sans le système, adapté à un dossier précis.
     6. Pour que les données et leur copie soient sur **deux machines différentes**, et parce que ce dépôt est **immuable** (7 jours dans le lab), ce qui protège contre la suppression des sauvegardes.
-    7. **Overwrite** remplace le fichier actuel par celui de la sauvegarde. **Keep** garde le fichier actuel et restaure l'ancien à côté (suffixe `_RESTORED_` + date si un fichier de même nom existe). **Permissions only** ne restaure que les droits d'accès, pas le contenu.
+    7. **Overwrite** remplace le fichier actuel par celui de la sauvegarde. **Keep** garde le fichier actuel et restaure l'ancien à côté (suffixe `_RESTORED_` + date et heure si un fichier de même nom existe). **Permissions only** ne restaure que les droits d'accès, pas le contenu.
     8. À **prouver que le fichier restauré est identique à l'original** : si une seule différence existe, l'empreinte change. C'est un test objectif, plus fiable qu'un simple coup d'œil.
 
 ---
@@ -720,5 +719,6 @@ Cocher chaque point avant de passer à la partie suivante :
 - [Groupes de protection (documentation Veeam)](https://helpcenter.veeam.com/docs/vbr/userguide/protection_group.html) — types de groupes et déploiement des agents.
 - [Créer un job de sauvegarde par agent pour Windows, console web (documentation Veeam)](https://helpcenter.veeam.com/docs/vbr/userguide/agent_job_create_win_web.html) — les étapes de l'assistant.
 - [Restauration de fichiers invités (documentation Veeam)](https://helpcenter.veeam.com/docs/vbr/userguide/guest_file_recovery.html) — montage, serveur de montage, Overwrite et Keep.
+- [Restaurer des fichiers invités dans l'interface web, étape Finalize Recovery (documentation Veeam)](https://helpcenter.veeam.com/docs/vbr/userguide/guest_restore_save_vm_web.html) — Keep, Overwrite, Download et suffixe `RESTORED_`.
 - [Limites de l'interface web (documentation Veeam)](https://helpcenter.veeam.com/docs/vbr/userguide/web_ui_limitations.html) — ce que l'interface web ne permet pas encore.
 - Partie précédente : [Ajouter des dépôts de sauvegarde](04-ajouter-des-depots-de-sauvegarde.md) · Partie suivante : [Sauvegarder et restaurer un serveur Linux](06-sauvegarder-restaurer-serveur-linux.md) · Retour au [sommaire du parcours](index.md).

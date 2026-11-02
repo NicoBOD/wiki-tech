@@ -36,10 +36,10 @@ status: publié
 | Place dans le parcours | Partie 7 sur 7 du parcours [Veeam Backup & Replication](index.md) |
 | Dernière mise à jour | 2026-11-02 |
 
-!!! warning "Partie illustrée, non rejouée"
-    Contrairement aux parties 3 à 6, cette partie **n'a pas été rejouée** dans le lab de 2026 : elle demande un abonnement Azure et génère des coûts. Les captures montrent Veeam Backup & Replication **12.1** installé sur Windows et une version antérieure du portail Azure.
+!!! warning "Partie illustrée"
+    Cette partie se lit avec les captures. La réaliser demande un **abonnement Azure** et **génère des coûts**. Les captures montrent Veeam Backup & Replication **12.1** installé sur Windows et une version antérieure du portail Azure.
 
-    Les principes et les assistants restent valables en version 13. Les différences connues sont signalées dans des encadrés « En version 13 ». L'interface du portail Azure évolue souvent : un libellé ou un onglet peut avoir légèrement changé.
+    Les principes restent valables en version 13. Les différences d'interface sont signalées dans des encadrés « En version 13 ». Le portail Azure évolue souvent : un libellé ou un onglet peut avoir légèrement changé.
 
 ---
 
@@ -163,7 +163,12 @@ Ouvrir **Stockage des données > Conteneurs**, cliquer sur **+ Conteneur**, nomm
 </figure>
 
 !!! tip "Pour des sauvegardes immuables"
-    L'immuabilité de Veeam sur Azure repose sur l'**immuabilité au niveau des versions** d'Azure, qui doit être activée sur le compte de stockage ou le conteneur. La case **Activer la prise en charge de l'immuabilité au niveau version** du panneau **Avancé** du conteneur sert à cela. Dans l'exemple, elle n'a pas été activée.
+    L'immuabilité de Veeam sur Azure repose sur l'**immuabilité au niveau des versions** d'Azure. Deux réglages sont nécessaires :
+
+    - sur le **compte de stockage**, activer le **contrôle de version des blobs** (onglet **Protection des données**) ;
+    - sur le **conteneur**, cocher **Activer la prise en charge de l'immuabilité de niveau version** (*Enable version-level immutability support* dans le portail en anglais), dans le panneau **Avancé**, sans définir de stratégie de rétention par défaut : c'est Veeam qui fixe la durée.
+
+    Dans l'exemple, la case n'est pas cochée : le dépôt ne sera pas immuable.
 
 ### 2.4 Ajouter le dépôt dans Veeam
 
@@ -222,8 +227,14 @@ Ouvrir **Stockage des données > Conteneurs**, cliquer sur **+ Conteneur**, nomm
 Ces options méritent d'être comprises :
 
 - **Limit object storage consumption to** : plafond de volume, pour maîtriser la facture.
-- **Make recent backups immutable for** : rend les sauvegardes récentes immuables pendant *n* jours (nécessite l'immuabilité au niveau version côté Azure). C'est l'option à activer en production.
+- **Make recent backups immutable for … days** : rend les sauvegardes récentes immuables pendant *n* jours (nécessite l'immuabilité de niveau version côté Azure). C'est l'option à activer en production.
 - **Use cool blob storage tier** : stockage moins cher mais lectures plus chères ; adapté aux sauvegardes longues durées (complètes GFS).
+
+!!! info "En version 13 : les options du conteneur"
+    L'étape **Container** garde le plafond **Limit object storage consumption to**, mais les deux autres options changent de forme :
+
+    - l'immuabilité se règle par la case **Make backups immutable (recommended)**, qui ouvre la fenêtre **Immutability Settings** : soit **For the entire duration of their retention policy** (la durée suit la rétention du job), soit **For the minimum immutability period only** avec une durée explicite (30 jours par défaut, de 1 à 999 jours) ;
+    - le niveau d'accès se choisit dans la section **Access tier**, en cliquant sur le lien **Hot** : la fenêtre **Access Tier Settings** propose **Hot** ou **Cool**.
 
 <figure markdown="span">
   ![Étape Apply : installation des composants et enregistrement du dépôt réussis](images/azure/az-20-vbr-application.png){ loading=lazy }
@@ -241,7 +252,9 @@ Ces options méritent d'être comprises :
 </figure>
 
 !!! info "En version 13 avec l'appliance"
-    L'assistant est le même dans l'interface web : **Backup Infrastructure > Backup Repositories > Add > Object Storage > Microsoft Azure Storage**. L'appliance joue le rôle de **passerelle** et de **serveur de montage** (à moins d'en désigner d'autres). Elle doit pouvoir joindre `*.blob.core.windows.net` en HTTPS (port 443) : dans le lab, elle sort par le cluster pfSense.
+    L'interface web de la version 13 ne sait ajouter que des dépôts Windows, Linux et durcis (*Hardened Repository*) : un dépôt Azure Blob s'ajoute depuis la **console Windows** installée sur `srv-fichiers` en [partie 3](03-preparer-le-lab-installer-appliance.md#11-installer-la-console-windows-sur-srv-fichiers). Le chemin y est **Backup Infrastructure > Backup Repositories > Add Repository > Object storage > Hyperscalers > Microsoft Azure Storage > Azure Blob Storage** (le niveau *Hyperscalers* regroupe les grands fournisseurs de cloud) ; la suite de l'assistant est celle décrite ci-dessus.
+
+    L'appliance joue par défaut le rôle de **passerelle** et de **serveur de montage** (à moins d'en désigner d'autres). Elle doit pouvoir joindre `*.blob.core.windows.net` en HTTPS (port 443) : dans le lab, elle sort par le cluster pfSense.
 
 ---
 
@@ -404,7 +417,7 @@ sudo systemctl restart veeamservice
 ```
 
 !!! question "Pourquoi libfuse ?"
-    **FUSE** (*Filesystem in Userspace*) permet de monter un système de fichiers sans modifier le noyau. L'agent Veeam s'en sert pour **monter le contenu d'une sauvegarde** et restaurer des fichiers. Les distributions récentes installent `libfuse3` par défaut, mais l'agent dépend aussi de l'ancienne version 2. Dans le lab de la [partie 6](06-sauvegarder-restaurer-serveur-linux.md), l'agent 13.1 a installé seul ses dépendances (dont `libfuse2t64`) sur Debian 13 : le problème vient le plus souvent d'une machine sans accès correct aux dépôts de paquets au moment du déploiement, ou de paquets cassés (d'où le `apt --fix-broken install` de la capture).
+    **FUSE** (*Filesystem in Userspace*) permet de monter un système de fichiers sans modifier le noyau. L'agent Veeam s'en sert pour **monter le contenu d'une sauvegarde** et restaurer des fichiers. Les distributions récentes installent `libfuse3` par défaut, mais l'agent dépend aussi de l'ancienne version 2. Normalement, l'agent 13.1 installe lui-même ses dépendances pendant le déploiement, dont `libfuse2t64` sur Debian 13 (voir la [partie 6](06-sauvegarder-restaurer-serveur-linux.md#25-ce-que-lagent-a-installe)) : quand la bibliothèque manque, la cause est le plus souvent une machine sans accès correct aux dépôts de paquets au moment du déploiement, ou des paquets cassés (d'où le `apt --fix-broken install` de la capture).
 
 4. **Relancer le rescan** : il réussit, et la sauvegarde vers Azure démarre.
 

@@ -1,13 +1,13 @@
 ---
 icon: material/school
-description: Cours complets et travaux pratiques rejoués en laboratoire — sauvegarde, systèmes, réseaux — pour débutants et techniciens en formation.
+description: Cours complets et travaux pratiques en laboratoire virtuel — sauvegarde, systèmes, réseaux — pour débutants et techniciens en formation.
 ---
 
 # Cours et Travaux Pratiques
 
 Cette catégorie rassemble des **supports de formation complets**. Chaque parcours enchaîne un ou plusieurs cours théoriques et des travaux pratiques (TP) détaillés pas à pas, pensés pour être réalisés **en autonomie** par des débutants.
 
-Tous les TP ont été **rejoués de bout en bout dans un laboratoire virtuel** avant publication : les captures d'écran, les adresses et les mots de passe indiqués sont ceux qui ont réellement fonctionné.
+Tous les TP se déroulent dans un **laboratoire virtuel** : les captures d'écran, les adresses et les mots de passe indiqués sont ceux du lab décrit dans chaque parcours.
 
 ## Parcours disponibles
 

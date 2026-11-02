@@ -35,7 +35,6 @@ status: publié
 | Durée estimée | 4 h, dont environ 1 h d'attente (installation de l'appliance, téléchargements, mises à jour) |
 | Version décrite | Veeam Software Appliance 13.1.2.57 (octobre 2026), Windows Server 2025, Debian 13 |
 | Place dans le parcours | Partie 3 sur 7 du parcours [Veeam Backup & Replication](index.md) |
-| Rejoué dans le lab | 2 novembre 2026 (KVM/libvirt). Les onglets VMware Workstation, VirtualBox et Proxmox VE suivent la documentation des éditeurs et n'ont pas été rejoués |
 | Dernière mise à jour | 2026-11-02 |
 
 <!-- NOTE DE RÉDACTION (non affichée) : Ce qui a changé par rapport à la version 1.5 du support (juin 2024)
@@ -131,7 +130,7 @@ Les trois VM se branchent sur le **même réseau LAN** que le cluster pfSense du
     Le LAN est un **pont Linux sans port physique** (par exemple `vmbr19`), créé dans **Datacenter > nœud > System > Network** pendant le TP pfSense. Chaque VM aura une carte réseau sur `vmbr19`. Le PC de l'administrateur n'est pas sur ce réseau : le navigateur du lab sera celui de `srv-fichiers`.
 
 !!! info "Pas fait le TP pfSense ?"
-    Un seul pfSense suffit, ou n'importe quel routeur qui offre la passerelle et le DNS. À défaut, brancher les trois VM sur le **réseau NAT** de l'hyperviseur et garder les **mêmes derniers octets** (`.55`, `.22`, `.170`) dans le sous-réseau de ce NAT. La **passerelle dépend de l'hyperviseur** (par exemple `.2` pour le NAT de VMware, `.1` pour le « Réseau NAT » de VirtualBox : à vérifier dans les réglages réseau de l'hyperviseur). Il faut alors remplacer **partout** `192.168.19.x` par les adresses de ce sous-réseau, y compris la passerelle et le DNS `192.168.19.21`. Ce cas de repli n'a pas été rejoué.
+    Un seul pfSense suffit, ou n'importe quel routeur qui offre la passerelle et le DNS. À défaut, brancher les trois VM sur le **réseau NAT** de l'hyperviseur et garder les **mêmes derniers octets** (`.55`, `.22`, `.170`) dans le sous-réseau de ce NAT. La **passerelle dépend de l'hyperviseur** (par exemple `.2` pour le NAT de VMware, `.1` pour le « Réseau NAT » de VirtualBox : à vérifier dans les réglages réseau de l'hyperviseur). Il faut alors remplacer **partout** `192.168.19.x` par les adresses de ce sous-réseau, y compris la passerelle et le DNS `192.168.19.21`.
 
 ---
 
@@ -156,17 +155,19 @@ Les trois VM se branchent sur le **même réseau LAN** que le cluster pfSense du
 
 ### 4.1 Les exigences de l'appliance
 
-Selon la [documentation officielle](https://helpcenter.veeam.com/docs/vbr/userguide/system_requirements.html) (section « Linux-Based Backup Server (Veeam Software Appliance) ») :
+Selon la [documentation officielle](https://helpcenter.veeam.com/docs/vbr/userguide/system_requirements_backup_server.html?ver=13) (page « Backup Server », section « Linux-Based Backup Server (Veeam Software Appliance) ») :
 
 | Élément | Exigence officielle | Utilisé dans le lab |
 |---|---|---|
-| Processeur | 8 cœurs (vCPU) minimum ; 6 vCPU suffisent pour un petit environnement de 5 charges de travail au plus | 6 vCPU |
-| Mémoire | 16 Go plus 500 Mo par job simultané ; 16 Go suffisent pour 5 charges de travail | 16 Go |
-| Disque 1 | 240 Go minimum : système, logiciel, base de configuration, cache | 240 Go |
-| Disque 2 | 240 Go minimum : catalogues et sauvegardes | 240 Go |
-| Réseau | 1 Gbit/s ou plus pour la sauvegarde sur site | 1 carte sur le LAN |
+| Processeur | Processeur x86-64, **8 cœurs** (vCPU) minimum. Pour un petit environnement de **5 charges de travail au plus**, **6 vCPU et 16 Go de RAM** suffisent | 6 vCPU |
+| Mémoire | **16 Go** plus **500 Mo par job simultané** | 16 Go |
+| Disque 1 | **240 Go** minimum : système Veeam JeOS, logiciel Veeam Backup & Replication, base de configuration et cache de la restauration instantanée (480 Go sur SSD recommandés pour un petit environnement de production) | 240 Go |
+| Disque 2 | **240 Go** minimum : catalogues des systèmes de fichiers invités et sauvegardes. Tout disque supplémentaire présent à l'installation lui est ajouté (volume LVM unique) | 240 Go |
+| Réseau | 1 Gbit/s ou plus pour la sauvegarde sur site, 1 Mbit/s ou plus hors site | 1 carte sur le LAN |
 
-Un profil réduit à 4 vCPU et 8 Go de RAM, utilisable dans un lab à la mémoire comptée, est **en dessous du minimum pris en charge** : voir le [dimensionnement](index.md#dimensionnement-des-machines-virtuelles). Les 2 disques peuvent être **dynamiques** (*thin*) : le lab n'a occupé qu'une trentaine de Go au départ. Le démarrage en **UEFI** est requis ; le **Secure Boot** a été activé dans le lab et l'appliance l'accepte.
+Un profil réduit à 4 vCPU et 8 Go de RAM, utilisable dans un lab à la mémoire comptée, est **en dessous du minimum pris en charge** : voir le [dimensionnement](index.md#dimensionnement-des-machines-virtuelles). Les 2 disques peuvent être **dynamiques** (*thin*) : le lab n'a occupé qu'une trentaine de Go au départ. Veeam compte ici le Go comme 10<sup>9</sup> octets : un disque de 240 Go (ou 240 Gio) dans l'hyperviseur convient.
+
+L'appliance s'installe en **UEFI** (ses disques sont partitionnés en GPT) : régler la VM dans ce mode, un démarrage BIOS classique ne convient pas. Le **Secure Boot** est pris en charge et recommandé (Veeam l'impose pour son modèle de VM Hyper-V) ; pour une installation depuis l'ISO, il reste facultatif. Il est activé sur la VM `vbr` de ce TP.
 
 !!! question "Pourquoi deux disques ?"
     Le premier héberge le système et le logiciel Veeam, le second les sauvegardes (le **dépôt par défaut**, `Default Backup Repository`, y est créé). Le séparer évite que des sauvegardes volumineuses remplissent le disque système.
@@ -181,7 +182,7 @@ Un profil réduit à 4 vCPU et 8 Go de RAM, utilisable dans un lab à la mémoir
     4. Réseau : **Use host-only networking**, puis après création, dans les réglages, **Network Adapter > Custom : VMnet19**.
     5. Créer un premier disque de **240 Go** (décocher **Allocate all disk space now**, choisir **Store virtual disk as a single file**), puis ajouter un **second disque** identique (**Add > Hard Disk**).
     6. **CD/DVD > Use ISO image file** : choisir l'ISO de l'appliance.
-    7. **Options > Advanced > Firmware type** : choisir **UEFI**. Cocher **Enable secure boot** est possible.
+    7. **Options > Advanced > Firmware type** : choisir **UEFI**. Cocher aussi **Enable secure boot** (recommandé, facultatif).
 
 === "VirtualBox"
 
@@ -189,12 +190,12 @@ Un profil réduit à 4 vCPU et 8 Go de RAM, utilisable dans un lab à la mémoir
     2. Mémoire : **16384 Mo**, processeurs : **6**, cocher **Activer EFI (OS spéciaux uniquement)**.
     3. Disque : créer un disque **VDI** de **240 Go**, **alloué dynamiquement**. Une fois la VM créée, ouvrir **Configuration > Stockage** et ajouter un **second disque** identique.
     4. **Configuration > Réseau > Carte 1** : **Mode d'accès réseau : Réseau privé hôte**, sur l'adaptateur du LAN du TP pfSense.
-    5. Le Secure Boot de VirtualBox se règle dans **Configuration > Système** ; il est facultatif pour ce TP et n'a pas été testé.
+    5. Si la version de VirtualBox le propose, la case **Activer Secure Boot** se trouve dans **Configuration > Système > Carte mère**, sous **Activer EFI** : la cocher est recommandé, mais facultatif pour ce TP. Les libellés peuvent varier légèrement selon la version de VirtualBox.
 
 === "Proxmox VE"
 
     1. 🖥️ **Create VM** : **General** : nom `vbr`. **OS** : l'ISO de l'appliance, type **Linux**, version **6.x - 2.6 Kernel**.
-    2. **System** : **Machine** `q35`, **BIOS** `OVMF (UEFI)`, cocher **Add EFI Disk**. Décocher **Pre-Enroll keys** désactive le Secure Boot ; le laisser coché l'active (accepté par l'appliance dans le lab, mais non vérifié sous Proxmox). **SCSI Controller** : `VirtIO SCSI single`.
+    2. **System** : **Machine** `q35`, **BIOS** `OVMF (UEFI)`, cocher **Add EFI Disk**. Laisser **Pre-Enroll keys** coché active le Secure Boot, que l'appliance prend en charge ; le décocher le désactive. **SCSI Controller** : `VirtIO SCSI single`.
     3. **Disks** : un premier disque de **240 Go**, puis **Add** un second de **240 Go**. L'allocation dynamique dépend du stockage choisi (LVM-thin, ZFS, fichiers qcow2).
     4. **CPU** : **6** cœurs, type `host`. **Memory** : **16384** Mo.
     5. **Network** : **Bridge** `vmbr19`, modèle **VirtIO**.
@@ -259,7 +260,7 @@ L'étape **License** : lire les contrats puis valider **[Accept]**. Il s'agit du
 ### 6.2 Nom d'hôte et disposition du clavier
 
 1. 📦 Sur l'étape **Hostname**, effacer le nom proposé avec **Retour arrière** et saisir `vbr`.
-2. 📦 Appuyer sur **Ctrl+K** (*Keyboard*) pour changer la **disposition du clavier** : taper `fr` dans le champ de recherche, sélectionner la disposition française (AZERTY) avec les flèches, puis **[OK]**. Le clavier **AZERTY** est alors actif pour les saisies suivantes. Dans le lab (clavier QWERTY simulé), la disposition **US** a été conservée.
+2. 📦 Appuyer sur **Ctrl+K** (*Keyboard*) pour changer la **disposition du clavier** : taper `fr` dans le champ de recherche, sélectionner la disposition française (AZERTY) avec les flèches, puis **[OK]**. Le clavier **AZERTY** est alors actif pour les saisies suivantes. Les captures de ce TP montrent la disposition **US** d'origine.
 
 ![Étape Hostname de l'assistant : nom vbr saisi](images/03-installation/assistant-nom-hote.png){ loading=lazy }
 /// caption
@@ -369,7 +370,7 @@ La fenêtre MFA. La clé secrète affichée sur la ligne du dessus a été **flo
     Si l'on préfère recopier la **clé secrète** à la main plutôt que scanner le QR code, attention : dans la police de la console, la lettre **O** ressemble à un **D** (dans le lab, un « O » a été lu « D » à la 15<sup>e</sup> position). Le téléphone calcule alors des codes **faux**, et l'appliance les refuse sans explication. **Préférer le QR code.**
 
 !!! warning "Si le code est refusé"
-    Vérifier d'abord l'**heure** du téléphone (réglage automatique) et du PC, puis attendre le code suivant (il change toutes les 30 secondes) et le retaper **dans le bon champ** : dans le lab, un premier code est parti sur un bouton parce qu'un **Tab** de trop avait déplacé la sélection.
+    Vérifier d'abord l'**heure** du téléphone (réglage automatique) et du PC, puis attendre le code suivant (il change toutes les 30 secondes) et le retaper **dans le bon champ** : un **Tab** de trop déplace la sélection sur un bouton, et le code part au mauvais endroit.
 
 ### 6.7 Compte Security Officer
 
@@ -424,7 +425,7 @@ La page de connexion de l'interface web. Le lien en bas, **Download Windows-base
 ///
 
 !!! note "Où est demandé le code MFA ?"
-    Dans le lab, l'interface web et la console Windows n'ont demandé **que le mot de passe**. Le **code MFA** est demandé à l'ouverture de **Host Management** ([étape 8](#8-decouvrir-host-management)). Si une page de connexion demande un code, le calculer avec l'application d'authentification.
+    Dans cette configuration, le **code MFA** n'est demandé qu'à la connexion à **Host Management** ([étape 8](#8-decouvrir-host-management)) : l'interface web et la console Windows se contentent du mot de passe. Si une page de connexion demande malgré tout un code, le lire dans l'application d'authentification.
 
 ### 7.3 La mise à jour des composants
 
@@ -601,8 +602,8 @@ La phrase secrète est enregistrée (date, indice).
 4. 🪟 Accepter les termes de licence, choisir **Personnalisé : installer uniquement Windows**, et sélectionner le **disque de 60 Go** (le **Lecteur 0**, pas celui de 40 Go).
 5. 🪟 Après redémarrage, définir le mot de passe de l'**Administrateur** : `Popopo222@@@`, puis ouvrir la session avec **Ctrl+Alt+Suppr** (dans la console de l'hyperviseur, utiliser son menu **Envoyer Ctrl+Alt+Suppr**).
 
-!!! tip "Fermer la fenêtre Windows Admin Center"
-    Au premier démarrage, la fenêtre « Essayez Windows Admin Center… » peut s'afficher : la fermer avec la croix, après avoir coché **Ne plus afficher ce message**.
+!!! tip "Fermer l'invitation Windows Admin Center"
+    À la première ouverture de session, le **Gestionnaire de serveur** démarre tout seul et affiche par-dessus une fenêtre « Essayez Windows Admin Center et Azure Arc ». Cocher **Ne plus afficher ce message**, puis la fermer avec la croix. Le Gestionnaire de serveur peut rester ouvert : il ne sert pas dans ce TP.
 
 ### 10.3 Nom, adresse IP, réseau et ping
 
@@ -864,7 +865,7 @@ Avec les quatre VM allumées (`pfsense-19`, `vbr`, `srv-fichiers`, `srv-debian`)
 
 === "Proxmox VE"
 
-    VM sélectionnée > **Snapshots > Take Snapshot**, nom `lab-pret-01`, l'équivalent de `01-lab-pret` (Proxmox exige qu'un nom d'instantané commence par une lettre). Le snapshot Proxmox dépend du stockage choisi : avec un stockage qui ne le gère pas (certains répertoires bruts), utiliser une **sauvegarde** de la VM à la place.
+    VM sélectionnée > **Snapshots > Take Snapshot**, nom `lab-pret-01`, l'équivalent de `01-lab-pret` : Proxmox exige qu'un nom d'instantané commence par une **lettre** et ne contienne ensuite que des lettres, des chiffres, `-` et `_` (40 caractères au plus). Le snapshot Proxmox dépend du stockage choisi : avec un stockage qui ne le gère pas (certains répertoires bruts), utiliser une **sauvegarde** de la VM à la place.
 
 !!! warning "Un instantané n'est pas une sauvegarde"
     L'instantané reste **sur le même disque** que la VM : voir l'[encadré de la page d'accueil du parcours](index.md#instantanes-conseilles).
@@ -899,7 +900,7 @@ Avec les quatre VM allumées (`pfsense-19`, `vbr`, `srv-fichiers`, `srv-debian`)
 
 ## Ressources
 
-- [Exigences système de Veeam Backup & Replication 13](https://helpcenter.veeam.com/docs/vbr/userguide/system_requirements.html) — matériel de l'appliance (section « Linux-Based Backup Server »).
+- [Exigences système du serveur de sauvegarde Veeam Backup & Replication 13](https://helpcenter.veeam.com/docs/vbr/userguide/system_requirements_backup_server.html?ver=13) — matériel de l'appliance (section « Linux-Based Backup Server (Veeam Software Appliance) »).
 - [Installer la Veeam Software Appliance depuis l'ISO](https://helpcenter.veeam.com/docs/vbr/userguide/deployment_linux_iso_install.html) — le déroulé de l'assistant de configuration initiale.
 - [Configurer le compte Security Officer à l'installation](https://helpcenter.veeam.com/docs/vbr/userguide/deployment_linux_iso_install_security_officer.html) — l'étape **Security Officer** de l'assistant.
 - [Veeam Host Management](https://helpcenter.veeam.com/docs/vbr/userguide/hmc_about.html) — le rôle de la console d'administration du système.

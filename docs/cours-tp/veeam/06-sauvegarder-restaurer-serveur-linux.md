@@ -36,7 +36,6 @@ status: publié
 | Durée estimée | 2 h 30 (une dizaine de minutes de calcul seulement : le reste est de la saisie et de la lecture) |
 | Version décrite | Veeam Backup & Replication 13.1.2.57 (appliance) ; agent Veeam pour Linux 13.1.2.11 ; support de récupération 13.1.2.11 |
 | Place dans le parcours | Partie 6 sur 7 du parcours [Veeam Backup & Replication](index.md) |
-| Rejoué dans le lab | 2 novembre 2026 (KVM/libvirt) |
 | Dernière mise à jour | 2026-11-02 |
 
 <!-- NOTE DE RÉDACTION (non affichée) : Ce qui a changé par rapport à la version 1.5 du support (juin 2024)
@@ -207,7 +206,7 @@ Une fenêtre **Machine Rescan** s'ouvre : Veeam se connecte en SSH, installe l'a
 
 ### 2.5 Ce que l'agent a installé
 
-Sur 🐧 **srv-debian**, on peut constater ce que le déploiement a ajouté (le journal du lab en témoigne) :
+Sur 🐧 **srv-debian**, on peut constater ce que le déploiement a ajouté :
 
 ```console
 $ dpkg -l | grep -iE "veeam|fuse|blksnap" | awk '{print $1,$2,$3}'
@@ -231,8 +230,8 @@ active
 
 Le journal d'installation de Debian montre aussi que l'agent a fait installer, par `apt`, tout le nécessaire à la compilation : **les en-têtes du noyau** (`linux-headers-6.12.113+deb13-amd64`), **`dkms`**, **`build-essential`** (compilateur `gcc`, `make`…), **`lvm2`** et **`libfuse2t64`**.
 
-!!! success "L'article 7 disait vrai : `libfuse` s'installe seule sur Debian 13"
-    Dans le lab, c'est bien **l'agent** qui a installé `libfuse2t64` (paquet de la bibliothèque FUSE 2) pendant le déploiement : aucune commande manuelle. `libfuse3-4` était déjà présent. Le problème de `libfuse` décrit en [partie 7](07-sauvegarder-vers-azure-blob.md#33-depanner-lechec-du-rescan-la-bibliotheque-libfuse) concerne une machine qui n'avait **pas accès** aux dépôts de paquets au moment du déploiement. Deux conséquences : `srv-debian` doit **sortir sur Internet** pendant l'installation, et le déploiement est plus long qu'on l'imagine (plusieurs dizaines de paquets).
+!!! success "`libfuse` s'installe seule sur Debian 13"
+    C'est bien **l'agent** qui installe `libfuse2t64` (paquet de la bibliothèque FUSE 2) pendant le déploiement : aucune commande manuelle. `libfuse3-4` était déjà présent. Le problème de `libfuse` décrit en [partie 7](07-sauvegarder-vers-azure-blob.md#33-depanner-lechec-du-rescan-la-bibliotheque-libfuse) concerne une machine qui n'avait **pas accès** aux dépôts de paquets au moment du déploiement. Deux conséquences : `srv-debian` doit **sortir sur Internet** pendant l'installation, et le déploiement est plus long qu'on l'imagine (plusieurs dizaines de paquets).
 
 ---
 
@@ -308,7 +307,7 @@ Le journal d'installation de Debian montre aussi que l'agent a fait installer, p
   <figcaption>Résumé du job. Le résumé donne aussi la commande PowerShell équivalente, pratique pour automatiser.</figcaption>
 </figure>
 
-Le job démarre. Dans le lab, **le premier essai a échoué**.
+Le job démarre. Il arrive que **le premier essai échoue**, comme ici.
 
 <figure markdown="span">
   ![Liste des jobs : le job Linux Agent Backup est au statut Failed](images/06-linux/job-08-echec.png){ loading=lazy }
@@ -333,7 +332,7 @@ Cette section sert à **toute personne dont le premier job échoue**. Si le vôt
     $ sudo bash -c 'cd "/var/log/veeam/Backup/Sauvegarde-srv-debian-machine-entiere - 192.168.19.170/"Session_*; grep -hE "ERR |WARN" Job.log | tail -20'
     ```
 
-Deux messages importants apparaissent dans le journal du lab.
+Deux messages importants peuvent y apparaître.
 
 ### 4.2 Erreur n° 1 : Secure Boot refuse le module noyau
 
@@ -362,7 +361,7 @@ Deux messages importants apparaissent dans le journal du lab.
 
 Deux solutions existent.
 
-#### Solution A (retenue dans le lab) : désactiver Secure Boot
+#### Solution A (la plus simple pour un lab) : désactiver Secure Boot
 
 C'est la plus simple pour un lab. **Éteindre** la VM, puis :
 
@@ -387,7 +386,7 @@ C'est la plus simple pour un lab. **Éteindre** la VM, puis :
 
     Autre solution : supprimer le disque EFI et le recréer **sans** *Pre-Enroll keys* (Debian se relance alors depuis l'entrée de secours du disque).
 
-=== "KVM / libvirt (rejoué dans le lab)"
+=== "KVM / libvirt"
 
     Dans la définition de la VM, remplacer le firmware à clés inscrites par un firmware sans Secure Boot, puis démarrer avec une NVRAM remise à zéro :
 
@@ -404,8 +403,7 @@ C'est la plus simple pour un lab. **Éteindre** la VM, puis :
     $ virsh start veeam-srv-debian --reset-nvram
     ```
 
-!!! warning "Les réglages VMware, VirtualBox et Proxmox n'ont pas été rejoués"
-    Le lab de 2026 tourne sous KVM/libvirt. Les trois premiers onglets s'appuient sur la documentation de chaque produit : les libellés peuvent différer légèrement selon la version. Seul l'onglet KVM a été exécuté.
+Les libellés peuvent varier légèrement selon la version de l'hyperviseur.
 
 Vérification, une fois la VM redémarrée :
 
@@ -417,16 +415,16 @@ veeamblksnap          155648  0
 bdevfilter             94208  1 veeamblksnap
 ```
 
-Dans le lab, le message est « *This system doesn't support Secure Boot* » parce que le firmware utilisé n'a pas de Secure Boot du tout ; avec un firmware qui le propose mais désactivé (VMware, par exemple), on lit plutôt `SecureBoot disabled`. L'important est que `modprobe` **réussisse** et que `veeamblksnap` apparaisse dans `lsmod`.
+Avec KVM/libvirt et le réglage ci-dessus, le message est « *This system doesn't support Secure Boot* » parce que le firmware choisi n'a pas de Secure Boot du tout ; avec un firmware qui le propose mais désactivé (VMware, par exemple), on lit plutôt `SecureBoot disabled`. L'important est que `modprobe` **réussisse** et que `veeamblksnap` apparaisse dans `lsmod`.
 
 !!! danger "Désactiver Secure Boot n'est pas innocent"
     Sur un serveur de production, Secure Boot protège le démarrage. La bonne pratique est de **garder** Secure Boot et d'**inscrire la clé** du module, voir la solution B. Désactiver est acceptable pour un lab.
 
-#### Solution B : inscrire la clé MOK de DKMS (n'a pas abouti dans le lab)
+#### Solution B (recommandée en production) : inscrire la clé MOK de DKMS
 
-C'est la méthode que décrit la [documentation Veeam](https://helpcenter.veeam.com/docs/agentforlinux/userguide/installation_uefi_secure_boot.html) : demander au firmware de faire confiance à la clé qui signe le module.
+C'est la procédure que décrivent la [documentation Veeam](https://helpcenter.veeam.com/docs/agentforlinux/userguide/installation_uefi_secure_boot.html) et le [wiki Debian](https://wiki.debian.org/SecureBoot) : demander au firmware de faire confiance à la clé qui signe le module. Sur Debian 12 et suivantes, la clé générée par DKMS doit être importée à la main.
 
-1. 🐧 Demander l'inscription de la clé et choisir un **mot de passe temporaire** (il ne sert qu'une fois, au prochain démarrage) :
+1. 🐧 Demander l'inscription de la clé et choisir un **mot de passe temporaire** (il ne sert qu'une fois, au prochain démarrage), puis vérifier que la demande est bien en attente :
 
     ```console
     $ sudo mokutil --import /var/lib/dkms/mok.pub
@@ -435,12 +433,31 @@ C'est la méthode que décrit la [documentation Veeam](https://helpcenter.veeam.
     $ sudo mokutil --list-new
     ```
 
-2. Redémarrer la machine. Un **écran bleu** (le gestionnaire **MokManager**) s'affiche brièvement avec un compte à rebours : **appuyer sur une touche** avant la fin, sinon le démarrage continue normalement et la demande est **perdue** (il faut alors refaire l'étape 1).
-3. Choisir **Enroll MOK > Continue > Yes**, saisir le mot de passe temporaire, puis **Reboot**.
-4. Vérifier : `sudo mokutil --test-key /var/lib/dkms/mok.pub` doit répondre que la clé est **already enrolled**, puis relancer le job (**Retry**).
+    `mokutil --list-new` (ou `mokutil -N`) affiche la clé en attente d'inscription.
 
-!!! warning "Non vérifié : cette voie n'a pas abouti dans le lab"
-    Deux tentatives ont été faites sur KVM. La première a échoué parce qu'une touche automatique a **validé l'option par défaut** (« Continue boot ») au lieu d'**Enroll MOK** : la demande a été consommée sans inscrire la clé (`/var/lib/dkms/mok.pub is not enrolled`). À la seconde, l'écran bleu est apparu mais la VM s'est ensuite arrêtée sur le menu GRUB sans démarrer ; la cause n'a pas été élucidée dans le temps imparti et le lab a basculé sur la solution A. Les étapes 3 et 4 ci-dessus suivent la documentation et **n'ont pas été rejouées**. Au besoin, saisir ces étapes à la main, sans automatisation, dans la console de la VM.
+2. Redémarrer la machine : `sudo systemctl reboot`.
+3. Avant Debian, un **écran bleu** s'affiche : c'est le gestionnaire de clés **MokManager**, avec un compte à rebours d'une dizaine de secondes. **Appuyer sur une touche** avant la fin.
+4. Dans MokManager, enchaîner les écrans :
+    1. **Enroll MOK** (inscrire la clé), puis **Entrée** ;
+    2. **Continue** (on peut d'abord choisir *View key 0* pour afficher la clé) ;
+    3. à la question *Enroll the key(s)?*, choisir **Yes** ;
+    4. saisir le **mot de passe temporaire** de l'étape 1 ;
+    5. choisir **Reboot**.
+5. Debian redémarre. Vérifier que la clé est inscrite, puis que le module se charge :
+
+    ```console
+    $ sudo mokutil --test-key /var/lib/dkms/mok.pub
+    /var/lib/dkms/mok.pub is already enrolled
+    $ sudo modprobe veeamblksnap && lsmod | grep -i blksnap
+    ```
+
+6. 🌐 Relancer le job (**Retry**, voir la [section 4.4](#44-relancer-le-job)).
+
+!!! tip "Deux pièges dans MokManager"
+    - **Ne pas laisser passer le compte à rebours** : sans appui sur une touche, la machine démarre normalement **sans** inscrire la clé. Il faut alors refaire l'étape 1 (`mokutil --import`) et redémarrer.
+    - **Choisir *Enroll MOK*, pas *Continue boot*** : *Continue boot* est l'option sélectionnée au départ ; la valider poursuit le démarrage sans rien inscrire. Si `mokutil --test-key` répond `is not enrolled`, c'est ce qui s'est passé : refaire l'étape 1.
+
+    MokManager fonctionne avant Debian, avec le clavier du firmware, généralement en **QWERTY** : choisir un mot de passe temporaire simple, fait de lettres qui ne changent pas de place entre AZERTY et QWERTY (éviter `a`, `q`, `z`, `w`, `m`, les chiffres et les symboles).
 
 ### 4.3 Erreur n° 2 : le nom `vbr` ne se résout pas
 
@@ -450,11 +467,11 @@ C'est la méthode que décrit la [documentation Veeam](https://helpcenter.veeam.
     >>  |Failed to resolve name: vbr. Error: Name or service not known
     ```
 
-**Pourquoi l'agent cherche-t-il `vbr` ?** L'appliance s'annonce à ses clients **par son nom d'hôte** (`vbr`), et non par son adresse IP. Quand l'agent doit joindre le serveur Veeam (port TCP `10006`), il cherche donc `vbr`. Or `srv-debian` ne connaît que l'adresse du résolveur DNS de pfSense, et pfSense **ne connaît pas** `vbr` : la résolution échoue. Le journal classe ce message en `WARN` (avertissement) et pas en `ERR` : dans le lab, le premier job s'est arrêté sur Secure Boot, mais les **deux correctifs** (Secure Boot et nom) ont été appliqués **avant** le second essai : on ne sait donc pas si le nom seul aurait suffi à bloquer le job. Ne pas le négliger : une machine qui ne trouve pas son serveur de sauvegarde ne peut pas communiquer avec lui.
+**Pourquoi l'agent cherche-t-il `vbr` ?** L'appliance s'annonce à ses clients **par son nom d'hôte** (`vbr`), et non par son adresse IP. Quand l'agent doit joindre le serveur Veeam (port TCP `10006`), il cherche donc `vbr`. Or `srv-debian` ne connaît que l'adresse du résolveur DNS de pfSense, et pfSense **ne connaît pas** `vbr` : la résolution échoue. Le journal classe ce message en `WARN` (avertissement) et pas en `ERR`, mais il ne faut pas le négliger : une machine qui ne trouve pas son serveur de sauvegarde ne peut pas communiquer avec lui. Corriger le nom **en même temps** que Secure Boot, avant de relancer le job.
 
 Deux façons de le corriger :
 
-=== "Rapide : /etc/hosts (retenu dans le lab)"
+=== "Rapide : /etc/hosts (utilisé dans ce TP)"
 
     🐧 Sur `srv-debian`, ajouter une ligne d'association nom-adresse :
 
@@ -468,9 +485,13 @@ Deux façons de le corriger :
 
 === "Propre : un enregistrement DNS sur pfSense"
 
-    Déclarer `vbr` **une fois**, dans le DNS qui sert tous les clients du LAN. Dans pfSense : **Services > DNS Resolver > Host Overrides > Add**, avec **Host** `vbr`, **Domain** le domaine du lab, **IP Address** `192.168.19.55`. Toutes les machines (dont celles ajoutées plus tard) résoudront `vbr` sans autre réglage.
+    Déclarer `vbr` **une fois**, dans le DNS qui sert tous les clients du LAN. C'est la bonne pratique en production.
 
-    Cette variante est la bonne pratique, mais **elle n'a pas été testée dans le lab** : le lab a utilisé le fichier `hosts`. Après l'ajout, vérifier avec `getent hosts vbr` depuis `srv-debian`.
+    1. Dans pfSense : **Services > DNS Resolver**, section **Host Overrides**, bouton **Add**.
+    2. Renseigner **Host** `vbr`, **Domain** le domaine du lab (champ obligatoire), **IP Address** `192.168.19.55` et une **Description** (`Appliance Veeam`).
+    3. **Save**, puis **Apply Changes**.
+
+    Toutes les machines qui utilisent pfSense comme DNS (dont celles ajoutées plus tard) résolvent alors `vbr.<domaine>`. Pour que le nom court `vbr` suffise, ce domaine doit être le **domaine de recherche** du client (ligne `search` de `/etc/resolv.conf`). Vérifier depuis `srv-debian` avec `getent hosts vbr`.
 
 ### 4.4 Relancer le job
 
@@ -485,7 +506,7 @@ Une fois les deux corrections faites :
 
 ### 5.1 Lire le résultat
 
-Dans le lab, le second essai a duré environ **3 minutes** et le statut est passé à **Success**.
+Le second essai dure environ **3 minutes** dans ce lab, et le statut passe à **Success**.
 
 <figure markdown="span">
   ![Liste des jobs : le job Linux Agent Backup est au statut Success, cible Default Backup Repository](images/06-linux/job-09-reussite.png){ loading=lazy }
@@ -516,7 +537,7 @@ $ ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub
 2. 🖥️ Prendre l'instantané **`04-avant-panne`** de `srv-debian` (et, de préférence, de toutes les machines du lab : voir les [instantanés conseillés](index.md#instantanes-conseilles)).
 
 !!! tip "Pourquoi ce point de retour ?"
-    La suite détruit volontairement le disque de `srv-debian`. Avec cet instantané, vous pourrez **rejouer** toute la restauration autant de fois que nécessaire, en revenant ici. Ce n'est **pas** la sauvegarde elle-même (voir l'avertissement de la page d'accueil du parcours) : la vraie sauvegarde est sur l'appliance.
+    La suite détruit volontairement le disque de `srv-debian`. Avec cet instantané, vous pourrez **refaire** toute la restauration autant de fois que nécessaire, en revenant ici. Ce n'est **pas** la sauvegarde elle-même (voir l'avertissement de la page d'accueil du parcours) : la vraie sauvegarde est sur l'appliance.
 
 ---
 
@@ -539,7 +560,7 @@ $ ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub
     1. **Hardware** : sélectionner le disque, **Detach** (il apparaît en *Unused Disk*).
     2. **Add > Hard Disk**, même bus, **20 GiB**.
 
-=== "KVM / libvirt (rejoué dans le lab)"
+=== "KVM / libvirt"
 
     Créer un volume vierge de 20 Go, puis remplacer la source du disque `vda` dans la définition de la VM :
 
@@ -585,7 +606,7 @@ Le support de récupération est une **ISO amorçable** : un petit système Debi
 !!! warning "Un nom de fichier qui ment : « 13.0.0 » contient la version 13.1.2.11"
     Ce qui est **sûr** : le dépôt n'offre qu'**un seul fichier pour la série 13**, nommé `veeam-recovery-amd64-13.0.0.iso` ; il pèse **762 314 752 octets** et son **étiquette de volume** (celle que lit la commande `file`) est `veeam-recovery-iso-13.1.2.11`. L'ISO est donc **assortie à l'agent 13.1.2.11** installé en section 2 : c'est cette version qu'il faut retenir.
 
-    Ce qui n'est **pas** établi : pourquoi Veeam laisse `13.0.0` dans le nom (probablement le nom de la série, mais ce n'est pas documenté). Ne **pas** vous fier au nom du fichier : renommer la copie en `veeam-recovery-amd64-13.1.2.11.iso` évite toute confusion. Le **SHA-256** ci-dessus est celui de l'ISO du lab ; si Veeam la republie, il changera, et seule la comparaison avec le fichier du dépôt public a un sens.
+    Le nom du fichier ne donne donc **pas** la version exacte : ne pas vous y fier. Renommer la copie en `veeam-recovery-amd64-13.1.2.11.iso` évite toute confusion. Le **SHA-256** ci-dessus est celui de l'ISO du lab ; si Veeam la republie, il changera, et seule la comparaison avec le fichier du dépôt public a un sens.
 
 !!! tip "Veeam documente aussi ces ISO"
     La page [Veeam Recovery Media](https://helpcenter.veeam.com/docs/agentforlinux/userguide/recovery_media.html) explique le contenu du support de récupération et la page [Veeam Recovery Media Versions](https://helpcenter.veeam.com/docs/agentforlinux/userguide/recovery_media_versions.html) liste les versions publiées.
@@ -598,13 +619,13 @@ Le support de récupération est une **ISO amorçable** : un petit système Debi
     - VMware : **VM > Power > Power On to Firmware**, puis menu **Boot**, ou **CD-ROM** déplacé en tête dans **Settings > Options > Boot Options** ;
     - VirtualBox : **Settings > System > Motherboard > Boot Order**, cocher **Optical** et le monter en tête ;
     - Proxmox VE : **Options > Boot Order**, activer **ide2** (le lecteur CD) et le glisser en premier ;
-    - KVM/libvirt (lab) : `<boot order='1'/>` sur le CD-ROM, `<boot order='2'/>` sur le disque.
+    - KVM/libvirt : `<boot order='1'/>` sur le CD-ROM, `<boot order='2'/>` sur le disque.
 
-3. Démarrer la VM. Le menu **GRUB** de l'ISO propose les entrées « Veeam recovery … » : laisser la première, le démarrage se fait seul au bout de quelques secondes.
+3. Démarrer la VM. Le menu **GRUB** de l'ISO propose deux entrées, une par noyau Linux embarqué : **Veeam recovery 6.12.100+deb13-amd64** (le noyau standard de Debian 13) et **Veeam recovery 7.1.3+deb13-amd64** (un noyau plus récent, à essayer si un disque ou une carte réseau n'est pas reconnu avec le premier). Laisser la première, le démarrage se fait seul au bout de quelques secondes.
 
 <figure markdown="span">
-  ![Menu GRUB du support de récupération Veeam : deux entrées Veeam recovery 6.12.100+deb13 et 7.1.3+deb13](images/06-linux/rec-01-grub-recuperation.png){ loading=lazy }
-  <figcaption>Le menu GRUB du support de récupération. La première entrée, mise en évidence, démarre seule.</figcaption>
+  ![Menu GRUB 2.12 du support de récupération Veeam : deux entrées, Veeam recovery 6.12.100+deb13-amd64 (sélectionnée) et Veeam recovery 7.1.3+deb13-amd64](images/06-linux/rec-01-grub-recuperation.png){ loading=lazy }
+  <figcaption>Le menu GRUB du support de récupération : une entrée par noyau. La première, mise en évidence, démarre seule.</figcaption>
 </figure>
 
 ---
@@ -614,12 +635,12 @@ Le support de récupération est une **ISO amorçable** : un petit système Debi
 Le support de récupération est en **mode texte** : on navigue avec le clavier. Les **flèches** déplacent la sélection, **Entrée** valide, **Tab** passe à l'élément suivant, **Échap** revient en arrière.
 
 !!! warning "Clavier : deux pièges possibles"
-    - **Disposition QWERTY probable** : le clavier du support de récupération est vraisemblablement en **QWERTY** (touches de l'anglais américain). Ce point **n'a pas pu être vérifié** dans le lab, où la saisie passait par un clavier virtuel déjà en QWERTY. Avant de taper un mot de passe, une adresse ou un jeton, **lire à l'écran** ce qui s'est écrit, car `:`, `-` ou `@` peuvent être ailleurs sur un clavier AZERTY.
-    - **Clavier qui ne répond pas** : dans le lab (KVM), le support de récupération **ignorait le clavier virtuel PS/2** de la VM. Ajouter un **clavier USB** à la VM a réglé le problème. Avec VMware, VirtualBox ou Proxmox, ce défaut n'a pas été testé : si les touches sont sans effet, essayer d'ajouter un contrôleur/clavier USB à la VM.
+    - **Disposition QWERTY** : le clavier du support de récupération peut être en **QWERTY** (disposition américaine). Avant de valider un mot de passe, une adresse ou un jeton, **lire à l'écran** ce qui s'est écrit : sur un clavier AZERTY, `a`, `q`, `z`, `w`, `m`, les chiffres, `-` ou `:` peuvent sortir autrement.
+    - **Clavier qui ne répond pas** : il arrive que le support de récupération **ignore le clavier virtuel PS/2** de la VM (cas rencontré sous KVM). Ajouter un **clavier USB** à la VM (ou un contrôleur USB) règle le problème.
 
 ### 8.1 Identifiants SSH temporaires et licence
 
-Après quelques dizaines de secondes, une fenêtre **SSH Connection Info** s'affiche. C'est une nouveauté de la version 13 : le support de récupération ouvre un **accès SSH temporaire** (nom d'utilisateur `veeamuser`, mot de passe aléatoire propre à ce démarrage) pour pouvoir le piloter à distance. On n'en a pas besoin ici. Le lab n'a obtenu **aucune adresse IPv4** (pas de DHCP sur ce réseau) : seule une adresse IPv6 locale s'affiche, ce qui est normal.
+Après quelques dizaines de secondes, une fenêtre **SSH Connection Info** s'affiche. C'est une nouveauté de la version 13 : le support de récupération ouvre un **accès SSH temporaire** (nom d'utilisateur `veeamuser`, mot de passe aléatoire propre à ce démarrage) pour pouvoir le piloter à distance. On n'en a pas besoin ici. Sans serveur DHCP sur le réseau, ce qui est le cas de ce lab, **aucune adresse IPv4** n'apparaît : seule une adresse IPv6 locale s'affiche, ce qui est normal.
 
 <figure markdown="span">
   ![Fenêtre SSH Connection Info : utilisateur veeamuser, mot de passe temporaire flouté, nom d'hôte veeam-recovery-iso, empreintes SSH](images/06-linux/rec-02-identifiants-ssh-temporaires.png){ loading=lazy width="420" }
@@ -631,7 +652,7 @@ Après quelques dizaines de secondes, une fenêtre **SSH Connection Info** s'aff
 
 <figure markdown="span">
   ![Écran Accept license agreement avec les deux cases cochées](images/06-linux/rec-03-licence.png){ loading=lazy width="420" }
-  <figcaption>Les deux cases doivent être cochées ; dans ce menu, les flèches étaient ignorées dans le lab, seuls Espace et Tab répondent.</figcaption>
+  <figcaption>Les deux cases doivent être cochées. Si les flèches ne répondent pas dans cet écran, utiliser Tab et Espace.</figcaption>
 </figure>
 
 Le **menu principal** s'affiche :
@@ -685,7 +706,7 @@ Le support démarre **sans réseau utilisable** : il faut lui redonner l'adresse
 </figure>
 
 4. Descendre jusqu'à **`<OK>`** (en bas, **Tab** plusieurs fois) et valider. Appuyer ensuite sur **Échap** autant de fois que nécessaire pour quitter `nmtui` et retrouver le menu principal.
-5. Vérifier depuis 🖥️ le PC hôte : `ping 192.168.19.170` doit répondre. Dans le lab, il répondait immédiatement après **OK**.
+5. Vérifier depuis 🖥️ le PC hôte : `ping 192.168.19.170` doit répondre, normalement dès la validation de **OK**.
 
 ### 8.3 Créer le jeton de récupération
 
@@ -702,10 +723,10 @@ Le support de récupération doit se **connecter à l'appliance** pour lire la s
 
 <figure markdown="span">
   ![Boîte Create Recovery Token : un jeton est affiché, flouté, avec la date d'expiration 24 heures plus tard](images/06-linux/tok-02-jeton-cree.png){ loading=lazy width="420" }
-  <figcaption>Le jeton (flouté ici, sous la forme de quatre groupes de quatre caractères) et sa date d'expiration, le lendemain à la même heure.</figcaption>
+  <figcaption>Le jeton (flouté ici) et sa date d'expiration : le lendemain à la même heure, soit 24 heures plus tard.</figcaption>
 </figure>
 
-4. Noter le jeton (**Copy to Clipboard**) : on le recopie à la main dans le support de récupération (pas de copier-coller possible dans une VM en mode texte).
+4. Noter le jeton (**Copy to Clipboard**) : on le recopie à la main dans le support de récupération (pas de copier-coller possible dans une VM en mode texte). Il se compose de **quatre groupes de quatre caractères séparés par des tirets**, sur le modèle `XXXX-XXXX-XXXX-XXXX`, et mélange **chiffres, majuscules et minuscules** : recopier chaque caractère en respectant la casse, et se méfier des confusions `0`/`O` et `1`/`l`/`I`.
 
 !!! question "Pourquoi un jeton plutôt que le compte `veeamadmin` ?"
     Le support de récupération tourne sur une **machine en panne**, parfois sur un réseau douteux, dans un système dont on ne maîtrise pas le contenu. Y saisir le compte **administrateur** de toute la plateforme de sauvegarde serait un risque : quiconque lirait l'écran ou le clavier pourrait **tout supprimer**. Le jeton, lui, **expire seul au bout de 24 h** et ne donne accès **qu'à la sauvegarde pour laquelle il a été créé** : même volé, il n'ouvre ni la console ni les autres sauvegardes. C'est le principe du **moindre privilège**. Veeam précise que, avec un jeton, on ne voit pas toutes les sauvegardes du dépôt : pour cela, il faut l'authentification par mot de passe. Le formulaire propose aussi *Login and password*, qui reste possible mais à éviter.
@@ -805,11 +826,11 @@ L'écran suivant compare à gauche le **système actuel** (*Current system*) et 
 </figure>
 
 !!! info "« Failed to export logs to the repository »"
-    Une dernière ligne indique, **après** le succès, que le support n'a pas pu envoyer ses journaux de restauration vers le dépôt. La cause n'a pas été étudiée dans le lab. La restauration elle-même est terminée (`Status: Success`) et le serveur redémarre correctement, comme le montre la section suivante.
+    Une dernière ligne indique, **après** le succès, que le support n'a pas pu envoyer ses journaux de restauration vers le dépôt. C'est un **avertissement sans conséquence** : il concerne seulement la copie des journaux, pas les données. La restauration elle-même est terminée (`Status: Success`) et le serveur redémarre correctement, comme le montre la section suivante.
 
 ### 8.8 Redémarrer sans l'ISO
 
-1. Appuyer sur **Échap** pour revenir au menu principal, puis choisir **Reboot** (ou **Shutdown**, ce qu'a fait le lab).
+1. Appuyer sur **Échap** pour revenir au menu principal, puis choisir **Reboot** (ou **Shutdown**, comme sur la capture).
 
 <figure markdown="span">
   ![Menu principal avec l'entrée Shutdown sélectionnée](images/06-linux/rec-18-eteindre.png){ loading=lazy width="360" }
@@ -832,7 +853,7 @@ L'écran suivant compare à gauche le **système actuel** (*Current system*) et 
 
 ## 9. Vérifier la restauration
 
-🐧 Une fois `srv-debian` démarré (attendre que SSH réponde), rejouer les mêmes commandes qu'en [section 5.2](#52-relever-les-preuves-avant-panne) et comparer.
+🐧 Une fois `srv-debian` démarré (attendre que SSH réponde), relancer les mêmes commandes qu'en [section 5.2](#52-relever-les-preuves-avant-panne) et comparer.
 
 ```console
 $ hostname
@@ -869,11 +890,11 @@ vda      20G
 Un serveur restauré est dans l'état du **dernier point**, pas dans celui du moment de la panne : tout ce qui a été écrit depuis la dernière sauvegarde est perdu. C'est le sens du RPO (voir ci-dessous). Après toute restauration :
 
 1. 🌐 Dans **Jobs**, sélectionner `Sauvegarde-srv-debian-machine-entiere` et cliquer sur **Start** pour lancer une sauvegarde **tout de suite**, sans attendre 22:00.
-2. Vérifier qu'elle se termine en **Success**. Si le job signale un avertissement ou une erreur, lire le message : le comportement exact de l'agent juste après une restauration à nu n'a **pas** été étudié dans le lab.
+2. Vérifier qu'elle se termine en **Success**. Si le job signale un avertissement ou une erreur, lire le message dans la fenêtre de session et dans le journal de l'agent, comme en [section 4.1](#41-comment-trouver-la-cause).
 
 !!! tip "🛟 Point d'instantané en fin de TP"
-    - L'instantané **`04-avant-panne`** (section 5.3) est votre point de départ pour **rejouer** la panne et la restauration : y revenir, retirer le disque vierge restauré, replacer un nouveau disque vierge, et recommencer la section 6.
-    - Il n'y a **pas** de nouvel instantané à prendre pour la suite : la [partie 7](07-sauvegarder-vers-azure-blob.md) est illustrée et n'a pas été rejouée dans le lab.
+    - L'instantané **`04-avant-panne`** (section 5.3) est votre point de départ pour **refaire** la panne et la restauration : y revenir, retirer le disque vierge restauré, replacer un nouveau disque vierge, et recommencer la section 6.
+    - Il n'y a **pas** de nouvel instantané à prendre pour la [partie 7](07-sauvegarder-vers-azure-blob.md).
     - L'**ISO** peut être supprimée du PC hôte ; le **jeton** n'a pas besoin d'être supprimé : il expire de lui-même au bout de 24 h.
 
 ---
@@ -893,7 +914,7 @@ Un serveur restauré est dans l'état du **dernier point**, pas dans celui du mo
 
 ??? success "Corrigé"
     1. Pour figer une image cohérente du disque pendant que le serveur travaille, l'agent charge un **module noyau** (`blksnap`) compilé sur place par DKMS. Avec Secure Boot, le noyau n'accepte que des modules **signés par une clé connue du firmware** : la clé locale de DKMS (MOK) ne l'est pas, d'où « *Key was rejected by service* ».
-    2. **Désactiver Secure Boot** (simple, adapté au lab) ou **inscrire la clé MOK de DKMS** avec `mokutil --import` puis MokManager au redémarrage. En production, on recommande l'**inscription de la clé**, qui conserve la protection au démarrage. (Dans le lab, seule la désactivation a abouti.)
+    2. **Désactiver Secure Boot** (simple, adapté au lab) ou **inscrire la clé MOK de DKMS** avec `mokutil --import` puis MokManager au redémarrage. En production, on recommande l'**inscription de la clé**, qui conserve la protection au démarrage.
     3. L'appliance s'annonce à ses clients par son **nom d'hôte** ; l'agent doit pouvoir le résoudre pour la joindre sur le port 10006. Solution rapide : une ligne dans `/etc/hosts` de chaque machine. Solution propre : un **enregistrement DNS** (pfSense : *Services > DNS Resolver > Host Overrides*) valable pour tout le réseau.
     4. **Machine entière** : tous les volumes, y compris le démarrage, ce qui permet la restauration à nu. **Volumes** : seulement ceux que l'on coche. **Fichiers** : seulement des dossiers, sans instantané du disque ; impossible de reconstruire le serveur.
     5. Le support de récupération tourne sur une machine **en panne**. Un jeton **expire au bout de 24 h** et n'ouvre que **la sauvegarde pour laquelle il a été créé**, alors que `veeamadmin` donne **tous les droits** sur la plateforme de sauvegarde. C'est le **moindre privilège**.

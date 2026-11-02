@@ -48,7 +48,7 @@ status: publié
 
 **Veeam Software** est un éditeur fondé en 2006, spécialisé dans la sauvegarde et la restauration de données. Son logiciel phare, **Veeam Backup & Replication**, est devenu une référence en entreprise, d'abord pour sauvegarder des machines virtuelles VMware, puis pour protéger à peu près tout ce qui contient des données.
 
-En 2025, le cabinet d'analystes Gartner a classé Veeam parmi les **leaders** de son *Magic Quadrant* des plateformes de sauvegarde et de protection des données, pour la neuvième année consécutive ([communiqué de Veeam](https://www.veeam.com/company/press-release/veeam-positioned-as-a-leader-in-the-2025-gartner-magic-quadrant-for-backup-data-protection-platforms-for-the-ninth-consecutive-time.html)).
+En juin 2026, le cabinet d'analystes Gartner a classé Veeam parmi les **leaders** de son *Magic Quadrant* des plateformes de sauvegarde et de protection des données (*Backup and Data Protection Platforms*), pour la dixième fois consécutive. Veeam y est aussi placé, pour la septième fois de suite, le plus haut sur l'axe « capacité d'exécution » ([communiqué de Veeam, en anglais](https://www.veeam.com/company/press-release/not-just-protected-but-trusted-veeam-marks-a-decade-as-a-leader-in-the-2026-gartner-magic-quadrant-for-backup-and-data-protection-platforms.html)).
 
 !!! note "Lire un classement d'analystes avec recul"
     Un *Magic Quadrant* compare des éditeurs sur leur vision et leur capacité d'exécution. C'est un indicateur de maturité, pas une preuve que le produit convient à un besoin précis. D'autres solutions sérieuses existent : Commvault, Rubrik, Cohesity, ou des solutions libres comme Bacula, Bareos, BorgBackup et Proxmox Backup Server.
@@ -62,7 +62,13 @@ En 2025, le cabinet d'analystes Gartner a classé Veeam parmi les **leaders** de
 | **Veeam Recovery Orchestrator** | Orchestration et test automatisé des plans de reprise d'activité (PRA). |
 | **Veeam Agents** (Windows, Linux, Mac, Unix) | Petits logiciels installés sur des machines physiques, des VM ou des instances cloud pour les sauvegarder. Ils sont pilotés par VBR dans les TP. |
 
-La plateforme est vendue en trois éditions de plus en plus complètes : **Foundation** (essentiellement VBR), **Advanced** (ajoute Veeam ONE) et **Premium** (ajoute Recovery Orchestrator). Veeam propose aussi des produits séparés : Veeam Backup for Microsoft 365, Kasten pour Kubernetes, Veeam Data Cloud (sauvegarde en mode service), etc.
+La plateforme est vendue en trois éditions, chacune reprenant la précédente :
+
+- **Foundation** : la sauvegarde et la restauration, c'est-à-dire Veeam Backup & Replication ;
+- **Advanced** : ajoute Veeam ONE (supervision, rapports) et des outils de détection des menaces (Threat Hunter, recherche d'indicateurs de compromission) ;
+- **Premium** : ajoute Veeam Recovery Orchestrator (PRA orchestrés et testés, rapports de conformité).
+
+Veeam propose aussi des produits séparés : Veeam Backup for Microsoft 365, Kasten pour Kubernetes, Veeam Data Cloud (sauvegarde en mode service), etc.
 
 ### 1.1 Ce que Veeam Backup & Replication sait protéger
 
@@ -82,7 +88,7 @@ Dans ce parcours, aucun hyperviseur n'est piloté par VBR : on protège un **ser
 
 ## 2. Les nouveautés de la version 13
 
-Par rapport à la version 12, la version 13 (2025), puis la 13.1 (disponible depuis le 29 juillet 2026), changent profondément la façon de déployer et d'administrer VBR.
+Par rapport à la version 12, la version 13 (appliance Linux publiée le 3 septembre 2025, puis version 13.0.1 disponible pour Windows et pour l'appliance le 19 novembre 2025) et la 13.1 (disponible depuis le 29 juillet 2026) changent profondément la façon de déployer et d'administrer VBR.
 
 ### 2.1 Un serveur de sauvegarde sous Linux : la Veeam Software Appliance
 
@@ -119,7 +125,7 @@ L'intérêt est double : moins de travail pour l'administrateur, et une surface 
 Parmi les nouveautés ([notes de version](https://helpcenter.veeam.com/rn/veeam_backup_13_1_release_notes.html)) :
 
 - de nouveaux hyperviseurs (Citrix XenServer, XCP-ng, Sangfor aSV) et la réplication de VM Proxmox VE ;
-- la gestion complète des **agents Windows et Linux** dans l'interface web, y compris la restauration *bare metal* de machines Windows ;
+- la gestion complète des **agents Windows et Linux** dans l'interface web, y compris la restauration *bare metal* de machines Windows.
 
 ---
 
@@ -155,7 +161,7 @@ Une infrastructure VBR se compose de plusieurs **rôles**. Dans une petite insta
 
 ### 4.1 Le serveur de sauvegarde (*backup server*)
 
-C'est le **chef d'orchestre**. Il conserve la configuration (dans une base de données PostgreSQL), planifie et lance les jobs, coordonne les autres composants et tient l'inventaire des sauvegardes. Il peut s'agir de l'appliance Linux ou d'un serveur Windows, physique ou virtuel.
+C'est le **chef d'orchestre**. Il conserve la configuration (dans une base de données PostgreSQL par défaut ; Microsoft SQL Server reste possible sur un serveur Windows), planifie et lance les jobs, coordonne les autres composants et tient l'inventaire des sauvegardes. Il peut s'agir de l'appliance Linux ou d'un serveur Windows, physique ou virtuel.
 
 ### 4.2 Les consoles
 

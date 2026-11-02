@@ -82,6 +82,9 @@ theme:
     - content.action.view
     - toc.follow
 
+hooks:
+  - hooks/retirer_notes_redaction.py
+
 plugins:
   - search:
       lang: fr
@@ -281,7 +284,7 @@ nav:
       - "4. Ajouter des dépôts de sauvegarde": cours-tp/veeam/04-ajouter-des-depots-de-sauvegarde.md
       - "5. Sauvegarder la configuration et un serveur de fichiers": cours-tp/veeam/05-sauvegarder-configuration-et-serveur-de-fichiers.md
       - "6. Sauvegarder et restaurer un serveur Linux": cours-tp/veeam/06-sauvegarder-restaurer-serveur-linux.md
-      - "7. Sauvegarder vers Azure Blob (non rejoué)": cours-tp/veeam/07-sauvegarder-vers-azure-blob.md
+      - "7. Sauvegarder vers Azure Blob Storage": cours-tp/veeam/07-sauvegarder-vers-azure-blob.md
   - Tags: tags.md
 
 copyright: >
