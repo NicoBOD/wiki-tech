@@ -42,7 +42,7 @@ status: publié
 - L'administration se fait par l'**interface web** (`https://192.168.19.55`) et par **Host Management** (`https://192.168.19.55:10443`), la page d'administration du système. La **console Windows** existe toujours, mais elle s'installe sur `srv-fichiers` et se télécharge depuis l'appliance.
 - Nouveautés de sécurité à connaître dès l'installation : mots de passe soumis à la politique **DISA STIG** (15 caractères minimum, pas plus de 4 caractères de la même catégorie à la suite…), **authentification multifacteur** (MFA) sur Host Management, et compte **Security Officer** à initialiser. Ces étapes n'existaient pas dans le support.
 - Sans clé de licence, l'appliance passe en **Community Edition restauration seule** : une clé d'essai de 30 jours est indispensable (voir la [partie 2](02-decouvrir-veeam-data-platform.md#32-le-piege-de-la-community-edition)).
-- Les adresses viennent du TP [cluster pfSense](../../reseaux/cluster-haute-disponibilite-pfsense-carp-pfsync.md) (LAN `192.168.19.0/24`) au lieu du réseau du support. Le serveur Debian est en Debian 13 et le serveur de fichiers en Windows Server 2025.
+- Les adresses viennent du TP [cluster pfSense](../pfsense-ha/index.md) (LAN `192.168.19.0/24`) au lieu du réseau du support. Le serveur Debian est en Debian 13 et le serveur de fichiers en Windows Server 2025.
 - Cette partie a été **entièrement rejouée** en novembre 2026 sur KVM/libvirt. Les onglets VMware Workstation, VirtualBox et Proxmox VE suivent la documentation des éditeurs et les réglages standards : ils **n'ont pas été rejoués**.
 -->
 
@@ -906,5 +906,5 @@ Avec les quatre VM allumées (`pfsense-19`, `vbr`, `srv-fichiers`, `srv-debian`)
 - [Veeam Host Management](https://helpcenter.veeam.com/docs/vbr/userguide/hmc_about.html) — le rôle de la console d'administration du système.
 - [Installer la console Veeam](https://helpcenter.veeam.com/docs/vbr/userguide/deploy_console.html) — installation de la console Windows.
 - [Téléchargements Veeam](https://www.veeam.com/products/downloads.html) — ISO de l'appliance et licence d'essai (compte gratuit).
-- [TP : cluster de pare-feux pfSense en haute disponibilité](../../reseaux/cluster-haute-disponibilite-pfsense-carp-pfsync.md) — le réseau du lab.
+- [Parcours : cluster de pare-feux pfSense en haute disponibilité](../pfsense-ha/index.md) — le réseau du lab.
 - Partie précédente : [Découvrir Veeam Data Platform](02-decouvrir-veeam-data-platform.md) · Partie suivante : [Ajouter des dépôts de sauvegarde](04-ajouter-des-depots-de-sauvegarde.md).

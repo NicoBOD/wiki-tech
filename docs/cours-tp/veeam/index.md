@@ -31,7 +31,7 @@ status: publié
 <!-- NOTE DE RÉDACTION (non affichée) : Ce qui a changé par rapport à la version 1.5 du support (juin 2024)
 - Le support décrivait **Veeam Backup & Replication 12** installé sur un **Windows Server**. Le parcours utilise désormais la **Veeam Software Appliance 13.1**, le serveur de sauvegarde Linux durci que Veeam livre prêt à installer. L'installation et le dépôt local ont été réécrits en conséquence.
 - Toutes les parties pratiques ont été **rejouées dans un lab réel** en novembre 2026 ; les captures d'écran viennent de ce lab.
-- L'adressage reprend celui du TP [cluster pfSense en haute disponibilité](../../reseaux/cluster-haute-disponibilite-pfsense-carp-pfsync.md) du wiki : les machines du lab Veeam s'y branchent directement.
+- L'adressage reprend celui du TP [cluster pfSense en haute disponibilité](../pfsense-ha/index.md) du wiki : les machines du lab Veeam s'y branchent directement.
 - La partie sur **Veeam ONE** (supervision) a été retirée. La partie **Azure** n'a pas été rejouée et le signale clairement.
 - Un **test de restauration d'un fichier** a été ajouté à la partie 5 : une sauvegarde jamais restaurée n'est pas une sauvegarde fiable.
 -->
@@ -86,7 +86,7 @@ Le rôle de chaque composant Veeam dans ce lab est détaillé dans la [partie 2]
 | `srv-debian` | Serveur Linux à protéger | `192.168.19.170/24` | `192.168.19.21` | Debian 13 |
 | PC hôte | Navigateur web (variante) | `192.168.19.1` | — | Celui du PC |
 
-Les derniers octets sont faciles à retenir : `.55` pour Veeam, `.22` pour le serveur de fichiers, `.170` pour Debian. L'adressage est celui du [TP pfSense](../../reseaux/cluster-haute-disponibilite-pfsense-carp-pfsync.md), sur lequel les machines du lab se branchent directement. Toutes les machines du lab sont branchées sur le **même réseau LAN**, dont le nom dépend de l'hyperviseur :
+Les derniers octets sont faciles à retenir : `.55` pour Veeam, `.22` pour le serveur de fichiers, `.170` pour Debian. L'adressage est celui du [parcours pfSense](../pfsense-ha/index.md), sur lequel les machines du lab se branchent directement. Toutes les machines du lab sont branchées sur le **même réseau LAN**, dont le nom dépend de l'hyperviseur :
 
 === "VMware Workstation"
 
@@ -177,4 +177,4 @@ Les menus et les boutons sont écrits **en anglais**, comme ils s'affichent dans
 
 - [Documentation de Veeam Backup & Replication 13](https://helpcenter.veeam.com/docs/vbr/userguide/overview.html) — guide officiel de l'utilisateur.
 - [Veeam University](https://www.veeam.com/support/training/veeam-university-free.html) — formations gratuites en ligne.
-- [TP : cluster de pare-feux pfSense en haute disponibilité](../../reseaux/cluster-haute-disponibilite-pfsense-carp-pfsync.md) — le réseau sur lequel s'appuie ce parcours.
+- [Parcours : cluster de pare-feux pfSense en haute disponibilité](../pfsense-ha/index.md) — le réseau sur lequel s'appuie ce parcours.
