@@ -15,7 +15,7 @@ Configuration réseau, routage, VPN, et services de proxy sous Linux.
 ## Routage & Pare-feu
 
 - [Configurer le NAT et le routage pour transformer un serveur Linux en routeur avec nftables](configurer-nat-routage-serveur-linux-nftables.md) — Transformer un serveur Linux standard en véritable routeur pour votre réseau local (LAN).
-- [Mettre en place un cluster de pare-feux pfSense en haute disponibilité (CARP, pfsync, XML-RPC)](cluster-haute-disponibilite-pfsense-carp-pfsync.md) — TP complet : deux pfSense en actif/passif, bascule automatique, exercices corrigés, LACP et mise à jour du cluster.
+- [Cluster de pare-feux pfSense en haute disponibilité (CARP, pfsync, XML-RPC)](../cours-tp/pfsense-ha/index.md) — Parcours complet, rangé dans la catégorie Cours et TP : deux pfSense en actif/passif, bascule automatique, exercices corrigés, LACP et mise à jour du cluster.
 
 ## Configuration IP & DNS
 

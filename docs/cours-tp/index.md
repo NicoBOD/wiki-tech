@@ -21,6 +21,14 @@ Tous les TP se déroulent dans un **laboratoire virtuel** : les captures d'écra
 
     [:octicons-arrow-right-24: Commencer le parcours](veeam/index.md)
 
+- :material-wall-fire:{ .lg .middle } __Cluster pfSense en haute disponibilité__
+
+    ---
+
+    Construire un cluster actif/passif de deux pare-feux pfSense : adresses IP virtuelles CARP, synchronisation pfsync et XML-RPC, tests de bascule, agrégation LACP et mise à jour du cluster sans interruption de service.
+
+    [:octicons-arrow-right-24: Commencer le parcours](pfsense-ha/index.md)
+
 </div>
 
 ## Autres cours et TP du wiki
@@ -29,7 +37,6 @@ Ces supports, plus anciens, sont rangés dans leur catégorie thématique :
 
 - [Découvrir les fonctions serveur de Windows Server](../systemes/windows-server-fonctions-serveur.md) — 21 h de cours et travaux dirigés : stockage, partages SMB, quotas, IIS, sauvegarde.
 - [Découvrir les services d'infrastructure Windows Server](../systemes/windows-server-dns-ad-dhcp-wins.md) — 21 h : DNS, Active Directory, GPO, DHCP et WINS.
-- [Mettre en place un cluster de pare-feux pfSense en haute disponibilité](../reseaux/cluster-haute-disponibilite-pfsense-carp-pfsync.md) — TP complet (CARP, pfsync, XML-RPC). Son lab sert de réseau au parcours Veeam.
 
 ## Comment utiliser ces supports
 

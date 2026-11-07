@@ -143,7 +143,6 @@ nav:
     - Bloquer les requêtes malveillantes et publicités avec Pi-hole: reseaux/installer-configurer-pi-hole-reseau-local.md
     - Créer des tunnels sécurisés avec la redirection de ports SSH: reseaux/creer-tunnels-securises-redirection-ports-ssh.md
     - Configurer le NAT et le routage pour transformer un serveur Linux en routeur avec nftables: reseaux/configurer-nat-routage-serveur-linux-nftables.md
-    - "Mettre en place un cluster de pare-feux pfSense en haute disponibilité (CARP, pfsync, XML-RPC)": reseaux/cluster-haute-disponibilite-pfsense-carp-pfsync.md
     - Mettre en place un serveur DHCP local avec Kea sur Ubuntu: reseaux/installer-configurer-serveur-dhcp-kea-ubuntu.md
     - Configurer des VLANs (802.1q) sur un serveur Linux avec Netplan: reseaux/configurer-vlans-8021q-netplan-linux.md
     - Configurer une adresse IP statique avec Netplan sur Ubuntu Server 24.04: reseaux/configurer-ip-statique-netplan-ubuntu-server.md
@@ -285,6 +284,17 @@ nav:
       - "5. Sauvegarder la configuration et un serveur de fichiers": cours-tp/veeam/05-sauvegarder-configuration-et-serveur-de-fichiers.md
       - "6. Sauvegarder et restaurer un serveur Linux": cours-tp/veeam/06-sauvegarder-restaurer-serveur-linux.md
       - "7. Sauvegarder vers Azure Blob Storage": cours-tp/veeam/07-sauvegarder-vers-azure-blob.md
+    - Cluster pfSense en haute disponibilité:
+      - cours-tp/pfsense-ha/index.md
+      - "1. Comprendre la haute disponibilité": cours-tp/pfsense-ha/01-comprendre-haute-disponibilite.md
+      - "2. Préparer le lab et installer pfSense": cours-tp/pfsense-ha/02-preparer-lab-installer-pfsense.md
+      - "3. Configuration initiale": cours-tp/pfsense-ha/03-configuration-initiale.md
+      - "4. Synchroniser le cluster": cours-tp/pfsense-ha/04-synchroniser-le-cluster.md
+      - "5. VIP CARP et NAT sortant": cours-tp/pfsense-ha/05-vip-carp-nat-sortant.md
+      - "6. Tester la bascule": cours-tp/pfsense-ha/06-tester-la-bascule.md
+      - "7. Agrégation LACP et troisième nœud": cours-tp/pfsense-ha/07-agregation-lacp-troisieme-noeud.md
+      - "8. Mettre à jour le cluster": cours-tp/pfsense-ha/08-mettre-a-jour-le-cluster.md
+      - Annexes: cours-tp/pfsense-ha/annexes.md
   - Tags: tags.md
 
 copyright: >
