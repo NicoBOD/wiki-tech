@@ -1,0 +1,3195 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+      
+      
+        <meta name="author" content="Nicolas BODAINE">
+      
+      
+        <link rel="canonical" href="https://wiki.bodaine.fr/cours-tp/pfsense-ha/">
+      
+      
+        <link rel="prev" href="../veeam/07-sauvegarder-vers-azure-blob/">
+      
+      
+        <link rel="next" href="01-comprendre-haute-disponibilite/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>Cluster de pare-feux pfSense en haute disponibilité (CARP, pfsync, XML-RPC) : cours et travaux pratiques - Wiki Tech — NicoBOD</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        
+        <link rel="stylesheet" href="../../assets/external/fonts.googleapis.com/css.56f7ac64.css">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+    
+    
+      
+    
+    
+
+    <!-- SEO -->
+    <meta name="author" content="Nicolas BODAINE">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph : compléments non gérés par le plugin social.     -->
+    <!-- og:type/title/description/image/url sont posés par social.   -->
+    <meta property="og:site_name" content="Wiki Tech — NicoBOD">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card : la grande image et l'image elle-même sont      -->
+    <!-- héritées des balises og:image générées par le plugin social.  -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Cluster de pare-feux pfSense en haute disponibilité (CARP, pfsync, XML-RPC) : cours et travaux pratiques — Wiki Tech — NicoBOD">
+    <meta name="twitter:description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+  
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cluster-de-pare-feux-pfsense-en-haute-disponibilite-cours-et-travaux-pratiques" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../.." title="Wiki Tech — NicoBOD" class="md-header__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wiki Tech — NicoBOD
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Cluster de pare-feux pfSense en haute disponibilité (CARP, pfsync, XML-RPC) : cours et travaux pratiques
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer en mode clair"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer en mode clair" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Passer en mode sombre"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer en mode sombre" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Revenir au thème système"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Revenir au thème système" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Partager" aria-label="Partager" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../systemes/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h16v10H4m16 2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4c-1.11 0-2 .89-2 2v10a2 2 0 0 0 2 2H0v2h24v-2z"/></svg>
+    
+  
+  Systèmes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reseaux/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v2h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+    
+  
+  Réseaux
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../cloud/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 20q-2.28 0-3.89-1.57Q1 16.85 1 14.58q0-1.95 1.17-3.48 1.18-1.53 3.08-1.95.63-2.3 2.5-3.72Q9.63 4 12 4q2.93 0 4.96 2.04Q19 8.07 19 11q1.73.2 2.86 1.5 1.14 1.28 1.14 3 0 1.88-1.31 3.19T18.5 20Z"/></svg>
+    
+  
+  Cloud
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../cybersecurite/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12h7c-.53 4.11-3.28 7.78-7 8.92zH5V6.3l7-3.11M12 1 3 5v6c0 5.55 3.84 10.73 9 12 5.16-1.27 9-6.45 9-12V5z"/></svg>
+    
+  
+  Cybersécurité
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../ia/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/></svg>
+    
+  
+  IA
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../automatisation/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+    
+  
+  Automatisation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../logiciels/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m0 5H3V4h18z"/></svg>
+    
+  
+  Logiciels
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../debug/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 12h-4v-2h4m0 6h-4v-2h4m6-6h-2.81a6 6 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6 6 0 0 0-2.83 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20z"/></svg>
+    
+  
+  Debug
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../astuces/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+    
+  
+  Astuces
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+    
+  
+  Cours et TP
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../tags/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tags
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Wiki Tech — NicoBOD" class="md-nav__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../assets/logo.svg" alt="logo">
+
+    </a>
+    Wiki Tech — NicoBOD
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../systemes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Systèmes
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../reseaux/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Réseaux
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../cybersecurite/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cybersécurité
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../ia/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IA
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../automatisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automatisation
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../logiciels/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logiciels
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../debug/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../astuces/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Astuces
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cours et TP
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cours et TP
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../veeam/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Veeam Backup & Replication
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_2" id="__nav_11_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Veeam Backup & Replication
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../veeam/01-comprendre-la-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../veeam/02-decouvrir-veeam-data-platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Découvrir Veeam Data Platform 13
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../veeam/03-preparer-le-lab-installer-appliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Préparer le lab et installer l'appliance
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../veeam/04-ajouter-des-depots-de-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Ajouter des dépôts de sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../veeam/05-sauvegarder-configuration-et-serveur-de-fichiers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Sauvegarder la configuration et un serveur de fichiers
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../veeam/06-sauvegarder-restaurer-serveur-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Sauvegarder et restaurer un serveur Linux
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../veeam/07-sauvegarder-vers-azure-blob/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Sauvegarder vers Azure Blob Storage
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_3" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="./" class="md-nav__link md-nav__link--active">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cluster pfSense en haute disponibilité
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link md-nav__link--active" for="__nav_11_3" id="__nav_11_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cluster pfSense en haute disponibilité
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01-comprendre-haute-disponibilite/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la haute disponibilité
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02-preparer-lab-installer-pfsense/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Préparer le lab et installer pfSense
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="03-configuration-initiale/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Configuration initiale
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="04-synchroniser-le-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Synchroniser le cluster
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="05-vip-carp-nat-sortant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. VIP CARP et NAT sortant
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="06-tester-la-bascule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Tester la bascule
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="07-agregation-lacp-troisieme-noeud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Agrégation LACP et troisième nœud
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="08-mettre-a-jour-le-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8. Mettre à jour le cluster
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tags/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.5 7A1.5 1.5 0 0 1 4 5.5 1.5 1.5 0 0 1 5.5 4 1.5 1.5 0 0 1 7 5.5 1.5 1.5 0 0 1 5.5 7m15.91 4.58-9-9C12.05 2.22 11.55 2 11 2H4c-1.11 0-2 .89-2 2v7c0 .55.22 1.05.59 1.41l8.99 9c.37.36.87.59 1.42.59s1.05-.23 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.56-.23-1.06-.59-1.42"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objectifs-du-parcours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objectifs du parcours
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plan-du-parcours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Plan du parcours
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schema-du-lab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schéma du lab
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plan-dadressage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Plan d'adressage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comptes-et-mots-de-passe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comptes et mots de passe
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dimensionnement-des-machines-virtuelles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dimensionnement des machines virtuelles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#instantanes-conseilles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instantanés conseillés
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logiciels-a-telecharger" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logiciels à télécharger
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Logiciels à télécharger">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#telecharger-limage-iso-de-pfsense-ce-272" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Télécharger l'image ISO de pfSense CE 2.7.2
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#convention-de-lecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Convention de lecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Cours et TP
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="./" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Cluster pfSense en haute disponibilité
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:carp" class="md-tag">carp</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:cours" class="md-tag">cours</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:haute-disponibilite" class="md-tag">haute-disponibilite</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:pare-feu" class="md-tag">pare-feu</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:pfsense" class="md-tag">pfsense</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:pfsync" class="md-tag">pfsync</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:reseau" class="md-tag">reseau</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:travaux-pratiques" class="md-tag">travaux-pratiques</a>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/NicoBOD/wiki-tech/edit/main/docs/cours-tp/pfsense-ha/index.md" title="Editer cette page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/NicoBOD/wiki-tech/raw/main/docs/cours-tp/pfsense-ha/index.md" title="Consulter la source de cette page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<!-- ============================================================ -->
+<!-- ⚠️ RAPPEL IMPORTANT :                                          -->
+<!-- Pensez TOUJOURS à ajouter une entrée dans le fichier d'index  -->
+<!-- (index.md) du dossier correspondant (ex: docs/cloud/index.md) -->
+<!-- afin de référencer ce nouvel article et permettre aux         -->
+<!-- visiteurs de le trouver et de cliquer dessus !                -->
+<!-- ============================================================ -->
+
+<h1 id="cluster-de-pare-feux-pfsense-en-haute-disponibilite-cours-et-travaux-pratiques">Cluster de pare-feux pfSense en haute disponibilité : cours et travaux pratiques<a class="headerlink" href="#cluster-de-pare-feux-pfsense-en-haute-disponibilite-cours-et-travaux-pratiques" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Résumé</p>
+<p>Ce parcours en huit parties construit, dans deux machines virtuelles, un <strong>cluster actif/passif de deux pare-feux pfSense</strong>. Si le pare-feu principal tombe en panne, le pare-feu de secours prend le relais en quelques secondes, sans qu'aucun poste du réseau n'ait à être reconfiguré.</p>
+<p>Le cluster repose sur trois mécanismes :</p>
+<ul>
+<li><strong><abbr title="Common Address Redundancy Protocol">CARP</abbr></strong> pour partager des adresses IP virtuelles ;</li>
+<li><strong>pfsync</strong> pour recopier la table des connexions en cours ;</li>
+<li><strong>XML-RPC</strong> pour répliquer automatiquement la configuration.</li>
+</ul>
+<p>Le parcours commence par un cours, continue par cinq travaux pratiques (préparation de l'hyperviseur, installation de pfSense CE 2.7.2, configuration de la haute disponibilité, tests de bascule et exercices corrigés) et se termine par deux prolongements : agrégation de liens <abbr title="Link Aggregation Control Protocol">LACP</abbr> et troisième nœud, puis <strong>mise à jour du cluster vers pfSense CE 2.9.0</strong> sans interruption de service.</p>
+<p>Cette page rassemble ce qu'il faut garder sous la main pendant tout le parcours : le plan, le schéma du lab, les adresses, les comptes et mots de passe, le dimensionnement des machines virtuelles, les instantanés conseillés et les logiciels à télécharger.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Propriété</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Public</td>
+<td>Débutants en réseau qui suivent les étapes dans l'ordre : savoir créer une machine virtuelle et connaître l'adressage IPv4 suffit, aucune connaissance de pfSense n'est demandée</td>
+</tr>
+<tr>
+<td>Durée totale</td>
+<td>Environ 10 à 11 h : 6 h 15 pour le cours, le TP principal et les exercices (parties 1 à 6), 1 h pour la partie 7, 2 h 30 à 4 h pour la mise à jour (partie 8), surtout du temps de téléchargement</td>
+</tr>
+<tr>
+<td>Versions décrites</td>
+<td>pfSense Community Edition <strong>2.7.2</strong>, mise à jour en <strong>2.9.0</strong> à la fin du parcours</td>
+</tr>
+<tr>
+<td>Hyperviseur</td>
+<td>VMware Workstation Pro (17, 25H2 ou 26H1) ou Oracle VirtualBox 7</td>
+</tr>
+<tr>
+<td>Organisation</td>
+<td>Travail individuel, sur un PC disposant d'au moins 8 Go de RAM</td>
+</tr>
+<tr>
+<td>Dernière mise à jour</td>
+<td>2026-11-07</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="objectifs-du-parcours">Objectifs du parcours<a class="headerlink" href="#objectifs-du-parcours" title="Permanent link">&para;</a></h2>
+<p>À la fin du parcours, il est possible de :</p>
+<ul>
+<li>expliquer la différence entre un pare-feu seul et un cluster à basculement (<em>fail-over</em>) ;</li>
+<li>préparer des réseaux virtuels (<abbr title="Network Address Translation — traduction d'adresses">NAT</abbr>, réseau privé hôte, réseau interne) dans un hyperviseur ;</li>
+<li>installer pfSense et réaliser sa configuration initiale en console puis dans l'interface web ;</li>
+<li>configurer la synchronisation de configuration (XML-RPC) et la synchronisation des états (pfsync) ;</li>
+<li>créer des adresses IP virtuelles <abbr title="Common Address Redundancy Protocol">CARP</abbr> et une règle de <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> sortant adaptée à un cluster ;</li>
+<li>écrire des règles de filtrage <strong>minimales</strong> (seulement ce qui est nécessaire) ;</li>
+<li>tester une bascule, mesurer la coupure et interpréter les journaux en cas de problème ;</li>
+<li>mettre à jour un cluster sans interrompre le service.</li>
+</ul>
+<h2 id="plan-du-parcours">Plan du parcours<a class="headerlink" href="#plan-du-parcours" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Partie</th>
+<th>Type</th>
+<th>Durée</th>
+<th>Contenu</th>
+<th>Machines allumées</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><a href="01-comprendre-haute-disponibilite/">1. Comprendre la haute disponibilité</a></td>
+<td>Cours</td>
+<td>45 min</td>
+<td>pfSense, <abbr title="Single Point Of Failure — point unique de défaillance">SPOF</abbr>, actif/passif, adresses IP virtuelles, <abbr title="Common Address Redundancy Protocol">CARP</abbr>, pfsync et XML-RPC</td>
+<td>Aucune</td>
+</tr>
+<tr>
+<td style="text-align: center;"><a href="02-preparer-lab-installer-pfsense/">2. Préparer le lab et installer pfSense</a></td>
+<td>TP</td>
+<td>1 h 30</td>
+<td>Réseaux virtuels, deux machines virtuelles, installation de pfSense CE 2.7.2, interfaces et adresse LAN en console</td>
+<td><code>pfsense-19</code>, <code>pfsense-20</code></td>
+</tr>
+<tr>
+<td style="text-align: center;"><a href="03-configuration-initiale/">3. Configuration initiale</a></td>
+<td>TP</td>
+<td>45 min</td>
+<td>Interface web, assistant de configuration, interface PFSYNC, premier test de connectivité</td>
+<td><code>pfsense-19</code>, <code>pfsense-20</code></td>
+</tr>
+<tr>
+<td style="text-align: center;"><a href="04-synchroniser-le-cluster/">4. Synchroniser le cluster</a></td>
+<td>TP</td>
+<td>1 h</td>
+<td>Utilisateur <code>ha-user</code>, synchronisation XML-RPC et pfsync, règles minimales du lien PFSYNC</td>
+<td><code>pfsense-19</code>, <code>pfsense-20</code></td>
+</tr>
+<tr>
+<td style="text-align: center;"><a href="05-vip-carp-nat-sortant/">5. <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> <abbr title="Common Address Redundancy Protocol">CARP</abbr> et <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> sortant</a></td>
+<td>TP</td>
+<td>45 min</td>
+<td>Adresses IP virtuelles WAN et LAN, règle de <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> sortant vers la <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr></td>
+<td><code>pfsense-19</code>, <code>pfsense-20</code></td>
+</tr>
+<tr>
+<td style="text-align: center;"><a href="06-tester-la-bascule/">6. Tester la bascule</a></td>
+<td>TP</td>
+<td>1 h 30</td>
+<td>État MASTER/BACKUP, panne simulée, mesure de la coupure, exercices corrigés</td>
+<td><code>pfsense-19</code>, <code>pfsense-20</code> (+ un poste client, facultatif)</td>
+</tr>
+<tr>
+<td style="text-align: center;"><a href="07-agregation-lacp-troisieme-noeud/">7. Agrégation <abbr title="Link Aggregation Control Protocol">LACP</abbr> et troisième nœud</a></td>
+<td>Pour aller plus loin</td>
+<td>1 h</td>
+<td>Lien de synchronisation agrégé (<abbr title="Link Aggregation — agrégation de liens">LAGG</abbr>/<abbr title="Link Aggregation Control Protocol">LACP</abbr>), principe d'un troisième nœud (non pris en charge par Netgate)</td>
+<td><code>pfsense-19</code>, <code>pfsense-20</code></td>
+</tr>
+<tr>
+<td style="text-align: center;"><a href="08-mettre-a-jour-le-cluster/">8. Mettre à jour le cluster</a></td>
+<td>TP</td>
+<td>2 h 30 à 4 h</td>
+<td>Mise à jour 2.7.2 → 2.8.1 → 2.9.0, mode de maintenance <abbr title="Common Address Redundancy Protocol">CARP</abbr>, dépannage</td>
+<td><code>pfsense-19</code>, <code>pfsense-20</code></td>
+</tr>
+</tbody>
+</table>
+<p>Les <a href="annexes/">annexes</a> rassemblent le dépannage et les astuces, un aide-mémoire des menus et des commandes, et un glossaire. Les durées sont indicatives : la partie 8 est surtout faite d'attente pendant les téléchargements.</p>
+<div class="admonition tip">
+<p class="admonition-title">Suivre l'ordre</p>
+<p>Chaque TP s'appuie sur le précédent : la partie 4 utilise l'interface PFSYNC créée en partie 3, la partie 6 les <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> et le <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> sortant de la partie 5. Le cours de la partie 1 explique le vocabulaire utilisé partout ensuite. Les parties 7 et 8 sont indépendantes l'une de l'autre : elles partent toutes les deux d'un cluster fonctionnel.</p>
+</div>
+<h2 id="schema-du-lab">Schéma du lab<a class="headerlink" href="#schema-du-lab" title="Permanent link">&para;</a></h2>
+<figure>
+  <img alt="Topologie complète du lab avec les deux pare-feux, les trois réseaux, les adresses IP et les VIP" loading="lazy" src="images/schema-topologie-lab.svg" />
+<br />
+<figcaption>Topologie du lab. Le dernier octet rappelle le rôle : .19 = primaire, .20 = secondaire, .21 = VIP.</figcaption>
+</figure>
+<p>Le lab utilise trois réseaux virtuels : le <strong>WAN</strong> (l'extérieur, avec accès à Internet par le <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> de l'hyperviseur), le <strong>LAN</strong> (le réseau interne, auquel le PC hôte est relié) et <strong>SYNCHRO-PFSENSE</strong>, un « câble virtuel » qui relie uniquement les deux pare-feux. Leur rôle est expliqué dans la <a href="01-comprendre-haute-disponibilite/">partie 1</a> et leur création dans la <a href="02-preparer-lab-installer-pfsense/#2-creer-les-reseaux-virtuels">partie 2</a>.</p>
+<h2 id="plan-dadressage">Plan d'adressage<a class="headerlink" href="#plan-dadressage" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Interface pfSense</th>
+<th>Rôle</th>
+<th><code>pfsense-19</code> (primaire)</th>
+<th><code>pfsense-20</code> (secondaire)</th>
+<th><abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> partagée</th>
+<th>Réseau virtuel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>em0</code></td>
+<td><strong>WAN</strong> — côté extérieur</td>
+<td><code>192.168.8.19/24</code></td>
+<td><code>192.168.8.20/24</code></td>
+<td><code>192.168.8.21/24</code></td>
+<td>VMnet8 (<abbr title="Network Address Translation — traduction d'adresses">NAT</abbr>) — passerelle <code>192.168.8.2</code></td>
+</tr>
+<tr>
+<td><code>em1</code></td>
+<td><strong>LAN</strong> — réseau interne</td>
+<td><code>192.168.19.19/24</code></td>
+<td><code>192.168.19.20/24</code></td>
+<td><code>192.168.19.21/24</code></td>
+<td>VMnet19 (<em>Host-only</em>)</td>
+</tr>
+<tr>
+<td><code>em2</code></td>
+<td><strong>PFSYNC</strong> — synchronisation (ex-OPT1)</td>
+<td><code>192.168.254.1/30</code></td>
+<td><code>192.168.254.2/30</code></td>
+<td>—</td>
+<td>LAN segment « SYNCHRO-PFSENSE »</td>
+</tr>
+</tbody>
+</table>
+<p>Le PC hôte a l'adresse <code>192.168.19.1</code> sur le LAN : c'est depuis son navigateur que s'ouvrent les interfaces web des deux pare-feux. Le poste client facultatif de la <a href="06-tester-la-bascule/#3-pour-aller-plus-loin-verifier-depuis-un-poste-client">partie 6</a> prend l'adresse <code>192.168.19.50</code>.</p>
+<div class="admonition info">
+<p class="admonition-title">Pourquoi un masque /30 pour la synchronisation ?</p>
+<p>Un réseau en <code>/30</code> (masque <code>255.255.255.252</code>) contient <strong>4 adresses</strong> : <code>192.168.254.0</code> (adresse du réseau), <code>.1</code> et <code>.2</code> (les deux seules adresses utilisables) et <code>.3</code> (diffusion). Il ne peut donc y avoir <strong>que deux machines</strong> sur ce réseau, exactement les deux pare-feux. Personne d'autre ne peut s'y glisser avec une adresse valide.</p>
+<p>Pour comparaison, un <code>/29</code> (masque <code>255.255.255.248</code>) offre 6 adresses utilisables, et un <code>/24</code> en offre 254.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Utilisateurs de VirtualBox : une seule différence</p>
+<p>D'après la documentation d'Oracle, la passerelle d'un « Réseau <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> » VirtualBox est <strong>toujours la première adresse</strong> du réseau, soit <code>192.168.8.1</code>, et ce n'est pas modifiable. Partout où ce parcours indique la passerelle ou le DNS <code>192.168.8.2</code>, utiliser <strong><code>192.168.8.1</code></strong> avec VirtualBox. Toutes les autres adresses sont identiques.</p>
+</div>
+<h2 id="comptes-et-mots-de-passe">Comptes et mots de passe<a class="headerlink" href="#comptes-et-mots-de-passe" title="Permanent link">&para;</a></h2>
+<p>Ce lab est <strong>pédagogique</strong> : les mots de passe sont écrits ici volontairement pour que chacun puisse suivre à l'identique. En production, chaque mot de passe serait unique, long et rangé dans un gestionnaire de mots de passe, et ne serait jamais publié. Ces mots de passe étant publics, <strong>ne jamais les réutiliser</strong> ailleurs que dans ce lab, et les changer si le lab devient joignable depuis un autre réseau que le PC hôte.</p>
+<table>
+<thead>
+<tr>
+<th>Où</th>
+<th>Compte</th>
+<th>Mot de passe</th>
+<th>Créé en</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pfsense-19</code> et <code>pfsense-20</code> : interface web, avant l'assistant</td>
+<td><code>admin</code></td>
+<td><code>pfsense</code> (mot de passe par défaut de pfSense)</td>
+<td>Partie 3</td>
+</tr>
+<tr>
+<td><code>pfsense-19</code> et <code>pfsense-20</code> : interface web, après l'assistant</td>
+<td><code>admin</code></td>
+<td><code>Tp-PvnpZskdQq</code> (le même sur les deux nœuds)</td>
+<td>Partie 3</td>
+</tr>
+<tr>
+<td><code>pfsense-19</code> et <code>pfsense-20</code> : synchronisation XML-RPC</td>
+<td><code>ha-user</code> (privilège <em>System - <abbr title="High Availability — haute disponibilité">HA</abbr> node sync</em>)</td>
+<td><code>Ha-UdO8Xe29FS</code></td>
+<td>Partie 4</td>
+</tr>
+<tr>
+<td><abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> <abbr title="Common Address Redundancy Protocol">CARP</abbr> du WAN et du LAN</td>
+<td>— (<em>Virtual IP Password</em>)</td>
+<td><code>Carp-I0yZc4hYXz</code></td>
+<td>Partie 5</td>
+</tr>
+</tbody>
+</table>
+<p>Le compte <code>root</code>, utilisé seulement en ligne de commande (dépannage de la <a href="08-mettre-a-jour-le-cluster/#7-depannage-de-la-mise-a-jour">partie 8</a>), partage le mot de passe du compte <code>admin</code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Un compte <code>ha-user</code> aussi précieux que <code>admin</code></p>
+<p>Le privilège <em>System - <abbr title="High Availability — haute disponibilité">HA</abbr> node sync</em> permet de remplacer la configuration du pare-feu : il équivaut en pratique à un accès administrateur. Son mot de passe se protège comme celui d'<code>admin</code>.</p>
+</div>
+<h2 id="dimensionnement-des-machines-virtuelles">Dimensionnement des machines virtuelles<a class="headerlink" href="#dimensionnement-des-machines-virtuelles" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Machine</th>
+<th>Conseillé</th>
+<th>Minimal</th>
+<th>Disque</th>
+<th>Cartes réseau</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pfsense-19</code> (primaire)</td>
+<td>1 vCPU, <strong>2 Go</strong></td>
+<td>1 vCPU, 1 Go</td>
+<td>20 Go</td>
+<td>3 : WAN, LAN, SYNCHRO-PFSENSE (4 en partie 7)</td>
+</tr>
+<tr>
+<td><code>pfsense-20</code> (secondaire)</td>
+<td>1 vCPU, <strong>2 Go</strong></td>
+<td>1 vCPU, 1 Go</td>
+<td>20 Go</td>
+<td>3 : WAN, LAN, SYNCHRO-PFSENSE (4 en partie 7)</td>
+</tr>
+<tr>
+<td>Poste client (facultatif, partie 6)</td>
+<td>1 vCPU, 1 Go (une petite distribution Linux suffit)</td>
+<td>—</td>
+<td>Selon le système</td>
+<td>1 : LAN</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>1 Go</strong> de RAM est le minimum officiel de pfSense et suffit pour les parties 1 à 7 (512 Mo fonctionnent en pratique pour un lab).</li>
+<li>La <strong>mise à jour</strong> de la partie 8 demande <strong>2 Go par VM</strong> : avec 1 Go, elle peut échouer faute de mémoire et laisser pfSense inutilisable. Créer directement les VM avec 2 Go évite d'avoir à les modifier plus tard.</li>
+<li>Le disque de 20 Go dépasse largement le minimum officiel de 8 Go.</li>
+<li><strong>PC hôte</strong> : au moins <strong>8 Go de RAM</strong>, environ <strong>50 Go d'espace disque libre</strong> et la virtualisation matérielle (Intel VT-x ou AMD-V) activée dans le BIOS/UEFI. Un accès à Internet est nécessaire pour la mise à jour finale.</li>
+</ul>
+<h2 id="instantanes-conseilles">Instantanés conseillés<a class="headerlink" href="#instantanes-conseilles" title="Permanent link">&para;</a></h2>
+<p>Un <strong>instantané</strong> (<em>snapshot</em>) enregistre l'état complet d'une machine virtuelle et permet d'y revenir en un clic. En cas d'erreur, on y revient en quelques secondes au lieu de tout recommencer. Prendre les instantanés <strong>sur les deux pare-feux en même temps</strong>, de préférence VM éteintes (console : option <strong>6) Halt system</strong>), aux étapes marquées 🛟 :</p>
+<table>
+<thead>
+<tr>
+<th>Instantané</th>
+<th>Moment</th>
+<th>Permet de recommencer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>01-installation-terminee</code></td>
+<td>Fin de l'installation de pfSense (partie 2)</td>
+<td>La configuration en console et toute la suite</td>
+</tr>
+<tr>
+<td><code>02-configuration-de-base</code></td>
+<td>Fin de la partie 3 (adresses, assistant, ping sur PFSYNC)</td>
+<td>La synchronisation (partie 4)</td>
+</tr>
+<tr>
+<td><code>03-synchronisation-ha</code></td>
+<td>Fin de la partie 4 (XML-RPC et pfsync fonctionnels)</td>
+<td>Les <abbr title="Virtual IP — adresse IP virtuelle partagée">VIP</abbr> et le <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> sortant (partie 5)</td>
+</tr>
+<tr>
+<td><code>04-cluster-fonctionnel</code></td>
+<td>Partie 6, juste avant les exercices</td>
+<td>Les exercices, puis les parties 7 et 8 avec un cluster propre</td>
+</tr>
+<tr>
+<td><code>05-avant-mise-a-jour</code></td>
+<td>Partie 8, étape 1, après la sauvegarde des configurations</td>
+<td>La mise à jour, en cas d'échec</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Toujours restaurer les deux VM sur le même instantané</strong> : un primaire et un secondaire revenus à des moments différents n'ont plus la même configuration.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">VMware Workstation</label><label for="__tabbed_1_2">VirtualBox</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><strong>VM &gt; Snapshot &gt; Take Snapshot…</strong>, avec le nom de l'instantané, sur chaque VM.</p>
+</div>
+<div class="tabbed-block">
+<p>Onglet <strong>Instantanés</strong> de la VM (menu <strong>Machine &gt; Outils &gt; Instantanés</strong>) puis <strong>Prendre</strong>, avec le nom de l'instantané, sur chaque VM.</p>
+</div>
+</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Un instantané n'est pas une sauvegarde</p>
+<p>L'instantané reste <strong>sur le même disque</strong> que la machine virtuelle : si le disque du PC hôte tombe en panne, les instantanés disparaissent avec lui. Pour un pare-feu en production, la sauvegarde de référence est le fichier de configuration XML, exporté dans <strong>Diagnostics &gt; Backup &amp; Restore</strong> (voir la <a href="08-mettre-a-jour-le-cluster/#2-etape-1-sauvegarder-les-deux-nuds-et-prevoir-2-go-de-ram">partie 8</a>).</p>
+</div>
+<h2 id="logiciels-a-telecharger">Logiciels à télécharger<a class="headerlink" href="#logiciels-a-telecharger" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Logiciel</th>
+<th>Où le trouver</th>
+<th>Remarque</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pfSense CE 2.7.2 (image <abbr title="Image disque d'un CD/DVD">ISO</abbr>)</td>
+<td>Miroirs ci-dessous</td>
+<td>Archive <code>.iso.gz</code> d'environ 575 Mo (<abbr title="Image disque d'un CD/DVD">ISO</abbr> décompressée : environ 875 Mo) ; empreinte SHA256 à vérifier</td>
+</tr>
+<tr>
+<td>VMware Workstation Pro</td>
+<td><a href="https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion">Page produit VMware</a></td>
+<td>Gratuit pour tous les usages depuis novembre 2024. Téléchargement depuis le portail de support Broadcom, avec un compte gratuit, en choisissant la variante « Personal ». La version 26H1 est la plus récente à la date de rédaction</td>
+</tr>
+<tr>
+<td>Oracle VirtualBox 7</td>
+<td><a href="https://www.virtualbox.org/wiki/Downloads">virtualbox.org</a></td>
+<td>Gratuit</td>
+</tr>
+<tr>
+<td>7-Zip (Windows)</td>
+<td><a href="https://www.7-zip.org/">7-zip.org</a></td>
+<td>Pour décompresser l'archive <code>.iso.gz</code> sous Windows</td>
+</tr>
+</tbody>
+</table>
+<h3 id="telecharger-limage-iso-de-pfsense-ce-272">Télécharger l'image <abbr title="Image disque d'un CD/DVD">ISO</abbr> de pfSense CE 2.7.2<a class="headerlink" href="#telecharger-limage-iso-de-pfsense-ce-272" title="Permanent link">&para;</a></h3>
+<p>Depuis la version 2.8, pfSense CE ne se télécharge plus sous forme d'image <abbr title="Image disque d'un CD/DVD">ISO</abbr> autonome. Il faut passer par le <strong>Netgate Installer</strong>, un installeur en ligne qui exige un compte Netgate et une connexion Internet pendant l'installation. Pour un TP, il est plus simple et plus fiable d'installer la <strong>version 2.7.2</strong> depuis une <abbr title="Image disque d'un CD/DVD">ISO</abbr> hors ligne, puis de mettre le cluster à jour à la fin (voir la <a href="08-mettre-a-jour-le-cluster/">partie 8</a>). Cela permet aussi d'apprendre la procédure de mise à jour d'un cluster.</p>
+<p>Des sites miroirs hébergent toujours l'<abbr title="Image disque d'un CD/DVD">ISO</abbr> 2.7.2 :</p>
+<ul>
+<li>Dakota State University (États-Unis), archive compressée : <a href="https://repo.ialab.dsu.edu/pfsense/pfSense-CE-2.7.2-RELEASE-amd64.iso.gz">https://repo.ialab.dsu.edu/pfsense/pfSense-CE-2.7.2-RELEASE-amd64.iso.gz</a></li>
+<li>Fagskolen Innlandet (Norvège), <abbr title="Image disque d'un CD/DVD">ISO</abbr> directe : <a href="https://ftp.fagskolen.gjovik.no/pub/pfSense/pfSense-CE-2.7.2-RELEASE-amd64.iso">https://ftp.fagskolen.gjovik.no/pub/pfSense/pfSense-CE-2.7.2-RELEASE-amd64.iso</a></li>
+</ul>
+<p>Un fichier en <code>.iso.gz</code> est une <strong>archive compressée</strong> : il faut la décompresser pour obtenir le fichier <code>.iso</code> à insérer dans le lecteur CD virtuel. Sous Windows, utiliser 7-Zip (clic droit &gt; <em>7-Zip &gt; Extraire ici</em>). Sous Linux, utiliser <code>gunzip</code>.</p>
+<p><strong>Vérifier l'intégrité du téléchargement</strong> permet de s'assurer que le fichier n'a été ni corrompu ni modifié. L'empreinte SHA256 officielle de l'archive <code>pfSense-CE-2.7.2-RELEASE-amd64.iso.gz</code> est :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>883fb7bc64fe548442ed007911341dd34e178449f8156ad65f7381a02b7cd9e4
+</code></pre></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Windows (PowerShell)</label><label for="__tabbed_2_2">Linux</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">Get-FileHash</span> <span class="p">.\</span><span class="n">pfSense-CE</span><span class="p">-</span><span class="n">2</span><span class="p">.</span><span class="n">7</span><span class="p">.</span><span class="n">2-RELEASE-amd64</span><span class="p">.</span><span class="n">iso</span><span class="p">.</span><span class="n">gz</span> <span class="n">-Algorithm</span> <span class="n">SHA256</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sha256sum<span class="w"> </span>pfSense-CE-2.7.2-RELEASE-amd64.iso.gz
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>gunzip<span class="w"> </span>-k<span class="w"> </span>pfSense-CE-2.7.2-RELEASE-amd64.iso.gz
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="admonition success">
+<p class="admonition-title">Résultat attendu</p>
+<p>L'empreinte affichée est <strong>identique</strong> à celle ci-dessus. Si elle diffère, supprimer le fichier et le télécharger à nouveau.</p>
+</div>
+<h2 id="convention-de-lecture">Convention de lecture<a class="headerlink" href="#convention-de-lecture" title="Permanent link">&para;</a></h2>
+<p>Dans les TP, chaque action commence par un repère qui indique <strong>où</strong> elle se fait :</p>
+<table>
+<thead>
+<tr>
+<th>Repère</th>
+<th>Où se fait l'action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🖥️</td>
+<td><strong>PC hôte</strong> : l'hyperviseur (réseaux virtuels, VM, instantanés), le navigateur ou un terminal du PC</td>
+</tr>
+<tr>
+<td>1️⃣</td>
+<td><strong>Primaire</strong> <code>pfsense-19</code> (<code>192.168.19.19</code>), le pare-feu qui porte normalement le trafic</td>
+</tr>
+<tr>
+<td>2️⃣</td>
+<td><strong>Secondaire</strong> <code>pfsense-20</code> (<code>192.168.19.20</code>), le pare-feu de secours</td>
+</tr>
+<tr>
+<td>1️⃣ 2️⃣</td>
+<td><strong>Les deux pare-feux</strong>, l'un après l'autre</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Les interfaces web des deux pare-feux s'ouvrent dans le navigateur du PC hôte : les repères 1️⃣ et 2️⃣ désignent le pare-feu <strong>sur lequel</strong> on agit, que ce soit dans sa console ou dans son interface web. Beaucoup d'erreurs viennent d'une action faite sur le mauvais nœud : relire le repère avant chaque manipulation.</li>
+<li>Les menus sont donnés en anglais, la langue par défaut de pfSense, suivis de leur équivalent français : <strong>Firewall &gt; Rules</strong> (<em>Pare-feu &gt; Règles</em>).</li>
+<li>Pour savoir sur quel pare-feu une capture a été prise, se fier au texte qui l'accompagne ou à l'adresse visible en haut de l'image : <code>192.168.19.19</code> pour le primaire, <code>192.168.19.20</code> pour le secondaire. Les captures mélangent l'interface en français et en anglais. Pour s'y retrouver soi-même, la <a href="03-configuration-initiale/#4-distinguer-les-deux-pare-feux-dun-coup-dil">partie 3</a> propose de distinguer les deux pare-feux par la langue et le thème.</li>
+<li>Les encadrés « Pourquoi ? » expliquent ce que fait chaque réglage, et les questions de révision de fin de partie vérifient qu'il est compris : comprendre vaut mieux que recopier.</li>
+</ul>
+<h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://docs.netgate.com/pfsense/en/latest/recipes/high-availability.html">Netgate — Configuring High Availability (recette complète)</a> — La procédure de référence de l'éditeur.</li>
+<li><a href="https://docs.netgate.com/pfsense/en/latest/highavailability/index.html">Netgate — High Availability : vue d'ensemble</a> — <abbr title="Common Address Redundancy Protocol">CARP</abbr>, pfsync, XML-RPC et leurs exigences.</li>
+<li><a href="https://docs.netgate.com/pfsense/en/latest/highavailability/xmlrpc-sync.html">Netgate — Configuration synchronization (XML-RPC)</a> — Ce qui est synchronisé, et ce qui ne l'est pas.</li>
+<li><a href="https://docs.netgate.com/pfsense/en/latest/highavailability/pfsync.html">Netgate — State synchronization (pfsync)</a> — Fonctionnement et règles nécessaires.</li>
+<li><a href="https://docs.netgate.com/pfsense/en/latest/install/upgrade-guide-ha.html">Netgate — Upgrading a High Availability Cluster</a> — Ordre officiel de mise à jour.</li>
+<li><a href="https://docs.netgate.com/pfsense/en/latest/monitoring/status/carp.html">Netgate — <abbr title="Common Address Redundancy Protocol">CARP</abbr> Status</a> — Désactivation temporaire et mode de maintenance.</li>
+<li><a href="https://docs.netgate.com/pfsense/en/latest/troubleshooting/high-availability-virtual.html">Netgate — High Availability in virtual environments</a> — Réglages des hyperviseurs (mode promiscuité).</li>
+<li><a href="https://docs.netgate.com/pfsense/en/latest/troubleshooting/upgrades.html">Netgate — Troubleshooting upgrades</a> — Que faire si la mise à jour échoue.</li>
+<li><a href="https://docs.netgate.com/pfsense/en/latest/releases/2-9-0.html">Netgate — Notes de version pfSense CE 2.9.0</a></li>
+<li><a href="https://docs.netgate.com/pfsense/en/latest/interfaces/lagg-interfaces.html">Netgate — <abbr title="Link Aggregation — agrégation de liens">LAGG</abbr> Interfaces</a></li>
+<li><a href="https://docs.oracle.com/en/virtualization/virtualbox/7.1/user/networkingdetails.html">Oracle — Modes réseau de VirtualBox</a></li>
+<li><a href="https://man.freebsd.org/cgi/man.cgi?query=carp&amp;sektion=4">FreeBSD — page de manuel carp(4)</a> — Fonctionnement détaillé de <abbr title="Common Address Redundancy Protocol">CARP</abbr>, préemption et rétrogradation.</li>
+<li>Wikipédia : <a href="https://fr.wikipedia.org/wiki/Basculement_%28informatique%29">Basculement (informatique)</a>, <a href="https://fr.wikipedia.org/wiki/Haute_disponibilit%C3%A9">Haute disponibilité</a>, <a href="https://fr.wikipedia.org/wiki/Common_Address_Redundancy_Protocol"><abbr title="Common Address Redundancy Protocol">CARP</abbr></a>, <a href="https://fr.wikipedia.org/wiki/Pfsync">pfsync</a>, <a href="https://fr.wikipedia.org/wiki/XML-RPC">XML-RPC</a>, <a href="https://fr.wikipedia.org/wiki/IEEE_802.3ad">IEEE 802.3ad</a></li>
+<li><a href="../veeam/">Parcours Veeam Backup &amp; Replication</a> — le parcours de sauvegarde du wiki, dont le lab se branche sur le LAN de ce cluster.</li>
+<li>Commencer le parcours : <a href="01-comprendre-haute-disponibilite/">Comprendre la haute disponibilité</a>.</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../veeam/07-sauvegarder-vers-azure-blob/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 7. Sauvegarder vers Azure Blob Storage">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                7. Sauvegarder vers Azure Blob Storage
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="01-comprendre-haute-disponibilite/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 1. Comprendre la haute disponibilité">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                1. Comprendre la haute disponibilité
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      <a href="/mentions-legales/">Mentions légales</a>
+
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/bodaine" target="_blank" rel="noopener" title="Nicolas BODAINE sur LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://github.com/NicoBOD" target="_blank" rel="noopener" title="NicoBOD sur GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://nicolas.bodaine.fr" target="_blank" rel="noopener" title="Portfolio de Nicolas BODAINE" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="/feed_rss_created.xml" target="_blank" rel="noopener" title="Flux RSS des derniers articles" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 64c0-17.7 14.3-32 32-32 229.8 0 416 186.2 416 416 0 17.7-14.3 32-32 32s-32-14.3-32-32C384 253.6 226.4 96 32 96 14.3 96 0 81.7 0 64m0 352a64 64 0 1 1 128 0 64 64 0 1 1-128 0m32-256c159.1 0 288 128.9 288 288 0 17.7-14.3 32-32 32s-32-14.3-32-32c0-123.7-100.3-224-224-224-17.7 0-32-14.3-32-32s14.3-32 32-32"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.path", "navigation.indexes", "navigation.prune", "navigation.footer", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "content.action.view", "toc.follow"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>
