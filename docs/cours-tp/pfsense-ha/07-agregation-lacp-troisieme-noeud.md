@@ -26,7 +26,7 @@ status: publié
 !!! abstract "Résumé"
     Cette partie, pour aller plus loin, supprime le dernier point unique de défaillance du cluster : le **lien de synchronisation**. On ajoute une quatrième carte réseau à chaque pare-feu et on regroupe les deux liens dans un **agrégat LACP** (un *LAGG* dans pfSense), après avoir sauvegardé les règles qu'il va effacer.
 
-    Elle présente ensuite le principe d'un **troisième nœud**, synchronisé en chaîne par le secondaire.
+    Elle présente ensuite le principe d'un **troisième nœud**, synchronisé en chaîne par le secondaire : une expérience de lab, car Netgate ne prend officiellement en charge que les clusters de deux nœuds.
 
 | Propriété | Valeur |
 |-----------|--------|
@@ -200,7 +200,10 @@ Secondaire — la règle de test est arrivée par réplication
 
 ## 2. Ajouter un troisième nœud au cluster
 
-Il est possible d'ajouter un **troisième pare-feu** au cluster, en conservant la synchronisation sur les trois nœuds. La méthode éprouvée consiste à **chaîner** la synchronisation :
+!!! warning "Une configuration que Netgate ne prend pas en charge"
+    D'après la documentation de Netgate, la seule configuration de haute disponibilité prise en charge comporte **exactement deux nœuds**. Un troisième nœud est possible, mais il n'apporte pas d'avantage significatif et les clusters de plus de deux nœuds ne sont **pas officiellement pris en charge**. Cette section est donc une **expérience de lab**, à ne pas reproduire en production.
+
+Il est possible d'ajouter un **troisième pare-feu** au cluster. Une méthode consiste à **chaîner** la synchronisation de la configuration :
 
 1. Configurer le troisième pare-feu (`pfsense-22` par exemple) avec ses deux VIP, comme expliqué à la [partie 5](05-vip-carp-nat-sortant.md#1-configurer-les-adresses-ip-virtuelles-vip-carp).
 2. 2️⃣ **Sur le secondaire** (ni le primaire, ni le tertiaire), dans **System > High Avail. Sync**, remplir la partie XML-RPC pour qu'il synchronise le tertiaire. Le secondaire devient ainsi le « maître » du tertiaire.
@@ -209,6 +212,7 @@ Il est possible d'ajouter un **troisième pare-feu** au cluster, en conservant l
 !!! note "Points d'attention"
     - Le réseau de synchronisation en `/30` ne peut contenir que deux adresses. Le lien entre le secondaire et le tertiaire demande donc un **autre réseau dédié** (par exemple `192.168.254.4/30` sur un nouveau LAN segment) et une carte réseau supplémentaire sur le secondaire.
     - pfSense ajoute 100 au skew des VIP à chaque synchronisation XML-RPC, comme on l'a constaté entre le primaire et le secondaire ([partie 5](05-vip-carp-nat-sortant.md#1-configurer-les-adresses-ip-virtuelles-vip-carp)). Le tertiaire devrait donc recevoir un skew de 200 et être le dernier à prendre la main.
+    - **Le chaînage recopie la configuration, pas les états des trois nœuds.** Avec une adresse de pair (*pfsync Synchronize Peer IP*), pfsync envoie les états **en unicast** au seul pair désigné, et le secondaire ne retransmet pas au tertiaire les états qu'il reçoit du primaire. Le tertiaire ne connaît donc pas les connexions ouvertes sur le primaire : si le trafic basculait directement du primaire vers lui, ces connexions seraient coupées. Netgate réserve l'adresse de pair aux clusters de **deux** pare-feux ; pour échanger les états entre trois nœuds, il faudrait un réseau de synchronisation **commun aux trois** (un `/29`, par exemple) et pfsync en **multicast**, son mode par défaut (adresse de pair laissée vide).
 
 <!-- NOTE DE RÉDACTION (non affichée) : Chaînage non rejoué
 Le chaînage vers un troisième nœud n'a pas été rejoué dans le lab de test ; le skew de 200 du tertiaire est une déduction à partir du +100 observé entre le primaire et le secondaire.
@@ -223,7 +227,7 @@ Le chaînage vers un troisième nœud n'a pas été rejoué dans le lab de test 
 3. Pourquoi sauvegarder les règles avant de créer le LAGG ?
 4. Après la création du LAGG, pourquoi la règle XML-RPC doit-elle exister de nouveau **sur le secondaire** avant que la réplication reprenne ?
 5. Pourquoi le lien entre le secondaire et un troisième nœud demande-t-il un autre réseau et une carte réseau supplémentaire ?
-6. Quel skew le troisième nœud devrait-il recevoir, et quelle conséquence cela a-t-il ?
+6. Le chaînage d'un troisième nœud synchronise-t-il les états des trois pare-feux ? Netgate prend-il en charge cette configuration ?
 
 ??? success "Corrigé"
     1. **Non.** LACP répartit le trafic **par flux** : une même conversation n'utilise qu'un lien à la fois, et la synchronisation entre deux pare-feux ne gagne pas de débit. Son bénéfice est la **redondance** : si un lien tombe, l'autre continue, ce qui supprime le dernier point unique de défaillance du cluster.
@@ -231,7 +235,7 @@ Le chaînage vers un troisième nœud n'a pas été rejoué dans le lab de test 
     3. Une interface ne peut entrer dans un LAGG que si elle n'est affectée à rien : il faut **supprimer l'interface PFSYNC**, ce qui supprime aussi **toutes ses règles**. La sauvegarde XML permet de les restaurer au lieu de les recréer à la main.
     4. L'interface PFSYNC du secondaire a été supprimée avec ses règles, dont la règle XML-RPC. Sans elle, le flux XML-RPC du primaire est bloqué à l'entrée du secondaire (refus par défaut), et plus rien n'est répliqué. Une fois la règle recréée, les autres règles arrivent par réplication.
     5. Un réseau en `/30` ne contient que **deux adresses utilisables**, déjà prises par le primaire et le secondaire. Le lien secondaire-tertiaire demande donc un autre `/30` (par exemple `192.168.254.4/30`), sur un nouveau LAN segment, donc une carte de plus sur le secondaire.
-    6. pfSense ajoute 100 au skew à chaque synchronisation XML-RPC : le tertiaire devrait recevoir un skew de **200**. Il annoncerait moins souvent que les deux autres et serait le **dernier** à prendre les VIP.
+    6. **Non.** Le chaînage recopie la **configuration** (XML-RPC), mais pfsync en unicast n'envoie les états qu'au pair désigné, et le secondaire ne retransmet pas au tertiaire ceux du primaire : une bascule directe du primaire vers le tertiaire couperait les connexions en cours. Il faudrait un réseau de synchronisation commun et pfsync en multicast. Et Netgate ne prend officiellement en charge que les clusters de **deux** nœuds : ce montage reste une expérience de lab.
 
 ---
 
@@ -239,6 +243,8 @@ Le chaînage vers un troisième nœud n'a pas été rejoué dans le lab de test 
 
 - [Netgate — LAGG Interfaces](https://docs.netgate.com/pfsense/en/latest/interfaces/lagg-interfaces.html) — Les protocoles d'agrégation disponibles dans pfSense.
 - [Netgate — Configuration synchronization (XML-RPC)](https://docs.netgate.com/pfsense/en/latest/highavailability/xmlrpc-sync.html) — Ce qui est synchronisé, et ce qui ne l'est pas.
+- [Netgate — High Availability : vue d'ensemble](https://docs.netgate.com/pfsense/en/latest/highavailability/index.html) — Seuls les clusters de deux nœuds sont officiellement pris en charge.
+- [Netgate — State synchronization (pfsync)](https://docs.netgate.com/pfsense/en/latest/highavailability/pfsync.html) — Multicast par défaut, adresse de pair pour deux pare-feux seulement.
 - Wikipédia : [IEEE 802.3ad](https://fr.wikipedia.org/wiki/IEEE_802.3ad)
 - Partie précédente : [Tester la bascule](06-tester-la-bascule.md) · Partie suivante : [Mettre à jour le cluster](08-mettre-a-jour-le-cluster.md).
 

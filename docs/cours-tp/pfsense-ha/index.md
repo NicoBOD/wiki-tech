@@ -81,7 +81,7 @@ status: publié
 | [4. Synchroniser le cluster](04-synchroniser-le-cluster.md) | TP | 1 h | Utilisateur `ha-user`, synchronisation XML-RPC et pfsync, règles minimales du lien PFSYNC | `pfsense-19`, `pfsense-20` |
 | [5. VIP CARP et NAT sortant](05-vip-carp-nat-sortant.md) | TP | 45 min | Adresses IP virtuelles WAN et LAN, règle de NAT sortant vers la VIP | `pfsense-19`, `pfsense-20` |
 | [6. Tester la bascule](06-tester-la-bascule.md) | TP | 1 h 30 | État MASTER/BACKUP, panne simulée, mesure de la coupure, exercices corrigés | `pfsense-19`, `pfsense-20` (+ un poste client, facultatif) |
-| [7. Agrégation LACP et troisième nœud](07-agregation-lacp-troisieme-noeud.md) | Pour aller plus loin | 1 h | Lien de synchronisation agrégé (LAGG/LACP), principe d'un troisième nœud | `pfsense-19`, `pfsense-20` |
+| [7. Agrégation LACP et troisième nœud](07-agregation-lacp-troisieme-noeud.md) | Pour aller plus loin | 1 h | Lien de synchronisation agrégé (LAGG/LACP), principe d'un troisième nœud (non pris en charge par Netgate) | `pfsense-19`, `pfsense-20` |
 | [8. Mettre à jour le cluster](08-mettre-a-jour-le-cluster.md) | TP | 2 h 30 à 4 h | Mise à jour 2.7.2 → 2.8.1 → 2.9.0, mode de maintenance CARP, dépannage | `pfsense-19`, `pfsense-20` |
 
 Les [annexes](annexes.md) rassemblent le dépannage et les astuces, un aide-mémoire des menus et des commandes, et un glossaire. Les durées sont indicatives : la partie 8 est surtout faite d'attente pendant les téléchargements.
@@ -118,7 +118,7 @@ Le PC hôte a l'adresse `192.168.19.1` sur le LAN : c'est depuis son navigateur 
 
 ## Comptes et mots de passe
 
-Ce lab est **pédagogique** : les mots de passe sont écrits ici volontairement pour que chacun puisse suivre à l'identique. En production, chaque mot de passe serait unique, long et rangé dans un gestionnaire de mots de passe, et ne serait jamais publié.
+Ce lab est **pédagogique** : les mots de passe sont écrits ici volontairement pour que chacun puisse suivre à l'identique. En production, chaque mot de passe serait unique, long et rangé dans un gestionnaire de mots de passe, et ne serait jamais publié. Ces mots de passe étant publics, **ne jamais les réutiliser** ailleurs que dans ce lab, et les changer si le lab devient joignable depuis un autre réseau que le PC hôte.
 
 | Où | Compte | Mot de passe | Créé en |
 |---|---|---|---|
