@@ -18,6 +18,7 @@ Tips & tricks divers pour gagner du temps.
 - [Maîtriser les redirections des sorties standard et d'erreur sous Linux (> et 2>)](maitriser-redirections-sorties-standard-erreur-linux.md) — Comprendre et utiliser stdout et stderr pour dompter les flux de commandes.
 - [Capturer et afficher simultanément une sortie avec la commande tee sous Linux](capturer-afficher-sortie-simultanement-tee-linux.md) — Enregistrer une commande dans un log tout en continuant à la suivre à l'écran.
 - [Naviguer plus vite dans ses dossiers Linux avec pushd et popd](naviguer-plus-vite-dossiers-linux-pushd-popd.md) — Jongler entre plusieurs répertoires via une pile (stack).
+- [Surveiller une commande en temps réel avec watch sous Linux](surveiller-commande-temps-reel-watch-linux.md) — Relancer une commande à intervalle régulier et repérer ce qui change.
 
 ## Réseau & Transferts
 
