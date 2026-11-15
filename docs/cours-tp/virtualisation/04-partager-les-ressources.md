@@ -76,7 +76,7 @@ Le nombre total de vCPU est le **produit** des deux. Pour Linux, `1 × 2` ou `2 
 
 !!! warning "Plus de vCPU ne veut pas dire plus rapide"
     - Ne **jamais** donner à une VM plus de vCPU que l'hôte n'a de processeurs logiques.
-    - Une VM à 4 vCPU doit attendre que l'hyperviseur lui trouve **4 processeurs logiques libres** en même temps pour s'exécuter efficacement. Sur un hôte chargé, une VM surdimensionnée peut être **plus lente** qu'une VM à 2 vCPU.
+    - Chaque vCPU est un fil d'exécution qui **attend son tour** sur un processeur logique de l'hôte. Plus une VM a de vCPU, plus elle entre en concurrence avec les autres VM et avec l'hôte lui-même, et plus ses vCPU doivent se coordonner entre eux. Sur un hôte chargé, une VM surdimensionnée peut donc être **plus lente** qu'une VM à 2 vCPU.
     - Règle pratique : commencer petit (1 ou 2 vCPU), **mesurer**, puis augmenter si la VM est réellement limitée par le processeur.
 
 ### 2.2 TP : mesurer la puissance d'un ou de deux vCPU
@@ -96,8 +96,10 @@ Le nombre total de vCPU est le **produit** des deux. Pour Linux, `1 × 2` ou `2 
 3. 🖥️ Pendant le test, regarder le graphique **Processeur** du Gestionnaire des tâches : l'utilisation du PC monte de l'équivalent de **2 processeurs logiques** (sur un PC à 8 processeurs logiques, environ 25 %).
 4. 🐧 À la fin, noter la valeur de la colonne **bogo ops/s** (*real time*) de la ligne `cpu` : c'est le nombre d'opérations de calcul faites par seconde.
 5. 🐧 Éteindre la VM : `sudo poweroff`.
-6. 🖥️ Ouvrir **VM > Settings > Processors** (*VM > Paramètres > Processeurs*), mettre **Number of processors** à `1` et **Number of cores per processor** à `1`, puis **OK**. Démarrer la VM et refaire les étapes 1 à 4.
-7. 🖥️ Remettre ensuite la VM à **2 vCPU** (1 processeur × 2 cœurs).
+6. 🖥️ Ouvrir **VM > Settings > Processors**, mettre **Number of processors** à `1` et **Number of cores per processor** à `1`, puis **OK**.
+7. 🖥️ Démarrer la VM, se connecter en `tssr` et refaire les étapes 1 à 4.
+8. 🐧 Éteindre la VM : `sudo poweroff`.
+9. 🖥️ Remettre la VM à **2 vCPU** (**Number of processors** `1`, **Number of cores per processor** `2`), puis la démarrer et se connecter en `tssr`. Les réglages du matériel ne se modifient que VM éteinte : allumée, ils sont grisés.
 
 !!! success "Vérifier son lab"
     Avec 2 vCPU, `nproc` affiche `2` ; avec 1 vCPU, il affiche `1`. Le nombre d'opérations par seconde est **à peu près divisé par deux** avec un seul vCPU. Exemple de mesure sur un hôte équipé d'un Intel Core i7-6700K :
@@ -134,16 +136,16 @@ Quand on attribue **2 Go** à une VM, l'hyperviseur ne prend généralement pas 
 
 ### 3.2 La surallocation de la mémoire
 
-La **surallocation** (*overcommitment*) consiste à attribuer aux VM, **au total**, plus de mémoire que l'hôte n'en possède. Par exemple, cinq VM de 4 Go sur un hôte de 16 Go. Ça fonctionne tant que les VM n'utilisent pas toutes leur mémoire en même temps, comme une compagnie aérienne qui vend plus de billets que de sièges en comptant sur les absents.
+La **surallocation** (*overcommitment*) consiste à attribuer aux VM, **au total**, plus de mémoire que l'hôte n'en possède. Par exemple, cinq VM de 4 Go sur un hôte de 16 Go. Cela fonctionne tant que les VM n'utilisent pas toutes leur mémoire en même temps, comme une compagnie aérienne qui vend plus de billets que de sièges en comptant sur les absents.
 
 Quand la mémoire réelle vient à manquer, l'hyperviseur dispose de plusieurs techniques, de la plus douce à la plus pénalisante :
 
 | Technique | Principe |
 |---|---|
-| **Ballon** (*ballooning*) | Un pilote installé dans l'invité (fourni par les VMware Tools ou open-vm-tools) « gonfle » : il réclame de la mémoire **à l'intérieur** de la VM, que l'hyperviseur peut alors rendre à l'hôte ou donner à une autre VM. L'invité choisit lui-même quoi libérer : c'est la méthode la plus intelligente |
+| **Ballon** (*ballooning*) | Un pilote installé dans l'invité (dans le noyau Linux, ou fourni par les VMware Tools sous Windows) « gonfle » : il réclame de la mémoire **à l'intérieur** de la VM, que l'hyperviseur peut alors rendre à l'hôte ou donner à une autre VM. L'invité choisit lui-même quoi libérer : c'est la méthode la plus intelligente |
 | **Partage de pages** | Des pages de mémoire identiques (même système dans plusieurs VM) ne sont stockées qu'une fois. Pour des raisons de sécurité, VMware ne le fait plus par défaut **entre** VM différentes sur ESXi |
 | **Compression** | Les pages peu utilisées sont compressées en mémoire |
-| **Échange sur disque** (*swap*) | L'hyperviseur place une partie de la mémoire des VM dans un fichier sur le disque. C'est **très lent** : les VM rament |
+| **Échange sur disque** (*swap*) | L'hyperviseur place une partie de la mémoire des VM dans un fichier sur le disque. C'est **très lent** : les VM deviennent très lentes |
 
 Dans Workstation, le plafond de mémoire de toutes les VM se règle dans **Edit > Preferences > Memory** :
 
@@ -159,7 +161,7 @@ Dans Workstation, le plafond de mémoire de toutes les VM se règle dans **Edit 
     free -h
     ```
 
-    La ligne `Mem:` affiche un **total** un peu inférieur aux 2 Go attribués : le noyau Linux en réserve une petite partie pour lui-même. La ligne `Swap:` montre l'**espace d'échange** que l'installateur de Debian a créé sur le disque.
+    La ligne `Mem:` affiche un **total** un peu inférieur aux 2 Go attribués : le noyau Linux en réserve une petite partie pour lui-même. La ligne `Échange:` (*swap*) montre l'**espace d'échange** que l'installateur de Debian a créé sur le disque.
 
 2. 🖥️ Dans le Gestionnaire des tâches, onglet **Performances > Mémoire**, noter la mémoire **En cours d'utilisation** du PC.
 3. 🐧 Occuper 1,5 Go de mémoire pendant 60 secondes :
@@ -189,7 +191,8 @@ Dans Workstation, le plafond de mémoire de toutes les VM se règle dans **Edit 
     sudo dmesg | grep -i -E "out of memory|killed process"
     ```
 
-4. 🖥️ Remettre la VM à **2 Go** de mémoire (VM éteinte).
+4. 🐧 Éteindre la VM : `sudo poweroff`.
+5. 🖥️ Remettre la VM à **2 Go** de mémoire dans **VM > Settings > Memory**.
 
 Que s'est-il passé ? Pourquoi la VM est-elle devenue lente ? Qu'aurait-il pu se passer sans espace d'échange ?
 
@@ -207,10 +210,10 @@ Que s'est-il passé ? Pourquoi la VM est-elle devenue lente ? Qu'aurait-il pu se
 
 ### 4.1 Disque dynamique ou préalloué
 
-<figure markdown="span">
-  ![Un disque virtuel de 20 Go contenant 2 Go : en mode dynamique, il occupe 2 Go sur l'hôte ; en mode préalloué, il occupe 20 Go tout de suite.](images/schema-disque-fin-epais.svg){ loading=lazy }
-  <figcaption>La VM voit la même chose dans les deux cas ; seule la place occupée sur l'hôte change.</figcaption>
-</figure>
+![Un disque virtuel de 20 Go contenant 2 Go : en mode dynamique, il occupe 2 Go sur l'hôte ; en mode préalloué, il occupe 20 Go tout de suite.](images/schema-disque-fin-epais.svg){ loading=lazy }
+/// caption
+La VM voit la même chose dans les deux cas ; seule la place occupée sur l'hôte change.
+///
 
 | | Disque **dynamique** (*thin*, fin) | Disque **préalloué** (*thick*, épais) |
 |---|---|---|
@@ -224,29 +227,30 @@ Workstation propose aussi de **découper** le disque en plusieurs fichiers d'au 
 
 ### 4.2 TP : regarder le disque grandir
 
-1. 🖥️ Dans l'Explorateur de fichiers, ouvrir le dossier de la VM (`C:\VM\debian-tp`) et noter la **taille** des fichiers `.vmdk` (sélectionner tous les `.vmdk`, puis clic droit > **Propriétés**).
-2. 🐧 Afficher la place occupée **dans** la VM :
+1. 🖥️ Démarrer `debian-tp` et se connecter en `tssr`.
+2. 🖥️ Dans l'Explorateur de fichiers, ouvrir le dossier de la VM (`C:\VM\debian-tp`) et noter la **taille** des fichiers `.vmdk` (sélectionner tous les `.vmdk`, puis clic droit > **Propriétés**).
+3. 🐧 Afficher la place occupée **dans** la VM :
 
     ```bash
     df -h /
     ```
 
-3. 🐧 Écrire un fichier de 2 Go rempli de données aléatoires :
+4. 🐧 Écrire un fichier de 2 Go rempli de données aléatoires :
 
     ```bash
     dd if=/dev/urandom of=~/gros-fichier bs=1M count=2048 status=progress
     sync
     ```
 
-4. 🖥️ Regarder de nouveau la taille des `.vmdk` : elle a **augmenté d'environ 2 Go**.
-5. 🐧 Supprimer le fichier, puis vérifier dans la VM que la place est libérée :
+5. 🖥️ Regarder de nouveau la taille des `.vmdk` : elle a **augmenté d'environ 2 Go**.
+6. 🐧 Supprimer le fichier, puis vérifier dans la VM que la place est libérée :
 
     ```bash
     rm ~/gros-fichier
     df -h /
     ```
 
-6. 🖥️ Regarder la taille des `.vmdk` : elle **n'a pas diminué**.
+7. 🖥️ Regarder la taille des `.vmdk` : elle **n'a pas diminué**.
 
 !!! question "Pourquoi le disque ne rétrécit-il pas ?"
     Quand on supprime un fichier, le système invité note simplement que ses blocs sont **libres** ; il ne prévient pas l'hyperviseur. Pour l'hyperviseur, ces blocs ont été écrits un jour, il les garde. Mesure faite sur un hôte KVM avec un disque dynamique de 20 Go : 2,7 Go occupés sur l'hôte → 4,6 Go après l'écriture de 2 Gio → **toujours 4,6 Go** après la suppression du fichier.
@@ -265,10 +269,10 @@ Workstation propose aussi de **découper** le disque en plusieurs fichiers d'au 
 
 Un **instantané** (*snapshot*) enregistre l'état d'une VM à un instant donné : le contenu de ses disques, ses paramètres et, si elle est allumée, le contenu de sa mémoire. On peut ensuite **revenir** à cet état en quelques secondes.
 
-<figure markdown="span">
-  ![Au moment de l'instantané, le disque debian-tp.vmdk est figé ; un disque différentiel debian-tp-000001.vmdk reçoit les nouvelles écritures. Plus bas : le clone lié s'appuie sur le disque figé de l'original, le clone complet en est une copie indépendante.](images/schema-instantanes-clones.svg){ loading=lazy }
-  <figcaption>Un instantané ne copie rien : il fige le disque et écrit les changements à côté. Le clone lié repose sur le même principe.</figcaption>
-</figure>
+![Au moment de l'instantané, le disque debian-tp.vmdk est figé ; un disque différentiel debian-tp-000001.vmdk reçoit les nouvelles écritures. Plus bas : le clone lié s'appuie sur le disque figé de l'original, le clone complet en est une copie indépendante.](images/schema-instantanes-clones.svg){ loading=lazy }
+/// caption
+Un instantané ne copie rien : il fige le disque et écrit les changements à côté. Le clone lié repose sur le même principe.
+///
 
 Au moment de l'instantané, Workstation **fige** le disque de la VM, qui passe en lecture seule, et crée un **disque différentiel** (un fichier comme `debian-tp-000001.vmdk`) qui reçoit toutes les écritures suivantes. **Revenir** à l'instantané revient à jeter ce disque différentiel. Si la VM était allumée, l'état de sa mémoire est enregistré dans un fichier `.vmem` et l'état de la VM dans un fichier `.vmsn` ; le fichier `.vmsd` tient la liste des instantanés.
 
@@ -283,33 +287,40 @@ Au moment de l'instantané, Workstation **fige** le disque de la VM, qui passe e
 
 On va faire ce qu'il ne faut **jamais** faire sur un vrai serveur : effacer tout le système. Grâce à un instantané, la réparation prend quelques secondes.
 
-1. 🖥️ Vérifier que les **dossiers partagés** sont désactivés : **VM > Settings > Options > Shared Folders** doit être sur **Disabled** (*désactivé*), le réglage par défaut. Sinon, la commande destructrice pourrait aussi effacer des fichiers du PC.
-2. 🛟 🖥️ Prendre un instantané de la VM **allumée** : **VM > Snapshot > Take Snapshot** (*VM > Instantané > Prendre un instantané*), nom `02-outils-installes`, description « avant l'erreur volontaire ». Pendant quelques secondes, Workstation enregistre la mémoire de la VM.
-3. 🖥️ Regarder le dossier de la VM : un nouveau fichier `-000001.vmdk` et des fichiers `.vmsn` et `.vmem` sont apparus.
-4. 🐧 Créer un fichier témoin :
+1. 🐧 Éteindre la VM : `sudo poweroff`.
+2. 🖥️ Vérifier que les **dossiers partagés** sont désactivés : **VM > Settings > Options > Shared Folders** doit être sur **Disabled**, le réglage par défaut. Sinon, la commande destructrice pourrait aussi effacer des fichiers du PC.
+3. 🛟 🖥️ VM **éteinte**, prendre un instantané : **VM > Snapshot > Take Snapshot**, nom `02-outils-installes`, description « avant l'erreur volontaire ». Il servira aussi de base aux clones de la [section 6](#6-les-clones) : Workstation ne clone qu'à partir d'un instantané pris VM éteinte.
+4. 🖥️ Regarder le dossier de la VM : un nouveau disque différentiel `debian-tp-000002.vmdk` (ou plusieurs fichiers `-000002-s001.vmdk`…) et un fichier `.vmsn` sont apparus.
+5. 🖥️ Ouvrir **VM > Snapshot > Snapshot Manager** et vérifier que `02-outils-installes` apparaît bien. **Ne pas continuer sans cet instantané.**
+6. 🖥️ Démarrer la VM et se connecter en `tssr` **dans la console de Workstation**.
+7. 🐧 Créer un fichier témoin :
 
     ```bash
     echo "version 1" > ~/important.txt
     cat ~/important.txt
     ```
 
-5. 🐧 Effacer **tout** le système (à ne faire **que** dans cette VM de TP) :
+8. 🐧 Effacer **tout** le système. La première partie de la commande vérifie le nom de la machine : si l'on n'est pas dans `debian-tp`, rien n'est effacé.
 
     ```bash
-    sudo rm -rf --no-preserve-root /
+    [ "$(hostname)" = "debian-tp" ] && sudo rm -rf --no-preserve-root /
     ```
 
-    Les messages d'erreur défilent. Taper ensuite `ls` ou `whoami` : la réponse est `command not found`, les commandes elles-mêmes ont été effacées.
+    Les messages d'erreur défilent. Taper ensuite `ls` ou `whoami` : la réponse est `commande introuvable` (ou `command not found`), les commandes elles-mêmes ont été effacées.
 
-6. 🖥️ Redémarrer la VM de force : **VM > Power > Reset** (*VM > Alimentation > Réinitialiser*). La VM ne démarre plus et s'arrête sur l'invite de secours de GRUB, le programme de démarrage :
+    !!! danger "Uniquement dans la console de `debian-tp`"
+        Cette commande se tape **dans la console Workstation de la VM `debian-tp`**, jamais dans un terminal SSH, dans WSL, ni sur une autre machine Linux. Sur un vrai serveur, elle détruirait tout, sans retour possible.
+
+9. 🖥️ Redémarrer la VM de force : **VM > Power > Reset**. La VM ne démarre plus. Avec un micrologiciel BIOS (réglé en [partie 3](03-creer-sa-premiere-vm.md#2-creer-la-vm-avec-lassistant)), elle s'arrête sur l'invite de secours de GRUB, le programme de démarrage :
 
     ![Écran noir de la VM après redémarrage : GRUB affiche « error: file '/boot/grub/i386-pc/normal.mod' not found » puis l'invite grub rescue](images/04-vm-cassee-grub-rescue.png){ loading=lazy }
     /// caption
     Le système a été effacé : le chargeur de démarrage ne trouve plus ses fichiers
     ///
 
-7. 🖥️ Revenir à l'instantané : **VM > Snapshot > Revert to Snapshot: 02-outils-installes** (*Rétablir l'instantané*), puis confirmer. La VM reprend **exactement** là où elle en était au moment de l'instantané, session ouverte comprise.
-8. 🐧 Vérifier :
+10. 🖥️ Revenir à l'instantané : **VM > Snapshot > Revert to Snapshot: 02-outils-installes**, puis confirmer. La VM revient **exactement** à l'état de l'instantané : éteinte, avec tout son système.
+11. 🖥️ Démarrer la VM et se connecter en `tssr`.
+12. 🐧 Vérifier :
 
     ```bash
     cat ~/important.txt
@@ -317,9 +328,9 @@ On va faire ce qu'il ne faut **jamais** faire sur un vrai serveur : effacer tout
     ```
 
 !!! success "Vérifier son lab"
-    - `cat ~/important.txt` répond `No such file or directory` : c'est **normal**, le fichier a été créé **après** l'instantané. Tout ce qui a été fait après l'instantané est perdu, le bon comme le mauvais.
+    - `cat ~/important.txt` répond `Aucun fichier ou dossier de ce nom` : c'est **normal**, le fichier a été créé **après** l'instantané. Tout ce qui a été fait après l'instantané est perdu, le bon comme le mauvais.
     - `ls /usr/share/doc | wc -l` affiche plusieurs centaines de dossiers : le système est revenu en entier.
-    - Le retour à un instantané prend **quelques secondes** ; sur un hôte KVM, la mesure donne 2,2 secondes pour une VM de 1 Go.
+    - Le retour à un instantané ne prend que **quelques secondes** : rien n'est recopié, l'hyperviseur jette simplement le disque différentiel.
 
 ??? question "Et si l'on avait créé `important.txt` avant l'instantané ?"
     Il serait revenu avec le reste. C'est tout l'enjeu du **moment** où l'on prend l'instantané : juste **avant** l'opération risquée, et pas une heure avant, sinon on perd tout le travail de l'heure.
@@ -366,8 +377,8 @@ Un clone est une **copie parfaite** : même nom de machine, même identifiant de
 2. 🐧 Changer le nom de la machine :
 
     ```bash
-    sudo hostnamectl set-hostname debian-clone-lie
     sudo sed -i 's/debian-tp/debian-clone-lie/g' /etc/hosts
+    sudo hostnamectl set-hostname debian-clone-lie
     ```
 
 3. 🐧 Générer un nouvel **identifiant de machine** (utilisé par systemd, les journaux et certains logiciels pour reconnaître la machine) :
@@ -387,7 +398,7 @@ Un clone est une **copie parfaite** : même nom de machine, même identifiant de
 5. 🐧 Effacer l'**identifiant DHCP** du client `dhcpcd`, utilisé par Debian 13 pour demander son adresse IP. Il est recréé automatiquement au prochain démarrage, propre au clone :
 
     ```bash
-    sudo rm -f /var/lib/dhcpcd/duid
+    sudo rm -f /var/lib/dhcpcd/duid /var/lib/dhcpcd/*.lease
     ```
 
 6. 🐧 Redémarrer (`sudo reboot`), se reconnecter, puis vérifier :
@@ -402,7 +413,7 @@ Un clone est une **copie parfaite** : même nom de machine, même identifiant de
     Sous Windows, le même problème se règle avec l'outil **Sysprep** (`C:\Windows\System32\Sysprep\sysprep.exe`, option **Généraliser**), qui efface l'identité de la machine avant de la cloner. C'est indispensable avant de joindre des clones à un domaine Active Directory.
 
 !!! success "Vérifier son lab"
-    - Le dossier `debian-clone-lie` ne pèse que **quelques dizaines de Mo**, le dossier `debian-clone-complet` à peu près **autant que `debian-tp`**.
+    - Le dossier `debian-clone-lie` ne pèse que **quelques dizaines de Mo** ; le dossier `debian-clone-complet` pèse **quelques Go** (une copie du disque à l'état de l'instantané) ; `debian-tp` pèse davantage, car il garde aussi ses disques différentiels d'instantanés.
     - Dans le clone, `hostnamectl` affiche `Static hostname: debian-clone-lie`, et l'identifiant de `cat /etc/machine-id` est **différent** de celui de `debian-tp`.
     - `ip -4 a` affiche une adresse en `192.168.x.128` ou au-dessus, **différente** de celle de `debian-tp`.
 
@@ -416,7 +427,7 @@ Un clone est une **copie parfaite** : même nom de machine, même identifiant de
 
     Sans pas-à-pas, réaliser :
 
-    1. deux clones **liés** de `debian-tp` nommés `test-web` et `test-bdd`, chacun avec **1 vCPU** et **768 Mo** de mémoire, et une identité propre (nom, identifiant de machine, clés SSH) ;
+    1. deux clones **liés** de `debian-tp` nommés `test-web` et `test-bdd`, chacun avec **1 vCPU** et **768 Mo** de mémoire, et une identité propre (nom, identifiant de machine, clés SSH et identifiant DHCP) ;
     2. la preuve que les deux machines **se voient** sur le réseau (avec `ping`, en utilisant leurs adresses IP) ;
     3. sur `test-web`, un instantané `avant-maj`, puis la mise à jour complète du système (`sudo apt update && sudo apt full-upgrade -y`), puis le **retour** à l'instantané, comme si la mise à jour avait échoué ;
     4. le calcul de la **place totale** occupée sur le PC par `debian-tp`, `test-web` et `test-bdd`, avec une explication en deux phrases ;
@@ -427,7 +438,7 @@ Un clone est une **copie parfaite** : même nom de machine, même identifiant de
 ??? success "Corrigé"
     1. Pour chaque clone : `debian-tp` éteinte, **VM > Manage > Clone**, source **An existing snapshot** (`02-outils-installes`), **Create a linked clone**, nom `test-web` (puis `test-bdd`). Dans **VM > Settings** du clone : **Processors** à 1 × 1, **Memory** à 768 Mo. Démarrer le clone, puis appliquer les commandes de la [section 6.3](#63-donner-une-identite-propre-au-clone) avec le bon nom (`sudo hostnamectl set-hostname test-web`, `/etc/hosts`, `machine-id`, clés SSH, identifiant DHCP) et redémarrer.
     2. Sur chaque clone, `ip -4 a` donne l'adresse (deux adresses différentes en `192.168.x.128` ou au-dessus). Depuis `test-web` : `ping -c 4 <adresse de test-bdd>` répond, car les deux VM sont branchées sur le même commutateur virtuel **VMnet8**.
-    3. Sur `test-web` : **VM > Snapshot > Take Snapshot** (`avant-maj`), puis `sudo apt update && sudo apt full-upgrade -y`, puis **VM > Snapshot > Revert to Snapshot: avant-maj**. On peut vérifier avec `apt list --upgradable` que les mises à jour sont de nouveau « en attente ».
+    3. Sur `test-web` : **VM > Snapshot > Take Snapshot** (`avant-maj`), puis `sudo apt update && sudo apt full-upgrade -y`, puis **VM > Snapshot > Revert to Snapshot: avant-maj**. Les paquets mis à jour sont revenus à leur version d'avant ; `apt list --upgradable` peut de nouveau les afficher « en attente », ou n'afficher rien si la liste des paquets de l'instantané n'était pas encore à jour.
     4. `debian-tp` pèse quelques gigaoctets (le système installé, plus le fichier de 2 Go écrit puis effacé en section 4.2, que le disque dynamique n'a pas rendu) ; chaque clone lié ne pèse que **quelques dizaines à quelques centaines de Mo** (ses fichiers de configuration, ses journaux et les blocs modifiés depuis le clonage, dont les fichiers de la mise à jour si on ne l'a pas annulée). Explication : les clones liés **partagent** le disque figé de `debian-tp` et n'enregistrent que leurs **différences** ; c'est ce qui permet de monter vite un lab de plusieurs machines sans remplir le disque du PC.
     5. Exemple de fiche :
 
@@ -448,7 +459,7 @@ Un clone est une **copie parfaite** : même nom de machine, même identifiant de
 6. Après avoir cloné une VM Linux, quels éléments faut-il changer pour lui donner une identité propre ? Et sous Windows ?
 
 ??? success "Corrigé"
-    1. Pour s'exécuter efficacement, ses 4 vCPU doivent trouver **4 processeurs logiques libres** au même moment. Sur un hôte chargé, elle attend plus souvent son tour qu'une VM à 2 vCPU. De plus, ses 4 vCPU entrent en concurrence avec ceux des autres VM. On dimensionne au plus juste et on augmente après mesure.
+    1. Chacun de ses 4 vCPU est un fil d'exécution qui attend son tour sur les processeurs logiques de l'hôte, en concurrence avec les vCPU des autres VM et avec l'hôte lui-même ; ses vCPU doivent aussi se coordonner entre eux. Sur un hôte déjà chargé, elle passe plus de temps à attendre qu'une VM à 2 vCPU. On dimensionne au plus juste et on augmente après mesure.
     2. Attribuer aux VM, au total, **plus de mémoire que l'hôte n'en possède**, en pariant qu'elles ne l'utiliseront pas toutes en même temps. Techniques : le **ballon** (un pilote dans l'invité libère de la mémoire que l'hyperviseur récupère), le **partage de pages** identiques, la **compression**, l'**échange sur disque** (*swap*, le plus lent).
     3. Il occupe toujours **environ 10 Go** (voire un peu plus) : les blocs libérés dans la VM ne sont pas rendus à l'hôte. Pour récupérer la place, on **réduit** le disque (`sudo vmware-toolbox-cmd disk shrink /` dans une VM Linux), à condition que le disque soit **dynamique** et n'ait **pas d'instantané**.
     4. Il est stocké **au même endroit** que la VM (une panne du disque, un vol ou un rançongiciel l'emporte aussi) et il **dépend** du disque d'origine. Il ralentit aussi la VM et grossit avec le temps : il est fait pour durer quelques heures ou quelques jours, pas pour protéger des données.
@@ -462,7 +473,7 @@ Un clone est une **copie parfaite** : même nom de machine, même identifiant de
 - [Broadcom — Fichiers d'une machine virtuelle (Workstation 26H1)](https://techdocs.broadcom.com/us/en/vmware-cis/desktop-hypervisors/workstation-pro/26H1/using-vmware-workstation-pro/creating-virtual-machines-in-workstation-user-guide/virtual-machine-files.html) — rôle des fichiers `.vmx`, `.vmdk`, `.vmsd`, `.vmsn`, `.vmem` (en anglais).
 - [Broadcom — Réduire un disque virtuel de Workstation](https://knowledge.broadcom.com/external/article/315631/defragmenting-and-shrinking-vmware-works.html) — conditions et procédure de réduction d'un disque (en anglais).
 - [Page de manuel de stress-ng](https://manpages.debian.org/trixie/stress-ng/stress-ng.1.en.html) — toutes les options de l'outil de charge (en anglais).
-- Partie précédente : [Créer sa première VM Debian 13](03-creer-sa-premiere-vm.md) · Partie suivante : Virtualiser des serveurs (jour 2).
+- Partie précédente : [Créer sa première VM Debian 13](03-creer-sa-premiere-vm.md) · Partie suivante : Virtualiser des serveurs (jour 2), voir le [plan du parcours](index.md#plan-du-parcours).
 
 *[vCPU]: processeur virtuel
 *[VM]: Virtual Machine — machine virtuelle
@@ -471,3 +482,8 @@ Un clone est une **copie parfaite** : même nom de machine, même identifiant de
 *[SSH]: Secure Shell — protocole d'administration à distance chiffré
 *[SID]: Security Identifier — identifiant de sécurité Windows
 *[FAT32]: système de fichiers ancien, limité à des fichiers de 4 Go
+*[BIOS]: Basic Input/Output System — micrologiciel de démarrage
+*[IP]: Internet Protocol — adresse d'une machine sur le réseau
+*[DHCP]: Dynamic Host Configuration Protocol — attribution automatique d'adresses IP
+*[DUID]: DHCP Unique Identifier — identifiant d'un client DHCP
+*[KVM]: Kernel-based Virtual Machine — hyperviseur intégré au noyau Linux

@@ -41,7 +41,7 @@ status: publié
 
 ## 1. Activité d'ouverture : la virtualisation sans le savoir
 
-💬 **Par deux, 10 minutes.** Lister des situations de la vie courante ou professionnelle où l'on utilise **un ordinateur qui n'existe pas vraiment**, ou un service qui tourne « quelque part » sans savoir sur quelle machine. Viser au moins cinq exemples, puis les mettre en commun.
+💬 **Par deux, 10 minutes.** Lister des situations de la vie courante ou professionnelle où l'on utilise **un ordinateur qui n'existe pas vraiment**, ou un service qui tourne « quelque part » sans savoir sur quelle machine. Viser au moins cinq exemples, puis les mettre en commun. **Seul**, en trouver cinq avant d'ouvrir les exemples.
 
 ??? success "Quelques exemples possibles"
     - **Une messagerie en ligne** (Gmail, Outlook.com) ou un **stockage en ligne** (OneDrive, Google Drive) : les serveurs qui répondent sont presque toujours des machines virtuelles ou des conteneurs dans un centre de données.
@@ -88,19 +88,19 @@ La définition « officielle » est plus abstraite : la virtualisation est l'ens
 
 ### 2.3 Ce que change la virtualisation
 
-<figure markdown="span">
-  ![À gauche, trois serveurs physiques avec chacun un système et une application, utilisés à 15 %. À droite, un seul serveur avec un hyperviseur qui héberge trois VM, utilisé à 60 %.](images/schema-physique-vs-virtualise.svg){ loading=lazy }
-  <figcaption>La consolidation : les mêmes services, sur moins de matériel, chacun restant isolé dans sa VM.</figcaption>
-</figure>
+![À gauche, trois serveurs physiques avec chacun un système et une application, utilisés à 15 %. À droite, un seul serveur avec un hyperviseur qui héberge trois VM, utilisé à environ 50 %.](images/schema-physique-vs-virtualise.svg){ loading=lazy }
+/// caption
+La consolidation : les mêmes services, sur moins de matériel, chacun restant isolé dans sa VM.
+///
 
 Sans virtualisation, le système d'exploitation est **lié au matériel** par ses pilotes : déplacer un serveur sur une autre machine revient à le réinstaller. Avec la virtualisation, le système et son application sont **découplés** du matériel : une VM n'est qu'un **ensemble de fichiers** (la [partie 3](03-creer-sa-premiere-vm.md#3-explorer-les-fichiers-dune-vm) le montre). On peut donc la **copier**, la **déplacer** sur un autre hôte, la **mettre en pause** ou revenir à un état antérieur.
 
 ## 3. Un peu d'histoire
 
-<figure markdown="span">
-  ![Frise de 1967 à 2023 : IBM CP-40 et CP-67, VM/370, Popek et Goldberg, VMware Workstation, ESX, Xen, Intel VT-x et AMD-V, Amazon EC2, KVM, Hyper-V, Docker, rachat de VMware par Broadcom.](images/frise-histoire-virtualisation.svg){ loading=lazy }
-  <figcaption>La virtualisation est une vieille idée, devenue courante quand les processeurs des PC et des serveurs l'ont prise en charge.</figcaption>
-</figure>
+![Frise de 1967 à 2023 : IBM CP-40 et CP-67, VM/370, Popek et Goldberg, VMware Workstation, ESX, Xen, Intel VT-x et AMD-V, Amazon EC2, KVM, Hyper-V, Docker, rachat de VMware par Broadcom.](images/frise-histoire-virtualisation.svg){ loading=lazy }
+/// caption
+La virtualisation est une vieille idée, devenue courante quand les processeurs des PC et des serveurs l'ont prise en charge.
+///
 
 - **Années 1960-1970 : les grands systèmes IBM.** Un ordinateur coûte alors une fortune : IBM invente les machines virtuelles pour que **plusieurs utilisateurs** partagent le même ordinateur central, chacun croyant en avoir un pour lui seul (CP-40, en production en 1967 ; CP-67 ; puis **VM/370**, annoncé en 1972). En 1974, les chercheurs **Popek et Goldberg** publient les conditions qu'un processeur doit remplir pour être « virtualisable ».
 - **Années 1990 : l'ère « un serveur, une application ».** Les serveurs x86 deviennent bon marché. Par prudence (une application qui plante ne doit pas entraîner les autres), on installe **une application par serveur**. Les salles serveurs se remplissent de machines presque vides.
@@ -182,6 +182,8 @@ La direction veut virtualiser ces 12 serveurs sur des **hôtes neufs** de **32 c
 3. **Débattre (15 min)** : un argument par équipe, à tour de rôle, 1 minute maximum chacun.
 4. **Conclure ensemble (10 min)** : rédiger en commun une recommandation de **5 lignes** pour la direction de *Bureautix*.
 
+**Seul** : endosser deux rôles (par exemple le directeur financier et le RSSI), écrire 3 arguments « Pour » et 3 arguments « Prudence », puis la recommandation de 5 lignes, et comparer avec les éléments de réponse.
+
 ??? success "Éléments de réponse"
     - **Pour** : un ou deux hôtes neufs au lieu de six machines vieillissantes (économies d'énergie, de place, de maintenance) ; sauvegardes et restaurations plus simples ; instantanés avant chaque mise à jour du logiciel de comptabilité ; possibilité de redémarrer les VM sur un second hôte en cas de panne ; création rapide d'une copie de test.
     - **Prudence** : tout concentrer sur un seul hôte crée un **point unique de défaillance** ; il faut un deuxième hôte ou au moins une bonne sauvegarde ; la console de l'hyperviseur devient très sensible ; **la clé de licence USB** doit être redirigée vers la VM (c'est possible, mais à tester avant la migration) ; il faut former quelqu'un pour administrer l'ensemble.
@@ -204,7 +206,7 @@ Le mot « virtualisation » désigne plusieurs techniques. Par défaut, il dési
 
 1. Expliquer la virtualisation en **une phrase**, sans jargon, à quelqu'un qui n'est pas informaticien.
 2. Quelles sont les **quatre ressources** dont une machine, physique ou virtuelle, a besoin pour fonctionner ?
-3. Quel type d'hyperviseur est dit *bare metal* ?
+3. Pourquoi prévoit-on toujours **un hôte de plus** que le strict nécessaire (règle N+1) ?
 4. Citer **cinq avantages** de la virtualisation.
 5. Citer **cinq inconvénients** ou risques de la virtualisation.
 6. Pourquoi l'arrivée de **VT-x** et d'**AMD-V** en 2005-2006 a-t-elle accéléré la virtualisation ?
@@ -212,7 +214,7 @@ Le mot « virtualisation » désigne plusieurs techniques. Par défaut, il dési
 ??? success "Corrigé"
     1. Par exemple : « La virtualisation, c'est faire tourner plusieurs ordinateurs “simulés” sur un seul ordinateur réel, chacun croyant être seul. » L'important est l'idée de **plusieurs machines isolées sur un seul matériel**.
     2. Le **processeur** (CPU), la **mémoire vive** (RAM), le **stockage** (disque) et l'**accès au réseau**.
-    3. L'hyperviseur de **type 1** : il s'installe directement sur le matériel, sans système d'exploitation en dessous (la [partie 2](02-hyperviseur-et-machine-virtuelle.md) le détaille).
+    3. Pour qu'en cas de **panne** (ou de maintenance) d'un hôte, ses VM puissent **redémarrer sur les autres**. Sans hôte de réserve, la panne d'un seul serveur arrêterait une partie des services jusqu'à sa réparation.
     4. Moins de serveurs physiques (économies de matériel, d'énergie et de place) ; meilleure disponibilité (déplacement des VM d'un hôte à l'autre) ; isolation des services ; sauvegardes et retours arrière simplifiés grâce aux instantanés ; souplesse (ajout de ressources, création rapide de serveurs à partir d'un modèle, répartition de la charge).
     5. Point unique de défaillance (une panne de l'hôte arrête toutes ses VM) ; risque d'évasion de VM et console d'administration très sensible ; contention des ressources (une VM gourmande ralentit les autres) ; stockage partagé à ouvrir à plusieurs hôtes et donc à protéger ; coûts de licences et de compétences ; prolifération de VM non documentées.
     6. Avant, l'hyperviseur devait **contourner** par logiciel les instructions du processeur qui posaient problème, ce qui était complexe et coûteux en performances. Avec VT-x et AMD-V, le **processeur lui-même** sait exécuter une VM et rendre la main à l'hyperviseur au bon moment : les hyperviseurs deviennent plus simples, plus rapides et plus fiables.
@@ -236,3 +238,11 @@ Le mot « virtualisation » désigne plusieurs techniques. Par défaut, il dési
 *[VPS]: Virtual Private Server — serveur privé virtuel
 *[WSL]: Windows Subsystem for Linux — sous-système Windows pour Linux
 *[SDN]: Software-Defined Networking — réseau défini par logiciel
+*[vCPU]: processeur virtuel
+*[VT-x]: extensions de virtualisation des processeurs Intel
+*[AMD-V]: extensions de virtualisation des processeurs AMD
+*[PME]: Petite ou moyenne entreprise
+*[KVM]: Kernel-based Virtual Machine — hyperviseur intégré au noyau Linux
+*[EC2]: Elastic Compute Cloud — location de VM chez Amazon
+*[ESX]: hyperviseur de type 1 de VMware (aujourd'hui ESXi)
+*[TSSR]: Technicien supérieur systèmes et réseaux

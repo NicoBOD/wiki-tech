@@ -69,7 +69,7 @@ Ses missions :
 
 Le système installé dans une VM (le **système invité**) croit tourner sur un vrai ordinateur. Il démarre sur un **BIOS ou un UEFI virtuel**, voit une **carte mère virtuelle**, une **carte réseau virtuelle** avec sa propre adresse MAC, et un **disque** qui est en réalité un **fichier** sur le disque de l'hôte.
 
-Certains de ces composants sont **émulés** : l'hyperviseur imite un vrai modèle de matériel connu (une vieille carte réseau Intel, un contrôleur de disque standard) pour que n'importe quel système le reconnaisse sans pilote particulier. D'autres sont **paravirtualisés** : ce sont des composants « idéaux » qui n'existent pas en vrai, plus rapides, mais qui demandent un **pilote spécial** dans l'invité (fourni par les **VMware Tools** ou leur version libre **open-vm-tools**). La différence est approfondie au jour 3.
+Certains de ces composants sont **émulés** : l'hyperviseur imite un vrai modèle de matériel connu (une vieille carte réseau Intel, un contrôleur de disque standard) pour que n'importe quel système le reconnaisse sans pilote particulier. D'autres sont **paravirtualisés** : ce sont des composants « idéaux » qui n'existent pas en vrai, plus rapides, mais qui demandent un **pilote spécial** dans l'invité (installé par les **VMware Tools** sous Windows, déjà présent dans le noyau sous Linux). La différence est approfondie au jour 3.
 
 ### 2.2 Le rôle du processeur : Intel VT-x et AMD-V
 
@@ -98,10 +98,10 @@ La [partie 3](03-creer-sa-premiere-vm.md#6-machine-physique-ou-machine-virtuelle
 
 ## 3. Les deux types d'hyperviseurs
 
-<figure markdown="span">
-  ![Type 1 : l'hyperviseur est posé directement sur le matériel et porte les VM. Type 2 : l'hyperviseur est une application d'un système hôte comme Windows, à côté des autres applications.](images/schema-hyperviseurs-type1-type2.svg){ loading=lazy }
-  <figcaption>La différence tient en une question : y a-t-il un système d'exploitation entre l'hyperviseur et le matériel ?</figcaption>
-</figure>
+![Type 1 : l'hyperviseur est posé directement sur le matériel et porte les VM. Type 2 : l'hyperviseur est une application d'un système hôte comme Windows, à côté des autres applications.](images/schema-hyperviseurs-type1-type2.svg){ loading=lazy }
+/// caption
+La différence tient en une question : y a-t-il un système d'exploitation entre l'hyperviseur et le matériel ?
+///
 
 ### 3.1 Type 1 : « bare metal » ou natif
 
@@ -130,7 +130,7 @@ Exemples : **VMware Workstation Pro** (Windows et Linux), **Oracle VirtualBox** 
 |---|---|---|---|---|---|
 | … | … | … | … | … | … |
 
-Mise en commun : chaque binôme présente **une** solution en une minute. On complète le tableau de la classe au tableau blanc.
+Mise en commun : chaque binôme présente **une** solution en une minute. **Seul**, comparer son tableau avec les exemples ci-dessous.
 
 ??? success "Exemples de réponses"
     | Nom | Éditeur | Type | Licence | Usage typique |
@@ -169,7 +169,7 @@ Windows 10 et 11 peuvent lancer **leur propre hyperviseur** (celui d'Hyper-V) sa
     - les VM peuvent être **plus lentes** ;
     - la **virtualisation imbriquée** (une VM qui fait elle-même tourner des VM) **n'est pas possible**.
 
-    Pour les jours 1 et 2, ce n'est pas gênant. Pour le **jour 3**, où l'on installe Proxmox VE **dans** une VM Workstation, il faudra désactiver l'hyperviseur de Windows : la procédure est dans les [annexes](annexes.md#13-desactiver-lhyperviseur-de-windows-pour-la-virtualisation-imbriquee). Le faire dès maintenant si le PC le permet évite une surprise plus tard.
+    Pour les jours 1 et 2, ce n'est pas gênant. Pour le **jour 3**, où l'on installe Proxmox VE **dans** une VM Workstation, il faudra désactiver l'hyperviseur de Windows : la procédure est dans les [annexes](annexes.md#13-desactiver-lhyperviseur-de-windows-pour-la-virtualisation-imbriquee). **Ne rien changer pour l'instant** : cette procédure baisse la sécurité de Windows et ne sera utile qu'au jour 3, si la virtualisation imbriquée est nécessaire.
 
 ## 5. TP : prendre en main VMware Workstation Pro
 
@@ -276,3 +276,9 @@ Recopier et remplir ce tableau. Il servira à dimensionner les VM des prochaines
 *[NAT]: Network Address Translation — traduction d'adresses
 *[UEFI]: Unified Extensible Firmware Interface — successeur du BIOS
 *[MAC]: Media Access Control — adresse physique d'une carte réseau
+*[BIOS]: Basic Input/Output System — micrologiciel de démarrage
+*[SSD]: Solid State Drive — disque à mémoire flash
+*[VT-x]: extensions de virtualisation des processeurs Intel
+*[AMD-V]: extensions de virtualisation des processeurs AMD
+*[KVM]: Kernel-based Virtual Machine — hyperviseur intégré au noyau Linux
+*[PME]: Petite ou moyenne entreprise

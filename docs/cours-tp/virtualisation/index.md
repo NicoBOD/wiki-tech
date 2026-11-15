@@ -82,29 +82,29 @@ Chaque partie dure entre 1 h 30 et 2 h et mêle cours, activités et pratique. L
 
 ### Jours 3 à 5 — Technologies, cloud et tendances
 
-| Partie | Type | Contenu |
-|:---:|---|---|
-| 9. Panorama des technologies | Atelier de recherche | Comparer les technologies de virtualisation du système, du stockage, du réseau et des applications |
-| 10. Types d'hyperviseurs et paravirtualisation | Cours et TP | Type 1 et type 2, virtualisation complète, assistée par le matériel et paravirtualisation ; Proxmox VE dans Workstation |
-| 11. Conteneurs | Cours et démonstration | Conteneur ou VM ? Docker et LXC |
-| 12. Stockage défini par logiciel et hyperconvergence | Cours et TP | SAN et NAS virtuels, SDS, vSAN, Ceph, hyperconvergence |
-| 13. Réseau virtuel, SDN et NFV | Cours et TP | vSwitch, VLAN, réseau défini par logiciel, virtualisation des fonctions réseau |
-| 14. Virtualisation des applications et des postes | Cours et activité | Citrix, App-V, VDI : avantages et limites |
-| 15. Le cloud : IaaS, PaaS, SaaS | Cours et TP sans compte | Modèles de service, acteurs, calculatrices de prix |
-| 16. Tendances et métier | Débat | Conteneurisation, edge computing, NFV, impact sur les métiers de l'informatique |
-| 17. Défi final | Défi et QCM | Mise en situation de synthèse et QCM de fin de parcours |
+| Jour | Partie | Type | Contenu |
+|:---:|:---:|---|---|
+| 3 | 9. Panorama des technologies | Atelier de recherche | Comparer les technologies de virtualisation du système, du stockage, du réseau et des applications |
+| 3 | 10. Types d'hyperviseurs et paravirtualisation | Cours et TP | Type 1 et type 2, virtualisation complète, assistée par le matériel et paravirtualisation ; Proxmox VE dans Workstation |
+| 3 | 11. Conteneurs | Cours et démonstration | Conteneur ou VM ? Docker et LXC |
+| 4 | 12. Stockage défini par logiciel et hyperconvergence | Cours et TP | SAN et NAS virtuels, SDS, vSAN, Ceph, hyperconvergence |
+| 4 | 13. Réseau virtuel, SDN et NFV | Cours et TP | vSwitch, VLAN, réseau défini par logiciel, virtualisation des fonctions réseau |
+| 4 | 14. Virtualisation des applications et des postes | Cours et activité | Citrix, App-V, VDI : avantages et limites |
+| 5 | 15. Le cloud : IaaS, PaaS, SaaS | Cours et TP sans compte | Modèles de service, acteurs, calculatrices de prix |
+| 5 | 16. Tendances et métier | Débat | Conteneurisation, edge computing, NFV, impact sur les métiers de l'informatique |
+| 5 | 17. Défi final | Défi et QCM | Mise en situation de synthèse et QCM de fin de parcours |
 
 Les [annexes](annexes.md) rassemblent le dépannage, les raccourcis de Workstation, un aide-mémoire des commandes et le glossaire.
 
 !!! tip "Suivre l'ordre"
-    Chaque TP s'appuie sur le précédent : la VM `debian-tp` créée en partie 3 sert dans toutes les parties suivantes. Les cours se lisent avant ou pendant les attentes des TP (l'installation de Debian prend une vingtaine de minutes).
+    Chaque TP s'appuie sur le précédent : la VM `debian-tp` créée en partie 3 sert dans toutes les parties suivantes. Les cours se lisent avant ou pendant les attentes des TP (l'installation de Debian prend environ 15 minutes).
 
 ## Schéma du lab du jour 1
 
-<figure markdown="span">
-  ![Le PC hôte Windows exécute VMware Workstation Pro. Workstation crée le commutateur virtuel VMnet8 en mode NAT, avec une passerelle en .2 et un serveur DHCP. La VM debian-tp et ses deux clones y sont branchés et sortent sur Internet par la carte réseau du PC.](images/schema-lab-jour1.svg){ loading=lazy }
-  <figcaption>Le lab du jour 1 tient dans un seul PC : Workstation crée un petit réseau virtuel en NAT pour les VM.</figcaption>
-</figure>
+![Le PC hôte Windows exécute VMware Workstation Pro. Workstation crée le commutateur virtuel VMnet8 en mode NAT, avec une passerelle en .2 et un serveur DHCP. La VM debian-tp et ses deux clones y sont branchés et sortent sur Internet par la carte réseau du PC.](images/schema-lab-jour1.svg){ loading=lazy }
+/// caption
+Le lab du jour 1 tient dans un seul PC : Workstation crée un petit réseau virtuel en NAT pour les VM.
+///
 
 ## Plan d'adressage
 
@@ -130,7 +130,7 @@ Ce lab est **pédagogique** : les mots de passe sont écrits ici volontairement 
 | Portail Broadcom (téléchargement de Workstation) | Compte personnel | Choisi par chacun | [Annexes](annexes.md#11-telecharger-et-installer-vmware-workstation-pro) |
 
 !!! warning "Le clavier de la VM"
-    Le mot de passe contient un **point d'exclamation** et des **chiffres**. Pendant l'installation, l'installateur Debian passe en **AZERTY** dès que la disposition « Français » est choisie : sur un clavier AZERTY, les chiffres demandent la touche ++shift++, et `!` est sur la touche à droite de ++comma++ (la virgule). L'option **Afficher le mot de passe en clair** de l'installateur permet de vérifier ce qui a été tapé.
+    Le mot de passe contient un **point d'exclamation** et des **chiffres**. Pendant l'installation, l'installateur Debian passe en **AZERTY** dès que la disposition « Français » est choisie : sur un clavier AZERTY, les chiffres demandent la touche ++shift++, et `!` se tape **sans** ++shift++ sur la touche juste à gauche de la touche ++shift++ de droite (après `,` `;` `:`). L'option **Afficher le mot de passe en clair** de l'installateur permet de vérifier ce qui a été tapé.
 
 ## Dimensionnement des machines virtuelles
 
@@ -153,7 +153,7 @@ Un **instantané** (*snapshot*) fige l'état d'une machine virtuelle. En cas d'e
 | Instantané | Machine | Moment | Permet de recommencer |
 |---|---|---|---|
 | `01-installation-terminee` | `debian-tp` | Fin de la partie 3, VM éteinte | Toutes les parties suivantes avec une Debian propre |
-| `02-outils-installes` | `debian-tp` | Partie 4, avant l'erreur volontaire | L'exercice « casser sa VM exprès » autant de fois que nécessaire |
+| `02-outils-installes` | `debian-tp` | Partie 4, VM éteinte, avant l'erreur volontaire ; sert aussi de base aux clones | L'exercice « casser sa VM exprès » autant de fois que nécessaire |
 
 !!! warning "Un instantané n'est pas une sauvegarde"
     L'instantané reste **dans le dossier de la VM**, sur le **même disque** que la machine virtuelle, et il **dépend** du disque d'origine : si le disque du PC tombe en panne, ou si le dossier de la VM est supprimé, les instantanés disparaissent avec lui. La [partie 4](04-partager-les-ressources.md#5-les-instantanes) l'explique en détail.
@@ -163,7 +163,7 @@ Un **instantané** (*snapshot*) fige l'état d'une machine virtuelle. En cas d'e
 | Logiciel | Où le trouver | Remarque |
 |---|---|---|
 | VMware Workstation Pro 26H1 pour Windows | [Portail de support Broadcom](https://support.broadcom.com/group/ecx/productdownloads?subfamily=VMware%20Workstation%20Pro&freeDownloads=true) | **Gratuit** pour tous les usages, mais **compte Broadcom obligatoire** ; procédure dans les [annexes](annexes.md#11-telecharger-et-installer-vmware-workstation-pro) |
-| Debian 13 (image *netinst* amd64, environ 790 Mo) | [debian.org](https://www.debian.org/distrib/netinst) | Image d'installation par le réseau : les paquets sont téléchargés pendant l'installation, il faut donc un accès à Internet |
+| Debian 13 (image *netinst* amd64, environ 800 Mo) | [debian.org](https://www.debian.org/distrib/netinst) | Image d'installation par le réseau : les paquets sont téléchargés pendant l'installation, il faut donc un accès à Internet |
 
 ## Convention de lecture
 
@@ -177,10 +177,27 @@ Dans les TP, chaque action précise où elle se fait :
 | ✍️ | Exercice à faire seul, corrigé replié en dessous |
 | 🛟 | Prendre un instantané |
 
-Les menus de Workstation sont écrits **en gras, en anglais**, comme dans la documentation officielle de Broadcom. Workstation existe aussi **en français** : si l'interface est en français, les menus sont au même endroit, avec leur nom traduit. Les commandes à taper dans la VM sont dans des blocs de code ; le texte après `#` est un commentaire, il ne se tape pas.
+Les menus de Workstation sont écrits **en gras, en anglais**, comme dans la documentation officielle de Broadcom. Workstation existe aussi **en français** : si l'interface est en français, les menus sont au même endroit, avec leur nom traduit ; les traductions indiquées entre parenthèses dans le texte sont données à titre indicatif. Les commandes à taper dans la VM sont dans des blocs de code ; le texte après `#` est un commentaire, il ne se tape pas.
 
 ## Ressources
 
 - [Documentation de VMware Workstation Pro 26H1](https://techdocs.broadcom.com/us/en/vmware-cis/desktop-hypervisors/workstation-pro/26H1/using-vmware-workstation-pro.html) — guide officiel de l'utilisateur (en anglais).
 - [Guide d'installation de Debian 13](https://www.debian.org/releases/trixie/amd64/) — le manuel officiel, en français.
 - [Référentiel du titre professionnel TSSR](https://www.francecompetences.fr/recherche/rncp/37682/) — la fiche RNCP du titre, avec ses compétences.
+*[vCPU]: processeur virtuel
+*[SSD]: Solid State Drive — disque à mémoire flash
+*[TSSR]: Technicien supérieur systèmes et réseaux
+*[NAT]: Network Address Translation — traduction d'adresses
+*[DHCP]: Dynamic Host Configuration Protocol — attribution automatique d'adresses IP
+*[VM]: Virtual Machine — machine virtuelle
+*[UEFI]: Unified Extensible Firmware Interface — successeur du BIOS
+*[BIOS]: Basic Input/Output System — micrologiciel de démarrage
+*[IaaS]: Infrastructure as a Service
+*[PaaS]: Platform as a Service
+*[SaaS]: Software as a Service
+*[NFV]: Network Functions Virtualization — virtualisation des fonctions réseau
+*[SDN]: Software-Defined Networking — réseau défini par logiciel
+*[VDI]: Virtual Desktop Infrastructure — postes de travail virtuels
+*[LXC]: Linux Containers — conteneurs Linux
+*[VT-x]: extensions de virtualisation des processeurs Intel
+*[AMD-V]: extensions de virtualisation des processeurs AMD

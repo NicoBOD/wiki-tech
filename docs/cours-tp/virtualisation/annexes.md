@@ -45,6 +45,8 @@ Depuis le **11 novembre 2024**, Workstation Pro est **gratuit pour tous les usag
 3. Lancer l'installateur, accepter le contrat de licence et garder les options proposées par défaut. Un redémarrage du PC peut être demandé.
 4. Lancer **VMware Workstation Pro** et vérifier la version dans **Help > About VMware Workstation**.
 
+Si le bouton de téléchargement reste inactif, ou si un message parle de vérification du compte, compléter **toutes** les rubriques du profil Broadcom (adresse comprise), puis réessayer.
+
 !!! info "Le portail change souvent d'apparence"
     Broadcom fait évoluer régulièrement son portail : les intitulés peuvent différer légèrement, mais le principe reste le même (compte gratuit, puis rubrique des téléchargements gratuits). En cas de doute, la fiche [KB 368667 de Broadcom](https://knowledge.broadcom.com/external/article/368667/download-and-license-vmware-desktop-hyper.html) décrit la procédure à jour.
 
@@ -55,6 +57,9 @@ La virtualisation matérielle est désactivée dans le BIOS/UEFI du PC. Voir la 
 ### 1.3 Désactiver l'hyperviseur de Windows pour la virtualisation imbriquée
 
 Quand l'hyperviseur de Windows est actif (sécurité basée sur la virtualisation, Hyper-V, WSL 2…), Workstation fonctionne en **mode Host VBS** : les VM sont plus lentes et la **virtualisation imbriquée** (installer un hyperviseur comme Proxmox VE **dans** une VM, au jour 3) est **impossible**. Le message d'erreur est alors du type *« Virtualized Intel VT-x/EPT is not supported on this platform »*.
+
+!!! warning "Une baisse de sécurité à assumer"
+    Ces réglages désactivent une **protection** de Windows et empêchent **WSL 2**, **Docker Desktop** et le **Bac à sable** de fonctionner. Ne les modifier que sur un PC **personnel**, ou avec l'accord de l'administrateur du PC, et seulement quand la virtualisation imbriquée est nécessaire (jour 3). **Noter l'état de départ** de chaque réglage pour pouvoir le rétablir.
 
 D'après Broadcom, il faut désactiver **tout ce qui lance l'hyperviseur de Windows** :
 
@@ -68,8 +73,8 @@ D'après Broadcom, il faut désactiver **tout ce qui lance l'hyperviseur de Wind
 
 4. Redémarrer le PC, puis vérifier dans `msinfo32` que la **Sécurité basée sur la virtualisation** n'est plus « En cours d'exécution ».
 
-!!! warning "Une baisse de sécurité à assumer"
-    Ces réglages désactivent une **protection** de Windows et empêchent **WSL 2**, **Docker Desktop** et le **Bac à sable** de fonctionner. Sur un PC professionnel ou d'établissement, ne pas les modifier sans l'accord de l'administrateur. Pour tout remettre après la formation : `bcdedit /set hypervisorlaunchtype auto`, recocher les fonctionnalités, réactiver l'Intégrité de la mémoire, puis redémarrer.
+!!! tip "Tout remettre après la formation"
+    `bcdedit /set hypervisorlaunchtype auto` (invite de commandes en administrateur), recocher les fonctionnalités, réactiver l'**Intégrité de la mémoire**, puis redémarrer.
 
 ### 1.4 La souris ou le clavier restent « coincés » dans la VM
 
@@ -77,11 +82,12 @@ Appuyer sur ++ctrl+alt++ : Workstation rend la souris et le clavier à Windows. 
 
 ### 1.5 Le clavier de la VM est en QWERTY
 
-L'installateur a été lancé avec un autre clavier, ou le choix n'a pas été enregistré. 🐧 Reconfigurer le clavier, puis l'appliquer à la console :
+L'installateur a été lancé avec un autre clavier, ou le choix n'a pas été enregistré. 🐧 Devenir `root`, reconfigurer le clavier, puis l'appliquer à la console :
 
 ```bash
-sudo dpkg-reconfigure keyboard-configuration
-sudo setupcon
+su -
+dpkg-reconfigure keyboard-configuration
+setupcon
 ```
 
 Garder le modèle de clavier proposé, choisir la disposition **Français**, puis valider les questions suivantes avec les réponses par défaut.
@@ -96,7 +102,8 @@ Vérifier dans l'ordre :
 4. 🐧 Redemander une adresse en désactivant puis réactivant la carte (remplacer `ens33` par le nom affiché par `ip a`) :
 
     ```bash
-    sudo ifdown ens33 && sudo ifup ens33
+    su -
+    ifdown ens33 && ifup ens33
     ```
 
 5. 🐧 Tester dans l'ordre la passerelle, Internet, puis la résolution de noms : `ping -c 3 192.168.x.2`, `ping -c 3 1.1.1.1`, `ping -c 3 deb.debian.org`.
@@ -110,7 +117,7 @@ Le disque du PC qui contient les VM est **plein** : les disques dynamiques ne pe
 - Le PC manque de mémoire : n'allumer que les VM de la partie en cours et fermer les applications inutiles.
 - L'hyperviseur de Windows est actif (mode Host VBS) : voir la [section 1.3](#13-desactiver-lhyperviseur-de-windows-pour-la-virtualisation-imbriquee).
 - Les VM sont sur un disque dur mécanique, une clé USB ou un dossier synchronisé avec OneDrive : les déplacer sur un SSD local.
-- Une VM a de vieux instantanés : les supprimer avec le **Snapshot Manager**.
+- Une VM a de vieux instantanés : les supprimer avec le **Snapshot Manager**, sauf ceux qui servent de base à un clone lié (`02-outils-installes`).
 
 ## 2. Raccourcis clavier de Workstation
 
@@ -237,3 +244,9 @@ VT-x / AMD-V
 *[DHCP]: Dynamic Host Configuration Protocol — attribution automatique d'adresses IP
 *[WSL]: Windows Subsystem for Linux — sous-système Windows pour Linux
 *[VBS]: Virtualization-Based Security — sécurité basée sur la virtualisation
+*[SSD]: Solid State Drive — disque à mémoire flash
+*[BIOS]: Basic Input/Output System — micrologiciel de démarrage
+*[UEFI]: Unified Extensible Firmware Interface — successeur du BIOS
+*[IP]: Internet Protocol — adresse d'une machine sur le réseau
+*[DNS]: Domain Name System — résolution des noms
+*[vCPU]: processeur virtuel

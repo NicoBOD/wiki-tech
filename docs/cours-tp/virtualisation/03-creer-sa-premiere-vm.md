@@ -44,9 +44,9 @@ status: publié
 
 ## 1. Télécharger Debian 13 et vérifier l'image
 
-Debian est distribué sous forme d'**images ISO** : un fichier qui contient tout le contenu d'un DVD d'installation. L'image **netinst** (*network install*, installation par le réseau) est petite (environ 790 Mo) : elle contient le strict nécessaire pour démarrer l'installation, puis télécharge le reste sur Internet.
+Debian est distribué sous forme d'**images ISO** : un fichier qui contient tout le contenu d'un DVD d'installation. L'image **netinst** (*network install*, installation par le réseau) est petite (environ 800 Mo) : elle contient le strict nécessaire pour démarrer l'installation, puis télécharge le reste sur Internet.
 
-1. 🖥️ Ouvrir la page [Debian — installation par le réseau](https://www.debian.org/distrib/netinst) et télécharger l'image **amd64** (petits CD). Le fichier s'appelle `debian-13.7.0-amd64-netinst.iso` (ou une version 13.x plus récente).
+1. 🖥️ Ouvrir la page [Debian — installation par le réseau](https://www.debian.org/distrib/netinst) et télécharger l'image **amd64** (petits CD). Le fichier s'appelle `debian-13.7.0-amd64-netinst.iso`, ou porte un numéro plus récent (13.8…) : adapter alors le nom du fichier dans les commandes ci-dessous.
 2. 🖥️ Le ranger dans un dossier dédié, par exemple `C:\VM\ISO`.
 3. 🖥️ Calculer son **empreinte** (*hash*) dans PowerShell :
 
@@ -54,7 +54,7 @@ Debian est distribué sous forme d'**images ISO** : un fichier qui contient tout
     Get-FileHash C:\VM\ISO\debian-13.7.0-amd64-netinst.iso -Algorithm SHA256
     ```
 
-4. 🖥️ Comparer le résultat avec la ligne correspondante du fichier `SHA256SUMS`, publié dans le [dossier de téléchargement officiel](https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/). Les deux empreintes doivent être **strictement identiques**.
+4. 🖥️ Comparer le résultat avec la ligne correspondante du fichier `SHA256SUMS`, publié dans le [dossier de téléchargement officiel](https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/). Les deux empreintes doivent être **identiques**, caractère par caractère. PowerShell les affiche en majuscules et le fichier `SHA256SUMS` en minuscules : la casse ne compte pas.
 
 !!! question "Pourquoi vérifier l'empreinte ?"
     L'empreinte est une sorte d'**empreinte digitale** du fichier : changer un seul octet change complètement le résultat. Si les deux empreintes sont identiques, le fichier téléchargé est **exactement** celui publié par Debian : il n'a été ni abîmé pendant le téléchargement, ni modifié par un tiers malveillant. C'est un réflexe à prendre pour **tout** fichier d'installation de système ou de logiciel serveur.
@@ -81,7 +81,11 @@ Debian est distribué sous forme d'**images ISO** : un fichier qui contient tout
 
     Cliquer sur **Close**.
 
-4. Sur la dernière page, **décocher** **Power on this virtual machine after creation** (*démarrer la VM après sa création*) : on va d'abord explorer ses fichiers. Cliquer sur **Finish**.
+4. Sur la dernière page, **décocher** **Power on this virtual machine after creation** : on va d'abord explorer ses fichiers et vérifier un dernier réglage. Cliquer sur **Finish**.
+5. 🖥️ VM éteinte, ouvrir **VM > Settings**, onglet **Options**, rubrique **Advanced**, et choisir **BIOS** dans **Firmware type** (*type de micrologiciel*), puis **OK**.
+
+!!! question "Pourquoi BIOS plutôt qu'UEFI ?"
+    Le **micrologiciel** (*firmware*) est le tout premier programme qui s'exécute au démarrage d'une machine : l'ancien **BIOS** ou son successeur **UEFI**. Workstation choisit l'un ou l'autre selon le système invité déclaré. Les deux fonctionnent très bien avec Debian ; on impose **BIOS** pour que les écrans de l'installation et de la [partie 4](04-partager-les-ressources.md#52-tp-casser-sa-vm-expres-et-la-reparer) soient exactement ceux des illustrations. Avec UEFI, l'installateur crée en plus une petite partition système EFI et ne pose pas les questions sur le programme de démarrage GRUB.
 
 !!! tip "Sur un PC de 8 Go"
     Donner **1 Go** et **1 processeur × 1 cœur** à la VM : l'installation sera un peu plus lente, mais Debian sans bureau fonctionne très bien avec 1 Go.
@@ -158,7 +162,7 @@ Dès que la disposition **Français** est validée, le clavier de la VM est en *
 
     ![Écran Adresse IP : champ rempli avec une adresse IPv4](images/03/054-adresse-ip.png){ loading=lazy }
     /// caption
-    L'adresse IP peut être saisie avec son masque au format CIDR (/24)
+    Exemple : ici 192.168.8.62 ; sur son PC, 192.168.x.10/24 (le masque peut être saisi au format CIDR)
     ///
 
 ### 4.3 Nom de la machine et comptes
@@ -166,7 +170,7 @@ Dès que la disposition **Français** est validée, le clavier de la VM est en *
 | Écran | Champ | Valeur |
 |---|---|---|
 | **Configurer le réseau** | **Nom de machine** | `debian-tp` (remplacer `debian`, proposé par défaut) |
-| **Configurer le réseau** | **Domaine** | laisser **vide** |
+| **Configurer le réseau** | **Domaine** | laisser **vide** (si `localdomain` est proposé, l'effacer ou le garder : c'est sans conséquence pour le TP) |
 | **Créer les utilisateurs et choisir les mots de passe** | **Mot de passe du superutilisateur (« root »)** et sa confirmation | `Virtu2026!` |
 | idem | **Nom complet du nouvel utilisateur** | `Technicien TSSR` |
 | idem | **Identifiant pour le compte utilisateur** | `tssr` (l'installateur propose `technicien` : **le remplacer**) |
@@ -291,7 +295,7 @@ Le menu **GNU GRUB** s'affiche quelques secondes, puis Debian démarre et affich
 
 ### 5.2 Les outils d'intégration open-vm-tools
 
-Les **VMware Tools** sont une suite de pilotes et de services qui améliorent le fonctionnement d'une VM dans un hyperviseur VMware : pilotes **paravirtualisés** (réseau, disque, affichage), **ballon** mémoire, synchronisation de l'heure, **arrêt propre** depuis Workstation, envoi de l'adresse IP à l'hyperviseur. Pour Linux, VMware recommande leur version libre **open-vm-tools**, fournie par les distributions : c'est le paquet installé à l'étape précédente.
+Les **VMware Tools** sont une suite de pilotes et de services qui améliorent le fonctionnement d'une VM dans un hyperviseur VMware. Sous **Windows**, ils installent les pilotes **paravirtualisés** (réseau, disque, affichage, ballon mémoire). Sous **Linux**, ces pilotes sont **déjà dans le noyau** ; VMware recommande d'y ajouter **open-vm-tools**, la version libre des outils fournie par les distributions, qui apporte les **services d'intégration** : synchronisation de l'heure, **arrêt propre** depuis Workstation, envoi de l'adresse IP à l'hyperviseur, réduction des disques. C'est le paquet installé à l'étape précédente.
 
 !!! info "Déjà installé ?"
     L'installateur Debian installe parfois `open-vm-tools` tout seul quand il détecte VMware. Dans ce cas, `apt` répond que le paquet est déjà à la version la plus récente : c'est normal.
@@ -326,7 +330,7 @@ vmware-toolbox-cmd -v
 |---|---|---|---|---|
 | Suis-je virtualisé ? | `systemd-detect-virt` | | `(Get-CimInstance Win32_ComputerSystem).HypervisorPresent` | |
 | Quel est le fabricant de la machine ? | `sudo dmidecode -s system-manufacturer` | | `(Get-CimInstance Win32_ComputerSystem).Manufacturer` | |
-| Quel processeur ? | `lscpu` (lignes *Model name*, *Hypervisor vendor*) | | `(Get-CimInstance Win32_Processor).Name` | |
+| Quel processeur ? | `lscpu` (lignes **Nom de modèle**, **Fabricant de l'hyperviseur**) | | `(Get-CimInstance Win32_Processor).Name` | |
 | Combien de processeurs ? | `nproc` | | `$env:NUMBER_OF_PROCESSORS` | |
 | Combien de mémoire ? | `free -h` | | Gestionnaire des tâches > Performances > Mémoire | |
 | Quels disques ? | `lsblk` | | `Get-Disk` | |
@@ -335,7 +339,7 @@ vmware-toolbox-cmd -v
 ??? success "Corrigé"
     - **Suis-je virtualisé ?** Dans la VM, `systemd-detect-virt` répond `vmware` (il répondrait `kvm` sous KVM, `microsoft` sous Hyper-V, `oracle` sous VirtualBox, et `none` sur une machine physique). Sur le PC, `HypervisorPresent` vaut `False`, sauf si l'hyperviseur de Windows est actif (voir la [partie 2](02-hyperviseur-et-machine-virtuelle.md#42-lhyperviseur-de-windows-est-il-actif)) : Windows lui-même tourne alors au-dessus d'un hyperviseur !
     - **Fabricant** : dans la VM, `VMware, Inc.` : le BIOS virtuel annonce clairement l'hyperviseur. Sur le PC, le vrai constructeur (Dell, HP, Lenovo, ou le fabricant de la carte mère).
-    - **Processeur** : la VM voit le **même modèle** de processeur que le PC (l'hyperviseur le lui présente tel quel), mais `lscpu` ajoute une ligne **Hypervisor vendor: VMware** et **Virtualization type: full**.
+    - **Processeur** : la VM voit le **même modèle** de processeur que le PC (l'hyperviseur le lui présente tel quel), mais `lscpu` ajoute les lignes **Fabricant de l'hyperviseur : VMware** et **Type de virtualisation : complet** (*Hypervisor vendor*, *Virtualization type* sur un système en anglais).
     - **Nombre de processeurs** : la VM n'en voit que **2** (ses vCPU), le PC tous ses processeurs logiques.
     - **Mémoire** : la VM voit un peu **moins de 2 Go** (environ 1,9 Gio), le noyau en réservant une partie ; le PC voit toute sa mémoire.
     - **Disques** : la VM voit **un disque de 20 Go**, qui n'est en réalité qu'un fichier `.vmdk` de quelques Go sur le disque du PC.
@@ -375,7 +379,7 @@ Cet instantané permettra de repartir d'une Debian propre à tout moment. La [pa
     3. La configuration est dans le fichier texte **`.vmx`** ; le disque est le ou les fichiers **`.vmdk`**.
     4. Parce qu'un **mot de passe root** a été défini : l'installateur considère qu'on administrera avec `root`. On installe `sudo` en tant que root (`su -`, puis `apt install sudo`) et on ajoute `tssr` au groupe `sudo` (`usermod -aG sudo tssr`), puis on se reconnecte.
     5. Pilotes paravirtualisés (réseau, disque, affichage), ballon mémoire, synchronisation de l'heure avec l'hôte, arrêt et redémarrage propres depuis l'hyperviseur, envoi de l'adresse IP et de l'état de la VM à l'hyperviseur, réduction des disques.
-    6. `systemd-detect-virt` (répond `vmware`), `lscpu` (ligne *Hypervisor vendor*), `sudo dmidecode -s system-manufacturer` (`VMware, Inc.`), ou `lspci` (composants au nom de VMware).
+    6. `systemd-detect-virt` (répond `vmware`), `lscpu` (ligne **Fabricant de l'hyperviseur**), `sudo dmidecode -s system-manufacturer` (`VMware, Inc.`), ou `lspci` (composants au nom de VMware).
 
 ---
 
@@ -396,3 +400,11 @@ Cet instantané permettra de repartir d'une Debian propre à tout moment. La [pa
 *[SSH]: Secure Shell — protocole d'administration à distance chiffré
 *[CIDR]: notation /24, /16… de la taille d'un réseau
 *[NVMe]: interface rapide pour les disques SSD
+*[BIOS]: Basic Input/Output System — micrologiciel de démarrage
+*[UEFI]: Unified Extensible Firmware Interface — successeur du BIOS
+*[IP]: Internet Protocol — adresse d'une machine sur le réseau
+*[DNS]: Domain Name System — résolution des noms
+*[SVGA]: carte graphique virtuelle de VMware
+*[PCI]: bus d'extension sur lequel se branchent les cartes
+*[KVM]: Kernel-based Virtual Machine — hyperviseur intégré au noyau Linux
+*[EFI]: Extensible Firmware Interface — partition de démarrage UEFI
