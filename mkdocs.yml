@@ -308,6 +308,18 @@ nav:
         - "6. Virtualiser le réseau": cours-tp/virtualisation/06-virtualiser-le-reseau.md
         - "7. Virtualiser le stockage": cours-tp/virtualisation/07-virtualiser-le-stockage.md
         - "8. Défi du jour 2": cours-tp/virtualisation/08-defi-jour-2.md
+      - "Jour 3 — Technologies du système":
+        - "9. Panorama des technologies": cours-tp/virtualisation/09-panorama-des-technologies.md
+        - "10. Types d'hyperviseurs et paravirtualisation": cours-tp/virtualisation/10-types-hyperviseurs-paravirtualisation.md
+        - "11. Conteneurs": cours-tp/virtualisation/11-conteneurs.md
+      - "Jour 4 — Stockage, réseau, applications":
+        - "12. Stockage défini par logiciel et hyperconvergence": cours-tp/virtualisation/12-stockage-sds-hyperconvergence.md
+        - "13. Réseau virtuel, SDN et NFV": cours-tp/virtualisation/13-reseau-virtuel-sdn-nfv.md
+        - "14. Virtualiser les applications et les postes": cours-tp/virtualisation/14-virtualiser-les-applications.md
+      - "Jour 5 — Cloud, tendances, défi final":
+        - "15. Le cloud : IaaS, PaaS, SaaS": cours-tp/virtualisation/15-le-cloud.md
+        - "16. Tendances et métier": cours-tp/virtualisation/16-tendances-et-metier.md
+        - "17. Défi final": cours-tp/virtualisation/17-defi-final.md
       - Annexes: cours-tp/virtualisation/annexes.md
   - Tags: tags.md
 

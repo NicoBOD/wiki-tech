@@ -80,19 +80,29 @@ Chaque partie dure entre 1 h 30 et 2 h et mêle cours, activités et pratique. L
 | [7. Virtualiser le stockage](07-virtualiser-le-stockage.md) | Cours et TP | 2 h | DAS, NAS, SAN, protocoles, une VM Debian qui partage un dossier en NFS et un disque en iSCSI | `routeur`, `stockage`, `web1` (dans cet ordre) |
 | [8. Défi du jour 2](08-defi-jour-2.md) | Défi | 1 h 15 | Deux serveurs web, un site partagé en NFS, publication, diagnostic de trois pannes | `routeur`, `stockage`, `web1`, `web4` |
 
-### Jours 3 à 5 — Technologies, cloud et tendances
+### Jour 3 — Les technologies de virtualisation du système
 
-| Jour | Partie | Type | Contenu |
-|:---:|:---:|---|---|
-| 3 | 9. Panorama des technologies | Atelier de recherche | Comparer les technologies de virtualisation du système, du stockage, du réseau et des applications |
-| 3 | 10. Types d'hyperviseurs et paravirtualisation | Cours et TP | Type 1 et type 2, virtualisation complète, assistée par le matériel et paravirtualisation ; Proxmox VE dans Workstation |
-| 3 | 11. Conteneurs | Cours et démonstration | Conteneur ou VM ? Docker et LXC |
-| 4 | 12. Stockage défini par logiciel et hyperconvergence | Cours et TP | SAN et NAS virtuels, SDS, vSAN, Ceph, hyperconvergence |
-| 4 | 13. Réseau virtuel, SDN et NFV | Cours et TP | vSwitch, VLAN, réseau défini par logiciel, virtualisation des fonctions réseau |
-| 4 | 14. Virtualisation des applications et des postes | Cours et activité | Citrix, App-V, VDI : avantages et limites |
-| 5 | 15. Le cloud : IaaS, PaaS, SaaS | Cours et TP sans compte | Modèles de service, acteurs, calculatrices de prix |
-| 5 | 16. Tendances et métier | Débat | Conteneurisation, edge computing, NFV, impact sur les métiers de l'informatique |
-| 5 | 17. Défi final | Défi et QCM | Mise en situation de synthèse et QCM de fin de parcours |
+| Partie | Type | Durée | Contenu | Machines allumées |
+|:---:|---|---|---|---|
+| [9. Panorama des technologies](09-panorama-des-technologies.md) | Cours et atelier | 1 h 45 | Carte des technologies, comparaison VM/conteneurs, fiche technologie, règles de la veille | Aucune |
+| [10. Types d'hyperviseurs et paravirtualisation](10-types-hyperviseurs-paravirtualisation.md) | Cours et TP | 2 h 30 | Virtualisation complète, paravirtualisation, assistance matérielle ; Proxmox VE installé dans Workstation ; pilotes émulés contre pilotes VirtIO | `pve` |
+| [11. Conteneurs](11-conteneurs.md) | Cours et démonstration | 1 h 30 | Conteneur ou VM ? Docker sur `debian-tp`, conteneur LXC dans Proxmox VE, mesures | `debian-tp`, puis `pve` |
+
+### Jour 4 — Stockage, réseau et applications virtualisés
+
+| Partie | Type | Durée | Contenu | Machines allumées |
+|:---:|---|---|---|---|
+| [12. Stockage défini par logiciel et hyperconvergence](12-stockage-sds-hyperconvergence.md) | Cours et TP | 2 h | SDS, vSAN, Ceph, hyperconvergence ; stockage NFS partagé ajouté à Proxmox, disque d'une VM déplacé à chaud | `routeur`, `stockage`, `pve` |
+| [13. Réseau virtuel, SDN et NFV](13-reseau-virtuel-sdn-nfv.md) | Cours et TP | 2 h | Commutateurs virtuels, VLAN, VXLAN, SDN, NFV ; VLAN dans Proxmox VE | `stockage`, `pve` |
+| [14. Virtualiser les applications et les postes](14-virtualiser-les-applications.md) | Cours et étude de cas | 1 h 30 | Publication, isolation, VDI ; Citrix, App-V, Azure Virtual Desktop, Omnissa ; Bac à sable Windows | Aucune |
+
+### Jour 5 — Le cloud, les tendances et le défi final
+
+| Partie | Type | Durée | Contenu | Machines allumées |
+|:---:|---|---|---|---|
+| [15. Le cloud : IaaS, PaaS, SaaS](15-le-cloud.md) | Cours et TP sans compte | 2 h | Définition du NIST, modèles de service, responsabilité partagée, acteurs et souveraineté, calculatrices de prix | Aucune |
+| [16. Tendances et métier](16-tendances-et-metier.md) | Cours et débat | 1 h 30 | Kubernetes, serverless, edge, NFV, GPU, informatique confidentielle, énergie, impact sur le métier de TSSR | Aucune |
+| [17. Défi final](17-defi-final.md) | Projet, diagnostic et QCM | 3 h | Projet de migration d'une PME, quatre incidents, QCM de vingt questions | Au choix |
 
 Les [annexes](annexes.md) rassemblent le dépannage, les raccourcis de Workstation, un aide-mémoire des commandes et le glossaire.
 
