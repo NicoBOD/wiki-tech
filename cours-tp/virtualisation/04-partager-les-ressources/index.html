@@ -1,0 +1,4190 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+      
+      
+        <meta name="author" content="Nicolas BODAINE">
+      
+      
+        <link rel="canonical" href="https://wiki.bodaine.fr/cours-tp/virtualisation/04-partager-les-ressources/">
+      
+      
+        <link rel="prev" href="../03-creer-sa-premiere-vm/">
+      
+      
+        <link rel="next" href="../annexes/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>Partager les ressources : vCPU, mémoire, disque, surallocation, instantanés et clones - Wiki Tech — NicoBOD</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        
+        <link rel="stylesheet" href="../../../assets/external/fonts.googleapis.com/css.56f7ac64.css">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+    
+    
+      
+    
+    
+
+    <!-- SEO -->
+    <meta name="author" content="Nicolas BODAINE">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph : compléments non gérés par le plugin social.     -->
+    <!-- og:type/title/description/image/url sont posés par social.   -->
+    <meta property="og:site_name" content="Wiki Tech — NicoBOD">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card : la grande image et l'image elle-même sont      -->
+    <!-- héritées des balises og:image générées par le plugin social.  -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Partager les ressources : vCPU, mémoire, disque, surallocation, instantanés et clones — Wiki Tech — NicoBOD">
+    <meta name="twitter:description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+  
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#partager-les-ressources-cpu-memoire-disque-instantanes-et-clones" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-header__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wiki Tech — NicoBOD
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Partager les ressources : vCPU, mémoire, disque, surallocation, instantanés et clones
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer en mode clair"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer en mode clair" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Passer en mode sombre"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer en mode sombre" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Revenir au thème système"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Revenir au thème système" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Partager" aria-label="Partager" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../systemes/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h16v10H4m16 2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4c-1.11 0-2 .89-2 2v10a2 2 0 0 0 2 2H0v2h24v-2z"/></svg>
+    
+  
+  Systèmes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../reseaux/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v2h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+    
+  
+  Réseaux
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cloud/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 20q-2.28 0-3.89-1.57Q1 16.85 1 14.58q0-1.95 1.17-3.48 1.18-1.53 3.08-1.95.63-2.3 2.5-3.72Q9.63 4 12 4q2.93 0 4.96 2.04Q19 8.07 19 11q1.73.2 2.86 1.5 1.14 1.28 1.14 3 0 1.88-1.31 3.19T18.5 20Z"/></svg>
+    
+  
+  Cloud
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cybersecurite/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12h7c-.53 4.11-3.28 7.78-7 8.92zH5V6.3l7-3.11M12 1 3 5v6c0 5.55 3.84 10.73 9 12 5.16-1.27 9-6.45 9-12V5z"/></svg>
+    
+  
+  Cybersécurité
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../ia/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/></svg>
+    
+  
+  IA
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../automatisation/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+    
+  
+  Automatisation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../logiciels/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m0 5H3V4h18z"/></svg>
+    
+  
+  Logiciels
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../debug/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 12h-4v-2h4m0 6h-4v-2h4m6-6h-2.81a6 6 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6 6 0 0 0-2.83 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20z"/></svg>
+    
+  
+  Debug
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../astuces/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+    
+  
+  Astuces
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+    
+  
+  Cours et TP
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../tags/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tags
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-nav__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    Wiki Tech — NicoBOD
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../systemes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Systèmes
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../reseaux/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Réseaux
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cybersecurite/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cybersécurité
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../ia/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IA
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../automatisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automatisation
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../logiciels/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logiciels
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../debug/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../astuces/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Astuces
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cours et TP
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cours et TP
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../veeam/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Veeam Backup & Replication
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_2" id="__nav_11_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Veeam Backup & Replication
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/01-comprendre-la-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/02-decouvrir-veeam-data-platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Découvrir Veeam Data Platform 13
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/03-preparer-le-lab-installer-appliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Préparer le lab et installer l'appliance
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/04-ajouter-des-depots-de-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Ajouter des dépôts de sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/05-sauvegarder-configuration-et-serveur-de-fichiers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Sauvegarder la configuration et un serveur de fichiers
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/06-sauvegarder-restaurer-serveur-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Sauvegarder et restaurer un serveur Linux
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/07-sauvegarder-vers-azure-blob/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Sauvegarder vers Azure Blob Storage
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pfsense-ha/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cluster pfSense en haute disponibilité
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_3" id="__nav_11_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cluster pfSense en haute disponibilité
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/01-comprendre-haute-disponibilite/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la haute disponibilité
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/02-preparer-lab-installer-pfsense/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Préparer le lab et installer pfSense
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/03-configuration-initiale/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Configuration initiale
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/04-synchroniser-le-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Synchroniser le cluster
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/05-vip-carp-nat-sortant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. VIP CARP et NAT sortant
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/06-tester-la-bascule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Tester la bascule
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/07-agregation-lacp-troisieme-noeud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Agrégation LACP et troisième nœud
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/08-mettre-a-jour-le-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8. Mettre à jour le cluster
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Virtualisation (5 jours)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_4" id="__nav_11_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Virtualisation (5 jours)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_4_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_11_4_2" id="__nav_11_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 1 — Comprendre et créer ses VM
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_11_4_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Jour 1 — Comprendre et créer ses VM
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-comprendre-la-virtualisation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la virtualisation
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-hyperviseur-et-machine-virtuelle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Hyperviseur et machine virtuelle
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-creer-sa-premiere-vm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Créer sa première VM Debian 13
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Partager les ressources
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Partager les ressources
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-preparer-les-outils-de-mesure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Préparer les outils de mesure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-le-processeur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Le processeur
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Le processeur">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-ce-quest-un-vcpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Ce qu'est un vCPU
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-tp-mesurer-la-puissance-dun-ou-de-deux-vcpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 TP : mesurer la puissance d'un ou de deux vCPU
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-la-memoire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. La mémoire
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. La mémoire">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-memoire-attribuee-et-memoire-reellement-utilisee" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Mémoire attribuée et mémoire réellement utilisée
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-la-surallocation-de-la-memoire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 La surallocation de la mémoire
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-tp-observer-la-memoire-de-la-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 TP : observer la mémoire de la VM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-exercice-que-se-passe-t-il-quand-la-memoire-manque" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 ✍️ Exercice : que se passe-t-il quand la mémoire manque ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-le-disque" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Le disque
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Le disque">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-disque-dynamique-ou-prealloue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Disque dynamique ou préalloué
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-tp-regarder-le-disque-grandir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 TP : regarder le disque grandir
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-les-instantanes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Les instantanés
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Les instantanés">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-comment-ca-marche" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Comment ça marche
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-tp-casser-sa-vm-expres-et-la-reparer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 TP : casser sa VM exprès… et la réparer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-le-gestionnaire-dinstantanes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Le gestionnaire d'instantanés
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-les-clones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Les clones
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Les clones">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-clone-lie-ou-clone-complet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Clone lié ou clone complet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-tp-creer-un-clone-lie-et-un-clone-complet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 TP : créer un clone lié et un clone complet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-donner-une-identite-propre-au-clone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 Donner une identité propre au clone
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-defi-du-jour-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Défi du jour 1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tags/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.5 7A1.5 1.5 0 0 1 4 5.5 1.5 1.5 0 0 1 5.5 4 1.5 1.5 0 0 1 7 5.5 1.5 1.5 0 0 1 5.5 7m15.91 4.58-9-9C12.05 2.22 11.55 2 11 2H4c-1.11 0-2 .89-2 2v7c0 .55.22 1.05.59 1.41l8.99 9c.37.36.87.59 1.42.59s1.05-.23 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.56-.23-1.06-.59-1.42"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-preparer-les-outils-de-mesure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Préparer les outils de mesure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-le-processeur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Le processeur
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Le processeur">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-ce-quest-un-vcpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Ce qu'est un vCPU
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-tp-mesurer-la-puissance-dun-ou-de-deux-vcpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 TP : mesurer la puissance d'un ou de deux vCPU
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-la-memoire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. La mémoire
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. La mémoire">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-memoire-attribuee-et-memoire-reellement-utilisee" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Mémoire attribuée et mémoire réellement utilisée
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-la-surallocation-de-la-memoire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 La surallocation de la mémoire
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-tp-observer-la-memoire-de-la-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 TP : observer la mémoire de la VM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-exercice-que-se-passe-t-il-quand-la-memoire-manque" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 ✍️ Exercice : que se passe-t-il quand la mémoire manque ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-le-disque" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Le disque
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Le disque">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-disque-dynamique-ou-prealloue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Disque dynamique ou préalloué
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-tp-regarder-le-disque-grandir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 TP : regarder le disque grandir
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-les-instantanes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Les instantanés
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Les instantanés">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-comment-ca-marche" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Comment ça marche
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-tp-casser-sa-vm-expres-et-la-reparer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 TP : casser sa VM exprès… et la réparer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-le-gestionnaire-dinstantanes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Le gestionnaire d'instantanés
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-les-clones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Les clones
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Les clones">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-clone-lie-ou-clone-complet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Clone lié ou clone complet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-tp-creer-un-clone-lie-et-un-clone-complet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 TP : créer un clone lié et un clone complet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-donner-une-identite-propre-au-clone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 Donner une identité propre au clone
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-defi-du-jour-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Défi du jour 1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Cours et TP
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Virtualisation (5 jours)
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../01-comprendre-la-virtualisation/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Jour 1 — Comprendre et créer ses VM
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:debian" class="md-tag">debian</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:travaux-pratiques" class="md-tag">travaux-pratiques</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:virtualisation" class="md-tag">virtualisation</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:vmware" class="md-tag">vmware</a>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/NicoBOD/wiki-tech/edit/main/docs/cours-tp/virtualisation/04-partager-les-ressources.md" title="Editer cette page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/NicoBOD/wiki-tech/raw/main/docs/cours-tp/virtualisation/04-partager-les-ressources.md" title="Consulter la source de cette page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<!-- ============================================================ -->
+<!-- ⚠️ RAPPEL IMPORTANT :                                          -->
+<!-- Pensez TOUJOURS à ajouter une entrée dans le fichier d'index  -->
+<!-- (index.md) du dossier correspondant (ex: docs/cloud/index.md) -->
+<!-- afin de référencer ce nouvel article et permettre aux         -->
+<!-- visiteurs de le trouver et de cliquer dessus !                -->
+<!-- ============================================================ -->
+
+<h1 id="partager-les-ressources-cpu-memoire-disque-instantanes-et-clones">Partager les ressources : CPU, mémoire, disque, instantanés et clones<a class="headerlink" href="#partager-les-ressources-cpu-memoire-disque-instantanes-et-clones" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Résumé</p>
+<p>Une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> n'a pas de matériel à elle : elle <strong>emprunte</strong> le processeur, la mémoire et le disque de l'hôte. Cette partie fait <strong>observer ce partage</strong> de l'intérieur et de l'extérieur de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> <code>debian-tp</code> :</p>
+<ul>
+<li>le <strong>processeur</strong> : ce qu'est un <abbr title="processeur virtuel">vCPU</abbr>, et ce que change le fait d'en donner un ou deux ;</li>
+<li>la <strong>mémoire</strong> : ce que la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> consomme réellement sur l'hôte, ce qu'est la <strong>surallocation</strong> et ce qui arrive quand la mémoire manque ;</li>
+<li>le <strong>disque</strong> : disque <strong>dynamique</strong> ou <strong>préalloué</strong>, et pourquoi un disque virtuel grandit mais ne rétrécit pas tout seul.</li>
+</ul>
+<p>On manipule ensuite les deux outils les plus utiles au quotidien : les <strong>instantanés</strong>, en <strong>cassant la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> exprès</strong> pour la réparer en quelques secondes, et les <strong>clones</strong>, liés ou complets. Un <strong>défi</strong> sans pas-à-pas termine la journée.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Propriété</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Difficulté</td>
+<td>Débutant</td>
+</tr>
+<tr>
+<td>Durée estimée</td>
+<td>1 h 45, défi compris</td>
+</tr>
+<tr>
+<td>Version décrite</td>
+<td>VMware Workstation Pro 26H1, Debian 13.7</td>
+</tr>
+<tr>
+<td>Place dans le parcours</td>
+<td>Partie 4 sur 17 du parcours <a href="../">Virtualisation</a> — jour 1</td>
+</tr>
+<tr>
+<td>Dernière mise à jour</td>
+<td>2026-11-16</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<div class="admonition info">
+<p class="admonition-title">Convention de lecture</p>
+<p>🖥️ <strong>PC hôte</strong> (Windows et Workstation) · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> Debian</strong> <code>debian-tp</code> (connecté en <code>tssr</code>) · ✍️ <strong>exercice</strong> · 🛟 <strong>instantané</strong>. Les <a href="../#comptes-et-mots-de-passe">comptes et mots de passe</a> sont rappelés sur la page d'accueil du parcours.</p>
+</div>
+<p><strong>Prérequis</strong> : la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> <code>debian-tp</code> de la <a href="../03-creer-sa-premiere-vm/">partie 3</a> est installée, avec <code>sudo</code> et les outils <code>open-vm-tools</code>, et l'instantané <code>01-installation-terminee</code> existe.</p>
+<h2 id="1-preparer-les-outils-de-mesure">1. Préparer les outils de mesure<a class="headerlink" href="#1-preparer-les-outils-de-mesure" title="Permanent link">&para;</a></h2>
+<ol>
+<li>🖥️ Démarrer <code>debian-tp</code> et se connecter en <code>tssr</code>.</li>
+<li>
+<p>🐧 Installer l'outil <strong>stress-ng</strong>, qui sait charger volontairement le processeur, la mémoire ou le disque :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>update
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>stress-ng
+</code></pre></div>
+</li>
+<li>
+<p>🖥️ Ouvrir le <strong>Gestionnaire des tâches</strong> de Windows (<span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-shift">Shift</kbd><span>+</span><kbd class="key-escape">Esc</kbd></span>), onglet <strong>Performances</strong>, et le placer à côté de la fenêtre de Workstation : on va observer l'hôte pendant qu'on charge la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</p>
+</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Libérer la souris et le clavier</p>
+<p>Quand on clique dans la console de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, Workstation « capture » la souris et le clavier. Pour revenir à Windows, appuyer sur <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-alt">Alt</kbd></span>.</p>
+</div>
+<h2 id="2-le-processeur">2. Le processeur<a class="headerlink" href="#2-le-processeur" title="Permanent link">&para;</a></h2>
+<h3 id="21-ce-quest-un-vcpu">2.1 Ce qu'est un <abbr title="processeur virtuel">vCPU</abbr><a class="headerlink" href="#21-ce-quest-un-vcpu" title="Permanent link">&para;</a></h3>
+<p>Un <strong><abbr title="processeur virtuel">vCPU</abbr></strong> (processeur virtuel) est, pour l'hôte, une simple <strong>tâche</strong> à exécuter, comme un programme. L'hyperviseur fait passer ces tâches à tour de rôle sur les <strong>processeurs logiques</strong> du PC (un cœur avec l'<em>hyperthreading</em> compte pour deux processeurs logiques). Une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> à 2 <abbr title="processeur virtuel">vCPU</abbr> peut donc utiliser au maximum <strong>l'équivalent de 2 processeurs logiques</strong> de l'hôte, jamais plus.</p>
+<p>Dans les paramètres d'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Settings &gt; Processors</strong>), Workstation demande :</p>
+<ul>
+<li><strong>Number of processors</strong> (<em>nombre de processeurs</em>) : le nombre de <strong>sockets</strong> (de « puces ») virtuels ;</li>
+<li><strong>Number of cores per processor</strong> (<em>nombre de cœurs par processeur</em>) : le nombre de cœurs de chacun.</li>
+</ul>
+<p>Le nombre total de <abbr title="processeur virtuel">vCPU</abbr> est le <strong>produit</strong> des deux. Pour Linux, <code>1 × 2</code> ou <code>2 × 1</code> revient au même. Certains logiciels sont vendus <strong>par socket</strong> : on préfère alors 1 processeur et plusieurs cœurs.</p>
+<div class="admonition warning">
+<p class="admonition-title">Plus de <abbr title="processeur virtuel">vCPU</abbr> ne veut pas dire plus rapide</p>
+<ul>
+<li>Ne <strong>jamais</strong> donner à une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> plus de <abbr title="processeur virtuel">vCPU</abbr> que l'hôte n'a de processeurs logiques.</li>
+<li>Chaque <abbr title="processeur virtuel">vCPU</abbr> est un fil d'exécution qui <strong>attend son tour</strong> sur un processeur logique de l'hôte. Plus une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> a de <abbr title="processeur virtuel">vCPU</abbr>, plus elle entre en concurrence avec les autres <abbr title="Virtual Machine — machine virtuelle">VM</abbr> et avec l'hôte lui-même, et plus ses <abbr title="processeur virtuel">vCPU</abbr> doivent se coordonner entre eux. Sur un hôte chargé, une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> surdimensionnée peut donc être <strong>plus lente</strong> qu'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> à 2 <abbr title="processeur virtuel">vCPU</abbr>.</li>
+<li>Règle pratique : commencer petit (1 ou 2 <abbr title="processeur virtuel">vCPU</abbr>), <strong>mesurer</strong>, puis augmenter si la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> est réellement limitée par le processeur.</li>
+</ul>
+</div>
+<h3 id="22-tp-mesurer-la-puissance-dun-ou-de-deux-vcpu">2.2 TP : mesurer la puissance d'un ou de deux <abbr title="processeur virtuel">vCPU</abbr><a class="headerlink" href="#22-tp-mesurer-la-puissance-dun-ou-de-deux-vcpu" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>🐧 Afficher le nombre de <abbr title="processeur virtuel">vCPU</abbr> vus par Debian :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>nproc
+</code></pre></div>
+</li>
+<li>
+<p>🐧 Lancer un test de calcul de 20 secondes sur <strong>tous</strong> les <abbr title="processeur virtuel">vCPU</abbr> (<code>--cpu 0</code> = autant de calculs que de <abbr title="processeur virtuel">vCPU</abbr>) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>stress-ng<span class="w"> </span>--cpu<span class="w"> </span><span class="m">0</span><span class="w"> </span>--cpu-method<span class="w"> </span>int64<span class="w"> </span>--metrics-brief<span class="w"> </span>-t<span class="w"> </span>20s
+</code></pre></div>
+</li>
+<li>
+<p>🖥️ Pendant le test, regarder le graphique <strong>Processeur</strong> du Gestionnaire des tâches : l'utilisation du PC monte de l'équivalent de <strong>2 processeurs logiques</strong> (sur un PC à 8 processeurs logiques, environ 25 %).</p>
+</li>
+<li>🐧 À la fin, noter la valeur de la colonne <strong>bogo ops/s</strong> (<em>real time</em>) de la ligne <code>cpu</code> : c'est le nombre d'opérations de calcul faites par seconde.</li>
+<li>🐧 Éteindre la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : <code>sudo poweroff</code>.</li>
+<li>🖥️ Ouvrir <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Settings &gt; Processors</strong>, mettre <strong>Number of processors</strong> à <code>1</code> et <strong>Number of cores per processor</strong> à <code>1</code>, puis <strong>OK</strong>.</li>
+<li>🖥️ Démarrer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, se connecter en <code>tssr</code> et refaire les étapes 1 à 4.</li>
+<li>🐧 Éteindre la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : <code>sudo poweroff</code>.</li>
+<li>🖥️ Remettre la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> à <strong>2 <abbr title="processeur virtuel">vCPU</abbr></strong> (<strong>Number of processors</strong> <code>1</code>, <strong>Number of cores per processor</strong> <code>2</code>), puis la démarrer et se connecter en <code>tssr</code>. Les réglages du matériel ne se modifient que <abbr title="Virtual Machine — machine virtuelle">VM</abbr> éteinte : allumée, ils sont grisés.</li>
+</ol>
+<div class="admonition success">
+<p class="admonition-title">Vérifier son lab</p>
+<p>Avec 2 <abbr title="processeur virtuel">vCPU</abbr>, <code>nproc</code> affiche <code>2</code> ; avec 1 <abbr title="processeur virtuel">vCPU</abbr>, il affiche <code>1</code>. Le nombre d'opérations par seconde est <strong>à peu près divisé par deux</strong> avec un seul <abbr title="processeur virtuel">vCPU</abbr>. Exemple de mesure sur un hôte équipé d'un Intel Core i7-6700K :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a># 2 vCPU
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>stress-ng: metrc: [719] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>stress-ng: metrc: [719] cpu               85581     20.00     39.42      0.00      4279.04        2171.17
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a># 1 vCPU
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>stress-ng: metrc: [700] cpu               44349     20.49     19.98      0.01      2164.13        2218.69
+</code></pre></div>
+<p>La dernière colonne (opérations par seconde <strong>par <abbr title="processeur virtuel">vCPU</abbr></strong>) reste la même : chaque <abbr title="processeur virtuel">vCPU</abbr> a la puissance d'un processeur logique de l'hôte. La valeur exacte dépend du processeur de chaque PC : seul le <strong>rapport</strong> entre les deux mesures compte.</p>
+</div>
+<details class="info">
+<summary>Vu de l'hôte : un <abbr title="processeur virtuel">vCPU</abbr> est un fil d'exécution</summary>
+<p>Sur un hôte Linux avec l'hyperviseur <abbr title="Kernel-based Virtual Machine — hyperviseur intégré au noyau Linux">KVM</abbr>, le processus d'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> à 2 <abbr title="processeur virtuel">vCPU</abbr> contient deux fils d'exécution nommés <code>CPU 0/KVM</code> et <code>CPU 1/KVM</code>, et la commande <code>top</code> de l'hôte affiche ce processus à <strong>200 %</strong> de processeur (deux processeurs logiques pleins) pendant le test. Sous Windows, Workstation fonctionne de la même manière : chaque <abbr title="processeur virtuel">vCPU</abbr> est un fil d'exécution du processus <code>vmware-vmx.exe</code>.</p>
+</details>
+<h2 id="3-la-memoire">3. La mémoire<a class="headerlink" href="#3-la-memoire" title="Permanent link">&para;</a></h2>
+<h3 id="31-memoire-attribuee-et-memoire-reellement-utilisee">3.1 Mémoire attribuée et mémoire réellement utilisée<a class="headerlink" href="#31-memoire-attribuee-et-memoire-reellement-utilisee" title="Permanent link">&para;</a></h3>
+<p>Quand on attribue <strong>2 Go</strong> à une <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, l'hyperviseur ne prend généralement pas 2 Go à l'hôte d'un coup : il fournit la mémoire <strong>au fur et à mesure</strong> que le système invité l'utilise. En revanche, une mémoire que l'invité a utilisée puis libérée <strong>n'est pas forcément rendue</strong> à l'hôte.</p>
+<details class="info">
+<summary>Une mesure sur un hôte <abbr title="Kernel-based Virtual Machine — hyperviseur intégré au noyau Linux">KVM</abbr></summary>
+<p>Une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> Debian 13 à qui l'on attribue 1 Gio de mémoire :</p>
+<table>
+<thead>
+<tr>
+<th>Moment</th>
+<th>Mémoire utilisée <strong>dans</strong> la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<code>free -m</code>)</th>
+<th>Mémoire occupée <strong>sur l'hôte</strong> par la <abbr title="Virtual Machine — machine virtuelle">VM</abbr></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Juste après le démarrage</td>
+<td>221 Mo</td>
+<td>≈ 400 Mo</td>
+</tr>
+<tr>
+<td>Pendant un <code>stress-ng</code> qui occupe 600 Mo</td>
+<td>830 Mo</td>
+<td>≈ 990 Mo</td>
+</tr>
+<tr>
+<td>Après le <code>stress-ng</code></td>
+<td>230 Mo</td>
+<td>≈ 990 Mo : la mémoire <strong>n'a pas été rendue</strong> à l'hôte</td>
+</tr>
+</tbody>
+</table>
+<p>C'est pour récupérer cette mémoire que les hyperviseurs utilisent un <strong>ballon</strong> (voir plus bas).</p>
+</details>
+<h3 id="32-la-surallocation-de-la-memoire">3.2 La surallocation de la mémoire<a class="headerlink" href="#32-la-surallocation-de-la-memoire" title="Permanent link">&para;</a></h3>
+<p>La <strong>surallocation</strong> (<em>overcommitment</em>) consiste à attribuer aux <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, <strong>au total</strong>, plus de mémoire que l'hôte n'en possède. Par exemple, cinq <abbr title="Virtual Machine — machine virtuelle">VM</abbr> de 4 Go sur un hôte de 16 Go. Cela fonctionne tant que les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> n'utilisent pas toutes leur mémoire en même temps, comme une compagnie aérienne qui vend plus de billets que de sièges en comptant sur les absents.</p>
+<p>Quand la mémoire réelle vient à manquer, l'hyperviseur dispose de plusieurs techniques, de la plus douce à la plus pénalisante :</p>
+<table>
+<thead>
+<tr>
+<th>Technique</th>
+<th>Principe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ballon</strong> (<em>ballooning</em>)</td>
+<td>Un pilote installé dans l'invité (dans le noyau Linux, ou fourni par les VMware Tools sous Windows) « gonfle » : il réclame de la mémoire <strong>à l'intérieur</strong> de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, que l'hyperviseur peut alors rendre à l'hôte ou donner à une autre <abbr title="Virtual Machine — machine virtuelle">VM</abbr>. L'invité choisit lui-même quoi libérer : c'est la méthode la plus intelligente</td>
+</tr>
+<tr>
+<td><strong>Partage de pages</strong></td>
+<td>Des pages de mémoire identiques (même système dans plusieurs <abbr title="Virtual Machine — machine virtuelle">VM</abbr>) ne sont stockées qu'une fois. Pour des raisons de sécurité, VMware ne le fait plus par défaut <strong>entre</strong> <abbr title="Virtual Machine — machine virtuelle">VM</abbr> différentes sur ESXi</td>
+</tr>
+<tr>
+<td><strong>Compression</strong></td>
+<td>Les pages peu utilisées sont compressées en mémoire</td>
+</tr>
+<tr>
+<td><strong>Échange sur disque</strong> (<em>swap</em>)</td>
+<td>L'hyperviseur place une partie de la mémoire des <abbr title="Virtual Machine — machine virtuelle">VM</abbr> dans un fichier sur le disque. C'est <strong>très lent</strong> : les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> deviennent très lentes</td>
+</tr>
+</tbody>
+</table>
+<p>Dans Workstation, le plafond de mémoire de toutes les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> se règle dans <strong>Edit &gt; Preferences &gt; Memory</strong> :</p>
+<ul>
+<li><strong>Reserved memory</strong> : la mémoire de l'hôte que les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> peuvent utiliser au total (un plafond, pas une réservation à l'avance) ;</li>
+<li><strong>Fit all virtual machine memory into reserved host RAM</strong> : refuse de démarrer une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> si la mémoire de toutes les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> allumées ne tient pas dans ce plafond (pas de surallocation) ;</li>
+<li><strong>Allow some virtual machine memory to be swapped</strong> ou <strong>Allow most virtual machine memory to be swapped</strong> : autorise la surallocation, une partie de la mémoire des <abbr title="Virtual Machine — machine virtuelle">VM</abbr> pouvant alors partir sur le disque.</li>
+</ul>
+<h3 id="33-tp-observer-la-memoire-de-la-vm">3.3 TP : observer la mémoire de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr><a class="headerlink" href="#33-tp-observer-la-memoire-de-la-vm" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>🐧 Dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, afficher la mémoire :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>free<span class="w"> </span>-h
+</code></pre></div>
+<p>La ligne <code>Mem:</code> affiche un <strong>total</strong> un peu inférieur aux 2 Go attribués : le noyau Linux en réserve une petite partie pour lui-même. La ligne <code>Échange:</code> (<em>swap</em>) montre l'<strong>espace d'échange</strong> que l'installateur de Debian a créé sur le disque.</p>
+</li>
+<li>
+<p>🖥️ Dans le Gestionnaire des tâches, onglet <strong>Performances &gt; Mémoire</strong>, noter la mémoire <strong>En cours d'utilisation</strong> du PC.</p>
+</li>
+<li>
+<p>🐧 Occuper 1,5 Go de mémoire pendant 60 secondes :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>stress-ng<span class="w"> </span>--vm<span class="w"> </span><span class="m">1</span><span class="w"> </span>--vm-bytes<span class="w"> </span>1500M<span class="w"> </span>--vm-keep<span class="w"> </span>-t<span class="w"> </span>60s<span class="w"> </span><span class="p">&amp;</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>free<span class="w"> </span>-h
+</code></pre></div>
+<p>Le <code>&amp;</code> lance la commande en arrière-plan, ce qui permet de taper <code>free -h</code> pendant le test.</p>
+</li>
+<li>
+<p>🖥️ Pendant le test, regarder de nouveau la mémoire <strong>En cours d'utilisation</strong> de Windows, puis encore une fois <strong>après</strong> la fin du test.</p>
+</li>
+</ol>
+<h3 id="34-exercice-que-se-passe-t-il-quand-la-memoire-manque">3.4 ✍️ Exercice : que se passe-t-il quand la mémoire manque ?<a class="headerlink" href="#34-exercice-que-se-passe-t-il-quand-la-memoire-manque" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🐧 Éteindre la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<code>sudo poweroff</code>). 🖥️ Dans <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Settings &gt; Memory</strong>, attribuer <strong>512 Mo</strong>, puis démarrer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</li>
+<li>
+<p>🐧 Demander <strong>700 Mo</strong> de mémoire, plus que la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> n'en a, tout en observant la mémoire chaque seconde :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>stress-ng<span class="w"> </span>--vm<span class="w"> </span><span class="m">1</span><span class="w"> </span>--vm-bytes<span class="w"> </span>700M<span class="w"> </span>--vm-keep<span class="w"> </span>-t<span class="w"> </span>30s<span class="w"> </span><span class="p">&amp;</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>vmstat<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">20</span>
+</code></pre></div>
+</li>
+<li>
+<p>Observer les colonnes <code>swpd</code> (mémoire placée sur le disque), <code>si</code> et <code>so</code> (données qui entrent et sortent de l'espace d'échange chaque seconde), puis lire les messages du noyau :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sudo<span class="w"> </span>dmesg<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>-E<span class="w"> </span><span class="s2">"out of memory|killed process"</span>
+</code></pre></div>
+</li>
+<li>
+<p>🐧 Éteindre la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : <code>sudo poweroff</code>.</p>
+</li>
+<li>🖥️ Remettre la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> à <strong>2 Go</strong> de mémoire dans <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Settings &gt; Memory</strong>.</li>
+</ol>
+<p>Que s'est-il passé ? Pourquoi la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> est-elle devenue lente ? Qu'aurait-il pu se passer sans espace d'échange ?</p>
+<details class="success">
+<summary>Corrigé</summary>
+<ul>
+<li>Avec 512 Mo, le système invité manque de mémoire : il déplace une partie de son contenu dans son <strong>espace d'échange</strong> (les colonnes <code>swpd</code>, <code>si</code> et <code>so</code> augmentent). Le disque étant des milliers de fois plus lent que la mémoire, <strong>toute la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ralentit</strong>.</li>
+<li>
+<p>Si la mémoire et l'espace d'échange ne suffisent plus, le noyau Linux déclenche le <strong>tueur de processus</strong> (<em><abbr title="Out Of Memory — mémoire épuisée">OOM</abbr> killer</em>, pour <em>Out Of Memory</em>) : il arrête de force le programme qui consomme le plus. Sur une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> sans espace d'échange, <code>dmesg</code> affiche alors un message comme :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Out of memory: Killed process 700 (stress-ng-vm) total-vm:524336kB, anon-rss:371540kB, ...
+</code></pre></div>
+</li>
+<li>
+<p>Leçon pour la production : une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> <strong>sous-dimensionnée</strong> en mémoire devient lente ou perd des processus. Une <strong>surallocation</strong> trop forte sur l'hôte provoque le même effet, mais pour <strong>toutes</strong> les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> à la fois. On surveille donc la mémoire de l'hôte et des <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, et on garde une marge.</p>
+</li>
+</ul>
+</details>
+<h2 id="4-le-disque">4. Le disque<a class="headerlink" href="#4-le-disque" title="Permanent link">&para;</a></h2>
+<h3 id="41-disque-dynamique-ou-prealloue">4.1 Disque dynamique ou préalloué<a class="headerlink" href="#41-disque-dynamique-ou-prealloue" title="Permanent link">&para;</a></h3>
+<figure>
+<p><img alt="Un disque virtuel de 20 Go contenant 2 Go : en mode dynamique, il occupe 2 Go sur l'hôte ; en mode préalloué, il occupe 20 Go tout de suite." loading="lazy" src="../images/schema-disque-fin-epais.svg" /></p>
+<figcaption>
+<p>La <abbr title="Virtual Machine — machine virtuelle">VM</abbr> voit la même chose dans les deux cas ; seule la place occupée sur l'hôte change.</p>
+</figcaption>
+</figure>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Disque <strong>dynamique</strong> (<em>thin</em>, fin)</th>
+<th>Disque <strong>préalloué</strong> (<em>thick</em>, épais)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dans Workstation</td>
+<td>Par défaut</td>
+<td>Case <strong>Allocate all disk space now</strong> (<em>allouer tout l'espace disque maintenant</em>), en configuration <strong>Custom</strong></td>
+</tr>
+<tr>
+<td>Place sur l'hôte</td>
+<td>Ce qui a été réellement écrit</td>
+<td>La taille totale, tout de suite</td>
+</tr>
+<tr>
+<td>Création</td>
+<td>Instantanée</td>
+<td>Longue (il faut écrire toute la taille)</td>
+</tr>
+<tr>
+<td>Surallocation</td>
+<td>Possible : la somme des tailles peut dépasser le disque de l'hôte</td>
+<td>Impossible</td>
+</tr>
+<tr>
+<td>Risque</td>
+<td>Si le disque de l'hôte se remplit, <strong>toutes</strong> les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> qui veulent écrire sont mises en pause</td>
+<td>Aucun pour l'espace, mais gaspillage de place</td>
+</tr>
+</tbody>
+</table>
+<p>Workstation propose aussi de <strong>découper</strong> le disque en plusieurs fichiers d'au plus 2 Go (<strong>Split virtual disk into multiple files</strong>, choix par défaut) ou de le garder en <strong>un seul fichier</strong>. Le découpage facilite la copie sur une clé USB formatée en <abbr title="système de fichiers ancien, limité à des fichiers de 4 Go">FAT32</abbr> ; le fichier unique est un peu plus simple à manipuler.</p>
+<h3 id="42-tp-regarder-le-disque-grandir">4.2 TP : regarder le disque grandir<a class="headerlink" href="#42-tp-regarder-le-disque-grandir" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🖥️ Démarrer <code>debian-tp</code> et se connecter en <code>tssr</code>.</li>
+<li>🖥️ Dans l'Explorateur de fichiers, ouvrir le dossier de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<code>C:\VM\debian-tp</code>) et noter la <strong>taille</strong> des fichiers <code>.vmdk</code> (sélectionner tous les <code>.vmdk</code>, puis clic droit &gt; <strong>Propriétés</strong>).</li>
+<li>
+<p>🐧 Afficher la place occupée <strong>dans</strong> la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>df<span class="w"> </span>-h<span class="w"> </span>/
+</code></pre></div>
+</li>
+<li>
+<p>🐧 Écrire un fichier de 2 Go rempli de données aléatoires :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>dd<span class="w"> </span><span class="k">if</span><span class="o">=</span>/dev/urandom<span class="w"> </span><span class="nv">of</span><span class="o">=</span>~/gros-fichier<span class="w"> </span><span class="nv">bs</span><span class="o">=</span>1M<span class="w"> </span><span class="nv">count</span><span class="o">=</span><span class="m">2048</span><span class="w"> </span><span class="nv">status</span><span class="o">=</span>progress
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>sync
+</code></pre></div>
+</li>
+<li>
+<p>🖥️ Regarder de nouveau la taille des <code>.vmdk</code> : elle a <strong>augmenté d'environ 2 Go</strong>.</p>
+</li>
+<li>
+<p>🐧 Supprimer le fichier, puis vérifier dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> que la place est libérée :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>rm<span class="w"> </span>~/gros-fichier
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>df<span class="w"> </span>-h<span class="w"> </span>/
+</code></pre></div>
+</li>
+<li>
+<p>🖥️ Regarder la taille des <code>.vmdk</code> : elle <strong>n'a pas diminué</strong>.</p>
+</li>
+</ol>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi le disque ne rétrécit-il pas ?</p>
+<p>Quand on supprime un fichier, le système invité note simplement que ses blocs sont <strong>libres</strong> ; il ne prévient pas l'hyperviseur. Pour l'hyperviseur, ces blocs ont été écrits un jour, il les garde. Mesure faite sur un hôte <abbr title="Kernel-based Virtual Machine — hyperviseur intégré au noyau Linux">KVM</abbr> avec un disque dynamique de 20 Go : 2,7 Go occupés sur l'hôte → 4,6 Go après l'écriture de 2 Gio → <strong>toujours 4,6 Go</strong> après la suppression du fichier.</p>
+<p>Pour récupérer la place, on <strong>réduit</strong> (<em>shrink</em>) le disque. Dans une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> Linux, les outils open-vm-tools le font en une commande, à lancer <strong>avant</strong> de prendre des instantanés :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>sudo<span class="w"> </span>vmware-toolbox-cmd<span class="w"> </span>disk<span class="w"> </span>shrink<span class="w"> </span>/
+</code></pre></div>
+<p>La commande remplit d'abord l'espace libre de zéros, puis Workstation compacte le fichier. D'après Broadcom, la réduction est <strong>impossible</strong> sur un disque <strong>préalloué</strong> et sur un disque qui a des <strong>instantanés</strong> (il faut d'abord les supprimer). Dans ce TP, <code>debian-tp</code> a déjà l'instantané <code>01-installation-terminee</code> : on ne réduit donc pas son disque maintenant, il suffit de retenir la méthode.</p>
+</div>
+<h2 id="5-les-instantanes">5. Les instantanés<a class="headerlink" href="#5-les-instantanes" title="Permanent link">&para;</a></h2>
+<h3 id="51-comment-ca-marche">5.1 Comment ça marche<a class="headerlink" href="#51-comment-ca-marche" title="Permanent link">&para;</a></h3>
+<p>Un <strong>instantané</strong> (<em>snapshot</em>) enregistre l'état d'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> à un instant donné : le contenu de ses disques, ses paramètres et, si elle est allumée, le contenu de sa mémoire. On peut ensuite <strong>revenir</strong> à cet état en quelques secondes.</p>
+<figure>
+<p><img alt="Au moment de l'instantané, le disque debian-tp.vmdk est figé ; un disque différentiel debian-tp-000001.vmdk reçoit les nouvelles écritures. Plus bas : le clone lié s'appuie sur le disque figé de l'original, le clone complet en est une copie indépendante." loading="lazy" src="../images/schema-instantanes-clones.svg" /></p>
+<figcaption>
+<p>Un instantané ne copie rien : il fige le disque et écrit les changements à côté. Le clone lié repose sur le même principe.</p>
+</figcaption>
+</figure>
+<p>Au moment de l'instantané, Workstation <strong>fige</strong> le disque de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, qui passe en lecture seule, et crée un <strong>disque différentiel</strong> (un fichier comme <code>debian-tp-000001.vmdk</code>) qui reçoit toutes les écritures suivantes. <strong>Revenir</strong> à l'instantané revient à jeter ce disque différentiel. Si la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> était allumée, l'état de sa mémoire est enregistré dans un fichier <code>.vmem</code> et l'état de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> dans un fichier <code>.vmsn</code> ; le fichier <code>.vmsd</code> tient la liste des instantanés.</p>
+<div class="admonition danger">
+<p class="admonition-title">Un instantané n'est PAS une sauvegarde</p>
+<ul>
+<li>Il est stocké <strong>dans le dossier de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong>, sur le <strong>même disque</strong> : une panne de disque, un vol du PC ou un rançongiciel l'emportent avec la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</li>
+<li>Il <strong>dépend</strong> du disque d'origine : sans le disque figé, le disque différentiel est inutilisable.</li>
+<li>Plus il vit longtemps, plus le disque différentiel <strong>grossit</strong>, et plus la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> <strong>ralentit</strong> (elle doit lire dans plusieurs fichiers).</li>
+</ul>
+<p>Bonnes pratiques : prendre un instantané <strong>avant</strong> une opération risquée (mise à jour, changement de configuration), vérifier que tout fonctionne, puis le <strong>supprimer</strong> dans les jours qui suivent. Ne jamais toucher aux fichiers <code>.vmdk</code> à la main.</p>
+</div>
+<h3 id="52-tp-casser-sa-vm-expres-et-la-reparer">5.2 TP : casser sa <abbr title="Virtual Machine — machine virtuelle">VM</abbr> exprès… et la réparer<a class="headerlink" href="#52-tp-casser-sa-vm-expres-et-la-reparer" title="Permanent link">&para;</a></h3>
+<p>On va faire ce qu'il ne faut <strong>jamais</strong> faire sur un vrai serveur : effacer tout le système. Grâce à un instantané, la réparation prend quelques secondes.</p>
+<ol>
+<li>🐧 Éteindre la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : <code>sudo poweroff</code>.</li>
+<li>🖥️ Vérifier que les <strong>dossiers partagés</strong> sont désactivés : <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Settings &gt; Options &gt; Shared Folders</strong> doit être sur <strong>Disabled</strong>, le réglage par défaut. Sinon, la commande destructrice pourrait aussi effacer des fichiers du PC.</li>
+<li>🛟 🖥️ <abbr title="Virtual Machine — machine virtuelle">VM</abbr> <strong>éteinte</strong>, prendre un instantané : <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Snapshot &gt; Take Snapshot</strong>, nom <code>02-outils-installes</code>, description « avant l'erreur volontaire ». Il servira aussi de base aux clones de la <a href="#6-les-clones">section 6</a> : Workstation ne clone qu'à partir d'un instantané pris <abbr title="Virtual Machine — machine virtuelle">VM</abbr> éteinte.</li>
+<li>🖥️ Regarder le dossier de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : un nouveau disque différentiel <code>debian-tp-000002.vmdk</code> (ou plusieurs fichiers <code>-000002-s001.vmdk</code>…) et un fichier <code>.vmsn</code> sont apparus.</li>
+<li>🖥️ Ouvrir <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Snapshot &gt; Snapshot Manager</strong> et vérifier que <code>02-outils-installes</code> apparaît bien. <strong>Ne pas continuer sans cet instantané.</strong></li>
+<li>🖥️ Démarrer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> et se connecter en <code>tssr</code> <strong>dans la console de Workstation</strong>.</li>
+<li>
+<p>🐧 Créer un fichier témoin :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"version 1"</span><span class="w"> </span>&gt;<span class="w"> </span>~/important.txt
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>cat<span class="w"> </span>~/important.txt
+</code></pre></div>
+</li>
+<li>
+<p>🐧 Effacer <strong>tout</strong> le système. La première partie de la commande vérifie le nom de la machine : si l'on n'est pas dans <code>debian-tp</code>, rien n'est effacé.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>hostname<span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"debian-tp"</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>--no-preserve-root<span class="w"> </span>/
+</code></pre></div>
+<p>Les messages d'erreur défilent. Taper ensuite <code>ls</code> ou <code>whoami</code> : la réponse est <code>commande introuvable</code> (ou <code>command not found</code>), les commandes elles-mêmes ont été effacées.</p>
+<div class="admonition danger">
+<p class="admonition-title">Uniquement dans la console de <code>debian-tp</code></p>
+<p>Cette commande se tape <strong>dans la console Workstation de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> <code>debian-tp</code></strong>, jamais dans un terminal <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr>, dans WSL, ni sur une autre machine Linux. Sur un vrai serveur, elle détruirait tout, sans retour possible.</p>
+</div>
+</li>
+<li>
+<p>🖥️ Redémarrer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> de force : <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Power &gt; Reset</strong>. La <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ne démarre plus. Avec un micrologiciel <abbr title="Basic Input/Output System — micrologiciel de démarrage">BIOS</abbr> (réglé en <a href="../03-creer-sa-premiere-vm/#2-creer-la-vm-avec-lassistant">partie 3</a>), elle s'arrête sur l'invite de secours de GRUB, le programme de démarrage :</p>
+<figure>
+<p><img alt="Écran noir de la VM après redémarrage : GRUB affiche « error: file '/boot/grub/i386-pc/normal.mod' not found » puis l'invite grub rescue" loading="lazy" src="../images/04-vm-cassee-grub-rescue.png" /></p>
+<figcaption>
+<p>Le système a été effacé : le chargeur de démarrage ne trouve plus ses fichiers</p>
+</figcaption>
+</figure>
+</li>
+<li>
+<p>🖥️ Revenir à l'instantané : <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Snapshot &gt; Revert to Snapshot: 02-outils-installes</strong>, puis confirmer. La <abbr title="Virtual Machine — machine virtuelle">VM</abbr> revient <strong>exactement</strong> à l'état de l'instantané : éteinte, avec tout son système.</p>
+</li>
+<li>🖥️ Démarrer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> et se connecter en <code>tssr</code>.</li>
+<li>
+<p>🐧 Vérifier :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>cat<span class="w"> </span>~/important.txt
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>ls<span class="w"> </span>/usr/share/doc<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+</code></pre></div>
+</li>
+</ol>
+<div class="admonition success">
+<p class="admonition-title">Vérifier son lab</p>
+<ul>
+<li><code>cat ~/important.txt</code> répond <code>Aucun fichier ou dossier de ce nom</code> : c'est <strong>normal</strong>, le fichier a été créé <strong>après</strong> l'instantané. Tout ce qui a été fait après l'instantané est perdu, le bon comme le mauvais.</li>
+<li><code>ls /usr/share/doc | wc -l</code> affiche plusieurs centaines de dossiers : le système est revenu en entier.</li>
+<li>Le retour à un instantané ne prend que <strong>quelques secondes</strong> : rien n'est recopié, l'hyperviseur jette simplement le disque différentiel.</li>
+</ul>
+</div>
+<details class="question">
+<summary>Et si l'on avait créé <code>important.txt</code> avant l'instantané ?</summary>
+<p>Il serait revenu avec le reste. C'est tout l'enjeu du <strong>moment</strong> où l'on prend l'instantané : juste <strong>avant</strong> l'opération risquée, et pas une heure avant, sinon on perd tout le travail de l'heure.</p>
+</details>
+<h3 id="53-le-gestionnaire-dinstantanes">5.3 Le gestionnaire d'instantanés<a class="headerlink" href="#53-le-gestionnaire-dinstantanes" title="Permanent link">&para;</a></h3>
+<p>🖥️ Ouvrir <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Snapshot &gt; Snapshot Manager</strong> (<em>Gestionnaire d'instantanés</em>). Il affiche l'<strong>arbre</strong> des instantanés de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : <code>01-installation-terminee</code>, puis <code>02-outils-installes</code>, puis l'état actuel (<strong>You Are Here</strong>, <em>vous êtes ici</em>). On peut y prendre, supprimer, cloner un instantané ou y revenir (<strong>Go To</strong>).</p>
+<div class="admonition info">
+<p class="admonition-title">Supprimer un instantané ne supprime pas les données de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr></p>
+<p><strong>Supprimer</strong> un instantané (<strong>Delete</strong>) ne fait pas revenir la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> en arrière : Workstation <strong>fusionne</strong> le disque différentiel avec le disque figé, et la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> garde son état actuel. On perd seulement la <strong>possibilité</strong> de revenir à ce point.</p>
+</div>
+<h2 id="6-les-clones">6. Les clones<a class="headerlink" href="#6-les-clones" title="Permanent link">&para;</a></h2>
+<h3 id="61-clone-lie-ou-clone-complet">6.1 Clone lié ou clone complet<a class="headerlink" href="#61-clone-lie-ou-clone-complet" title="Permanent link">&para;</a></h3>
+<p><strong>Cloner</strong> une <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, c'est en créer une <strong>copie</strong> qui démarre comme une nouvelle machine. Workstation propose deux sortes de clones (voir le schéma de la <a href="#51-comment-ca-marche">section 5.1</a>) :</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Clone <strong>lié</strong> (<em>linked clone</em>)</th>
+<th>Clone <strong>complet</strong> (<em>full clone</em>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Principe</td>
+<td>Partage le disque figé de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> d'origine, n'enregistre que ses différences</td>
+<td>Copie intégrale et indépendante</td>
+</tr>
+<tr>
+<td>Création</td>
+<td>Quelques secondes</td>
+<td>Le temps de copier tout le disque</td>
+</tr>
+<tr>
+<td>Place</td>
+<td>Quelques Mo au départ</td>
+<td>Autant que l'original</td>
+</tr>
+<tr>
+<td>Dépendance</td>
+<td>Ne fonctionne <strong>plus</strong> si l'original (ou son instantané) est supprimé ou déplacé</td>
+<td>Aucune</td>
+</tr>
+<tr>
+<td>Usage</td>
+<td>Labs, formations, tests jetables</td>
+<td>Machine durable, à déplacer ou à donner</td>
+</tr>
+</tbody>
+</table>
+<p>Mesure sur un hôte <abbr title="Kernel-based Virtual Machine — hyperviseur intégré au noyau Linux">KVM</abbr>, à partir d'un disque Debian 13 de 327 Mo (compressé) : le clone lié est créé en 0,05 s et occupe 196 Ko ; le clone complet prend 3,3 s et occupe 961 Mo.</p>
+<h3 id="62-tp-creer-un-clone-lie-et-un-clone-complet">6.2 TP : créer un clone lié et un clone complet<a class="headerlink" href="#62-tp-creer-un-clone-lie-et-un-clone-complet" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🐧 Éteindre <code>debian-tp</code> (<code>sudo poweroff</code>). Un clone se crée <abbr title="Virtual Machine — machine virtuelle">VM</abbr> <strong>éteinte</strong>.</li>
+<li>🖥️ Ouvrir <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Manage &gt; Clone</strong> (<em><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Gérer &gt; Cloner</em>). L'assistant <strong>Clone Virtual Machine Wizard</strong> s'ouvre ; cliquer sur <strong>Next</strong>.</li>
+<li><strong>Clone Source</strong> (<em>source du clone</em>) : choisir <strong>An existing snapshot</strong> (<em>un instantané existant</em>) et sélectionner <code>02-outils-installes</code>, puis <strong>Next</strong>.</li>
+<li><strong>Clone Type</strong> (<em>type de clone</em>) : choisir <strong>Create a linked clone</strong> (<em>créer un clone lié</em>), puis <strong>Next</strong>.</li>
+<li><strong>Name of the New Virtual Machine</strong> : nom <code>debian-clone-lie</code>, emplacement <code>C:\VM\debian-clone-lie</code>, puis <strong>Finish</strong>. La création est quasi instantanée ; cliquer sur <strong>Close</strong>.</li>
+<li>🖥️ Recommencer depuis <code>debian-tp</code> avec <strong>Create a full clone</strong> (<em>créer un clone complet</em>), nom <code>debian-clone-complet</code>, emplacement <code>C:\VM\debian-clone-complet</code>. Cette fois, une barre de progression s'affiche pendant la copie.</li>
+<li>🖥️ Les clones héritent des réglages de <code>debian-tp</code>. Pour économiser la mémoire du PC, ouvrir <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Settings</strong> de chaque clone et régler <strong>Processors</strong> sur 1 × 1 et <strong>Memory</strong> sur <strong>1 Go</strong>.</li>
+<li>🖥️ Dans l'Explorateur, comparer la taille des trois dossiers <code>debian-tp</code>, <code>debian-clone-lie</code> et <code>debian-clone-complet</code>.</li>
+</ol>
+<h3 id="63-donner-une-identite-propre-au-clone">6.3 Donner une identité propre au clone<a class="headerlink" href="#63-donner-une-identite-propre-au-clone" title="Permanent link">&para;</a></h3>
+<p>Un clone est une <strong>copie parfaite</strong> : même nom de machine, même identifiant de machine, mêmes clés <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr>, même identifiant auprès du serveur <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr>. Workstation génère une <strong>nouvelle adresse <abbr title="Media Access Control — adresse physique d'une carte réseau">MAC</abbr></strong> pour la carte réseau du clone, mais le reste doit être changé à la main, sinon deux machines se présentent sous la même identité sur le réseau.</p>
+<ol>
+<li>🖥️ Démarrer <code>debian-clone-lie</code> et se connecter en <code>tssr</code>. 🐧 Le nom affiché est toujours <code>debian-tp</code>.</li>
+<li>
+<p>🐧 Changer le nom de la machine :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>sudo<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">'s/debian-tp/debian-clone-lie/g'</span><span class="w"> </span>/etc/hosts
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>sudo<span class="w"> </span>hostnamectl<span class="w"> </span>set-hostname<span class="w"> </span>debian-clone-lie
+</code></pre></div>
+</li>
+<li>
+<p>🐧 Générer un nouvel <strong>identifiant de machine</strong> (utilisé par systemd, les journaux et certains logiciels pour reconnaître la machine). Debian en garde une <strong>copie</strong> dans <code>/var/lib/dbus/machine-id</code> : il faut l'effacer aussi, sinon l'ancien identifiant est simplement recopié :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>sudo<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>/etc/machine-id<span class="w"> </span>/var/lib/dbus/machine-id
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>sudo<span class="w"> </span>systemd-machine-id-setup
+</code></pre></div>
+</li>
+<li>
+<p>🐧 Générer de nouvelles <strong>clés <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> d'hôte</strong> (sinon les deux machines ont la même « empreinte » pour les clients <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr>) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>sudo<span class="w"> </span>rm<span class="w"> </span>/etc/ssh/ssh_host_*
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>sudo<span class="w"> </span>dpkg-reconfigure<span class="w"> </span>openssh-server
+</code></pre></div>
+</li>
+<li>
+<p>🐧 Effacer l'<strong>identifiant <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr></strong> du client <code>dhcpcd</code>, utilisé par Debian 13 pour demander son adresse <abbr title="Internet Protocol — adresse d'une machine sur le réseau">IP</abbr>. Il est recréé automatiquement au prochain démarrage, propre au clone :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>sudo<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>/var/lib/dhcpcd/duid<span class="w"> </span>/var/lib/dhcpcd/*.lease
+</code></pre></div>
+</li>
+<li>
+<p>🐧 Redémarrer (<code>sudo reboot</code>), se reconnecter, puis vérifier :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>hostnamectl
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>cat<span class="w"> </span>/etc/machine-id
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>ip<span class="w"> </span>-4<span class="w"> </span>a
+</code></pre></div>
+</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Connexion <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> : « REMOTE HOST IDENTIFICATION HAS CHANGED »</p>
+<p>Si l'on s'était déjà connecté en <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> à la même adresse <abbr title="Internet Protocol — adresse d'une machine sur le réseau">IP</abbr> avant de changer les clés, le client <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> refuse la connexion avec ce message d'alerte : l'empreinte de la machine a changé, ce qui pourrait signaler une usurpation. Ici, c'est normal : on vient de régénérer les clés. Effacer l'ancienne empreinte sur le PC (PowerShell), puis se reconnecter :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="n">ssh-keygen</span> <span class="n">-R</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">y</span>
+</code></pre></div>
+</div>
+<div class="admonition info">
+<p class="admonition-title">Sous Windows : Sysprep</p>
+<p>Sous Windows, le même problème se règle avec l'outil <strong>Sysprep</strong> (<code>C:\Windows\System32\Sysprep\sysprep.exe</code>, option <strong>Généraliser</strong>), qui efface l'identité de la machine avant de la cloner. C'est indispensable avant de joindre des clones à un domaine Active Directory.</p>
+</div>
+<div class="admonition success">
+<p class="admonition-title">Vérifier son lab</p>
+<ul>
+<li>Le dossier <code>debian-clone-lie</code> ne pèse que <strong>quelques dizaines de Mo</strong> ; le dossier <code>debian-clone-complet</code> pèse <strong>quelques Go</strong> (une copie du disque à l'état de l'instantané) ; <code>debian-tp</code> pèse davantage, car il garde aussi ses disques différentiels d'instantanés.</li>
+<li>Dans le clone, <code>hostnamectl</code> affiche <code>Static hostname: debian-clone-lie</code>, et l'identifiant de <code>cat /etc/machine-id</code> est <strong>différent</strong> de celui de <code>debian-tp</code>.</li>
+<li><code>ip -4 a</code> affiche une adresse en <code>192.168.x.128</code> ou au-dessus, <strong>différente</strong> de celle de <code>debian-tp</code>.</li>
+</ul>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Ne pas supprimer debian-tp</p>
+<p>Le clone lié <strong>dépend</strong> de <code>debian-tp</code> et de son instantané <code>02-outils-installes</code>. Supprimer <code>debian-tp</code>, le déplacer ou supprimer cet instantané rendrait <code>debian-clone-lie</code> inutilisable.</p>
+</div>
+<h2 id="7-defi-du-jour-1">7. Défi du jour 1<a class="headerlink" href="#7-defi-du-jour-1" title="Permanent link">&para;</a></h2>
+<div class="admonition example">
+<p class="admonition-title">Mise en situation</p>
+<p>Le responsable informatique de <em>Bureautix</em> doit tester une mise à jour risquée sur deux serveurs Linux avant de la faire en production. Il demande un <strong>environnement de test jetable</strong>, construit à partir de <code>debian-tp</code>, et une <strong>fiche de documentation</strong>.</p>
+<p>Sans pas-à-pas, réaliser :</p>
+<ol>
+<li>deux clones <strong>liés</strong> de <code>debian-tp</code> nommés <code>test-web</code> et <code>test-bdd</code>, chacun avec <strong>1 <abbr title="processeur virtuel">vCPU</abbr></strong> et <strong>768 Mo</strong> de mémoire, et une identité propre (nom, identifiant de machine, clés <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> et identifiant <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr>) ;</li>
+<li>la preuve que les deux machines <strong>se voient</strong> sur le réseau (avec <code>ping</code>, en utilisant leurs adresses <abbr title="Internet Protocol — adresse d'une machine sur le réseau">IP</abbr>) ;</li>
+<li>sur <code>test-web</code>, un instantané <code>avant-maj</code>, puis la mise à jour complète du système (<code>sudo apt update &amp;&amp; sudo apt full-upgrade -y</code>), puis le <strong>retour</strong> à l'instantané, comme si la mise à jour avait échoué ;</li>
+<li>le calcul de la <strong>place totale</strong> occupée sur le PC par <code>debian-tp</code>, <code>test-web</code> et <code>test-bdd</code>, avec une explication en deux phrases ;</li>
+<li>une <strong>fiche de documentation</strong> des deux machines de test : nom, rôle, <abbr title="processeur virtuel">vCPU</abbr>, mémoire, taille du disque, réseau, adresse <abbr title="Internet Protocol — adresse d'une machine sur le réseau">IP</abbr>, instantanés, <abbr title="Virtual Machine — machine virtuelle">VM</abbr> dont elles dépendent.</li>
+</ol>
+<p>Temps conseillé : 45 minutes.</p>
+</div>
+<details class="success">
+<summary>Corrigé</summary>
+<ol>
+<li>Pour chaque clone : <code>debian-tp</code> éteinte, <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Manage &gt; Clone</strong>, source <strong>An existing snapshot</strong> (<code>02-outils-installes</code>), <strong>Create a linked clone</strong>, nom <code>test-web</code> (puis <code>test-bdd</code>). Dans <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Settings</strong> du clone : <strong>Processors</strong> à 1 × 1, <strong>Memory</strong> à 768 Mo. Démarrer le clone, puis appliquer les commandes de la <a href="#63-donner-une-identite-propre-au-clone">section 6.3</a> avec le bon nom (<code>sudo hostnamectl set-hostname test-web</code>, <code>/etc/hosts</code>, <code>machine-id</code>, clés <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr>, identifiant <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr>) et redémarrer.</li>
+<li>Sur chaque clone, <code>ip -4 a</code> donne l'adresse (deux adresses différentes en <code>192.168.x.128</code> ou au-dessus). Depuis <code>test-web</code> : <code>ping -c 4 &lt;adresse de test-bdd&gt;</code> répond, car les deux <abbr title="Virtual Machine — machine virtuelle">VM</abbr> sont branchées sur le même commutateur virtuel <strong>VMnet8</strong>.</li>
+<li>Sur <code>test-web</code> : <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Snapshot &gt; Take Snapshot</strong> (<code>avant-maj</code>), puis <code>sudo apt update &amp;&amp; sudo apt full-upgrade -y</code>, puis <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Snapshot &gt; Revert to Snapshot: avant-maj</strong>. Les paquets mis à jour sont revenus à leur version d'avant ; <code>apt list --upgradable</code> peut de nouveau les afficher « en attente », ou n'afficher rien si la liste des paquets de l'instantané n'était pas encore à jour.</li>
+<li><code>debian-tp</code> pèse quelques gigaoctets (le système installé, plus le fichier de 2 Go écrit puis effacé en section 4.2, que le disque dynamique n'a pas rendu) ; chaque clone lié ne pèse que <strong>quelques dizaines à quelques centaines de Mo</strong> (ses fichiers de configuration, ses journaux et les blocs modifiés depuis le clonage, dont les fichiers de la mise à jour si on ne l'a pas annulée). Explication : les clones liés <strong>partagent</strong> le disque figé de <code>debian-tp</code> et n'enregistrent que leurs <strong>différences</strong> ; c'est ce qui permet de monter vite un lab de plusieurs machines sans remplir le disque du PC.</li>
+<li>
+<p>Exemple de fiche :</p>
+<table>
+<thead>
+<tr>
+<th>Nom</th>
+<th>Rôle</th>
+<th><abbr title="processeur virtuel">vCPU</abbr></th>
+<th>Mémoire</th>
+<th>Disque</th>
+<th>Réseau</th>
+<th><abbr title="Internet Protocol — adresse d'une machine sur le réseau">IP</abbr></th>
+<th>Instantanés</th>
+<th>Dépend de</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>test-web</code></td>
+<td>Test de mise à jour, serveur web</td>
+<td>1</td>
+<td>768 Mo</td>
+<td>20 Go dynamique, clone lié</td>
+<td>VMnet8 (NAT)</td>
+<td><code>192.168.x.1xx</code> (<abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr>)</td>
+<td><code>avant-maj</code></td>
+<td><code>debian-tp</code>, instantané <code>02-outils-installes</code></td>
+</tr>
+<tr>
+<td><code>test-bdd</code></td>
+<td>Test de mise à jour, base de données</td>
+<td>1</td>
+<td>768 Mo</td>
+<td>20 Go dynamique, clone lié</td>
+<td>VMnet8 (NAT)</td>
+<td><code>192.168.x.1xx</code> (<abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr>)</td>
+<td>aucun</td>
+<td><code>debian-tp</code>, instantané <code>02-outils-installes</code></td>
+</tr>
+</tbody>
+</table>
+<p>La colonne <strong>Dépend de</strong> est la plus importante : elle évite qu'un collègue supprime <code>debian-tp</code> en pensant faire du ménage.</p>
+</li>
+</ol>
+</details>
+<h2 id="8-questions-de-revision">8. Questions de révision<a class="headerlink" href="#8-questions-de-revision" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> a 4 <abbr title="processeur virtuel">vCPU</abbr> sur un hôte de 4 processeurs logiques déjà chargé par d'autres <abbr title="Virtual Machine — machine virtuelle">VM</abbr>. Pourquoi peut-elle être <strong>plus lente</strong> qu'avec 2 <abbr title="processeur virtuel">vCPU</abbr> ?</li>
+<li>Qu'est-ce que la <strong>surallocation</strong> de la mémoire ? Citer deux techniques qu'utilise l'hyperviseur quand la mémoire vient à manquer.</li>
+<li>Un disque dynamique de 40 Go contient 10 Go de données ; on efface 5 Go de fichiers dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>. Quelle place occupe-t-il sur l'hôte ? Comment récupérer de la place ?</li>
+<li>Pourquoi un instantané n'est-il pas une sauvegarde ? Donner deux raisons.</li>
+<li>Quelle est la différence entre un clone lié et un clone complet ? Dans quel cas choisir l'un ou l'autre ?</li>
+<li>Après avoir cloné une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> Linux, quels éléments faut-il changer pour lui donner une identité propre ? Et sous Windows ?</li>
+</ol>
+<details class="success">
+<summary>Corrigé</summary>
+<ol>
+<li>Chacun de ses 4 <abbr title="processeur virtuel">vCPU</abbr> est un fil d'exécution qui attend son tour sur les processeurs logiques de l'hôte, en concurrence avec les <abbr title="processeur virtuel">vCPU</abbr> des autres <abbr title="Virtual Machine — machine virtuelle">VM</abbr> et avec l'hôte lui-même ; ses <abbr title="processeur virtuel">vCPU</abbr> doivent aussi se coordonner entre eux. Sur un hôte déjà chargé, elle passe plus de temps à attendre qu'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> à 2 <abbr title="processeur virtuel">vCPU</abbr>. On dimensionne au plus juste et on augmente après mesure.</li>
+<li>Attribuer aux <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, au total, <strong>plus de mémoire que l'hôte n'en possède</strong>, en pariant qu'elles ne l'utiliseront pas toutes en même temps. Techniques : le <strong>ballon</strong> (un pilote dans l'invité libère de la mémoire que l'hyperviseur récupère), le <strong>partage de pages</strong> identiques, la <strong>compression</strong>, l'<strong>échange sur disque</strong> (<em>swap</em>, le plus lent).</li>
+<li>Il occupe toujours <strong>environ 10 Go</strong> (voire un peu plus) : les blocs libérés dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ne sont pas rendus à l'hôte. Pour récupérer la place, on <strong>réduit</strong> le disque (<code>sudo vmware-toolbox-cmd disk shrink /</code> dans une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> Linux), à condition que le disque soit <strong>dynamique</strong> et n'ait <strong>pas d'instantané</strong>.</li>
+<li>Il est stocké <strong>au même endroit</strong> que la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (une panne du disque, un vol ou un rançongiciel l'emporte aussi) et il <strong>dépend</strong> du disque d'origine. Il ralentit aussi la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> et grossit avec le temps : il est fait pour durer quelques heures ou quelques jours, pas pour protéger des données.</li>
+<li>Le clone <strong>lié</strong> partage le disque figé de l'original et ne stocke que ses différences : création instantanée, très peu de place, mais <strong>dépendance</strong> à l'original. Le clone <strong>complet</strong> est une copie indépendante : plus long et plus volumineux, mais <strong>autonome</strong>. Lié pour un lab ou un test jetable ; complet pour une machine durable, à déplacer ou à livrer.</li>
+<li>Sous Linux : le <strong>nom de la machine</strong> (<code>hostnamectl</code>, <code>/etc/hosts</code>), l'<strong>identifiant de machine</strong> (<code>/etc/machine-id</code>), les <strong>clés <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> d'hôte</strong> et l'identifiant <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> (<code>/var/lib/dhcpcd/duid</code>) ; Workstation change déjà l'adresse <abbr title="Media Access Control — adresse physique d'une carte réseau">MAC</abbr>. Sous Windows : passer <strong>Sysprep</strong> en mode <strong>Généraliser</strong>, qui réinitialise l'identité de la machine (dont son identifiant de sécurité, le <abbr title="Security Identifier — identifiant de sécurité Windows">SID</abbr>) avant le clonage.</li>
+</ol>
+</details>
+<hr />
+<h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://techdocs.broadcom.com/us/en/vmware-cis/desktop-hypervisors/workstation-pro/26H1/using-vmware-workstation-pro/creating-virtual-machines-in-workstation-user-guide/virtual-machine-files.html">Broadcom — Fichiers d'une machine virtuelle (Workstation 26H1)</a> — rôle des fichiers <code>.vmx</code>, <code>.vmdk</code>, <code>.vmsd</code>, <code>.vmsn</code>, <code>.vmem</code> (en anglais).</li>
+<li><a href="https://knowledge.broadcom.com/external/article/315631/defragmenting-and-shrinking-vmware-works.html">Broadcom — Réduire un disque virtuel de Workstation</a> — conditions et procédure de réduction d'un disque (en anglais).</li>
+<li><a href="https://manpages.debian.org/trixie/stress-ng/stress-ng.1.en.html">Page de manuel de stress-ng</a> — toutes les options de l'outil de charge (en anglais).</li>
+<li>Partie précédente : <a href="../03-creer-sa-premiere-vm/">Créer sa première <abbr title="Virtual Machine — machine virtuelle">VM</abbr> Debian 13</a> · Partie suivante : Virtualiser des serveurs (jour 2), voir le <a href="../#plan-du-parcours">plan du parcours</a>.</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../03-creer-sa-premiere-vm/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 3. Créer sa première VM Debian 13">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                3. Créer sa première VM Debian 13
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../annexes/" class="md-footer__link md-footer__link--next" aria-label="Suivant: Annexes">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                Annexes
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      <a href="/mentions-legales/">Mentions légales</a>
+
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/bodaine" target="_blank" rel="noopener" title="Nicolas BODAINE sur LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://github.com/NicoBOD" target="_blank" rel="noopener" title="NicoBOD sur GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://nicolas.bodaine.fr" target="_blank" rel="noopener" title="Portfolio de Nicolas BODAINE" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="/feed_rss_created.xml" target="_blank" rel="noopener" title="Flux RSS des derniers articles" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 64c0-17.7 14.3-32 32-32 229.8 0 416 186.2 416 416 0 17.7-14.3 32-32 32s-32-14.3-32-32C384 253.6 226.4 96 32 96 14.3 96 0 81.7 0 64m0 352a64 64 0 1 1 128 0 64 64 0 1 1-128 0m32-256c159.1 0 288 128.9 288 288 0 17.7-14.3 32-32 32s-32-14.3-32-32c0-123.7-100.3-224-224-224-17.7 0-32-14.3-32-32s14.3-32 32-32"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.path", "navigation.indexes", "navigation.prune", "navigation.footer", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "content.action.view", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>
