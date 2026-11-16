@@ -1,0 +1,3793 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+      
+      
+        <meta name="author" content="Nicolas BODAINE">
+      
+      
+        <link rel="canonical" href="https://wiki.bodaine.fr/cours-tp/virtualisation/13-reseau-virtuel-sdn-nfv/">
+      
+      
+        <link rel="prev" href="../12-stockage-sds-hyperconvergence/">
+      
+      
+        <link rel="next" href="../14-virtualiser-les-applications/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>Réseau virtuel, SDN et NFV : commutateurs virtuels, VLAN, VXLAN, réseau défini par logiciel - Wiki Tech — NicoBOD</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        
+        <link rel="stylesheet" href="../../../assets/external/fonts.googleapis.com/css.56f7ac64.css">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+    
+    
+      
+    
+    
+
+    <!-- SEO -->
+    <meta name="author" content="Nicolas BODAINE">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph : compléments non gérés par le plugin social.     -->
+    <!-- og:type/title/description/image/url sont posés par social.   -->
+    <meta property="og:site_name" content="Wiki Tech — NicoBOD">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card : la grande image et l'image elle-même sont      -->
+    <!-- héritées des balises og:image générées par le plugin social.  -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Réseau virtuel, SDN et NFV : commutateurs virtuels, VLAN, VXLAN, réseau défini par logiciel — Wiki Tech — NicoBOD">
+    <meta name="twitter:description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+  
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#reseau-virtuel-sdn-et-nfv" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-header__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wiki Tech — NicoBOD
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Réseau virtuel, SDN et NFV : commutateurs virtuels, VLAN, VXLAN, réseau défini par logiciel
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer en mode clair"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer en mode clair" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Passer en mode sombre"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer en mode sombre" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Revenir au thème système"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Revenir au thème système" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Partager" aria-label="Partager" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../systemes/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h16v10H4m16 2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4c-1.11 0-2 .89-2 2v10a2 2 0 0 0 2 2H0v2h24v-2z"/></svg>
+    
+  
+  Systèmes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../reseaux/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v2h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+    
+  
+  Réseaux
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cloud/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 20q-2.28 0-3.89-1.57Q1 16.85 1 14.58q0-1.95 1.17-3.48 1.18-1.53 3.08-1.95.63-2.3 2.5-3.72Q9.63 4 12 4q2.93 0 4.96 2.04Q19 8.07 19 11q1.73.2 2.86 1.5 1.14 1.28 1.14 3 0 1.88-1.31 3.19T18.5 20Z"/></svg>
+    
+  
+  Cloud
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cybersecurite/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12h7c-.53 4.11-3.28 7.78-7 8.92zH5V6.3l7-3.11M12 1 3 5v6c0 5.55 3.84 10.73 9 12 5.16-1.27 9-6.45 9-12V5z"/></svg>
+    
+  
+  Cybersécurité
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../ia/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/></svg>
+    
+  
+  IA
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../automatisation/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+    
+  
+  Automatisation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../logiciels/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m0 5H3V4h18z"/></svg>
+    
+  
+  Logiciels
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../debug/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 12h-4v-2h4m0 6h-4v-2h4m6-6h-2.81a6 6 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6 6 0 0 0-2.83 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20z"/></svg>
+    
+  
+  Debug
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../astuces/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+    
+  
+  Astuces
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+    
+  
+  Cours et TP
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../tags/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tags
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-nav__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    Wiki Tech — NicoBOD
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../systemes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Systèmes
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../reseaux/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Réseaux
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cybersecurite/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cybersécurité
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../ia/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IA
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../automatisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automatisation
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../logiciels/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logiciels
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../debug/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../astuces/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Astuces
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cours et TP
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cours et TP
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../veeam/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Veeam Backup & Replication
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_2" id="__nav_11_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Veeam Backup & Replication
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/01-comprendre-la-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/02-decouvrir-veeam-data-platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Découvrir Veeam Data Platform 13
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/03-preparer-le-lab-installer-appliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Préparer le lab et installer l'appliance
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/04-ajouter-des-depots-de-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Ajouter des dépôts de sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/05-sauvegarder-configuration-et-serveur-de-fichiers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Sauvegarder la configuration et un serveur de fichiers
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/06-sauvegarder-restaurer-serveur-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Sauvegarder et restaurer un serveur Linux
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/07-sauvegarder-vers-azure-blob/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Sauvegarder vers Azure Blob Storage
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pfsense-ha/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cluster pfSense en haute disponibilité
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_3" id="__nav_11_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cluster pfSense en haute disponibilité
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/01-comprendre-haute-disponibilite/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la haute disponibilité
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/02-preparer-lab-installer-pfsense/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Préparer le lab et installer pfSense
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/03-configuration-initiale/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Configuration initiale
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/04-synchroniser-le-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Synchroniser le cluster
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/05-vip-carp-nat-sortant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. VIP CARP et NAT sortant
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/06-tester-la-bascule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Tester la bascule
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/07-agregation-lacp-troisieme-noeud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Agrégation LACP et troisième nœud
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/08-mettre-a-jour-le-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8. Mettre à jour le cluster
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Virtualisation (5 jours)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_4" id="__nav_11_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Virtualisation (5 jours)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../01-comprendre-la-virtualisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 1 — Comprendre et créer ses VM
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../05-virtualiser-des-serveurs/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 2 — Serveurs, réseau, stockage
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../09-panorama-des-technologies/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 3 — Technologies du système
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_4_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_11_4_5" id="__nav_11_4_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 4 — Stockage, réseau, applications
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_11_4_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Jour 4 — Stockage, réseau, applications
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-stockage-sds-hyperconvergence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12. Stockage défini par logiciel et hyperconvergence
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13. Réseau virtuel, SDN et NFV
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13. Réseau virtuel, SDN et NFV
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-les-commutateurs-virtuels-en-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Les commutateurs virtuels en production
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-les-vlan-plusieurs-reseaux-sur-les-memes-cables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Les VLAN : plusieurs réseaux sur les mêmes câbles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-le-reseau-defini-par-logiciel-sdn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Le réseau défini par logiciel (SDN)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-la-virtualisation-des-fonctions-reseau-nfv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. La virtualisation des fonctions réseau (NFV)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. La virtualisation des fonctions réseau (NFV)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-exercice-quelle-technologie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 ✍️ Exercice : quelle technologie ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-tp-des-vlan-dans-proxmox-ve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. TP : des VLAN dans Proxmox VE
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. TP : des VLAN dans Proxmox VE">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-rendre-le-pont-vlan-aware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Rendre le pont « VLAN aware »
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-etiqueter-les-cartes-reseau" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Étiqueter les cartes réseau
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-tester" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Tester
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-remettre-en-etat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Remettre en état
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../14-virtualiser-les-applications/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14. Virtualiser les applications et les postes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../15-le-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 5 — Cloud, tendances, défi final
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tags/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.5 7A1.5 1.5 0 0 1 4 5.5 1.5 1.5 0 0 1 5.5 4 1.5 1.5 0 0 1 7 5.5 1.5 1.5 0 0 1 5.5 7m15.91 4.58-9-9C12.05 2.22 11.55 2 11 2H4c-1.11 0-2 .89-2 2v7c0 .55.22 1.05.59 1.41l8.99 9c.37.36.87.59 1.42.59s1.05-.23 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.56-.23-1.06-.59-1.42"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-les-commutateurs-virtuels-en-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Les commutateurs virtuels en production
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-les-vlan-plusieurs-reseaux-sur-les-memes-cables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Les VLAN : plusieurs réseaux sur les mêmes câbles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-le-reseau-defini-par-logiciel-sdn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Le réseau défini par logiciel (SDN)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-la-virtualisation-des-fonctions-reseau-nfv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. La virtualisation des fonctions réseau (NFV)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. La virtualisation des fonctions réseau (NFV)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-exercice-quelle-technologie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 ✍️ Exercice : quelle technologie ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-tp-des-vlan-dans-proxmox-ve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. TP : des VLAN dans Proxmox VE
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. TP : des VLAN dans Proxmox VE">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-rendre-le-pont-vlan-aware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Rendre le pont « VLAN aware »
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-etiqueter-les-cartes-reseau" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Étiqueter les cartes réseau
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-tester" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Tester
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-remettre-en-etat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Remettre en état
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Cours et TP
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Virtualisation (5 jours)
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../12-stockage-sds-hyperconvergence/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Jour 4 — Stockage, réseau, applications
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:cours" class="md-tag">cours</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:proxmox" class="md-tag">proxmox</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:reseau" class="md-tag">reseau</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:travaux-pratiques" class="md-tag">travaux-pratiques</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:virtualisation" class="md-tag">virtualisation</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:vlan" class="md-tag">vlan</a>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/NicoBOD/wiki-tech/edit/main/docs/cours-tp/virtualisation/13-reseau-virtuel-sdn-nfv.md" title="Editer cette page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/NicoBOD/wiki-tech/raw/main/docs/cours-tp/virtualisation/13-reseau-virtuel-sdn-nfv.md" title="Consulter la source de cette page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<h1 id="reseau-virtuel-sdn-et-nfv">Réseau virtuel, <abbr title="Software-Defined Networking — réseau défini par logiciel">SDN</abbr> et <abbr title="Network Functions Virtualization — virtualisation des fonctions réseau">NFV</abbr><a class="headerlink" href="#reseau-virtuel-sdn-et-nfv" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Résumé</p>
+<p>Le jour 2 a fait construire un réseau virtuel avec Workstation : commutateurs VMnet, réseau isolé, <abbr title="Virtual Machine — machine virtuelle">VM</abbr> routeur. Cette partie présente les technologies réseau des plateformes de production : les <strong>commutateurs virtuels</strong> des grands hyperviseurs, les <strong><abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr></strong> qui séparent plusieurs réseaux sur les mêmes câbles, <strong><abbr title="Virtual eXtensible LAN — réseaux virtuels transportés sur IP">VXLAN</abbr></strong> pour aller au-delà, le <strong>réseau défini par logiciel</strong> (<abbr title="Software-Defined Networking — réseau défini par logiciel">SDN</abbr>) et la <strong>virtualisation des fonctions réseau</strong> (<abbr title="Network Functions Virtualization — virtualisation des fonctions réseau">NFV</abbr>).</p>
+<p>Le TP active les <strong><abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr></strong> sur le commutateur virtuel de Proxmox VE et montre, avec trois machines branchées sur le <strong>même</strong> pont, que seules celles du <strong>même <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr></strong> peuvent se parler.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Propriété</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Difficulté</td>
+<td>Intermédiaire</td>
+</tr>
+<tr>
+<td>Durée estimée</td>
+<td>2 h</td>
+</tr>
+<tr>
+<td>Version décrite</td>
+<td>Proxmox VE 9.2</td>
+</tr>
+<tr>
+<td>Place dans le parcours</td>
+<td>Partie 13 sur 17 du parcours <a href="../">Virtualisation</a> — jour 4</td>
+</tr>
+<tr>
+<td>Dernière mise à jour</td>
+<td>2026-11-16</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<div class="admonition info">
+<p class="admonition-title">Convention de lecture</p>
+<p>🖥️ <strong>PC hôte</strong> · 🌐 <strong>interface web ou Shell de Proxmox</strong> (<code>pve</code>) · ✍️ <strong>exercice</strong> · 🛟 <strong>instantané</strong>.</p>
+</div>
+<h2 id="1-les-commutateurs-virtuels-en-production">1. Les commutateurs virtuels en production<a class="headerlink" href="#1-les-commutateurs-virtuels-en-production" title="Permanent link">&para;</a></h2>
+<p>Au jour 2, les réseaux <strong>VMnet</strong> de Workstation ont fait découvrir le <strong>commutateur virtuel</strong>. Sur les hyperviseurs de production, on retrouve le même principe, avec plus de fonctions :</p>
+<table>
+<thead>
+<tr>
+<th>Hyperviseur</th>
+<th>Commutateur virtuel</th>
+<th>Particularité</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VMware ESXi</td>
+<td><strong>vSwitch standard</strong></td>
+<td>Configuré <strong>hôte par hôte</strong></td>
+</tr>
+<tr>
+<td>VMware vSphere</td>
+<td><strong>vSphere Distributed Switch</strong> (<abbr title="vSphere Distributed Switch — commutateur distribué de VMware">vDS</abbr>)</td>
+<td>Configuré <strong>une fois</strong> dans vCenter, identique sur tous les hôtes du cluster : indispensable pour qu'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> garde son réseau en migration à chaud</td>
+</tr>
+<tr>
+<td>Microsoft Hyper-V</td>
+<td><strong>Commutateur virtuel Hyper-V</strong></td>
+<td>Trois types : <strong>externe</strong> (relié à une carte physique), <strong>interne</strong> (<abbr title="Virtual Machine — machine virtuelle">VM</abbr> et hôte), <strong>privé</strong> (<abbr title="Virtual Machine — machine virtuelle">VM</abbr> seulement) — l'équivalent du pont, du réseau privé hôte et d'un VMnet isolé</td>
+</tr>
+<tr>
+<td>Proxmox VE, KVM</td>
+<td><strong>Pont Linux</strong> (<em>Linux bridge</em>, <code>vmbr0</code>…) ou <strong>Open vSwitch</strong></td>
+<td>Le pont <code>vmbr0</code> est créé à l'installation, relié à la carte physique</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Open vSwitch</strong> est un commutateur virtuel libre, hébergé par la Linux Foundation, utilisé par de nombreuses plateformes (Proxmox VE en option, OpenStack) pour les fonctions avancées.</p>
+<h2 id="2-les-vlan-plusieurs-reseaux-sur-les-memes-cables">2. Les <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> : plusieurs réseaux sur les mêmes câbles<a class="headerlink" href="#2-les-vlan-plusieurs-reseaux-sur-les-memes-cables" title="Permanent link">&para;</a></h2>
+<p>Un <strong><abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr></strong> (<em>Virtual LAN</em>, réseau local virtuel) découpe <strong>un</strong> réseau physique en <strong>plusieurs</strong> réseaux logiques, isolés les uns des autres, sans câbles supplémentaires. La norme <strong><abbr title="organisme de normalisation des réseaux Ethernet et Wi-Fi">IEEE</abbr> 802.1Q</strong> ajoute à chaque trame Ethernet une <strong>étiquette</strong> (<em>tag</em>) qui contient le numéro du <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr>, codé sur <strong>12 bits</strong> : <strong>4 094</strong> <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> utilisables (les valeurs 0 et 4 095 sont réservées).</p>
+<table>
+<thead>
+<tr>
+<th>Terme</th>
+<th>Signification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Port d'accès</strong> (<em>access</em>)</td>
+<td>Port qui appartient à <strong>un seul</strong> <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> ; l'appareil branché ne voit pas d'étiquette (un PC, une imprimante)</td>
+</tr>
+<tr>
+<td><strong>Port d'agrégation</strong> (<em>trunk</em>)</td>
+<td>Port qui transporte <strong>plusieurs</strong> <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr>, chaque trame portant son étiquette (lien entre commutateurs, ou vers un hyperviseur)</td>
+</tr>
+<tr>
+<td><strong>Étiquette</strong> (<em>tag</em>)</td>
+<td>Le numéro de <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> ajouté à la trame</td>
+</tr>
+</tbody>
+</table>
+<p>Dans un hyperviseur, la carte physique de l'hôte est branchée sur un port <strong>trunk</strong> du commutateur de la salle. Le commutateur virtuel <strong>lit</strong> les étiquettes et distribue chaque trame à la bonne <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : on donne simplement à chaque carte virtuelle un <strong>numéro de <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr></strong>. C'est ainsi qu'on sépare, sur les mêmes hôtes, les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> des serveurs, de la <abbr title="zone démilitarisée — réseau des serveurs exposés à Internet">DMZ</abbr>, de l'administration et du stockage.</p>
+<div class="admonition info">
+<p class="admonition-title">Et pour aller au-delà de 4 094 réseaux ?</p>
+<p>Un fournisseur de cloud qui héberge des milliers de clients manque vite de <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr>. <strong><abbr title="Virtual eXtensible LAN — réseaux virtuels transportés sur IP">VXLAN</abbr></strong> (<em>Virtual eXtensible LAN</em>, RFC 7348) transporte les trames Ethernet <strong>à l'intérieur de paquets <abbr title="User Datagram Protocol">UDP</abbr>/IP</strong> : les réseaux virtuels traversent n'importe quel réseau IP, même entre plusieurs salles. L'identifiant de réseau est codé sur <strong>24 bits</strong>, soit environ <strong>16 millions</strong> de réseaux possibles.</p>
+</div>
+<h2 id="3-le-reseau-defini-par-logiciel-sdn">3. Le réseau défini par logiciel (<abbr title="Software-Defined Networking — réseau défini par logiciel">SDN</abbr>)<a class="headerlink" href="#3-le-reseau-defini-par-logiciel-sdn" title="Permanent link">&para;</a></h2>
+<p>Un équipement réseau classique fait deux métiers : il <strong>décide</strong> où envoyer les paquets (le <strong>plan de contrôle</strong> : tables de routage, protocoles) et il les <strong>envoie</strong> (le <strong>plan de données</strong>). Le <strong><abbr title="Software-Defined Networking — réseau défini par logiciel">SDN</abbr></strong> (<em>Software-Defined Networking</em>) <strong>sépare</strong> ces deux plans : un <strong>contrôleur</strong> central, logiciel, décide pour tout le réseau, et programme les commutateurs (physiques ou virtuels) qui se contentent d'exécuter.</p>
+<table>
+<thead>
+<tr>
+<th>Avantage</th>
+<th>Exemple</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Créer un réseau en quelques secondes, par logiciel ou par script</td>
+<td>Un nouveau client d'un cloud reçoit ses réseaux isolés automatiquement</td>
+</tr>
+<tr>
+<td>Une configuration <strong>centrale</strong> et cohérente</td>
+<td>Un même réseau virtuel sur tous les hôtes, sans configurer chaque commutateur</td>
+</tr>
+<tr>
+<td>Une sécurité fine</td>
+<td><strong>Micro-segmentation</strong> : des règles de pare-feu au niveau de chaque <abbr title="Virtual Machine — machine virtuelle">VM</abbr></td>
+</tr>
+</tbody>
+</table>
+<p>Produits : <strong>VMware NSX</strong>, <strong>Cisco ACI</strong>, les réseaux virtuels des clouds publics (<abbr title="Virtual Private Cloud — réseau privé virtuel dans un cloud public">VPC</abbr> chez AWS, VNet chez Azure), et, dans Proxmox VE, le module <strong><abbr title="Software-Defined Networking — réseau défini par logiciel">SDN</abbr></strong> (installé par défaut depuis la version 8.1), qui crée des <strong>zones</strong> (<em>Simple</em>, <em><abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr></em>, <em>QinQ</em>, <em><abbr title="Virtual eXtensible LAN — réseaux virtuels transportés sur IP">VXLAN</abbr></em>, <em>EVPN</em>) et des réseaux virtuels (<strong>VNet</strong>) pour tout un cluster.</p>
+<h2 id="4-la-virtualisation-des-fonctions-reseau-nfv">4. La virtualisation des fonctions réseau (<abbr title="Network Functions Virtualization — virtualisation des fonctions réseau">NFV</abbr>)<a class="headerlink" href="#4-la-virtualisation-des-fonctions-reseau-nfv" title="Permanent link">&para;</a></h2>
+<p>La <strong><abbr title="Network Functions Virtualization — virtualisation des fonctions réseau">NFV</abbr></strong> (<em>Network Functions Virtualization</em>) remplace les <strong>boîtiers</strong> réseau spécialisés (routeur, pare-feu, répartiteur de charge, cœur de réseau mobile) par des <strong>logiciels</strong> qui tournent sur des serveurs standards : dans des <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<strong><abbr title="Virtual Network Function — fonction réseau dans une VM">VNF</abbr></strong>, <em>Virtual Network Function</em>) ou des conteneurs (<strong><abbr title="Cloud-native Network Function — fonction réseau dans un conteneur">CNF</abbr></strong>). L'idée a été lancée en <strong>2012</strong> par un groupe de grands opérateurs de télécommunications, dans le cadre de l'organisme de normalisation européen <strong><abbr title="Institut européen des normes de télécommunications">ETSI</abbr></strong>.</p>
+<p>Exemples à portée de main :</p>
+<ul>
+<li>le <strong>routeur Debian</strong> de la <a href="../06-virtualiser-le-reseau/">partie 6</a> : une fonction de routage et de NAT dans une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ;</li>
+<li>un pare-feu <strong>pfSense</strong> ou <strong>OPNsense</strong> en <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, comme dans le <a href="../../pfsense-ha/">parcours pfSense</a> ;</li>
+<li>des routeurs virtuels (VyOS, routeurs virtuels des grands constructeurs), des répartiteurs de charge logiciels ;</li>
+<li>le cœur des réseaux <strong>5G</strong>, entièrement logiciel.</li>
+</ul>
+<p>Avantages : déploiement en minutes au lieu de semaines, matériel standard moins cher, haute disponibilité et sauvegarde des fonctions réseau comme n'importe quelle <abbr title="Virtual Machine — machine virtuelle">VM</abbr>. Limites : performances à surveiller (un pare-feu logiciel doit traiter des millions de paquets), et dépendance à la plateforme de virtualisation.</p>
+<h3 id="41-exercice-quelle-technologie">4.1 ✍️ Exercice : quelle technologie ?<a class="headerlink" href="#41-exercice-quelle-technologie" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Une entreprise veut séparer, sur ses trois hôtes Proxmox VE, les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> des serveurs, de la <abbr title="zone démilitarisée — réseau des serveurs exposés à Internet">DMZ</abbr> et de l'administration, sans acheter de nouveaux commutateurs.</li>
+<li>Un hébergeur doit offrir à 20 000 clients chacun plusieurs réseaux privés isolés.</li>
+<li>Un opérateur veut déployer un pare-feu pour un nouveau client en dix minutes, sans livrer de boîtier.</li>
+<li>Sur VMware vSphere, une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> doit garder exactement la même configuration réseau après une migration à chaud vers un autre hôte.</li>
+</ol>
+<details class="success">
+<summary>Corrigé</summary>
+<ol>
+<li>Des <strong><abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr></strong> : le port du commutateur physique vers chaque hôte passe en <strong>trunk</strong>, le pont des hôtes devient « <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> aware », et chaque carte virtuelle reçoit son numéro de <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr>.</li>
+<li><strong><abbr title="Virtual eXtensible LAN — réseaux virtuels transportés sur IP">VXLAN</abbr></strong> (ou un <abbr title="Software-Defined Networking — réseau défini par logiciel">SDN</abbr> qui l'utilise) : 4 094 <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> ne suffisent pas, <abbr title="Virtual eXtensible LAN — réseaux virtuels transportés sur IP">VXLAN</abbr> offre environ 16 millions de réseaux.</li>
+<li>La <strong><abbr title="Network Functions Virtualization — virtualisation des fonctions réseau">NFV</abbr></strong> : un pare-feu virtuel (<abbr title="Virtual Network Function — fonction réseau dans une VM">VNF</abbr>) déployé dans une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ou un conteneur, à partir d'un modèle.</li>
+<li>Un <strong>commutateur distribué</strong> (vSphere Distributed Switch) : configuré une seule fois dans vCenter, identique sur tous les hôtes.</li>
+</ol>
+</details>
+<h2 id="5-tp-des-vlan-dans-proxmox-ve">5. TP : des <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> dans Proxmox VE<a class="headerlink" href="#5-tp-des-vlan-dans-proxmox-ve" title="Permanent link">&para;</a></h2>
+<p>On utilise les trois machines créées aux parties 10 et 11, toutes branchées sur le <strong>même</strong> pont <code>vmbr0</code>. 🖥️ Démarrer d'abord <code>stockage</code> : depuis la <a href="../12-stockage-sds-hyperconvergence/">partie 12</a>, le disque de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> 102 y est rangé.</p>
+<table>
+<thead>
+<tr>
+<th>Machine</th>
+<th>Adresse</th>
+<th><abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> à lui donner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Conteneur <strong>201</strong> <code>ct-debian</code></td>
+<td><code>192.168.x.85</code></td>
+<td><strong>10</strong></td>
+</tr>
+<tr>
+<td><abbr title="Virtual Machine — machine virtuelle">VM</abbr> <strong>102</strong> <code>virtio</code></td>
+<td><code>192.168.x.82</code></td>
+<td><strong>10</strong></td>
+</tr>
+<tr>
+<td><abbr title="Virtual Machine — machine virtuelle">VM</abbr> <strong>101</strong> <code>emulee</code></td>
+<td><code>192.168.x.81</code></td>
+<td><strong>20</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="51-rendre-le-pont-vlan-aware">5.1 Rendre le pont « <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> aware »<a class="headerlink" href="#51-rendre-le-pont-vlan-aware" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🖥️ Démarrer <code>pve</code>. 🌐 Ouvrir <strong>pve &gt; Système &gt; Réseau</strong>, sélectionner <strong>vmbr0</strong>, puis <strong>Éditer</strong>.</li>
+<li>
+<p>Cocher <strong>Gère les <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr></strong> (<em><abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> aware</em>), puis <strong>OK</strong>.</p>
+<figure>
+<p><img alt="Fenêtre Éditer: Linux Bridge de vmbr0 : adresse IPv4, passerelle, ports du pont nic0, case Gère les VLAN" loading="lazy" src="../images/13/410-gere-les-vlan.png" /></p>
+<figcaption>
+<p>La case <strong>Gère les <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr></strong> transforme le pont en commutateur qui comprend les étiquettes 802.1Q</p>
+</figcaption>
+</figure>
+</li>
+<li>
+<p>Cliquer sur <strong>Appliquer la configuration</strong>. L'accès à l'interface web n'est pas coupé : <code>vmbr0</code> lui-même reste dans le réseau non étiqueté.</p>
+</li>
+</ol>
+<h3 id="52-etiqueter-les-cartes-reseau">5.2 Étiqueter les cartes réseau<a class="headerlink" href="#52-etiqueter-les-cartes-reseau" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🌐 Démarrer le conteneur 201 et les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> 101 et 102.</li>
+<li>🌐 Pour la <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> 102</strong> : <strong>Matériel</strong>, sélectionner <strong>Carte réseau (net0)</strong>, <strong>Éditer</strong>, saisir <strong>Étiquette de <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr></strong> <code>10</code>, puis <strong>OK</strong>. Faire de même pour la <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> 101</strong> avec l'étiquette <code>20</code>.</li>
+<li>🌐 Pour le <strong>conteneur 201</strong> : <strong>Réseau</strong>, sélectionner <strong>eth0</strong>, <strong>Éditer</strong>, <strong>Étiquette de <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr></strong> <code>10</code>, puis <strong>OK</strong>.</li>
+<li>
+<p>🌐 <strong>Attendre une dizaine de secondes</strong> après les changements d'étiquette : le temps que les machines et le pont réapprennent qui est où. Puis, dans <strong>pve &gt; Shell</strong>, vérifier l'étiquette posée sur chaque port du pont :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>bridge<span class="w"> </span>vlan<span class="w"> </span>show<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'tap10[12]i0|veth201i0'</span><span class="w"> </span>-A1
+</code></pre></div>
+</li>
+</ol>
+<h3 id="53-tester">5.3 Tester<a class="headerlink" href="#53-tester" title="Permanent link">&para;</a></h3>
+<p>🌐 Dans <strong>pve &gt; Shell</strong>, faire pinguer chaque machine depuis le conteneur 201 (<abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> 10) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pct<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="m">201</span><span class="w"> </span>--<span class="w"> </span>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">192</span>.168.x.82<span class="w">    </span><span class="c1"># VM 102, VLAN 10</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>pct<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="m">201</span><span class="w"> </span>--<span class="w"> </span>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">192</span>.168.x.81<span class="w">    </span><span class="c1"># VM 101, VLAN 20</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>pct<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="m">201</span><span class="w"> </span>--<span class="w"> </span>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">192</span>.168.x.2<span class="w">     </span><span class="c1"># passerelle de VMnet8, sans VLAN</span>
+</code></pre></div>
+<div class="admonition success">
+<p class="admonition-title">Vérifier son lab</p>
+<ul>
+<li><code>bridge vlan show</code> affiche <code>10 PVID Egress Untagged</code> pour <code>tap102i0</code> et <code>veth201i0</code>, et <code>20 PVID Egress Untagged</code> pour <code>tap101i0</code> : chaque port du pont appartient à son <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr>, comme un <strong>port d'accès</strong> d'un commutateur physique.</li>
+<li>Le ping vers la <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> 102</strong> (même <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr>) répond : <strong>0 % de perte</strong>. S'il échoue juste après le changement d'étiquette, attendre quelques secondes et le relancer.</li>
+<li>Le ping vers la <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> 101</strong> (<abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> 20) échoue : <strong>100 % de perte</strong>, alors que les deux machines sont sur le <strong>même</strong> pont, dans le <strong>même</strong> sous-réseau IP.</li>
+<li>Le ping vers la <strong>passerelle</strong> échoue aussi : la passerelle de VMnet8 n'est dans <strong>aucun</strong> <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr>. Pour sortir, un <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> a besoin de <strong>son</strong> routeur (ou d'un pare-feu avec une interface dans ce <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr>).</li>
+</ul>
+</div>
+<details class="question">
+<summary>✍️ Que se passe-t-il si l'on met la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> 101 dans le <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> 10 ?</summary>
+<p>Elle peut de nouveau communiquer avec le conteneur 201 et la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> 102 (essai fait : 5 pings sur 5 répondent après le changement d'étiquette). Le <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> est une frontière <strong>logique</strong>, que l'on déplace par logiciel en quelques secondes : c'est toute la souplesse du réseau virtualisé, et aussi la raison de bien protéger l'accès à l'interface de l'hyperviseur.</p>
+</details>
+<h3 id="54-remettre-en-etat">5.4 Remettre en état<a class="headerlink" href="#54-remettre-en-etat" title="Permanent link">&para;</a></h3>
+<p>🌐 Retirer les étiquettes de <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> des trois machines (champ <strong>Étiquette de <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr></strong> vide), pour qu'elles retrouvent l'accès à Internet, puis les éteindre. Laisser <strong>Gère les <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr></strong> coché : sans étiquette, une carte reste dans le réseau non étiqueté. 🛟 🖥️ Éteindre <code>pve</code> et prendre l'instantané <code>03-pve-vlan</code>.</p>
+<h2 id="6-questions-de-revision">6. Questions de révision<a class="headerlink" href="#6-questions-de-revision" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Quelle est la différence entre un vSwitch standard et un commutateur distribué (<abbr title="vSphere Distributed Switch — commutateur distribué de VMware">vDS</abbr>) chez VMware ?</li>
+<li>Combien de <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> la norme 802.1Q permet-elle ? Pourquoi ?</li>
+<li>Quelle est la différence entre un port d'accès et un port trunk ?</li>
+<li>Que sépare le <abbr title="Software-Defined Networking — réseau défini par logiciel">SDN</abbr> ? Citer un avantage.</li>
+<li>Qu'est-ce que la <abbr title="Network Functions Virtualization — virtualisation des fonctions réseau">NFV</abbr> ? Donner deux exemples de <abbr title="Virtual Network Function — fonction réseau dans une VM">VNF</abbr>.</li>
+<li>Dans le TP, pourquoi le conteneur 201 (<abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> 10) ne peut-il plus joindre la passerelle ?</li>
+</ol>
+<details class="success">
+<summary>Corrigé</summary>
+<ol>
+<li>Le <strong>vSwitch standard</strong> se configure <strong>hôte par hôte</strong> ; le <strong>commutateur distribué</strong> se configure <strong>une fois</strong> dans vCenter et s'applique à tous les hôtes du cluster, ce qui garantit qu'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> retrouve le même réseau après une migration à chaud.</li>
+<li><strong>4 094</strong> : l'identifiant de <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> est codé sur <strong>12 bits</strong> (4 096 valeurs), dont deux sont réservées (0 et 4 095).</li>
+<li>Un <strong>port d'accès</strong> appartient à un seul <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> et transmet les trames <strong>sans</strong> étiquette (pour un poste, une imprimante). Un <strong>port trunk</strong> transporte <strong>plusieurs</strong> <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr>, chaque trame portant son étiquette (entre commutateurs, ou vers un hyperviseur).</li>
+<li>Le <strong>plan de contrôle</strong> (qui décide où vont les paquets) du <strong>plan de données</strong> (qui les transmet) : un contrôleur central programme les commutateurs. Avantages : création de réseaux par logiciel en quelques secondes, configuration centrale et cohérente, micro-segmentation.</li>
+<li>La virtualisation des fonctions réseau : remplacer des boîtiers spécialisés par des logiciels sur des serveurs standards. Exemples : un pare-feu pfSense ou OPNsense en <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, un routeur virtuel, le cœur de réseau 5G d'un opérateur.</li>
+<li>Parce que la passerelle de VMnet8 se trouve dans le réseau <strong>non étiqueté</strong> : le pont <code>vmbr0</code> ne fait pas passer les trames du <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> 10 vers ce réseau. Il faudrait un routeur avec une interface dans le <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr> 10.</li>
+</ol>
+</details>
+<hr />
+<h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://pve.proxmox.com/wiki/Network_Configuration">Proxmox VE — Configuration réseau</a> — ponts, <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr>, agrégation de liens (en anglais).</li>
+<li><a href="https://pve.proxmox.com/pve-docs/chapter-pvesdn.html">Proxmox VE — Software-Defined Network</a> — zones, VNet et sous-réseaux du <abbr title="Software-Defined Networking — réseau défini par logiciel">SDN</abbr> de Proxmox (en anglais).</li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc7348">RFC 7348 — <abbr title="Virtual eXtensible LAN — réseaux virtuels transportés sur IP">VXLAN</abbr></a> — la norme <abbr title="Virtual eXtensible LAN — réseaux virtuels transportés sur IP">VXLAN</abbr> (en anglais).</li>
+<li><a href="https://www.etsi.org/technologies/nfv"><abbr title="Institut européen des normes de télécommunications">ETSI</abbr> — Network Functions Virtualisation</a> — la <abbr title="Network Functions Virtualization — virtualisation des fonctions réseau">NFV</abbr> par l'organisme européen de normalisation (en anglais).</li>
+<li>Partie précédente : <a href="../12-stockage-sds-hyperconvergence/">Stockage défini par logiciel et hyperconvergence</a> · Partie suivante : <a href="../14-virtualiser-les-applications/">Virtualiser les applications et les postes de travail</a>.</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../12-stockage-sds-hyperconvergence/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 12. Stockage défini par logiciel et hyperconvergence">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                12. Stockage défini par logiciel et hyperconvergence
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../14-virtualiser-les-applications/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 14. Virtualiser les applications et les postes">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                14. Virtualiser les applications et les postes
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      <a href="/mentions-legales/">Mentions légales</a>
+
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/bodaine" target="_blank" rel="noopener" title="Nicolas BODAINE sur LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://github.com/NicoBOD" target="_blank" rel="noopener" title="NicoBOD sur GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://nicolas.bodaine.fr" target="_blank" rel="noopener" title="Portfolio de Nicolas BODAINE" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="/feed_rss_created.xml" target="_blank" rel="noopener" title="Flux RSS des derniers articles" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 64c0-17.7 14.3-32 32-32 229.8 0 416 186.2 416 416 0 17.7-14.3 32-32 32s-32-14.3-32-32C384 253.6 226.4 96 32 96 14.3 96 0 81.7 0 64m0 352a64 64 0 1 1 128 0 64 64 0 1 1-128 0m32-256c159.1 0 288 128.9 288 288 0 17.7-14.3 32-32 32s-32-14.3-32-32c0-123.7-100.3-224-224-224-17.7 0-32-14.3-32-32s14.3-32 32-32"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.path", "navigation.indexes", "navigation.prune", "navigation.footer", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "content.action.view", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>

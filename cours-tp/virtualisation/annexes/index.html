@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://wiki.bodaine.fr/cours-tp/virtualisation/annexes/">
       
       
-        <link rel="prev" href="../08-defi-jour-2/">
+        <link rel="prev" href="../17-defi-final/">
       
       
         <link rel="next" href="../../../tags/">
@@ -2273,6 +2273,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -2448,6 +2454,192 @@
     
   
     Jour 2 — Serveurs, réseau, stockage
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../09-panorama-des-technologies/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 3 — Technologies du système
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../12-stockage-sds-hyperconvergence/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 4 — Stockage, réseau, applications
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../15-le-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 5 — Cloud, tendances, défi final
   
 
     
@@ -3391,6 +3583,8 @@
 <dd>Switch logiciel de l'hyperviseur sur lequel sont branchées les cartes réseau des <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ; dans Workstation, les réseaux VMnet0 à VMnet19.</dd>
 <dt>Consolidation</dt>
 <dd>Regroupement de plusieurs serveurs physiques peu utilisés sous forme de <abbr title="Virtual Machine — machine virtuelle">VM</abbr> sur un nombre réduit d'hôtes.</dd>
+<dt>Conteneur</dt>
+<dd>Environnement isolé qui exécute une application (ou un système Linux) en partageant le noyau de l'hôte, grâce aux espaces de noms et aux groupes de contrôle du noyau.</dd>
 <dt><abbr title="Direct Attached Storage">DAS</abbr></dt>
 <dd><em>Direct Attached Storage</em> : disques directement attachés à un seul serveur.</dd>
 <dt>Disque différentiel</dt>
@@ -3405,8 +3599,12 @@
 <dd>Fonction d'un cluster qui redémarre automatiquement les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> d'un hôte en panne sur les autres hôtes.</dd>
 <dt>Hôte</dt>
 <dd>Machine physique qui exécute l'hyperviseur et héberge les <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</dd>
+<dt>Hyperconvergence (<abbr title="Hyperconverged Infrastructure">HCI</abbr>)</dt>
+<dd>Architecture où chaque serveur est à la fois hôte de <abbr title="Virtual Machine — machine virtuelle">VM</abbr> et nœud de stockage ; un logiciel réunit leurs disques en un stockage partagé (Ceph, vSAN, S2D).</dd>
 <dt>Hyperviseur</dt>
 <dd>Logiciel qui crée les machines virtuelles et partage entre elles les ressources de l'hôte. Aussi appelé <abbr title="Virtual Machine Monitor — moniteur de machines virtuelles">VMM</abbr>.</dd>
+<dt><abbr title="Infrastructure as a Service">IaaS</abbr>, <abbr title="Platform as a Service">PaaS</abbr>, <abbr title="Software as a Service">SaaS</abbr></dt>
+<dd>Les trois modèles de service du cloud : infrastructure (<abbr title="Virtual Machine — machine virtuelle">VM</abbr>, stockage, réseau), plateforme d'exécution, application prête à l'emploi.</dd>
 <dt>Instantané (<em>snapshot</em>)</dt>
 <dd>État enregistré d'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (disques, paramètres et éventuellement mémoire), auquel on peut revenir. Ce n'est pas une sauvegarde.</dd>
 <dt>Invité</dt>
@@ -3435,6 +3633,8 @@
 <dd>Traduction d'adresses : les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ont leur propre réseau privé et sortent sur Internet derrière l'adresse de l'hôte.</dd>
 <dt><abbr title="Network File System">NFS</abbr></dt>
 <dd><em>Network File System</em> : protocole de partage de fichiers du monde Unix et Linux (port <abbr title="Transmission Control Protocol">TCP</abbr> 2049).</dd>
+<dt><abbr title="Network Functions Virtualization">NFV</abbr></dt>
+<dd><em>Network Functions Virtualization</em> : remplacement des boîtiers réseau (routeurs, pare-feux) par des logiciels dans des <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<abbr title="Virtual Network Function">VNF</abbr>) ou des conteneurs (<abbr title="Cloud-native Network Function">CNF</abbr>).</dd>
 <dt>open-vm-tools</dt>
 <dd>Version libre des VMware Tools, fournie par les distributions Linux : pilotes et services qui améliorent l'intégration d'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> Linux dans un hyperviseur VMware.</dd>
 <dt><abbr title="Physical to Virtual">P2V</abbr></dt>
@@ -3453,6 +3653,10 @@
 <dd>Fonction qui permet à une machine de faire passer des paquets d'une carte réseau à une autre, c'est-à-dire de servir de routeur.</dd>
 <dt><abbr title="Storage Area Network — partage de blocs">SAN</abbr></dt>
 <dd><em>Storage Area Network</em> : réseau de stockage qui partage des <strong>blocs</strong> (des disques, les <abbr title="Logical Unit Number — disque logique présenté par une baie">LUN</abbr>), en Fibre Channel ou en <abbr title="Internet Small Computer System Interface — disques SCSI sur IP">iSCSI</abbr>.</dd>
+<dt><abbr title="Software-Defined Networking — réseau défini par logiciel">SDN</abbr></dt>
+<dd><em>Software-Defined Networking</em> : réseau dont le plan de contrôle est séparé du plan de données et piloté par un contrôleur logiciel.</dd>
+<dt><abbr title="Software-Defined Storage">SDS</abbr></dt>
+<dd><em>Software-Defined Storage</em> : stockage dont la logique (copies, répartition, instantanés) est un logiciel indépendant du matériel.</dd>
 <dt><abbr title="Server Message Block">SMB</abbr></dt>
 <dd><em>Server Message Block</em> : protocole de partage de fichiers et d'imprimantes de Windows (port <abbr title="Transmission Control Protocol">TCP</abbr> 445).</dd>
 <dt>Surallocation (<em>overcommitment</em>)</dt>
@@ -3461,8 +3665,14 @@
 <dd>Fonction qui fait tourner une copie miroir d'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> sur un autre hôte, prête à prendre le relais sans aucune coupure.</dd>
 <dt><abbr title="processeur virtuel">vCPU</abbr></dt>
 <dd>Processeur virtuel attribué à une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ; pour l'hôte, c'est un fil d'exécution à faire tourner sur un processeur logique.</dd>
+<dt><abbr title="Virtual Desktop Infrastructure">VDI</abbr></dt>
+<dd><em>Virtual Desktop Infrastructure</em> : postes de travail virtuels, un bureau complet par utilisateur dans une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> du centre de données ou du cloud.</dd>
+<dt>VirtIO</dt>
+<dd>Famille de périphériques paravirtualisés (disque, réseau, ballon…) de KVM et Proxmox VE, dont les pilotes sont intégrés au noyau Linux.</dd>
 <dt>Virtualisation imbriquée (<em>nested virtualization</em>)</dt>
 <dd>Faire tourner un hyperviseur à l'intérieur d'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</dd>
+<dt><abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr></dt>
+<dd><em>Virtual LAN</em> : réseau logique isolé, identifié par une étiquette 802.1Q de 12 bits, qui partage les mêmes câbles et commutateurs que d'autres <abbr title="Virtual LAN — réseau local virtuel">VLAN</abbr>.</dd>
 <dt>VMDK</dt>
 <dd>Format des fichiers de disques virtuels de VMware.</dd>
 <dt>VMnet</dt>
@@ -3473,6 +3683,8 @@
 <dd>Fichier texte de configuration d'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> VMware (processeurs, mémoire, disques, cartes réseau).</dd>
 <dt>VT-x / AMD-V</dt>
 <dd>Extensions de virtualisation des processeurs Intel et AMD, indispensables pour les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> 64 bits sur Workstation. Elles s'activent dans le <abbr title="Basic Input/Output System — micrologiciel de démarrage">BIOS</abbr>/<abbr title="Unified Extensible Firmware Interface — successeur du BIOS">UEFI</abbr>.</dd>
+<dt><abbr title="Virtual eXtensible LAN">VXLAN</abbr></dt>
+<dd>Technique qui transporte des réseaux Ethernet virtuels dans des paquets <abbr title="User Datagram Protocol">UDP</abbr>/<abbr title="Internet Protocol — adresse d'une machine sur le réseau">IP</abbr>, avec un identifiant de 24 bits (environ 16 millions de réseaux).</dd>
 </dl>
 <hr />
 <h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
@@ -3523,7 +3735,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
         
           
-          <a href="../08-defi-jour-2/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 8. Défi du jour 2">
+          <a href="../17-defi-final/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 17. Défi final">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -3533,7 +3745,7 @@
                 Précédent
               </span>
               <div class="md-ellipsis">
-                8. Défi du jour 2
+                17. Défi final
               </div>
             </div>
           </a>

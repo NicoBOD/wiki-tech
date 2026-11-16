@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="420" viewBox="0 0 1000 420" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Architecture classique et hyperconvergence</title>
+  <desc id="d">À gauche, l'architecture classique : trois hôtes de virtualisation sans disques de données sont reliés par un réseau de stockage à une baie SAN qui contient tous les disques. À droite, l'hyperconvergence : trois nœuds identiques ont chacun des disques ; un logiciel de stockage défini par logiciel, comme Ceph ou vSAN, les réunit en un seul stockage partagé, avec plusieurs copies de chaque donnée sur des nœuds différents.</desc>
+  <rect x="0" y="0" width="1000" height="420" rx="16" fill="#ffffff"/>
+  <text x="250" y="38" text-anchor="middle" font-size="19" font-weight="700" fill="#0f172a">Classique : hôtes + baie</text>
+  <text x="750" y="38" text-anchor="middle" font-size="19" font-weight="700" fill="#0f172a">Hyperconvergence</text>
+  <line x1="500" y1="20" x2="500" y2="400" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8 6"/>
+  <g font-size="14" text-anchor="middle">
+    <!-- classique -->
+    <rect x="40" y="65" width="120" height="70" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="100" y="95" fill="#1e3a8a" font-weight="700">Hôte 1</text><text x="100" y="115" fill="#1e3a8a" font-size="12">VM</text>
+    <rect x="190" y="65" width="120" height="70" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="250" y="95" fill="#1e3a8a" font-weight="700">Hôte 2</text><text x="250" y="115" fill="#1e3a8a" font-size="12">VM</text>
+    <rect x="340" y="65" width="120" height="70" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="400" y="95" fill="#1e3a8a" font-weight="700">Hôte 3</text><text x="400" y="115" fill="#1e3a8a" font-size="12">VM</text>
+    <line x1="100" y1="135" x2="100" y2="175" stroke="#7c3aed" stroke-width="3"/>
+    <line x1="250" y1="135" x2="250" y2="175" stroke="#7c3aed" stroke-width="3"/>
+    <line x1="400" y1="135" x2="400" y2="175" stroke="#7c3aed" stroke-width="3"/>
+    <rect x="40" y="175" width="420" height="34" rx="6" fill="#ede9fe" stroke="#7c3aed"/>
+    <text x="250" y="197" fill="#4c1d95">réseau de stockage (Fibre Channel, iSCSI)</text>
+    <line x1="250" y1="209" x2="250" y2="240" stroke="#7c3aed" stroke-width="3"/>
+    <rect x="120" y="240" width="260" height="100" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+    <text x="250" y="266" fill="#78350f" font-weight="700">Baie SAN</text>
+    <g fill="#fde68a" stroke="#b45309">
+      <rect x="140" y="282" width="34" height="40" rx="4"/><rect x="182" y="282" width="34" height="40" rx="4"/><rect x="224" y="282" width="34" height="40" rx="4"/><rect x="266" y="282" width="34" height="40" rx="4"/><rect x="308" y="282" width="34" height="40" rx="4"/>
+    </g>
+    <text x="250" y="375" fill="#991b1b">un équipement central, à doubler</text>
+    <!-- HCI -->
+    <g>
+      <rect x="540" y="65" width="125" height="160" rx="10" fill="#f8fafc" stroke="#334155" stroke-width="2"/>
+      <text x="602" y="90" fill="#0f172a" font-weight="700">Nœud 1</text>
+      <rect x="555" y="102" width="95" height="40" rx="6" fill="#dbeafe" stroke="#2563eb"/><text x="602" y="127" fill="#1e3a8a" font-size="12">VM</text>
+      <g fill="#fde68a" stroke="#b45309"><rect x="557" y="160" width="26" height="40" rx="4"/><rect x="589" y="160" width="26" height="40" rx="4"/><rect x="621" y="160" width="26" height="40" rx="4"/></g>
+      <rect x="687" y="65" width="125" height="160" rx="10" fill="#f8fafc" stroke="#334155" stroke-width="2"/>
+      <text x="749" y="90" fill="#0f172a" font-weight="700">Nœud 2</text>
+      <rect x="702" y="102" width="95" height="40" rx="6" fill="#dbeafe" stroke="#2563eb"/><text x="749" y="127" fill="#1e3a8a" font-size="12">VM</text>
+      <g fill="#fde68a" stroke="#b45309"><rect x="704" y="160" width="26" height="40" rx="4"/><rect x="736" y="160" width="26" height="40" rx="4"/><rect x="768" y="160" width="26" height="40" rx="4"/></g>
+      <rect x="834" y="65" width="125" height="160" rx="10" fill="#f8fafc" stroke="#334155" stroke-width="2"/>
+      <text x="896" y="90" fill="#0f172a" font-weight="700">Nœud 3</text>
+      <rect x="849" y="102" width="95" height="40" rx="6" fill="#dbeafe" stroke="#2563eb"/><text x="896" y="127" fill="#1e3a8a" font-size="12">VM</text>
+      <g fill="#fde68a" stroke="#b45309"><rect x="851" y="160" width="26" height="40" rx="4"/><rect x="883" y="160" width="26" height="40" rx="4"/><rect x="915" y="160" width="26" height="40" rx="4"/></g>
+    </g>
+    <rect x="540" y="250" width="419" height="70" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+    <text x="749" y="278" fill="#14532d" font-weight="700">Stockage partagé logiciel (Ceph, vSAN, S2D)</text>
+    <text x="749" y="300" fill="#166534" font-size="13">chaque donnée copiée sur plusieurs nœuds</text>
+    <line x1="602" y1="225" x2="602" y2="250" stroke="#16a34a" stroke-width="3"/>
+    <line x1="749" y1="225" x2="749" y2="250" stroke="#16a34a" stroke-width="3"/>
+    <line x1="896" y1="225" x2="896" y2="250" stroke="#16a34a" stroke-width="3"/>
+    <text x="749" y="355" fill="#166534">pour grandir : ajouter un nœud</text>
+    <text x="749" y="377" fill="#166534">(calcul + stockage en même temps)</text>
+  </g>
+</svg>

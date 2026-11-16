@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="500" viewBox="0 0 1000 500" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Carte des technologies de virtualisation</title>
+  <desc id="d">Quatre familles de virtualisation empilées sur l'infrastructure physique. Le stockage : disques virtuels, NAS et SAN virtuels, stockage défini par logiciel comme vSAN ou Ceph. Le réseau : commutateurs virtuels, VLAN et VXLAN, réseau défini par logiciel, fonctions réseau virtualisées comme un pare-feu en VM. Le système : hyperviseurs de type 1 et 2, virtualisation complète, paravirtualisation, conteneurs Docker et LXC. Les applications et postes : virtualisation d'applications comme Citrix ou App-V, postes de travail virtuels (VDI). Le cloud s'appuie sur l'ensemble pour vendre ces ressources à la demande : IaaS, PaaS, SaaS.</desc>
+  <rect x="0" y="0" width="1000" height="500" rx="16" fill="#ffffff"/>
+  <rect x="40" y="20" width="920" height="54" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+  <text x="500" y="44" text-anchor="middle" font-size="17" font-weight="700" fill="#075985">Le cloud : tout cela vendu à la demande</text>
+  <text x="500" y="64" text-anchor="middle" font-size="13" fill="#0c4a6e">IaaS · PaaS · SaaS — jour 5</text>
+  <g font-size="13" text-anchor="middle">
+    <rect x="40" y="90" width="920" height="72" rx="10" fill="#fce7f3" stroke="#db2777" stroke-width="2"/>
+    <text x="500" y="115" font-size="16" font-weight="700" fill="#831843">Applications et postes de travail — jour 4</text>
+    <text x="500" y="138" fill="#9d174d">Virtualisation d'applications (Citrix, App-V, RemoteApp) · postes virtuels (VDI, Azure Virtual Desktop) · bac à sable</text>
+    <rect x="40" y="176" width="920" height="72" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+    <text x="500" y="201" font-size="16" font-weight="700" fill="#1e3a8a">Système — jours 1 et 3</text>
+    <text x="500" y="224" fill="#1e40af">Hyperviseurs type 1 et 2 · virtualisation complète, assistée, paravirtualisation · conteneurs (Docker, LXC)</text>
+    <rect x="40" y="262" width="450" height="96" rx="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+    <text x="265" y="288" font-size="16" font-weight="700" fill="#4c1d95">Réseau — jours 2 et 4</text>
+    <text x="265" y="311" fill="#5b21b6">Commutateurs virtuels · VLAN, VXLAN</text>
+    <text x="265" y="331" fill="#5b21b6">Réseau défini par logiciel (SDN)</text>
+    <text x="265" y="351" fill="#5b21b6">Fonctions réseau virtualisées (NFV)</text>
+    <rect x="510" y="262" width="450" height="96" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+    <text x="735" y="288" font-size="16" font-weight="700" fill="#14532d">Stockage — jours 2 et 4</text>
+    <text x="735" y="311" fill="#166534">Disques virtuels · NAS et SAN (NFS, iSCSI)</text>
+    <text x="735" y="331" fill="#166534">Stockage défini par logiciel (SDS)</text>
+    <text x="735" y="351" fill="#166534">Hyperconvergence (vSAN, Ceph)</text>
+    <rect x="40" y="374" width="920" height="60" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+    <text x="500" y="400" font-size="16" font-weight="700" fill="#78350f">Infrastructure physique</text>
+    <text x="500" y="421" fill="#92400e">Serveurs (processeurs, mémoire) · disques et baies · commutateurs, routeurs, liens réseau</text>
+  </g>
+  <text x="500" y="470" text-anchor="middle" font-size="14" fill="#475569">Chaque famille ajoute une couche logicielle entre une ressource physique et ceux qui l'utilisent.</text>
+</svg>

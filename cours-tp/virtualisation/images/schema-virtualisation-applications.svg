@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="420" viewBox="0 0 1000 420" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Trois façons de virtualiser les applications et les postes</title>
+  <desc id="d">Publication d'applications : l'application s'exécute sur un serveur partagé ; le poste de l'utilisateur ne reçoit que l'image de sa fenêtre et envoie le clavier et la souris. Isolation : l'application s'exécute sur le poste, dans une bulle séparée du système, et disparaît proprement. VDI : chaque utilisateur a une VM de bureau complète dans le centre de données ou le cloud, et son poste n'affiche que l'image du bureau.</desc>
+  <defs>
+    <marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+  </defs>
+  <rect x="0" y="0" width="1000" height="420" rx="16" fill="#ffffff"/>
+  <g font-size="14" text-anchor="middle">
+    <text x="165" y="38" font-size="18" font-weight="700" fill="#0f172a">Publication d'applications</text>
+    <rect x="45" y="60" width="240" height="110" rx="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+    <text x="165" y="85" fill="#4c1d95" font-weight="700">Serveur (RDS, Citrix)</text>
+    <rect x="70" y="100" width="90" height="50" rx="6" fill="#ffffff" stroke="#7c3aed"/>
+    <text x="115" y="130" fill="#4c1d95" font-size="13">Appli A</text>
+    <rect x="170" y="100" width="90" height="50" rx="6" fill="#ffffff" stroke="#7c3aed"/>
+    <text x="215" y="130" fill="#4c1d95" font-size="13">Appli B</text>
+    <line x1="165" y1="172" x2="165" y2="235" stroke="#475569" stroke-width="2.5" marker-end="url(#fl)"/>
+    <text x="240" y="208" fill="#475569" font-size="12">image de la fenêtre</text>
+    <rect x="75" y="240" width="180" height="70" rx="10" fill="#f1f5f9" stroke="#334155" stroke-width="2"/>
+    <text x="165" y="270" fill="#0f172a">Poste léger</text>
+    <text x="165" y="290" fill="#334155" font-size="12">affiche seulement</text>
+    <text x="165" y="345" fill="#334155">L'application tourne</text>
+    <text x="165" y="365" fill="#334155" font-weight="700">sur le serveur</text>
+
+    <text x="500" y="38" font-size="18" font-weight="700" fill="#0f172a">Isolation d'applications</text>
+    <rect x="380" y="60" width="240" height="250" rx="10" fill="#f1f5f9" stroke="#334155" stroke-width="2"/>
+    <text x="500" y="85" fill="#0f172a" font-weight="700">Poste de l'utilisateur</text>
+    <rect x="405" y="105" width="190" height="80" rx="40" fill="#fce7f3" stroke="#db2777" stroke-width="2" stroke-dasharray="7 5"/>
+    <text x="500" y="140" fill="#831843" font-weight="700">Appli dans sa bulle</text>
+    <text x="500" y="160" fill="#9d174d" font-size="12">(App-V, MSIX, bac à sable)</text>
+    <rect x="405" y="220" width="190" height="60" rx="8" fill="#e0e7ff" stroke="#4f46e5"/>
+    <text x="500" y="255" fill="#312e81">Système Windows</text>
+    <text x="500" y="345" fill="#334155">L'application tourne</text>
+    <text x="500" y="365" fill="#334155" font-weight="700">sur le poste, à part</text>
+
+    <text x="835" y="38" font-size="18" font-weight="700" fill="#0f172a">Postes virtuels (VDI)</text>
+    <rect x="715" y="60" width="240" height="110" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+    <text x="835" y="85" fill="#1e3a8a" font-weight="700">Centre de données / cloud</text>
+    <rect x="735" y="100" width="95" height="50" rx="6" fill="#ffffff" stroke="#2563eb"/>
+    <text x="782" y="122" fill="#1e3a8a" font-size="12">VM bureau</text>
+    <text x="782" y="139" fill="#1e3a8a" font-size="12">Alice</text>
+    <rect x="840" y="100" width="95" height="50" rx="6" fill="#ffffff" stroke="#2563eb"/>
+    <text x="887" y="122" fill="#1e3a8a" font-size="12">VM bureau</text>
+    <text x="887" y="139" fill="#1e3a8a" font-size="12">Bruno</text>
+    <line x1="835" y1="172" x2="835" y2="235" stroke="#475569" stroke-width="2.5" marker-end="url(#fl)"/>
+    <text x="908" y="208" fill="#475569" font-size="12">image du bureau</text>
+    <rect x="745" y="240" width="180" height="70" rx="10" fill="#f1f5f9" stroke="#334155" stroke-width="2"/>
+    <text x="835" y="270" fill="#0f172a">PC, tablette, client léger</text>
+    <text x="835" y="290" fill="#334155" font-size="12">n'importe où</text>
+    <text x="835" y="345" fill="#334155">Le bureau complet tourne</text>
+    <text x="835" y="365" fill="#334155" font-weight="700">dans une VM par utilisateur</text>
+  </g>
+  <line x1="333" y1="25" x2="333" y2="380" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="667" y1="25" x2="667" y2="380" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8 6"/>
+</svg>
