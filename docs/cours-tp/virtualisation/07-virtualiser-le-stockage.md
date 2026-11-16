@@ -215,6 +215,7 @@ sudo targetcli /iscsi/iqn.2026-11.lab.tssr:stockage/tpg1/luns create /backstores
 sudo targetcli /iscsi/iqn.2026-11.lab.tssr:stockage/tpg1/acls create iqn.2026-11.lab.tssr:web1
 sudo targetcli saveconfig
 sudo targetcli ls
+systemctl is-enabled rtslib-fb-targetctl
 ```
 
 Ces commandes, dans l'ordre :
@@ -223,7 +224,8 @@ Ces commandes, dans l'ordre :
 2. créent la **cible** iSCSI et son IQN ; targetcli ajoute automatiquement un **portail** qui écoute sur toutes les adresses, port **3260** ;
 3. exposent `lun0` comme **LUN 0** de cette cible ;
 4. créent une **ACL** (liste de contrôle d'accès) : seul un initiateur qui se présente sous le nom `iqn.2026-11.lab.tssr:web1` pourra se connecter (un filtre sur le nom, sans mot de passe : voir la question 4 de révision) ;
-5. enregistrent la configuration dans `/etc/rtslib-fb-target/saveconfig.json`, que le service `rtslib-fb-targetctl` recharge à chaque démarrage.
+5. enregistrent la configuration dans `/etc/rtslib-fb-target/saveconfig.json`, que le service `rtslib-fb-targetctl` recharge à chaque démarrage ;
+6. vérifient que ce service est bien **activé** au démarrage : la réponse doit être `enabled` (c'est le cas après l'installation de `targetcli-fb` ; sinon, `sudo systemctl enable rtslib-fb-targetctl`).
 
 !!! success "Vérifier son lab"
     `sudo targetcli ls` affiche l'arbre de la configuration : `lun0` sous `backstores/block` avec `[/dev/sdb (10.0GiB) write-thru activated]`, la cible `iqn.2026-11.lab.tssr:stockage`, son ACL `iqn.2026-11.lab.tssr:web1` avec `[Mapped LUNs: 1]`, et le portail `0.0.0.0:3260`. La commande `ss -ltn | grep 3260` montre le port en écoute.

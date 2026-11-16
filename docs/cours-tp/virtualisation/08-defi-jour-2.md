@@ -40,8 +40,8 @@ Réaliser, sans pas-à-pas :
 1. sur `stockage`, un dossier `/srv/site` qui contient une page `index.html` affichant « Site de Bureautix », partagé en **NFS en lecture seule** pour le réseau `10.10.10.0/24` ;
 2. un nouveau serveur `web4`, **clone lié** du modèle, branché **uniquement** sur VMnet2, avec l'adresse fixe `10.10.10.11`, la passerelle et le DNS qui conviennent, une identité propre et nginx ;
 3. sur `web1` **et** sur `web4`, le partage `/srv/site` monté **automatiquement au démarrage** à la place de `/var/www/html` ;
-4. sur `routeur`, la publication de `web4` sur le **port 8081** (en plus de `web1` sur le port 8080, si la section 5.2 de la partie 6 a été faite) ;
-5. la preuve, depuis le navigateur du PC, que les deux serveurs affichent la même page, puis qu'une modification de `index.html` sur `stockage` apparaît sur les deux dès le rechargement de la page ;
+4. sur `routeur`, la publication de `web1` sur le **port 8080** (si elle n'a pas été faite en section 5.2 de la partie 6) et de `web4` sur le **port 8081** ;
+5. la preuve, depuis le navigateur du PC, que les deux serveurs affichent la même page, puis qu'une modification de `index.html` sur `stockage` apparaît sur les deux après un rechargement de la page ;
 6. une **fiche de documentation** du lab : pour chaque VM, son rôle, ses cartes réseau (VMnet), ses adresses, sa mémoire, ses services et ses instantanés.
 
 ## 2. Diagnostic : trois pannes
@@ -75,7 +75,7 @@ Indice : chaque panne correspond à **une** étape de la partie 6.
 
     - 🖥️ Clone lié de `modele-debian` (`modele-v1`), nommé `web4`, carte réseau sur **Custom > VMnet2**.
     - 🐧 `sudo personnaliser-clone.sh web4`.
-    - 🐧 Dans `/etc/network/interfaces` : `iface ens33 inet static`, `address 10.10.10.11/24`, `gateway 10.10.10.1` ; `sudo reboot` ; **après** le redémarrage, `echo "nameserver 192.168.x.2" | sudo tee /etc/resolv.conf` (adresse notée sur `routeur` en partie 6).
+    - 🐧 Dans `/etc/network/interfaces`, sur la ligne `iface … inet dhcp` de la carte (nom affiché par `ip -br link`, souvent `ens33`) : `inet static`, `address 10.10.10.11/24`, `gateway 10.10.10.1` ; `sudo reboot` ; **après** le redémarrage, `echo "nameserver 192.168.x.2" | sudo tee /etc/resolv.conf` (adresse notée sur `routeur` en partie 6).
     - 🐧 `sudo apt install -y nginx nfs-common` : le paquet `nfs-common` est indispensable pour monter un partage NFS.
 
     **3. Le montage automatique**, sur `web1` et sur `web4` :
@@ -95,9 +95,9 @@ Indice : chaque panne correspond à **une** étape de la partie 6.
     iifname "ens33" tcp dport 8081 dnat to 10.10.10.11:80
     ```
 
-    puis `sudo nft -c -f /etc/nftables.conf && sudo systemctl restart nftables`.
+    (et la ligne équivalente vers `10.10.10.10:80` pour le port 8080 si elle manque), avec le **vrai** nom de la carte VMnet8 du routeur à la place de `ens33`, puis `sudo nft -c -f /etc/nftables.conf && sudo systemctl restart nftables`.
 
-    **5. La preuve** : 🌐 `http://<IP ens33 du routeur>:8080` et `http://<IP ens33 du routeur>:8081` affichent tous deux « Site de Bureautix ». Sur `stockage`, modifier la page (`echo "<h1>Site de Bureautix — version 2</h1>" | sudo tee /srv/site/index.html`) : un rechargement de chaque page (++f5++) affiche la version 2. C'est le principe d'une **ferme de serveurs web** : plusieurs serveurs identiques, un seul contenu partagé ; un **répartiteur de charge** (*load balancer*) placé devant enverrait chaque visiteur vers l'un ou l'autre.
+    **5. La preuve** : 🌐 `http://<IP ens33 du routeur>:8080` et `http://<IP ens33 du routeur>:8081` affichent tous deux « Site de Bureautix ». Sur `stockage`, modifier la page (`echo "<h1>Site de Bureautix — version 2</h1>" | sudo tee /srv/site/index.html`) : un rechargement de chaque page (++f5++) affiche la version 2 ; si l'un des serveurs affiche encore l'ancienne version, patienter quelques secondes : le client NFS garde brièvement en cache les informations sur les fichiers, puis relit la nouvelle version. C'est le principe d'une **ferme de serveurs web** : plusieurs serveurs identiques, un seul contenu partagé ; un **répartiteur de charge** (*load balancer*) placé devant enverrait chaque visiteur vers l'un ou l'autre.
 
     **6. La fiche de documentation** (exemple) :
 

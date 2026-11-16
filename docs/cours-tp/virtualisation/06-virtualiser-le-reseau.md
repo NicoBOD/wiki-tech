@@ -198,13 +198,19 @@ La réponse `net.ipv4.ip_forward = 1` confirme que le routage est actif. Le fich
 
 Le réseau `10.10.10.0/24` est inconnu en dehors du routeur : une réponse venant d'Internet ne saurait pas revenir vers `10.10.10.10`. Le routeur doit donc **remplacer** l'adresse des machines internes par la sienne quand les paquets sortent : c'est la **traduction d'adresses** (NAT), ici en mode *masquerade*. On utilise **nftables**, le pare-feu standard de Debian.
 
-1. 🐧 **routeur** : ouvrir le fichier de configuration de nftables (il contient déjà une table `inet filter` vide, sans effet) :
+1. 🐧 **routeur** : vérifier que nftables est installé (il l'est en principe depuis l'installation de Debian ; sinon, la commande l'installe) :
+
+    ```bash
+    sudo apt install -y nftables
+    ```
+
+2. 🐧 **routeur** : ouvrir le fichier de configuration de nftables (il contient déjà une table `inet filter` vide, sans effet) :
 
     ```bash
     sudo nano /etc/nftables.conf
     ```
 
-2. Ajouter à la fin :
+3. Ajouter à la fin :
 
     ```text title="/etc/nftables.conf (ajout)"
     table ip nat {
@@ -217,7 +223,7 @@ Le réseau `10.10.10.0/24` est inconnu en dehors du routeur : une réponse venan
 
     La règle se lit : « pour tout paquet qui **sort** par `ens33` (vers VMnet8 et Internet), remplacer l'adresse source par celle du routeur ». **`ens33` doit être le vrai nom de la carte VMnet8 du routeur**, relevé en section 3.2 : avec un nom faux, `nft -c` ne signale aucune erreur, mais la règle ne s'applique jamais et les VM de VMnet2 n'ont pas Internet.
 
-3. 🐧 **routeur** : vérifier la syntaxe, activer nftables au démarrage, le démarrer, puis afficher les règles chargées :
+4. 🐧 **routeur** : vérifier la syntaxe, activer nftables au démarrage, le démarrer, puis afficher les règles chargées :
 
     ```bash
     sudo nft -c -f /etc/nftables.conf
@@ -227,8 +233,8 @@ Le réseau `10.10.10.0/24` est inconnu en dehors du routeur : une réponse venan
 
     La première commande ne répond **rien** si le fichier est correct.
 
-4. 🐧 **routeur** : éteindre la VM : `sudo poweroff`.
-5. 🛟 🖥️ Prendre l'instantané `routeur-ok`, puis redémarrer `routeur`. Il doit rester **allumé** pendant toute la suite du jour 2 : c'est le seul accès à Internet du réseau VMnet2.
+5. 🐧 **routeur** : éteindre la VM : `sudo poweroff`.
+6. 🛟 🖥️ Prendre l'instantané `routeur-ok`, puis redémarrer `routeur`. Il doit rester **allumé** pendant toute la suite du jour 2 : c'est le seul accès à Internet du réseau VMnet2.
 
 !!! warning "Un routeur, pas encore un pare-feu"
     La table `inet filter` de `/etc/nftables.conf` est **vide** : le routeur fait passer **tout** le trafic, dans les deux sens. Le réseau interne est seulement **caché** par la traduction d'adresses : une machine de VMnet8 qui connaîtrait la route vers `10.10.10.0/24` pourrait joindre `web1`. Un vrai pare-feu ajoute des **règles de filtrage** (par exemple : tout refuser par défaut, n'autoriser que les connexions sortantes et le port publié), comme le fait pfSense dans le [parcours pfSense](../pfsense-ha/index.md).
