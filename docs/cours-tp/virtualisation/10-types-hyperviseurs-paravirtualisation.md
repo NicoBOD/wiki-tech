@@ -297,7 +297,7 @@ Dans l'assistant **Créer une VM**, le modèle de carte réseau se choisit dans 
     La différence existe aussi pour le disque : sur le même lab, une réécriture de 1 Go (`dd … oflag=direct conv=notrunc`) atteint environ **1,7 Go/s** en VirtIO SCSI contre **610 Mo/s** en IDE, et une lecture directe environ **3 Go/s** contre **650 Mo/s**. Mais dans une VM imbriquée, ces mesures sont très perturbées par le disque du PC et par ses caches : ne pas s'étonner de résultats irréguliers.
 
 ??? failure "Les VM 101 et 102 n'ont pas de réseau"
-    - Vérifier dans la console de la VM l'adresse (`ip -br a`) et la passerelle (`ip route`) : elles doivent correspondre au `x` de son VMnet8. Sinon, corriger dans **Matériel**… plutôt dans l'onglet **Cloud-Init** de la VM, puis **Régénérer l'image** et redémarrer la VM.
+    - Vérifier dans la console de la VM l'adresse (`ip -br a`) et la passerelle (`ip route`) : elles doivent correspondre au `x` de son VMnet8. Sinon, corriger les valeurs dans l'onglet **Cloud-Init** de la VM, régénérer l'image cloud-init (bouton en haut de l'onglet), puis redémarrer la VM.
     - Vérifier que la VM `pve` est bien sur **NAT** dans Workstation, et que le nœud lui-même joint Internet (`ping -c 3 deb.debian.org` dans **pve > Shell**).
     - Pour la VM 101, vérifier qu'on a bien utilisé l'image **generic** (pilote E1000 présent).
 
