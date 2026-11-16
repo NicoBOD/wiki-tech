@@ -174,24 +174,24 @@ Pour chacun des noms `web1`, `web2` et `web3` :
 
 ### 3.2 Personnaliser chaque serveur
 
-Pour **chaque** serveur (`web1`, puis `web2`, puis `web3`) :
+Pour **chaque** serveur (`web1`, puis `web2`, puis `web3`), **un à la fois** : ne démarrer le suivant qu'une fois le précédent personnalisé et redémarré (avant le script, les clones se présentent au DHCP avec la même identité et peuvent recevoir la même adresse IP) :
 
 1. 🖥️ Démarrer la VM et se connecter en `tssr`.
-2. 🐧 Donner son identité au serveur (exemple pour `web1`), puis redémarrer :
+2. 🐧 **web1** : donner son identité au serveur (remplacer `web1` par le nom du serveur en cours), puis redémarrer :
 
     ```bash
     sudo personnaliser-clone.sh web1
     sudo reboot
     ```
 
-3. 🐧 Après le redémarrage, se reconnecter, installer le serveur web **nginx** et remplacer sa page d'accueil par une page qui affiche le nom du serveur :
+3. 🐧 **web1** : après le redémarrage, se reconnecter, installer le serveur web **nginx** et remplacer sa page d'accueil par une page qui affiche le nom du serveur :
 
     ```bash
     sudo apt install -y nginx
     echo "<h1>Serveur $(hostname)</h1>" | sudo tee /var/www/html/index.html
     ```
 
-4. 🐧 Noter l'adresse IP du serveur :
+4. 🐧 **web1** : noter l'adresse IP du serveur :
 
     ```bash
     ip -4 a
@@ -214,6 +214,7 @@ Pour **chaque** serveur (`web1`, puis `web2`, puis `web3`) :
 ??? failure "La page ne s'affiche pas"
     - 🐧 `systemctl status nginx` : le service doit être **active (running)**.
     - 🐧 `wget -qO- http://localhost` : si la page s'affiche dans la VM mais pas sur le PC, vérifier l'adresse IP tapée dans le navigateur.
+    - En SSH, le message « REMOTE HOST IDENTIFICATION HAS CHANGED » : l'adresse a déjà servi à une autre VM, dont les clés étaient différentes ; voir l'encadré de la [partie 4](04-partager-les-ressources.md#63-donner-une-identite-propre-au-clone) (`ssh-keygen -R`).
     - Deux serveurs ont la **même** adresse IP : le script n'a pas été lancé sur l'un d'eux, ou la VM n'a pas été redémarrée après. Le relancer, puis `sudo reboot`.
 
 ### 3.4 Éteindre ce qui ne sert plus
@@ -224,7 +225,7 @@ Pour **chaque** serveur (`web1`, puis `web2`, puis `web3`) :
 
 1. Qu'est-ce qu'un modèle (*template*), et que doit-il contenir ? Que ne doit-il **pas** contenir ?
 2. Quelle est la différence entre la **migration à chaud** et la **haute disponibilité** ? Laquelle provoque une coupure ?
-3. Pourquoi la migration à chaud et la haute disponibilité exigent-elles un **stockage partagé** ?
+3. Pourquoi la migration à chaud et la haute disponibilité reposent-elles en pratique sur un **stockage partagé** ?
 4. Que signifie **P2V** ? Dans quel cas l'utilise-t-on ?
 5. Que fait la ligne `set -e` au début d'un script bash ? Pourquoi est-elle utile ici ?
 6. Pourquoi coche-t-on **Enable Template mode** sur `modele-debian` ?
@@ -232,7 +233,7 @@ Pour **chaque** serveur (`web1`, puis `web2`, puis `web3`) :
 ??? success "Corrigé"
     1. Une VM « maître », installée, à jour et configurée, qui sert à créer rapidement de nouveaux serveurs. Elle contient ce qui est **commun** à tous (système, mises à jour, outils, scripts). Elle ne doit pas contenir ce qui est **propre** à chaque serveur : nom, identifiants, clés, adresse IP fixe, données.
     2. La **migration à chaud** déplace une VM **allumée** d'un hôte à un autre, sans coupure perceptible : on l'utilise pour une maintenance **prévue**. La **haute disponibilité** redémarre automatiquement les VM d'un hôte tombé en **panne** sur les autres hôtes : il y a une coupure, le temps du redémarrage.
-    3. Parce que l'hôte qui reprend la VM doit pouvoir lire **ses disques**. Avec un stockage partagé, il n'y a pas de disque à copier : seule la mémoire (migration) ou rien du tout (haute disponibilité) doit passer d'un hôte à l'autre.
+    3. Parce que l'hôte qui reprend la VM doit pouvoir lire **ses disques**. Avec un stockage partagé, il n'y a pas de disque à copier : seule la mémoire (migration) ou rien du tout (haute disponibilité) doit passer d'un hôte à l'autre. Une migration à chaud **sans** stockage partagé existe (elle copie aussi les disques), mais elle est bien plus longue ; la haute disponibilité, elle, est impossible sans stockage partagé ou répliqué, puisque l'hôte en panne ne peut plus rien copier.
     4. *Physical to Virtual* : la conversion d'un serveur **physique** en VM. On l'utilise pour virtualiser un serveur existant sans le réinstaller, par exemple quand l'application est difficile ou impossible à réinstaller.
     5. Elle arrête le script dès qu'une commande échoue. Sans elle, le script continuerait sur un système à moitié modifié (par exemple, clés SSH supprimées mais jamais recréées), ce qui serait pire qu'un arrêt net.
     6. Pour que Workstation **protège** la VM modèle : impossible de supprimer la VM ou son instantané `modele-v1`, sur lesquels reposent les clones liés `web1`, `web2` et `web3`.
@@ -256,3 +257,4 @@ Pour **chaque** serveur (`web1`, puis `web2`, puis `web3`) :
 *[DHCP]: Dynamic Host Configuration Protocol — attribution automatique d'adresses IP
 *[SSH]: Secure Shell — protocole d'administration à distance chiffré
 *[IP]: Internet Protocol — adresse d'une machine sur le réseau
+*[TSSR]: Technicien supérieur systèmes et réseaux

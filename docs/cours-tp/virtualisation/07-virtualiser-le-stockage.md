@@ -37,7 +37,7 @@ status: publié
 
 <!-- NOTE DE RÉDACTION (non affichée) : déroulé vérifié sur KVM (Debian 13.7, second disque virtio vdb ; sous Workstation sdb si le disque système est SCSI/SATA) : exportfs -v montre root_squash par défaut ; montage nfs4 vers=4.2 ; fstab _netdev remonté après redémarrage ; targetcli crée le portail 0.0.0.0:3260 automatiquement, saveconfig dans /etc/rtslib-fb-target/saveconfig.json, service rtslib-fb-targetctl activé ; initiateur : lsblk montre TRAN iscsi, VENDOR LIO-ORG, MODEL lun0 ; mkfs.ext4 + mount OK. Questions 5 et 6 du QCM du formateur reprises (SAN/NAS corrigé : « Ethernet » pour NAS = le réseau local, SAN = réseau dédié). -->
 
-**Prérequis** : la [partie 6](06-virtualiser-le-reseau.md) est terminée : `routeur` relie le réseau isolé VMnet2 (`10.10.10.0/24`) à Internet, et `web1` est en `10.10.10.10`.
+**Prérequis** : la [partie 6](06-virtualiser-le-reseau.md) est terminée : `routeur` relie le réseau isolé VMnet2 (`10.10.10.0/24`) à Internet, et `web1` est en `10.10.10.10`. 🖥️ `routeur` doit être **allumé** pendant toute la partie : sans lui, aucune VM de VMnet2 ne peut installer de paquet.
 
 ## 1. Les familles de stockage
 
@@ -92,7 +92,7 @@ Le vocabulaire d'iSCSI :
 
 1. 🖥️ Créer un **clone lié** de `modele-debian` (instantané `modele-v1`) nommé `stockage`, dans `C:\VM\stockage`. Mémoire : **1 Go**.
 2. 🖥️ VM éteinte, dans **VM > Settings** : sélectionner **Network Adapter**, choisir **Custom: Specific virtual network** > **VMnet2**.
-3. 🖥️ Toujours dans **VM > Settings**, cliquer sur **Add…**, choisir **Hard Disk**, puis **Next** ; garder le type de disque proposé (**SCSI**), **Create a new virtual disk**, taille **10** Go, **Store virtual disk as a single file**, puis **Finish** et **OK**.
+3. 🖥️ Toujours dans **VM > Settings**, cliquer sur **Add…**, choisir **Hard Disk**, puis **Next** ; choisir le type **SCSI** (même si l'assistant en propose un autre), **Create a new virtual disk**, taille **10** Go, garder **Split virtual disk into multiple files** (comme pour le disque système), puis **Finish** et **OK**.
 
 ### 2.2 Personnaliser la VM et lui donner son adresse
 
@@ -103,7 +103,7 @@ Le vocabulaire d'iSCSI :
     sudo personnaliser-clone.sh stockage
     ```
 
-3. 🐧 **stockage** : dans `/etc/network/interfaces` (`sudo nano /etc/network/interfaces`), remplacer `iface ens33 inet dhcp` par :
+3. 🐧 **stockage** : dans `/etc/network/interfaces` (`sudo nano /etc/network/interfaces`), remplacer la ligne `iface ens33 inet dhcp` (garder le nom de carte du fichier) par :
 
     ```text title="/etc/network/interfaces (extrait)"
     iface ens33 inet static
@@ -111,20 +111,24 @@ Le vocabulaire d'iSCSI :
         gateway 10.10.10.1
     ```
 
-4. 🐧 **stockage** : indiquer le serveur DNS (le `x` de son PC), puis redémarrer :
+4. 🐧 **stockage** : redémarrer (`sudo reboot`) et se reconnecter.
+5. 🐧 **stockage** : indiquer le serveur DNS, avec l'adresse `192.168.x.2` notée sur `routeur` en [partie 6](06-virtualiser-le-reseau.md#32-identifier-les-deux-cartes), puis vérifier l'accès à Internet :
 
     ```bash
     echo "nameserver 192.168.x.2" | sudo tee /etc/resolv.conf
-    sudo reboot
+    ping -c 3 deb.debian.org
     ```
 
-5. 🐧 **stockage** : après la reconnexion, vérifier l'accès à Internet (`ping -c 3 deb.debian.org`) et repérer le nouveau disque :
+6. 🐧 **stockage** : repérer le nouveau disque :
 
     ```bash
     lsblk
     ```
 
-    Le disque système s'appelle `sda` ; le nouveau disque de **10G**, sans partition, s'appelle `sdb` (ou `nvme0n2` si Workstation a choisi un contrôleur NVMe : adapter les commandes).
+    Le nouveau disque est celui de **10G**, **sans partition** ni point de montage : souvent `sdb`. S'il a un autre nom (`sda` si le disque système est en NVMe, par exemple), **remplacer `sdb` par ce nom** dans toute la suite.
+
+    !!! danger "Ne jamais choisir le disque qui porte `/`"
+        Le disque système est celui dont une partition est montée sur `/` (colonne `MOUNTPOINTS`). Le partager en iSCSI, puis le formater depuis `web1`, détruirait le système de `stockage`.
 
 ## 3. TP : partager un dossier en NFS
 
@@ -175,7 +179,7 @@ Le vocabulaire d'iSCSI :
 3. 🐧 **stockage** : vérifier que le fichier est bien arrivé : `cat /srv/partage/test.txt`.
 
 !!! success "Vérifier son lab"
-    - Sur `web1`, `findmnt /mnt/partage` affiche la source `10.10.10.20:/srv/partage` et le type `nfs4` : le client a choisi automatiquement **NFS version 4** (la commande `mount` détaille `vers=4.2`).
+    - Sur `web1`, `findmnt /mnt/partage` affiche la source `10.10.10.20:/srv/partage` et le type `nfs4` : le client a choisi automatiquement **NFS version 4** (`findmnt -o SOURCE,FSTYPE,OPTIONS /mnt/partage` détaille `vers=4.2`).
     - Sur `stockage`, `cat /srv/partage/test.txt` affiche `écrit depuis web1`, et `ls -l /srv/partage` montre le fichier appartenant à `tssr` : sur le serveur, c'est un **fichier ordinaire**, dans un système de fichiers que gère le serveur.
 
 ### 3.3 Monter le partage automatiquement
@@ -183,14 +187,14 @@ Le vocabulaire d'iSCSI :
 🐧 **web1** : pour que le partage soit monté à chaque démarrage, l'ajouter à `/etc/fstab`, le fichier des systèmes de fichiers à monter :
 
 ```bash
-echo "10.10.10.20:/srv/partage  /mnt/partage  nfs  defaults,_netdev  0  0" | sudo tee -a /etc/fstab
+echo "10.10.10.20:/srv/partage  /mnt/partage  nfs  defaults,_netdev,nofail  0  0" | sudo tee -a /etc/fstab
 sudo systemctl daemon-reload
 sudo umount /mnt/partage
 sudo mount -a
 findmnt /mnt/partage
 ```
 
-L'option `_netdev` indique qu'il s'agit d'un **stockage réseau** : il ne doit être monté qu'une fois le réseau disponible. `mount -a` monte tout ce qui est dans `/etc/fstab` : s'il ne répond rien et que `findmnt` affiche le partage, la ligne est correcte. Après un `sudo reboot`, le partage est remonté automatiquement.
+L'option `_netdev` indique qu'il s'agit d'un **stockage réseau** : il ne doit être monté qu'une fois le réseau disponible. L'option `nofail` permet à `web1` de démarrer normalement même si `stockage` est éteint (sans le partage, et sans attendre une minute et demie). Démarrer de préférence `routeur`, puis `stockage`, puis `web1`. `mount -a` monte tout ce qui est dans `/etc/fstab` : s'il ne répond rien et que `findmnt` affiche le partage, la ligne est correcte. Après un `sudo reboot`, le partage est remonté automatiquement.
 
 !!! danger "Toujours tester `/etc/fstab` avec `mount -a`"
     Une erreur dans `/etc/fstab` peut empêcher la machine de démarrer normalement. On vérifie donc chaque modification avec `sudo mount -a` **avant** de redémarrer.
@@ -218,7 +222,7 @@ Ces commandes, dans l'ordre :
 1. déclarent le disque `/dev/sdb` comme **espace de stockage** (*backstore*) nommé `lun0` ;
 2. créent la **cible** iSCSI et son IQN ; targetcli ajoute automatiquement un **portail** qui écoute sur toutes les adresses, port **3260** ;
 3. exposent `lun0` comme **LUN 0** de cette cible ;
-4. créent une **ACL** (liste de contrôle d'accès) : seul l'initiateur `iqn.2026-11.lab.tssr:web1` pourra se connecter ;
+4. créent une **ACL** (liste de contrôle d'accès) : seul un initiateur qui se présente sous le nom `iqn.2026-11.lab.tssr:web1` pourra se connecter (un filtre sur le nom, sans mot de passe : voir la question 4 de révision) ;
 5. enregistrent la configuration dans `/etc/rtslib-fb-target/saveconfig.json`, que le service `rtslib-fb-targetctl` recharge à chaque démarrage.
 
 !!! success "Vérifier son lab"
@@ -284,17 +288,24 @@ Ces commandes, dans l'ordre :
 ??? success "Corrigé"
     | Question | NFS | iSCSI |
     |---|---|---|
-    | Ce que voit `web1` | Un **dossier** réseau, monté en `nfs4` | Un **disque** `sdb` de 10 Go, transport `iscsi` |
+    | Ce que voit `web1` | Un **dossier** réseau, monté en `nfs4` | Un **disque** de 10 Go (souvent `sdb`), transport `iscsi` |
     | Qui a créé le système de fichiers ? | Le **serveur** `stockage` (c'est son disque système) | Le **client** `web1` (`mkfs.ext4`) |
-    | Le serveur peut-il lire les fichiers ? | **Oui** : ce sont des fichiers ordinaires dans `/srv/partage` | **Non**, pas directement : pour lui, `/dev/sdb` n'est qu'une suite de blocs que `web1` a formatés |
+    | Le serveur peut-il lire les fichiers ? | **Oui** : ce sont des fichiers ordinaires dans `/srv/partage` | **Non**, pas directement : pour lui, son disque de 10 Go n'est qu'une suite de blocs que `web1` a formatés |
     | Plusieurs clients en même temps ? | **Oui**, c'est fait pour | **Non** avec ext4 ; oui avec un système de fichiers de cluster (VMFS, CSV…) |
     | Famille | **NAS** (fichiers) | **SAN** (blocs) |
 
-🛟 🖥️ Éteindre `web1` puis `stockage` (dans cet ordre, `sudo poweroff`), et prendre sur chacune l'instantané `stockage-ok`.
+??? failure "Dépannage NFS et iSCSI"
+    - `mount.nfs: access denied by server while mounting` : le réseau autorisé est mal écrit dans `/etc/exports`, ou `sudo exportfs -ra` a été oublié. Vérifier avec `sudo exportfs -v` sur `stockage`.
+    - `mount` reste bloqué : `stockage` est éteint ou injoignable (`ping 10.10.10.20` depuis `web1`).
+    - La découverte iSCSI répond `No route to host` ou `Connection refused` : `stockage` est éteint, ou le portail est absent (`sudo targetcli ls` sur `stockage`).
+    - La connexion échoue avec une erreur d'**autorisation** (*authorization failure*) : le nom de `/etc/iscsi/initiatorname.iscsi` sur `web1` ne correspond pas **exactement** à l'ACL créée sur `stockage` (faute de frappe fréquente). Corriger le fichier, puis `sudo systemctl restart iscsid` et recommencer la découverte et la connexion.
+
+1. 🐧 **web1** puis 🐧 **stockage** : éteindre les deux VM, dans cet ordre (`sudo poweroff`).
+2. 🛟 🖥️ Prendre sur chacune l'instantané `stockage-ok` (le même nom sur les deux : il marque l'état du lab à la fin de la partie 7).
 
 ## 5. Questions de révision
 
-1. Citez les différences entre un SAN et un NAS.
+1. Quelles sont les différences entre un SAN et un NAS ?
 2. Que signifie SMB ? Sur quel port fonctionne-t-il ?
 3. Dans iSCSI, qu'est-ce qu'une cible, un initiateur, une LUN et un IQN ?
 4. Pourquoi a-t-on créé une ACL sur la cible iSCSI ?
@@ -305,9 +316,9 @@ Ces commandes, dans l'ordre :
     1. Un **NAS** partage des **fichiers** sur le réseau local, avec NFS ou SMB : c'est lui qui gère le système de fichiers, et plusieurs clients lisent les mêmes fichiers. Un **SAN** partage des **blocs** (des disques bruts, les LUN) sur un réseau de stockage dédié, en Fibre Channel ou en iSCSI : chaque serveur formate et gère lui-même son disque. Le SAN est plus performant et a une latence plus faible ; le NAS est plus simple à utiliser et à administrer, et moins cher.
     2. **Server Message Block** : le protocole client-serveur de partage de fichiers, de dossiers et d'imprimantes de Windows. Il fonctionne sur le port **TCP 445**. Sous Linux, **Samba** le met en œuvre.
     3. La **cible** est le serveur de stockage qui partage les disques ; l'**initiateur** est le client qui s'y connecte ; une **LUN** est un disque logique présenté par la cible ; un **IQN** est le nom unique d'une cible ou d'un initiateur (`iqn.2026-11.lab.tssr:stockage`).
-    4. Pour que **seul** l'initiateur autorisé (`web1`) puisse se connecter au disque. Sans ACL, n'importe quelle machine du réseau pourrait accéder au disque, le lire ou l'effacer.
+    4. Pour que seul l'initiateur dont le **nom** est autorisé (`web1`) puisse se connecter au disque. C'est un premier filtre, mais faible : un IQN n'est pas un secret, et n'importe quelle machine peut prendre ce nom (on l'a fait soi-même dans le TP). En production, on ajoute une **authentification CHAP** (identifiant et mot de passe) et on isole le réseau de stockage (réseau ou VLAN dédié).
     5. Le système de fichiers ext4 est géré par **chaque** client, qui garde en mémoire sa propre vision du disque. Deux clients écriraient sans se coordonner et détruiraient le système de fichiers. Il faut un système de fichiers de cluster (VMFS, CSV, GFS2, OCFS2).
-    6. Elle indique un **système de fichiers réseau** : le système attend que le réseau soit disponible avant de le monter, et le démonte avant de couper le réseau à l'arrêt.
+    6. Elle indique un **système de fichiers réseau** : le système attend que le réseau soit disponible avant de le monter, et le démonte avant de couper le réseau à l'arrêt. (`nofail`, elle, évite de bloquer le démarrage si le serveur NFS est absent.)
 
 ---
 
@@ -337,3 +348,13 @@ Ces commandes, dans l'ordre :
 *[CSV]: Cluster Shared Volumes — volumes partagés de cluster de Microsoft
 *[VM]: Virtual Machine — machine virtuelle
 *[DNS]: Domain Name System — résolution des noms
+*[SCSI]: Small Computer System Interface — famille de normes d'accès aux disques
+*[SATA]: Serial ATA — interface de disque
+*[SAS]: Serial Attached SCSI — interface de disque pour serveurs
+*[USB]: Universal Serial Bus
+*[NVMe]: interface rapide pour les disques SSD
+*[TCP]: Transmission Control Protocol
+*[IP]: Internet Protocol — adresse d'une machine sur le réseau
+*[PME]: Petite ou moyenne entreprise
+*[CHAP]: Challenge-Handshake Authentication Protocol — authentification par mot de passe d'iSCSI
+*[VLAN]: Virtual LAN — réseau local virtuel

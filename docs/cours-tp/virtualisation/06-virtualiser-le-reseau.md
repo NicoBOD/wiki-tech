@@ -9,7 +9,7 @@ tags:
   - debian
   - cours
   - travaux-pratiques
-difficulty: débutant
+difficulty: intermédiaire
 os: VMware Workstation Pro 26H1, Debian 13.7, nftables
 status: publié
 ---
@@ -19,11 +19,11 @@ status: publié
 !!! abstract "Résumé"
     Une VM a besoin d'un réseau, et ce réseau est lui aussi **virtuel** : cartes réseau virtuelles, **commutateurs virtuels**, routeurs et pare-feux qui ne sont que des logiciels. Cette partie explique comment l'hyperviseur relie les VM entre elles et au monde extérieur, et compare les trois modes de Workstation : **pont**, **NAT** et **réseau privé hôte**.
 
-    Le TP construit un petit réseau d'entreprise **isolé** : un réseau privé `10.10.10.0/24` invisible depuis Windows, un serveur web dedans, et une **VM Debian qui sert de routeur** et de pare-feu pour le relier à Internet. À la fin, le serveur `web1` est protégé derrière le routeur, sort sur Internet par lui, et peut même être publié sur un port choisi.
+    Le TP construit un petit réseau d'entreprise **isolé** : un réseau privé `10.10.10.0/24` invisible depuis Windows, un serveur web dedans, et une **VM Debian qui sert de routeur** pour le relier à Internet. À la fin, le serveur `web1` est caché derrière le routeur, sort sur Internet par lui, et peut même être publié sur un port choisi.
 
 | Propriété | Valeur |
 |-----------|--------|
-| Difficulté | Débutant à intermédiaire |
+| Difficulté | Intermédiaire |
 | Durée estimée | 2 h |
 | Version décrite | VMware Workstation Pro 26H1, Debian 13.7, nftables 1.1 |
 | Place dans le parcours | Partie 6 sur 17 du parcours [Virtualisation](index.md) — jour 2 |
@@ -134,7 +134,20 @@ ip -br link
 ip -br a
 ```
 
-La première carte, branchée sur VMnet8, s'appelle en général `ens33` et a une adresse en `192.168.x.128` ou au-dessus. La **seconde** carte, sur VMnet2, n'a **pas d'adresse** : noter son nom (par exemple `ens36` ou `ens37`). Dans la suite, on l'appelle `ens36` : **remplacer** ce nom par celui affiché.
+Noter le nom des **deux** cartes :
+
+- la **première**, branchée sur VMnet8, a une adresse en `192.168.x.128` ou au-dessus ; elle s'appelle souvent `ens33` (parfois `ens160` ou `ens192`, selon le type de carte choisi par Workstation) ;
+- la **seconde**, sur VMnet2, n'a **pas d'adresse** ; elle s'appelle par exemple `ens36` ou `ens37`.
+
+Dans la suite de la page, la carte VMnet8 du routeur est appelée `ens33` et la carte VMnet2 `ens36` : **remplacer les deux noms** par ceux affichés, dans **toutes** les commandes et tous les fichiers.
+
+🐧 **routeur** : relever aussi l'adresse de la **passerelle et du DNS de VMnet8**, qui donne le `x` de son PC :
+
+```bash
+ip route
+```
+
+La première ligne, `default via 192.168.x.2 dev ens33`, donne l'adresse `192.168.x.2`. **La noter** : elle servira de serveur DNS à toutes les VM du réseau VMnet2 (parties 6, 7 et 8).
 
 !!! tip "Quelle carte est laquelle ?"
     En cas de doute, comparer les **adresses MAC** : `ip -br link` affiche celle de chaque carte, et Workstation celle de chaque **Network Adapter** (bouton **Advanced…** dans **VM > Settings**).
@@ -183,7 +196,7 @@ La réponse `net.ipv4.ip_forward = 1` confirme que le routage est actif. Le fich
 
 ### 3.5 Activer la traduction d'adresses (NAT)
 
-Le réseau `10.10.10.0/24` est inconnu en dehors du PC : une réponse venant d'Internet ne saurait pas revenir vers `10.10.10.10`. Le routeur doit donc **remplacer** l'adresse des machines internes par la sienne quand les paquets sortent : c'est la **traduction d'adresses** (NAT), ici en mode *masquerade*. On utilise **nftables**, le pare-feu standard de Debian.
+Le réseau `10.10.10.0/24` est inconnu en dehors du routeur : une réponse venant d'Internet ne saurait pas revenir vers `10.10.10.10`. Le routeur doit donc **remplacer** l'adresse des machines internes par la sienne quand les paquets sortent : c'est la **traduction d'adresses** (NAT), ici en mode *masquerade*. On utilise **nftables**, le pare-feu standard de Debian.
 
 1. 🐧 **routeur** : ouvrir le fichier de configuration de nftables (il contient déjà une table `inet filter` vide, sans effet) :
 
@@ -202,7 +215,7 @@ Le réseau `10.10.10.0/24` est inconnu en dehors du PC : une réponse venant d'I
     }
     ```
 
-    La règle se lit : « pour tout paquet qui **sort** par `ens33` (vers VMnet8 et Internet), remplacer l'adresse source par celle du routeur ».
+    La règle se lit : « pour tout paquet qui **sort** par `ens33` (vers VMnet8 et Internet), remplacer l'adresse source par celle du routeur ». **`ens33` doit être le vrai nom de la carte VMnet8 du routeur**, relevé en section 3.2 : avec un nom faux, `nft -c` ne signale aucune erreur, mais la règle ne s'applique jamais et les VM de VMnet2 n'ont pas Internet.
 
 3. 🐧 **routeur** : vérifier la syntaxe, activer nftables au démarrage, le démarrer, puis afficher les règles chargées :
 
@@ -214,20 +227,24 @@ Le réseau `10.10.10.0/24` est inconnu en dehors du PC : une réponse venant d'I
 
     La première commande ne répond **rien** si le fichier est correct.
 
-🛟 🖥️ Éteindre `routeur` (`sudo poweroff`), prendre l'instantané `routeur-ok`, puis le redémarrer.
+4. 🐧 **routeur** : éteindre la VM : `sudo poweroff`.
+5. 🛟 🖥️ Prendre l'instantané `routeur-ok`, puis redémarrer `routeur`. Il doit rester **allumé** pendant toute la suite du jour 2 : c'est le seul accès à Internet du réseau VMnet2.
+
+!!! warning "Un routeur, pas encore un pare-feu"
+    La table `inet filter` de `/etc/nftables.conf` est **vide** : le routeur fait passer **tout** le trafic, dans les deux sens. Le réseau interne est seulement **caché** par la traduction d'adresses : une machine de VMnet8 qui connaîtrait la route vers `10.10.10.0/24` pourrait joindre `web1`. Un vrai pare-feu ajoute des **règles de filtrage** (par exemple : tout refuser par défaut, n'autoriser que les connexions sortantes et le port publié), comme le fait pfSense dans le [parcours pfSense](../pfsense-ha/index.md).
 
 ## 4. TP : placer web1 derrière le routeur
 
 1. 🐧 **web1** : éteindre la VM (`sudo poweroff`).
 2. 🖥️ Dans **VM > Settings** de `web1`, sélectionner **Network Adapter**, choisir **Custom: Specific virtual network** > **VMnet2**, puis **OK**.
-3. 🖥️ Démarrer `web1` et se connecter en `tssr` **dans la console de Workstation** (plus d'accès SSH depuis Windows : le PC n'est pas sur VMnet2).
+3. 🖥️ Démarrer `web1` et se connecter en `tssr` **dans la console de Workstation** (plus d'accès SSH direct depuis Windows : le PC n'est pas sur VMnet2 ; voir l'astuce ci-dessous).
 4. 🐧 **web1** : remplacer la configuration DHCP par une adresse fixe :
 
     ```bash
     sudo nano /etc/network/interfaces
     ```
 
-    Remplacer la ligne `iface ens33 inet dhcp` par :
+    Remplacer la ligne `iface ens33 inet dhcp` (le nom de la carte peut être différent : garder celui du fichier) par :
 
     ```text title="/etc/network/interfaces (extrait)"
     iface ens33 inet static
@@ -235,16 +252,26 @@ Le réseau `10.10.10.0/24` est inconnu en dehors du PC : une réponse venant d'I
         gateway 10.10.10.1
     ```
 
-5. 🐧 **web1** : indiquer le serveur DNS. Sur VMnet8, le routeur NAT de Workstation (`192.168.x.2`, avec le `x` de son PC) fait aussi serveur DNS ; `web1` le joindra à travers `routeur` :
+5. 🐧 **web1** : redémarrer (`sudo reboot`) et se reconnecter.
+6. 🐧 **web1** : indiquer le serveur DNS. Sur VMnet8, le routeur NAT de Workstation (l'adresse `192.168.x.2` notée en section 3.2) fait aussi serveur DNS ; `web1` le joindra à travers `routeur` :
 
     ```bash
     echo "nameserver 192.168.x.2" | sudo tee /etc/resolv.conf
     ```
 
-6. 🐧 **web1** : redémarrer (`sudo reboot`) et se reconnecter.
+    On écrit ce fichier **après** le redémarrage : à l'arrêt, le client DHCP qui tournait encore aurait pu le réécrire.
+
+??? tip "Astuce : se connecter en SSH à travers le routeur"
+    Dans la console de Workstation, pas de copier-coller. Le client SSH de Windows sait **rebondir** par une machine intermédiaire (option `-J`, *jump*) : le PC joint `routeur` (sur VMnet8), qui joint `web1` (sur VMnet2). Dans PowerShell :
+
+    ```powershell
+    ssh -J tssr@<adresse ens33 du routeur> tssr@10.10.10.10
+    ```
+
+    Le mot de passe est demandé deux fois (routeur, puis `web1`). Le copier-coller fonctionne alors normalement. En entreprise, ce rôle de machine intermédiaire s'appelle un **bastion**. En cas d'alerte « REMOTE HOST IDENTIFICATION HAS CHANGED », voir l'encadré de la [partie 4](04-partager-les-ressources.md#63-donner-une-identite-propre-au-clone).
 
 !!! info "Pourquoi pas `dns-nameservers` dans `/etc/network/interfaces` ?"
-    Le fichier `/etc/network/interfaces` de Debian le rappelle en commentaire : les options `dns-*` ne fonctionnent qu'avec un paquet comme **resolvconf** (ou **openresolv**), qui n'est pas installé. Sans lui, on écrit directement le fichier `/etc/resolv.conf`.
+    Les options `dns-*` de ce fichier ne fonctionnent qu'avec un paquet comme **resolvconf** (ou **openresolv**), qui n'est pas installé. Sans lui, on écrit directement le fichier `/etc/resolv.conf`.
 
 ## 5. Tester
 
@@ -263,9 +290,16 @@ sudo apt update                 # les dépôts Debian
 🐧 **routeur** : `wget -qO- http://10.10.10.10` (affiche la page de `web1`).
 
 !!! success "Vérifier son lab"
-    - Sur `web1`, `ip route` affiche `default via 10.10.10.1 dev ens33`.
+    - Sur `web1`, `ip route` affiche une ligne qui commence par `default via 10.10.10.1`, et `cat /etc/resolv.conf` affiche `nameserver 192.168.x.2`.
     - Les trois `ping` de `web1` répondent (0 % de perte) et `sudo apt update` télécharge les listes de paquets : `web1` sort sur Internet **à travers** `routeur`.
-    - Depuis le **PC**, `ping 10.10.10.10` **échoue** (délai d'attente dépassé) : le réseau interne est invisible depuis Windows. C'est voulu.
+    - Depuis le **PC**, `ping 10.10.10.10` **échoue** (délai d'attente dépassé) : le réseau interne est invisible depuis Windows. C'est voulu. (Si le réseau de la salle utilise lui-même des adresses en `10.10.10.x`, le ping peut répondre par erreur : choisir alors un autre réseau pour VMnet2, par exemple `10.99.99.0/24`, et adapter toutes les adresses.)
+
+??? failure "Dépannage : web1 ne sort pas sur Internet"
+    Tester couche par couche, depuis `web1` :
+
+    - `ping -c 3 10.10.10.1` **échoue** : vérifier dans Workstation que la carte de `web1` est sur **VMnet2** et **Connected** ; sur `routeur`, que la carte VMnet2 a bien `10.10.10.1` (`ip -br a`) ; sur `web1`, l'adresse et le masque (`ip -br a`) et l'absence de faute dans `/etc/network/interfaces`.
+    - `ping 10.10.10.1` répond mais pas `ping 1.1.1.1` : sur `routeur`, `cat /proc/sys/net/ipv4/ip_forward` doit afficher `1`, et `sudo nft list ruleset` doit montrer `masquerade` avec le **nom exact** de la carte VMnet8 (comparer avec `ip -br link`).
+    - `ping 1.1.1.1` répond mais pas `ping deb.debian.org` : `cat /etc/resolv.conf` doit contenir `nameserver 192.168.x.2` avec le bon `x`.
     - Depuis `routeur`, `wget -qO- http://10.10.10.10` affiche `<h1>Serveur web1</h1>`.
 
 ### 5.1 ✍️ Expérience : sans traduction d'adresses
@@ -298,7 +332,7 @@ Le serveur `web1` est caché derrière le routeur. Pour le rendre joignable depu
 2. 🐧 **routeur** : `sudo nft -c -f /etc/nftables.conf && sudo systemctl restart nftables`, puis noter l'adresse de `ens33` (`ip -br a`).
 3. 🌐 Dans le navigateur du PC, ouvrir `http://<adresse ens33 du routeur>:8080` : la page « Serveur web1 » s'affiche.
 
-C'est ainsi qu'une entreprise publie un serveur interne : seul le port choisi est ouvert, le reste du réseau interne reste invisible.
+C'est ainsi qu'une entreprise publie un serveur interne : seul le port choisi est redirigé. Pour que le reste du réseau interne soit réellement inaccessible, il faut en plus des règles de **filtrage** (voir l'encadré « Un routeur, pas encore un pare-feu »).
 
 ## 6. Questions de révision
 

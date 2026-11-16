@@ -152,7 +152,7 @@ Dès que la disposition **Français** est validée, le clavier de la VM est en *
 
     Deux solutions :
 
-    - **Réparer le DHCP** : vérifier dans Workstation que la carte réseau est connectée (**VM > Settings > Network Adapter**, case **Connected**) et que les services **VMware DHCP Service** et **VMware NAT Service** tournent sur le PC (voir les [annexes](annexes.md#16-pas-dinternet-dans-la-vm)), puis choisir **Réessayer la configuration automatique du réseau**.
+    - **Réparer le DHCP** : vérifier dans Workstation que la carte réseau est connectée (**VM > Settings > Network Adapter**, case **Connected**) et que les services **VMware DHCP Service** et **VMware NAT Service** tournent sur le PC (voir les [annexes](annexes.md#16-pas-dinternet-dans-une-vm-branchee-en-nat-vmnet8)), puis choisir **Réessayer la configuration automatique du réseau**.
     - **Configurer le réseau à la main** : choisir **Configurer vous-même le réseau**, puis saisir une adresse **libre** du réseau VMnet8 **sous** la plage DHCP (par exemple `192.168.x.10/24`), la passerelle `192.168.x.2` et le serveur de noms `192.168.x.2`, où `x` est le troisième octet du réseau VMnet8 de son PC.
 
     ![Écran Méthode pour la configuration du réseau : Configurer vous-même le réseau est sélectionné](images/03/052-configurer-reseau-soi-meme.png){ loading=lazy }

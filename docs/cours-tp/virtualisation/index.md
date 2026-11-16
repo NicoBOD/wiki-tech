@@ -73,12 +73,12 @@ Chaque partie dure entre 1 h 30 et 2 h et mêle cours, activités et pratique. L
 
 ### Jour 2 — Virtualiser les serveurs, le réseau et le stockage
 
-| Partie | Type | Durée | Contenu |
-|:---:|---|---|---|
-| [5. Virtualiser des serveurs](05-virtualiser-des-serveurs.md) | Cours et TP | 1 h 45 | Fonctions d'un cluster (migration à chaud, haute disponibilité, P2V), modèle, script de personnalisation, trois serveurs web déployés à partir du modèle |
-| [6. Virtualiser le réseau](06-virtualiser-le-reseau.md) | Cours et TP | 2 h | Commutateurs virtuels, modes pont, NAT et réseau privé hôte, réseau isolé VMnet2, VM routeur avec NAT nftables, redirection de port |
-| [7. Virtualiser le stockage](07-virtualiser-le-stockage.md) | Cours et TP | 2 h | DAS, NAS, SAN, protocoles, une VM Debian qui partage un dossier en NFS et un disque en iSCSI |
-| [8. Défi du jour 2](08-defi-jour-2.md) | Défi | 1 h 15 | Deux serveurs web, un site partagé en NFS, publication, diagnostic de trois pannes |
+| Partie | Type | Durée | Contenu | Machines allumées |
+|:---:|---|---|---|---|
+| [5. Virtualiser des serveurs](05-virtualiser-des-serveurs.md) | Cours et TP | 1 h 45 | Fonctions d'un cluster (migration à chaud, haute disponibilité, P2V), modèle, script de personnalisation, trois serveurs web déployés à partir du modèle | `modele-debian`, puis `web1` à `web3` un par un |
+| [6. Virtualiser le réseau](06-virtualiser-le-reseau.md) | Cours et TP | 2 h | Commutateurs virtuels, modes pont, NAT et réseau privé hôte, réseau isolé VMnet2, VM routeur avec NAT nftables, redirection de port | `routeur`, `web1` |
+| [7. Virtualiser le stockage](07-virtualiser-le-stockage.md) | Cours et TP | 2 h | DAS, NAS, SAN, protocoles, une VM Debian qui partage un dossier en NFS et un disque en iSCSI | `routeur`, `stockage`, `web1` (dans cet ordre) |
+| [8. Défi du jour 2](08-defi-jour-2.md) | Défi | 1 h 15 | Deux serveurs web, un site partagé en NFS, publication, diagnostic de trois pannes | `routeur`, `stockage`, `web1`, `web4` |
 
 ### Jours 3 à 5 — Technologies, cloud et tendances
 
@@ -99,7 +99,7 @@ Les [annexes](annexes.md) rassemblent le dépannage, les raccourcis de Workstati
 !!! tip "Suivre l'ordre"
     Chaque TP s'appuie sur le précédent : la VM `debian-tp` créée en partie 3 sert dans toutes les parties suivantes. Les cours se lisent avant les TP ou pendant leurs temps d'attente, par exemple pendant l'installation de Debian (environ 15 minutes).
 
-## Schéma du lab du jour 1
+## Schémas du lab
 
 ![Le PC hôte Windows exécute VMware Workstation Pro. Workstation crée le commutateur virtuel VMnet8 en mode NAT, avec une passerelle en .2 et un serveur DHCP. La VM debian-tp et ses deux clones y sont branchés et sortent sur Internet par la carte réseau du PC.](images/schema-lab-jour1.svg){ loading=lazy }
 /// caption
@@ -121,7 +121,7 @@ Pour connaître le `x` de son PC : 🖥️ dans Workstation, menu **Edit > Virtu
 
 | Machine | Réseau | Adresse | Passerelle | DNS | Créée en |
 |---|---|---|---|---|---|
-| `web1`, `web2`, `web3` | VMnet8 (NAT) | DHCP | `.2` | `.2` | Partie 5 |
+| `web1`, `web2`, `web3` | VMnet8 (NAT) | DHCP | `192.168.x.2` | `192.168.x.2` | Partie 5 |
 | `routeur`, 1re carte (`ens33`) | VMnet8 (NAT) | DHCP | `192.168.x.2` | `192.168.x.2` | Partie 6 |
 | `routeur`, 2e carte | VMnet2 (isolé) | `10.10.10.1/24` | — | — | Partie 6 |
 | `web1` (déplacé) | VMnet2 | `10.10.10.10/24` | `10.10.10.1` | `192.168.x.2` | Partie 6 |
@@ -130,7 +130,7 @@ Pour connaître le `x` de son PC : 🖥️ dans Workstation, menu **Edit > Virtu
 
 ![Lab du jour 2 : VMnet8 en NAT relie le routeur, web2 et web3 ; VMnet2 isolé relie la seconde carte du routeur en 10.10.10.1, web1 en 10.10.10.10 et le serveur de stockage en 10.10.10.20](images/schema-lab-jour2.svg){ loading=lazy }
 /// caption
-Le lab à la fin du jour 2
+Le lab à la fin de la partie 7 (le défi du jour 2 ajoute `web4` en `10.10.10.11`)
 ///
 
 ## Comptes et mots de passe
@@ -159,7 +159,7 @@ Le parcours est prévu pour des PC de **16 Go de mémoire vive** et un processeu
 | `routeur` (jour 2) | 1 vCPU, 512 Mo | 1 vCPU, 512 Mo | Clone lié de `modele-debian` |
 
 - Debian recommande **1 Go** de mémoire pour un système **sans bureau**, et en exige 512 Mo au minimum. Le profil **confortable** rend l'installation plus rapide ; une fois installée, une Debian sans bureau tourne très bien avec 1 Go.
-- **Mémoire du PC hôte** : avec 16 Go, trois VM de 1 à 2 Go allumées en même temps laissent largement de quoi faire tourner Windows et un navigateur. VMware demande au minimum 2 Go pour l'hôte lui-même, 4 Go conseillés.
+- **Mémoire du PC hôte** : avec 16 Go, trois VM de 1 à 2 Go allumées en même temps (jour 1), ou quatre VM de 512 Mo à 1 Go (jour 2, environ 3,5 Go), laissent largement de quoi faire tourner Windows et un navigateur. VMware demande au minimum 2 Go pour l'hôte lui-même, 4 Go conseillés.
 - **Disque du PC hôte** : prévoir **30 Go libres** pour le jour 1 et **15 Go** de plus pour le jour 2 (surtout pour le modèle et le disque de stockage), de préférence sur un **SSD**. Les disques virtuels sont **dynamiques** : un disque de 20 Go n'occupe au départ que la place réellement écrite (environ 2 Go après l'installation).
 - La **virtualisation matérielle** (Intel VT-x ou AMD-V) doit être activée dans le BIOS/UEFI du PC : la [partie 2](02-hyperviseur-et-machine-virtuelle.md#4-tp-verifier-que-son-pc-sait-virtualiser) explique comment le vérifier.
 
@@ -193,6 +193,7 @@ Dans les TP, chaque action précise où elle se fait :
 |---|---|
 | 🖥️ | PC hôte : Windows et la fenêtre de VMware Workstation |
 | 🐧 | Dans la VM Debian (console de la VM dans Workstation) |
+| 🌐 | Navigateur web du PC hôte |
 | 💬 | Activité en groupe ou en binôme : débat, recherche, mise en commun |
 | ✍️ | Exercice à faire seul, corrigé replié en dessous |
 | 🛟 | Prendre un instantané |

@@ -29,7 +29,7 @@ status: publié
 
 <!-- NOTE DE RÉDACTION (non affichée) : le montage d'un export NFS en lecture seule sur /var/www/html et la publication par nginx ont été vérifiés sur KVM (page servie depuis /srv/site). Les trois pannes correspondent à des effets mesurés en partie 6 (sans masquerade : 100 % de perte vers Internet). -->
 
-**Point de départ** : le lab de la fin de la [partie 7](07-virtualiser-le-stockage.md) : `routeur` (NAT sur VMnet8, `10.10.10.1` sur VMnet2), `web1` (`10.10.10.10`), `stockage` (`10.10.10.20`, NFS et iSCSI), et le modèle `modele-debian`.
+**Point de départ** : le lab de la fin de la [partie 7](07-virtualiser-le-stockage.md) : `routeur` (NAT sur VMnet8, `10.10.10.1` sur VMnet2), `web1` (`10.10.10.10`), `stockage` (`10.10.10.20`, NFS et iSCSI), et le modèle `modele-debian`. 🖥️ Démarrer, dans cet ordre, `routeur`, `stockage`, puis `web1`.
 
 ## 1. Mission : un deuxième serveur web pour Bureautix
 
@@ -41,7 +41,7 @@ Réaliser, sans pas-à-pas :
 2. un nouveau serveur `web4`, **clone lié** du modèle, branché **uniquement** sur VMnet2, avec l'adresse fixe `10.10.10.11`, la passerelle et le DNS qui conviennent, une identité propre et nginx ;
 3. sur `web1` **et** sur `web4`, le partage `/srv/site` monté **automatiquement au démarrage** à la place de `/var/www/html` ;
 4. sur `routeur`, la publication de `web4` sur le **port 8081** (en plus de `web1` sur le port 8080, si la section 5.2 de la partie 6 a été faite) ;
-5. la preuve, depuis le navigateur du PC, que les deux serveurs affichent la même page, puis qu'une modification de `index.html` sur `stockage` apparaît **immédiatement** sur les deux ;
+5. la preuve, depuis le navigateur du PC, que les deux serveurs affichent la même page, puis qu'une modification de `index.html` sur `stockage` apparaît sur les deux dès le rechargement de la page ;
 6. une **fiche de documentation** du lab : pour chaque VM, son rôle, ses cartes réseau (VMnet), ses adresses, sa mémoire, ses services et ses instantanés.
 
 ## 2. Diagnostic : trois pannes
@@ -52,7 +52,7 @@ Un collègue a « bricolé » le lab. Pour chaque symptôme, trouver la cause **
 |:---:|---|
 | A | `web1` joint `10.10.10.1` mais ni `1.1.1.1` ni `deb.debian.org`. Sur `routeur`, `sudo nft list ruleset` affiche bien la table `ip nat` avec sa règle `masquerade`. |
 | B | `web1` joint `1.1.1.1`, mais `ping deb.debian.org` répond « Échec temporaire dans la résolution du nom ». |
-| C | Après un redémarrage de `routeur`, plus aucune machine de VMnet2 ne sort sur Internet, alors que tout fonctionnait avant. `sudo nft list ruleset` ne montre que la table `inet filter`. |
+| C | Après un redémarrage de `routeur`, plus aucune machine de VMnet2 ne sort sur Internet, alors que tout fonctionnait avant. `sudo nft list ruleset` **n'affiche plus rien**. |
 
 Indice : chaque panne correspond à **une** étape de la partie 6.
 
@@ -75,13 +75,13 @@ Indice : chaque panne correspond à **une** étape de la partie 6.
 
     - 🖥️ Clone lié de `modele-debian` (`modele-v1`), nommé `web4`, carte réseau sur **Custom > VMnet2**.
     - 🐧 `sudo personnaliser-clone.sh web4`.
-    - 🐧 Dans `/etc/network/interfaces` : `iface ens33 inet static`, `address 10.10.10.11/24`, `gateway 10.10.10.1` ; `echo "nameserver 192.168.x.2" | sudo tee /etc/resolv.conf` ; `sudo reboot`.
+    - 🐧 Dans `/etc/network/interfaces` : `iface ens33 inet static`, `address 10.10.10.11/24`, `gateway 10.10.10.1` ; `sudo reboot` ; **après** le redémarrage, `echo "nameserver 192.168.x.2" | sudo tee /etc/resolv.conf` (adresse notée sur `routeur` en partie 6).
     - 🐧 `sudo apt install -y nginx nfs-common` : le paquet `nfs-common` est indispensable pour monter un partage NFS.
 
     **3. Le montage automatique**, sur `web1` et sur `web4` :
 
     ```bash
-    echo "10.10.10.20:/srv/site  /var/www/html  nfs  ro,_netdev  0  0" | sudo tee -a /etc/fstab
+    echo "10.10.10.20:/srv/site  /var/www/html  nfs  ro,_netdev,nofail  0  0" | sudo tee -a /etc/fstab
     sudo systemctl daemon-reload
     sudo mount -a
     findmnt /var/www/html
@@ -110,11 +110,11 @@ Indice : chaque panne correspond à **une** étape de la partie 6.
     | `modele-debian` | Modèle (mode modèle) | VMnet8 | — | 1 Go | — | `modele-v1` (base des clones liés) |
 
 ??? success "Corrigé du diagnostic"
-    **A — le routage IP est désactivé.** Les paquets de `web1` arrivent au routeur, qui ne les fait pas passer d'une carte à l'autre. Preuve : 🐧 **routeur** `cat /proc/sys/net/ipv4/ip_forward` répond `0`. Correction : recréer `/etc/sysctl.d/99-routeur.conf` avec `net.ipv4.ip_forward=1`, puis `sudo sysctl --system`.
+    **A — le routage IP est désactivé**, ou la règle `masquerade` vise une carte qui n'existe pas. Les paquets de `web1` arrivent au routeur, qui ne les fait pas passer d'une carte à l'autre, ou les fait sortir sans traduction d'adresse. Preuves : 🐧 **routeur** `cat /proc/sys/net/ipv4/ip_forward` répond `0` ; ou le nom après `oifname` dans `sudo nft list ruleset` diffère du nom de la carte VMnet8 affiché par `ip -br link`. Corrections : recréer `/etc/sysctl.d/99-routeur.conf` avec `net.ipv4.ip_forward=1`, puis `sudo sysctl --system` ; ou corriger le nom de la carte dans `/etc/nftables.conf`, puis `sudo systemctl restart nftables`.
 
     **B — le DNS est mal configuré.** Le réseau fonctionne (le ping par adresse répond), seule la **résolution des noms** échoue. Preuve : 🐧 **web1** `cat /etc/resolv.conf` ne contient pas de ligne `nameserver 192.168.x.2` valide (fichier vide, mauvaise adresse, ou adresse d'un serveur injoignable). Correction : `echo "nameserver 192.168.x.2" | sudo tee /etc/resolv.conf`.
 
-    **C — nftables n'est pas lancé au démarrage.** La règle avait été chargée à la main (`nft -f` ou `systemctl start`), mais le service n'a pas été **activé** : au redémarrage, seule la table vide par défaut est chargée… ou les règles ont été ajoutées en ligne de commande sans être écrites dans `/etc/nftables.conf`. Preuve : 🐧 **routeur** `systemctl is-enabled nftables` répond `disabled`, ou `/etc/nftables.conf` ne contient pas la table `ip nat`. Correction : écrire la table dans `/etc/nftables.conf`, puis `sudo systemctl enable --now nftables`.
+    **C — nftables n'est pas lancé au démarrage.** Les règles avaient été chargées à la main (`sudo systemctl start nftables` ou `sudo nft -f /etc/nftables.conf`), mais le service n'a pas été **activé** : au redémarrage, rien n'est chargé, d'où un `nft list ruleset` vide. Preuve : 🐧 **routeur** `systemctl is-enabled nftables` répond `disabled`. Correction : `sudo systemctl enable --now nftables`. (Variante : si `nft list ruleset` montrait la table `inet filter` mais pas la table `ip nat`, c'est que la règle avait été tapée en ligne de commande sans être écrite dans `/etc/nftables.conf`.)
 
     **Méthode à retenir** : on teste **couche par couche**, du plus proche au plus lointain. Adresse et passerelle (`ip a`, `ip route`), puis la passerelle (`ping 10.10.10.1`), puis Internet par adresse (`ping 1.1.1.1`), puis par nom (`ping deb.debian.org`). La première étape qui échoue désigne la panne.
 
