@@ -124,7 +124,7 @@ Indice : chaque panne correspond à **une** étape de la partie 6.
 
 - [Wiki nftables — Quick reference](https://wiki.nftables.org/wiki-nftables/index.php/Quick_reference-nftables_in_10_minutes) — l'essentiel de la syntaxe de nftables (en anglais).
 - [Manuel Debian — `exports(5)`](https://manpages.debian.org/trixie/nfs-kernel-server/exports.5.en.html) — toutes les options d'un partage NFS (en anglais).
-- Partie précédente : [Virtualiser le stockage](07-virtualiser-le-stockage.md) · Partie suivante : Panorama des technologies (jour 3), voir le [plan du parcours](index.md#plan-du-parcours).
+- Partie précédente : [Virtualiser le stockage](07-virtualiser-le-stockage.md) · Partie suivante : [Panorama des technologies](09-panorama-des-technologies.md).
 
 *[VM]: Virtual Machine — machine virtuelle
 *[NFS]: Network File System — partage de fichiers Unix et Linux

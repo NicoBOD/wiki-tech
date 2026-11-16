@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="470" viewBox="0 0 1000 470" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Sur site, IaaS, PaaS, SaaS : qui gère quoi</title>
+  <desc id="d">Quatre colonnes de sept couches, de bas en haut : réseau et centre de données, serveurs, stockage, virtualisation, système d'exploitation, intergiciel et environnement d'exécution, application, et tout en haut les données et les comptes. Sur site, le client gère toutes les couches. En IaaS, le fournisseur gère le réseau, les serveurs, le stockage et la virtualisation ; le client gère le système, l'environnement, l'application et les données. En PaaS, le fournisseur gère aussi le système et l'environnement d'exécution ; le client gère l'application et les données. En SaaS, le fournisseur gère tout, sauf les données et les comptes.</desc>
+  <rect x="0" y="0" width="1000" height="470" rx="16" fill="#ffffff"/>
+  <g font-size="13" text-anchor="middle">
+    <text x="140" y="34" font-size="18" font-weight="700" fill="#0f172a">Sur site</text>
+    <text x="380" y="34" font-size="18" font-weight="700" fill="#0f172a">IaaS</text>
+    <text x="620" y="34" font-size="18" font-weight="700" fill="#0f172a">PaaS</text>
+    <text x="860" y="34" font-size="18" font-weight="700" fill="#0f172a">SaaS</text>
+  </g>
+  <!-- couches : y de 50 à 400, 8 couches de 42 -->
+  <g font-size="13" text-anchor="middle">
+    <!-- colonne sur site : tout client (bleu) -->
+    <g>
+      <rect x="40" y="50" width="200" height="38" rx="6" fill="#dbeafe" stroke="#2563eb"/><text x="140" y="74" fill="#1e3a8a" font-weight="700">Données, comptes</text>
+      <rect x="40" y="93" width="200" height="38" rx="6" fill="#dbeafe" stroke="#2563eb"/><text x="140" y="117" fill="#1e3a8a">Application</text>
+      <rect x="40" y="136" width="200" height="38" rx="6" fill="#dbeafe" stroke="#2563eb"/><text x="140" y="160" fill="#1e3a8a">Environnement d'exécution</text>
+      <rect x="40" y="179" width="200" height="38" rx="6" fill="#dbeafe" stroke="#2563eb"/><text x="140" y="203" fill="#1e3a8a">Système d'exploitation</text>
+      <rect x="40" y="222" width="200" height="38" rx="6" fill="#dbeafe" stroke="#2563eb"/><text x="140" y="246" fill="#1e3a8a">Virtualisation</text>
+      <rect x="40" y="265" width="200" height="38" rx="6" fill="#dbeafe" stroke="#2563eb"/><text x="140" y="289" fill="#1e3a8a">Serveurs</text>
+      <rect x="40" y="308" width="200" height="38" rx="6" fill="#dbeafe" stroke="#2563eb"/><text x="140" y="332" fill="#1e3a8a">Stockage</text>
+      <rect x="40" y="351" width="200" height="38" rx="6" fill="#dbeafe" stroke="#2563eb"/><text x="140" y="375" fill="#1e3a8a">Réseau, centre de données</text>
+    </g>
+    <!-- IaaS -->
+    <g>
+      <rect x="280" y="50" width="200" height="38" rx="6" fill="#dbeafe" stroke="#2563eb"/><text x="380" y="74" fill="#1e3a8a" font-weight="700">Données, comptes</text>
+      <rect x="280" y="93" width="200" height="38" rx="6" fill="#dbeafe" stroke="#2563eb"/><text x="380" y="117" fill="#1e3a8a">Application</text>
+      <rect x="280" y="136" width="200" height="38" rx="6" fill="#dbeafe" stroke="#2563eb"/><text x="380" y="160" fill="#1e3a8a">Environnement d'exécution</text>
+      <rect x="280" y="179" width="200" height="38" rx="6" fill="#dbeafe" stroke="#2563eb"/><text x="380" y="203" fill="#1e3a8a">Système d'exploitation</text>
+      <rect x="280" y="222" width="200" height="38" rx="6" fill="#fef3c7" stroke="#d97706"/><text x="380" y="246" fill="#78350f">Virtualisation</text>
+      <rect x="280" y="265" width="200" height="38" rx="6" fill="#fef3c7" stroke="#d97706"/><text x="380" y="289" fill="#78350f">Serveurs</text>
+      <rect x="280" y="308" width="200" height="38" rx="6" fill="#fef3c7" stroke="#d97706"/><text x="380" y="332" fill="#78350f">Stockage</text>
+      <rect x="280" y="351" width="200" height="38" rx="6" fill="#fef3c7" stroke="#d97706"/><text x="380" y="375" fill="#78350f">Réseau, centre de données</text>
+    </g>
+    <!-- PaaS -->
+    <g>
+      <rect x="520" y="50" width="200" height="38" rx="6" fill="#dbeafe" stroke="#2563eb"/><text x="620" y="74" fill="#1e3a8a" font-weight="700">Données, comptes</text>
+      <rect x="520" y="93" width="200" height="38" rx="6" fill="#dbeafe" stroke="#2563eb"/><text x="620" y="117" fill="#1e3a8a">Application</text>
+      <rect x="520" y="136" width="200" height="38" rx="6" fill="#fef3c7" stroke="#d97706"/><text x="620" y="160" fill="#78350f">Environnement d'exécution</text>
+      <rect x="520" y="179" width="200" height="38" rx="6" fill="#fef3c7" stroke="#d97706"/><text x="620" y="203" fill="#78350f">Système d'exploitation</text>
+      <rect x="520" y="222" width="200" height="38" rx="6" fill="#fef3c7" stroke="#d97706"/><text x="620" y="246" fill="#78350f">Virtualisation</text>
+      <rect x="520" y="265" width="200" height="38" rx="6" fill="#fef3c7" stroke="#d97706"/><text x="620" y="289" fill="#78350f">Serveurs</text>
+      <rect x="520" y="308" width="200" height="38" rx="6" fill="#fef3c7" stroke="#d97706"/><text x="620" y="332" fill="#78350f">Stockage</text>
+      <rect x="520" y="351" width="200" height="38" rx="6" fill="#fef3c7" stroke="#d97706"/><text x="620" y="375" fill="#78350f">Réseau, centre de données</text>
+    </g>
+    <!-- SaaS -->
+    <g>
+      <rect x="760" y="50" width="200" height="38" rx="6" fill="#dbeafe" stroke="#2563eb"/><text x="860" y="74" fill="#1e3a8a" font-weight="700">Données, comptes</text>
+      <rect x="760" y="93" width="200" height="38" rx="6" fill="#fef3c7" stroke="#d97706"/><text x="860" y="117" fill="#78350f">Application</text>
+      <rect x="760" y="136" width="200" height="38" rx="6" fill="#fef3c7" stroke="#d97706"/><text x="860" y="160" fill="#78350f">Environnement d'exécution</text>
+      <rect x="760" y="179" width="200" height="38" rx="6" fill="#fef3c7" stroke="#d97706"/><text x="860" y="203" fill="#78350f">Système d'exploitation</text>
+      <rect x="760" y="222" width="200" height="38" rx="6" fill="#fef3c7" stroke="#d97706"/><text x="860" y="246" fill="#78350f">Virtualisation</text>
+      <rect x="760" y="265" width="200" height="38" rx="6" fill="#fef3c7" stroke="#d97706"/><text x="860" y="289" fill="#78350f">Serveurs</text>
+      <rect x="760" y="308" width="200" height="38" rx="6" fill="#fef3c7" stroke="#d97706"/><text x="860" y="332" fill="#78350f">Stockage</text>
+      <rect x="760" y="351" width="200" height="38" rx="6" fill="#fef3c7" stroke="#d97706"/><text x="860" y="375" fill="#78350f">Réseau, centre de données</text>
+    </g>
+  </g>
+  <rect x="290" y="418" width="22" height="18" rx="4" fill="#dbeafe" stroke="#2563eb"/>
+  <text x="320" y="432" font-size="14" fill="#1e3a8a">géré par le client</text>
+  <rect x="520" y="418" width="22" height="18" rx="4" fill="#fef3c7" stroke="#d97706"/>
+  <text x="550" y="432" font-size="14" fill="#78350f">géré par le fournisseur</text>
+</svg>

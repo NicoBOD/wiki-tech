@@ -204,6 +204,9 @@ Commutateur virtuel (*vSwitch*)
 Consolidation
 :   Regroupement de plusieurs serveurs physiques peu utilisés sous forme de VM sur un nombre réduit d'hôtes.
 
+Conteneur
+:   Environnement isolé qui exécute une application (ou un système Linux) en partageant le noyau de l'hôte, grâce aux espaces de noms et aux groupes de contrôle du noyau.
+
 DAS
 :   *Direct Attached Storage* : disques directement attachés à un seul serveur.
 
@@ -225,8 +228,14 @@ Haute disponibilité (HA)
 Hôte
 :   Machine physique qui exécute l'hyperviseur et héberge les VM.
 
+Hyperconvergence (HCI)
+:   Architecture où chaque serveur est à la fois hôte de VM et nœud de stockage ; un logiciel réunit leurs disques en un stockage partagé (Ceph, vSAN, S2D).
+
 Hyperviseur
 :   Logiciel qui crée les machines virtuelles et partage entre elles les ressources de l'hôte. Aussi appelé VMM.
+
+IaaS, PaaS, SaaS
+:   Les trois modèles de service du cloud : infrastructure (VM, stockage, réseau), plateforme d'exécution, application prête à l'emploi.
 
 Instantané (*snapshot*)
 :   État enregistré d'une VM (disques, paramètres et éventuellement mémoire), auquel on peut revenir. Ce n'est pas une sauvegarde.
@@ -270,6 +279,9 @@ NAT
 NFS
 :   *Network File System* : protocole de partage de fichiers du monde Unix et Linux (port TCP 2049).
 
+NFV
+:   *Network Functions Virtualization* : remplacement des boîtiers réseau (routeurs, pare-feux) par des logiciels dans des VM (VNF) ou des conteneurs (CNF).
+
 open-vm-tools
 :   Version libre des VMware Tools, fournie par les distributions Linux : pilotes et services qui améliorent l'intégration d'une VM Linux dans un hyperviseur VMware.
 
@@ -297,6 +309,12 @@ Routage IP (*IP forwarding*)
 SAN
 :   *Storage Area Network* : réseau de stockage qui partage des **blocs** (des disques, les LUN), en Fibre Channel ou en iSCSI.
 
+SDN
+:   *Software-Defined Networking* : réseau dont le plan de contrôle est séparé du plan de données et piloté par un contrôleur logiciel.
+
+SDS
+:   *Software-Defined Storage* : stockage dont la logique (copies, répartition, instantanés) est un logiciel indépendant du matériel.
+
 SMB
 :   *Server Message Block* : protocole de partage de fichiers et d'imprimantes de Windows (port TCP 445).
 
@@ -309,8 +327,17 @@ Tolérance aux pannes (FT)
 vCPU
 :   Processeur virtuel attribué à une VM ; pour l'hôte, c'est un fil d'exécution à faire tourner sur un processeur logique.
 
+VDI
+:   *Virtual Desktop Infrastructure* : postes de travail virtuels, un bureau complet par utilisateur dans une VM du centre de données ou du cloud.
+
+VirtIO
+:   Famille de périphériques paravirtualisés (disque, réseau, ballon…) de KVM et Proxmox VE, dont les pilotes sont intégrés au noyau Linux.
+
 Virtualisation imbriquée (*nested virtualization*)
 :   Faire tourner un hyperviseur à l'intérieur d'une VM.
+
+VLAN
+:   *Virtual LAN* : réseau logique isolé, identifié par une étiquette 802.1Q de 12 bits, qui partage les mêmes câbles et commutateurs que d'autres VLAN.
 
 VMDK
 :   Format des fichiers de disques virtuels de VMware.
@@ -326,6 +353,9 @@ VMX
 
 VT-x / AMD-V
 :   Extensions de virtualisation des processeurs Intel et AMD, indispensables pour les VM 64 bits sur Workstation. Elles s'activent dans le BIOS/UEFI.
+
+VXLAN
+:   Technique qui transporte des réseaux Ethernet virtuels dans des paquets UDP/IP, avec un identifiant de 24 bits (environ 16 millions de réseaux).
 
 ---
 
@@ -365,3 +395,16 @@ VT-x / AMD-V
 *[CHAP]: Challenge-Handshake Authentication Protocol
 *[IQN]: iSCSI Qualified Name
 *[DAS]: Direct Attached Storage
+*[VLAN]: Virtual LAN — réseau local virtuel
+*[VXLAN]: Virtual eXtensible LAN
+*[SDN]: Software-Defined Networking — réseau défini par logiciel
+*[NFV]: Network Functions Virtualization
+*[SDS]: Software-Defined Storage
+*[HCI]: Hyperconverged Infrastructure
+*[VDI]: Virtual Desktop Infrastructure
+*[IaaS]: Infrastructure as a Service
+*[PaaS]: Platform as a Service
+*[SaaS]: Software as a Service
+*[VNF]: Virtual Network Function
+*[CNF]: Cloud-native Network Function
+*[UDP]: User Datagram Protocol

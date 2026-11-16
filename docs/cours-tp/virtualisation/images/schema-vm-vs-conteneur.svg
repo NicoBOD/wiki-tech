@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="420" viewBox="0 0 1000 420" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Machines virtuelles et conteneurs</title>
+  <desc id="d">À gauche, trois VM au-dessus d'un hyperviseur et du matériel ; chaque VM contient une application, ses bibliothèques et un système invité complet avec son noyau. À droite, trois conteneurs au-dessus d'un moteur de conteneurs, d'un seul système hôte avec son noyau, et du matériel ; chaque conteneur ne contient que l'application et ses bibliothèques.</desc>
+  <rect x="0" y="0" width="1000" height="420" rx="16" fill="#ffffff"/>
+  <text x="250" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="#0f172a">Machines virtuelles</text>
+  <text x="750" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="#0f172a">Conteneurs</text>
+  <line x1="500" y1="20" x2="500" y2="400" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8 6"/>
+  <g font-size="13" text-anchor="middle">
+    <!-- VMs -->
+    <g>
+      <rect x="40" y="60" width="130" height="190" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2" stroke-dasharray="6 4"/>
+      <rect x="55" y="75" width="100" height="34" rx="6" fill="#fce7f3" stroke="#db2777"/><text x="105" y="97" fill="#831843">Application</text>
+      <rect x="55" y="115" width="100" height="34" rx="6" fill="#ffedd5" stroke="#ea580c"/><text x="105" y="137" fill="#7c2d12">Bibliothèques</text>
+      <rect x="55" y="155" width="100" height="80" rx="6" fill="#e0e7ff" stroke="#4f46e5"/><text x="105" y="185" fill="#312e81">Système</text><text x="105" y="203" fill="#312e81">invité</text><text x="105" y="221" fill="#312e81" font-weight="700">+ noyau</text>
+      <rect x="185" y="60" width="130" height="190" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2" stroke-dasharray="6 4"/>
+      <rect x="200" y="75" width="100" height="34" rx="6" fill="#fce7f3" stroke="#db2777"/><text x="250" y="97" fill="#831843">Application</text>
+      <rect x="200" y="115" width="100" height="34" rx="6" fill="#ffedd5" stroke="#ea580c"/><text x="250" y="137" fill="#7c2d12">Bibliothèques</text>
+      <rect x="200" y="155" width="100" height="80" rx="6" fill="#e0e7ff" stroke="#4f46e5"/><text x="250" y="185" fill="#312e81">Système</text><text x="250" y="203" fill="#312e81">invité</text><text x="250" y="221" fill="#312e81" font-weight="700">+ noyau</text>
+      <rect x="330" y="60" width="130" height="190" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2" stroke-dasharray="6 4"/>
+      <rect x="345" y="75" width="100" height="34" rx="6" fill="#fce7f3" stroke="#db2777"/><text x="395" y="97" fill="#831843">Application</text>
+      <rect x="345" y="115" width="100" height="34" rx="6" fill="#ffedd5" stroke="#ea580c"/><text x="395" y="137" fill="#7c2d12">Bibliothèques</text>
+      <rect x="345" y="155" width="100" height="80" rx="6" fill="#e0e7ff" stroke="#4f46e5"/><text x="395" y="185" fill="#312e81">Système</text><text x="395" y="203" fill="#312e81">invité</text><text x="395" y="221" fill="#312e81" font-weight="700">+ noyau</text>
+    </g>
+    <rect x="40" y="265" width="420" height="42" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/><text x="250" y="291" fill="#4c1d95" font-weight="700" font-size="15">Hyperviseur</text>
+    <rect x="40" y="320" width="420" height="42" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/><text x="250" y="346" fill="#78350f" font-weight="700" font-size="15">Matériel</text>
+    <text x="250" y="390" fill="#334155">chaque VM : plusieurs Go, démarrage en dizaines de secondes</text>
+    <!-- conteneurs -->
+    <g>
+      <rect x="540" y="135" width="130" height="115" rx="10" fill="#ffffff" stroke="#16a34a" stroke-width="2" stroke-dasharray="6 4"/>
+      <rect x="555" y="150" width="100" height="34" rx="6" fill="#fce7f3" stroke="#db2777"/><text x="605" y="172" fill="#831843">Application</text>
+      <rect x="555" y="192" width="100" height="34" rx="6" fill="#ffedd5" stroke="#ea580c"/><text x="605" y="214" fill="#7c2d12">Bibliothèques</text>
+      <rect x="685" y="135" width="130" height="115" rx="10" fill="#ffffff" stroke="#16a34a" stroke-width="2" stroke-dasharray="6 4"/>
+      <rect x="700" y="150" width="100" height="34" rx="6" fill="#fce7f3" stroke="#db2777"/><text x="750" y="172" fill="#831843">Application</text>
+      <rect x="700" y="192" width="100" height="34" rx="6" fill="#ffedd5" stroke="#ea580c"/><text x="750" y="214" fill="#7c2d12">Bibliothèques</text>
+      <rect x="830" y="135" width="130" height="115" rx="10" fill="#ffffff" stroke="#16a34a" stroke-width="2" stroke-dasharray="6 4"/>
+      <rect x="845" y="150" width="100" height="34" rx="6" fill="#fce7f3" stroke="#db2777"/><text x="895" y="172" fill="#831843">Application</text>
+      <rect x="845" y="192" width="100" height="34" rx="6" fill="#ffedd5" stroke="#ea580c"/><text x="895" y="214" fill="#7c2d12">Bibliothèques</text>
+    </g>
+    <rect x="540" y="265" width="420" height="42" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><text x="750" y="284" fill="#14532d" font-weight="700" font-size="14">Moteur de conteneurs (Docker, LXC)</text><text x="750" y="301" fill="#166534" font-size="12">+ système hôte et SON noyau, partagé par tous</text>
+    <rect x="540" y="320" width="420" height="42" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/><text x="750" y="346" fill="#78350f" font-weight="700" font-size="15">Matériel (ou une VM)</text>
+    <text x="750" y="390" fill="#334155">chaque conteneur : quelques Mo, démarrage en moins d'une seconde</text>
+  </g>
+</svg>
