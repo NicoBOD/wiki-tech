@@ -97,7 +97,7 @@ Chaque partie dure entre 1 h 30 et 2 h et mêle cours, activités et pratique. L
 Les [annexes](annexes.md) rassemblent le dépannage, les raccourcis de Workstation, un aide-mémoire des commandes et le glossaire.
 
 !!! tip "Suivre l'ordre"
-    Chaque TP s'appuie sur le précédent : la VM `debian-tp` créée en partie 3 sert dans toutes les parties suivantes. Les cours se lisent avant ou pendant les attentes des TP (l'installation de Debian prend environ 15 minutes).
+    Chaque TP s'appuie sur le précédent : la VM `debian-tp` créée en partie 3 sert dans toutes les parties suivantes. Les cours se lisent avant les TP ou pendant leurs temps d'attente, par exemple pendant l'installation de Debian (environ 15 minutes).
 
 ## Schéma du lab du jour 1
 

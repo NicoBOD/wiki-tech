@@ -381,10 +381,10 @@ Un clone est une **copie parfaite** : même nom de machine, même identifiant de
     sudo hostnamectl set-hostname debian-clone-lie
     ```
 
-3. 🐧 Générer un nouvel **identifiant de machine** (utilisé par systemd, les journaux et certains logiciels pour reconnaître la machine) :
+3. 🐧 Générer un nouvel **identifiant de machine** (utilisé par systemd, les journaux et certains logiciels pour reconnaître la machine). Debian en garde une **copie** dans `/var/lib/dbus/machine-id` : il faut l'effacer aussi, sinon l'ancien identifiant est simplement recopié :
 
     ```bash
-    sudo rm /etc/machine-id
+    sudo rm -f /etc/machine-id /var/lib/dbus/machine-id
     sudo systemd-machine-id-setup
     ```
 
@@ -407,6 +407,13 @@ Un clone est une **copie parfaite** : même nom de machine, même identifiant de
     hostnamectl
     cat /etc/machine-id
     ip -4 a
+    ```
+
+!!! tip "Connexion SSH : « REMOTE HOST IDENTIFICATION HAS CHANGED »"
+    Si l'on s'était déjà connecté en SSH à la même adresse IP avant de changer les clés, le client SSH refuse la connexion avec ce message d'alerte : l'empreinte de la machine a changé, ce qui pourrait signaler une usurpation. Ici, c'est normal : on vient de régénérer les clés. Effacer l'ancienne empreinte sur le PC (PowerShell), puis se reconnecter :
+
+    ```powershell
+    ssh-keygen -R 192.168.x.y
     ```
 
 !!! info "Sous Windows : Sysprep"

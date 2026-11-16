@@ -274,12 +274,12 @@ Le menu **GNU GRUB** s'affiche quelques secondes, puis Debian démarre et affich
 
     La carte réseau (souvent nommée `ens33`) a une adresse en `192.168.x.128` ou au-dessus, distribuée par le DHCP de Workstation.
 
-3. 🐧 Devenir `root`, installer `sudo` et les outils d'intégration, puis donner les droits `sudo` à `tssr` :
+3. 🐧 Devenir `root`, installer `sudo`, les outils d'intégration et deux outils d'inventaire du matériel (`dmidecode`, `pciutils`, utilisés en section 6), puis donner les droits `sudo` à `tssr` :
 
     ```bash
     su -                                  # mot de passe de root : Virtu2026!
     apt update
-    apt install -y sudo open-vm-tools
+    apt install -y sudo open-vm-tools dmidecode pciutils
     usermod -aG sudo tssr                 # ajoute tssr au groupe sudo
     exit                                  # quitte la session root
     ```
