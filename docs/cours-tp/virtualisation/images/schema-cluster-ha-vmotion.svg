@@ -46,10 +46,9 @@
   </g>
   <!-- flèches -->
   <path d="M250 165 C 330 120, 430 120, 505 165" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#fl)"/>
-  <text x="380" y="118" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">migration à chaud : sans coupure</text>
+
   <path d="M850 195 C 760 245, 620 250, 495 225" fill="none" stroke="#dc2626" stroke-width="3" marker-end="url(#flr)"/>
-  <text x="690" y="235" text-anchor="middle" font-size="13" font-weight="700" fill="#b91c1c">haute disponibilité :</text>
-  <text x="690" y="252" text-anchor="middle" font-size="13" font-weight="700" fill="#b91c1c">redémarrage automatique</text>
+
   <!-- stockage partagé -->
   <rect x="200" y="370" width="600" height="60" rx="12" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
   <text x="500" y="397" text-anchor="middle" font-size="16" font-weight="700" fill="#14532d">Stockage partagé (SAN ou NAS)</text>
@@ -57,4 +56,9 @@
   <line x1="160" y1="300" x2="300" y2="370" stroke="#16a34a" stroke-width="2.5"/>
   <line x1="500" y1="300" x2="500" y2="370" stroke="#16a34a" stroke-width="2.5"/>
   <line x1="840" y1="300" x2="700" y2="370" stroke="#16a34a" stroke-width="2.5"/>
+  <rect x="215" y="312" width="570" height="46" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+  <line x1="235" y1="326" x2="275" y2="326" stroke="#2563eb" stroke-width="3" marker-end="url(#fl)"/>
+  <text x="285" y="331" font-size="13" font-weight="700" fill="#1d4ed8">migration à chaud (VM B) : déplacement sans coupure</text>
+  <line x1="235" y1="346" x2="275" y2="346" stroke="#dc2626" stroke-width="3" marker-end="url(#flr)"/>
+  <text x="285" y="351" font-size="13" font-weight="700" fill="#b91c1c">haute disponibilité (VM E) : redémarrage automatique</text>
 </svg>
