@@ -296,6 +296,14 @@ nav:
       - "7. Agrégation LACP et troisième nœud": cours-tp/pfsense-ha/07-agregation-lacp-troisieme-noeud.md
       - "8. Mettre à jour le cluster": cours-tp/pfsense-ha/08-mettre-a-jour-le-cluster.md
       - Annexes: cours-tp/pfsense-ha/annexes.md
+    - Virtualisation (5 jours):
+      - cours-tp/virtualisation/index.md
+      - "Jour 1 — Comprendre et créer ses VM":
+        - "1. Comprendre la virtualisation": cours-tp/virtualisation/01-comprendre-la-virtualisation.md
+        - "2. Hyperviseur et machine virtuelle": cours-tp/virtualisation/02-hyperviseur-et-machine-virtuelle.md
+        - "3. Créer sa première VM Debian 13": cours-tp/virtualisation/03-creer-sa-premiere-vm.md
+        - "4. Partager les ressources": cours-tp/virtualisation/04-partager-les-ressources.md
+      - Annexes: cours-tp/virtualisation/annexes.md
   - Tags: tags.md
 
 copyright: >

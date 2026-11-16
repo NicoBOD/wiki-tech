@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="500" viewBox="0 0 1000 500" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Instantané, clone lié et clone complet</title>
+  <desc id="d">En haut, l'instantané : au moment de l'instantané, le disque d'origine debian-tp.vmdk est figé en lecture seule et un disque différentiel debian-tp-000001.vmdk reçoit toutes les nouvelles écritures. Revenir à l'instantané revient à jeter le disque différentiel. En bas à gauche, le clone lié : son disque ne contient que ses différences et lit le reste dans le disque figé de la VM d'origine ; il est créé en quelques secondes mais ne fonctionne pas sans l'original. En bas à droite, le clone complet : c'est une copie entière et indépendante du disque, plus longue à créer et aussi volumineuse que l'original.</desc>
+  <defs>
+    <marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+  </defs>
+  <rect x="0" y="0" width="1000" height="500" rx="16" fill="#ffffff"/>
+  <text x="500" y="36" text-anchor="middle" font-size="21" font-weight="700" fill="#0f172a">L'instantané : figer le disque, écrire à côté</text>
+  <g font-size="14" text-anchor="middle">
+    <rect x="90" y="60" width="260" height="70" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+    <text x="220" y="90" fill="#0f172a" font-weight="700">debian-tp.vmdk</text>
+    <text x="220" y="112" fill="#334155">figé en lecture seule 🔒</text>
+    <line x1="350" y1="95" x2="445" y2="95" stroke="#475569" stroke-width="2.5" marker-end="url(#fl)"/>
+    <text x="397" y="84" fill="#475569" font-size="12">puis</text>
+    <rect x="450" y="60" width="270" height="70" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+    <text x="585" y="90" fill="#14532d" font-weight="700">debian-tp-000001.vmdk</text>
+    <text x="585" y="112" fill="#166534">reçoit les nouvelles écritures</text>
+    <rect x="745" y="60" width="200" height="70" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="2" stroke-dasharray="6 4"/>
+    <text x="845" y="88" fill="#991b1b" font-weight="700">Revenir à l'instantané</text>
+    <text x="845" y="110" fill="#991b1b">= jeter les différences</text>
+    <text x="500" y="160" fill="#475569">La VM lit d'abord le disque différentiel, puis le disque figé pour tout ce qui n'a pas changé.</text>
+  </g>
+  <line x1="40" y1="185" x2="960" y2="185" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="250" y="222" text-anchor="middle" font-size="20" font-weight="700" fill="#0f172a">Clone lié</text>
+  <text x="750" y="222" text-anchor="middle" font-size="20" font-weight="700" fill="#0f172a">Clone complet</text>
+  <line x1="500" y1="200" x2="500" y2="480" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8 6"/>
+  <g font-size="14" text-anchor="middle">
+    <rect x="60" y="250" width="380" height="60" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+    <text x="250" y="276" fill="#0f172a" font-weight="700">Disque de debian-tp, figé par un instantané</text>
+    <text x="250" y="297" fill="#334155">≈ 2 Go</text>
+    <line x1="250" y1="355" x2="250" y2="315" stroke="#475569" stroke-width="2.5" marker-end="url(#fl)"/>
+    <text x="330" y="340" fill="#475569" font-size="12">lit ce qui n'a pas changé</text>
+    <rect x="130" y="360" width="240" height="55" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+    <text x="250" y="384" fill="#1e3a8a" font-weight="700">Disque du clone lié</text>
+    <text x="250" y="404" fill="#1e3a8a">quelques Mo au départ</text>
+    <text x="250" y="445" fill="#166534">✔ Créé en quelques secondes, très peu de place</text>
+    <text x="250" y="468" fill="#991b1b">✘ Inutilisable si l'original est supprimé ou déplacé</text>
+    <rect x="560" y="250" width="380" height="60" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+    <text x="750" y="276" fill="#0f172a" font-weight="700">Disque de debian-tp</text>
+    <text x="750" y="297" fill="#334155">≈ 2 Go</text>
+    <line x1="750" y1="315" x2="750" y2="355" stroke="#475569" stroke-width="2.5" marker-end="url(#fl)"/>
+    <text x="820" y="340" fill="#475569" font-size="12">copie intégrale</text>
+    <rect x="560" y="360" width="380" height="55" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+    <text x="750" y="384" fill="#78350f" font-weight="700">Disque du clone complet</text>
+    <text x="750" y="404" fill="#78350f">≈ 2 Go, totalement indépendant</text>
+    <text x="750" y="445" fill="#166534">✔ Autonome : survit à la suppression de l'original</text>
+    <text x="750" y="468" fill="#991b1b">✘ Plus long à créer, prend autant de place</text>
+  </g>
+</svg>

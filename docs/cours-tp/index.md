@@ -29,6 +29,14 @@ Tous les TP se déroulent dans un **laboratoire virtuel** : les captures d'écra
 
     [:octicons-arrow-right-24: Commencer le parcours](pfsense-ha/index.md)
 
+- :material-server-network:{ .lg .middle } __Virtualisation en 5 jours__
+
+    ---
+
+    Comprendre la virtualisation, l'hyperviseur et la machine virtuelle, créer ses VM Debian avec VMware Workstation, partager le processeur, la mémoire et le disque, maîtriser instantanés et clones, puis découvrir la virtualisation des serveurs, du réseau, du stockage, les conteneurs et le cloud.
+
+    [:octicons-arrow-right-24: Commencer le parcours](virtualisation/index.md)
+
 </div>
 
 ## Autres cours et TP du wiki

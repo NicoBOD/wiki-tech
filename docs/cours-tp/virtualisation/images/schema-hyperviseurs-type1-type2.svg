@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="460" viewBox="0 0 1000 460" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Hyperviseur de type 1 et hyperviseur de type 2</title>
+  <desc id="d">À gauche, le type 1 ou bare metal : l'hyperviseur est posé directement sur le matériel du serveur et héberge les VM. Exemples : VMware ESXi, Microsoft Hyper-V, Proxmox VE. À droite, le type 2 ou hébergé : le matériel du PC porte un système d'exploitation hôte, Windows par exemple ; l'hyperviseur est une application de ce système, à côté des autres applications, et il héberge les VM. Exemples : VMware Workstation Pro, Oracle VirtualBox.</desc>
+  <rect x="0" y="0" width="1000" height="460" rx="16" fill="#ffffff"/>
+  <text x="250" y="40" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">Type 1 : « bare metal » (natif)</text>
+  <text x="750" y="40" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">Type 2 : hébergé</text>
+  <line x1="500" y1="20" x2="500" y2="440" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8 6"/>
+  <g font-size="15" text-anchor="middle">
+    <!-- type 1 -->
+    <rect x="50" y="80" width="120" height="70" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+    <text x="110" y="110" fill="#1e3a8a" font-weight="700">VM 1</text>
+    <text x="110" y="130" fill="#1e3a8a">Windows</text>
+    <rect x="190" y="80" width="120" height="70" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+    <text x="250" y="110" fill="#1e3a8a" font-weight="700">VM 2</text>
+    <text x="250" y="130" fill="#1e3a8a">Linux</text>
+    <rect x="330" y="80" width="120" height="70" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+    <text x="390" y="110" fill="#1e3a8a" font-weight="700">VM 3</text>
+    <text x="390" y="130" fill="#1e3a8a">Linux</text>
+    <rect x="50" y="200" width="400" height="60" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+    <text x="250" y="236" fill="#4c1d95" font-weight="700" font-size="17">Hyperviseur de type 1</text>
+    <rect x="50" y="300" width="400" height="60" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+    <text x="250" y="336" fill="#78350f" font-weight="700" font-size="17">Matériel du serveur</text>
+    <text x="250" y="400" fill="#334155">ESXi · Hyper-V · Proxmox VE · XCP-ng</text>
+    <text x="250" y="425" fill="#334155" font-size="14">Accès direct au matériel : le choix des entreprises</text>
+    <!-- type 2 -->
+    <rect x="550" y="80" width="110" height="60" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+    <text x="605" y="106" fill="#1e3a8a" font-weight="700">VM 1</text>
+    <text x="605" y="126" fill="#1e3a8a">Debian</text>
+    <rect x="670" y="80" width="110" height="60" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+    <text x="725" y="106" fill="#1e3a8a" font-weight="700">VM 2</text>
+    <text x="725" y="126" fill="#1e3a8a">Windows</text>
+    <rect x="550" y="150" width="230" height="45" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+    <text x="665" y="178" fill="#4c1d95" font-weight="700">Hyperviseur de type 2</text>
+    <rect x="790" y="80" width="160" height="115" rx="8" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/>
+    <text x="870" y="125" fill="#334155">Autres</text>
+    <text x="870" y="145" fill="#334155">applications</text>
+    <text x="870" y="165" fill="#334155">(navigateur…)</text>
+    <rect x="550" y="215" width="400" height="55" rx="8" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+    <text x="750" y="248" fill="#312e81" font-weight="700" font-size="17">Système hôte (Windows, Linux, macOS)</text>
+    <rect x="550" y="300" width="400" height="60" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+    <text x="750" y="336" fill="#78350f" font-weight="700" font-size="17">Matériel du PC</text>
+    <text x="750" y="400" fill="#334155">VMware Workstation Pro · VirtualBox</text>
+    <text x="750" y="425" fill="#334155" font-size="14">Une application parmi d'autres : idéal pour tester et apprendre</text>
+  </g>
+</svg>

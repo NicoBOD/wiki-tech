@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="480" viewBox="0 0 1000 480" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Lab du jour 1</title>
+  <desc id="d">Le PC hôte sous Windows exécute VMware Workstation Pro. Workstation fournit le commutateur virtuel VMnet8 en mode NAT, sur le réseau 192.168.x.0/24 : la passerelle NAT et le DNS sont en .2, un serveur DHCP distribue les adresses de .128 à .254, et le PC lui-même a l'adresse .1 sur ce réseau. La VM debian-tp et ses clones debian-clone-lie et debian-clone-complet sont branchés sur VMnet8. Ils sortent sur Internet par la carte réseau physique du PC.</desc>
+  <defs>
+    <marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+  </defs>
+  <rect x="0" y="0" width="1000" height="480" rx="16" fill="#ffffff"/>
+  <!-- Internet -->
+  <ellipse cx="880" cy="70" rx="85" ry="38" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+  <text x="880" y="77" text-anchor="middle" font-size="17" font-weight="700" fill="#075985">Internet</text>
+  <!-- PC hôte -->
+  <rect x="30" y="40" width="760" height="420" rx="14" fill="#f8fafc" stroke="#334155" stroke-width="2.5"/>
+  <text x="50" y="70" font-size="18" font-weight="700" fill="#0f172a">🖥️ PC hôte — Windows 10 ou 11, 16 Go de mémoire</text>
+  <rect x="560" y="85" width="210" height="46" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="665" y="105" text-anchor="middle" font-size="14" font-weight="700" fill="#78350f">Carte réseau physique</text>
+  <text x="665" y="123" text-anchor="middle" font-size="13" fill="#78350f">(Wi-Fi ou Ethernet de la salle)</text>
+  <line x1="770" y1="100" x2="800" y2="85" stroke="#475569" stroke-width="2.5" marker-end="url(#fl)"/>
+  <!-- Workstation -->
+  <rect x="50" y="150" width="720" height="290" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+  <text x="70" y="178" font-size="16" font-weight="700" fill="#4c1d95">VMware Workstation Pro 26H1 (hyperviseur de type 2)</text>
+  <!-- VMnet8 -->
+  <rect x="70" y="200" width="680" height="70" rx="10" fill="#ffffff" stroke="#16a34a" stroke-width="2"/>
+  <text x="90" y="226" font-size="15" font-weight="700" fill="#14532d">VMnet8 — NAT — 192.168.x.0/24</text>
+  <text x="90" y="250" font-size="13" fill="#166534">Passerelle NAT et DNS : .2 · DHCP : .128 à .254 · le PC : .1</text>
+  <line x1="660" y1="200" x2="660" y2="135" stroke="#475569" stroke-width="2.5" marker-end="url(#fl)"/>
+  <text x="652" y="175" font-size="12" fill="#475569" text-anchor="end">traduction d'adresses (NAT)</text>
+  <!-- VMs -->
+  <g font-size="14" text-anchor="middle">
+    <line x1="175" y1="270" x2="175" y2="320" stroke="#16a34a" stroke-width="2.5"/>
+    <line x1="410" y1="270" x2="410" y2="320" stroke="#16a34a" stroke-width="2.5"/>
+    <line x1="645" y1="270" x2="645" y2="320" stroke="#16a34a" stroke-width="2.5"/>
+    <rect x="80" y="320" width="190" height="95" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+    <text x="175" y="347" font-weight="700" fill="#1e3a8a">🐧 debian-tp</text>
+    <text x="175" y="369" fill="#1e3a8a">Debian 13 · 2 vCPU · 2 Go</text>
+    <text x="175" y="391" fill="#1e3a8a">Parties 3 et 4</text>
+    <rect x="315" y="320" width="190" height="95" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2" stroke-dasharray="6 4"/>
+    <text x="410" y="347" font-weight="700" fill="#1e3a8a">debian-clone-lie</text>
+    <text x="410" y="369" fill="#1e3a8a">lié · 1 vCPU · 1 Go</text>
+    <text x="410" y="391" fill="#1e3a8a">Partie 4</text>
+    <rect x="550" y="320" width="190" height="95" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2" stroke-dasharray="6 4"/>
+    <text x="645" y="347" font-weight="700" fill="#1e3a8a">debian-clone-complet</text>
+    <text x="645" y="369" fill="#1e3a8a">complet · 1 vCPU · 1 Go</text>
+    <text x="645" y="391" fill="#1e3a8a">Partie 4</text>
+  </g>
+  <text x="895" y="300" text-anchor="middle" font-size="13" fill="#475569">Le « x » du réseau</text>
+  <text x="895" y="318" text-anchor="middle" font-size="13" fill="#475569">change d'un PC à l'autre :</text>
+  <text x="895" y="336" text-anchor="middle" font-size="13" fill="#475569">il est tiré au hasard</text>
+  <text x="895" y="354" text-anchor="middle" font-size="13" fill="#475569">à l'installation</text>
+  <text x="895" y="372" text-anchor="middle" font-size="13" fill="#475569">de Workstation.</text>
+</svg>
