@@ -92,7 +92,7 @@ setupcon
 
 Garder le modèle de clavier proposé, choisir la disposition **Français**, puis valider les questions suivantes avec les réponses par défaut.
 
-### 1.6 Pas d'Internet dans la VM
+### 1.6 Pas d'Internet dans une VM branchée en NAT (VMnet8)
 
 Vérifier dans l'ordre :
 
@@ -117,7 +117,18 @@ Le disque du PC qui contient les VM est **plein** : les disques dynamiques ne pe
 - Le PC manque de mémoire : n'allumer que les VM de la partie en cours et fermer les applications inutiles.
 - L'hyperviseur de Windows est actif (mode Host VBS) : voir la [section 1.3](#13-desactiver-lhyperviseur-de-windows-pour-la-virtualisation-imbriquee).
 - Les VM sont sur un disque dur mécanique, une clé USB ou un dossier synchronisé avec OneDrive : les déplacer sur un SSD local.
-- Une VM a de vieux instantanés : les supprimer avec le **Snapshot Manager**, sauf ceux qui servent de base à un clone lié (`02-outils-installes`).
+- Une VM a de vieux instantanés : les supprimer avec le **Snapshot Manager**, sauf ceux qui servent de base à des clones liés (`02-outils-installes`, `modele-v1`).
+
+### 1.9 Pas d'Internet sur une VM du réseau isolé VMnet2
+
+Les VM `web1`, `stockage` et `web4` n'ont ni DHCP ni accès direct à Internet : tout passe par `routeur`. Tester couche par couche :
+
+1. 🐧 Sur la VM : `ip -br a` (adresse fixe en `10.10.10.x/24`) et `ip route` (ligne `default via 10.10.10.1`).
+2. 🐧 Sur la VM : `ping -c 3 10.10.10.1`. Si le routeur ne répond pas : vérifier qu'il est **allumé**, que la carte de la VM est sur **VMnet2** et **Connected**, et que la seconde carte du routeur a bien `10.10.10.1`.
+3. 🐧 Sur `routeur` : `cat /proc/sys/net/ipv4/ip_forward` doit afficher `1`, et `sudo nft list ruleset` doit montrer `masquerade` avec le **nom exact** de la carte VMnet8 (comparer avec `ip -br link`).
+4. 🐧 Sur la VM : `ping -c 3 1.1.1.1`, puis `ping -c 3 deb.debian.org`. Si seul le second échoue, corriger `/etc/resolv.conf` (`nameserver 192.168.x.2`).
+
+Le [défi du jour 2](08-defi-jour-2.md#2-diagnostic-trois-pannes) détaille ces pannes.
 
 ## 2. Raccourcis clavier de Workstation
 
@@ -151,16 +162,35 @@ Le disque du PC qui contient les VM est **plein** : les disques dynamiques ne pe
 | `sudo dmidecode -s system-manufacturer` | Afficher le fabricant de la machine (vu par le BIOS) |
 | `stress-ng --cpu 0 -t 20s` | Charger tous les processeurs pendant 20 secondes |
 | `stress-ng --vm 1 --vm-bytes 1500M --vm-keep -t 60s` | Occuper 1,5 Go de mémoire pendant 60 secondes |
+| `ip route` | Afficher les routes, dont la passerelle par défaut |
+| `sudo ifup <carte>` | Activer une carte réseau décrite dans `/etc/network/interfaces` |
+| `sudo sysctl --system` | Appliquer les réglages du noyau de `/etc/sysctl.d/` |
+| `sudo nft -c -f /etc/nftables.conf` | Vérifier la syntaxe des règles nftables sans les appliquer |
+| `sudo nft list ruleset` | Afficher les règles nftables chargées |
+| `sudo systemctl enable --now <service>` | Activer un service au démarrage et le démarrer tout de suite |
+| `sudo exportfs -ra` puis `sudo exportfs -v` | Recharger puis afficher les partages NFS |
+| `findmnt <dossier>` | Afficher ce qui est monté sur un dossier |
+| `sudo mount -a` | Monter tout ce qui est décrit dans `/etc/fstab` (pour le tester) |
+| `sudo targetcli ls` | Afficher la configuration de la cible iSCSI |
+| `sudo iscsiadm -m discovery -t sendtargets -p <IP>` | Découvrir les cibles iSCSI d'un serveur |
+| `sudo iscsiadm -m node --login` | Se connecter aux cibles découvertes |
+| `wget -qO- http://<adresse>` | Afficher une page web en ligne de commande |
 | `sudo poweroff` | Éteindre proprement la machine |
 | `sudo reboot` | Redémarrer la machine |
 
 ## 4. Glossaire
 
+Ballon (*ballooning*)
+:   Technique de récupération de mémoire : un pilote installé dans la VM réclame de la mémoire au système invité, que l'hyperviseur rend à l'hôte ou donne à une autre VM.
+
 Bare metal
 :   « Métal nu » : se dit d'un hyperviseur de **type 1**, installé directement sur le matériel, sans système d'exploitation en dessous.
 
-Ballon (*ballooning*)
-:   Technique de récupération de mémoire : un pilote installé dans la VM réclame de la mémoire au système invité, que l'hyperviseur rend à l'hôte ou donne à une autre VM.
+CHAP
+:   *Challenge-Handshake Authentication Protocol* : authentification par identifiant et mot de passe, utilisée notamment pour protéger l'accès aux cibles iSCSI.
+
+Cible et initiateur (iSCSI)
+:   En iSCSI, la **cible** est le serveur qui partage des disques (LUN) ; l'**initiateur** est le client qui s'y connecte.
 
 Clone complet
 :   Copie intégrale et indépendante d'une VM.
@@ -168,8 +198,14 @@ Clone complet
 Clone lié
 :   Copie d'une VM qui partage le disque figé de l'original et n'enregistre que ses différences. Rapide et économe, mais dépendante de l'original.
 
+Commutateur virtuel (*vSwitch*)
+:   Switch logiciel de l'hyperviseur sur lequel sont branchées les cartes réseau des VM ; dans Workstation, les réseaux VMnet0 à VMnet19.
+
 Consolidation
 :   Regroupement de plusieurs serveurs physiques peu utilisés sous forme de VM sur un nombre réduit d'hôtes.
+
+DAS
+:   *Direct Attached Storage* : disques directement attachés à un seul serveur.
 
 Disque différentiel
 :   Fichier de disque qui ne contient que les blocs modifiés depuis un instantané ou depuis la création d'un clone lié.
@@ -179,6 +215,12 @@ Disque dynamique (*thin*)
 
 Disque préalloué (*thick*)
 :   Disque virtuel qui occupe dès sa création toute sa taille sur l'hôte.
+
+DNAT (redirection de port)
+:   Traduction de l'adresse de **destination** : un pare-feu ou un routeur renvoie ce qui arrive sur l'un de ses ports vers une machine interne.
+
+Haute disponibilité (HA)
+:   Fonction d'un cluster qui redémarre automatiquement les VM d'un hôte en panne sur les autres hôtes.
 
 Hôte
 :   Machine physique qui exécute l'hyperviseur et héberge les VM.
@@ -192,23 +234,80 @@ Instantané (*snapshot*)
 Invité
 :   Système d'exploitation installé dans une VM.
 
+IQN
+:   *iSCSI Qualified Name* : nom unique d'une cible ou d'un initiateur iSCSI, de la forme `iqn.AAAA-MM.domaine-inversé:nom`.
+
+iSCSI
+:   Protocole qui transporte des commandes de disque SCSI sur un réseau IP (port TCP 3260) : un client (initiateur) utilise un disque distant (LUN) d'une cible comme un disque local.
+
+LUN
+:   *Logical Unit Number* : disque logique présenté par une baie de stockage ou une cible iSCSI.
+
 Machine virtuelle (VM)
 :   Ordinateur simulé par un hyperviseur, avec un matériel virtuel, et isolé des autres VM.
+
+Masquerade
+:   Forme de NAT source où le routeur remplace l'adresse des machines internes par sa propre adresse de sortie.
+
+Migration à chaud (vMotion)
+:   Déplacement d'une VM allumée d'un hôte à un autre, sans coupure perceptible.
 
 Mode Host VBS
 :   Mode de fonctionnement de Workstation quand l'hyperviseur de Windows est actif : Workstation passe par lui, les VM sont plus lentes et la virtualisation imbriquée est impossible.
 
+Mode modèle (*Template mode*)
+:   Réglage de Workstation qui empêche de supprimer une VM modèle et ses instantanés, sur lesquels reposent des clones liés.
+
+Modèle (*template*)
+:   VM « maître », installée et configurée, qui sert à créer rapidement de nouvelles VM identiques.
+
+NAS
+:   *Network Attached Storage* : stockage qui partage des **fichiers** sur le réseau (NFS, SMB).
+
 NAT
 :   Traduction d'adresses : les VM ont leur propre réseau privé et sortent sur Internet derrière l'adresse de l'hôte.
+
+NFS
+:   *Network File System* : protocole de partage de fichiers du monde Unix et Linux (port TCP 2049).
 
 open-vm-tools
 :   Version libre des VMware Tools, fournie par les distributions Linux : pilotes et services qui améliorent l'intégration d'une VM Linux dans un hyperviseur VMware.
 
+P2V
+:   *Physical to Virtual* : conversion d'un serveur physique en machine virtuelle, sans réinstallation.
+
 Paravirtualisation
 :   Technique où le système invité sait qu'il est virtualisé et dialogue directement avec l'hyperviseur, par des pilotes dédiés, au lieu d'utiliser du matériel imité.
 
+Pont (*Bridged*)
+:   Mode réseau qui branche la VM directement sur le réseau physique du PC (VMnet0 dans Workstation).
+
+Provisionnement fin (*thin provisioning*)
+:   Fait de n'occuper sur le stockage que l'espace réellement écrit, quelle que soit la taille annoncée du disque ou du volume.
+
+Répartition de charge (DRS)
+:   Fonction d'un cluster qui déplace automatiquement des VM (par migration à chaud) pour équilibrer la charge entre les hôtes.
+
+Réseau privé hôte (*Host-only*)
+:   Mode réseau où les VM ne communiquent qu'avec le PC hôte et entre elles, sans accès à Internet (VMnet1 dans Workstation).
+
+Routage IP (*IP forwarding*)
+:   Fonction qui permet à une machine de faire passer des paquets d'une carte réseau à une autre, c'est-à-dire de servir de routeur.
+
+SAN
+:   *Storage Area Network* : réseau de stockage qui partage des **blocs** (des disques, les LUN), en Fibre Channel ou en iSCSI.
+
+SMB
+:   *Server Message Block* : protocole de partage de fichiers et d'imprimantes de Windows (port TCP 445).
+
 Surallocation (*overcommitment*)
 :   Fait d'attribuer aux VM, au total, plus de ressources (mémoire, processeurs, disque) que l'hôte n'en possède réellement.
+
+Tolérance aux pannes (FT)
+:   Fonction qui fait tourner une copie miroir d'une VM sur un autre hôte, prête à prendre le relais sans aucune coupure.
+
+vCPU
+:   Processeur virtuel attribué à une VM ; pour l'hôte, c'est un fil d'exécution à faire tourner sur un processeur logique.
 
 Virtualisation imbriquée (*nested virtualization*)
 :   Faire tourner un hyperviseur à l'intérieur d'une VM.
@@ -216,14 +315,14 @@ Virtualisation imbriquée (*nested virtualization*)
 VMDK
 :   Format des fichiers de disques virtuels de VMware.
 
+VMnet
+:   Nom des commutateurs virtuels de VMware Workstation (VMnet0 à VMnet19).
+
 VMware Tools
 :   Suite de pilotes et de services de VMware à installer dans les VM : pilotes paravirtualisés, synchronisation de l'heure, copier-coller, arrêt propre depuis l'hyperviseur.
 
 VMX
 :   Fichier texte de configuration d'une VM VMware (processeurs, mémoire, disques, cartes réseau).
-
-vCPU
-:   Processeur virtuel attribué à une VM ; pour l'hôte, c'est un fil d'exécution à faire tourner sur un processeur logique.
 
 VT-x / AMD-V
 :   Extensions de virtualisation des processeurs Intel et AMD, indispensables pour les VM 64 bits sur Workstation. Elles s'activent dans le BIOS/UEFI.
@@ -250,3 +349,19 @@ VT-x / AMD-V
 *[IP]: Internet Protocol — adresse d'une machine sur le réseau
 *[DNS]: Domain Name System — résolution des noms
 *[vCPU]: processeur virtuel
+*[LUN]: Logical Unit Number — disque logique présenté par une baie
+*[NAS]: Network Attached Storage — partage de fichiers
+*[SAN]: Storage Area Network — partage de blocs
+*[NFS]: Network File System
+*[SMB]: Server Message Block
+*[iSCSI]: Internet Small Computer System Interface — disques SCSI sur IP
+*[SCSI]: Small Computer System Interface
+*[TCP]: Transmission Control Protocol
+*[HA]: High Availability — haute disponibilité
+*[DNAT]: Destination NAT — redirection de port
+*[FT]: Fault Tolerance — tolérance aux pannes
+*[DRS]: Distributed Resource Scheduler
+*[P2V]: Physical to Virtual
+*[CHAP]: Challenge-Handshake Authentication Protocol
+*[IQN]: iSCSI Qualified Name
+*[DAS]: Direct Attached Storage

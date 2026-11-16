@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="430" viewBox="0 0 1000 430" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">DAS, NAS et SAN</title>
+  <desc id="d">DAS : les disques sont directement attachés à un seul serveur. NAS : un appareil de stockage partage des fichiers et des dossiers sur le réseau local, avec les protocoles NFS ou SMB ; plusieurs machines lisent les mêmes fichiers, et c'est le NAS qui gère le système de fichiers. SAN : une baie de stockage présente des disques bruts, des LUN, à des serveurs sur un réseau dédié, en Fibre Channel ou en iSCSI ; chaque serveur voit un disque comme s'il était branché en local et le formate lui-même.</desc>
+  <rect x="0" y="0" width="1000" height="430" rx="16" fill="#ffffff"/>
+  <g font-size="14" text-anchor="middle">
+    <!-- DAS -->
+    <text x="160" y="38" font-size="19" font-weight="700" fill="#0f172a">DAS : stockage direct</text>
+    <rect x="80" y="70" width="160" height="60" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="2"/>
+    <text x="160" y="105" fill="#0f172a">Serveur</text>
+    <line x1="160" y1="130" x2="160" y2="170" stroke="#d97706" stroke-width="4"/>
+    <text x="222" y="155" fill="#b45309" font-size="12">câble SATA/SAS</text>
+    <rect x="80" y="170" width="160" height="60" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+    <text x="160" y="205" fill="#78350f">Disques</text>
+    <text x="160" y="275" fill="#334155">Un seul serveur y accède</text>
+    <text x="160" y="298" fill="#166534">✔ simple, rapide, bon marché</text>
+    <text x="160" y="321" fill="#991b1b">✘ pas de partage entre hôtes</text>
+    <!-- NAS -->
+    <text x="500" y="38" font-size="19" font-weight="700" fill="#0f172a">NAS : partage de FICHIERS</text>
+    <rect x="370" y="70" width="110" height="50" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="2"/>
+    <text x="425" y="100" fill="#0f172a">PC / serveur</text>
+    <rect x="520" y="70" width="110" height="50" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="2"/>
+    <text x="575" y="100" fill="#0f172a">PC / serveur</text>
+    <rect x="360" y="140" width="280" height="30" rx="6" fill="#e0f2fe" stroke="#0284c7"/>
+    <text x="500" y="160" fill="#075985">réseau local (Ethernet)</text>
+    <line x1="425" y1="120" x2="425" y2="140" stroke="#0284c7" stroke-width="3"/>
+    <line x1="575" y1="120" x2="575" y2="140" stroke="#0284c7" stroke-width="3"/>
+    <line x1="500" y1="170" x2="500" y2="190" stroke="#0284c7" stroke-width="3"/>
+    <rect x="420" y="190" width="160" height="50" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+    <text x="500" y="212" fill="#14532d" font-weight="700">NAS</text>
+    <text x="500" y="230" fill="#14532d" font-size="12">gère le système de fichiers</text>
+    <text x="500" y="275" fill="#334155">Protocoles : NFS, SMB</text>
+    <text x="500" y="298" fill="#166534">✔ plusieurs clients, mêmes fichiers</text>
+    <text x="500" y="321" fill="#166534">✔ simple à administrer</text>
+    <text x="500" y="344" fill="#991b1b">✘ moins performant qu'un SAN</text>
+    <!-- SAN -->
+    <text x="840" y="38" font-size="19" font-weight="700" fill="#0f172a">SAN : partage de BLOCS</text>
+    <rect x="710" y="70" width="110" height="50" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="2"/>
+    <text x="765" y="92" fill="#0f172a">Hôte 1</text>
+    <text x="765" y="110" fill="#334155" font-size="12">voit « LUN 0 »</text>
+    <rect x="860" y="70" width="110" height="50" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="2"/>
+    <text x="915" y="92" fill="#0f172a">Hôte 2</text>
+    <text x="915" y="110" fill="#334155" font-size="12">voit « LUN 1 »</text>
+    <rect x="700" y="140" width="280" height="30" rx="6" fill="#ede9fe" stroke="#7c3aed"/>
+    <text x="840" y="160" fill="#4c1d95">réseau de stockage dédié</text>
+    <line x1="765" y1="120" x2="765" y2="140" stroke="#7c3aed" stroke-width="3"/>
+    <line x1="915" y1="120" x2="915" y2="140" stroke="#7c3aed" stroke-width="3"/>
+    <line x1="840" y1="170" x2="840" y2="190" stroke="#7c3aed" stroke-width="3"/>
+    <rect x="740" y="190" width="200" height="50" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+    <text x="840" y="212" fill="#1e3a8a" font-weight="700">Baie de stockage</text>
+    <text x="840" y="230" fill="#1e3a8a" font-size="12">découpée en LUN (disques bruts)</text>
+    <text x="840" y="275" fill="#334155">Protocoles : Fibre Channel, iSCSI</text>
+    <text x="840" y="298" fill="#166534">✔ très performant, faible latence</text>
+    <text x="840" y="321" fill="#166534">✔ le stockage des clusters de VM</text>
+    <text x="840" y="344" fill="#991b1b">✘ plus cher et plus complexe</text>
+  </g>
+  <line x1="330" y1="25" x2="330" y2="360" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="670" y1="25" x2="670" y2="360" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="500" y="400" text-anchor="middle" font-size="14" fill="#475569">NAS : le client demande « le fichier rapport.docx ». SAN : le client demande « les blocs 1 024 à 2 047 du disque » et gère lui-même ses fichiers.</text>
+</svg>

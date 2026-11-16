@@ -480,7 +480,7 @@ Un clone est une **copie parfaite** : même nom de machine, même identifiant de
 - [Broadcom — Fichiers d'une machine virtuelle (Workstation 26H1)](https://techdocs.broadcom.com/us/en/vmware-cis/desktop-hypervisors/workstation-pro/26H1/using-vmware-workstation-pro/creating-virtual-machines-in-workstation-user-guide/virtual-machine-files.html) — rôle des fichiers `.vmx`, `.vmdk`, `.vmsd`, `.vmsn`, `.vmem` (en anglais).
 - [Broadcom — Réduire un disque virtuel de Workstation](https://knowledge.broadcom.com/external/article/315631/defragmenting-and-shrinking-vmware-works.html) — conditions et procédure de réduction d'un disque (en anglais).
 - [Page de manuel de stress-ng](https://manpages.debian.org/trixie/stress-ng/stress-ng.1.en.html) — toutes les options de l'outil de charge (en anglais).
-- Partie précédente : [Créer sa première VM Debian 13](03-creer-sa-premiere-vm.md) · Partie suivante : Virtualiser des serveurs (jour 2), voir le [plan du parcours](index.md#plan-du-parcours).
+- Partie précédente : [Créer sa première VM Debian 13](03-creer-sa-premiere-vm.md) · Partie suivante : [Virtualiser des serveurs](05-virtualiser-des-serveurs.md).
 
 *[vCPU]: processeur virtuel
 *[VM]: Virtual Machine — machine virtuelle
