@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://wiki.bodaine.fr/cours-tp/virtualisation/annexes/">
       
       
-        <link rel="prev" href="../04-partager-les-ressources/">
+        <link rel="prev" href="../08-defi-jour-2/">
       
       
         <link rel="next" href="../../../tags/">
@@ -2271,6 +2271,8 @@
       
         
       
+        
+      
     
     
     
@@ -2382,6 +2384,70 @@
     
   
     Jour 1 — Comprendre et créer ses VM
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../05-virtualiser-des-serveurs/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 2 — Serveurs, réseau, stockage
   
 
     
@@ -2549,10 +2615,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#16-pas-dinternet-dans-la-vm" class="md-nav__link">
+  <a href="#16-pas-dinternet-dans-une-vm-branchee-en-nat-vmnet8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1.6 Pas d'Internet dans la VM
+        1.6 Pas d'Internet dans une VM branchée en NAT (VMnet8)
       
     </span>
   </a>
@@ -2575,6 +2641,17 @@
     <span class="md-ellipsis">
       
         1.8 Les VM sont très lentes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#19-pas-dinternet-sur-une-vm-du-reseau-isole-vmnet2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.9 Pas d'Internet sur une VM du réseau isolé VMnet2
       
     </span>
   </a>
@@ -2777,10 +2854,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#16-pas-dinternet-dans-la-vm" class="md-nav__link">
+  <a href="#16-pas-dinternet-dans-une-vm-branchee-en-nat-vmnet8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1.6 Pas d'Internet dans la VM
+        1.6 Pas d'Internet dans une VM branchée en NAT (VMnet8)
       
     </span>
   </a>
@@ -2803,6 +2880,17 @@
     <span class="md-ellipsis">
       
         1.8 Les VM sont très lentes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#19-pas-dinternet-sur-une-vm-du-reseau-isole-vmnet2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.9 Pas d'Internet sur une VM du réseau isolé VMnet2
       
     </span>
   </a>
@@ -3077,7 +3165,7 @@
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>setupcon
 </code></pre></div>
 <p>Garder le modèle de clavier proposé, choisir la disposition <strong>Français</strong>, puis valider les questions suivantes avec les réponses par défaut.</p>
-<h3 id="16-pas-dinternet-dans-la-vm">1.6 Pas d'Internet dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr><a class="headerlink" href="#16-pas-dinternet-dans-la-vm" title="Permanent link">&para;</a></h3>
+<h3 id="16-pas-dinternet-dans-une-vm-branchee-en-nat-vmnet8">1.6 Pas d'Internet dans une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> branchée en <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> (VMnet8)<a class="headerlink" href="#16-pas-dinternet-dans-une-vm-branchee-en-nat-vmnet8" title="Permanent link">&para;</a></h3>
 <p>Vérifier dans l'ordre :</p>
 <ol>
 <li>🐧 <code>ip -4 a</code> : la carte réseau (souvent nommée <code>ens33</code>) a-t-elle une adresse en <code>192.168.x.128</code> ou au-dessus ? Si elle n'a <strong>aucune</strong> adresse, le <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> n'a pas répondu.</li>
@@ -3100,8 +3188,17 @@
 <li>Le PC manque de mémoire : n'allumer que les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> de la partie en cours et fermer les applications inutiles.</li>
 <li>L'hyperviseur de Windows est actif (mode Host <abbr title="Virtualization-Based Security — sécurité basée sur la virtualisation">VBS</abbr>) : voir la <a href="#13-desactiver-lhyperviseur-de-windows-pour-la-virtualisation-imbriquee">section 1.3</a>.</li>
 <li>Les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> sont sur un disque dur mécanique, une clé USB ou un dossier synchronisé avec OneDrive : les déplacer sur un <abbr title="Solid State Drive — disque à mémoire flash">SSD</abbr> local.</li>
-<li>Une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> a de vieux instantanés : les supprimer avec le <strong>Snapshot Manager</strong>, sauf ceux qui servent de base à un clone lié (<code>02-outils-installes</code>).</li>
+<li>Une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> a de vieux instantanés : les supprimer avec le <strong>Snapshot Manager</strong>, sauf ceux qui servent de base à des clones liés (<code>02-outils-installes</code>, <code>modele-v1</code>).</li>
 </ul>
+<h3 id="19-pas-dinternet-sur-une-vm-du-reseau-isole-vmnet2">1.9 Pas d'Internet sur une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> du réseau isolé VMnet2<a class="headerlink" href="#19-pas-dinternet-sur-une-vm-du-reseau-isole-vmnet2" title="Permanent link">&para;</a></h3>
+<p>Les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> <code>web1</code>, <code>stockage</code> et <code>web4</code> n'ont ni <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> ni accès direct à Internet : tout passe par <code>routeur</code>. Tester couche par couche :</p>
+<ol>
+<li>🐧 Sur la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : <code>ip -br a</code> (adresse fixe en <code>10.10.10.x/24</code>) et <code>ip route</code> (ligne <code>default via 10.10.10.1</code>).</li>
+<li>🐧 Sur la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : <code>ping -c 3 10.10.10.1</code>. Si le routeur ne répond pas : vérifier qu'il est <strong>allumé</strong>, que la carte de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> est sur <strong>VMnet2</strong> et <strong>Connected</strong>, et que la seconde carte du routeur a bien <code>10.10.10.1</code>.</li>
+<li>🐧 Sur <code>routeur</code> : <code>cat /proc/sys/net/ipv4/ip_forward</code> doit afficher <code>1</code>, et <code>sudo nft list ruleset</code> doit montrer <code>masquerade</code> avec le <strong>nom exact</strong> de la carte VMnet8 (comparer avec <code>ip -br link</code>).</li>
+<li>🐧 Sur la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : <code>ping -c 3 1.1.1.1</code>, puis <code>ping -c 3 deb.debian.org</code>. Si seul le second échoue, corriger <code>/etc/resolv.conf</code> (<code>nameserver 192.168.x.2</code>).</li>
+</ol>
+<p>Le <a href="../08-defi-jour-2/#2-diagnostic-trois-pannes">défi du jour 2</a> détaille ces pannes.</p>
 <h2 id="2-raccourcis-clavier-de-workstation">2. Raccourcis clavier de Workstation<a class="headerlink" href="#2-raccourcis-clavier-de-workstation" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -3215,6 +3312,58 @@
 <td>Occuper 1,5 Go de mémoire pendant 60 secondes</td>
 </tr>
 <tr>
+<td><code>ip route</code></td>
+<td>Afficher les routes, dont la passerelle par défaut</td>
+</tr>
+<tr>
+<td><code>sudo ifup &lt;carte&gt;</code></td>
+<td>Activer une carte réseau décrite dans <code>/etc/network/interfaces</code></td>
+</tr>
+<tr>
+<td><code>sudo sysctl --system</code></td>
+<td>Appliquer les réglages du noyau de <code>/etc/sysctl.d/</code></td>
+</tr>
+<tr>
+<td><code>sudo nft -c -f /etc/nftables.conf</code></td>
+<td>Vérifier la syntaxe des règles nftables sans les appliquer</td>
+</tr>
+<tr>
+<td><code>sudo nft list ruleset</code></td>
+<td>Afficher les règles nftables chargées</td>
+</tr>
+<tr>
+<td><code>sudo systemctl enable --now &lt;service&gt;</code></td>
+<td>Activer un service au démarrage et le démarrer tout de suite</td>
+</tr>
+<tr>
+<td><code>sudo exportfs -ra</code> puis <code>sudo exportfs -v</code></td>
+<td>Recharger puis afficher les partages <abbr title="Network File System">NFS</abbr></td>
+</tr>
+<tr>
+<td><code>findmnt &lt;dossier&gt;</code></td>
+<td>Afficher ce qui est monté sur un dossier</td>
+</tr>
+<tr>
+<td><code>sudo mount -a</code></td>
+<td>Monter tout ce qui est décrit dans <code>/etc/fstab</code> (pour le tester)</td>
+</tr>
+<tr>
+<td><code>sudo targetcli ls</code></td>
+<td>Afficher la configuration de la cible <abbr title="Internet Small Computer System Interface — disques SCSI sur IP">iSCSI</abbr></td>
+</tr>
+<tr>
+<td><code>sudo iscsiadm -m discovery -t sendtargets -p &lt;IP&gt;</code></td>
+<td>Découvrir les cibles <abbr title="Internet Small Computer System Interface — disques SCSI sur IP">iSCSI</abbr> d'un serveur</td>
+</tr>
+<tr>
+<td><code>sudo iscsiadm -m node --login</code></td>
+<td>Se connecter aux cibles découvertes</td>
+</tr>
+<tr>
+<td><code>wget -qO- http://&lt;adresse&gt;</code></td>
+<td>Afficher une page web en ligne de commande</td>
+</tr>
+<tr>
 <td><code>sudo poweroff</code></td>
 <td>Éteindre proprement la machine</td>
 </tr>
@@ -3226,22 +3375,34 @@
 </table>
 <h2 id="4-glossaire">4. Glossaire<a class="headerlink" href="#4-glossaire" title="Permanent link">&para;</a></h2>
 <dl>
-<dt>Bare metal</dt>
-<dd>« Métal nu » : se dit d'un hyperviseur de <strong>type 1</strong>, installé directement sur le matériel, sans système d'exploitation en dessous.</dd>
 <dt>Ballon (<em>ballooning</em>)</dt>
 <dd>Technique de récupération de mémoire : un pilote installé dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> réclame de la mémoire au système invité, que l'hyperviseur rend à l'hôte ou donne à une autre <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</dd>
+<dt>Bare metal</dt>
+<dd>« Métal nu » : se dit d'un hyperviseur de <strong>type 1</strong>, installé directement sur le matériel, sans système d'exploitation en dessous.</dd>
+<dt><abbr title="Challenge-Handshake Authentication Protocol">CHAP</abbr></dt>
+<dd><em>Challenge-Handshake Authentication Protocol</em> : authentification par identifiant et mot de passe, utilisée notamment pour protéger l'accès aux cibles <abbr title="Internet Small Computer System Interface — disques SCSI sur IP">iSCSI</abbr>.</dd>
+<dt>Cible et initiateur (<abbr title="Internet Small Computer System Interface — disques SCSI sur IP">iSCSI</abbr>)</dt>
+<dd>En <abbr title="Internet Small Computer System Interface — disques SCSI sur IP">iSCSI</abbr>, la <strong>cible</strong> est le serveur qui partage des disques (<abbr title="Logical Unit Number — disque logique présenté par une baie">LUN</abbr>) ; l'<strong>initiateur</strong> est le client qui s'y connecte.</dd>
 <dt>Clone complet</dt>
 <dd>Copie intégrale et indépendante d'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</dd>
 <dt>Clone lié</dt>
 <dd>Copie d'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> qui partage le disque figé de l'original et n'enregistre que ses différences. Rapide et économe, mais dépendante de l'original.</dd>
+<dt>Commutateur virtuel (<em>vSwitch</em>)</dt>
+<dd>Switch logiciel de l'hyperviseur sur lequel sont branchées les cartes réseau des <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ; dans Workstation, les réseaux VMnet0 à VMnet19.</dd>
 <dt>Consolidation</dt>
 <dd>Regroupement de plusieurs serveurs physiques peu utilisés sous forme de <abbr title="Virtual Machine — machine virtuelle">VM</abbr> sur un nombre réduit d'hôtes.</dd>
+<dt><abbr title="Direct Attached Storage">DAS</abbr></dt>
+<dd><em>Direct Attached Storage</em> : disques directement attachés à un seul serveur.</dd>
 <dt>Disque différentiel</dt>
 <dd>Fichier de disque qui ne contient que les blocs modifiés depuis un instantané ou depuis la création d'un clone lié.</dd>
 <dt>Disque dynamique (<em>thin</em>)</dt>
 <dd>Disque virtuel qui n'occupe sur l'hôte que la place réellement écrite, et grandit au fil des écritures.</dd>
 <dt>Disque préalloué (<em>thick</em>)</dt>
 <dd>Disque virtuel qui occupe dès sa création toute sa taille sur l'hôte.</dd>
+<dt><abbr title="Destination NAT — redirection de port">DNAT</abbr> (redirection de port)</dt>
+<dd>Traduction de l'adresse de <strong>destination</strong> : un pare-feu ou un routeur renvoie ce qui arrive sur l'un de ses ports vers une machine interne.</dd>
+<dt>Haute disponibilité (<abbr title="High Availability — haute disponibilité">HA</abbr>)</dt>
+<dd>Fonction d'un cluster qui redémarre automatiquement les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> d'un hôte en panne sur les autres hôtes.</dd>
 <dt>Hôte</dt>
 <dd>Machine physique qui exécute l'hyperviseur et héberge les <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</dd>
 <dt>Hyperviseur</dt>
@@ -3250,28 +3411,66 @@
 <dd>État enregistré d'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (disques, paramètres et éventuellement mémoire), auquel on peut revenir. Ce n'est pas une sauvegarde.</dd>
 <dt>Invité</dt>
 <dd>Système d'exploitation installé dans une <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</dd>
+<dt><abbr title="iSCSI Qualified Name">IQN</abbr></dt>
+<dd><em><abbr title="Internet Small Computer System Interface — disques SCSI sur IP">iSCSI</abbr> Qualified Name</em> : nom unique d'une cible ou d'un initiateur <abbr title="Internet Small Computer System Interface — disques SCSI sur IP">iSCSI</abbr>, de la forme <code>iqn.AAAA-MM.domaine-inversé:nom</code>.</dd>
+<dt><abbr title="Internet Small Computer System Interface — disques SCSI sur IP">iSCSI</abbr></dt>
+<dd>Protocole qui transporte des commandes de disque <abbr title="Small Computer System Interface">SCSI</abbr> sur un réseau <abbr title="Internet Protocol — adresse d'une machine sur le réseau">IP</abbr> (port <abbr title="Transmission Control Protocol">TCP</abbr> 3260) : un client (initiateur) utilise un disque distant (<abbr title="Logical Unit Number — disque logique présenté par une baie">LUN</abbr>) d'une cible comme un disque local.</dd>
+<dt><abbr title="Logical Unit Number — disque logique présenté par une baie">LUN</abbr></dt>
+<dd><em>Logical Unit Number</em> : disque logique présenté par une baie de stockage ou une cible <abbr title="Internet Small Computer System Interface — disques SCSI sur IP">iSCSI</abbr>.</dd>
 <dt>Machine virtuelle (<abbr title="Virtual Machine — machine virtuelle">VM</abbr>)</dt>
 <dd>Ordinateur simulé par un hyperviseur, avec un matériel virtuel, et isolé des autres <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</dd>
+<dt>Masquerade</dt>
+<dd>Forme de <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> source où le routeur remplace l'adresse des machines internes par sa propre adresse de sortie.</dd>
+<dt>Migration à chaud (vMotion)</dt>
+<dd>Déplacement d'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> allumée d'un hôte à un autre, sans coupure perceptible.</dd>
 <dt>Mode Host <abbr title="Virtualization-Based Security — sécurité basée sur la virtualisation">VBS</abbr></dt>
 <dd>Mode de fonctionnement de Workstation quand l'hyperviseur de Windows est actif : Workstation passe par lui, les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> sont plus lentes et la virtualisation imbriquée est impossible.</dd>
+<dt>Mode modèle (<em>Template mode</em>)</dt>
+<dd>Réglage de Workstation qui empêche de supprimer une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> modèle et ses instantanés, sur lesquels reposent des clones liés.</dd>
+<dt>Modèle (<em>template</em>)</dt>
+<dd><abbr title="Virtual Machine — machine virtuelle">VM</abbr> « maître », installée et configurée, qui sert à créer rapidement de nouvelles <abbr title="Virtual Machine — machine virtuelle">VM</abbr> identiques.</dd>
+<dt><abbr title="Network Attached Storage — partage de fichiers">NAS</abbr></dt>
+<dd><em>Network Attached Storage</em> : stockage qui partage des <strong>fichiers</strong> sur le réseau (<abbr title="Network File System">NFS</abbr>, <abbr title="Server Message Block">SMB</abbr>).</dd>
 <dt><abbr title="Network Address Translation — traduction d'adresses">NAT</abbr></dt>
 <dd>Traduction d'adresses : les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ont leur propre réseau privé et sortent sur Internet derrière l'adresse de l'hôte.</dd>
+<dt><abbr title="Network File System">NFS</abbr></dt>
+<dd><em>Network File System</em> : protocole de partage de fichiers du monde Unix et Linux (port <abbr title="Transmission Control Protocol">TCP</abbr> 2049).</dd>
 <dt>open-vm-tools</dt>
 <dd>Version libre des VMware Tools, fournie par les distributions Linux : pilotes et services qui améliorent l'intégration d'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> Linux dans un hyperviseur VMware.</dd>
+<dt><abbr title="Physical to Virtual">P2V</abbr></dt>
+<dd><em>Physical to Virtual</em> : conversion d'un serveur physique en machine virtuelle, sans réinstallation.</dd>
 <dt>Paravirtualisation</dt>
 <dd>Technique où le système invité sait qu'il est virtualisé et dialogue directement avec l'hyperviseur, par des pilotes dédiés, au lieu d'utiliser du matériel imité.</dd>
+<dt>Pont (<em>Bridged</em>)</dt>
+<dd>Mode réseau qui branche la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> directement sur le réseau physique du PC (VMnet0 dans Workstation).</dd>
+<dt>Provisionnement fin (<em>thin provisioning</em>)</dt>
+<dd>Fait de n'occuper sur le stockage que l'espace réellement écrit, quelle que soit la taille annoncée du disque ou du volume.</dd>
+<dt>Répartition de charge (<abbr title="Distributed Resource Scheduler">DRS</abbr>)</dt>
+<dd>Fonction d'un cluster qui déplace automatiquement des <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (par migration à chaud) pour équilibrer la charge entre les hôtes.</dd>
+<dt>Réseau privé hôte (<em>Host-only</em>)</dt>
+<dd>Mode réseau où les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ne communiquent qu'avec le PC hôte et entre elles, sans accès à Internet (VMnet1 dans Workstation).</dd>
+<dt>Routage <abbr title="Internet Protocol — adresse d'une machine sur le réseau">IP</abbr> (<em><abbr title="Internet Protocol — adresse d'une machine sur le réseau">IP</abbr> forwarding</em>)</dt>
+<dd>Fonction qui permet à une machine de faire passer des paquets d'une carte réseau à une autre, c'est-à-dire de servir de routeur.</dd>
+<dt><abbr title="Storage Area Network — partage de blocs">SAN</abbr></dt>
+<dd><em>Storage Area Network</em> : réseau de stockage qui partage des <strong>blocs</strong> (des disques, les <abbr title="Logical Unit Number — disque logique présenté par une baie">LUN</abbr>), en Fibre Channel ou en <abbr title="Internet Small Computer System Interface — disques SCSI sur IP">iSCSI</abbr>.</dd>
+<dt><abbr title="Server Message Block">SMB</abbr></dt>
+<dd><em>Server Message Block</em> : protocole de partage de fichiers et d'imprimantes de Windows (port <abbr title="Transmission Control Protocol">TCP</abbr> 445).</dd>
 <dt>Surallocation (<em>overcommitment</em>)</dt>
 <dd>Fait d'attribuer aux <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, au total, plus de ressources (mémoire, processeurs, disque) que l'hôte n'en possède réellement.</dd>
+<dt>Tolérance aux pannes (<abbr title="Fault Tolerance — tolérance aux pannes">FT</abbr>)</dt>
+<dd>Fonction qui fait tourner une copie miroir d'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> sur un autre hôte, prête à prendre le relais sans aucune coupure.</dd>
+<dt><abbr title="processeur virtuel">vCPU</abbr></dt>
+<dd>Processeur virtuel attribué à une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ; pour l'hôte, c'est un fil d'exécution à faire tourner sur un processeur logique.</dd>
 <dt>Virtualisation imbriquée (<em>nested virtualization</em>)</dt>
 <dd>Faire tourner un hyperviseur à l'intérieur d'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</dd>
 <dt>VMDK</dt>
 <dd>Format des fichiers de disques virtuels de VMware.</dd>
+<dt>VMnet</dt>
+<dd>Nom des commutateurs virtuels de VMware Workstation (VMnet0 à VMnet19).</dd>
 <dt>VMware Tools</dt>
 <dd>Suite de pilotes et de services de VMware à installer dans les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : pilotes paravirtualisés, synchronisation de l'heure, copier-coller, arrêt propre depuis l'hyperviseur.</dd>
 <dt>VMX</dt>
 <dd>Fichier texte de configuration d'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> VMware (processeurs, mémoire, disques, cartes réseau).</dd>
-<dt><abbr title="processeur virtuel">vCPU</abbr></dt>
-<dd>Processeur virtuel attribué à une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ; pour l'hôte, c'est un fil d'exécution à faire tourner sur un processeur logique.</dd>
 <dt>VT-x / AMD-V</dt>
 <dd>Extensions de virtualisation des processeurs Intel et AMD, indispensables pour les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> 64 bits sur Workstation. Elles s'activent dans le <abbr title="Basic Input/Output System — micrologiciel de démarrage">BIOS</abbr>/<abbr title="Unified Extensible Firmware Interface — successeur du BIOS">UEFI</abbr>.</dd>
 </dl>
@@ -3324,7 +3523,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
         
           
-          <a href="../04-partager-les-ressources/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 4. Partager les ressources">
+          <a href="../08-defi-jour-2/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 8. Défi du jour 2">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -3334,7 +3533,7 @@
                 Précédent
               </span>
               <div class="md-ellipsis">
-                4. Partager les ressources
+                8. Défi du jour 2
               </div>
             </div>
           </a>

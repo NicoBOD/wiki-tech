@@ -2271,6 +2271,8 @@
       
         
       
+        
+      
     
     
     
@@ -2798,6 +2800,70 @@
             
           </ul>
         </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../05-virtualiser-des-serveurs/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 2 — Serveurs, réseau, stockage
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
       
     </li>
   
@@ -3493,7 +3559,7 @@
 </figure>
 <p>Deux solutions :</p>
 <ul>
-<li><strong>Réparer le <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr></strong> : vérifier dans Workstation que la carte réseau est connectée (<strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Settings &gt; Network Adapter</strong>, case <strong>Connected</strong>) et que les services <strong>VMware <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> Service</strong> et <strong>VMware <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> Service</strong> tournent sur le PC (voir les <a href="../annexes/#16-pas-dinternet-dans-la-vm">annexes</a>), puis choisir <strong>Réessayer la configuration automatique du réseau</strong>.</li>
+<li><strong>Réparer le <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr></strong> : vérifier dans Workstation que la carte réseau est connectée (<strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Settings &gt; Network Adapter</strong>, case <strong>Connected</strong>) et que les services <strong>VMware <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> Service</strong> et <strong>VMware <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> Service</strong> tournent sur le PC (voir les <a href="../annexes/#16-pas-dinternet-dans-une-vm-branchee-en-nat-vmnet8">annexes</a>), puis choisir <strong>Réessayer la configuration automatique du réseau</strong>.</li>
 <li><strong>Configurer le réseau à la main</strong> : choisir <strong>Configurer vous-même le réseau</strong>, puis saisir une adresse <strong>libre</strong> du réseau VMnet8 <strong>sous</strong> la plage <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> (par exemple <code>192.168.x.10/24</code>), la passerelle <code>192.168.x.2</code> et le serveur de noms <code>192.168.x.2</code>, où <code>x</code> est le troisième octet du réseau VMnet8 de son PC.</li>
 </ul>
 <figure>

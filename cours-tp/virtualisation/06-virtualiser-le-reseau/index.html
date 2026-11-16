@@ -1,0 +1,3876 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+      
+      
+        <meta name="author" content="Nicolas BODAINE">
+      
+      
+        <link rel="canonical" href="https://wiki.bodaine.fr/cours-tp/virtualisation/06-virtualiser-le-reseau/">
+      
+      
+        <link rel="prev" href="../05-virtualiser-des-serveurs/">
+      
+      
+        <link rel="next" href="../07-virtualiser-le-stockage/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>Virtualiser le réseau : commutateurs virtuels, modes pont, NAT et privé hôte, VM routeur - Wiki Tech — NicoBOD</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        
+        <link rel="stylesheet" href="../../../assets/external/fonts.googleapis.com/css.56f7ac64.css">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+    
+    
+      
+    
+    
+
+    <!-- SEO -->
+    <meta name="author" content="Nicolas BODAINE">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph : compléments non gérés par le plugin social.     -->
+    <!-- og:type/title/description/image/url sont posés par social.   -->
+    <meta property="og:site_name" content="Wiki Tech — NicoBOD">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card : la grande image et l'image elle-même sont      -->
+    <!-- héritées des balises og:image générées par le plugin social.  -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Virtualiser le réseau : commutateurs virtuels, modes pont, NAT et privé hôte, VM routeur — Wiki Tech — NicoBOD">
+    <meta name="twitter:description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+  
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#virtualiser-le-reseau" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-header__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wiki Tech — NicoBOD
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Virtualiser le réseau : commutateurs virtuels, modes pont, NAT et privé hôte, VM routeur
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer en mode clair"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer en mode clair" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Passer en mode sombre"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer en mode sombre" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Revenir au thème système"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Revenir au thème système" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Partager" aria-label="Partager" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../systemes/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h16v10H4m16 2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4c-1.11 0-2 .89-2 2v10a2 2 0 0 0 2 2H0v2h24v-2z"/></svg>
+    
+  
+  Systèmes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../reseaux/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v2h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+    
+  
+  Réseaux
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cloud/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 20q-2.28 0-3.89-1.57Q1 16.85 1 14.58q0-1.95 1.17-3.48 1.18-1.53 3.08-1.95.63-2.3 2.5-3.72Q9.63 4 12 4q2.93 0 4.96 2.04Q19 8.07 19 11q1.73.2 2.86 1.5 1.14 1.28 1.14 3 0 1.88-1.31 3.19T18.5 20Z"/></svg>
+    
+  
+  Cloud
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cybersecurite/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12h7c-.53 4.11-3.28 7.78-7 8.92zH5V6.3l7-3.11M12 1 3 5v6c0 5.55 3.84 10.73 9 12 5.16-1.27 9-6.45 9-12V5z"/></svg>
+    
+  
+  Cybersécurité
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../ia/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/></svg>
+    
+  
+  IA
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../automatisation/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+    
+  
+  Automatisation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../logiciels/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m0 5H3V4h18z"/></svg>
+    
+  
+  Logiciels
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../debug/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 12h-4v-2h4m0 6h-4v-2h4m6-6h-2.81a6 6 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6 6 0 0 0-2.83 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20z"/></svg>
+    
+  
+  Debug
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../astuces/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+    
+  
+  Astuces
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+    
+  
+  Cours et TP
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../tags/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tags
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-nav__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    Wiki Tech — NicoBOD
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../systemes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Systèmes
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../reseaux/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Réseaux
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cybersecurite/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cybersécurité
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../ia/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IA
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../automatisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automatisation
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../logiciels/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logiciels
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../debug/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../astuces/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Astuces
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cours et TP
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cours et TP
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../veeam/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Veeam Backup & Replication
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_2" id="__nav_11_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Veeam Backup & Replication
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/01-comprendre-la-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/02-decouvrir-veeam-data-platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Découvrir Veeam Data Platform 13
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/03-preparer-le-lab-installer-appliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Préparer le lab et installer l'appliance
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/04-ajouter-des-depots-de-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Ajouter des dépôts de sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/05-sauvegarder-configuration-et-serveur-de-fichiers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Sauvegarder la configuration et un serveur de fichiers
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/06-sauvegarder-restaurer-serveur-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Sauvegarder et restaurer un serveur Linux
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/07-sauvegarder-vers-azure-blob/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Sauvegarder vers Azure Blob Storage
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pfsense-ha/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cluster pfSense en haute disponibilité
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_3" id="__nav_11_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cluster pfSense en haute disponibilité
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/01-comprendre-haute-disponibilite/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la haute disponibilité
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/02-preparer-lab-installer-pfsense/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Préparer le lab et installer pfSense
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/03-configuration-initiale/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Configuration initiale
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/04-synchroniser-le-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Synchroniser le cluster
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/05-vip-carp-nat-sortant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. VIP CARP et NAT sortant
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/06-tester-la-bascule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Tester la bascule
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/07-agregation-lacp-troisieme-noeud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Agrégation LACP et troisième nœud
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/08-mettre-a-jour-le-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8. Mettre à jour le cluster
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Virtualisation (5 jours)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_4" id="__nav_11_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Virtualisation (5 jours)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../01-comprendre-la-virtualisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 1 — Comprendre et créer ses VM
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_4_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_11_4_3" id="__nav_11_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 2 — Serveurs, réseau, stockage
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_11_4_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Jour 2 — Serveurs, réseau, stockage
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-virtualiser-des-serveurs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Virtualiser des serveurs
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Virtualiser le réseau
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Virtualiser le réseau
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-les-briques-dun-reseau-virtuel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Les briques d'un réseau virtuel
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Les briques d&#39;un réseau virtuel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-carte-reseau-et-commutateur-virtuels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Carte réseau et commutateur virtuels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-les-trois-modes-de-workstation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Les trois modes de Workstation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-exercice-quel-mode-choisir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 ✍️ Exercice : quel mode choisir ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-tp-creer-un-reseau-isole" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. TP : créer un réseau isolé
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-tp-construire-une-vm-routeur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. TP : construire une VM routeur
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. TP : construire une VM routeur">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-creer-la-vm-et-lui-ajouter-une-seconde-carte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Créer la VM et lui ajouter une seconde carte
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-identifier-les-deux-cartes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Identifier les deux cartes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-donner-une-adresse-fixe-a-la-carte-du-reseau-interne" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Donner une adresse fixe à la carte du réseau interne
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-activer-le-routage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Activer le routage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-activer-la-traduction-dadresses-nat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 Activer la traduction d'adresses (NAT)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-tp-placer-web1-derriere-le-routeur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. TP : placer web1 derrière le routeur
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-tester" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Tester
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Tester">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-experience-sans-traduction-dadresses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 ✍️ Expérience : sans traduction d'adresses
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-pour-aller-plus-loin-publier-le-serveur-web" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Pour aller plus loin : publier le serveur web
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-virtualiser-le-stockage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Virtualiser le stockage
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-defi-jour-2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8. Défi du jour 2
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tags/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.5 7A1.5 1.5 0 0 1 4 5.5 1.5 1.5 0 0 1 5.5 4 1.5 1.5 0 0 1 7 5.5 1.5 1.5 0 0 1 5.5 7m15.91 4.58-9-9C12.05 2.22 11.55 2 11 2H4c-1.11 0-2 .89-2 2v7c0 .55.22 1.05.59 1.41l8.99 9c.37.36.87.59 1.42.59s1.05-.23 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.56-.23-1.06-.59-1.42"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-les-briques-dun-reseau-virtuel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Les briques d'un réseau virtuel
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Les briques d&#39;un réseau virtuel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-carte-reseau-et-commutateur-virtuels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Carte réseau et commutateur virtuels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-les-trois-modes-de-workstation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Les trois modes de Workstation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-exercice-quel-mode-choisir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 ✍️ Exercice : quel mode choisir ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-tp-creer-un-reseau-isole" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. TP : créer un réseau isolé
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-tp-construire-une-vm-routeur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. TP : construire une VM routeur
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. TP : construire une VM routeur">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-creer-la-vm-et-lui-ajouter-une-seconde-carte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Créer la VM et lui ajouter une seconde carte
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-identifier-les-deux-cartes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Identifier les deux cartes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-donner-une-adresse-fixe-a-la-carte-du-reseau-interne" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Donner une adresse fixe à la carte du réseau interne
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-activer-le-routage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Activer le routage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-activer-la-traduction-dadresses-nat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 Activer la traduction d'adresses (NAT)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-tp-placer-web1-derriere-le-routeur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. TP : placer web1 derrière le routeur
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-tester" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Tester
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Tester">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-experience-sans-traduction-dadresses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 ✍️ Expérience : sans traduction d'adresses
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-pour-aller-plus-loin-publier-le-serveur-web" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Pour aller plus loin : publier le serveur web
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Cours et TP
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Virtualisation (5 jours)
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../05-virtualiser-des-serveurs/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Jour 2 — Serveurs, réseau, stockage
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:cours" class="md-tag">cours</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:debian" class="md-tag">debian</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:reseau" class="md-tag">reseau</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:travaux-pratiques" class="md-tag">travaux-pratiques</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:virtualisation" class="md-tag">virtualisation</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:vmware" class="md-tag">vmware</a>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/NicoBOD/wiki-tech/edit/main/docs/cours-tp/virtualisation/06-virtualiser-le-reseau.md" title="Editer cette page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/NicoBOD/wiki-tech/raw/main/docs/cours-tp/virtualisation/06-virtualiser-le-reseau.md" title="Consulter la source de cette page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<h1 id="virtualiser-le-reseau">Virtualiser le réseau<a class="headerlink" href="#virtualiser-le-reseau" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Résumé</p>
+<p>Une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> a besoin d'un réseau, et ce réseau est lui aussi <strong>virtuel</strong> : cartes réseau virtuelles, <strong>commutateurs virtuels</strong>, routeurs et pare-feux qui ne sont que des logiciels. Cette partie explique comment l'hyperviseur relie les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> entre elles et au monde extérieur, et compare les trois modes de Workstation : <strong>pont</strong>, <strong><abbr title="Network Address Translation — traduction d'adresses">NAT</abbr></strong> et <strong>réseau privé hôte</strong>.</p>
+<p>Le TP construit un petit réseau d'entreprise <strong>isolé</strong> : un réseau privé <code>10.10.10.0/24</code> invisible depuis Windows, un serveur web dedans, et une <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> Debian qui sert de routeur</strong> pour le relier à Internet. À la fin, le serveur <code>web1</code> est caché derrière le routeur, sort sur Internet par lui, et peut même être publié sur un port choisi.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Propriété</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Difficulté</td>
+<td>Intermédiaire</td>
+</tr>
+<tr>
+<td>Durée estimée</td>
+<td>2 h</td>
+</tr>
+<tr>
+<td>Version décrite</td>
+<td>VMware Workstation Pro 26H1, Debian 13.7, nftables 1.1</td>
+</tr>
+<tr>
+<td>Place dans le parcours</td>
+<td>Partie 6 sur 17 du parcours <a href="../">Virtualisation</a> — jour 2</td>
+</tr>
+<tr>
+<td>Dernière mise à jour</td>
+<td>2026-11-16</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<div class="admonition info">
+<p class="admonition-title">Convention de lecture</p>
+<p>🖥️ <strong>PC hôte</strong> (Windows et Workstation) · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> Debian</strong> (le nom de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> est précisé) · 🌐 <strong>navigateur du PC</strong> · ✍️ <strong>exercice</strong> · 🛟 <strong>instantané</strong>. Les <a href="../#comptes-et-mots-de-passe">comptes et mots de passe</a> sont rappelés sur la page d'accueil du parcours.</p>
+</div>
+<p><strong>Prérequis</strong> : la <a href="../05-virtualiser-des-serveurs/">partie 5</a> est terminée : le modèle <code>modele-debian</code> (instantané <code>modele-v1</code>) et le serveur <code>web1</code> existent.</p>
+<h2 id="1-les-briques-dun-reseau-virtuel">1. Les briques d'un réseau virtuel<a class="headerlink" href="#1-les-briques-dun-reseau-virtuel" title="Permanent link">&para;</a></h2>
+<h3 id="11-carte-reseau-et-commutateur-virtuels">1.1 Carte réseau et commutateur virtuels<a class="headerlink" href="#11-carte-reseau-et-commutateur-virtuels" title="Permanent link">&para;</a></h3>
+<p>Dans un réseau physique, chaque ordinateur a une <strong>carte réseau</strong>, reliée par un câble à un <strong>commutateur</strong> (<em>switch</em>), qui fait passer les trames d'une machine à l'autre. Dans un hyperviseur, tout cela existe <strong>en logiciel</strong> :</p>
+<table>
+<thead>
+<tr>
+<th>Élément physique</th>
+<th>Équivalent virtuel</th>
+<th>Dans Workstation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Carte réseau</td>
+<td><strong>Carte réseau virtuelle</strong> (<abbr title="virtual Network Interface Card — carte réseau virtuelle">vNIC</abbr>), avec sa propre adresse <abbr title="Media Access Control — adresse physique d'une carte réseau">MAC</abbr></td>
+<td><strong>Network Adapter</strong> dans <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Settings</strong></td>
+</tr>
+<tr>
+<td>Câble</td>
+<td>Le réglage qui relie la carte à un réseau</td>
+<td>Le choix <strong>Bridged</strong>, <strong><abbr title="Network Address Translation — traduction d'adresses">NAT</abbr></strong>, <strong>Host-only</strong> ou <strong>Custom</strong></td>
+</tr>
+<tr>
+<td>Commutateur</td>
+<td><strong>Commutateur virtuel</strong> (vSwitch)</td>
+<td>Les réseaux <strong>VMnet0</strong> à <strong>VMnet19</strong></td>
+</tr>
+<tr>
+<td>Routeur, box Internet</td>
+<td>Routeur <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> intégré à l'hyperviseur, ou <abbr title="Virtual Machine — machine virtuelle">VM</abbr> routeur</td>
+<td>Le service <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> de <strong>VMnet8</strong>, ou une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> comme celle du TP</td>
+</tr>
+<tr>
+<td>Serveur <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr></td>
+<td>Service <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> de l'hyperviseur</td>
+<td>Le service <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> de VMnet1 et VMnet8</td>
+</tr>
+</tbody>
+</table>
+<p>Les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> branchées sur le <strong>même</strong> commutateur virtuel communiquent entre elles, exactement comme des PC sur le même switch. Pour passer d'un réseau à un autre, il faut un <strong>routeur</strong>, physique ou virtuel.</p>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi virtualiser le réseau ?</p>
+<ul>
+<li><strong>Segmenter</strong> : séparer les serveurs, les postes, une zone exposée à Internet (<abbr title="zone démilitarisée — réseau des serveurs exposés à Internet">DMZ</abbr>) ou un lab, sans acheter un switch par réseau. Un attaquant qui compromet une machine d'un segment ne voit pas directement les autres.</li>
+<li><strong>Tester</strong> : monter une architecture réseau complète (routeurs, pare-feux, plusieurs sous-réseaux) sur un seul PC, comme le lab pfSense du wiki.</li>
+<li><strong>Automatiser</strong> : créer un réseau devient une opération logicielle, scriptable. C'est le principe du <strong>réseau défini par logiciel</strong> (<abbr title="Software-Defined Networking — réseau défini par logiciel">SDN</abbr>), vu au jour 4.</li>
+</ul>
+</div>
+<h3 id="12-les-trois-modes-de-workstation">1.2 Les trois modes de Workstation<a class="headerlink" href="#12-les-trois-modes-de-workstation" title="Permanent link">&para;</a></h3>
+<figure>
+<p><img alt="Trois schémas côte à côte : en mode pont, la VM est sur le réseau de la salle ; en NAT, elle est sur un réseau privé derrière le PC ; en réseau privé hôte, elle ne voit que le PC et les autres VM" loading="lazy" src="../images/schema-modes-reseau-workstation.svg" /></p>
+<figcaption>
+<p>Le mode choisi décide qui peut parler à la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, et si elle peut sortir sur Internet</p>
+</figcaption>
+</figure>
+<p>VMware Workstation propose principalement trois types de réseau :</p>
+<ul>
+<li><strong>Le pont</strong> (<em>Bridged</em>), géré par le commutateur virtuel <strong>VMnet0</strong>, branche les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> <strong>directement sur le réseau physique</strong> du PC. Elles reçoivent une adresse <abbr title="Internet Protocol — adresse d'une machine sur le réseau">IP</abbr> du serveur <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> du réseau de la salle (le routeur ou la box) et communiquent dans les <strong>deux sens</strong> avec toutes les machines de ce réseau (un ping fonctionne dans les deux sens si les pare-feux l'autorisent).</li>
+<li><strong>Le <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr></strong> (<em>Network Address Translation</em>), géré par <strong>VMnet8</strong>, place les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> sur leur <strong>propre réseau virtuel</strong>. Elles reçoivent une adresse du serveur <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> de VMware et sortent vers le réseau physique et Internet <strong>derrière l'adresse <abbr title="Internet Protocol — adresse d'une machine sur le réseau">IP</abbr> du PC</strong>, qui fait office de passerelle : le <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> <strong>masque</strong> leurs adresses privées. La communication est donc <strong>à sens unique</strong> : les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> peuvent joindre la salle et Internet, mais la salle ne peut pas joindre les <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, sauf avec une <strong>redirection de port</strong>. Seul le PC hôte peut les joindre, car il a une adresse sur VMnet8.</li>
+<li><strong>Le réseau privé hôte</strong> (<em>Host-only</em>), géré par <strong>VMnet1</strong>, relie les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> à un réseau <strong>fermé</strong> : faute de routeur <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr>, il ne communique avec aucun autre réseau. Seuls le PC (d'où le nom <em>host-only</em>) et les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> branchées sur ce commutateur en font partie ; le <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> de VMware leur attribue une adresse.</li>
+</ul>
+<p>En résumé : le <strong>pont</strong> met les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> sur le réseau de la salle, le <strong><abbr title="Network Address Translation — traduction d'adresses">NAT</abbr></strong> leur donne un réseau à part qui sort sur Internet par le PC, le <strong>réseau privé hôte</strong> leur donne un réseau à part qui ne sort nulle part. Les commutateurs VMnet0, VMnet1 et VMnet8 sont préconfigurés ; on peut en créer d'autres (<strong>VMnet2</strong> à <strong>VMnet19</strong>, soit 20 réseaux au total sous Windows) dans l'éditeur de réseaux virtuels.</p>
+<h3 id="13-exercice-quel-mode-choisir">1.3 ✍️ Exercice : quel mode choisir ?<a class="headerlink" href="#13-exercice-quel-mode-choisir" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Un serveur web dans une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> doit être consulté par tous les PC de la salle.</li>
+<li>Une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> de test doit pouvoir télécharger des mises à jour, mais personne ne doit pouvoir s'y connecter depuis la salle.</li>
+<li>Un lab d'analyse de logiciels malveillants : les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ne doivent <strong>jamais</strong> sortir du PC.</li>
+<li>Un lab avec un pare-feu en <abbr title="Virtual Machine — machine virtuelle">VM</abbr> qui protège plusieurs serveurs en <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</li>
+<li>Au centre de formation, le réseau de la salle n'accepte qu'un seul appareil par prise murale.</li>
+</ol>
+<details class="success">
+<summary>Corrigé</summary>
+<ol>
+<li><strong>Pont</strong> : la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> a une adresse sur le réseau de la salle et tout le monde peut la joindre.</li>
+<li><strong><abbr title="Network Address Translation — traduction d'adresses">NAT</abbr></strong> : la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> sort sur Internet, mais elle est invisible depuis la salle.</li>
+<li><strong>Réseau privé hôte</strong>, et même un réseau <strong>personnalisé sans carte du PC</strong> (comme le VMnet2 du TP) : rien ne sort, ni vers Internet, ni vers Windows.</li>
+<li>Le pare-feu a <strong>deux cartes</strong> : l'une en <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> (ou en pont) pour l'extérieur, l'autre sur un réseau personnalisé isolé où sont branchés les serveurs. C'est exactement le TP de cette partie.</li>
+<li><strong><abbr title="Network Address Translation — traduction d'adresses">NAT</abbr></strong> : le pont ferait apparaître une adresse <abbr title="Media Access Control — adresse physique d'une carte réseau">MAC</abbr> supplémentaire par <abbr title="Virtual Machine — machine virtuelle">VM</abbr> sur la prise, que le réseau refuserait. En <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr>, seule l'adresse du PC apparaît.</li>
+</ol>
+</details>
+<h2 id="2-tp-creer-un-reseau-isole">2. TP : créer un réseau isolé<a class="headerlink" href="#2-tp-creer-un-reseau-isole" title="Permanent link">&para;</a></h2>
+<p>On crée un réseau <strong>VMnet2</strong> totalement isolé : pas de serveur <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr>, pas de carte réseau du PC branchée dessus. Il jouera le rôle du réseau interne d'une entreprise, <code>10.10.10.0/24</code>.</p>
+<figure>
+<p><img alt="Lab du jour 2 : VMnet8 en NAT relie le routeur, web2 et web3 ; VMnet2 isolé relie la seconde carte du routeur en 10.10.10.1, web1 en 10.10.10.10 et le serveur de stockage en 10.10.10.20" loading="lazy" src="../images/schema-lab-jour2.svg" /></p>
+<figcaption>
+<p>Le lab à la fin du jour 2 : le routeur est le seul lien entre le réseau isolé et l'extérieur</p>
+</figcaption>
+</figure>
+<ol>
+<li>🖥️ Dans Workstation, ouvrir <strong>Edit &gt; Virtual Network Editor</strong>. Si les réglages sont grisés, cliquer sur <strong>Change Settings</strong> en bas de la fenêtre : des droits d'administrateur Windows sont demandés.</li>
+<li>Cliquer sur <strong>Add Network…</strong>, choisir <strong>VMnet2</strong>, puis <strong>OK</strong>.</li>
+<li>VMnet2 sélectionné, dans la partie basse de la fenêtre :<ul>
+<li>choisir <strong>Host-only (connect VMs internally on a private network)</strong> ;</li>
+<li><strong>décocher</strong> <strong>Connect a host virtual adapter to this network</strong> : le PC ne sera pas branché sur ce réseau ;</li>
+<li><strong>décocher</strong> <strong>Use local <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> service to distribute <abbr title="Internet Protocol — adresse d'une machine sur le réseau">IP</abbr> addresses to VMs</strong> : les adresses seront fixées à la main, comme sur un réseau de serveurs ;</li>
+<li><strong>Subnet <abbr title="Internet Protocol — adresse d'une machine sur le réseau">IP</abbr></strong> : <code>10.10.10.0</code> ; <strong>Subnet mask</strong> : <code>255.255.255.0</code>.</li>
+</ul>
+</li>
+<li>Cliquer sur <strong>Apply</strong>, puis <strong>OK</strong>.</li>
+</ol>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi pas de <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> ni de carte du PC ?</p>
+<p>Sans <strong>carte du PC</strong>, Windows ne voit pas ce réseau : rien ne peut y entrer ou en sortir, sauf par une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> qui a une carte de chaque côté (le routeur). Sans <strong><abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr></strong>, on fixe les adresses des serveurs à la main : c'est l'usage pour des serveurs, dont l'adresse ne doit jamais changer.</p>
+</div>
+<h2 id="3-tp-construire-une-vm-routeur">3. TP : construire une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> routeur<a class="headerlink" href="#3-tp-construire-une-vm-routeur" title="Permanent link">&para;</a></h2>
+<h3 id="31-creer-la-vm-et-lui-ajouter-une-seconde-carte">3.1 Créer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> et lui ajouter une seconde carte<a class="headerlink" href="#31-creer-la-vm-et-lui-ajouter-une-seconde-carte" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🖥️ Créer un <strong>clone lié</strong> de <code>modele-debian</code> (instantané <code>modele-v1</code>) nommé <code>routeur</code>, dans <code>C:\VM\routeur</code> (même méthode qu'en <a href="../05-virtualiser-des-serveurs/#31-creer-les-clones">partie 5</a>). Lui laisser 1 vCPU ; régler sa mémoire sur <strong>512 Mo</strong> (un routeur Linux sans interface graphique n'a pas besoin de plus).</li>
+<li>🖥️ <abbr title="Virtual Machine — machine virtuelle">VM</abbr> <code>routeur</code> éteinte, ouvrir <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Settings</strong>, cliquer sur <strong>Add…</strong>, choisir <strong>Network Adapter</strong>, puis <strong>Finish</strong>.</li>
+<li>Sélectionner le nouveau <strong>Network Adapter 2</strong>, choisir <strong>Custom: Specific virtual network</strong> et, dans la liste, <strong>VMnet2</strong>. Laisser le premier <strong>Network Adapter</strong> en <strong><abbr title="Network Address Translation — traduction d'adresses">NAT</abbr></strong>. Cliquer sur <strong>OK</strong>.</li>
+<li>🖥️ Démarrer <code>routeur</code> et se connecter en <code>tssr</code>.</li>
+<li>
+<p>🐧 <strong>routeur</strong> : donner son identité au clone, puis redémarrer et se reconnecter :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>personnaliser-clone.sh<span class="w"> </span>routeur
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>reboot
+</code></pre></div>
+</li>
+</ol>
+<h3 id="32-identifier-les-deux-cartes">3.2 Identifier les deux cartes<a class="headerlink" href="#32-identifier-les-deux-cartes" title="Permanent link">&para;</a></h3>
+<p>🐧 <strong>routeur</strong> : afficher les cartes réseau et leurs adresses :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ip<span class="w"> </span>-br<span class="w"> </span>link
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>ip<span class="w"> </span>-br<span class="w"> </span>a
+</code></pre></div>
+<p>Noter le nom des <strong>deux</strong> cartes :</p>
+<ul>
+<li>la <strong>première</strong>, branchée sur VMnet8, a une adresse en <code>192.168.x.128</code> ou au-dessus ; elle s'appelle souvent <code>ens33</code> (parfois <code>ens160</code> ou <code>ens192</code>, selon le type de carte choisi par Workstation) ;</li>
+<li>la <strong>seconde</strong>, sur VMnet2, n'a <strong>pas d'adresse</strong> ; elle s'appelle par exemple <code>ens36</code> ou <code>ens37</code>.</li>
+</ul>
+<p>Dans la suite de la page, la carte VMnet8 du routeur est appelée <code>ens33</code> et la carte VMnet2 <code>ens36</code> : <strong>remplacer les deux noms</strong> par ceux affichés, dans <strong>toutes</strong> les commandes et tous les fichiers.</p>
+<p>🐧 <strong>routeur</strong> : relever aussi l'adresse de la <strong>passerelle et du <abbr title="Domain Name System — résolution des noms">DNS</abbr> de VMnet8</strong>, qui donne le <code>x</code> de son PC :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ip<span class="w"> </span>route
+</code></pre></div>
+<p>La première ligne, <code>default via 192.168.x.2 dev ens33</code>, donne l'adresse <code>192.168.x.2</code>. <strong>La noter</strong> : elle servira de serveur <abbr title="Domain Name System — résolution des noms">DNS</abbr> à toutes les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> du réseau VMnet2 (parties 6, 7 et 8).</p>
+<div class="admonition tip">
+<p class="admonition-title">Quelle carte est laquelle ?</p>
+<p>En cas de doute, comparer les <strong>adresses <abbr title="Media Access Control — adresse physique d'une carte réseau">MAC</abbr></strong> : <code>ip -br link</code> affiche celle de chaque carte, et Workstation celle de chaque <strong>Network Adapter</strong> (bouton <strong>Advanced…</strong> dans <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Settings</strong>).</p>
+</div>
+<h3 id="33-donner-une-adresse-fixe-a-la-carte-du-reseau-interne">3.3 Donner une adresse fixe à la carte du réseau interne<a class="headerlink" href="#33-donner-une-adresse-fixe-a-la-carte-du-reseau-interne" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>🐧 <strong>routeur</strong> : ouvrir le fichier de configuration du réseau :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/network/interfaces
+</code></pre></div>
+</li>
+<li>
+<p>Ajouter à la fin (avec le <strong>vrai</strong> nom de la seconde carte) :</p>
+<div class="highlight"><span class="filename">/etc/network/interfaces (ajout)</span><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a># Carte du réseau interne (VMnet2)
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>allow-hotplug ens36
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>iface ens36 inet static
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    address 10.10.10.1/24
+</code></pre></div>
+<p>Pas de ligne <code>gateway</code> : la passerelle par défaut du routeur reste celle de VMnet8, reçue par <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> sur <code>ens33</code>. Enregistrer et quitter (<span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-o">O</kbd></span>, <span class="keys"><kbd class="key-enter">Enter</kbd></span>, <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-x">X</kbd></span>).</p>
+</li>
+<li>
+<p>🐧 <strong>routeur</strong> : activer la carte et vérifier :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sudo<span class="w"> </span>ifup<span class="w"> </span>ens36
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>ip<span class="w"> </span>-br<span class="w"> </span>a
+</code></pre></div>
+</li>
+</ol>
+<h3 id="34-activer-le-routage">3.4 Activer le routage<a class="headerlink" href="#34-activer-le-routage" title="Permanent link">&para;</a></h3>
+<p>Par défaut, Linux <strong>ne fait pas passer</strong> les paquets d'une carte à l'autre : un poste ordinaire n'est pas un routeur. On active le <strong>routage <abbr title="Internet Protocol — adresse d'une machine sur le réseau">IP</abbr></strong> (<em><abbr title="Internet Protocol — adresse d'une machine sur le réseau">IP</abbr> forwarding</em>).</p>
+<p>🐧 <strong>routeur</strong> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"net.ipv4.ip_forward=1"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/sysctl.d/99-routeur.conf
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sudo<span class="w"> </span>sysctl<span class="w"> </span>--system<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>forward
+</code></pre></div>
+<p>La réponse <code>net.ipv4.ip_forward = 1</code> confirme que le routage est actif. Le fichier dans <code>/etc/sysctl.d/</code> le réactive à chaque démarrage.</p>
+<div class="admonition info">
+<p class="admonition-title">Et <code>/etc/sysctl.conf</code> ?</p>
+<p>Beaucoup de tutoriels modifient <code>/etc/sysctl.conf</code>. Ce fichier <strong>n'existe plus</strong> dans Debian 13, et même recréé, il ne serait plus lu au démarrage par le service <code>systemd-sysctl</code> : le réglage serait perdu au premier redémarrage. Les réglages du noyau se placent dans des fichiers <code>.conf</code> du dossier <code>/etc/sysctl.d/</code>, lus au démarrage et par <code>sysctl --system</code>.</p>
+</div>
+<h3 id="35-activer-la-traduction-dadresses-nat">3.5 Activer la traduction d'adresses (<abbr title="Network Address Translation — traduction d'adresses">NAT</abbr>)<a class="headerlink" href="#35-activer-la-traduction-dadresses-nat" title="Permanent link">&para;</a></h3>
+<p>Le réseau <code>10.10.10.0/24</code> est inconnu en dehors du routeur : une réponse venant d'Internet ne saurait pas revenir vers <code>10.10.10.10</code>. Le routeur doit donc <strong>remplacer</strong> l'adresse des machines internes par la sienne quand les paquets sortent : c'est la <strong>traduction d'adresses</strong> (<abbr title="Network Address Translation — traduction d'adresses">NAT</abbr>), ici en mode <em>masquerade</em>. On utilise <strong>nftables</strong>, le pare-feu standard de Debian.</p>
+<ol>
+<li>
+<p>🐧 <strong>routeur</strong> : vérifier que nftables est installé (il l'est en principe depuis l'installation de Debian ; sinon, la commande l'installe) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>nftables
+</code></pre></div>
+</li>
+<li>
+<p>🐧 <strong>routeur</strong> : ouvrir le fichier de configuration de nftables (il contient déjà une table <code>inet filter</code> vide, sans effet) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/nftables.conf
+</code></pre></div>
+</li>
+<li>
+<p>Ajouter à la fin :</p>
+<div class="highlight"><span class="filename">/etc/nftables.conf (ajout)</span><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>table ip nat {
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    chain postrouting {
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>        type nat hook postrouting priority srcnat; policy accept;
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>        oifname "ens33" masquerade
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>    }
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>}
+</code></pre></div>
+<p>La règle se lit : « pour tout paquet qui <strong>sort</strong> par <code>ens33</code> (vers VMnet8 et Internet), remplacer l'adresse source par celle du routeur ». <strong><code>ens33</code> doit être le vrai nom de la carte VMnet8 du routeur</strong>, relevé en section 3.2 : avec un nom faux, <code>nft -c</code> ne signale aucune erreur, mais la règle ne s'applique jamais et les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> de VMnet2 n'ont pas Internet.</p>
+</li>
+<li>
+<p>🐧 <strong>routeur</strong> : vérifier la syntaxe, activer nftables au démarrage, le démarrer, puis afficher les règles chargées :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>sudo<span class="w"> </span>nft<span class="w"> </span>-c<span class="w"> </span>-f<span class="w"> </span>/etc/nftables.conf
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>nftables
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>sudo<span class="w"> </span>nft<span class="w"> </span>list<span class="w"> </span>ruleset
+</code></pre></div>
+<p>La première commande ne répond <strong>rien</strong> si le fichier est correct.</p>
+</li>
+<li>
+<p>🐧 <strong>routeur</strong> : éteindre la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : <code>sudo poweroff</code>.</p>
+</li>
+<li>🛟 🖥️ Prendre l'instantané <code>routeur-ok</code>, puis redémarrer <code>routeur</code>. Il doit rester <strong>allumé</strong> pendant toute la suite du jour 2 : c'est le seul accès à Internet du réseau VMnet2.</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Un routeur, pas encore un pare-feu</p>
+<p>La table <code>inet filter</code> de <code>/etc/nftables.conf</code> est <strong>vide</strong> : le routeur fait passer <strong>tout</strong> le trafic, dans les deux sens. Le réseau interne est seulement <strong>caché</strong> par la traduction d'adresses : une machine de VMnet8 qui connaîtrait la route vers <code>10.10.10.0/24</code> pourrait joindre <code>web1</code>. Un vrai pare-feu ajoute des <strong>règles de filtrage</strong> (par exemple : tout refuser par défaut, n'autoriser que les connexions sortantes et le port publié), comme le fait pfSense dans le <a href="../../pfsense-ha/">parcours pfSense</a>.</p>
+</div>
+<h2 id="4-tp-placer-web1-derriere-le-routeur">4. TP : placer web1 derrière le routeur<a class="headerlink" href="#4-tp-placer-web1-derriere-le-routeur" title="Permanent link">&para;</a></h2>
+<ol>
+<li>🐧 <strong>web1</strong> : éteindre la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<code>sudo poweroff</code>).</li>
+<li>🖥️ Dans <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Settings</strong> de <code>web1</code>, sélectionner <strong>Network Adapter</strong>, choisir <strong>Custom: Specific virtual network</strong> &gt; <strong>VMnet2</strong>, puis <strong>OK</strong>.</li>
+<li>🖥️ Démarrer <code>web1</code> et se connecter en <code>tssr</code> <strong>dans la console de Workstation</strong> (plus d'accès <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> direct depuis Windows : le PC n'est pas sur VMnet2 ; voir l'astuce ci-dessous).</li>
+<li>
+<p>🐧 <strong>web1</strong> : remplacer la configuration <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> par une adresse fixe :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/network/interfaces
+</code></pre></div>
+<p>Remplacer la ligne <code>iface ens33 inet dhcp</code> (le nom de la carte peut être différent : garder celui du fichier) par :</p>
+<div class="highlight"><span class="filename">/etc/network/interfaces (extrait)</span><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>iface ens33 inet static
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>    address 10.10.10.10/24
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    gateway 10.10.10.1
+</code></pre></div>
+</li>
+<li>
+<p>🐧 <strong>web1</strong> : redémarrer (<code>sudo reboot</code>) et se reconnecter.</p>
+</li>
+<li>
+<p>🐧 <strong>web1</strong> : indiquer le serveur <abbr title="Domain Name System — résolution des noms">DNS</abbr>. Sur VMnet8, le routeur <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> de Workstation (l'adresse <code>192.168.x.2</code> notée en section 3.2) fait aussi serveur <abbr title="Domain Name System — résolution des noms">DNS</abbr> ; <code>web1</code> le joindra à travers <code>routeur</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"nameserver 192.168.x.2"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/resolv.conf
+</code></pre></div>
+<p>On écrit ce fichier <strong>après</strong> le redémarrage : à l'arrêt, le client <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> qui tournait encore aurait pu le réécrire.</p>
+</li>
+</ol>
+<details class="tip">
+<summary>Astuce : se connecter en <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> à travers le routeur</summary>
+<p>Dans la console de Workstation, pas de copier-coller. Le client <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> de Windows sait <strong>rebondir</strong> par une machine intermédiaire (option <code>-J</code>, <em>jump</em>) : le PC joint <code>routeur</code> (sur VMnet8), qui joint <code>web1</code> (sur VMnet2). Dans PowerShell :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">ssh</span> <span class="n">-J</span> <span class="n">tssr</span><span class="p">@&lt;</span><span class="n">adresse</span> <span class="n">ens33</span> <span class="n">du</span> <span class="n">routeur</span><span class="p">&gt;</span> <span class="n">tssr</span><span class="nv">@10</span><span class="p">.</span><span class="n">10</span><span class="p">.</span><span class="n">10</span><span class="p">.</span><span class="n">10</span>
+</code></pre></div>
+<p>Le mot de passe est demandé deux fois (routeur, puis <code>web1</code>). Le copier-coller fonctionne alors normalement. En entreprise, ce rôle de machine intermédiaire s'appelle un <strong>bastion</strong>. En cas d'alerte « REMOTE HOST IDENTIFICATION HAS CHANGED », voir l'encadré de la <a href="../04-partager-les-ressources/#63-donner-une-identite-propre-au-clone">partie 4</a>.</p>
+</details>
+<div class="admonition info">
+<p class="admonition-title">Pourquoi pas <code>dns-nameservers</code> dans <code>/etc/network/interfaces</code> ?</p>
+<p>Les options <code>dns-*</code> de ce fichier ne fonctionnent qu'avec un paquet comme <strong>resolvconf</strong> (ou <strong>openresolv</strong>), qui n'est pas installé. Sans lui, on écrit directement le fichier <code>/etc/resolv.conf</code>.</p>
+</div>
+<h2 id="5-tester">5. Tester<a class="headerlink" href="#5-tester" title="Permanent link">&para;</a></h2>
+<p>🐧 <strong>web1</strong> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>ip<span class="w"> </span>route<span class="w">                        </span><span class="c1"># la route par défaut passe par 10.10.10.1</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">10</span>.10.10.1<span class="w">            </span><span class="c1"># le routeur</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">1</span>.1.1.1<span class="w">               </span><span class="c1"># Internet, par son adresse</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">3</span><span class="w"> </span>deb.debian.org<span class="w">        </span><span class="c1"># Internet, par son nom (DNS)</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>sudo<span class="w"> </span>apt<span class="w"> </span>update<span class="w">                 </span><span class="c1"># les dépôts Debian</span>
+</code></pre></div>
+<p>🖥️ <strong>PC</strong> (PowerShell) : <code>ping 10.10.10.10</code>.</p>
+<p>🐧 <strong>routeur</strong> : <code>wget -qO- http://10.10.10.10</code> (affiche la page de <code>web1</code>).</p>
+<div class="admonition success">
+<p class="admonition-title">Vérifier son lab</p>
+<ul>
+<li>Sur <code>web1</code>, <code>ip route</code> affiche une ligne qui commence par <code>default via 10.10.10.1</code>, et <code>cat /etc/resolv.conf</code> affiche <code>nameserver 192.168.x.2</code>.</li>
+<li>Les trois <code>ping</code> de <code>web1</code> répondent (0 % de perte) et <code>sudo apt update</code> télécharge les listes de paquets : <code>web1</code> sort sur Internet <strong>à travers</strong> <code>routeur</code>.</li>
+<li>Depuis le <strong>PC</strong>, <code>ping 10.10.10.10</code> <strong>échoue</strong> (délai d'attente dépassé) : le réseau interne est invisible depuis Windows. C'est voulu. (Si le réseau de la salle utilise lui-même des adresses en <code>10.10.10.x</code>, le ping peut répondre par erreur : choisir alors un autre réseau pour VMnet2, par exemple <code>10.99.99.0/24</code>, et adapter toutes les adresses.)</li>
+</ul>
+</div>
+<details class="failure">
+<summary>Dépannage : web1 ne sort pas sur Internet</summary>
+<p>Tester couche par couche, depuis <code>web1</code> :</p>
+<ul>
+<li><code>ping -c 3 10.10.10.1</code> <strong>échoue</strong> : vérifier dans Workstation que la carte de <code>web1</code> est sur <strong>VMnet2</strong> et <strong>Connected</strong> ; sur <code>routeur</code>, que la carte VMnet2 a bien <code>10.10.10.1</code> (<code>ip -br a</code>) ; sur <code>web1</code>, l'adresse et le masque (<code>ip -br a</code>) et l'absence de faute dans <code>/etc/network/interfaces</code>.</li>
+<li><code>ping 10.10.10.1</code> répond mais pas <code>ping 1.1.1.1</code> : sur <code>routeur</code>, <code>cat /proc/sys/net/ipv4/ip_forward</code> doit afficher <code>1</code>, et <code>sudo nft list ruleset</code> doit montrer <code>masquerade</code> avec le <strong>nom exact</strong> de la carte VMnet8 (comparer avec <code>ip -br link</code>).</li>
+<li><code>ping 1.1.1.1</code> répond mais pas <code>ping deb.debian.org</code> : <code>cat /etc/resolv.conf</code> doit contenir <code>nameserver 192.168.x.2</code> avec le bon <code>x</code>.</li>
+<li>Depuis <code>routeur</code>, <code>wget -qO- http://10.10.10.10</code> affiche <code>&lt;h1&gt;Serveur web1&lt;/h1&gt;</code>.</li>
+</ul>
+</details>
+<h3 id="51-experience-sans-traduction-dadresses">5.1 ✍️ Expérience : sans traduction d'adresses<a class="headerlink" href="#51-experience-sans-traduction-dadresses" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🐧 <strong>routeur</strong> : vider la règle de <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> : <code>sudo nft flush chain ip nat postrouting</code>.</li>
+<li>🐧 <strong>web1</strong> : <code>ping -c 3 1.1.1.1</code>.</li>
+<li>🐧 <strong>routeur</strong> : recharger la configuration : <code>sudo systemctl restart nftables</code>.</li>
+<li>🐧 <strong>web1</strong> : <code>ping -c 3 1.1.1.1</code>.</li>
+</ol>
+<p>Que se passe-t-il à l'étape 2 ? Pourquoi ?</p>
+<details class="success">
+<summary>Corrigé</summary>
+<p>À l'étape 2, le ping échoue (<strong>100 % de perte</strong>). Les paquets de <code>web1</code> traversent bien le routeur et sortent avec l'adresse source <code>10.10.10.10</code>. Mais le routeur <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> de Workstation, puis Internet, ne connaissent <strong>aucune route</strong> vers <code>10.10.10.0/24</code> : les réponses ne peuvent pas revenir. Avec le <em>masquerade</em>, les paquets sortent avec l'adresse du routeur sur VMnet8 ; les réponses reviennent au routeur, qui les retransmet à <code>web1</code> grâce à sa <strong>table de suivi des connexions</strong>. À l'étape 4, tout refonctionne.</p>
+</details>
+<h3 id="52-pour-aller-plus-loin-publier-le-serveur-web">5.2 Pour aller plus loin : publier le serveur web<a class="headerlink" href="#52-pour-aller-plus-loin-publier-le-serveur-web" title="Permanent link">&para;</a></h3>
+<p>Le serveur <code>web1</code> est caché derrière le routeur. Pour le rendre joignable depuis le PC, on peut faire une <strong>redirection de port</strong> (<em><abbr title="Destination NAT — redirection de port">DNAT</abbr></em>) : tout ce qui arrive sur le <strong>port 8080</strong> du routeur est renvoyé vers le port 80 de <code>web1</code>.</p>
+<ol>
+<li>
+<p>🐧 <strong>routeur</strong> : ajouter à la fin de <code>/etc/nftables.conf</code> :</p>
+<div class="highlight"><span class="filename">/etc/nftables.conf (ajout)</span><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>table ip redirection {
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>    chain prerouting {
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>        type nat hook prerouting priority dstnat; policy accept;
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>        iifname "ens33" tcp dport 8080 dnat to 10.10.10.10:80
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>    }
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>}
+</code></pre></div>
+</li>
+<li>
+<p>🐧 <strong>routeur</strong> : <code>sudo nft -c -f /etc/nftables.conf &amp;&amp; sudo systemctl restart nftables</code>, puis noter l'adresse de <code>ens33</code> (<code>ip -br a</code>).</p>
+</li>
+<li>🌐 Dans le navigateur du PC, ouvrir <code>http://&lt;adresse ens33 du routeur&gt;:8080</code> : la page « Serveur web1 » s'affiche.</li>
+</ol>
+<p>C'est ainsi qu'une entreprise publie un serveur interne : seul le port choisi est redirigé. Pour que le reste du réseau interne soit réellement inaccessible, il faut en plus des règles de <strong>filtrage</strong> (voir l'encadré « Un routeur, pas encore un pare-feu »).</p>
+<h2 id="6-questions-de-revision">6. Questions de révision<a class="headerlink" href="#6-questions-de-revision" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Quelle est la différence entre une carte réseau virtuelle et un commutateur virtuel ?</li>
+<li>Quel mode réseau de Workstation rend une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> joignable par tous les PC de la salle ? Lequel la rend invisible depuis la salle tout en lui donnant Internet ?</li>
+<li>Pourquoi a-t-on décoché <strong>Connect a host virtual adapter to this network</strong> pour VMnet2 ?</li>
+<li>Que fait <code>net.ipv4.ip_forward=1</code> ? Que se passerait-il sans lui ?</li>
+<li>Pourquoi <code>web1</code> ne peut-il pas sortir sur Internet sans la règle <code>masquerade</code> ?</li>
+<li>Que fait une redirection de port (<abbr title="Destination NAT — redirection de port">DNAT</abbr>) ? Donner un exemple d'usage en entreprise.</li>
+</ol>
+<details class="success">
+<summary>Corrigé</summary>
+<ol>
+<li>La <strong>carte réseau virtuelle</strong> (<abbr title="virtual Network Interface Card — carte réseau virtuelle">vNIC</abbr>) appartient à une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : c'est sa prise réseau, avec son adresse <abbr title="Media Access Control — adresse physique d'une carte réseau">MAC</abbr>. Le <strong>commutateur virtuel</strong> (VMnet dans Workstation, vSwitch chez VMware ESXi) est le switch logiciel sur lequel on branche ces cartes ; les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> d'un même commutateur communiquent entre elles.</li>
+<li>Le mode <strong>pont</strong> (<em>Bridged</em>, VMnet0) rend la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> joignable par toute la salle. Le mode <strong><abbr title="Network Address Translation — traduction d'adresses">NAT</abbr></strong> (VMnet8) lui donne Internet tout en la rendant invisible depuis la salle.</li>
+<li>Pour que le <strong>PC</strong> ne soit pas branché sur ce réseau : VMnet2 est ainsi totalement isolé, seul le routeur (qui a une carte de chaque côté) le relie à l'extérieur.</li>
+<li>Elle autorise le noyau Linux à <strong>faire passer</strong> des paquets d'une carte réseau à une autre, ce qui fait de la machine un routeur. Sans elle, le routeur recevrait les paquets de <code>web1</code> destinés à Internet et les jetterait.</li>
+<li>Parce que l'adresse <code>10.10.10.10</code> est <strong>privée</strong> et inconnue en dehors du lab : les réponses ne trouveraient pas le chemin du retour. Le <em>masquerade</em> remplace l'adresse source par celle du routeur, que le reste du réseau sait joindre.</li>
+<li>Elle renvoie ce qui arrive sur un port du routeur vers une machine interne. Exemple : publier le serveur web interne d'une entreprise (port 443 du pare-feu vers le serveur web en <abbr title="zone démilitarisée — réseau des serveurs exposés à Internet">DMZ</abbr>), sans exposer les autres machines.</li>
+</ol>
+</details>
+<hr />
+<h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://techdocs.broadcom.com/us/en/vmware-cis/desktop-hypervisors/workstation-pro/26H1/using-vmware-workstation-pro/configuring-network-connections.html">Broadcom — Configurer les réseaux virtuels de Workstation 26H1</a> — pont, <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr>, réseau privé hôte et éditeur de réseaux virtuels (en anglais).</li>
+<li><a href="https://wiki.nftables.org/wiki-nftables/index.php/Performing_Network_Address_Translation_%28NAT%29">Wiki nftables — Performing Network Address Translation</a> — <em>masquerade</em> et redirection de port (en anglais).</li>
+<li><a href="https://manpages.debian.org/trixie/ifupdown/interfaces.5.fr.html">Manuel Debian — <code>interfaces(5)</code></a> — la syntaxe de <code>/etc/network/interfaces</code>, en français.</li>
+<li><a href="../../pfsense-ha/">Parcours : cluster de pare-feux pfSense en haute disponibilité</a> — le même principe de routeur entre deux réseaux, avec un vrai pare-feu.</li>
+<li>Partie précédente : <a href="../05-virtualiser-des-serveurs/">Virtualiser des serveurs</a> · Partie suivante : <a href="../07-virtualiser-le-stockage/">Virtualiser le stockage</a>.</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../05-virtualiser-des-serveurs/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 5. Virtualiser des serveurs">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                5. Virtualiser des serveurs
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../07-virtualiser-le-stockage/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 7. Virtualiser le stockage">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                7. Virtualiser le stockage
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      <a href="/mentions-legales/">Mentions légales</a>
+
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/bodaine" target="_blank" rel="noopener" title="Nicolas BODAINE sur LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://github.com/NicoBOD" target="_blank" rel="noopener" title="NicoBOD sur GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://nicolas.bodaine.fr" target="_blank" rel="noopener" title="Portfolio de Nicolas BODAINE" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="/feed_rss_created.xml" target="_blank" rel="noopener" title="Flux RSS des derniers articles" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 64c0-17.7 14.3-32 32-32 229.8 0 416 186.2 416 416 0 17.7-14.3 32-32 32s-32-14.3-32-32C384 253.6 226.4 96 32 96 14.3 96 0 81.7 0 64m0 352a64 64 0 1 1 128 0 64 64 0 1 1-128 0m32-256c159.1 0 288 128.9 288 288 0 17.7-14.3 32-32 32s-32-14.3-32-32c0-123.7-100.3-224-224-224-17.7 0-32-14.3-32-32s14.3-32 32-32"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.path", "navigation.indexes", "navigation.prune", "navigation.footer", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "content.action.view", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>

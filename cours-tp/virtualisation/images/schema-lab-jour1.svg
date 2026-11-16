@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="480" viewBox="0 0 1000 480" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
   <title id="t">Lab du jour 1</title>
-  <desc id="d">Le PC hôte sous Windows exécute VMware Workstation Pro. Workstation fournit le commutateur virtuel VMnet8 en mode NAT, sur le réseau 192.168.x.0/24 : la passerelle NAT et le DNS sont en .2, un serveur DHCP distribue les adresses de .128 à .254, et le PC lui-même a l'adresse .1 sur ce réseau. La VM debian-tp et ses clones debian-clone-lie et debian-clone-complet sont branchés sur VMnet8. Ils sortent sur Internet par la carte réseau physique du PC.</desc>
+  <desc id="d">Le PC hôte sous Windows exécute VMware Workstation Pro. Workstation fournit le commutateur virtuel VMnet8 en mode NAT, sur le réseau 192.168.x.0/24 : la passerelle NAT et le DNS sont en .2, un serveur DHCP distribue les adresses de .128 à .253, et le PC lui-même a l'adresse .1 sur ce réseau. La VM debian-tp et ses clones debian-clone-lie et debian-clone-complet sont branchés sur VMnet8. Ils sortent sur Internet par la carte réseau physique du PC.</desc>
   <defs>
     <marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
   </defs>
@@ -21,7 +21,7 @@
   <!-- VMnet8 -->
   <rect x="70" y="200" width="680" height="70" rx="10" fill="#ffffff" stroke="#16a34a" stroke-width="2"/>
   <text x="90" y="226" font-size="15" font-weight="700" fill="#14532d">VMnet8 — NAT — 192.168.x.0/24</text>
-  <text x="90" y="250" font-size="13" fill="#166534">Passerelle NAT et DNS : .2 · DHCP : .128 à .254 · le PC : .1</text>
+  <text x="90" y="250" font-size="13" fill="#166534">Passerelle NAT et DNS : .2 · DHCP : .128 à .253 · le PC : .1</text>
   <line x1="660" y1="200" x2="660" y2="135" stroke="#475569" stroke-width="2.5" marker-end="url(#fl)"/>
   <text x="652" y="175" font-size="12" fill="#475569" text-anchor="end">traduction d'adresses (NAT)</text>
   <!-- VMs -->

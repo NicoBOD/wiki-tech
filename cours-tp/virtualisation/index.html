@@ -2271,6 +2271,8 @@
       
         
       
+        
+      
     
     
     
@@ -2382,6 +2384,70 @@
     
   
     Jour 1 — Comprendre et créer ses VM
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="05-virtualiser-des-serveurs/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 2 — Serveurs, réseau, stockage
   
 
     
@@ -2568,10 +2634,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#schema-du-lab-du-jour-1" class="md-nav__link">
+  <a href="#schemas-du-lab" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Schéma du lab du jour 1
+        Schémas du lab
       
     </span>
   </a>
@@ -2903,32 +2969,37 @@
 <th>Type</th>
 <th>Durée</th>
 <th>Contenu</th>
+<th>Machines allumées</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: center;">5. Virtualiser des serveurs</td>
+<td style="text-align: center;"><a href="05-virtualiser-des-serveurs/">5. Virtualiser des serveurs</a></td>
 <td>Cours et TP</td>
 <td>1 h 45</td>
-<td>Consolidation, modèles, déploiement rapide de serveurs à partir d'un modèle</td>
+<td>Fonctions d'un cluster (migration à chaud, haute disponibilité, P2V), modèle, script de personnalisation, trois serveurs web déployés à partir du modèle</td>
+<td><code>modele-debian</code>, puis <code>web1</code> à <code>web3</code> un par un</td>
 </tr>
 <tr>
-<td style="text-align: center;">6. Virtualiser le réseau</td>
+<td style="text-align: center;"><a href="06-virtualiser-le-reseau/">6. Virtualiser le réseau</a></td>
 <td>Cours et TP</td>
 <td>2 h</td>
-<td>Commutateurs virtuels, modes pont, <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> et réseau privé hôte, une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> routeur entre deux réseaux isolés</td>
+<td>Commutateurs virtuels, modes pont, <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> et réseau privé hôte, réseau isolé VMnet2, <abbr title="Virtual Machine — machine virtuelle">VM</abbr> routeur avec <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> nftables, redirection de port</td>
+<td><code>routeur</code>, <code>web1</code></td>
 </tr>
 <tr>
-<td style="text-align: center;">7. Virtualiser le stockage</td>
+<td style="text-align: center;"><a href="07-virtualiser-le-stockage/">7. Virtualiser le stockage</a></td>
 <td>Cours et TP</td>
 <td>2 h</td>
-<td>DAS, NAS, SAN, NFS et iSCSI, une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> Debian qui sert de baie de stockage</td>
+<td>DAS, NAS, SAN, protocoles, une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> Debian qui partage un dossier en NFS et un disque en iSCSI</td>
+<td><code>routeur</code>, <code>stockage</code>, <code>web1</code> (dans cet ordre)</td>
 </tr>
 <tr>
-<td style="text-align: center;">8. Défi du jour 2</td>
+<td style="text-align: center;"><a href="08-defi-jour-2/">8. Défi du jour 2</a></td>
 <td>Défi</td>
 <td>1 h 15</td>
-<td>Monter une petite infrastructure complète sans pas-à-pas</td>
+<td>Deux serveurs web, un site partagé en NFS, publication, diagnostic de trois pannes</td>
+<td><code>routeur</code>, <code>stockage</code>, <code>web1</code>, <code>web4</code></td>
 </tr>
 </tbody>
 </table>
@@ -3004,7 +3075,7 @@
 <p class="admonition-title">Suivre l'ordre</p>
 <p>Chaque TP s'appuie sur le précédent : la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> <code>debian-tp</code> créée en partie 3 sert dans toutes les parties suivantes. Les cours se lisent avant les TP ou pendant leurs temps d'attente, par exemple pendant l'installation de Debian (environ 15 minutes).</p>
 </div>
-<h2 id="schema-du-lab-du-jour-1">Schéma du lab du jour 1<a class="headerlink" href="#schema-du-lab-du-jour-1" title="Permanent link">&para;</a></h2>
+<h2 id="schemas-du-lab">Schémas du lab<a class="headerlink" href="#schemas-du-lab" title="Permanent link">&para;</a></h2>
 <figure>
 <p><img alt="Le PC hôte Windows exécute VMware Workstation Pro. Workstation crée le commutateur virtuel VMnet8 en mode NAT, avec une passerelle en .2 et un serveur DHCP. La VM debian-tp et ses deux clones y sont branchés et sortent sur Internet par la carte réseau du PC." loading="lazy" src="images/schema-lab-jour1.svg" /></p>
 <figcaption>
@@ -3039,12 +3110,80 @@
 </tr>
 <tr>
 <td><abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<code>debian-tp</code>, clones)</td>
-<td><code>192.168.x.128</code> à <code>192.168.x.254</code></td>
-<td>Distribuées par le <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> de Workstation</td>
+<td><code>192.168.x.128</code> à <code>192.168.x.253</code></td>
+<td>Distribuées par le <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> de Workstation (le serveur <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> lui-même est en <code>.254</code>)</td>
 </tr>
 </tbody>
 </table>
-<p>Pour connaître le <code>x</code> de son PC : 🖥️ dans Workstation, menu <strong>Edit &gt; Virtual Network Editor</strong>, ligne <strong>VMnet8</strong> ; ou dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, commande <code>ip a</code> (partie 3). Les réseaux suivants (réseau privé hôte, réseaux isolés) sont créés au jour 2.</p>
+<p>Pour connaître le <code>x</code> de son PC : 🖥️ dans Workstation, menu <strong>Edit &gt; Virtual Network Editor</strong>, ligne <strong>VMnet8</strong> ; ou dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, commande <code>ip a</code> (partie 3). Au jour 2, on ajoute un réseau <strong>VMnet2</strong> totalement isolé (sans <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> ni carte du PC), relié à l'extérieur par une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> routeur :</p>
+<table>
+<thead>
+<tr>
+<th>Machine</th>
+<th>Réseau</th>
+<th>Adresse</th>
+<th>Passerelle</th>
+<th>DNS</th>
+<th>Créée en</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>web1</code>, <code>web2</code>, <code>web3</code></td>
+<td>VMnet8 (<abbr title="Network Address Translation — traduction d'adresses">NAT</abbr>)</td>
+<td><abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr></td>
+<td><code>192.168.x.2</code></td>
+<td><code>192.168.x.2</code></td>
+<td>Partie 5</td>
+</tr>
+<tr>
+<td><code>routeur</code>, 1re carte (<code>ens33</code>)</td>
+<td>VMnet8 (<abbr title="Network Address Translation — traduction d'adresses">NAT</abbr>)</td>
+<td><abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr></td>
+<td><code>192.168.x.2</code></td>
+<td><code>192.168.x.2</code></td>
+<td>Partie 6</td>
+</tr>
+<tr>
+<td><code>routeur</code>, 2e carte</td>
+<td>VMnet2 (isolé)</td>
+<td><code>10.10.10.1/24</code></td>
+<td>—</td>
+<td>—</td>
+<td>Partie 6</td>
+</tr>
+<tr>
+<td><code>web1</code> (déplacé)</td>
+<td>VMnet2</td>
+<td><code>10.10.10.10/24</code></td>
+<td><code>10.10.10.1</code></td>
+<td><code>192.168.x.2</code></td>
+<td>Partie 6</td>
+</tr>
+<tr>
+<td><code>stockage</code></td>
+<td>VMnet2</td>
+<td><code>10.10.10.20/24</code></td>
+<td><code>10.10.10.1</code></td>
+<td><code>192.168.x.2</code></td>
+<td>Partie 7</td>
+</tr>
+<tr>
+<td><code>web4</code></td>
+<td>VMnet2</td>
+<td><code>10.10.10.11/24</code></td>
+<td><code>10.10.10.1</code></td>
+<td><code>192.168.x.2</code></td>
+<td>Partie 8</td>
+</tr>
+</tbody>
+</table>
+<figure>
+<p><img alt="Lab du jour 2 : VMnet8 en NAT relie le routeur, web2 et web3 ; VMnet2 isolé relie la seconde carte du routeur en 10.10.10.1, web1 en 10.10.10.10 et le serveur de stockage en 10.10.10.20" loading="lazy" src="images/schema-lab-jour2.svg" /></p>
+<figcaption>
+<p>Le lab à la fin de la partie 7 (le défi du jour 2 ajoute <code>web4</code> en <code>10.10.10.11</code>)</p>
+</figcaption>
+</figure>
 <h2 id="comptes-et-mots-de-passe">Comptes et mots de passe<a class="headerlink" href="#comptes-et-mots-de-passe" title="Permanent link">&para;</a></h2>
 <p>Ce lab est <strong>pédagogique</strong> : les mots de passe sont écrits ici volontairement pour que chacun puisse suivre à l'identique. En production, chaque mot de passe serait unique, long et rangé dans un gestionnaire de mots de passe.</p>
 <table>
@@ -3105,12 +3244,30 @@
 <td>1 <abbr title="processeur virtuel">vCPU</abbr>, 512 Mo</td>
 <td>Quelques Mo (clone lié) ou la taille de l'original (clone complet)</td>
 </tr>
+<tr>
+<td><code>modele-debian</code> (partie 5, éteint)</td>
+<td>1 <abbr title="processeur virtuel">vCPU</abbr>, 1 Go</td>
+<td>—</td>
+<td>Clone complet de <code>debian-tp</code>, quelques Go</td>
+</tr>
+<tr>
+<td><code>web1</code> à <code>web4</code>, <code>stockage</code> (jour 2)</td>
+<td>1 <abbr title="processeur virtuel">vCPU</abbr>, 1 Go</td>
+<td>1 <abbr title="processeur virtuel">vCPU</abbr>, 512 Mo</td>
+<td>Clones liés de <code>modele-debian</code> ; <code>stockage</code> a un second disque de 10 Go</td>
+</tr>
+<tr>
+<td><code>routeur</code> (jour 2)</td>
+<td>1 <abbr title="processeur virtuel">vCPU</abbr>, 512 Mo</td>
+<td>1 <abbr title="processeur virtuel">vCPU</abbr>, 512 Mo</td>
+<td>Clone lié de <code>modele-debian</code></td>
+</tr>
 </tbody>
 </table>
 <ul>
 <li>Debian recommande <strong>1 Go</strong> de mémoire pour un système <strong>sans bureau</strong>, et en exige 512 Mo au minimum. Le profil <strong>confortable</strong> rend l'installation plus rapide ; une fois installée, une Debian sans bureau tourne très bien avec 1 Go.</li>
-<li><strong>Mémoire du PC hôte</strong> : avec 16 Go, trois <abbr title="Virtual Machine — machine virtuelle">VM</abbr> de 1 à 2 Go allumées en même temps laissent largement de quoi faire tourner Windows et un navigateur. VMware demande au minimum 2 Go pour l'hôte lui-même, 4 Go conseillés.</li>
-<li><strong>Disque du PC hôte</strong> : prévoir <strong>30 Go libres</strong> pour le jour 1, de préférence sur un <strong><abbr title="Solid State Drive — disque à mémoire flash">SSD</abbr></strong>. Les disques virtuels sont <strong>dynamiques</strong> : un disque de 20 Go n'occupe au départ que la place réellement écrite (environ 2 Go après l'installation).</li>
+<li><strong>Mémoire du PC hôte</strong> : avec 16 Go, trois <abbr title="Virtual Machine — machine virtuelle">VM</abbr> de 1 à 2 Go allumées en même temps (jour 1), ou quatre <abbr title="Virtual Machine — machine virtuelle">VM</abbr> de 512 Mo à 1 Go (jour 2, environ 3,5 Go), laissent largement de quoi faire tourner Windows et un navigateur. VMware demande au minimum 2 Go pour l'hôte lui-même, 4 Go conseillés.</li>
+<li><strong>Disque du PC hôte</strong> : prévoir <strong>30 Go libres</strong> pour le jour 1 et <strong>15 Go</strong> de plus pour le jour 2 (surtout pour le modèle et le disque de stockage), de préférence sur un <strong><abbr title="Solid State Drive — disque à mémoire flash">SSD</abbr></strong>. Les disques virtuels sont <strong>dynamiques</strong> : un disque de 20 Go n'occupe au départ que la place réellement écrite (environ 2 Go après l'installation).</li>
 <li>La <strong>virtualisation matérielle</strong> (Intel <abbr title="extensions de virtualisation des processeurs Intel">VT-x</abbr> ou <abbr title="extensions de virtualisation des processeurs AMD">AMD-V</abbr>) doit être activée dans le <abbr title="Basic Input/Output System — micrologiciel de démarrage">BIOS</abbr>/<abbr title="Unified Extensible Firmware Interface — successeur du BIOS">UEFI</abbr> du PC : la <a href="02-hyperviseur-et-machine-virtuelle/#4-tp-verifier-que-son-pc-sait-virtualiser">partie 2</a> explique comment le vérifier.</li>
 </ul>
 <h2 id="instantanes-conseilles">Instantanés conseillés<a class="headerlink" href="#instantanes-conseilles" title="Permanent link">&para;</a></h2>
@@ -3136,6 +3293,24 @@
 <td><code>debian-tp</code></td>
 <td>Partie 4, <abbr title="Virtual Machine — machine virtuelle">VM</abbr> éteinte, avant l'erreur volontaire ; sert aussi de base aux clones</td>
 <td>L'exercice « casser sa <abbr title="Virtual Machine — machine virtuelle">VM</abbr> exprès » autant de fois que nécessaire</td>
+</tr>
+<tr>
+<td><code>modele-v1</code></td>
+<td><code>modele-debian</code></td>
+<td>Partie 5, <abbr title="Virtual Machine — machine virtuelle">VM</abbr> éteinte ; base de tous les clones du jour 2 (ne jamais le supprimer)</td>
+<td>Tous les déploiements du jour 2</td>
+</tr>
+<tr>
+<td><code>routeur-ok</code></td>
+<td><code>routeur</code></td>
+<td>Fin de la partie 6, <abbr title="Virtual Machine — machine virtuelle">VM</abbr> éteinte</td>
+<td>Les parties 7 et 8 avec un routeur qui fonctionne</td>
+</tr>
+<tr>
+<td><code>stockage-ok</code></td>
+<td><code>web1</code>, <code>stockage</code></td>
+<td>Fin de la partie 7, <abbr title="Virtual Machine — machine virtuelle">VM</abbr> éteintes</td>
+<td>Le défi du jour 2</td>
 </tr>
 </tbody>
 </table>
@@ -3182,6 +3357,10 @@
 <tr>
 <td>🐧</td>
 <td>Dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> Debian (console de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> dans Workstation)</td>
+</tr>
+<tr>
+<td>🌐</td>
+<td>Navigateur web du PC hôte</td>
 </tr>
 <tr>
 <td>💬</td>
