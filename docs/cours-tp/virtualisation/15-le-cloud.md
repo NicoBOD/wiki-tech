@@ -170,7 +170,7 @@ Chez **OVHcloud**, il n'y a pas de calculatrice publique, mais la [grille tarifa
 
 ### 3.4 💬 Débat : le cloud ou la virtualisation sur site ?
 
-**Par deux, 15 minutes** (reprise de l'activité « Le cloud et la virtu »). L'un défend le **cloud public**, l'autre la **virtualisation sur site** (comme le Proxmox du jour 3), pour l'entreprise *Bureautix* (40 salariés). Chacun expose **cinq arguments distincts**. **Seul** : écrire cinq arguments pour chaque camp.
+**Par deux, 15 minutes.** L'un défend le **cloud public**, l'autre la **virtualisation sur site** (comme le Proxmox du jour 3), pour l'entreprise *Bureautix* (40 salariés). Chacun expose **cinq arguments distincts**. **Seul** : écrire cinq arguments pour chaque camp.
 
 ??? success "Éléments de réponse"
     - **Cloud** : pas d'investissement de départ ; élasticité ; haute disponibilité et sauvegardes plus faciles à mettre en place ; accès depuis partout ; le fournisseur gère le matériel, l'énergie, la sécurité physique ; PCA et PRA à moindre coût.

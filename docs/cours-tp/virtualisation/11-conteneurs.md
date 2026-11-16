@@ -109,7 +109,7 @@ En pratique, les deux **coexistent** : les conteneurs tournent très souvent **d
     wget -qO- http://localhost:8080 | grep title
     ```
 
-5. 🌐 Dans le navigateur du PC, ouvrir `http://<adresse de debian-tp>:8080` : la page « Welcome to nginx! » s'affiche.
+5. 🌐 Relever l'adresse de `debian-tp` (`ip -br a`, carte en `192.168.x.y`), puis ouvrir `http://192.168.x.y:8080` dans le navigateur du PC : la page « Welcome to nginx! » s'affiche.
 6. 🐧 Comparer le noyau de `debian-tp` et celui du conteneur, puis la mémoire utilisée par le conteneur :
 
     ```bash

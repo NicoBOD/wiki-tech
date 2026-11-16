@@ -23,7 +23,7 @@ status: publié
 | Propriété | Valeur |
 |-----------|--------|
 | Difficulté | Intermédiaire |
-| Durée estimée | 2 h 30 (dont environ 10 minutes d'installation de Proxmox) |
+| Durée estimée | 2 h 30 (dont environ 5 minutes d'installation de Proxmox) |
 | Version décrite | VMware Workstation Pro 26H1, Proxmox VE 9.2 (9.2.2), Debian 13 |
 | Place dans le parcours | Partie 10 sur 17 du parcours [Virtualisation](index.md) — jour 3 |
 | Dernière mise à jour | 2026-11-16 |
@@ -39,7 +39,8 @@ status: publié
 
 - un PC avec **16 Go** de mémoire et **au moins 4 processeurs logiques** ;
 - l'**hyperviseur de Windows désactivé** (mode Host VBS impossible pour la virtualisation imbriquée) : suivre la [procédure des annexes](annexes.md#13-desactiver-lhyperviseur-de-windows-pour-la-virtualisation-imbriquee) avant de commencer ;
-- environ **40 Go** libres sur le disque des VM.
+- environ **40 Go** libres sur le disque des VM ;
+- **toutes les autres VM éteintes** : `pve` utilise à lui seul 6 Go de mémoire.
 
 ## 1. Trois façons de virtualiser un processeur
 
@@ -198,7 +199,11 @@ Pour gagner du temps, on n'installe pas Debian : on **importe** l'image disque o
 
     ```bash
     wget https://cloud.debian.org/images/cloud/trixie/latest/debian-13-generic-amd64.qcow2
+    wget https://cloud.debian.org/images/cloud/trixie/latest/SHA512SUMS
+    grep 'debian-13-generic-amd64.qcow2$' SHA512SUMS | sha512sum -c -
     ```
+
+    La dernière commande vérifie l'empreinte de l'image, comme en partie 3 : elle doit répondre `debian-13-generic-amd64.qcow2: Réussi` (ou `OK`).
 
     !!! warning "L'image « generic », pas « genericcloud »"
         L'image `genericcloud`, plus légère, n'a **pas** le pilote de la carte Intel E1000 : la VM émulée démarrerait sans réseau. C'est une bonne illustration du tableau de la section 1.2 : un périphérique émulé a besoin du pilote du **vrai** matériel.
@@ -241,10 +246,11 @@ Dans l'assistant **Créer une VM**, le modèle de carte réseau se choisit dans 
 
 ### 3.2 Observer ce que voit chaque VM
 
-1. 🖥️ Se connecter à chaque VM depuis PowerShell : `ssh tssr@192.168.x.81` puis `ssh tssr@192.168.x.82`.
-2. 🐧 Dans chaque VM :
+1. 🌐 Ouvrir la **Console** de la VM 101 (sélectionner la VM dans l'arbre, puis **Console**) et se connecter en `tssr` / `Virtu2026!`. Faire de même, dans un autre onglet, pour la VM 102.
+2. 🐧 Dans chaque VM, installer les deux petits outils d'inventaire, puis observer :
 
     ```bash
+    sudo apt update && sudo apt install -y pciutils ethtool
     lspci | grep -i -E 'ether|ide|scsi|virtio'
     sudo ethtool -i eth0 | head -1
     ```
@@ -263,14 +269,14 @@ Dans l'assistant **Créer une VM**, le modèle de carte réseau se choisit dans 
 1. 🌐 Sur le nœud (**pve > Shell**), installer et lancer le serveur de mesure **iperf3** :
 
     ```bash
-    apt install -y iperf3
+    DEBIAN_FRONTEND=noninteractive apt install -y iperf3
     iperf3 -s -D
     ```
 
 2. 🐧 Dans chaque VM, installer iperf3 et mesurer pendant 10 secondes le débit vers le nœud :
 
     ```bash
-    sudo apt update && sudo apt install -y iperf3
+    sudo DEBIAN_FRONTEND=noninteractive apt install -y iperf3
     iperf3 -c 192.168.x.80 -t 10
     ```
 
@@ -289,6 +295,11 @@ Dans l'assistant **Créer une VM**, le modèle de carte réseau se choisit dans 
 
 ??? info "Et le disque ?"
     La différence existe aussi pour le disque : sur le même lab, une réécriture de 1 Go (`dd … oflag=direct conv=notrunc`) atteint environ **1,7 Go/s** en VirtIO SCSI contre **610 Mo/s** en IDE, et une lecture directe environ **3 Go/s** contre **650 Mo/s**. Mais dans une VM imbriquée, ces mesures sont très perturbées par le disque du PC et par ses caches : ne pas s'étonner de résultats irréguliers.
+
+??? failure "Les VM 101 et 102 n'ont pas de réseau"
+    - Vérifier dans la console de la VM l'adresse (`ip -br a`) et la passerelle (`ip route`) : elles doivent correspondre au `x` de son VMnet8. Sinon, corriger dans **Matériel**… plutôt dans l'onglet **Cloud-Init** de la VM, puis **Régénérer l'image** et redémarrer la VM.
+    - Vérifier que la VM `pve` est bien sur **NAT** dans Workstation, et que le nœud lui-même joint Internet (`ping -c 3 deb.debian.org` dans **pve > Shell**).
+    - Pour la VM 101, vérifier qu'on a bien utilisé l'image **generic** (pilote E1000 présent).
 
 ### 3.4 Arrêter les VM
 

@@ -92,7 +92,7 @@ Chaque partie dure entre 1 h 30 et 2 h et mêle cours, activités et pratique. L
 
 | Partie | Type | Durée | Contenu | Machines allumées |
 |:---:|---|---|---|---|
-| [12. Stockage défini par logiciel et hyperconvergence](12-stockage-sds-hyperconvergence.md) | Cours et TP | 2 h | SDS, vSAN, Ceph, hyperconvergence ; stockage NFS partagé ajouté à Proxmox, disque d'une VM déplacé à chaud | `routeur`, `stockage`, `pve` |
+| [12. Stockage défini par logiciel et hyperconvergence](12-stockage-sds-hyperconvergence.md) | Cours et TP | 2 h | SDS, vSAN, Ceph, hyperconvergence ; stockage NFS partagé ajouté à Proxmox, disque d'une VM déplacé à chaud | `stockage`, puis `pve` |
 | [13. Réseau virtuel, SDN et NFV](13-reseau-virtuel-sdn-nfv.md) | Cours et TP | 2 h | Commutateurs virtuels, VLAN, VXLAN, SDN, NFV ; VLAN dans Proxmox VE | `stockage`, `pve` |
 | [14. Virtualiser les applications et les postes](14-virtualiser-les-applications.md) | Cours et étude de cas | 1 h 30 | Publication, isolation, VDI ; Citrix, App-V, Azure Virtual Desktop, Omnissa ; Bac à sable Windows | Aucune |
 
@@ -167,10 +167,11 @@ Le parcours est prévu pour des PC de **16 Go de mémoire vive** et un processeu
 | `modele-debian` (partie 5, éteint) | 1 vCPU, 1 Go | — | Clone complet de `debian-tp`, quelques Go |
 | `web1` à `web4`, `stockage` (jour 2) | 1 vCPU, 1 Go | 1 vCPU, 512 Mo | Clones liés de `modele-debian` ; `stockage` a un second disque de 10 Go |
 | `routeur` (jour 2) | 1 vCPU, 512 Mo | 1 vCPU, 512 Mo | Clone lié de `modele-debian` |
+| `pve` (jours 3 et 4) | 4 vCPU (1 × 4), 6 Go, VT-x virtualisé | 2 vCPU, 6 Go | 32 Go dynamique ; éteindre les autres VM, sauf `stockage` (1 Go) au jour 4 |
 
 - Debian recommande **1 Go** de mémoire pour un système **sans bureau**, et en exige 512 Mo au minimum. Le profil **confortable** rend l'installation plus rapide ; une fois installée, une Debian sans bureau tourne très bien avec 1 Go.
 - **Mémoire du PC hôte** : avec 16 Go, trois VM de 1 à 2 Go allumées en même temps (jour 1), ou quatre VM de 512 Mo à 1 Go (jour 2, environ 3,5 Go), laissent largement de quoi faire tourner Windows et un navigateur. VMware demande au minimum 2 Go pour l'hôte lui-même, 4 Go conseillés.
-- **Disque du PC hôte** : prévoir **30 Go libres** pour le jour 1 et **15 Go** de plus pour le jour 2 (surtout pour le modèle et le disque de stockage), de préférence sur un **SSD**. Les disques virtuels sont **dynamiques** : un disque de 20 Go n'occupe au départ que la place réellement écrite (environ 2 Go après l'installation).
+- **Disque du PC hôte** : prévoir **30 Go libres** pour le jour 1 **15 Go** de plus pour le jour 2 (surtout pour le modèle et le disque de stockage) et environ **40 Go** pour Proxmox VE aux jours 3 et 4, de préférence sur un **SSD**. Les disques virtuels sont **dynamiques** : un disque de 20 Go n'occupe au départ que la place réellement écrite (environ 2 Go après l'installation).
 - La **virtualisation matérielle** (Intel VT-x ou AMD-V) doit être activée dans le BIOS/UEFI du PC : la [partie 2](02-hyperviseur-et-machine-virtuelle.md#4-tp-verifier-que-son-pc-sait-virtualiser) explique comment le vérifier.
 
 ## Instantanés conseillés
@@ -184,6 +185,9 @@ Un **instantané** (*snapshot*) fige l'état d'une machine virtuelle. En cas d'e
 | `modele-v1` | `modele-debian` | Partie 5, VM éteinte ; base de tous les clones du jour 2 (ne jamais le supprimer) | Tous les déploiements du jour 2 |
 | `routeur-ok` | `routeur` | Fin de la partie 6, VM éteinte | Les parties 7 et 8 avec un routeur qui fonctionne |
 | `stockage-ok` | `web1`, `stockage` | Fin de la partie 7, VM éteintes | Le défi du jour 2 |
+| `01-pve-installe` | `pve` | Partie 10, après le passage au dépôt gratuit | Les parties 10 et 11 |
+| `02-pve-stockage-nfs` | `pve` | Fin de la partie 12 | La partie 13 (démarrer `stockage` avant `pve`) |
+| `03-pve-vlan` | `pve` | Fin de la partie 13 | — |
 
 !!! warning "Un instantané n'est pas une sauvegarde"
     L'instantané reste **dans le dossier de la VM**, sur le **même disque** que la machine virtuelle, et il **dépend** du disque d'origine : si le disque du PC tombe en panne, ou si le dossier de la VM est supprimé, les instantanés disparaissent avec lui. La [partie 4](04-partager-les-ressources.md#5-les-instantanes) l'explique en détail.
@@ -193,6 +197,7 @@ Un **instantané** (*snapshot*) fige l'état d'une machine virtuelle. En cas d'e
 | Logiciel | Où le trouver | Remarque |
 |---|---|---|
 | VMware Workstation Pro 26H1 pour Windows | [Portail de support Broadcom](https://support.broadcom.com/group/ecx/productdownloads?subfamily=VMware%20Workstation%20Pro&freeDownloads=true) | **Gratuit** pour tous les usages, mais **compte Broadcom obligatoire** ; procédure dans les [annexes](annexes.md#11-telecharger-et-installer-vmware-workstation-pro) |
+| Proxmox VE 9.2 (image ISO, environ 1,7 Go) | [proxmox.com](https://www.proxmox.com/en/downloads) | Sans compte ; utilisé aux jours 3 et 4 |
 | Debian 13 (image *netinst* amd64, environ 800 Mo) | [debian.org](https://www.debian.org/distrib/netinst) | Image d'installation par le réseau : les paquets sont téléchargés pendant l'installation, il faut donc un accès à Internet |
 
 ## Convention de lecture

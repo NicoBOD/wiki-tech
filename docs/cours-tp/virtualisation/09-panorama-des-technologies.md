@@ -76,7 +76,7 @@ Pour exécuter le code d'une VM sans qu'il prenne le contrôle du vrai matériel
 
 ### 3.1 Consignes
 
-**Par deux, 1 heure, avec Internet.** Chaque binôme choisit (ou tire au sort) **une** technologie dans la liste ci-dessous et rédige sa **fiche technologie**, puis la présente en **5 minutes**. **Seul** : rédiger deux fiches, sur deux familles différentes.
+**Par deux, 1 heure, avec Internet.** Chaque binôme choisit (ou tire au sort) **une** technologie dans la liste ci-dessous et rédige sa **fiche technologie**, puis la présente en **5 minutes**. **Seul** : rédiger deux fiches, sur deux familles différentes, puis les relire à voix haute en 5 minutes chacune, comme pour une présentation.
 
 Technologies proposées :
 

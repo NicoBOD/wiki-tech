@@ -100,11 +100,11 @@ On relie le nœud `pve` au réseau isolé VMnet2 du jour 2, où le serveur `stoc
 
 ### 2.1 Brancher le nœud sur VMnet2
 
-1. 🌐 Éteindre `pve` (bouton **Arrêter** du nœud).
+1. 🌐 Éteindre `pve` s'il est allumé (bouton **Arrêter** du nœud).
 2. 🖥️ Dans **VM > Settings** de `pve`, **Add…** > **Network Adapter** > **Finish**, puis régler ce **Network Adapter 2** sur **Custom: Specific virtual network** > **VMnet2**. **OK**, puis démarrer `pve`.
 3. 🌐 Ouvrir **pve > Système > Réseau** : une nouvelle ligne de type **Carte réseau**, sans adresse, est apparue (par exemple `ens36` ; sous KVM, `enp7s0`). La sélectionner, cliquer sur **Éditer**, saisir **IPv4/CIDR** `10.10.10.30/24`, cocher **Démarrage automatique**, puis **OK**.
 4. 🌐 Cliquer sur **Appliquer la configuration** (en haut de la liste) : Proxmox VE applique les changements réseau sans redémarrer.
-5. 🌐 Dans **pve > Shell**, vérifier : `ping -c 3 10.10.10.20` répond, et `showmount -e 10.10.10.20` liste le partage `/srv/partage`.
+5. 🌐 Dans **pve > Shell**, vérifier : `ping -c 3 10.10.10.20` répond, et `showmount -e 10.10.10.20` liste le partage `/srv/partage` (et `/srv/site` si le défi du jour 2 a été fait).
 
 !!! warning "Pas de passerelle sur cette carte"
     Ne pas remplir **Passerelle** : le nœud garde sa passerelle unique sur `vmbr0` (VMnet8). Une seconde passerelle par défaut perturberait tout son réseau.
@@ -118,7 +118,7 @@ On relie le nœud `pve` au réseau isolé VMnet2 du jour 2, où le serveur `stoc
     |---|---|
     | **ID** | `nfs-stockage` (le nom du stockage dans Proxmox) |
     | **Serveur** | `10.10.10.20` |
-    | **Export** | `/srv/partage` (choisir dans la liste, que Proxmox remplit en interrogeant le serveur) |
+    | **Export** | `/srv/partage` (choisir dans la liste, que Proxmox remplit en interrogeant le serveur ; si elle reste vide, taper le chemin à la main) |
     | **Contenu** | **Image disque** |
     | **Nœuds** | **Tout (Aucune restriction)** |
     | **Activer** | coché |
@@ -169,6 +169,9 @@ On relie le nœud `pve` au réseau isolé VMnet2 du jour 2, où le serveur `stoc
     Proxmox VE intègre **Ceph** (menu **Ceph** du nœud et du centre de données). Mais Ceph demande au moins **trois nœuds**, chacun avec un disque dédié, et un réseau rapide : soit trois VM Proxmox d'au moins 4 Go, impossible sur un PC de 16 Go. On le découvre en lisant la [documentation de Proxmox VE sur Ceph](https://pve.proxmox.com/wiki/Deploy_Hyper-Converged_Ceph_Cluster), et en le pratiquant plus tard sur un lab plus puissant.
 
 🌐 Éteindre la VM 102 (`qm shutdown 102`). 🛟 🖥️ Éteindre `pve` et prendre l'instantané `02-pve-stockage-nfs`.
+
+!!! warning "Le disque de la VM 102 vit désormais sur `stockage`"
+    À partir de maintenant, **démarrer `stockage` avant `pve`** : sinon le stockage `nfs-stockage` est indisponible et la VM 102 ne démarre pas. Et ne pas revenir à un instantané de `pve` antérieur à cette partie sans tenir compte de ce déplacement.
 
 ## 3. Questions de révision
 

@@ -57,7 +57,7 @@ L'intelligence artificielle consomme énormément de calcul sur **cartes graphiq
 
 ### 1.6 L'informatique confidentielle (*confidential computing*)
 
-Une VM est protégée des **autres** VM, mais pas de l'**hyperviseur** ni de l'administrateur de l'hôte. L'**informatique confidentielle** chiffre la mémoire de la VM **pendant qu'elle s'exécute**, grâce au processeur (AMD SEV, Intel TDX) : même le fournisseur de cloud ne peut pas lire les données. C'est une réponse technique à la question de la confiance envers les hébergeurs.
+Une VM est protégée des **autres** VM, mais pas de l'**hyperviseur** ni de l'administrateur de l'hôte. L'**informatique confidentielle** chiffre la mémoire de la VM **pendant qu'elle s'exécute**, grâce au processeur (AMD SEV, Intel TDX) : l'hyperviseur et l'administrateur de l'hôte ne peuvent plus lire directement la mémoire de la VM. Ce n'est pas une garantie absolue (tout dépend du mode utilisé, de la vérification à distance de la VM, appelée *attestation*, et de qui détient les clés), mais c'est une réponse technique sérieuse à la question de la confiance envers les hébergeurs.
 
 ### 1.7 L'énergie
 
@@ -124,7 +124,7 @@ Remplir ce tableau pour soi-même, puis le garder pour la suite de la formation.
 ??? success "Corrigé"
     1. Un **orchestrateur** libre qui déploie, répartit et surveille des conteneurs sur un ensemble de serveurs. Les VM restent utiles : isolation plus forte, systèmes différents (Windows et Linux), applications non conteneurisées ; et Kubernetes lui-même tourne souvent sur des VM.
     2. **Traiter les données près de leur source** (usine, magasin, antenne) pour réduire le délai de réponse et la quantité de données envoyées vers un centre de données lointain.
-    3. La mémoire de la VM est **chiffrée pendant son exécution** par le processeur : ni l'hyperviseur, ni l'administrateur de l'hôte, ni le fournisseur de cloud ne peuvent lire ses données.
+    3. La mémoire de la VM est **chiffrée pendant son exécution** par le processeur : l'hyperviseur et l'administrateur de l'hôte (donc le fournisseur de cloud) ne peuvent plus la lire directement. La protection dépend toutefois du mode utilisé, de l'attestation et de la gestion des clés.
     4. Une **VNF** est une fonction réseau (routeur, pare-feu, cœur de réseau mobile) qui tourne dans une **VM** ; une **CNF** est la même chose dans un **conteneur**.
     5. Parce que le rachat de VMware par Broadcom et le passage aux abonnements ont poussé de nombreuses entreprises à réduire leur usage de VMware et à migrer, progressivement, vers d'autres solutions (Proxmox VE, Hyper-V, Nutanix, cloud) : il faut savoir administrer et migrer entre plusieurs plateformes.
     6. Linux et la ligne de commande, l'automatisation (scripts, Ansible), le cloud hybride, la sécurité des comptes et des hyperviseurs, la documentation et la veille.

@@ -53,7 +53,7 @@ Où s'exécute l'application ? Sur un serveur, sur le poste dans une bulle, ou d
 | Approche | Où s'exécute l'application ? | Ce qui circule sur le réseau | Exemples |
 |---|---|---|---|
 | **Publication d'applications** | Sur un **serveur** partagé par plusieurs utilisateurs | L'image de la fenêtre, le clavier et la souris | Microsoft **RemoteApp** (services Bureau à distance, RDS), **Citrix Virtual Apps** |
-| **Isolation d'applications** | Sur le **poste**, dans une « bulle » séparée du système | Rien en fonctionnement (l'application est livrée en paquet, parfois en flux) | Microsoft **App-V**, **MSIX** et *app attach*, Bac à sable Windows, Flatpak sous Linux |
+| **Isolation d'applications** | Sur le **poste**, dans une « bulle » séparée du système | Rien en fonctionnement (l'application est livrée en paquet, parfois en flux) | Microsoft **App-V**, **MSIX** et *app attach*, Flatpak sous Linux |
 | **Poste de travail virtuel (VDI)** | Dans une **VM de bureau** par utilisateur, dans le centre de données ou le cloud | L'image du bureau, le clavier et la souris | **Citrix Virtual Desktops**, **Azure Virtual Desktop**, **Windows 365**, **Omnissa Horizon** |
 
 ### 2.1 La publication d'applications
@@ -78,7 +78,7 @@ On virtualise le **bureau complet** : chaque utilisateur a une VM Windows dans l
 | **Azure Virtual Desktop** | Microsoft | VDI dans le cloud Azure | Bureaux et applications Windows hébergés dans Azure, plusieurs utilisateurs possibles par VM |
 | **Windows 365** | Microsoft | VDI en SaaS (*Cloud PC*) | Un PC Windows dans le cloud par utilisateur, au prix fixe mensuel |
 | **Horizon** | Omnissa | VDI et publication | Ancien produit VMware, vendu par Broadcom au fonds KKR : la société **Omnissa** existe depuis le **1er juillet 2024** |
-| **Bac à sable Windows** | Microsoft | Isolation | Inclus dans Windows 10/11 **Pro, Entreprise et Éducation** (pas dans l'édition Famille) |
+| **Bac à sable Windows** | Microsoft | Bac à sable du système (petite VM jetable) | Inclus dans Windows 10/11 **Pro, Entreprise et Éducation** (pas dans l'édition Famille) |
 
 !!! info "Un marché qui bouge vite"
     Ces noms et ces situations changent souvent (renommages, rachats, fins de support). C'est un bon sujet de **veille** : avant de conseiller un produit, vérifier sa page officielle de cycle de vie.
@@ -123,11 +123,11 @@ On virtualise le **bureau complet** : chaque utilisateur a une VM Windows dans l
 
 ## 6. Démonstration : isoler une application avec le Bac à sable Windows
 
-Le **Bac à sable Windows** (*Windows Sandbox*) lance un bureau Windows **jetable**, dans une petite VM gérée par l'hyperviseur de Windows : tout ce qui s'y passe est **effacé à la fermeture**. C'est une forme simple d'isolation, pratique pour tester un logiciel douteux.
+Le **Bac à sable Windows** (*Windows Sandbox*) lance un bureau Windows **jetable**, dans une petite VM gérée par l'hyperviseur de Windows : tout ce qui s'y passe est **effacé à la fermeture**. Ce n'est pas un outil de diffusion d'applications comme App-V, mais un **bac à sable du système** : il isole tout un bureau, ce qui est pratique pour tester un logiciel douteux.
 
 !!! warning "Prérequis et conflit avec le jour 3"
     - Windows 10 ou 11 **Pro, Entreprise ou Éducation** (pas l'édition Famille), virtualisation matérielle activée.
-    - Le Bac à sable a besoin de l'**hyperviseur de Windows**. Si celui-ci a été désactivé pour la virtualisation imbriquée du jour 3 ([annexes](annexes.md#13-desactiver-lhyperviseur-de-windows-pour-la-virtualisation-imbriquee)), le Bac à sable ne démarre pas : faire la démonstration sur un autre PC, ou la lire seulement.
+    - Le Bac à sable a besoin de l'**hyperviseur de Windows**. S'il a été désactivé pour la virtualisation imbriquée du jour 3 ([annexes](annexes.md#13-desactiver-lhyperviseur-de-windows-pour-la-virtualisation-imbriquee)), il faut d'abord le réactiver (`bcdedit /set hypervisorlaunchtype auto` en administrateur, puis redémarrer), faire la démonstration, puis le désactiver de nouveau avant de reprendre Proxmox VE. Le plus simple est de faire la démonstration sur un autre PC, ou de la lire seulement.
     - Sur un PC géré par un établissement, l'activation peut être interdite : demander à l'administrateur.
 
 1. 🖥️ Ouvrir **Activer ou désactiver des fonctionnalités Windows** (++win+r++, `optionalfeatures`), cocher **Bac à sable Windows** (*Windows Sandbox*), valider, puis redémarrer le PC.

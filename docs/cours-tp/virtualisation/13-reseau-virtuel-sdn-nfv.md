@@ -129,7 +129,7 @@ On utilise les trois machines créées aux parties 10 et 11, toutes branchées s
 1. 🌐 Démarrer le conteneur 201 et les VM 101 et 102.
 2. 🌐 Pour la **VM 102** : **Matériel**, sélectionner **Carte réseau (net0)**, **Éditer**, saisir **Étiquette de VLAN** `10`, puis **OK**. Faire de même pour la **VM 101** avec l'étiquette `20`.
 3. 🌐 Pour le **conteneur 201** : **Réseau**, sélectionner **eth0**, **Éditer**, **Étiquette de VLAN** `10`, puis **OK**.
-4. 🌐 Dans **pve > Shell**, vérifier l'étiquette posée sur chaque port du pont :
+4. 🌐 **Attendre une dizaine de secondes** après les changements d'étiquette : le temps que les machines et le pont réapprennent qui est où. Puis, dans **pve > Shell**, vérifier l'étiquette posée sur chaque port du pont :
 
     ```bash
     bridge vlan show | grep -E 'tap10[12]i0|veth201i0' -A1
@@ -147,7 +147,7 @@ pct exec 201 -- ping -c 3 192.168.x.2     # passerelle de VMnet8, sans VLAN
 
 !!! success "Vérifier son lab"
     - `bridge vlan show` affiche `10 PVID Egress Untagged` pour `tap102i0` et `veth201i0`, et `20 PVID Egress Untagged` pour `tap101i0` : chaque port du pont appartient à son VLAN, comme un **port d'accès** d'un commutateur physique.
-    - Le ping vers la **VM 102** (même VLAN) répond : **0 % de perte**.
+    - Le ping vers la **VM 102** (même VLAN) répond : **0 % de perte**. S'il échoue juste après le changement d'étiquette, attendre quelques secondes et le relancer.
     - Le ping vers la **VM 101** (VLAN 20) échoue : **100 % de perte**, alors que les deux machines sont sur le **même** pont, dans le **même** sous-réseau IP.
     - Le ping vers la **passerelle** échoue aussi : la passerelle de VMnet8 n'est dans **aucun** VLAN. Pour sortir, un VLAN a besoin de **son** routeur (ou d'un pare-feu avec une interface dans ce VLAN).
 
