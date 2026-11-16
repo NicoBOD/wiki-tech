@@ -303,6 +303,11 @@ nav:
         - "2. Hyperviseur et machine virtuelle": cours-tp/virtualisation/02-hyperviseur-et-machine-virtuelle.md
         - "3. Créer sa première VM Debian 13": cours-tp/virtualisation/03-creer-sa-premiere-vm.md
         - "4. Partager les ressources": cours-tp/virtualisation/04-partager-les-ressources.md
+      - "Jour 2 — Serveurs, réseau, stockage":
+        - "5. Virtualiser des serveurs": cours-tp/virtualisation/05-virtualiser-des-serveurs.md
+        - "6. Virtualiser le réseau": cours-tp/virtualisation/06-virtualiser-le-reseau.md
+        - "7. Virtualiser le stockage": cours-tp/virtualisation/07-virtualiser-le-stockage.md
+        - "8. Défi du jour 2": cours-tp/virtualisation/08-defi-jour-2.md
       - Annexes: cours-tp/virtualisation/annexes.md
   - Tags: tags.md
 

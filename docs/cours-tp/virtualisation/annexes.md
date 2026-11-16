@@ -207,6 +207,45 @@ open-vm-tools
 Paravirtualisation
 :   Technique où le système invité sait qu'il est virtualisé et dialogue directement avec l'hyperviseur, par des pilotes dédiés, au lieu d'utiliser du matériel imité.
 
+Commutateur virtuel (*vSwitch*)
+:   Switch logiciel de l'hyperviseur sur lequel sont branchées les cartes réseau des VM ; dans Workstation, les réseaux VMnet0 à VMnet19.
+
+DAS
+:   *Direct Attached Storage* : disques directement attachés à un seul serveur.
+
+DNAT (redirection de port)
+:   Traduction de l'adresse de **destination** : un pare-feu ou un routeur renvoie ce qui arrive sur l'un de ses ports vers une machine interne.
+
+Haute disponibilité (HA)
+:   Fonction d'un cluster qui redémarre automatiquement les VM d'un hôte en panne sur les autres hôtes.
+
+iSCSI
+:   Protocole qui transporte des commandes de disque SCSI sur un réseau IP (port TCP 3260) : un client (initiateur) utilise un disque distant (LUN) d'une cible comme un disque local.
+
+LUN
+:   *Logical Unit Number* : disque logique présenté par une baie de stockage ou une cible iSCSI.
+
+Masquerade
+:   Forme de NAT source où le routeur remplace l'adresse des machines internes par sa propre adresse de sortie.
+
+Migration à chaud (vMotion)
+:   Déplacement d'une VM allumée d'un hôte à un autre, sans coupure perceptible.
+
+Modèle (*template*)
+:   VM « maître », installée et configurée, qui sert à créer rapidement de nouvelles VM identiques.
+
+NAS
+:   *Network Attached Storage* : stockage qui partage des **fichiers** sur le réseau (NFS, SMB).
+
+NFS
+:   *Network File System* : protocole de partage de fichiers du monde Unix et Linux (port TCP 2049).
+
+SAN
+:   *Storage Area Network* : réseau de stockage qui partage des **blocs** (des disques, les LUN), en Fibre Channel ou en iSCSI.
+
+SMB
+:   *Server Message Block* : protocole de partage de fichiers et d'imprimantes de Windows (port TCP 445).
+
 Surallocation (*overcommitment*)
 :   Fait d'attribuer aux VM, au total, plus de ressources (mémoire, processeurs, disque) que l'hôte n'en possède réellement.
 

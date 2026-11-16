@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="440" viewBox="0 0 1000 440" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Les trois modes réseau de VMware Workstation</title>
+  <desc id="d">Mode pont, VMnet0 : la VM est branchée directement sur le réseau physique de la salle, à côté du PC, et reçoit une adresse du routeur de la salle ; elle est joignable dans les deux sens. Mode NAT, VMnet8 : la VM est sur un réseau privé de Workstation et sort sur Internet derrière l'adresse du PC ; on ne peut pas la joindre depuis la salle, seul le PC le peut. Mode réseau privé hôte, VMnet1 : la VM ne communique qu'avec le PC et les autres VM du même réseau, sans accès à Internet.</desc>
+  <rect x="0" y="0" width="1000" height="440" rx="16" fill="#ffffff"/>
+  <g font-size="14" text-anchor="middle">
+    <!-- PONT -->
+    <text x="170" y="38" font-size="19" font-weight="700" fill="#0f172a">Pont (Bridged) — VMnet0</text>
+    <rect x="30" y="60" width="280" height="44" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+    <text x="170" y="87" fill="#075985" font-weight="700">Réseau de la salle 192.168.1.0/24</text>
+    <line x1="100" y1="104" x2="100" y2="150" stroke="#0284c7" stroke-width="3"/>
+    <line x1="240" y1="104" x2="240" y2="150" stroke="#0284c7" stroke-width="3"/>
+    <rect x="40" y="150" width="120" height="70" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="2"/>
+    <text x="100" y="180" fill="#0f172a">PC hôte</text>
+    <text x="100" y="200" fill="#334155" font-size="13">192.168.1.20</text>
+    <rect x="180" y="150" width="120" height="70" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+    <text x="240" y="180" fill="#1e3a8a">VM</text>
+    <text x="240" y="200" fill="#1e3a8a" font-size="13">192.168.1.57</text>
+    <text x="170" y="260" fill="#166534">✔ joignable par toute la salle</text>
+    <text x="170" y="283" fill="#166534">✔ accès à Internet</text>
+    <text x="170" y="306" fill="#991b1b">✘ dépend du réseau de la salle</text>
+    <text x="170" y="329" fill="#991b1b">✘ peut gêner les autres postes</text>
+    <!-- NAT -->
+    <text x="500" y="38" font-size="19" font-weight="700" fill="#0f172a">NAT — VMnet8</text>
+    <rect x="360" y="60" width="280" height="44" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+    <text x="500" y="87" fill="#075985" font-weight="700">Réseau de la salle / Internet</text>
+    <line x1="500" y1="104" x2="500" y2="130" stroke="#0284c7" stroke-width="3"/>
+    <rect x="380" y="130" width="240" height="40" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="2"/>
+    <text x="500" y="155" fill="#0f172a">PC hôte + routeur NAT (.2)</text>
+    <line x1="500" y1="170" x2="500" y2="190" stroke="#16a34a" stroke-width="3"/>
+    <rect x="380" y="190" width="240" height="30" rx="6" fill="#dcfce7" stroke="#16a34a"/>
+    <text x="500" y="210" fill="#14532d" font-size="13">VMnet8 192.168.x.0/24 (DHCP)</text>
+    <line x1="500" y1="220" x2="500" y2="235" stroke="#16a34a" stroke-width="3"/>
+    <rect x="440" y="235" width="120" height="40" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+    <text x="500" y="260" fill="#1e3a8a">VM .128</text>
+    <text x="500" y="306" fill="#166534">✔ accès à Internet</text>
+    <text x="500" y="329" fill="#166534">✔ indépendant du réseau de la salle</text>
+    <text x="500" y="352" fill="#991b1b">✘ invisible depuis la salle</text>
+    <text x="500" y="375" fill="#334155">(seul le PC peut la joindre)</text>
+    <!-- HOST-ONLY -->
+    <text x="830" y="38" font-size="19" font-weight="700" fill="#0f172a">Réseau privé hôte — VMnet1</text>
+    <rect x="690" y="60" width="280" height="44" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="6 4"/>
+    <text x="830" y="87" fill="#94a3b8">pas de sortie vers la salle</text>
+    <rect x="710" y="130" width="240" height="40" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="2"/>
+    <text x="830" y="155" fill="#0f172a">PC hôte (.1)</text>
+    <line x1="830" y1="170" x2="830" y2="190" stroke="#7c3aed" stroke-width="3"/>
+    <rect x="710" y="190" width="240" height="30" rx="6" fill="#ede9fe" stroke="#7c3aed"/>
+    <text x="830" y="210" fill="#4c1d95" font-size="13">VMnet1 réseau fermé (DHCP)</text>
+    <line x1="770" y1="220" x2="770" y2="235" stroke="#7c3aed" stroke-width="3"/>
+    <line x1="890" y1="220" x2="890" y2="235" stroke="#7c3aed" stroke-width="3"/>
+    <rect x="715" y="235" width="110" height="40" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+    <text x="770" y="260" fill="#1e3a8a">VM A</text>
+    <rect x="835" y="235" width="110" height="40" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+    <text x="890" y="260" fill="#1e3a8a">VM B</text>
+    <text x="830" y="306" fill="#166534">✔ isolé : idéal pour un lab</text>
+    <text x="830" y="329" fill="#166534">✔ le PC et les VM se voient</text>
+    <text x="830" y="352" fill="#991b1b">✘ pas d'Internet</text>
+  </g>
+  <line x1="335" y1="25" x2="335" y2="400" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8 6"/>
+  <line x1="665" y1="25" x2="665" y2="400" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="500" y="425" text-anchor="middle" font-size="14" fill="#475569">Les adresses sont des exemples : la salle a son propre plan d'adressage, et le « x » de VMnet8 change d'un PC à l'autre.</text>
+</svg>
