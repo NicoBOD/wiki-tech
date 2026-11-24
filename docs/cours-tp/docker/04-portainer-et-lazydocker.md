@@ -38,7 +38,7 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `tssr` · 🌐 **navigateur du PC** · ✍️ **exercice**. Portainer n'existe **qu'en anglais** : ses menus sont écrits en gras, en anglais, avec leur traduction entre parenthèses. Point de départ : `docker ps -a` ne montre **aucun** conteneur (sinon les supprimer avec `docker rm -f`), et les ports 8000, 8081 et 9443 de la VM sont libres.
+    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `tssr` · 🌐 **navigateur du PC** · ✍️ **exercice**. Portainer n'existe **qu'en anglais** : ses menus sont écrits en gras, en anglais, avec leur traduction entre parenthèses. Point de départ : `docker ps -a` ne montre **aucun** conteneur (sinon les supprimer avec `docker rm -f`), et les ports 8081 et 9443 de la VM sont libres.
 
 <!-- NOTE DE RÉDACTION (non affichée) : le TD « 10 Portainer » du formateur ne contenait que le script d'installation interactif (Docker + Portainer CE/EE + Rancher « à corriger ») : partie écrite d'après la documentation de Portainer (docs.portainer.io, novembre 2026) et rejouée dans le lab. Écarts avec le script du formateur : image portainer/portainer-ce:lts (et non :latest), volume portainer_data, port 9000 (HTTP) plus publié par défaut (la doc le garde « for legacy reasons »), champ « Setup token » apparu dans les versions récentes (jeton dans docker logs), mot de passe ≥ 12 caractères, Rancher non repris (Rancher sert à gérer Kubernetes, pas Docker seul). Captures Portainer prises à travers un relais local (certificat autosigné) le 2026-11-24 ; LazyDocker capturé dans tmux, rendu en image. -->
 
@@ -70,13 +70,12 @@ Ces interfaces ne remplacent pas la ligne de commande : elles envoient **exactem
 2. 🐧 Lancer Portainer (une seule commande, sur une seule ligne) :
 
     ```bash
-    docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:lts
+    docker run -d -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:lts
     ```
 
     | Option | Explication |
     |---|---|
     | `-p 9443:9443` | L'interface web, en **HTTPS** |
-    | `-p 8000:8000` | Un tunnel utilisé seulement par les agents *Edge* (des serveurs distants qui se connectent à Portainer) ; facultatif dans ce lab |
     | `--name portainer` | Nom du conteneur |
     | `--restart=always` | **Politique de redémarrage** : Docker relance le conteneur s'il s'arrête tout seul, et au démarrage de la VM |
     | `-v /var/run/docker.sock:/var/run/docker.sock` | Donne au conteneur l'accès au **socket Docker** de la VM : c'est ainsi que Portainer pilote Docker (voir la [section 5](#5-le-socket-docker-les-cles-de-la-maison)) |
@@ -90,11 +89,11 @@ Ces interfaces ne remplacent pas la ligne de commande : elles envoient **exactem
     ```
 
     ```text
-    CONTAINER ID   IMAGE                        COMMAND        CREATED         STATUS         PORTS                                                                                                NAMES
-    a2cfe6d29a11   portainer/portainer-ce:lts   "/portainer"   6 seconds ago   Up 5 seconds   0.0.0.0:8000->8000/tcp, [::]:8000->8000/tcp, 0.0.0.0:9443->9443/tcp, [::]:9443->9443/tcp, 9000/tcp   portainer
+    CONTAINER ID   IMAGE                        COMMAND        CREATED         STATUS         PORTS                                                             NAMES
+    2fc8f7b7cb70   portainer/portainer-ce:lts   "/portainer"   5 seconds ago   Up 4 seconds   8000/tcp, 9000/tcp, 0.0.0.0:9443->9443/tcp, [::]:9443->9443/tcp   portainer
     ```
 
-    La colonne `PORTS` affiche aussi `9000/tcp`, sans flèche : le conteneur écoute en HTTP simple sur ce port, mais il n'est **pas publié**, donc injoignable depuis l'extérieur. La documentation de Portainer ne le garde que pour des raisons de compatibilité (`-p 9000:9000` si on en a vraiment besoin).
+    La colonne `PORTS` affiche aussi `8000/tcp` et `9000/tcp`, sans flèche : le conteneur écoute sur ces ports, mais ils ne sont **pas publiés**, donc injoignables depuis l'extérieur de la VM. Le port 9000 sert une version HTTP non chiffrée de l'interface, que la documentation de Portainer ne garde que pour des raisons de compatibilité. Le port 8000 sert de tunnel aux agents *Edge* (des serveurs distants qui se connectent à Portainer) : la documentation le publie avec `-p 8000:8000`, mais on ne le fait que si l'on utilise ces agents. **Moins de ports publiés, c'est moins de portes d'entrée.**
 
 !!! question "Que fait `--restart=always` ?"
     En partie 3, les services ne revenaient pas après un redémarrage. Ici, c'est **Docker lui-même** qui relance le conteneur Portainer quand la VM redémarre, ou si Portainer plante. Les politiques possibles : `no` (par défaut, rien), `on-failure` (seulement après une erreur), `always` (relancé s'il s'arrête tout seul, et à chaque démarrage de Docker, **même** s'il avait été arrêté exprès avec `docker stop`) et `unless-stopped` (pareil, **sauf** s'il avait été arrêté exprès). Dans tous les cas, un `docker stop` arrête bien le conteneur sur le moment.
@@ -217,7 +216,7 @@ Le menu de gauche reprend les objets de Docker vus en ligne de commande :
 
     ```text
     web-portainer  nginx:latest  0.0.0.0:8081->80/tcp, [::]:8081->80/tcp
-    portainer  portainer/portainer-ce:lts  0.0.0.0:8000->8000/tcp, [::]:8000->8000/tcp, 0.0.0.0:9443->9443/tcp, [::]:9443->9443/tcp, 9000/tcp
+    portainer  portainer/portainer-ce:lts  8000/tcp, 9000/tcp, 0.0.0.0:9443->9443/tcp, [::]:9443->9443/tcp
     ```
 
 !!! info "« You are currently using an anonymous account… limited to 100 pulls every 6 hours »"

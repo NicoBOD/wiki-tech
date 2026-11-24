@@ -47,7 +47,7 @@ if demander_confirmation "$INFO Voulez-vous installer Docker (installation basé
   $SUDO install -m 0755 -d /etc/apt/keyrings
   $SUDO curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc \
     || { echo -e "$ERROR Téléchargement de la clé de Docker impossible."; exit 1; }
-  $SUDO chmod a+r /etc/apt/keyrings/docker.asc
+  $SUDO chmod a+r /etc/apt/keyrings/docker.asc || { echo -e "$ERROR Impossible de régler les droits de la clé."; exit 1; }
   # Déclaration du dépôt Docker (format .sources)
   $SUDO tee /etc/apt/sources.list.d/docker.sources > /dev/null <<EOF
 Types: deb
@@ -57,18 +57,20 @@ Components: stable
 Architectures: $(dpkg --print-architecture)
 Signed-By: /etc/apt/keyrings/docker.asc
 EOF
+  [ -s /etc/apt/sources.list.d/docker.sources ] || { echo -e "$ERROR Le fichier du dépôt n'a pas pu être écrit."; exit 1; }
   $SUDO apt-get update || { echo -e "$ERROR Le dépôt de Docker est injoignable ou mal déclaré."; exit 1; }
   if ! $SUDO apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin; then
     echo -e "$ERROR L'installation des paquets Docker a échoué : lis les messages ci-dessus."
     exit 1
   fi
   # Démarrage du service maintenant et à chaque démarrage de la machine
-  $SUDO systemctl enable --now docker
+  $SUDO systemctl enable --now docker || { echo -e "$ERROR Le service Docker ne démarre pas : voir « systemctl status docker »."; exit 1; }
   # Vérification
   if $SUDO docker run --rm hello-world; then
     echo -e "$SUCCESS Docker installé avec succès."
   else
     echo -e "$ERROR Docker est installé mais le conteneur de test a échoué : voir « systemctl status docker »."
+    exit 1
   fi
 else
   echo -e "$WARNING Docker n'a pas été installé."
