@@ -340,6 +340,12 @@ nav:
       - "Jour 4 — Exploiter et s'amuser":
         - "12. Exploiter Docker au quotidien": cours-tp/docker/12-exploiter-docker-au-quotidien.md
         - "13. Des projets sympas à déployer": cours-tp/docker/13-projets-sympas.md
+      - "Jour 5 — Construire, distribuer, orchestrer":
+        - "14. Construire ses images avec un Dockerfile": cours-tp/docker/14-construire-ses-images-dockerfile.md
+        - "15. Distribuer ses images : Docker Hub et registre privé": cours-tp/docker/15-distribuer-ses-images-registre.md
+        - "16. Un cluster Docker Swarm": cours-tp/docker/16-cluster-docker-swarm.md
+        - "17. Défi final": cours-tp/docker/17-defi-final.md
+      - Annexes: cours-tp/docker/annexes.md
   - Tags: tags.md
 
 copyright: >
