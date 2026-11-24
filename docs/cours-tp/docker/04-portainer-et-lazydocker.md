@@ -302,7 +302,7 @@ docker run -d --name web-portainer -p 8081:80 nginx
 lazydocker
 ```
 
-![LazyDocker dans un terminal : à gauche, les panneaux Conteneurs (portainer et web-portainer, running), Images (alpine, debian, nginx, portainer-ce…), Volumes (portainer_data) et Réseaux (bridge, host, none) ; à droite, les onglets Journaux, Statistiques, Env, Config et Top, avec les journaux de nginx ; en bas, l'aide des raccourcis clavier.](images/04-lazydocker.png){ loading=lazy }
+![LazyDocker dans un terminal : à gauche, les panneaux Conteneurs (portainer et web-portainer, running), Images (leur liste dépend de ce qui a déjà été téléchargé), Volumes (portainer_data) et Réseaux (bridge, host, none) ; à droite, les onglets Journaux, Statistiques, Env, Config et Top, avec les journaux de nginx ; en bas, l'aide des raccourcis clavier.](images/04-lazydocker.png){ loading=lazy }
 /// caption
 LazyDocker, en français, dans une session SSH : tout Docker sur un seul écran.
 ///
@@ -392,7 +392,7 @@ Pour un administrateur systèmes et réseaux, Docker Desktop est pratique pour *
 - [Docker — Politiques de redémarrage](https://docs.docker.com/engine/containers/start-containers-automatically/) — `no`, `on-failure`, `unless-stopped`, `always`.
 - [Docker — Limites de téléchargement de Docker Hub](https://docs.docker.com/docker-hub/usage/) — les quotas avec et sans compte.
 - [Docker Desktop pour Windows](https://docs.docker.com/desktop/setup/install/windows-install/) — prérequis et installation.
-- Partie précédente : [Un serveur web et SSH dans un conteneur Debian](03-apache-et-ssh-dans-un-conteneur.md).
+- Partie précédente : [Un serveur web et SSH dans un conteneur Debian](03-apache-et-ssh-dans-un-conteneur.md) · Partie suivante : [Garder ses données : volumes et dossiers montés](05-volumes-et-dossiers-montes.md).
 
 *[TUI]: Text User Interface — interface en mode texte
 *[CE]: Community Edition — édition communautaire, gratuite

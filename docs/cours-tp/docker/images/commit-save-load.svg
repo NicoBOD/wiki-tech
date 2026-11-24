@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="260" viewBox="0 0 900 260" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="14">
+  <title>docker commit, docker save, docker load</title>
+  <defs><marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#455a64"/></marker></defs>
+  <rect x="10" y="20" width="520" height="220" rx="12" fill="#f4f6f8" stroke="#2e7d32" stroke-width="2"/>
+  <text x="25" y="45" font-weight="bold" fill="#1b5e20">Serveur 1</text>
+  <rect x="25" y="70" width="140" height="80" rx="10" fill="#e1f5fe" stroke="#0288d1"/>
+  <text x="95" y="100" text-anchor="middle" font-weight="bold" fill="#01579b">conteneur</text>
+  <text x="95" y="122" text-anchor="middle" font-size="12">debian_test</text>
+  <text x="95" y="140" text-anchor="middle" font-size="11" fill="#546e7a">+ ping, nano</text>
+  <rect x="210" y="70" width="140" height="80" rx="10" fill="#f3e5f5" stroke="#8e24aa"/>
+  <text x="280" y="100" text-anchor="middle" font-weight="bold">image</text>
+  <text x="280" y="122" text-anchor="middle" font-size="12">debian-ping-nano</text>
+  <rect x="395" y="70" width="120" height="80" rx="10" fill="#fff8e1" stroke="#f9a825"/>
+  <text x="455" y="100" text-anchor="middle" font-weight="bold">archive</text>
+  <text x="455" y="122" text-anchor="middle" font-size="12">….tar (66 Mo)</text>
+  <line x1="165" y1="110" x2="208" y2="110" stroke="#455a64" stroke-width="2" marker-end="url(#m)"/>
+  <text x="187" y="180" text-anchor="middle" font-family="Consolas, monospace" font-size="12">docker commit</text>
+  <line x1="350" y1="110" x2="393" y2="110" stroke="#455a64" stroke-width="2" marker-end="url(#m)"/>
+  <text x="372" y="180" text-anchor="middle" font-family="Consolas, monospace" font-size="12">docker save</text>
+  <text x="95" y="215" text-anchor="middle" font-size="11" fill="#c62828">les volumes ne sont PAS inclus</text>
+  <line x1="515" y1="110" x2="583" y2="110" stroke="#455a64" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#m)"/>
+  <text x="550" y="96" text-anchor="middle" font-size="12">copie</text>
+  <text x="557" y="162" text-anchor="middle" font-size="11" fill="#546e7a">scp,</text><text x="557" y="177" text-anchor="middle" font-size="11" fill="#546e7a">clé USB</text>
+  <rect x="585" y="20" width="305" height="220" rx="12" fill="#f4f6f8" stroke="#2e7d32" stroke-width="2"/>
+  <text x="600" y="45" font-weight="bold" fill="#1b5e20">Serveur 2 (ou plus tard)</text>
+  <rect x="600" y="70" width="120" height="80" rx="10" fill="#f3e5f5" stroke="#8e24aa"/>
+  <text x="660" y="100" text-anchor="middle" font-weight="bold">image</text>
+  <text x="660" y="122" text-anchor="middle" font-size="12">debian-ping-nano</text>
+  <rect x="760" y="70" width="115" height="80" rx="10" fill="#e1f5fe" stroke="#0288d1"/>
+  <text x="817" y="100" text-anchor="middle" font-weight="bold" fill="#01579b">conteneurs</text>
+  <text x="817" y="122" text-anchor="middle" font-size="12">restaure…</text>
+  <text x="660" y="180" text-anchor="middle" font-family="Consolas, monospace" font-size="12">docker load</text>
+  <line x1="720" y1="110" x2="758" y2="110" stroke="#455a64" stroke-width="2" marker-end="url(#m)"/>
+  <text x="817" y="180" text-anchor="middle" font-family="Consolas, monospace" font-size="12">docker run</text>
+</svg>

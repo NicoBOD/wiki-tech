@@ -72,10 +72,10 @@ Chaque partie dure entre 1 h et 2 h 30 et mêle explications et pratique. Les du
 
 | Partie | Type | Durée | Contenu | Machines allumées |
 |:---:|---|---|---|---|
-| 5. Garder ses données : volumes et dossiers montés | Cours et TP | 2 h | Couche du conteneur, volumes, *bind mounts*, sauvegarde et restauration d'un volume | `docker-hote` |
-| 6. Sauvegarder un conteneur sous forme d'image | TP | 1 h | `docker commit`, `docker save`, `docker load`, et leurs limites | `docker-hote` |
-| 7. Les réseaux Docker | Cours et TP | 2 h | Bridge par défaut et personnalisé, résolution de noms, host, none, macvlan, Docker et le pare-feu | `docker-hote` |
-| 8. Docker Compose : Nextcloud en une commande | Cours et TP | 2 h | Fichier `compose.yaml`, services, volumes, réseaux, variables, journaux | `docker-hote` |
+| [5. Garder ses données : volumes et dossiers montés](05-volumes-et-dossiers-montes.md) | Cours et TP | 2 h | Couche du conteneur, volumes, *bind mounts*, sauvegarde et restauration d'un volume | `docker-hote` |
+| [6. Sauvegarder un conteneur sous forme d'image](06-sauvegarder-un-conteneur-en-image.md) | TP | 1 h | `docker commit`, `docker save`, `docker load`, et leurs limites | `docker-hote` |
+| [7. Les réseaux Docker](07-reseaux-docker.md) | Cours et TP | 2 h | Bridge par défaut et personnalisé, résolution de noms, host, none, macvlan, Docker et le pare-feu | `docker-hote` |
+| [8. Docker Compose : Nextcloud en une commande](08-docker-compose-nextcloud.md) | Cours et TP | 2 h | Fichier `compose.yaml`, services, volumes, réseaux, variables, journaux | `docker-hote` |
 
 ### Jour 3 — Publier des services
 
@@ -150,6 +150,9 @@ Ce lab est **pédagogique** : les mots de passe sont écrits ici volontairement 
 | VM `docker-hote` | `tssr` (utilisateur, membre des groupes `sudo` et `docker`) | `TutoDocker2026!` | Partie 1 |
 | Conteneur `debian` (SSH) | `root` | `TutoDocker2026!` | Partie 3 |
 | Portainer | `admin` | `TutoDocker2026!` | Partie 4 |
+| MariaDB (essais de la partie 5) | `root` | `TutoDocker2026!` | Partie 5 |
+| MariaDB de Nextcloud | `root`, et `nextcloud` (base `nextcloud`) | `TutoDocker2026!` | Partie 8 |
+| Nextcloud | `admin` | `TutoDocker2026!` | Partie 8 |
 
 !!! info "Pourquoi un mot de passe aussi long ?"
     Portainer refuse les mots de passe de **moins de 12 caractères**. Plutôt que d'avoir un mot de passe différent par logiciel, le lab en utilise un seul, assez long pour être accepté partout. Sur un clavier AZERTY, le `!` se tape **sans** ++shift++, sur la touche à gauche de la touche ++shift++ de droite.
@@ -162,7 +165,7 @@ Le parcours est prévu pour des PC de **16 Go de mémoire vive** et un processeu
 |---|---|---|---|
 | `docker-hote` (Debian 13 sans interface graphique) | 2 vCPU, 4 Go | 1 vCPU, 2 Go | 40 Go, dynamique |
 
-<!-- NOTE DE RÉDACTION (non affichée) : minimal mesuré le 2026-11-24 : VM à 1 vCPU / 2 Go, Portainer + nginx + conteneur Debian/Apache en même temps : 492 Mo utilisés sur 1874, tout répond. L'installation de Docker passe aussi à 1 Go (docker-n2). -->
+<!-- NOTE DE RÉDACTION (non affichée) : minimal mesuré le 2026-11-24 : VM à 1 vCPU / 2 Go, Portainer + nginx + conteneur Debian/Apache en même temps : 492 Mo utilisés sur 1874, tout répond. L'installation de Docker passe aussi à 1 Go (docker-n2). Jour 2 à 1 vCPU / 2 Go : Nextcloud + MariaDB + Redis + Portainer = 721 Mo utilisés sur 1874, installation par occ réussie. -->
 
 - Une Debian sans bureau occupe environ 2 Go de disque. Les **images Docker** prennent vite de la place (de quelques Mo à plusieurs Go chacune) : 40 Go en disque **dynamique** (qui ne grossit qu'au fur et à mesure) évitent d'être à l'étroit sans occuper 40 Go tout de suite sur le PC.
 - Les besoins des jours suivants (plateformes, projets gourmands, cluster Swarm) sont indiqués au début de chaque partie.
@@ -175,7 +178,8 @@ Un **instantané** (*snapshot*) fige l'état d'une machine virtuelle. En cas d'e
 |---|---|---|---|
 | `00-debian-installee` | `docker-hote` | Partie 1, juste après l'installation de Debian, VM éteinte | L'installation de Docker |
 | `01-docker-installe` | `docker-hote` | Fin de la partie 1, VM éteinte | Toutes les parties suivantes avec un Docker propre |
-| `02-fin-jour-1` | `docker-hote` | Fin de la partie 4, VM éteinte : Docker, Portainer (compte `admin` créé) et LazyDocker | Les jours 2 et 3, qui réutilisent Portainer |
+| `02-fin-jour-1` | `docker-hote` | Fin de la partie 4, VM éteinte : Docker, Portainer (compte `admin` créé) et LazyDocker | Le jour 2 |
+| `03-fin-jour-2` | `docker-hote` | Fin de la partie 8, VM éteinte, Nextcloud arrêté (`docker compose down`) mais ses volumes gardés | Le jour 3, qui remet Nextcloud derrière un reverse proxy |
 
 !!! warning "Un instantané n'est pas une sauvegarde"
     L'instantané reste **dans le dossier de la VM**, sur le **même disque** que la machine virtuelle, et il **dépend** du disque d'origine : si le disque du PC tombe en panne, ou si le dossier de la VM est supprimé, les instantanés disparaissent avec lui.

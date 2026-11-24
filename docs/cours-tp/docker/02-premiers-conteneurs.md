@@ -177,7 +177,7 @@ Un conteneur a sa **propre adresse IP**, sur un réseau privé que Docker crée 
 
 ## 3. Le cycle de vie d'un conteneur
 
-![Une image donne, avec docker run, un conteneur en marche. docker stop l'arrête (il passe à l'état Exited), docker start le relance. docker rm supprime un conteneur arrêté et ses fichiers ; docker rm -f supprime directement un conteneur en marche.](images/cycle-de-vie-conteneur.svg){ loading=lazy }
+![Une image donne, avec docker run, un conteneur en marche. docker stop l'arrête (il passe à l'état Exited), docker start le relance. docker rm supprime un conteneur arrêté et sa couche de fichiers (les volumes, vus en partie 5, sont gardés) ; docker rm -f supprime directement un conteneur en marche.](images/cycle-de-vie-conteneur.svg){ loading=lazy }
 /// caption
 Les états d'un conteneur et les commandes qui le font passer de l'un à l'autre.
 ///

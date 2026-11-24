@@ -22,7 +22,7 @@
   <!-- Supprimé -->
   <rect x="770" y="130" width="120" height="70" rx="10" fill="#ffebee" stroke="#e53935" stroke-width="2"/>
   <text x="830" y="160" text-anchor="middle" font-weight="bold">Supprimé</text>
-  <text x="830" y="182" text-anchor="middle" font-size="11">fichiers effacés</text>
+  <text x="830" y="180" text-anchor="middle" font-size="10">couche effacée,</text><text x="830" y="193" text-anchor="middle" font-size="10">volumes gardés</text>
   <!-- Flèches -->
   <line x1="140" y1="165" x2="198" y2="165" stroke="#455a64" stroke-width="2" marker-end="url(#f)"/>
   <text x="169" y="152" text-anchor="middle" font-family="Consolas, monospace" font-size="12">create</text>
@@ -39,7 +39,6 @@
   <text x="749" y="152" text-anchor="middle" font-family="Consolas, monospace" font-size="12">rm</text>
   <path d="M465,200 C465,295 830,295 830,202" fill="none" stroke="#e53935" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#f)"/>
   <text x="650" y="290" text-anchor="middle" font-family="Consolas, monospace" font-size="12" fill="#c62828">docker rm -f (sans arrêt préalable)</text>
-  <path d="M265,200 C265,320 830,320 830,202" fill="none" stroke="#90a4ae" stroke-width="1.5" stroke-dasharray="3 3"/>
-  <text x="300" y="258" text-anchor="middle" font-size="11" fill="#546e7a">un conteneur dont le démarrage</text>
-  <text x="300" y="273" text-anchor="middle" font-size="11" fill="#546e7a">échoue reste « Created »</text>
+  <text x="265" y="225" text-anchor="middle" font-size="11" fill="#546e7a">un conteneur dont le démarrage</text>
+  <text x="265" y="240" text-anchor="middle" font-size="11" fill="#546e7a">échoue reste « Created »</text>
 </svg>

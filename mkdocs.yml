@@ -328,6 +328,11 @@ nav:
         - "2. Premiers conteneurs": cours-tp/docker/02-premiers-conteneurs.md
         - "3. Un serveur web et SSH dans un conteneur Debian": cours-tp/docker/03-apache-et-ssh-dans-un-conteneur.md
         - "4. Gérer Docker avec Portainer et LazyDocker": cours-tp/docker/04-portainer-et-lazydocker.md
+      - "Jour 2 — Données, réseaux et Docker Compose":
+        - "5. Garder ses données : volumes et dossiers montés": cours-tp/docker/05-volumes-et-dossiers-montes.md
+        - "6. Sauvegarder un conteneur sous forme d'image": cours-tp/docker/06-sauvegarder-un-conteneur-en-image.md
+        - "7. Les réseaux Docker": cours-tp/docker/07-reseaux-docker.md
+        - "8. Docker Compose : Nextcloud en une commande": cours-tp/docker/08-docker-compose-nextcloud.md
   - Tags: tags.md
 
 copyright: >
