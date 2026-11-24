@@ -39,7 +39,7 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `tssr` · 📦 **dans un conteneur** · 🌐 **navigateur du PC** · ✍️ **exercice**. Point de départ : l'instantané `02-fin-jour-1`. 🖥️ Démarrer la VM, puis s'y connecter en SSH : `ssh tssr@IP-de-la-VM`. Seul le conteneur `portainer` doit tourner (`docker ps`).
+    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `adminlab` · 📦 **dans un conteneur** · 🌐 **navigateur du PC** · ✍️ **exercice**. Point de départ : l'instantané `02-fin-jour-1`. 🖥️ Démarrer la VM, puis s'y connecter en SSH : `ssh adminlab@IP-de-la-VM`. Seul le conteneur `portainer` doit tourner (`docker ps`).
 
 <!-- NOTE DE RÉDACTION (non affichée) : partie écrite d'après la documentation Docker (Storage : volumes, bind mounts, tmpfs) et les fiches « Volumes Docker et dossier attaché » du formateur ; le cours « 00 Théorie » ne traitait que l'option -v en une ligne. Toutes les sorties viennent du lab (Debian 13.7, Docker 29.10.0, mariadb:11.8, 2026-11-24). Piège mesuré : MariaDB met environ 8 s à s'initialiser au premier démarrage ; une requête lancée trop tôt échoue (« Can't connect to local server through socket » ou « Access denied », le mot de passe root n'étant posé qu'en fin d'initialisation). -->
 
@@ -50,7 +50,7 @@ status: publié
 1. 🐧 Lancer un serveur de base de données **MariaDB**, avec un mot de passe pour son administrateur `root` :
 
     ```bash
-    docker run -d --name bdd -e MARIADB_ROOT_PASSWORD='TutoDocker2026!' mariadb:11.8
+    docker run -d --name bdd -e MARIADB_ROOT_PASSWORD='TutoDocker-Lab1!' mariadb:11.8
     ```
 
     L'option `-e` (*environment*) passe une **variable d'environnement** au conteneur. C'est la façon habituelle de configurer une image : la documentation de chaque image (ici [MariaDB sur Docker Hub](https://hub.docker.com/_/mariadb)) liste les variables qu'elle comprend. Le mot de passe est entre apostrophes `'…'` pour que le `!` ne soit pas interprété par le terminal.
@@ -75,7 +75,7 @@ status: publié
 3. 🐧 Créer une base `tp`, une table et deux lignes, puis les afficher. La commande `mariadb` est le client en ligne de commande, lancé **dans** le conteneur avec `docker exec` :
 
     ```bash
-    docker exec bdd mariadb -uroot -p'TutoDocker2026!' -e "CREATE DATABASE tp; CREATE TABLE tp.personnes(nom VARCHAR(30)); INSERT INTO tp.personnes VALUES ('Alice'),('Bob'); SELECT * FROM tp.personnes;"
+    docker exec bdd mariadb -uroot -p'TutoDocker-Lab1!' -e "CREATE DATABASE tp; CREATE TABLE tp.personnes(nom VARCHAR(30)); INSERT INTO tp.personnes VALUES ('Alice'),('Bob'); SELECT * FROM tp.personnes;"
     ```
 
     ```text
@@ -95,13 +95,13 @@ C'est l'opération la plus courante en exploitation : pour **mettre à jour** un
 
     ```bash
     docker rm -f bdd
-    docker run -d --name bdd -e MARIADB_ROOT_PASSWORD='TutoDocker2026!' mariadb:11.8
+    docker run -d --name bdd -e MARIADB_ROOT_PASSWORD='TutoDocker-Lab1!' mariadb:11.8
     ```
 
 2. 🐧 Attendre la double ligne `ready for connections` (`docker logs -f bdd`), puis relire la table :
 
     ```bash
-    docker exec bdd mariadb -uroot -p'TutoDocker2026!' -e "SELECT * FROM tp.personnes;"
+    docker exec bdd mariadb -uroot -p'TutoDocker-Lab1!' -e "SELECT * FROM tp.personnes;"
     ```
 
     ```text
@@ -161,7 +161,7 @@ Total reclaimed space: 337.2MB
 
 ### 2.1 Trois façons de ranger des données
 
-![Trois conteneurs dans la VM docker-hote. Le premier utilise un volume nommé, rangé par Docker dans /var/lib/docker/volumes. Le deuxième utilise un dossier monté : un dossier choisi de la VM, par exemple /home/tssr/site, apparaît dans le conteneur. Le troisième utilise un tmpfs, rangé dans la mémoire vive et effacé à l'arrêt du conteneur.](images/types-de-stockage.svg){ loading=lazy }
+![Trois conteneurs dans la VM docker-hote. Le premier utilise un volume nommé, rangé par Docker dans /var/lib/docker/volumes. Le deuxième utilise un dossier monté : un dossier choisi de la VM, par exemple /home/adminlab/site, apparaît dans le conteneur. Le troisième utilise un tmpfs, rangé dans la mémoire vive et effacé à l'arrêt du conteneur.](images/types-de-stockage.svg){ loading=lazy }
 /// caption
 Volume, dossier monté, tmpfs : trois endroits où un conteneur peut garder ses fichiers.
 ///
@@ -183,13 +183,13 @@ Volume, dossier monté, tmpfs : trois endroits où un conteneur peut garder ses 
 2. 🐧 Lancer MariaDB en **branchant** ce volume sur `/var/lib/mysql`, avec l'option `-v nom-du-volume:chemin-dans-le-conteneur` :
 
     ```bash
-    docker run -d --name bdd -e MARIADB_ROOT_PASSWORD='TutoDocker2026!' -v donnees-bdd:/var/lib/mysql mariadb:11.8
+    docker run -d --name bdd -e MARIADB_ROOT_PASSWORD='TutoDocker-Lab1!' -v donnees-bdd:/var/lib/mysql mariadb:11.8
     ```
 
 3. 🐧 Attendre la double ligne `ready for connections` (`docker logs -f bdd`), puis recréer la table :
 
     ```bash
-    docker exec bdd mariadb -uroot -p'TutoDocker2026!' -e "CREATE DATABASE tp; CREATE TABLE tp.personnes(nom VARCHAR(30)); INSERT INTO tp.personnes VALUES ('Alice'),('Bob');"
+    docker exec bdd mariadb -uroot -p'TutoDocker-Lab1!' -e "CREATE DATABASE tp; CREATE TABLE tp.personnes(nom VARCHAR(30)); INSERT INTO tp.personnes VALUES ('Alice'),('Bob');"
     ```
 
 ### 2.3 Supprimer le conteneur, garder les données
@@ -204,7 +204,7 @@ Volume, dossier monté, tmpfs : trois endroits où un conteneur peut garder ses 
 2. 🐧 Quelques secondes plus tard (cette fois, une seule ligne `ready for connections` : la base existe déjà, il n'y a rien à initialiser), relire la table :
 
     ```bash
-    docker exec bdd2 mariadb -uroot -p'TutoDocker2026!' -e "SELECT * FROM tp.personnes;"
+    docker exec bdd2 mariadb -uroot -p'TutoDocker-Lab1!' -e "SELECT * FROM tp.personnes;"
     ```
 
     ```text
@@ -285,7 +285,7 @@ La méthode recommandée par la documentation de Docker : lancer un conteneur **
     |---|---|
     | `--rm` | Supprimer le conteneur dès que `tar` a fini |
     | `-v donnees-bdd:/source:ro` | Le volume apparaît dans `/source`, en **lecture seule** (`ro`, *read-only*) : impossible de l'abîmer par erreur |
-    | `-v "$PWD":/sauvegarde` | Le dossier courant de la VM (`$PWD`, ici `/home/tssr`) apparaît dans `/sauvegarde` : c'est un **dossier monté** |
+    | `-v "$PWD":/sauvegarde` | Le dossier courant de la VM (`$PWD`, ici `/home/adminlab`) apparaît dans `/sauvegarde` : c'est un **dossier monté** |
     | `debian:13 tar czf … -C /source .` | Dans une Debian, compresser tout le contenu de `/source` dans `/sauvegarde/donnees-bdd.tar.gz` |
 
     L'archive appartient à `root`, parce que `tar` tournait en `root` dans le conteneur.
@@ -301,7 +301,7 @@ La méthode recommandée par la documentation de Docker : lancer un conteneur **
 
 ### 3.2 Restaurer dans un volume neuf
 
-Simulons la perte du volume, puis sa restauration.
+On simule la perte du volume, puis sa restauration.
 
 1. 🐧 Tout supprimer : le conteneur, puis le volume.
 
@@ -321,7 +321,7 @@ Simulons la perte du volume, puis sa restauration.
 
     ```bash
     docker run -d --name bdd3 -v donnees-bdd:/var/lib/mysql mariadb:11.8
-    docker exec bdd3 mariadb -uroot -p'TutoDocker2026!' -e "SELECT * FROM tp.personnes;"
+    docker exec bdd3 mariadb -uroot -p'TutoDocker-Lab1!' -e "SELECT * FROM tp.personnes;"
     ```
 
     ```text
@@ -338,7 +338,7 @@ Alice et Bob sont de retour : la sauvegarde est **testée**. Une sauvegarde qu'o
 
 Un **dossier monté** fait apparaître un dossier **choisi** de la VM à l'intérieur du conteneur. Les deux voient **les mêmes fichiers**, en direct.
 
-1. 🐧 Créer un petit site web dans le dossier personnel de `tssr` :
+1. 🐧 Créer un petit site web dans le dossier personnel de `adminlab` :
 
     ```bash
     mkdir -p ~/site
@@ -356,7 +356,7 @@ Un **dossier monté** fait apparaître un dossier **choisi** de la VM à l'inté
     <h1>Mon site</h1>
     ```
 
-    Quand la partie gauche de `-v` est un **chemin** (il commence par `/` ou `./`), Docker monte un dossier ; quand c'est un **nom**, il utilise un volume. Le terminal remplace `~` par `/home/tssr` avant même de lancer la commande : Docker reçoit donc un chemin.
+    Quand la partie gauche de `-v` est un **chemin** (il commence par `/` ou `./`), Docker monte un dossier ; quand c'est un **nom**, il utilise un volume. Le terminal remplace `~` par `/home/adminlab` avant même de lancer la commande : Docker reçoit donc un chemin.
 
 3. 🐧 Modifier la page **depuis la VM**, sans toucher au conteneur :
 

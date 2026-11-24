@@ -38,7 +38,7 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `tssr` · 🌐 **navigateur du PC** · ✍️ **exercice**. Point de départ : l'instantané `05-exploitation`. Ces images sont **grosses** (souvent plusieurs Go) : vérifier la place disponible avec `df -h /` et `docker system df` avant de commencer, et supprimer chaque projet après l'avoir essayé.
+    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `adminlab` · 🌐 **navigateur du PC** · ✍️ **exercice**. Point de départ : l'instantané `05-exploitation`. Ces images sont **grosses** (souvent plusieurs Go) : vérifier la place disponible avec `df -h /` et `docker system df` avant de commencer, et supprimer chaque projet après l'avoir essayé.
 
 <!-- NOTE DE RÉDACTION (non affichée) : projets demandés par le formateur (emulatorjs, Kasm Workspaces, dockurr, Open WebUI, Presenton, agent Hermes à la place de Moodle). Testés dans le lab le 2026-11-24 : Kasm (image kasmweb/firefox seule), Open WebUI 0.13.4 relié à l'Ollama du poste du formateur (modèle ministral-3, via un tunnel SSH, réponse obtenue), Hermes Agent v0.23.4 (image téléchargée et démarrée ; assistant de configuration non déroulé, il demande un fournisseur de modèle). Uptime Kuma déployé par Coolify en partie 11. Présentés d'après leur README, non lancés : dockur/windows (ISO Windows de plusieurs Go, 4 Go de RAM par défaut), Presenton, RomM. linuxserver/emulatorjs est archivé depuis juin 2025 : RomM, qui intègre EmulatorJS, le remplace. -->
 
@@ -66,7 +66,7 @@ status: publié
 1. 🐧 Lancer l'image Firefox :
 
     ```bash
-    docker run -d --name kasm-firefox --shm-size=512m -p 6901:6901 -e VNC_PW=TutoDocker2026! kasmweb/firefox:1.18.0-rolling-daily
+    docker run -d --name kasm-firefox --shm-size=512m -p 6901:6901 -e VNC_PW=TutoDocker-Lab1! kasmweb/firefox:1.18.0-rolling-daily
     ```
 
     | Option | Rôle |
@@ -75,7 +75,7 @@ status: publié
     | `-p 6901:6901` | L'interface web, en HTTPS (certificat autosigné) |
     | `-e VNC_PW=…` | Le mot de passe de l'utilisateur `kasm_user` |
 
-2. 🌐 Ouvrir `https://IP-de-la-VM:6901`, accepter l'alerte de certificat, puis se connecter avec `kasm_user` / `TutoDocker2026!`. Firefox s'affiche dans l'onglet : il tourne **dans le conteneur**, sur la VM.
+2. 🌐 Ouvrir `https://IP-de-la-VM:6901`, accepter l'alerte de certificat, puis se connecter avec `kasm_user` / `TutoDocker-Lab1!`. Firefox s'affiche dans l'onglet : il tourne **dans le conteneur**, sur la VM.
 
     ![Firefox affiché dans un onglet du navigateur du PC : barre d'adresse et page d'accueil de Firefox, servis par le conteneur Kasm.](images/13-kasm-firefox.png){ loading=lazy }
     /// caption
@@ -103,11 +103,16 @@ status: publié
 
 Un modèle de langage demande beaucoup de mémoire et, idéalement, une carte graphique : la VM de 4 Go est trop petite. Le plus confortable est d'installer **Ollama sur le PC** (version Windows sur [ollama.com](https://ollama.com/download)), puis de le rendre joignable depuis la VM par un **tunnel SSH** : Ollama reste fermé au réseau, et le pare-feu de Windows n'a rien à autoriser.
 
+![Schéma : sur le PC hôte, Ollama écoute sur 127.0.0.1:11434, fermé au réseau. Un tunnel SSH inverse, créé depuis le PC avec ssh -N -R 127.0.0.1:11434:127.0.0.1:11434 adminlab@IP-de-la-VM, ouvre sur la VM docker-hote le port 127.0.0.1:11434, joignable seulement depuis la VM. Le conteneur open-webui, lancé avec --network host et OLLAMA_BASE_URL=http://127.0.0.1:11434, partage le réseau de la VM, atteint ce port et écoute sur le port 3000, où le navigateur du PC se connecte.](images/tunnel-ollama.svg){ loading=lazy }
+/// caption
+Ollama reste sur le PC ; le tunnel SSH le rend joignable à la VM seule, et Open WebUI le trouve sur 127.0.0.1:11434.
+///
+
 1. 🖥️ Installer Ollama sur le PC, puis télécharger un modèle dans PowerShell, par exemple `ollama pull ministral-3` (plusieurs Go ; un modèle plus petit comme `gemma3:1b` suffit pour essayer).
 2. 🖥️ Ouvrir une **seconde** fenêtre PowerShell et y créer le tunnel, à laisser ouvert pendant tout le TP :
 
     ```powershell
-    ssh -N -R 127.0.0.1:11434:127.0.0.1:11434 tssr@IP-de-la-VM
+    ssh -N -R 127.0.0.1:11434:127.0.0.1:11434 adminlab@IP-de-la-VM
     ```
 
     `-R` crée sur la **VM** un port 11434, réservé à la VM elle-même (`127.0.0.1`), qui mène au port 11434 du **PC**, où écoute Ollama. `-N` : pas de terminal, seulement le tunnel. La fenêtre semble figée après le mot de passe : c'est normal.
@@ -134,7 +139,7 @@ Un modèle de langage demande beaucoup de mémoire et, idéalement, une carte gr
     curl -s http://localhost:3000/health
     ```
 
-2. 🌐 Ouvrir `http://IP-de-la-VM:3000`, cliquer sur **Démarrer**, puis créer le **compte administrateur** (le premier compte créé l'est automatiquement) : nom `Administrateur`, e-mail `admin@lab.local`, mot de passe `TutoDocker2026!`, **Créer un compte administrateur**.
+2. 🌐 **Sans attendre**, ouvrir `http://IP-de-la-VM:3000`, cliquer sur **Démarrer**, puis créer le **compte administrateur**. Le premier compte créé devient administrateur, et en mode `host` le port 3000 est ouvert sur toutes les adresses de la VM : tant que ce compte n'existe pas, quiconque joint la VM pourrait le créer à sa place. Compte : nom `Administrateur`, e-mail `admin@lab.local`, mot de passe `TutoDocker-Lab1!`, **Créer un compte administrateur**.
 3. 🌐 En haut de la conversation, choisir le modèle (par exemple `ministral-3:latest`), et poser une question.
 
     ![Open WebUI en français : la question « En une phrase : qu'est-ce qu'un conteneur Docker ? » et la réponse du modèle ministral-3, suivies de questions de suivi proposées.](images/13-open-webui-ministral.png){ loading=lazy }
@@ -149,7 +154,7 @@ Un modèle de langage demande beaucoup de mémoire et, idéalement, une carte gr
 
 ### 4.1 Uptime Kuma, la supervision simple
 
-Déployé par Coolify en [partie 11](11-plateformes-tout-en-un.md#6-deployer-uptime-kuma-en-un-clic), il se lance aussi en une commande (commande officielle) :
+Déployé par Coolify en [partie 11](11-plateformes-tout-en-un.md#6-deployer-uptime-kuma-en-un-clic), il se lance aussi en une commande (commande officielle), 🐧 dans la VM :
 
 ```bash
 docker run -d --restart=always -p 3001:3001 -v uptime-kuma:/app/data --name uptime-kuma louislam/uptime-kuma:2
@@ -194,7 +199,8 @@ Avant d'essayer, vérifier dans la VM que `ls -l /dev/kvm` répond (sous Virtual
 ✍️ Choisir un projet de ce catalogue (Uptime Kuma, Open WebUI ou Kasm) et le publier en `https://<nom>.docker.test` derrière Nginx Proxy Manager, **sans aucun port publié**, avec un certificat autosigné qui couvre ce nom, une limite de mémoire, et une politique de redémarrage. Vérifier avec `docker ps` que seul `npm-app-1` publie des ports.
 
 ??? success "Corrigé (exemple avec Uptime Kuma)"
-    0. 🐧 Supprimer d'abord les conteneurs des sections précédentes (les volumes sont gardés) : `docker rm -f uptime-kuma open-webui kasm-firefox 2>/dev/null`.
+    Avant de commencer, 🐧 supprimer les conteneurs des sections précédentes (les volumes sont gardés) : `docker rm -f uptime-kuma open-webui kasm-firefox 2>/dev/null`.
+
     1. 🐧 Réseau et conteneur, sans `-p` :
 
         ```bash
@@ -235,6 +241,14 @@ docker system df
     ```
 
     Résultat attendu : `kasm-firefox  0.0.0.0:6901->6901/tcp, [::]:6901->6901/tcp`, puis `401` (le serveur répond et demande l'identifiant `kasm_user`, ce qui prouve qu'il fonctionne).
+
+!!! abstract "Le jour 4 en résumé"
+    Avant les questions, relire cette carte : chaque branche reprend une partie du jour, avec ses notions et ses commandes clés.
+
+    ![Carte mentale du jour 4 : mettre à jour une image, lire et limiter les journaux, limiter le processeur et la mémoire, durcir un conteneur, analyse Trivy et ménage, projets sympas](images/carte-mentale-jour4.svg){ loading=lazy }
+    /// caption
+    Le jour 4 en un coup d'œil : exploiter Docker au quotidien, puis les projets à déployer.
+    ///
 
 ## 8. Questions de révision
 

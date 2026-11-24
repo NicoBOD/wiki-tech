@@ -40,7 +40,7 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `tssr` · 🌐 **navigateur du PC** · ✍️ **exercice**. Point de départ : l'instantané `03-fin-jour-2`. Les ports **80**, **81** et **443** de la VM doivent être libres : `docker ps` ne doit montrer que `portainer`.
+    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `adminlab` · 🌐 **navigateur du PC** · ✍️ **exercice**. Point de départ : l'instantané `03-fin-jour-2`. Les ports **80**, **81** et **443** de la VM doivent être libres : `docker ps` ne doit montrer que `portainer`.
 
 <!-- NOTE DE RÉDACTION (non affichée) : reprend le TD « 11 Reverse proxy NPM dans Docker » v1.2 et le TD/TP « 12 Déplacer un conteneur Portainer derrière un reverse proxy » du formateur. Mises à jour vérifiées dans le lab (NPM 2.17.1, 2026-11-24) : plus d'identifiants par défaut (admin@example.com / changeme) : NPM demande de créer le compte administrateur au premier accès ; interface disponible en français ; variable TZ de la documentation ajoutée. Domaines : *.docker.test (TLD réservé aux tests, RFC 2606) au lieu de sous-domaines de tutotech.org. Conteneur Portainer : nom « portainer » du jour 1 au lieu de « portainer-container » (même déroulé). Correction : « docker docker rm -f » (doublon). Captures prises avec la résolution forcée du navigateur, le fichier hosts du PC hôte du lab n'a pas été modifié. -->
 
@@ -50,7 +50,7 @@ Un **reverse proxy** (« mandataire inverse ») est un serveur placé **devant**
 
 C'est l'**accueil d'un immeuble de bureaux** : les visiteurs entrent tous par la même porte (le port 80 ou 443), disent qui ils viennent voir (le **nom de domaine**), et l'hôtesse les oriente vers le bon bureau (le bon conteneur). Les bureaux, eux, n'ont pas besoin de porte sur la rue.
 
-![Le navigateur du PC demande portainer.docker.test, nextcloud.docker.test ou apache-interne.docker.test : toutes les requêtes arrivent sur le port 80 ou 443 de la VM, au conteneur Nginx Proxy Manager. Celui-ci lit le nom demandé et transmet la requête au conteneur correspondant (portainer, nextcloud, test-apache) à travers des réseaux Docker partagés, sans que ces conteneurs publient de port.](images/reverse-proxy.svg){ loading=lazy }
+![Le navigateur du PC demande portainer.docker.test, nextcloud.docker.test ou apache-interne.docker.test : toutes les requêtes arrivent sur le port 80 ou 443 de la VM, au conteneur Nginx Proxy Manager. Celui-ci lit le nom demandé et transmet la requête au conteneur correspondant (portainer, nextcloud, test-apache-interne) à travers des réseaux Docker partagés, sans que ces conteneurs publient de port.](images/reverse-proxy.svg){ loading=lazy }
 /// caption
 Un seul point d'entrée, qui aiguille chaque requête selon le nom demandé.
 ///
@@ -114,7 +114,7 @@ La ligne `Envoi d'une requête 'ping' sur portainer.docker.test [IP-de-la-VM] �
     ```yaml
     services:
       app:
-        image: jc21/nginx-proxy-manager:latest
+        image: jc21/nginx-proxy-manager:2.17.1
         restart: unless-stopped
         ports:
           - 80:80
@@ -129,11 +129,15 @@ La ligne `Envoi d'une requête 'ping' sur portainer.docker.test [IP-de-la-VM] �
 
     | Ligne | Explication |
     |---|---|
+    | `image: jc21/nginx-proxy-manager:2.17.1` | La version est **figée** : une mise à jour se fera quand on l'aura décidé, en changeant ce numéro (partie 12), et non par surprise lors d'un `docker compose pull` |
     | `80:80` et `443:443` | Les ports **publics** : HTTP et HTTPS, par lesquels passeront tous les sites |
     | `81:81` | L'interface d'**administration** de NPM (en HTTP non chiffré : en production, on ne l'expose pas, ou on la limite à l'adresse d'administration avec `127.0.0.1:81:81` et un tunnel SSH) |
     | `TZ: Europe/Paris` | Le fuseau horaire, pour des journaux à l'heure française |
     | `./data:/data` | La configuration et la base de NPM, dans le dossier `~/npm/data` de la VM (**dossier monté**, partie 5) et non dans `/var/lib/docker/volumes` |
     | `./letsencrypt:/etc/letsencrypt` | Les certificats |
+
+    !!! warning "L'interface d'administration reste ouverte"
+        Le port **81** donne accès à toute la configuration de NPM, en HTTP non chiffré, avec un mot de passe publié dans ce parcours. Dans le lab, la VM n'est joignable que depuis le PC (réseau NAT ou privé hôte) : c'est acceptable. Sur un serveur, une fois les hôtes créés, on publie ce port seulement en local (`127.0.0.1:81:81`) et on y accède par un tunnel SSH (`ssh -L 8081:127.0.0.1:81 adminlab@IP-de-la-VM`, puis `http://localhost:8081` sur le PC).
 
 2. 🐧 Démarrer NPM :
 
@@ -144,7 +148,7 @@ La ligne `Envoi d'une requête 'ping' sur portainer.docker.test [IP-de-la-VM] �
 
     ```text
     NAME        IMAGE                             COMMAND   SERVICE   CREATED         STATUS                  PORTS
-    npm-app-1   jc21/nginx-proxy-manager:latest   "/init"   app       2 seconds ago   Up Less than a second   0.0.0.0:80-81->80-81/tcp, [::]:80-81->80-81/tcp, 0.0.0.0:443->443/tcp, [::]:443->443/tcp
+    npm-app-1   jc21/nginx-proxy-manager:2.17.1   "/init"   app       2 seconds ago   Up Less than a second   0.0.0.0:80-81->80-81/tcp, [::]:80-81->80-81/tcp, 0.0.0.0:443->443/tcp, [::]:443->443/tcp
     ```
 
     Au premier démarrage, NPM prépare sa base de données (journaux `Migrating Up…`) : attendre quelques secondes.
@@ -176,7 +180,7 @@ La ligne `Envoi d'une requête 'ping' sur portainer.docker.test [IP-de-la-VM] �
     |---|---|
     | **Nom complet** | `Administrateur` |
     | **Adresse e-mail** | `admin@lab.local` (ne sert que d'identifiant de connexion : elle n'est jamais utilisée sur le réseau) |
-    | **Nouveau mot de passe** | `TutoDocker2026!` |
+    | **Nouveau mot de passe** | `TutoDocker-Lab1!` |
 
 4. 🌐 Cliquer sur **Enregistrer** : le **Tableau de bord** s'affiche, sans aucun hôte pour l'instant.
 
@@ -268,7 +272,7 @@ Portainer (partie 4) publie son port 9443 : n'importe qui sur le réseau peut to
 Essayer seul d'abord ; le corrigé détaillé est replié ci-dessous.
 
 ??? success "Corrigé pas à pas"
-    **1. Créer l'hôte proxy… et constater l'erreur.** 🌐 Dans NPM, ajouter un hôte proxy `portainer.docker.test` → `http`, `portainer`, port `9000`. Ouvrir `http://portainer.docker.test` :
+    **1. Créer l'hôte proxy… et constater l'erreur.** 🌐 Dans NPM, ajouter un hôte proxy `portainer.docker.test` → `http`, `portainer`, port `9000`, en cochant **Prise en charge de WebSockets** : la **console** et les journaux en direct de Portainer passent par des WebSockets, et sans cette option NPM les refuse (la console reste vide). Ouvrir `http://portainer.docker.test` :
 
     ![Page blanche avec le titre « 502 Bad Gateway » et la mention openresty.](images/09-erreur-502.png){ loading=lazy }
     /// caption
@@ -309,7 +313,7 @@ Essayer seul d'abord ; le corrigé détaillé est replié ci-dessous.
 
     NPM est maintenant sur ses deux réseaux.
 
-    **5. Vérifier.** 🌐 Rafraîchir `http://portainer.docker.test` (si l'erreur 502 persiste, attendre quelques secondes : Portainer démarre). La page de connexion de Portainer s'affiche, et les identifiants `admin` / `TutoDocker2026!` fonctionnent : le volume a gardé le compte.
+    **5. Vérifier.** 🌐 Rafraîchir `http://portainer.docker.test` (si l'erreur 502 persiste, attendre quelques secondes : Portainer démarre). La page de connexion de Portainer s'affiche, et les identifiants `admin` / `TutoDocker-Lab1!` fonctionnent : le volume a gardé le compte.
 
     ![Page de connexion de Portainer, « Log in to your account », avec les champs Username et Password et le bouton Login.](images/09-portainer-par-son-nom.png){ loading=lazy }
     /// caption
@@ -367,7 +371,7 @@ docker rm -f test-apache test-apache-interne
     docker ps --format '{{.Names}}  {{.Ports}}'
     ```
 
-    Résultat attendu : `200` (sortie relevée dans le lab), puis une liste où **seul** `npm-app-1` publie des ports (`0.0.0.0:80-81->80-81/tcp…`). 🌐 Depuis le PC, `http://portainer.docker.test` affiche Portainer.
+    Résultat attendu : `200`, puis une liste où **seul** `npm-app-1` publie des ports (`0.0.0.0:80-81->80-81/tcp…`). 🌐 Depuis le PC, `http://portainer.docker.test` affiche Portainer.
 
 ## 9. Questions de révision
 

@@ -39,7 +39,7 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `tssr` · 🌐 **navigateur** du PC · ✍️ **exercice** · 🛟 **instantané**. Point de départ : la fin de la partie 14 (images `web` et `debian-ssh` construites).
+    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `adminlab` · 🌐 **navigateur** du PC · ✍️ **exercice** · 🛟 **instantané**. Point de départ : la fin de la partie 14 (images `web` et `debian-ssh` construites).
 
 <!-- NOTE DE RÉDACTION (non affichée) : partie construite à partir du TD 08 du formateur (publier sur Docker Hub). La création d'un compte Docker Hub n'a pas été faite dans le lab (compte personnel requis) : la section 2 suit le TD 08, ses captures (mars 2025) et la documentation Docker lue le 2026-11-24 (jetons : avatar > Account settings > Personal access tokens > Generate new token ; permissions « Read-only », « Read & Write », « Read, Write, Delete » ; dépôts : My Hub > Repositories > Create repository ; 1 dépôt privé sur un compte Personal ; limites 100 pulls / 6 h sans compte, 200 avec un compte Personal). Comportements de la CLI mesurés dans le lab : connexion web par code à usage unique quand on tape `docker login` sans -u, invite « Password: » avec -u, avertissement « credentials are stored unencrypted ». Le registre privé (sections 3 et 4) est entièrement mesuré (captures/15-*.txt). Fait découvert : déclarer `insecure-registries` remplace la liste par défaut 127.0.0.0/8 et ::1/128 (InsecureRegistryCIDRs devient null) et casse localhost:5000 ; corrigé en ajoutant les deux plages. Le TD 08 utilisait l'ID de l'image dans `docker tag` : gardé en variante, le nom est plus lisible. -->
 
@@ -65,6 +65,11 @@ ghcr.io/open-webui/open-webui:main
 
 Ainsi, `docker pull nginx` télécharge en réalité `docker.io/library/nginx:latest`. Et pour **envoyer** une image quelque part, il faut d'abord lui donner un nom qui contient la bonne adresse : c'est le rôle de `docker tag`.
 
+![Schéma : un nom d'image se lit registre / espace / dépôt : étiquette. Trois exemples : nginx, que Docker complète en docker.io/library/nginx:latest ; <identifiant>/initiation-docker:tagname, sur Docker Hub avec un compte ; 192.168.8.71:5000/web:1.0, sur le registre privé du lab. En dessous : docker tag donne à l'image web le nom localhost:5000/web:1.0 (même image, aucune copie), docker push l'envoie au registre privé IP-de-la-VM:5000, et docker pull IP-de-la-VM:5000/web:1.0 la télécharge sur une autre machine.](images/nom-d-une-image.svg){ loading=lazy }
+/// caption
+Le nom d'une image est une adresse : `docker tag` la change, `docker push` et `docker pull` s'en servent.
+///
+
 !!! info "Les limites de téléchargement de Docker Hub"
     Docker Hub limite les téléchargements : **100 par période de 6 heures** sans compte (par adresse IP publique), **200** avec un compte personnel gratuit connecté par `docker login`. Dans une salle où tous les PC sortent par la même adresse IP, la limite anonyme peut être atteinte : se connecter, ou installer un registre local qui garde une copie des images, règle le problème.
 
@@ -84,7 +89,7 @@ Pour la ligne de commande, on n'utilise **pas son mot de passe**, mais un **jeto
 
     ![Docker account center : menu de l'avatar ouvert, entrée Account settings repérée ; à gauche, page Personal access tokens avec le bouton Generate new token.](images/15-hub-jetons.png){ loading=lazy }
     /// caption
-    Avatar > **Account settings**, puis **Personal access tokens** > **Generate new token** (interface de 2025 : l'emplacement des menus peut avoir changé)
+    Avatar > **Account settings**, puis **Personal access tokens** > **Generate new token**
     ///
 
 3. 🌐 Remplir le formulaire :
@@ -97,7 +102,7 @@ Pour la ligne de commande, on n'utilise **pas son mot de passe**, mais un **jeto
 
     ![Formulaire Create access token : description, date d'expiration None, droits Read, Write, Delete, boutons Cancel et Generate.](images/15-hub-creer-jeton.png){ loading=lazy }
     /// caption
-    Le formulaire de création du jeton (ici avec les droits les plus larges et sans expiration : pour un TP, préférer **Read & Write** et 30 jours)
+    Le formulaire de création du jeton. Les réglages visibles (tous les droits, aucune expiration) sont à éviter : choisir **Read & Write** et 30 jours
     ///
 
 4. 🌐 Cliquer sur **Generate**, puis **copier le jeton** (il commence par `dckr_pat_`). Il ne sera **plus jamais affiché** : le ranger dans un gestionnaire de mots de passe. Un jeton perdu se révoque et se recrée.
@@ -115,7 +120,7 @@ Pour la ligne de commande, on n'utilise **pas son mot de passe**, mais un **jeto
 
     ![Formulaire Create repository : namespace, nom du dépôt initiation-docker, description courte, visibilité Public ou Private avec la mention Using 0 of 1 private repositories, boutons Cancel et Create.](images/15-hub-creer-depot.png){ loading=lazy }
     /// caption
-    Création du dépôt `initiation-docker` (interface de 2025) : le compteur « Using 0 of 1 private repositories » rappelle le dépôt privé unique d'un compte gratuit
+    Création du dépôt `initiation-docker` : le compteur « Using 0 of 1 private repositories » rappelle le dépôt privé unique d'un compte gratuit
     ///
 
 3. 🌐 Cliquer sur **Create**. La page du dépôt rappelle la commande à utiliser : `docker push <identifiant>/initiation-docker:tagname`.
@@ -134,14 +139,14 @@ docker login -u <identifiant>
 À l'invite `Password:`, **coller le jeton** (rien ne s'affiche pendant la saisie, c'est normal), puis ++enter++. Docker répond `Login Succeeded`, précédé d'un avertissement :
 
 ```text
-WARNING! Your credentials are stored unencrypted in '/home/tssr/.docker/config.json'.
+WARNING! Your credentials are stored unencrypted in '/home/adminlab/.docker/config.json'.
 Configure a credential helper to remove this warning. See
 https://docs.docker.com/go/credential-store/
 
 Login Succeeded
 ```
 
-Sur une Debian sans bureau, aucun coffre de mots de passe n'est installé : le jeton est rangé dans `~/.docker/config.json`, simplement **encodé** en base64 (ce n'est pas un chiffrement), lisible seulement par `tssr` (droits `600`). C'est une raison de plus d'utiliser un jeton limité et qui expire. `docker logout` l'efface.
+Sur une Debian sans bureau, aucun coffre de mots de passe n'est installé : le jeton est rangé dans `~/.docker/config.json`, simplement **encodé** en base64 (ce n'est pas un chiffrement), lisible seulement par `adminlab` (droits `600`). C'est une raison de plus d'utiliser un jeton limité et qui expire. `docker logout` l'efface.
 
 !!! info "Et `docker login` sans `-u` ?"
     Sans identifiant, Docker propose une **connexion par le navigateur** :
@@ -183,7 +188,7 @@ Sur une Debian sans bureau, aucun coffre de mots de passe n'est installé : le j
 
     ![Page du dépôt initiation-docker sur Docker Hub, onglet General : la section Tags contient l'étiquette latest, avec les colonnes OS, Type, Pulled et Pushed.](images/15-hub-depot-avec-tag.png){ loading=lazy }
     /// caption
-    L'image publiée apparaît dans les étiquettes du dépôt (ici une image poussée avec l'étiquette `latest`)
+    L'image publiée apparaît dans la section **Tags** (étiquettes) du dépôt, avec la date de son envoi (**Pushed**)
     ///
 
 5. 🐧 N'importe quelle machine peut maintenant la récupérer (après `docker login` si le dépôt est privé) :

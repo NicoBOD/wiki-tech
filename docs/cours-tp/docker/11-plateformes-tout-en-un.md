@@ -40,7 +40,7 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🖥️ **PC hôte** · 🐧 **VM** `docker-plateforme` (nouvelle VM), connecté en `root` · 🌐 **navigateur du PC** · ✍️ **exercice** · 🛟 **instantané**. Coolify n'existe qu'en anglais : ses menus sont écrits en gras, en anglais, avec une traduction entre parenthèses.
+    🖥️ **PC hôte** · 🐧 **VM** `docker-plateforme` (nouvelle VM), connecté en `root` (connexion SSH en `adminlab`, puis `su -` : SSH refuse `root` avec un mot de passe) · 🌐 **navigateur du PC** · ✍️ **exercice** · 🛟 **instantané**. Coolify n'existe qu'en anglais : ses menus sont écrits en gras, en anglais, avec une traduction entre parenthèses.
 
 <!-- NOTE DE RÉDACTION (non affichée) : partie écrite à la demande du formateur (plateformes Docker + reverse proxy : Coolify, Cosmos Server, BunkerWeb), absente de ses supports. Coolify rejoué le 2026-11-24 sur une VM Debian 13.7 (KVM, 2 vCPU, 4 Go) : script officiel (3 min 11 s, 9 étapes), compte, assistant, service Uptime Kuma, domaine générique sslip.io. Constat : sans domaine générique, Coolify fabrique les adresses avec l'IP PUBLIQUE de la connexion Internet (inutilisable dans un lab derrière NAT) ; d'où le réglage « Wildcard domain » avant de créer les services. Cosmos Server et BunkerWeb sont présentés d'après leur documentation et leur dépôt GitHub (non installés dans le lab). -->
 
@@ -79,7 +79,7 @@ Coolify prend la main sur Docker et sur les ports 80, 443, 8000, 6001 et 6002 de
 
 🐧 Noter l'adresse de la VM (`ip -br a`) : elle est écrite **IP-de-plateforme** dans la suite. Sous VirtualBox, c'est celle de `enp0s8` (`192.168.56.1xx`), **jamais** `10.0.2.15`.
 
-!!! success "🛟 Prendre l'instantané `00-debian-installee` de `docker-plateforme`"
+!!! success "Prendre l'instantané `00-debian-installee` de `docker-plateforme`"
     VM éteinte, comme en partie 1 : il permet de recommencer l'installation de Coolify.
 
 ## 3. Installer Coolify
@@ -138,7 +138,7 @@ Coolify prend la main sur Docker et sur les ports 80, 443, 8000, 6001 et 6002 de
 
 ## 4. Créer le compte et connecter le serveur
 
-1. 🌐 Ouvrir `http://IP-de-plateforme:8000` : la page **Register** (inscription) s'affiche. Remplir **Name** (`Administrateur`), **Email** (`admin@lab.local`), **Password** et **Confirm Password** (`TutoDocker2026!`), puis **Create Account**.
+1. 🌐 Ouvrir `http://IP-de-plateforme:8000` : la page **Register** (inscription) s'affiche. Remplir **Name** (`Administrateur`), **Email** (`admin@lab.local`), **Password** et **Confirm Password** (`TutoDocker-Lab1!`), puis **Create Account**.
 2. 🌐 L'assistant **Welcome to Coolify** s'ouvre : **Continue**.
 3. 🌐 **Choose Server Type** (type de serveur) : choisir **This machine** (cette machine). Coolify déploiera sur la VM où il est installé ; il saurait aussi piloter d'autres serveurs en SSH, ou en créer chez des hébergeurs.
 
@@ -147,7 +147,7 @@ Coolify prend la main sur Docker et sur les ports 80, 443, 8000, 6001 et 6002 de
     Coolify peut gérer la machine où il tourne, ou d'autres serveurs par SSH.
     ///
 
-    Avec **This machine**, le script a donné à Coolify une **clé SSH `root`** vers la VM (étape 7/9) et l'accès au socket Docker : comme pour Portainer en partie 4, **un administrateur de Coolify est `root` sur la VM**.
+    Avec **This machine**, le script a donné à Coolify une **clé SSH `root`** vers la VM (étape 7/9) et l'accès au socket Docker : comme pour Portainer en partie 4, **un administrateur de Coolify est `root` sur la VM**. De plus, l'interface s'ouvre ici en HTTP simple (port 8000, non chiffré) : c'est acceptable dans le lab, joignable seulement depuis le PC ; sur un vrai serveur, on n'y accède que par un VPN ou derrière un reverse proxy en HTTPS.
 
 4. 🌐 **Project Setup** : **Create "My First Project"** (créer le premier projet). Un projet regroupe des ressources ; il contient un environnement **production**.
 5. 🌐 **Setup complete** : le résumé indique `Server: localhost`, `Project: My first project`, `Docker Engine: Installed and running`. Cliquer sur **Go to dashboard**. Fermer les bandeaux de bienvenue (**Maybe next time**, **Accept And Close**).
@@ -161,6 +161,12 @@ Coolify publie chaque service sous un **nom de domaine**, derrière son reverse 
 
 1. 🌐 Menu **Servers** (serveurs), cliquer sur **localhost**.
 2. 🌐 Dans **Wildcard domain** (domaine générique), saisir `http://IP-de-plateforme.sslip.io` (par exemple `http://192.168.56.110.sslip.io`), puis **Save** (enregistrer).
+
+
+    ![Page Servers > localhost de Coolify, section Connection : champs Name (localhost), IP address or domain (masqué), SSH user (root), SSH port (22), Connection timeout, Server timezone (UTC) et Wildcard domain rempli avec http://192.168.8.72.sslip.io.](images/11-coolify-wildcard-domain.png){ loading=lazy }
+    /// caption
+    Le champ **Wildcard domain** (en bas à droite), rempli avec l'adresse de la VM du lab de référence.
+    ///
 
 !!! failure "Le nom en sslip.io ne répond pas"
     Certains DNS (pfSense, OPNsense, box, réseaux d'entreprise ou d'école) refusent par sécurité les réponses qui contiennent une adresse **privée** (protection contre le *DNS rebinding*). 🖥️ Tester dans PowerShell : `nslookup test.IP-de-plateforme.sslip.io`, puis `nslookup test.IP-de-plateforme.sslip.io 1.1.1.1`. Si seul le second répond, c'est le DNS local qui filtre : ajouter le nom affiché par **Links** au fichier `hosts` du PC (partie 9), ou utiliser temporairement un DNS public sur la carte réseau du PC.
@@ -195,7 +201,7 @@ Coolify publie chaque service sous un **nom de domaine**, derrière son reverse 
     Uptime Kuma, déployé et publié par Coolify, sans une ligne de configuration.
     ///
 
-✍️ **Exercice** — Terminer l'installation d'Uptime Kuma (base **SQLite**, compte `admin` / `TutoDocker2026!`), puis ajouter une **sonde** (*monitor*) de type **HTTP(s)** qui surveille Nginx Proxy Manager sur `docker-hote` (`http://IP-de-la-VM:81`). Éteindre `docker-hote` et regarder la sonde passer au rouge.
+✍️ **Exercice** — Terminer l'installation d'Uptime Kuma (base **SQLite**, compte `admin` / `TutoDocker-Lab1!`), puis ajouter une **sonde** (*monitor*) de type **HTTP(s)** qui surveille Nginx Proxy Manager sur `docker-hote` (`http://IP-de-la-VM:81`). Éteindre `docker-hote` et regarder la sonde passer au rouge.
 
 ??? success "Réponse"
     Dans Uptime Kuma : **Ajouter une nouvelle sonde**, **Type de sonde** **HTTP(s)**, URL `http://IP-de-la-VM:81`, intervalle par défaut (60 s), **Sauvegarder**. La sonde est verte (**En ligne**) tant que NPM répond ; une à deux minutes après l'extinction de `docker-hote`, elle passe **Hors ligne** et l'historique montre la coupure. On pourrait y ajouter une notification (courriel, Discord, Telegram…).
@@ -262,6 +268,14 @@ Coolify publie chaque service sous un **nom de domaine**, derrière son reverse 
 
 !!! success "Prendre l'instantané `01-coolify` de `docker-plateforme`"
     🛟 VM éteinte (`poweroff`).
+
+!!! abstract "Le jour 3 en résumé"
+    Avant les questions, relire cette carte : chaque branche reprend une partie du jour, avec ses notions et ses commandes clés.
+
+    ![Carte mentale du jour 3 : le reverse proxy, brancher Nginx Proxy Manager aux réseaux des conteneurs, HTTPS avec un certificat autosigné, plateformes tout-en-un comme Coolify](images/carte-mentale-jour3.svg){ loading=lazy }
+    /// caption
+    Le jour 3 en un coup d'œil : publier plusieurs services derrière un seul point d'entrée.
+    ///
 
 ## 9. Questions de révision
 

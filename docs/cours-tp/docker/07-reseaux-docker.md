@@ -38,7 +38,7 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `tssr` · 📦 **dans un conteneur** · ✍️ **exercice**. Suite de la partie 6 : seul `portainer` tourne.
+    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `adminlab` · 📦 **dans un conteneur** · ✍️ **exercice**. Suite de la partie 6 : seul `portainer` tourne.
 
 <!-- NOTE DE RÉDACTION (non affichée) : reprend la section « Les réseaux Docker » du cours « 00 Théorie Docker » du formateur (bridge, host, none, overlay, macvlan, réseaux personnalisés, tableau de synthèse), transformée en TP. Corrections : « docker run --rm --network=none busybox ifconfig » remplacé par la lecture de /proc/net/dev (sortie mesurée) ; macvlan : ajout de la limite « la VM ne joint pas ses propres conteneurs macvlan » (mesurée dans le lab : joignable depuis le PC, pas depuis la VM) et du mode promiscuité nécessaire dans les hyperviseurs ; ajout de la publication sur 127.0.0.1 et du contournement du pare-feu (règles DNAT de la chaîne DOCKER relevées). Overlay seulement cité : pratiqué en partie 16 (Swarm). Sorties du lab, 2026-11-24. -->
 
@@ -214,12 +214,12 @@ Le code 28 de `curl` signifie « délai dépassé » : `web1` ne peut plus joind
 🐧 Le sous-réseau d'un réseau personnalisé peut être imposé, par exemple pour éviter un conflit avec un réseau de l'entreprise, et un conteneur peut y recevoir une adresse fixe :
 
 ```bash
-docker network create --driver bridge --subnet=192.168.100.0/24 mon_reseau_perso
-docker run --rm --network mon_reseau_perso --ip 192.168.100.50 debian:13 hostname -I
+docker network create --driver bridge --subnet=10.77.0.0/24 mon_reseau_perso
+docker run --rm --network mon_reseau_perso --ip 10.77.0.50 debian:13 hostname -I
 ```
 
 ```text
-192.168.100.50
+10.77.0.50
 ```
 
 !!! warning "Attention aux conflits d'adresses"
@@ -339,7 +339,7 @@ La carte réseau de la VM va émettre des trames avec **plusieurs adresses MAC**
     192.168.8.201 9e:d0:81:e5:7e:f8
     ```
 
-    (exemple : l'adresse est celle choisie, et l'adresse MAC est tirée au hasard par Docker).
+    (exemple du lab de référence, sous KVM : l'adresse est celle choisie dans sa plage, et l'adresse MAC est tirée au hasard par Docker).
 
 ### 5.3 Tester depuis le PC… et depuis la VM
 
@@ -387,7 +387,7 @@ docker ps --filter name=prive --format '{{.Ports}}'
 
 ### 6.2 Les ports publiés contournent le pare-feu
 
-Pour publier un port, Docker écrit lui-même des **règles de NAT** dans le pare-feu du noyau (iptables, ici sur sa variante nftables) :
+Pour publier un port, Docker écrit lui-même des **règles de NAT** dans le pare-feu du noyau (iptables, ici sur sa variante nftables). 🐧 Pour les voir :
 
 ```bash
 sudo iptables -t nat -S DOCKER
@@ -400,6 +400,11 @@ sudo iptables -t nat -S DOCKER
 ```
 
 Chaque port publié devient une règle **DNAT** (traduction d'adresse de destination), comme une redirection de port sur un routeur. Le paquet est redirigé vers le conteneur **dès son arrivée**, avant d'atteindre les règles qui protègent la VM elle-même (la chaîne `INPUT`, celle qu'utilise UFW) : il est **routé** vers le conteneur, pas **reçu** par la VM.
+
+![Schéma : avec docker run -p 8080:80, un paquet destiné au port 8080 de la VM passe par la table nat PREROUTING, puis la chaîne DOCKER qui applique un DNAT vers l'IP du conteneur sur le port 80, puis FORWARD où il est routé, et arrive au conteneur. La chaîne DOCKER-USER, réservée aux règles de l'administrateur, est consultée à ce niveau. La chaîne INPUT, où agit UFW, n'est jamais atteinte par ce paquet : ufw deny 8080 ne protège donc pas un port publié.](images/chemin-port-publie-pare-feu.svg){ loading=lazy }
+/// caption
+Le paquet est redirigé vers le conteneur avant la chaîne INPUT : les règles d'UFW ne le voient pas.
+///
 
 !!! danger "UFW et Docker : un piège classique"
     Sur une machine protégée par **UFW** (ou firewalld), un administrateur bloque le port 8080 avec `ufw deny 8080`, puis lance `docker run -p 8080:80 …`. Le port est **quand même joignable** depuis l'extérieur : le paquet est redirigé vers le conteneur sans jamais passer par les règles d'UFW. La documentation de Docker le signale explicitement.
@@ -430,20 +435,20 @@ docker rm -f prive
 
 ## 8. Exercice
 
-✍️ Créer deux réseaux, `front` et `back`. Lancer un conteneur `bdd` (image `mariadb:11.8`, mot de passe root `TutoDocker2026!`) sur `back` seulement, et un conteneur `web` (image `nginx`) sur `front` **et** `back`. Lancer enfin un conteneur jetable `intrus` sur `front` seulement. Vérifier que `web` résout le nom `bdd`, et que `intrus`, lui, ne le résout pas.
+✍️ Créer deux réseaux, `front` et `back`. Lancer un conteneur `bdd` (image `mariadb:11.8`, mot de passe root `TutoDocker-Lab1!`) sur `back` seulement, et un conteneur `web` (image `nginx`) sur `front` **et** `back`. Lancer enfin un conteneur jetable `intrus` sur `front` seulement. Vérifier que `web` résout le nom `bdd`, et que `intrus`, lui, ne le résout pas.
 
 ??? success "Réponse"
     ```bash
     docker network create front
     docker network create back
-    docker run -d --name bdd --network back -e MARIADB_ROOT_PASSWORD='TutoDocker2026!' mariadb:11.8
+    docker run -d --name bdd --network back -e MARIADB_ROOT_PASSWORD='TutoDocker-Lab1!' mariadb:11.8
     docker run -d --name web --network front nginx
     docker network connect back web
     docker exec web getent hosts bdd                                   # répond : 172.x.x.x bdd
     docker run --rm --name intrus --network front debian:13 getent hosts bdd; echo "code=$?"   # rien, code=2
     ```
 
-    `web`, branché sur les deux réseaux, joint la base ; `intrus`, seulement sur `front`, ne la trouve même pas. C'est le schéma classique : le serveur web est exposé, la base de données est cachée derrière lui. Nettoyer ensuite : `docker rm -f bdd web` puis `docker network rm front back`.
+    `web`, branché sur les deux réseaux, joint la base ; `intrus`, seulement sur `front`, ne la trouve même pas. C'est le schéma classique : le serveur web est exposé, la base de données est cachée derrière lui. Nettoyer ensuite : `docker rm -fv bdd web` (le `v` supprime aussi le volume anonyme de MariaDB) puis `docker network rm front back`.
 
 ## 9. Vérifier son lab
 

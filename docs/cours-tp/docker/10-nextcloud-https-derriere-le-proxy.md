@@ -39,7 +39,7 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `tssr` · 🌐 **navigateur du PC** · ✍️ **exercice** · 🛟 **instantané**. Suite de la [partie 9](09-reverse-proxy-nginx-proxy-manager.md) : NPM et Portainer tournent, et le fichier `hosts` du PC contient `nextcloud.docker.test` et `wordpress.docker.test`.
+    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `adminlab` · 🌐 **navigateur du PC** · ✍️ **exercice** · 🛟 **instantané**. Suite de la [partie 9](09-reverse-proxy-nginx-proxy-manager.md) : NPM et Portainer tournent, et le fichier `hosts` du PC contient `nextcloud.docker.test` et `wordpress.docker.test`.
 
 <!-- NOTE DE RÉDACTION (non affichée) : reprend le TD « 13 Docker Compose Nextcloud derrière reverse proxy », la partie SSL du TD « 14 Certificat SSL » et le brouillon « 13 TD Docker Compose WordPress » du formateur. Mises à jour vérifiées dans le lab (2026-11-24) : mariadb:10.5 → 11.8 + test de santé ; NPM 2.17 : le certificat personnalisé s'importe en envoyant les FICHIERS .key et .crt (le TD faisait coller leur contenu) ; certificat généré avec subjectAltName (sans lui, Chrome et Edge refusent le certificat même importé dans le magasin de confiance) ; Nextcloud derrière HTTPS : avertissement « Vous accédez au site de manière non sécurisée via HTTP » tant que TRUSTED_PROXIES / OVERWRITEPROTOCOL ne sont pas définis (mesuré, puis corrigé par les variables de l'image) ; WordPress : le brouillon (« ne fonctionne pas encore ») déclarait npm_default comme réseau interne du projet au lieu de « external: true », et utilisait mysql:latest ; corrigé et testé (302 vers wp-admin/install.php). Texte parasite « CopierModifier » du TD 14 retiré. La page d'alerte de certificat du navigateur n'a pas pu être capturée (navigateur sans interface). -->
 
@@ -79,8 +79,8 @@ On repart d'un **nouveau** projet, dans son propre dossier, pour ne pas mélange
         environment:
           - MYSQL_DATABASE=nextcloud
           - MYSQL_USER=nextcloud
-          - MYSQL_ROOT_PASSWORD=TutoDocker2026!
-          - MYSQL_PASSWORD=TutoDocker2026!
+          - MYSQL_ROOT_PASSWORD=TutoDocker-Lab1!
+          - MYSQL_PASSWORD=TutoDocker-Lab1!
         expose:
           - 3306
         healthcheck:
@@ -104,7 +104,7 @@ On repart d'un **nouveau** projet, dans son propre dossier, pour ne pas mélange
           - MYSQL_HOST=mariadb
           - MYSQL_DATABASE=nextcloud
           - MYSQL_USER=nextcloud
-          - MYSQL_PASSWORD=TutoDocker2026!
+          - MYSQL_PASSWORD=TutoDocker-Lab1!
         depends_on:
           mariadb:
             condition: service_healthy
@@ -159,7 +159,21 @@ Les différences avec la partie 8 :
     66d095acc251   nextcloud-proxy_redis     bridge    local
     ```
 
-    NPM rejoint Nextcloud par `app`, mais n'a **aucun** accès à la base de données ni à Redis : ils sont sur d'autres réseaux. Comme en partie 9, rendre ce branchement durable en ajoutant `nextcloud-proxy_app` à la liste `networks:` du service `app` de `~/npm/docker-compose.yml`, et `nextcloud-proxy_app: external: true` à la section `networks:` de fin de fichier, puis `cd ~/npm && docker compose up -d`.
+    NPM rejoint Nextcloud par `app`, mais n'a **aucun** accès à la base de données ni à Redis : ils sont sur d'autres réseaux. Comme en partie 9, rendre ce branchement durable : dans `~/npm/docker-compose.yml`, ajouter `nextcloud-proxy_app` aux réseaux du service `app` et à la section `networks:` de fin de fichier. La fin du fichier devient :
+
+    ```yaml
+        networks:
+          - default
+          - portainer_network
+          - nextcloud-proxy_app
+    networks:
+      portainer_network:
+        external: true
+      nextcloud-proxy_app:
+        external: true
+    ```
+
+    Puis `cd ~/npm && docker compose up -d`. Sans cette déclaration, la prochaine recréation de NPM (partie 12) le débrancherait de Nextcloud : erreur 502.
 
 2. 🌐 Dans NPM, **Ajouter Hôte proxy** :
 
@@ -174,7 +188,7 @@ Les différences avec la partie 8 :
 
     Laisser l'onglet **SSL** tel quel pour l'instant, et **Enregistrer**.
 
-3. 🌐 Ouvrir `http://nextcloud.docker.test` : l'assistant d'installation s'affiche. Créer le compte `admin` / `TutoDocker2026!` comme en [partie 8](08-docker-compose-nextcloud.md#52-creer-le-compte-administrateur), puis **Installer** (environ une minute).
+3. 🌐 Ouvrir `http://nextcloud.docker.test` : l'assistant d'installation s'affiche. Créer le compte `admin` / `TutoDocker-Lab1!` comme en [partie 8](08-docker-compose-nextcloud.md#52-creer-le-compte-administrateur), puis **Installer** (environ une minute).
 
 !!! info "Le nom de domaine retenu par Nextcloud"
     Pendant l'installation, Nextcloud enregistre le nom par lequel on l'a joint comme **domaine de confiance** (*trusted domain*). On le vérifie avec `occ` :
@@ -230,15 +244,15 @@ openssl x509 -in docker.test.crt -noout -subject -enddate -ext subjectAltName
 ```
 
 ```text
--rw-rw-r-- 1 tssr tssr 1411 24 nov.  08:31 docker.test.crt
--rw------- 1 tssr tssr 1704 24 nov.  08:31 docker.test.key
+-rw-rw-r-- 1 adminlab adminlab 1411 24 nov.  08:31 docker.test.crt
+-rw------- 1 adminlab adminlab 1704 24 nov.  08:31 docker.test.key
 subject=C=FR, ST=France, L=Paris, O=Lab Docker, CN=docker.test
 notAfter=Nov 24 07:31:21 2027 GMT
 X509v3 Subject Alternative Name:
     DNS:nextcloud.docker.test, DNS:portainer.docker.test, DNS:wordpress.docker.test
 ```
 
-La clé privée n'est lisible que par `tssr` (`-rw-------`) : elle ne doit jamais être partagée.
+La clé privée n'est lisible que par `adminlab` (`-rw-------`) : elle ne doit jamais être partagée.
 
 ### 3.3 Copier les fichiers sur le PC
 
@@ -248,7 +262,7 @@ NPM importe les certificats en **envoyant des fichiers** depuis le navigateur : 
 
 ```powershell
 cd $HOME
-scp tssr@IP-de-la-VM:certs/docker.test.* .
+scp adminlab@IP-de-la-VM:certs/docker.test.* .
 ```
 
 Les fichiers arrivent dans le dossier personnel de Windows (`C:\Users\<nom>`). Après l'import dans NPM, supprimer la **clé privée** du PC : `Remove-Item .\docker.test.key`.
@@ -370,7 +384,7 @@ Le proxy ajoute à chaque requête des **en-têtes** qui racontent ce qui s'est 
 
 ✍️ Écrire un projet Compose dans `~/wordpress` avec deux services :
 
-- `database` : MariaDB 11.8 (avec test de santé), base `wordpress`, utilisateur `wordpress`, mot de passe `TutoDocker2026!`, volume `db_data`, sur un réseau `db_wordpress` seulement ;
+- `database` : MariaDB 11.8 (avec test de santé), base `wordpress`, utilisateur `wordpress`, mot de passe `TutoDocker-Lab1!`, volume `db_data`, sur un réseau `db_wordpress` seulement ;
 - `wordpress` : image `wordpress`, volume `wp_data`, sur `db_wordpress` **et** sur le réseau **existant** `npm_default` de NPM, aucun port publié.
 
 Le publier en `https://wordpress.docker.test`, avec le certificat `docker.test`, **avant** de lancer l'assistant d'installation de WordPress (installé en HTTP, WordPress enregistrerait des adresses en `http://` et continuerait à produire de tels liens après le passage en HTTPS).
@@ -390,10 +404,10 @@ Le publier en `https://wordpress.docker.test`, avec le certificat `docker.test`,
         networks:
           - db_wordpress
         environment:
-          - MARIADB_ROOT_PASSWORD=TutoDocker2026!
+          - MARIADB_ROOT_PASSWORD=TutoDocker-Lab1!
           - MARIADB_DATABASE=wordpress
           - MARIADB_USER=wordpress
-          - MARIADB_PASSWORD=TutoDocker2026!
+          - MARIADB_PASSWORD=TutoDocker-Lab1!
         volumes:
           - db_data:/var/lib/mysql
         healthcheck:
@@ -416,7 +430,7 @@ Le publier en `https://wordpress.docker.test`, avec le certificat `docker.test`,
           - WORDPRESS_DB_HOST=database:3306
           - WORDPRESS_DB_NAME=wordpress
           - WORDPRESS_DB_USER=wordpress
-          - WORDPRESS_DB_PASSWORD=TutoDocker2026!
+          - WORDPRESS_DB_PASSWORD=TutoDocker-Lab1!
         volumes:
           - wp_data:/var/www/html
     networks:

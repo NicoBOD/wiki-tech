@@ -126,7 +126,7 @@ Les messages ci-dessous ont été rencontrés pendant les TP (sauf les deux dern
 
 | Message ou symptôme | Cause | Solution |
 |---|---|---|
-| `permission denied while trying to connect to the docker API at unix:///var/run/docker.sock` | L'utilisateur n'est pas dans le groupe `docker`, ou ne s'est pas reconnecté depuis | `sudo usermod -aG docker tssr`, puis se **déconnecter et se reconnecter** (partie 1) |
+| `permission denied while trying to connect to the docker API at unix:///var/run/docker.sock` | L'utilisateur n'est pas dans le groupe `docker`, ou ne s'est pas reconnecté depuis | `sudo usermod -aG docker adminlab`, puis se **déconnecter et se reconnecter** (partie 1) |
 | `Could not get lock /var/lib/apt/lists/lock` | Une mise à jour automatique tourne, juste après le démarrage | Attendre une minute, relancer |
 | `Bind for 0.0.0.0:8080 failed: port is already allocated` | Un autre conteneur (ou programme) occupe ce port de la VM ; le nouveau conteneur reste en état `Created` | `docker ps` pour trouver qui l'occupe ; choisir un autre port ; supprimer le conteneur `Created` (partie 2) |
 | `Conflict. The container name "/web" is already in use…` | Un conteneur de ce nom existe, même arrêté | `docker rm -f web` ou un autre nom (partie 2) |

@@ -39,9 +39,9 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `tssr` · 🌐 **navigateur du PC** · ✍️ **exercice** · 🛟 **instantané**. Le port **80** de la VM doit être libre : `docker ps` ne doit montrer que `portainer`. Il reste environ 600 Mo d'images à télécharger (MariaDB est déjà là depuis la partie 5), qui occuperont environ 2,5 Go sur le disque de la VM.
+    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `adminlab` · 🌐 **navigateur du PC** · ✍️ **exercice** · 🛟 **instantané**. Le port **80** de la VM doit être libre : `docker ps` ne doit montrer que `portainer`. Il reste environ 600 Mo d'images à télécharger (MariaDB est déjà là depuis la partie 5), qui occuperont environ 2,5 Go sur le disque de la VM.
 
-<!-- NOTE DE RÉDACTION (non affichée) : reprend le TD « 03 Installer un service Nextcloud avec Docker Compose » v2 du formateur (fichier issu de docker/awesome-compose, explications par service, mêmes noms nc/redis/db, dossier ~/nextcloud, conteneurs nextcloud-nc-1…). Mises à jour : mariadb:10.5 (fin de vie juin 2025) → mariadb:11.8 (version recommandée par Nextcloud 35) ; mots de passe nextcloud → mot de passe du lab ; sudo inutile (tssr est dans le groupe docker) ; « docker-compose up -d » du mémo → « docker compose up -d » (Compose v1 n'est plus maintenu) ; « restart: always = redémarre après un reboot » précisé. Correction : avec les variables MYSQL_* de l'image, l'assistant Nextcloud 35 ne demande plus que le compte administrateur (base pré-remplie), alors que le TD faisait saisir hôte, utilisateur et mot de passe de la base. Ajouts mesurés dans le lab : panne « Connection refused » si l'on installe avant la fin de l'initialisation de MariaDB, test de santé + depends_on (up -d attend « Healthy », 16,7 s), commandes occ, cycle down / down -v. -->
+<!-- NOTE DE RÉDACTION (non affichée) : reprend le TD « 03 Installer un service Nextcloud avec Docker Compose » v2 du formateur (fichier issu de docker/awesome-compose, explications par service, mêmes noms nc/redis/db, dossier ~/nextcloud, conteneurs nextcloud-nc-1…). Mises à jour : mariadb:10.5 (fin de vie juin 2025) → mariadb:11.8 (version recommandée par Nextcloud 35) ; mots de passe nextcloud → mot de passe du lab ; sudo inutile (adminlab est dans le groupe docker) ; « docker-compose up -d » du mémo → « docker compose up -d » (Compose v1 n'est plus maintenu) ; « restart: always = redémarre après un reboot » précisé. Correction : avec les variables MYSQL_* de l'image, l'assistant Nextcloud 35 ne demande plus que le compte administrateur (base pré-remplie), alors que le TD faisait saisir hôte, utilisateur et mot de passe de la base. Ajouts mesurés dans le lab : panne « Connection refused » si l'on installe avant la fin de l'initialisation de MariaDB, test de santé + depends_on (up -d attend « Healthy », 16,7 s), commandes occ, cycle down / down -v. -->
 
 ## 1. Docker Compose, c'est quoi ?
 
@@ -79,7 +79,7 @@ services:
       - MYSQL_HOST=db
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
-      - MYSQL_PASSWORD=TutoDocker2026!
+      - MYSQL_PASSWORD=TutoDocker-Lab1!
   redis:
     image: redis:alpine
     restart: always
@@ -98,8 +98,8 @@ services:
     environment:
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
-      - MYSQL_ROOT_PASSWORD=TutoDocker2026!
-      - MYSQL_PASSWORD=TutoDocker2026!
+      - MYSQL_ROOT_PASSWORD=TutoDocker-Lab1!
+      - MYSQL_PASSWORD=TutoDocker-Lab1!
     expose:
       - 3306
 volumes:
@@ -110,7 +110,7 @@ networks:
   redisnet:
 ```
 
-Ce fichier contient trois **services** (un service = un conteneur, ou plusieurs copies du même) : Nextcloud (`nc`), Redis (`redis`) pour la mise en cache, et MariaDB (`db`) comme base de données. Regardons-les un par un.
+Ce fichier contient trois **services** (un service = un conteneur, ou plusieurs copies du même) : Nextcloud (`nc`), Redis (`redis`) pour la mise en cache, et MariaDB (`db`) comme base de données. Voici chacun d'eux, un par un.
 
 ![Trois conteneurs créés par Compose dans la VM. Le conteneur nc (Nextcloud) publie le port 80 de la VM et range ses fichiers dans le volume nc_data. Il est branché sur deux réseaux : redisnet, où se trouve le conteneur redis, et dbnet, où se trouve le conteneur db (MariaDB), qui range sa base dans le volume db_data. redis et db ne partagent aucun réseau.](images/compose-nextcloud.svg){ loading=lazy }
 /// caption
@@ -297,7 +297,7 @@ Au premier démarrage, MariaDB crée sa base : cela prend une dizaine de seconde
     | Champ | Valeur |
     |---|---|
     | **Nom du compte administrateur** | `admin` |
-    | **Mot de passe du compte administrateur** | `TutoDocker2026!` |
+    | **Mot de passe du compte administrateur** | `TutoDocker-Lab1!` |
 
 3. 🌐 Cliquer sur **Installer** et patienter : l'installation prend environ une minute.
 4. 🌐 Nextcloud propose d'installer des **applications recommandées** (agenda, contacts, messagerie…) : cliquer sur **Ignorer** pour gagner du temps. Une fenêtre de bienvenue présente les nouveautés : la fermer avec **Passer**, puis la croix.
@@ -442,7 +442,7 @@ La solution : un **test de santé** (*healthcheck*), une commande que Docker lan
               - MYSQL_HOST=db
               - MYSQL_DATABASE=nextcloud
               - MYSQL_USER=nextcloud
-              - MYSQL_PASSWORD=TutoDocker2026!
+              - MYSQL_PASSWORD=TutoDocker-Lab1!
             depends_on:
               db:
                 condition: service_healthy
@@ -466,8 +466,8 @@ La solution : un **test de santé** (*healthcheck*), une commande que Docker lan
             environment:
               - MYSQL_DATABASE=nextcloud
               - MYSQL_USER=nextcloud
-              - MYSQL_ROOT_PASSWORD=TutoDocker2026!
-              - MYSQL_PASSWORD=TutoDocker2026!
+              - MYSQL_ROOT_PASSWORD=TutoDocker-Lab1!
+              - MYSQL_PASSWORD=TutoDocker-Lab1!
             expose:
               - 3306
             healthcheck:
@@ -535,7 +535,7 @@ La solution : un **test de santé** (*healthcheck*), une commande que Docker lan
           - dbnet
     ```
 
-    Puis `docker compose up -d` : Compose ne crée **que** le nouveau service, sans toucher aux trois autres. 🌐 Sur `http://IP-de-la-VM:8080`, choisir le système **MySQL / MariaDB**, serveur `db`, utilisateur `nextcloud`, mot de passe `TutoDocker2026!`, base `nextcloud` : les tables de Nextcloud (`oc_…`) s'affichent. Adminer joint `db` **par son nom**, puisqu'ils partagent `dbnet`.
+    Puis `docker compose up -d` : Compose ne crée **que** le nouveau service, sans toucher aux trois autres. 🌐 Sur `http://IP-de-la-VM:8080`, choisir le système **MySQL / MariaDB**, serveur `db`, utilisateur `nextcloud`, mot de passe `TutoDocker-Lab1!`, base `nextcloud` : les tables de Nextcloud (`oc_…`) s'affichent. Adminer joint `db` **par son nom**, puisqu'ils partagent `dbnet`.
 
     Retirer ensuite le service du fichier et lancer `docker compose up -d --remove-orphans` pour supprimer le conteneur devenu orphelin : un outil d'administration de base de données ne doit pas rester exposé.
 
@@ -558,7 +558,7 @@ La solution : un **test de santé** (*healthcheck*), une commande que Docker lan
     {"installed":true,"maintenance":false,"needsDbUpgrade":false,"version":"35.0.3.2","versionstring":"35.0.3","edition":"","productname":"Nextcloud","extendedSupport":false}
     ```
 
-    🌐 `http://IP-de-la-VM` affiche la page de connexion de Nextcloud, et le compte `admin` / `TutoDocker2026!` fonctionne.
+    🌐 `http://IP-de-la-VM` affiche la page de connexion de Nextcloud, et le compte `admin` / `TutoDocker-Lab1!` fonctionne.
 
 !!! success "Prendre l'instantané `03-fin-jour-2`"
     🛟 Le jour 3 installe un reverse proxy qui a besoin du port 80. 🐧 Arrêter et supprimer les conteneurs de Nextcloud, **en gardant ses données** (pas de `-v`) :
@@ -569,6 +569,14 @@ La solution : un **test de santé** (*healthcheck*), une commande que Docker lan
     ```
 
     🐧 Éteindre la VM (`sudo poweroff`), puis 🖥️ prendre un instantané nommé `03-fin-jour-2`.
+
+!!! abstract "Le jour 2 en résumé"
+    Avant les questions, relire cette carte : chaque branche reprend une partie du jour, avec ses notions et ses commandes clés.
+
+    ![Carte mentale du jour 2 : volumes et dossiers montés, docker commit, save et load, réseaux Docker, Docker Compose avec ses commandes](images/carte-mentale-jour2.svg){ loading=lazy }
+    /// caption
+    Le jour 2 en un coup d'œil : garder ses données, relier les conteneurs, tout lancer avec Compose.
+    ///
 
 ## 10. Questions de révision
 

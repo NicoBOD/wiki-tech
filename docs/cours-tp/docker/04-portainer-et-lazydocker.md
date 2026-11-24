@@ -38,7 +38,7 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `tssr` · 🌐 **navigateur du PC** · ✍️ **exercice**. Portainer n'existe **qu'en anglais** : ses menus sont écrits en gras, en anglais, avec leur traduction entre parenthèses. Point de départ : `docker ps -a` ne montre **aucun** conteneur (sinon les supprimer avec `docker rm -f`), et les ports 8081 et 9443 de la VM sont libres.
+    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `adminlab` · 🌐 **navigateur du PC** · ✍️ **exercice**. Portainer n'existe **qu'en anglais** : ses menus sont écrits en gras, en anglais, avec leur traduction entre parenthèses. Point de départ : `docker ps -a` ne montre **aucun** conteneur (sinon les supprimer avec `docker rm -f`), et les ports 8081 et 9443 de la VM sont libres.
 
 <!-- NOTE DE RÉDACTION (non affichée) : le TD « 10 Portainer » du formateur ne contenait que le script d'installation interactif (Docker + Portainer CE/EE + Rancher « à corriger ») : partie écrite d'après la documentation de Portainer (docs.portainer.io, novembre 2026) et rejouée dans le lab. Écarts avec le script du formateur : image portainer/portainer-ce:lts (et non :latest), volume portainer_data, port 9000 (HTTP) plus publié par défaut (la doc le garde « for legacy reasons »), champ « Setup token » apparu dans les versions récentes (jeton dans docker logs), mot de passe ≥ 12 caractères, Rancher non repris (Rancher sert à gérer Kubernetes, pas Docker seul). Captures Portainer prises à travers un relais local (certificat autosigné) le 2026-11-24 ; LazyDocker capturé dans tmux, rendu en image. -->
 
@@ -122,7 +122,7 @@ Le jeton change à chaque installation : copier **le sien** (sélectionner la su
     | Champ | Valeur |
     |---|---|
     | **Username** (identifiant) | `admin` |
-    | **Password** et **Confirm password** (mot de passe, confirmation) | `TutoDocker2026!` |
+    | **Password** et **Confirm password** (mot de passe, confirmation) | `TutoDocker-Lab1!` |
     | **Setup token** (jeton de configuration) | Le jeton copié à l'étape précédente |
 
     ![Écran « New Portainer installation » : champs Username (admin), Password et Confirm password masqués, Setup token rempli avec une longue suite hexadécimale, rappel « The password must be at least 12 characters long » coché, bouton Create user.](images/04-portainer-creer-admin.png){ loading=lazy }
@@ -253,7 +253,12 @@ Dans la colonne **Quick Actions** (actions rapides), chaque icône ouvre un outi
 
 ## 5. Le socket Docker : les clés de la maison
 
-Pour piloter Docker, Portainer a besoin du **socket** `/var/run/docker.sock`, qu'on lui a donné avec `-v /var/run/docker.sock:/var/run/docker.sock`. En [partie 1](01-decouvrir-et-installer-docker.md#42-ajouter-tssr-au-groupe-docker), on a vu que l'accès à ce socket permet de **devenir `root` sur la machine**.
+Pour piloter Docker, Portainer a besoin du **socket** `/var/run/docker.sock`, qu'on lui a donné avec `-v /var/run/docker.sock:/var/run/docker.sock`. En [partie 1](01-decouvrir-et-installer-docker.md#42-ajouter-adminlab-au-groupe-docker), on a vu que l'accès à ce socket permet de **devenir `root` sur la machine**.
+
+![Schéma : la commande docker, le client, envoie ses ordres au socket /var/run/docker.sock (srw-rw---- root:docker), puis à dockerd, containerd et aux conteneurs. Peuvent écrire dans le socket : root, le groupe docker et Portainer qui le monte ; les autres utilisateurs sont refusés. Qui parle au socket peut monter tout le disque de la VM dans un conteneur : groupe docker = root.](images/client-socket-dockerd.svg){ loading=lazy }
+/// caption
+Portainer monte le socket : qui administre Portainer contrôle la VM.
+///
 
 Conséquence directe : **quiconque se connecte à Portainer en administrateur contrôle la VM**. Il peut lancer un conteneur qui monte `/` et lire ou modifier n'importe quel fichier.
 
@@ -265,13 +270,13 @@ Conséquence directe : **quiconque se connecte à Portainer en administrateur co
 
 ## 6. LazyDocker, l'interface en mode texte
 
-**LazyDocker** est un petit programme qui s'utilise **dans le terminal**, par exemple dans la session SSH ouverte depuis le PC. Il affiche les conteneurs, les images, les volumes et les réseaux, avec les journaux et les statistiques en direct, et se pilote au clavier. Aucun port à ouvrir, aucun mot de passe de plus : il utilise les droits de l'utilisateur qui le lance (ici `tssr`, membre du groupe `docker`).
+**LazyDocker** est un petit programme qui s'utilise **dans le terminal**, par exemple dans la session SSH ouverte depuis le PC. Il affiche les conteneurs, les images, les volumes et les réseaux, avec les journaux et les statistiques en direct, et se pilote au clavier. Aucun port à ouvrir, aucun mot de passe de plus : il utilise les droits de l'utilisateur qui le lance (ici `adminlab`, membre du groupe `docker`).
 
 ### 6.1 L'installer
 
 Son auteur fournit un script d'installation. Comme vu en partie 1, on le **lit** avant de l'exécuter.
 
-1. 🐧 Télécharger le script, le lire, puis l'exécuter **en `tssr`** (pas en `root`, ni avec `sudo` : il s'installe dans le dossier personnel) :
+1. 🐧 Télécharger le script, le lire, puis l'exécuter **en `adminlab`** (pas en `root`, ni avec `sudo` : il s'installe dans le dossier personnel) :
 
     ```bash
     curl -fsSLO https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh
@@ -295,7 +300,7 @@ Son auteur fournit un script d'installation. Comme vu en partie 1, on le **lit**
 
 ### 6.2 L'utiliser
 
-🐧 Relancer d'abord le conteneur de l'exercice, pour avoir quelque chose à regarder, puis lancer LazyDocker :
+🐧 Relancer d'abord le conteneur de l'exercice, pour avoir quelque chose à regarder (s'il existe encore, le supprimer avant : `docker rm -f web-portainer`), puis lancer LazyDocker :
 
 ```bash
 docker run -d --name web-portainer -p 8081:80 nginx
@@ -339,7 +344,7 @@ Pour un administrateur systèmes et réseaux, Docker Desktop est pratique pour *
 ## 8. Vérifier son lab
 
 !!! success "Vérifier son lab"
-    🐧 En `tssr` :
+    🐧 En `adminlab` :
 
     ```bash
     docker ps --format '{{.Names}}  {{.Status}}' --filter name=^portainer$
@@ -358,12 +363,20 @@ Pour un administrateur systèmes et réseaux, Docker Desktop est pratique pour *
     Version: 0.25.2
     ```
 
-    🌐 `https://IP-de-la-VM:9443` affiche la page de connexion de Portainer, et l'on se connecte avec `admin` / `TutoDocker2026!`.
+    🌐 `https://IP-de-la-VM:9443` affiche la page de connexion de Portainer, et l'on se connecte avec `admin` / `TutoDocker-Lab1!`.
 
     🐧 Pour aller plus loin : redémarrer la VM (`sudo reboot`), se reconnecter en SSH, et vérifier avec `docker ps` que **Portainer est revenu tout seul**, grâce à `--restart=always`.
 
-!!! success "🛟 Prendre l'instantané `02-fin-jour-1`"
+!!! success "Prendre l'instantané `02-fin-jour-1`"
     🐧 Éteindre la VM (`sudo poweroff`), puis 🖥️ prendre un instantané nommé `02-fin-jour-1`. Portainer et son compte `admin` resservent aux jours suivants.
+
+!!! abstract "Le jour 1 en résumé"
+    Avant les questions, relire cette carte : chaque branche reprend une partie du jour, avec ses notions et ses commandes clés.
+
+    ![Carte mentale du jour 1 : quatre branches, comprendre et installer Docker, premiers conteneurs (docker run, ps, logs, exec), Debian avec Apache et SSH, Portainer et LazyDocker](images/carte-mentale-jour1.svg){ loading=lazy }
+    /// caption
+    Le jour 1 en un coup d'œil : les notions et les commandes à retenir.
+    ///
 
 ## 9. Questions de révision
 

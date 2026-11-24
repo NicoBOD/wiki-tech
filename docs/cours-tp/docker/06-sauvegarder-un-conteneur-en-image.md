@@ -38,9 +38,9 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🐧 **VM** `docker-hote`, connecté en `tssr` · 📦 **dans un conteneur** · ✍️ **exercice**. Suite directe de la [partie 5](05-volumes-et-dossiers-montes.md) : seul `portainer` tourne.
+    🐧 **VM** `docker-hote`, connecté en `adminlab` · 📦 **dans un conteneur** · ✍️ **exercice**. Suite directe de la [partie 5](05-volumes-et-dossiers-montes.md) : seul `portainer` tourne.
 
-<!-- NOTE DE RÉDACTION (non affichée) : reprend le TD « 04 Faire une sauvegarde d'un conteneur sous forme d'image » v1 du formateur (mêmes noms : debian_test, debian-ping-nano, ping-terminator, backup-2025-image-debian-ping-nano.tar). Corrections : « docker exec -it debian_test bash -c "…" exit » (le mot exit était collé à la commande) ; ajout de la preuve que commit n'inclut pas les volumes (mesurée : /data vide dans l'image), et de l'historique opaque d'une image commitée. Exemple Dockerfile de l'alternative gardé, renvoyé à la partie 14 pour la pratique. Sorties du lab, 2026-11-24. -->
+<!-- NOTE DE RÉDACTION (non affichée) : reprend le TD « 04 Faire une sauvegarde d'un conteneur sous forme d'image » v1 du formateur (mêmes noms : debian_test, debian-ping-nano, ping-terminator, backup-2025-image-debian-ping-nano.tar, renommé sauvegarde-image-debian-ping-nano.tar pour ne pas dater le parcours). Corrections : « docker exec -it debian_test bash -c "…" exit » (le mot exit était collé à la commande) ; ajout de la preuve que commit n'inclut pas les volumes (mesurée : /data vide dans l'image), et de l'historique opaque d'une image commitée. Exemple Dockerfile de l'alternative gardé, renvoyé à la partie 14 pour la pratique. Sorties du lab, 2026-11-24. -->
 
 ## 1. À quoi sert `docker commit` ?
 
@@ -143,12 +143,12 @@ PING 9.9.9.9 (9.9.9.9) 56(84) bytes of data.
 🐧 Ranger l'image dans une archive `.tar` (*tape archive*, un fichier qui en regroupe plusieurs) :
 
 ```bash
-docker save -o backup-2025-image-debian-ping-nano.tar debian-ping-nano
-ls -lh backup-2025-image-debian-ping-nano.tar
+docker save -o sauvegarde-image-debian-ping-nano.tar debian-ping-nano
+ls -lh sauvegarde-image-debian-ping-nano.tar
 ```
 
 ```text
--rw------- 1 tssr tssr 66M 24 nov.  06:51 backup-2025-image-debian-ping-nano.tar
+-rw------- 1 adminlab adminlab 66M 24 nov.  06:51 sauvegarde-image-debian-ping-nano.tar
 ```
 
 Cette archive contient **toutes les couches** de l'image : on peut la copier sur une clé USB ou un autre serveur (`scp`), même sans accès à Internet ni à un registre.
@@ -174,7 +174,7 @@ Pour simuler « une autre machine », on supprime tout de la VM, puis on recharg
 2. 🐧 Recharger l'image depuis l'archive :
 
     ```bash
-    docker load -i backup-2025-image-debian-ping-nano.tar
+    docker load -i sauvegarde-image-debian-ping-nano.tar
     ```
 
     ```text
@@ -286,7 +286,7 @@ Puis on construit l'image avec `docker build -t debian-ping-nano .`. Le résulta
 ```bash
 docker rm -f restaure
 docker image rm debian-ping-nano debian-outils:v2
-rm -f backup-2025-image-debian-ping-nano.tar
+rm -f sauvegarde-image-debian-ping-nano.tar
 ```
 
 ## 7. Vérifier son lab

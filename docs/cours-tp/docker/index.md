@@ -33,7 +33,7 @@ status: publié
 | Propriété | Valeur |
 |-----------|--------|
 | Public | Techniciens et administrateurs systèmes et réseaux en formation : savoir créer une VM Linux et taper quelques commandes suffit |
-| Durée totale | 5 jours de 7 h (35 h), dont environ 31 h 30 de parties ; le reste sert aux questions, aux révisions et aux QCM des [annexes](annexes.md) |
+| Durée totale | 5 jours de 7 h (35 h), dont environ 32 h de parties ; le reste sert aux questions, aux révisions et aux QCM des [annexes](annexes.md) |
 | Version décrite | Debian **13.7** « trixie », Docker Engine **29.10** (et son mode Swarm), Docker Compose **5.8**, Portainer CE **2.45 LTS**, registre `registry:3` |
 | Dernière mise à jour | 2026-11-24 |
 
@@ -75,7 +75,7 @@ Chaque partie dure entre 1 h et 2 h 30 et mêle explications et pratique. Les du
 | [5. Garder ses données : volumes et dossiers montés](05-volumes-et-dossiers-montes.md) | Cours et TP | 2 h | Couche du conteneur, volumes, *bind mounts*, sauvegarde et restauration d'un volume | `docker-hote` |
 | [6. Sauvegarder un conteneur sous forme d'image](06-sauvegarder-un-conteneur-en-image.md) | TP | 1 h | `docker commit`, `docker save`, `docker load`, et leurs limites | `docker-hote` |
 | [7. Les réseaux Docker](07-reseaux-docker.md) | Cours et TP | 2 h | Bridge par défaut et personnalisé, résolution de noms, host, none, macvlan, Docker et le pare-feu | `docker-hote` |
-| [8. Docker Compose : Nextcloud en une commande](08-docker-compose-nextcloud.md) | Cours et TP | 2 h | Fichier `compose.yaml`, services, volumes, réseaux, variables, journaux | `docker-hote` |
+| [8. Docker Compose : Nextcloud en une commande](08-docker-compose-nextcloud.md) | Cours et TP | 2 h | Fichier Compose (`docker-compose.yml`), services, volumes, réseaux, variables, journaux | `docker-hote` |
 
 ### Jour 3 — Publier des services
 
@@ -83,7 +83,7 @@ Chaque partie dure entre 1 h et 2 h 30 et mêle explications et pratique. Les du
 |:---:|---|---|---|---|
 | [9. Un reverse proxy avec Nginx Proxy Manager](09-reverse-proxy-nginx-proxy-manager.md) | Cours et TP | 2 h | Fichier `hosts`, hôtes de proxy, réseaux Docker partagés, Portainer derrière le proxy | `docker-hote` |
 | [10. Nextcloud en HTTPS derrière le reverse proxy](10-nextcloud-https-derriere-le-proxy.md) | TP | 2 h | Compose et proxy, certificat autosigné, WordPress en exercice | `docker-hote` |
-| [11. Les plateformes tout-en-un](11-plateformes-tout-en-un.md) | Cours et TP | 2 h | Coolify, Cosmos Server, BunkerWeb | `docker-hote`, `docker-plateforme` |
+| [11. Les plateformes tout-en-un](11-plateformes-tout-en-un.md) | Cours et TP | 2 h 30 | Coolify, Cosmos Server, BunkerWeb | `docker-hote`, `docker-plateforme` |
 
 ### Jour 4 — Exploiter et s'amuser
 
@@ -149,7 +149,7 @@ La VM `docker-hote` reçoit son adresse automatiquement (DHCP). Elle change d'un
 
 La VM `docker-plateforme` de la partie 11 se branche sur le **même réseau** que `docker-hote` (mêmes réglages) et reçoit elle aussi son adresse par DHCP : elle est écrite **IP-de-plateforme**.
 
-Les VM `docker-n2` et `docker-n3` du cluster Swarm (partie 16) se branchent elles aussi sur ce réseau. À partir de la partie 15, certaines adresses sont écrites en clair, celles du lab de référence (un lab sous KVM, dont le réseau est `192.168.8.0/24`) : `192.168.8.71` pour `docker-hote`, `192.168.8.73` pour `docker-n2`, `192.168.8.74` pour `docker-n3`. Chez soi, elles sont dans la plage de son hyperviseur (tableaux ci-dessus) : les remplacer par les siennes.
+Les VM `docker-n2` et `docker-n3` du cluster Swarm (partie 16) se branchent elles aussi sur ce réseau. Certaines captures (dès la partie 4) et, à partir de la partie 15, certaines commandes montrent en clair les adresses du lab de référence (un lab sous KVM, dont le réseau est `192.168.8.0/24`) : `192.168.8.71` pour `docker-hote`, `192.168.8.72` pour `docker-plateforme`, `192.168.8.73` pour `docker-n2`, `192.168.8.74` pour `docker-n3`. Chez soi, elles sont dans la plage de son hyperviseur (tableaux ci-dessus) : les remplacer par les siennes.
 
 À l'intérieur de la VM, Docker crée en plus son propre réseau privé pour les conteneurs, `172.17.0.0/16` par défaut : on le découvre en [partie 2](02-premiers-conteneurs.md).
 
@@ -159,24 +159,24 @@ Ce lab est **pédagogique** : les mots de passe sont écrits ici volontairement 
 
 | Où | Compte | Mot de passe | Créé en |
 |---|---|---|---|
-| VM `docker-hote` | `root` (administrateur) | `TutoDocker2026!` | Partie 1 |
-| VM `docker-hote` | `tssr` (utilisateur, membre des groupes `sudo` et `docker`) | `TutoDocker2026!` | Partie 1 |
-| Conteneur `debian` (SSH) | `root` | `TutoDocker2026!` | Partie 3 |
-| Portainer | `admin` | `TutoDocker2026!` | Partie 4 |
-| MariaDB (essais de la partie 5) | `root` | `TutoDocker2026!` | Partie 5 |
-| MariaDB de Nextcloud | `root`, et `nextcloud` (base `nextcloud`) | `TutoDocker2026!` | Partie 8 |
-| Nextcloud | `admin` | `TutoDocker2026!` | Parties 8 et 10 |
-| Nginx Proxy Manager | `admin@lab.local` | `TutoDocker2026!` | Partie 9 |
-| Coolify | `admin@lab.local` | `TutoDocker2026!` | Partie 11 |
-| Uptime Kuma | `admin` | `TutoDocker2026!` | Partie 11 |
-| Kasm (Firefox) | `kasm_user` | `TutoDocker2026!` | Partie 13 |
-| Open WebUI | `admin@lab.local` | `TutoDocker2026!` | Partie 13 |
-| VM `docker-plateforme` | `root` et `tssr` | `TutoDocker2026!` | Partie 11 |
-| MariaDB de WordPress | `root`, et `wordpress` (base `wordpress`) | `TutoDocker2026!` | Partie 10 |
-| Conteneur `debian-ssh-container` (SSH, port 54321) | `user` | `TutoDocker2026!` | Partie 14 |
-| WordPress de l'image LAMP (base `wordpress`, puis site) | `wordpress` (base), `admin` (site) | `TutoDocker2026!` | Partie 14 |
+| VM `docker-hote` | `root` (administrateur) | `TutoDocker-Lab1!` | Partie 1 |
+| VM `docker-hote` | `adminlab` (utilisateur, membre des groupes `sudo` et `docker`) | `TutoDocker-Lab1!` | Partie 1 |
+| Conteneur `debian` (SSH) | `root` | `TutoDocker-Lab1!` | Partie 3 |
+| Portainer | `admin` | `TutoDocker-Lab1!` | Partie 4 |
+| MariaDB (essais de la partie 5) | `root` | `TutoDocker-Lab1!` | Partie 5 |
+| MariaDB de Nextcloud | `root`, et `nextcloud` (base `nextcloud`) | `TutoDocker-Lab1!` | Partie 8 |
+| Nextcloud | `admin` | `TutoDocker-Lab1!` | Parties 8 et 10 |
+| Nginx Proxy Manager | `admin@lab.local` | `TutoDocker-Lab1!` | Partie 9 |
+| Coolify | `admin@lab.local` | `TutoDocker-Lab1!` | Partie 11 |
+| Uptime Kuma | `admin` | `TutoDocker-Lab1!` | Partie 11 |
+| Kasm (Firefox) | `kasm_user` | `TutoDocker-Lab1!` | Partie 13 |
+| Open WebUI | `admin@lab.local` | `TutoDocker-Lab1!` | Partie 13 |
+| VM `docker-plateforme` | `root` et `adminlab` | `TutoDocker-Lab1!` | Partie 11 |
+| MariaDB de WordPress | `root`, et `wordpress` (base `wordpress`) | `TutoDocker-Lab1!` | Partie 10 |
+| Conteneur `debian-ssh-container` (SSH, port 54321) | `user` | `TutoDocker-Lab1!` | Partie 14 |
+| WordPress de l'image LAMP (base `wordpress`, puis site) | `wordpress` (base), `admin` (site) | `TutoDocker-Lab1!` | Partie 14 |
 | Docker Hub | son propre compte, avec un **jeton d'accès** | personnel, jamais publié | Partie 15 |
-| VM `docker-n2` et `docker-n3` | `root` et `tssr` | `TutoDocker2026!` | Partie 16 |
+| VM `docker-n2` et `docker-n3` | `root` et `adminlab` | `TutoDocker-Lab1!` | Partie 16 |
 
 !!! info "Pourquoi un mot de passe aussi long ?"
     Portainer refuse les mots de passe de **moins de 12 caractères**. Plutôt que d'avoir un mot de passe différent par logiciel, le lab en utilise un seul, assez long pour être accepté partout. Sur un clavier AZERTY, le `!` se tape **sans** ++shift++, sur la touche à gauche de la touche ++shift++ de droite.
@@ -206,7 +206,7 @@ Un **instantané** (*snapshot*) fige l'état d'une machine virtuelle. En cas d'e
 | `01-docker-installe` | `docker-hote` | Fin de la partie 1, VM éteinte | Toutes les parties suivantes avec un Docker propre |
 | `02-fin-jour-1` | `docker-hote` | Fin de la partie 4, VM éteinte : Docker, Portainer (compte `admin` créé) et LazyDocker | Le jour 2 |
 | `03-fin-jour-2` | `docker-hote` | Fin de la partie 8, VM éteinte, Nextcloud arrêté (`docker compose down`) mais ses volumes gardés | Le jour 3 |
-| `04-fin-jour-3` | `docker-hote` | Fin de la partie 10, VM éteinte : NPM, Portainer et Nextcloud derrière le proxy en HTTPS | La partie 11 et le jour 4 |
+| `04-fin-jour-3` | `docker-hote` | Fin de la partie 10, VM éteinte : NPM, Portainer et Nextcloud derrière le proxy en HTTPS (et WordPress si l'exercice a été fait) | La partie 11 et le jour 4 |
 | `05-exploitation` | `docker-hote` | Fin de la partie 12, VM éteinte : rotation des journaux réglée | La partie 13 |
 | `00-debian-installee`, `01-coolify` | `docker-plateforme` | Partie 11 : avant, puis après l'installation de Coolify et d'Uptime Kuma | L'installation de Coolify |
 | `06-registre` | `docker-hote` | Fin de la partie 15, VM éteinte : images `web` et `debian-ssh`, registre privé, `insecure-registries` | La partie 16 |
@@ -243,7 +243,7 @@ Dans les TP, chaque action précise où elle se fait :
 Les commandes à taper sont dans des blocs de code ; le texte après `#` est un commentaire, il ne se tape pas. Les interfaces qui n'existent qu'en anglais (Portainer, Coolify…) ont leurs menus écrits **en gras, en anglais**, avec une traduction entre parenthèses.
 
 !!! tip "Travailler en SSH depuis le PC"
-    La console de l'hyperviseur ne permet pas toujours le copier-coller. Mieux vaut ouvrir **PowerShell** sur le PC et se connecter à la VM en SSH : `ssh tssr@IP-de-la-VM`. Le copier-coller fonctionne alors normalement (clic droit pour coller dans le terminal Windows).
+    La console de l'hyperviseur ne permet pas toujours le copier-coller. Mieux vaut ouvrir **PowerShell** sur le PC et se connecter à la VM en SSH : `ssh adminlab@IP-de-la-VM`. Le copier-coller fonctionne alors normalement (clic droit pour coller dans le terminal Windows).
 
 !!! info "S'entraîner en ligne"
     Le bac à sable en ligne historique de Docker, *Play with Docker*, a fermé le 1er mars 2026. Pour réviser hors du lab, des plateformes comme [Killercoda](https://killercoda.com/) ou [iximiuz Labs](https://labs.iximiuz.com/) proposent des terminaux Docker dans le navigateur (compte gratuit requis). Elles ne sont pas nécessaires pour suivre le parcours.

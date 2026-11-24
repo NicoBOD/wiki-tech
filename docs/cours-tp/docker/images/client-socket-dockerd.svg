@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="520" viewBox="0 0 960 520" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="14">
+  <title>La commande docker parle à dockerd par le socket /var/run/docker.sock</title>
+  <defs>
+    <marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1565c0"/></marker>
+  </defs>
+  <rect width="960" height="520" fill="#ffffff"/>
+  <rect x="20" y="15" width="920" height="150" rx="14" fill="#f4f6f8" stroke="#2e7d32" stroke-width="2"/>
+  <text x="40" y="41" font-size="16" font-weight="bold" fill="#1b5e20">VM docker-hote</text>
+  <rect x="40" y="60" width="160" height="80" rx="10" fill="#ffffff" stroke="#607d8b" stroke-width="2"/>
+  <text x="120" y="88" text-anchor="middle" font-weight="bold">commande docker</text>
+  <text x="120" y="108" text-anchor="middle" font-size="12">le client</text>
+  <text x="120" y="126" text-anchor="middle" font-family="Consolas, monospace" font-size="11" fill="#546e7a">docker ps</text>
+  <rect x="220" y="60" width="160" height="80" rx="10" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/>
+  <text x="300" y="84" text-anchor="middle" font-weight="bold">le socket</text>
+  <text x="300" y="104" text-anchor="middle" font-family="Consolas, monospace" font-size="11" fill="#263238">/var/run/docker.sock</text>
+  <text x="300" y="122" text-anchor="middle" font-family="Consolas, monospace" font-size="11" fill="#263238">srw-rw---- root:docker</text>
+  <rect x="400" y="60" width="160" height="80" rx="10" fill="#e8f5e9" stroke="#43a047" stroke-width="2"/>
+  <text x="480" y="88" text-anchor="middle" font-family="Consolas, monospace" font-weight="bold" font-size="15">dockerd</text>
+  <text x="480" y="110" text-anchor="middle" font-size="12">le service Docker</text>
+  <rect x="580" y="60" width="160" height="80" rx="10" fill="#e8f5e9" stroke="#43a047" stroke-width="2"/>
+  <text x="660" y="88" text-anchor="middle" font-family="Consolas, monospace" font-weight="bold" font-size="15">containerd</text>
+  <text x="660" y="110" text-anchor="middle" font-size="12">lance les conteneurs</text>
+  <rect x="760" y="60" width="160" height="80" rx="10" fill="#e1f5fe" stroke="#0288d1" stroke-width="2"/>
+  <text x="840" y="88" text-anchor="middle" font-weight="bold" fill="#01579b">conteneurs</text>
+  <text x="840" y="110" text-anchor="middle" font-size="12">web, portainer…</text>
+  <line x1="200" y1="100" x2="218" y2="100" stroke="#1565c0" stroke-width="2" marker-end="url(#m)"/>
+  <line x1="380" y1="100" x2="398" y2="100" stroke="#1565c0" stroke-width="2" marker-end="url(#m)"/>
+  <line x1="560" y1="100" x2="578" y2="100" stroke="#1565c0" stroke-width="2" marker-end="url(#m)"/>
+  <line x1="740" y1="100" x2="758" y2="100" stroke="#1565c0" stroke-width="2" marker-end="url(#m)"/>
+
+  <text x="40" y="196" font-size="15" font-weight="bold" fill="#263238">Qui peut écrire dans le socket ?</text>
+  <line x1="127" y1="252" x2="598" y2="252" stroke="#1565c0" stroke-width="2"/>
+  <line x1="127" y1="252" x2="127" y2="272" stroke="#1565c0" stroke-width="2"/>
+  <line x1="362" y1="252" x2="362" y2="272" stroke="#1565c0" stroke-width="2"/>
+  <line x1="598" y1="252" x2="598" y2="272" stroke="#1565c0" stroke-width="2"/>
+  <line x1="300" y1="252" x2="300" y2="142" stroke="#1565c0" stroke-width="3" marker-end="url(#m)"/>
+  <text x="312" y="222" font-size="12" fill="#546e7a">lecture et écriture : il suffit de le pouvoir</text>
+
+  <rect x="25" y="272" width="205" height="108" rx="10" fill="#e8f5e9" stroke="#43a047" stroke-width="2"/>
+  <text x="127" y="298" text-anchor="middle" font-weight="bold" fill="#1b5e20">root</text>
+  <text x="127" y="320" text-anchor="middle" font-size="12">propriétaire du socket</text>
+  <text x="127" y="340" text-anchor="middle" font-size="12">(droits rw)</text>
+  <rect x="260" y="272" width="205" height="108" rx="10" fill="#e8f5e9" stroke="#43a047" stroke-width="2"/>
+  <text x="362" y="298" text-anchor="middle" font-weight="bold" fill="#1b5e20">le groupe docker</text>
+  <text x="362" y="320" text-anchor="middle" font-size="12">tout membre du groupe, par ex.</text>
+  <text x="362" y="338" text-anchor="middle" font-size="12">adminlab après</text>
+  <text x="362" y="356" text-anchor="middle" font-family="Consolas, monospace" font-size="10.5" fill="#263238">usermod -aG docker adminlab</text>
+  <rect x="495" y="272" width="205" height="108" rx="10" fill="#e8f5e9" stroke="#43a047" stroke-width="2"/>
+  <text x="597" y="298" text-anchor="middle" font-weight="bold" fill="#1b5e20">Portainer</text>
+  <text x="597" y="320" text-anchor="middle" font-size="12">un conteneur à qui on monte</text>
+  <text x="597" y="338" text-anchor="middle" font-size="12">le socket avec l'option</text>
+  <text x="597" y="358" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#263238">-v /var/run/docker.sock:</text>
+  <text x="597" y="371" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#263238">/var/run/docker.sock</text>
+  <rect x="730" y="272" width="205" height="108" rx="10" fill="#ffffff" stroke="#c62828" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="832" y="298" text-anchor="middle" font-weight="bold" fill="#b71c1c">les autres utilisateurs</text>
+  <text x="832" y="320" text-anchor="middle" font-size="12">refusés :</text>
+  <text x="832" y="340" text-anchor="middle" font-size="11" fill="#263238">permission denied while trying</text>
+  <text x="832" y="356" text-anchor="middle" font-size="11" fill="#263238">to connect to the docker API</text>
+
+  <rect x="20" y="405" width="920" height="102" rx="12" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+  <text x="40" y="430" font-size="15" font-weight="bold" fill="#b71c1c">Pourquoi « groupe docker = root » ?</text>
+  <text x="40" y="452" font-size="13" fill="#263238">Qui parle au socket peut demander un conteneur où il est root, avec tout le disque de la VM monté dedans :</text>
+  <text x="40" y="474" font-family="Consolas, monospace" font-size="13" fill="#263238">docker run --rm -v /:/hote debian:13 head -2 /hote/etc/shadow</text>
+  <text x="40" y="495" font-size="13" fill="#263238">Sans mot de passe, il lit le fichier des mots de passe chiffrés. Même risque pour qui administre Portainer.</text>
+</svg>

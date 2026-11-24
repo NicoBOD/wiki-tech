@@ -38,7 +38,7 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `tssr` · 🌐 **navigateur** du PC · ✍️ **exercice** · 🛟 **instantané**. Point de départ : l'instantané `05-exploitation` (fin de la partie 12), ou la VM telle qu'elle est à la fin de la partie 13.
+    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `adminlab` · 🌐 **navigateur** du PC · ✍️ **exercice** · 🛟 **instantané**. Point de départ : l'instantané `05-exploitation` (fin de la partie 12), ou la VM telle qu'elle est à la fin de la partie 13.
 
 <!-- NOTE DE RÉDACTION (non affichée) : partie construite à partir des supports du formateur 05 (TD Dockerfile), 06 (TP SSH), 07 (correction du TP) et 09 (pile LAMP + WordPress). Tout a été exécuté le 2026-11-24 sur docker-hote (Debian 13.7, Docker 29.10.0), sorties dans captures/14-*.txt du lab. Écarts corrigés : EXPOSE présenté comme documentaire (le TD disait « il faut toujours exposer les ports aussi avec -p », ce qui laissait croire que EXPOSE ouvrait le port) ; -p 80:80 remplacé par -p 8080:80 (port 80 pris par NPM depuis la partie 9 : erreur « port is already allocated » mesurée) ; « RUN : Démarrer le service SSH » du corrigé remplacé par CMD ; `RUN mkdir /var/run/sshd` fait ÉCHOUER la construction sur debian:13 (« File exists », le paquet openssh-server 1:10.0p1-7+deb13u4 crée déjà /run/sshd) → `mkdir -p /run/sshd` ; debian:latest → debian:13 ; mot de passe du corrigé remplacé par celui du lab ; dans le 09, `service mysql start` répond « mysql: unrecognized service » sur Debian 13 (service `mariadb`) et la base n'est pas créée, alors que l'assistant WordPress s'affiche quand même → corrigé, et IF NOT EXISTS ajouté (sinon erreurs à chaque redémarrage) ; LABEL maintainer (adresse e-mail) retiré ; chemin /home/<formateur>/docker/lamp-wordpress remplacé par ~/lamp-wordpress. -->
 
@@ -196,7 +196,7 @@ Objectif : une image `web` qui contient le serveur Apache **et** une page d'accu
 
     | Ligne | Rôle |
     |---|---|
-    | `FROM httpd:latest` | Part de l'image officielle d'Apache (`httpd`), déjà croisée en partie 3. `latest` simplifie ce premier essai ; la section 6 explique pourquoi, pour un vrai service, on fige la version (`httpd:2.4`) |
+    | `FROM httpd:latest` | Part de l'image officielle d'Apache (`httpd`), déjà croisée aux parties 2 et 9. `latest` simplifie ce premier essai ; la section 6 explique pourquoi, pour un vrai service, on fige la version (`httpd:2.4`) |
     | `COPY index.html /usr/local/apache2/htdocs/` | Copie la page dans le dossier que cette image publie (sa racine web) |
     | `EXPOSE 80` | Documente le port d'Apache. L'image `httpd` le déclare déjà : la ligne est redondante, mais elle rend le fichier lisible seul |
 
@@ -233,7 +233,7 @@ docker build -t web .
  => => naming to docker.io/library/web:latest                              0.0s
 ```
 
-Le moteur de construction, **BuildKit**, affiche une ligne par étape : `[1/2] FROM`, puis `[2/2] COPY`. Cette sortie a été obtenue avec l'image `httpd` déjà présente sur la VM (`CACHED` sur la ligne `FROM`) : si elle manque, Docker la télécharge d'abord, et la construction prend environ 5 secondes au lieu d'une.
+Le moteur de construction, **BuildKit**, affiche une ligne par étape : `[1/2] FROM`, puis `[2/2] COPY`. Ici l'image `httpd` est déjà sur la VM (`CACHED` sur la ligne `FROM`) ; si elle manque, Docker la télécharge d'abord, et la construction prend environ 5 secondes au lieu d'une.
 
 🐧 Regarder l'image et ses couches :
 
@@ -342,7 +342,7 @@ En partie 3, on a installé SSH **à la main** dans un conteneur Debian, et on a
 **Mission :** écrire un Dockerfile qui construit une image `debian-ssh` à partir de `debian:13`, avec :
 
 - le serveur SSH installé (paquet `openssh-server`) ;
-- un utilisateur **`user`** (avec un dossier personnel et le shell `/bin/bash`), mot de passe `TutoDocker2026!` ;
+- un utilisateur **`user`** (avec un dossier personnel et le shell `/bin/bash`), mot de passe `TutoDocker-Lab1!` ;
 - le port 22 documenté ;
 - le serveur SSH lancé automatiquement, au premier plan, à chaque démarrage du conteneur.
 
@@ -374,7 +374,7 @@ Puis : construire l'image, démarrer un conteneur `debian-ssh-container` qui pub
     RUN mkdir -p /run/sshd
     # Créer un utilisateur nommé « user » avec un mot de passe
     RUN useradd -ms /bin/bash user && \
-        echo 'user:TutoDocker2026!' | chpasswd
+        echo 'user:TutoDocker-Lab1!' | chpasswd
     # Documenter le port du serveur SSH
     EXPOSE 22
     # Démarrer le serveur SSH au premier plan à chaque lancement du conteneur
@@ -389,7 +389,7 @@ Puis : construire l'image, démarrer un conteneur `debian-ssh-container` qui pub
     | `rm -rf /var/lib/apt/lists/*` | Supprime la liste des paquets, inutile une fois l'installation faite, **dans le même `RUN`** (section 2) |
     | `mkdir -p /run/sshd` | `sshd` range des fichiers de travail dans `/run/sshd` et refuse de démarrer si ce dossier manque. Sur Debian 13, le paquet le crée déjà : `-p` évite l'erreur « File exists » si le dossier existe, et le crée sur les systèmes où il manque |
     | `useradd -ms /bin/bash user` | Crée l'utilisateur `user` : `-m` crée son dossier personnel `/home/user`, `-s /bin/bash` choisit son shell |
-    | `echo 'user:TutoDocker2026!' | chpasswd` | `chpasswd` reçoit `utilisateur:motdepasse` et définit le mot de passe. Les guillemets **simples** empêchent le shell d'interpréter le `!` |
+    | `echo 'user:TutoDocker-Lab1!' | chpasswd` | `chpasswd` reçoit `utilisateur:motdepasse` et définit le mot de passe. Les guillemets **simples** empêchent le shell d'interpréter le `!` |
     | `EXPOSE 22` | Documente le port de SSH. **N'ouvre rien** : la publication se fait avec `-p` au lancement |
     | `CMD ["/usr/sbin/sshd", "-D"]` | **Commande de démarrage** du conteneur (ce n'est pas un `RUN`, qui s'exécuterait une seule fois, pendant la construction). `-D` (*don't detach*) garde `sshd` au premier plan : il devient le processus principal et le conteneur reste en vie |
 
@@ -407,6 +407,9 @@ Puis : construire l'image, démarrer un conteneur `debian-ssh-container` qui pub
     ```
 
     La première construction dure une vingtaine de secondes (téléchargement et installation des paquets). Avec `apt` au lieu d'`apt-get`, la construction afficherait `WARNING: apt does not have a stable CLI interface`, sans gravité, et l'image garderait la liste des paquets (301 Mo au lieu de 263 Mo).
+
+    !!! warning "Un SSH avec un mot de passe publié"
+        Comme en partie 3, ce conteneur accepte une connexion SSH avec un mot de passe écrit sur cette page, sur le port 54321 de **toutes** les adresses de la VM, sans passer par son pare-feu (partie 7). La VM reste en NAT ou en réseau privé hôte, jamais en mode pont, et le conteneur se supprime dès la fin de l'essai (`docker rm -f debian-ssh-container`). Pour un test depuis la VM seulement, `-p 127.0.0.1:54321:22` suffit.
 
     **Démarrer le conteneur.** 🐧
 
@@ -438,7 +441,7 @@ Puis : construire l'image, démarrer un conteneur `debian-ssh-container` qui pub
     ssh user@localhost -p 54321
     ```
 
-    Répondre `yes` à la question sur l'empreinte du serveur (première connexion), puis taper le mot de passe `TutoDocker2026!`. Dans la session :
+    Répondre `yes` à la question sur l'empreinte du serveur (première connexion), puis taper le mot de passe `TutoDocker-Lab1!`. Dans la session :
 
     ```bash
     whoami; hostname; cat /etc/debian_version; id
@@ -467,7 +470,7 @@ Puis : construire l'image, démarrer un conteneur `debian-ssh-container` qui pub
     ```
 
     ```text
-    RUN /bin/sh -c useradd -ms /bin/bash user &&     echo 'user:TutoDocker2026!' | chpasswd # buildkit
+    RUN /bin/sh -c useradd -ms /bin/bash user &&     echo 'user:TutoDocker-Lab1!' | chpasswd # buildkit
     ```
 
     Toute personne qui récupère l'image lit le mot de passe. Même chose pour un fichier copié dans l'image : le script `init.sh` de la section 5 contient le mot de passe de la base, lisible par `docker run --rm --entrypoint cat lamp-wordpress /init.sh`. Pour un lab, c'est acceptable ; pour une image partagée (partie 15), jamais. En production, les secrets se passent **au lancement** (variables d'environnement, fichiers montés, *secrets* Docker), pas dans l'image. Et, comme en partie 3, un serveur SSH dans un conteneur reste une exception : pour administrer un conteneur, `docker exec` suffit.
@@ -546,7 +549,7 @@ Le script doit démarrer MariaDB, créer la base et l'utilisateur de WordPress, 
     service mariadb start
     # Crée la base et l'utilisateur de WordPress (IF NOT EXISTS : pas d'erreur au redémarrage du conteneur)
     mysql -e "CREATE DATABASE IF NOT EXISTS wordpress DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-    mysql -e "CREATE USER IF NOT EXISTS 'wordpress'@'localhost' IDENTIFIED BY 'TutoDocker2026!';"
+    mysql -e "CREATE USER IF NOT EXISTS 'wordpress'@'localhost' IDENTIFIED BY 'TutoDocker-Lab1!';"
     mysql -e "GRANT ALL PRIVILEGES ON wordpress.* TO 'wordpress'@'localhost';"
     mysql -e "FLUSH PRIVILEGES;"
     # Démarre Apache au premier plan : c'est lui qui garde le conteneur en vie
@@ -599,7 +602,7 @@ Le script doit démarrer MariaDB, créer la base et l'utilisateur de WordPress, 
     !!! tip "Une image qui change à chaque construction"
         `latest-fr_FR.tar.gz` désigne toujours la dernière version : reconstruire l'image dans un mois peut donner un autre WordPress. Pour une image **reproductible**, on télécharge une version précise, par exemple `https://fr.wordpress.org/wordpress-7.1.5-fr_FR.tar.gz`, et on vérifie son empreinte, publiée à côté (même adresse suivie de `.sha1`) : même principe que figer l'étiquette d'une image (section 6).
 
-2. 🐧 Démarrer le conteneur et lire ses journaux :
+2. 🐧 Démarrer le conteneur et lire ses journaux. Tant que l'assistant d'installation n'est pas terminé, le **premier visiteur** du port 65432 peut créer le compte administrateur du site : le terminer aussitôt (étape 3), et garder la VM en NAT ou en réseau privé hôte.
 
     ```bash
     docker run -d -p 65432:80 --name wordpress-lamp lamp-wordpress
@@ -633,7 +636,7 @@ Le script doit démarrer MariaDB, créer la base et l'utilisateur de WordPress, 
     |---|---|
     | Nom de la base de données | `wordpress` |
     | Identifiant | `wordpress` |
-    | Mot de passe | `TutoDocker2026!` |
+    | Mot de passe | `TutoDocker-Lab1!` |
     | Adresse de la base de données | `localhost` (la base est **dans le même conteneur**) |
     | Préfixe des tables | `wp_` (ne pas changer) |
 
@@ -649,7 +652,7 @@ Le script doit démarrer MariaDB, créer la base et l'utilisateur de WordPress, 
     WordPress joint bien la base créée par `init.sh`
     ///
 
-4. 🌐 Cliquer sur **Lancer l'installation**, puis remplir **Titre du site** (au choix), **Identifiant** `admin`, **Mot de passe** `TutoDocker2026!` (WordPress le juge « Forte ») et **Votre e-mail** avec une adresse fictive (`admin@lab.local`). Cliquer sur **Installer WordPress** : le message « Quel succès ! » confirme l'installation.
+4. 🌐 Cliquer sur **Lancer l'installation**, puis remplir **Titre du site** (au choix), **Identifiant** `admin`, **Mot de passe** `TutoDocker-Lab1!` (WordPress le juge « Forte ») et **Votre e-mail** avec une adresse fictive (`admin@lab.local`). Cliquer sur **Installer WordPress** : le message « Quel succès ! » confirme l'installation.
 
 ### 5.5 Pourquoi on ne fait pas ainsi en production
 

@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="598" viewBox="0 0 1200 598" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">
+  <title>Jour 1 — Installer Docker, premiers conteneurs : carte mentale de révision</title>
+  <rect x="0" y="0" width="1200" height="598" fill="#ffffff"/>
+  <path d="M600,299 C460,299 470,50 420,50" fill="none" stroke="#1565c0" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M600,299 C460,299 470,330 420,330" fill="none" stroke="#2e7d32" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M600,299 C740,299 730,67 780,67" fill="none" stroke="#ef6c00" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M600,299 C740,299 730,347 780,347" fill="none" stroke="#6a1b9a" stroke-width="3.5" stroke-linecap="round"/>
+  <rect x="20" y="30" width="400" height="258" rx="12" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="36" y="55" font-size="16" font-weight="bold" fill="#1565c0">01 Comprendre et installer</text>
+  <rect x="34" y="78" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="96" fill="#263238">Le conteneur isole l'application seule</text>
+  <rect x="34" y="112" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="130" fill="#263238">Image = modèle, conteneur = exécution</text>
+  <rect x="34" y="146" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="164" fill="#263238">Dépôt officiel Docker, pas docker.io</text>
+  <rect x="34" y="180" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="198" font-family="Consolas, monospace" font-size="12" fill="#263238">sudo usermod -aG docker adminlab</text>
+  <rect x="34" y="214" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="232" fill="#263238">Groupe docker = accès root de fait</text>
+  <rect x="34" y="248" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="266" font-family="Consolas, monospace" font-size="12" fill="#263238">docker run --rm hello-world</text>
+  <rect x="20" y="310" width="400" height="258" rx="12" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+  <text x="36" y="335" font-size="16" font-weight="bold" fill="#2e7d32">02 Premiers conteneurs</text>
+  <rect x="34" y="358" width="372" height="28" rx="6" fill="#ffffff" stroke="#2e7d32" stroke-opacity="0.55"/>
+  <text x="44" y="376" font-family="Consolas, monospace" font-size="12" fill="#263238">docker run -d --name web -p 8080:80 nginx</text>
+  <rect x="34" y="392" width="372" height="28" rx="6" fill="#ffffff" stroke="#2e7d32" stroke-opacity="0.55"/>
+  <text x="44" y="410" fill="#263238">-p hôte:conteneur publie un port</text>
+  <rect x="34" y="426" width="372" height="28" rx="6" fill="#ffffff" stroke="#2e7d32" stroke-opacity="0.55"/>
+  <text x="44" y="444" font-family="Consolas, monospace" font-size="12" fill="#263238">docker ps -a  ·  docker stop  ·  docker start</text>
+  <rect x="34" y="460" width="372" height="28" rx="6" fill="#ffffff" stroke="#2e7d32" stroke-opacity="0.55"/>
+  <text x="44" y="478" font-family="Consolas, monospace" font-size="12" fill="#263238">docker logs web</text>
+  <rect x="34" y="494" width="372" height="28" rx="6" fill="#ffffff" stroke="#2e7d32" stroke-opacity="0.55"/>
+  <text x="44" y="512" font-family="Consolas, monospace" font-size="12" fill="#263238">docker exec -it web bash</text>
+  <rect x="34" y="528" width="372" height="28" rx="6" fill="#ffffff" stroke="#2e7d32" stroke-opacity="0.55"/>
+  <text x="44" y="546" font-family="Consolas, monospace" font-size="12" fill="#263238">docker pull debian:13  (toujours la version)</text>
+  <rect x="780" y="47" width="400" height="258" rx="12" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+  <text x="796" y="72" font-size="16" font-weight="bold" fill="#ef6c00">03 Debian, Apache et SSH</text>
+  <rect x="794" y="95" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="804" y="113" font-family="Consolas, monospace" font-size="12" fill="#263238">docker run -dit -p8080:80 -p2222:22 debian</text>
+  <rect x="794" y="129" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="804" y="147" font-family="Consolas, monospace" font-size="12" fill="#263238">apt install apache2 -y</text>
+  <rect x="794" y="163" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="804" y="181" font-family="Consolas, monospace" font-size="12" fill="#263238">docker exec debian service apache2 start</text>
+  <rect x="794" y="197" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="804" y="215" font-family="Consolas, monospace" font-size="12" fill="#263238">ssh root@localhost -p2222</text>
+  <rect x="794" y="231" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="804" y="249" fill="#263238">Au redémarrage : services à relancer</text>
+  <rect x="794" y="265" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="804" y="283" fill="#263238">Pas ainsi en production</text>
+  <rect x="780" y="327" width="400" height="224" rx="12" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="2"/>
+  <text x="796" y="352" font-size="16" font-weight="bold" fill="#6a1b9a">04 Portainer et LazyDocker</text>
+  <rect x="794" y="375" width="372" height="28" rx="6" fill="#ffffff" stroke="#6a1b9a" stroke-opacity="0.55"/>
+  <text x="804" y="393" font-family="Consolas, monospace" font-size="12" fill="#263238">docker volume create portainer_data</text>
+  <rect x="794" y="409" width="372" height="28" rx="6" fill="#ffffff" stroke="#6a1b9a" stroke-opacity="0.55"/>
+  <text x="804" y="427" font-family="Consolas, monospace" font-size="12" fill="#263238">docker logs portainer | grep setup_token</text>
+  <rect x="794" y="443" width="372" height="28" rx="6" fill="#ffffff" stroke="#6a1b9a" stroke-opacity="0.55"/>
+  <text x="804" y="461" fill="#263238">Portainer : interface web, port 9443</text>
+  <rect x="794" y="477" width="372" height="28" rx="6" fill="#ffffff" stroke="#6a1b9a" stroke-opacity="0.55"/>
+  <text x="804" y="495" fill="#263238">docker.sock = les clés de la maison</text>
+  <rect x="794" y="511" width="372" height="28" rx="6" fill="#ffffff" stroke="#6a1b9a" stroke-opacity="0.55"/>
+  <text x="804" y="529" font-family="Consolas, monospace" font-size="12" fill="#263238">lazydocker  (interface en mode texte)</text>
+  <ellipse cx="600" cy="299" rx="135" ry="62" fill="#f4f6f8" stroke="#37474f" stroke-width="3"/>
+  <text x="600" y="293" text-anchor="middle" font-size="26" font-weight="bold" fill="#263238">Jour 1</text>
+  <text x="600" y="313" text-anchor="middle" font-size="14" fill="#37474f">Installer Docker,</text>
+  <text x="600" y="330" text-anchor="middle" font-size="14" fill="#37474f">premiers conteneurs</text>
+</svg>

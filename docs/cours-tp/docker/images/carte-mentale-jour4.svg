@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="776" viewBox="0 0 1200 776" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">
+  <title>Jour 4 — Exploiter et s'amuser : carte mentale de révision</title>
+  <rect x="0" y="0" width="1200" height="776" fill="#ffffff"/>
+  <path d="M600,388 C460,388 470,50 420,50" fill="none" stroke="#1565c0" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M600,388 C460,388 470,296 420,296" fill="none" stroke="#2e7d32" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M600,388 C460,388 470,542 420,542" fill="none" stroke="#ef6c00" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M600,388 C740,388 730,67 780,67" fill="none" stroke="#6a1b9a" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M600,388 C740,388 730,313 780,313" fill="none" stroke="#00838f" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M600,388 C740,388 730,525 780,525" fill="none" stroke="#c62828" stroke-width="3.5" stroke-linecap="round"/>
+  <rect x="20" y="30" width="400" height="224" rx="12" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="36" y="55" font-size="16" font-weight="bold" fill="#1565c0">12 Mettre à jour une image</text>
+  <rect x="34" y="78" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="96" fill="#263238">Remplacer le conteneur, pas le réparer</text>
+  <rect x="34" y="112" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="130" font-family="Consolas, monospace" font-size="12" fill="#263238">docker pull nginx:1.31</text>
+  <rect x="34" y="146" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="164" font-family="Consolas, monospace" font-size="12" fill="#263238">docker compose pull</text>
+  <rect x="34" y="180" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="198" font-family="Consolas, monospace" font-size="12" fill="#263238">docker compose up -d</text>
+  <rect x="34" y="214" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="232" fill="#263238">Pas de mise à jour auto sans test</text>
+  <rect x="20" y="276" width="400" height="224" rx="12" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+  <text x="36" y="301" font-size="16" font-weight="bold" fill="#2e7d32">12 Les journaux</text>
+  <rect x="34" y="324" width="372" height="28" rx="6" fill="#ffffff" stroke="#2e7d32" stroke-opacity="0.55"/>
+  <text x="44" y="342" font-family="Consolas, monospace" font-size="12" fill="#263238">docker logs --tail 3 bavard</text>
+  <rect x="34" y="358" width="372" height="28" rx="6" fill="#ffffff" stroke="#2e7d32" stroke-opacity="0.55"/>
+  <text x="44" y="376" font-family="Consolas, monospace" font-size="12" fill="#263238">docker logs --since 10m bavard</text>
+  <rect x="34" y="392" width="372" height="28" rx="6" fill="#ffffff" stroke="#2e7d32" stroke-opacity="0.55"/>
+  <text x="44" y="410" font-family="Consolas, monospace" font-size="12" fill="#263238">docker logs -f bavard</text>
+  <rect x="34" y="426" width="372" height="28" rx="6" fill="#ffffff" stroke="#2e7d32" stroke-opacity="0.55"/>
+  <text x="44" y="444" fill="#263238">json-file sans limite : le disque se remplit</text>
+  <rect x="34" y="460" width="372" height="28" rx="6" fill="#ffffff" stroke="#2e7d32" stroke-opacity="0.55"/>
+  <text x="44" y="478" font-family="Consolas, monospace" font-size="12" fill="#263238">max-size, max-file dans daemon.json</text>
+  <rect x="20" y="522" width="400" height="224" rx="12" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+  <text x="36" y="547" font-size="16" font-weight="bold" fill="#ef6c00">12 Limiter les ressources</text>
+  <rect x="34" y="570" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="44" y="588" font-family="Consolas, monospace" font-size="12" fill="#263238">docker run --cpus 0.5 alpine ...</text>
+  <rect x="34" y="604" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="44" y="622" font-family="Consolas, monospace" font-size="12" fill="#263238">docker run --memory 32m alpine ...</text>
+  <rect x="34" y="638" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="44" y="656" font-family="Consolas, monospace" font-size="12" fill="#263238">docker stats --no-stream</text>
+  <rect x="34" y="672" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="44" y="690" fill="#263238">OOMKilled=true, code 137</text>
+  <rect x="34" y="706" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="44" y="724" fill="#263238">Compose : bloc deploy: limits</text>
+  <rect x="780" y="47" width="400" height="224" rx="12" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="2"/>
+  <text x="796" y="72" font-size="16" font-weight="bold" fill="#6a1b9a">12 Durcir un conteneur</text>
+  <rect x="794" y="95" width="372" height="28" rx="6" fill="#ffffff" stroke="#6a1b9a" stroke-opacity="0.55"/>
+  <text x="804" y="113" font-family="Consolas, monospace" font-size="12" fill="#263238">--user 1000:1000</text>
+  <rect x="794" y="129" width="372" height="28" rx="6" fill="#ffffff" stroke="#6a1b9a" stroke-opacity="0.55"/>
+  <text x="804" y="147" font-family="Consolas, monospace" font-size="12" fill="#263238">--read-only  (avec --tmpfs /tmp)</text>
+  <rect x="794" y="163" width="372" height="28" rx="6" fill="#ffffff" stroke="#6a1b9a" stroke-opacity="0.55"/>
+  <text x="804" y="181" font-family="Consolas, monospace" font-size="12" fill="#263238">--cap-drop ALL</text>
+  <rect x="794" y="197" width="372" height="28" rx="6" fill="#ffffff" stroke="#6a1b9a" stroke-opacity="0.55"/>
+  <text x="804" y="215" font-family="Consolas, monospace" font-size="12" fill="#263238">--security-opt no-new-privileges</text>
+  <rect x="794" y="231" width="372" height="28" rx="6" fill="#ffffff" stroke="#6a1b9a" stroke-opacity="0.55"/>
+  <text x="804" y="249" fill="#263238">Jamais --privileged ni docker.sock</text>
+  <rect x="780" y="293" width="400" height="190" rx="12" fill="#e0f7fa" stroke="#00838f" stroke-width="2"/>
+  <text x="796" y="318" font-size="16" font-weight="bold" fill="#00838f">12 Trivy et ménage</text>
+  <rect x="794" y="341" width="372" height="28" rx="6" fill="#ffffff" stroke="#00838f" stroke-opacity="0.55"/>
+  <text x="804" y="359" font-family="Consolas, monospace" font-size="12" fill="#263238">aquasec/trivy image --severity HIGH,CRITICAL</text>
+  <rect x="794" y="375" width="372" height="28" rx="6" fill="#ffffff" stroke="#00838f" stroke-opacity="0.55"/>
+  <text x="804" y="393" font-family="Consolas, monospace" font-size="12" fill="#263238">docker system df</text>
+  <rect x="794" y="409" width="372" height="28" rx="6" fill="#ffffff" stroke="#00838f" stroke-opacity="0.55"/>
+  <text x="804" y="427" font-family="Consolas, monospace" font-size="12" fill="#263238">docker container prune  ·  image prune</text>
+  <rect x="794" y="443" width="372" height="28" rx="6" fill="#ffffff" stroke="#00838f" stroke-opacity="0.55"/>
+  <text x="804" y="461" fill="#263238">volume prune -a : dangereux</text>
+  <rect x="780" y="505" width="400" height="224" rx="12" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+  <text x="796" y="530" font-size="16" font-weight="bold" fill="#c62828">13 Projets sympas</text>
+  <rect x="794" y="553" width="372" height="28" rx="6" fill="#ffffff" stroke="#c62828" stroke-opacity="0.55"/>
+  <text x="804" y="571" font-family="Consolas, monospace" font-size="12" fill="#263238">docker run -d --shm-size=512m -p 6901:6901 ...</text>
+  <rect x="794" y="587" width="372" height="28" rx="6" fill="#ffffff" stroke="#c62828" stroke-opacity="0.55"/>
+  <text x="804" y="605" fill="#263238">Kasm : un navigateur dans un conteneur</text>
+  <rect x="794" y="621" width="372" height="28" rx="6" fill="#ffffff" stroke="#c62828" stroke-opacity="0.55"/>
+  <text x="804" y="639" fill="#263238">Open WebUI + Ollama sur le PC</text>
+  <rect x="794" y="655" width="372" height="28" rx="6" fill="#ffffff" stroke="#c62828" stroke-opacity="0.55"/>
+  <text x="804" y="673" font-family="Consolas, monospace" font-size="12" fill="#263238">ssh -N -R 127.0.0.1:11434:127.0.0.1:11434</text>
+  <rect x="794" y="689" width="372" height="28" rx="6" fill="#ffffff" stroke="#c62828" stroke-opacity="0.55"/>
+  <text x="804" y="707" font-family="Consolas, monospace" font-size="12" fill="#263238">--restart unless-stopped  (Uptime Kuma)</text>
+  <ellipse cx="600" cy="388" rx="135" ry="62" fill="#f4f6f8" stroke="#37474f" stroke-width="3"/>
+  <text x="600" y="382" text-anchor="middle" font-size="26" font-weight="bold" fill="#263238">Jour 4</text>
+  <text x="600" y="404" text-anchor="middle" font-size="14" fill="#37474f">Exploiter et s'amuser</text>
+</svg>

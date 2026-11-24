@@ -9,7 +9,7 @@
   <text x="45" y="144" fill="#37474f">https://IP-de-la-VM:9443</text>
   <rect x="30" y="210" width="210" height="90" rx="10" fill="#ffffff" stroke="#607d8b"/>
   <text x="45" y="238" font-weight="bold" fill="#263238">Terminal (PowerShell)</text>
-  <text x="45" y="262" fill="#37474f">ssh tssr@IP-de-la-VM</text>
+  <text x="45" y="262" fill="#37474f">ssh adminlab@IP-de-la-VM</text>
   <rect x="30" y="320" width="210" height="70" rx="10" fill="#e3f2fd" stroke="#1e88e5"/>
   <text x="45" y="348" font-weight="bold" fill="#0d47a1">Workstation ou</text>
   <text x="45" y="370" font-weight="bold" fill="#0d47a1">VirtualBox</text>
