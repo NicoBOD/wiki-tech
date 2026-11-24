@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="300" viewBox="0 0 860 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="14">
+  <title>Cycle de vie d'un conteneur Docker</title>
+  <defs>
+    <marker id="f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#455a64"/></marker>
+  </defs>
+  <rect x="20" y="110" width="140" height="70" rx="10" fill="#f3e5f5" stroke="#8e24aa" stroke-width="2"/>
+  <text x="90" y="140" text-anchor="middle" font-weight="bold">Image</text>
+  <text x="90" y="162" text-anchor="middle" font-size="12">modèle en lecture seule</text>
+  <rect x="250" y="110" width="140" height="70" rx="10" fill="#e8f5e9" stroke="#43a047" stroke-width="2"/>
+  <text x="320" y="140" text-anchor="middle" font-weight="bold">En marche</text>
+  <text x="320" y="162" text-anchor="middle" font-size="12">Up · running</text>
+  <rect x="480" y="110" width="140" height="70" rx="10" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/>
+  <text x="550" y="140" text-anchor="middle" font-weight="bold">Arrêté</text>
+  <text x="550" y="162" text-anchor="middle" font-size="12">Exited</text>
+  <rect x="700" y="110" width="140" height="70" rx="10" fill="#ffebee" stroke="#e53935" stroke-width="2"/>
+  <text x="770" y="140" text-anchor="middle" font-weight="bold">Supprimé</text>
+  <text x="770" y="162" text-anchor="middle" font-size="12">ses fichiers disparaissent</text>
+  <line x1="160" y1="145" x2="248" y2="145" stroke="#455a64" stroke-width="2" marker-end="url(#f)"/>
+  <text x="204" y="135" text-anchor="middle" font-family="Consolas, monospace" font-size="13">docker run</text>
+  <path d="M390,125 C430,95 440,95 478,125" fill="none" stroke="#455a64" stroke-width="2" marker-end="url(#f)"/>
+  <text x="435" y="88" text-anchor="middle" font-family="Consolas, monospace" font-size="13">docker stop</text>
+  <text x="435" y="68" text-anchor="middle" font-size="12" fill="#546e7a">(ou fin du processus principal)</text>
+  <path d="M478,165 C440,195 430,195 392,165" fill="none" stroke="#455a64" stroke-width="2" marker-end="url(#f)"/>
+  <text x="435" y="212" text-anchor="middle" font-family="Consolas, monospace" font-size="13">docker start</text>
+  <line x1="620" y1="145" x2="698" y2="145" stroke="#455a64" stroke-width="2" marker-end="url(#f)"/>
+  <text x="659" y="135" text-anchor="middle" font-family="Consolas, monospace" font-size="13">docker rm</text>
+  <path d="M320,180 C320,270 770,270 770,182" fill="none" stroke="#e53935" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#f)"/>
+  <text x="545" y="262" text-anchor="middle" font-family="Consolas, monospace" font-size="13" fill="#c62828">docker rm -f (force, sans arrêt préalable)</text>
+  <text x="90" y="215" text-anchor="middle" font-size="12" fill="#546e7a">une image → autant de</text>
+  <text x="90" y="232" text-anchor="middle" font-size="12" fill="#546e7a">conteneurs que voulu</text>
+</svg>

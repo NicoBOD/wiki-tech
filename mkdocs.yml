@@ -321,6 +321,13 @@ nav:
         - "16. Tendances et métier": cours-tp/virtualisation/16-tendances-et-metier.md
         - "17. Défi final": cours-tp/virtualisation/17-defi-final.md
       - Annexes: cours-tp/virtualisation/annexes.md
+    - Docker (5 jours):
+      - cours-tp/docker/index.md
+      - "Jour 1 — Installer Docker et lancer ses premiers conteneurs":
+        - "1. Découvrir Docker et l'installer": cours-tp/docker/01-decouvrir-et-installer-docker.md
+        - "2. Premiers conteneurs": cours-tp/docker/02-premiers-conteneurs.md
+        - "3. Apache et SSH dans un conteneur Debian": cours-tp/docker/03-apache-et-ssh-dans-un-conteneur.md
+        - "4. Portainer et LazyDocker": cours-tp/docker/04-portainer-et-lazydocker.md
   - Tags: tags.md
 
 copyright: >
