@@ -89,8 +89,8 @@ Chaque partie dure entre 1 h et 2 h 30 et mêle explications et pratique. Les du
 
 | Partie | Type | Durée | Contenu | Machines allumées |
 |:---:|---|---|---|---|
-| 12. Exploiter Docker au quotidien | Cours et TP | 2 h | Mises à jour d'images, journaux, limites de ressources, nettoyage, sécurité, analyse avec Trivy | `docker-hote` |
-| 13. Des projets sympas à déployer | TP au choix | 2 h 30 | Uptime Kuma, Kasm, rétrogaming, Open WebUI, Presenton, Windows dans un conteneur, agent Hermes | `docker-hote` |
+| [12. Exploiter Docker au quotidien](12-exploiter-docker-au-quotidien.md) | Cours et TP | 2 h | Mises à jour d'images, journaux, limites de ressources, nettoyage, sécurité, analyse avec Trivy | `docker-hote` |
+| [13. Des projets sympas à déployer](13-projets-sympas.md) | TP au choix | 2 h 30 | Uptime Kuma, Kasm, rétrogaming, Open WebUI, Presenton, Windows dans un conteneur, agent Hermes | `docker-hote` |
 
 ### Jour 5 — Construire, distribuer, orchestrer
 
@@ -158,6 +158,8 @@ Ce lab est **pédagogique** : les mots de passe sont écrits ici volontairement 
 | Nginx Proxy Manager | `admin@lab.local` | `TutoDocker2026!` | Partie 9 |
 | Coolify | `admin@lab.local` | `TutoDocker2026!` | Partie 11 |
 | Uptime Kuma | `admin` | `TutoDocker2026!` | Partie 11 |
+| Kasm (Firefox) | `kasm_user` | `TutoDocker2026!` | Partie 13 |
+| Open WebUI | `admin@lab.local` | `TutoDocker2026!` | Partie 13 |
 | VM `docker-plateforme` | `root` et `tssr` | `TutoDocker2026!` | Partie 11 |
 | MariaDB de WordPress | `root`, et `wordpress` (base `wordpress`) | `TutoDocker2026!` | Partie 10 |
 
@@ -188,6 +190,7 @@ Un **instantané** (*snapshot*) fige l'état d'une machine virtuelle. En cas d'e
 | `02-fin-jour-1` | `docker-hote` | Fin de la partie 4, VM éteinte : Docker, Portainer (compte `admin` créé) et LazyDocker | Le jour 2 |
 | `03-fin-jour-2` | `docker-hote` | Fin de la partie 8, VM éteinte, Nextcloud arrêté (`docker compose down`) mais ses volumes gardés | Le jour 3 |
 | `04-fin-jour-3` | `docker-hote` | Fin de la partie 10, VM éteinte : NPM, Portainer et Nextcloud derrière le proxy en HTTPS | La partie 11 et le jour 4 |
+| `05-exploitation` | `docker-hote` | Fin de la partie 12, VM éteinte : rotation des journaux réglée | La partie 13 |
 | `00-debian-installee`, `01-coolify` | `docker-plateforme` | Partie 11 : avant, puis après l'installation de Coolify et d'Uptime Kuma | L'installation de Coolify |
 
 !!! warning "Un instantané n'est pas une sauvegarde"

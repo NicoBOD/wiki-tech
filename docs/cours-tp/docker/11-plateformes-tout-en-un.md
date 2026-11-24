@@ -290,7 +290,7 @@ Coolify publie chaque service sous un **nom de domaine**, derrière son reverse 
 - [Uptime Kuma](https://github.com/louislam/uptime-kuma) — l'outil de supervision déployé dans ce TP.
 - [Cosmos Server](https://github.com/azukaar/Cosmos-Server) — dépôt, fonctions et installation.
 - [BunkerWeb](https://github.com/bunkerity/bunkerweb) — dépôt et documentation du pare-feu applicatif.
-- Partie précédente : [Nextcloud en HTTPS derrière le reverse proxy](10-nextcloud-https-derriere-le-proxy.md).
+- Partie précédente : [Nextcloud en HTTPS derrière le reverse proxy](10-nextcloud-https-derriere-le-proxy.md) · Partie suivante : [Exploiter Docker au quotidien](12-exploiter-docker-au-quotidien.md).
 
 *[PaaS]: Platform as a Service — plateforme pour déployer des applications
 *[WAF]: Web Application Firewall — pare-feu applicatif web
