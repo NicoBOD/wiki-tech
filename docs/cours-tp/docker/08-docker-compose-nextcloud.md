@@ -596,7 +596,7 @@ La solution : un **test de santé** (*healthcheck*), une commande que Docker lan
 - [Image officielle Nextcloud sur Docker Hub](https://hub.docker.com/_/nextcloud) — variables d'environnement et exemples Compose.
 - [Nextcloud — Configuration requise](https://docs.nextcloud.com/server/latest/admin_manual/installation/system_requirements.html) — versions de bases de données prises en charge.
 - [Nextcloud — Utiliser la commande occ](https://docs.nextcloud.com/server/latest/admin_manual/occ_command.html) — l'administration en ligne de commande.
-- Partie précédente : [Les réseaux Docker](07-reseaux-docker.md).
+- Partie précédente : [Les réseaux Docker](07-reseaux-docker.md) · Partie suivante : [Un reverse proxy avec Nginx Proxy Manager](09-reverse-proxy-nginx-proxy-manager.md).
 
 *[YAML]: YAML Ain't Markup Language — format de fichier de configuration lisible
 *[VM]: Virtual Machine — machine virtuelle
