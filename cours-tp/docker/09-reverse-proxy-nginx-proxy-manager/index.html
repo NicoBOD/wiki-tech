@@ -3869,13 +3869,13 @@
 <hr />
 <div class="admonition info">
 <p class="admonition-title">Convention de lecture</p>
-<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>tssr</code> · 🌐 <strong>navigateur du PC</strong> · ✍️ <strong>exercice</strong>. Point de départ : l'instantané <code>03-fin-jour-2</code>. Les ports <strong>80</strong>, <strong>81</strong> et <strong>443</strong> de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> doivent être libres : <code>docker ps</code> ne doit montrer que <code>portainer</code>.</p>
+<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>adminlab</code> · 🌐 <strong>navigateur du PC</strong> · ✍️ <strong>exercice</strong>. Point de départ : l'instantané <code>03-fin-jour-2</code>. Les ports <strong>80</strong>, <strong>81</strong> et <strong>443</strong> de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> doivent être libres : <code>docker ps</code> ne doit montrer que <code>portainer</code>.</p>
 </div>
 <h2 id="1-quest-ce-quun-reverse-proxy">1. Qu'est-ce qu'un reverse proxy ?<a class="headerlink" href="#1-quest-ce-quun-reverse-proxy" title="Permanent link">&para;</a></h2>
 <p>Un <strong>reverse proxy</strong> (« mandataire inverse ») est un serveur placé <strong>devant</strong> les services web. Il reçoit les requêtes des navigateurs et les <strong>transmet</strong> au bon serveur, puis renvoie la réponse. Le navigateur ne parle qu'au proxy.</p>
 <p>C'est l'<strong>accueil d'un immeuble de bureaux</strong> : les visiteurs entrent tous par la même porte (le port 80 ou 443), disent qui ils viennent voir (le <strong>nom de domaine</strong>), et l'hôtesse les oriente vers le bon bureau (le bon conteneur). Les bureaux, eux, n'ont pas besoin de porte sur la rue.</p>
 <figure>
-<p><img alt="Le navigateur du PC demande portainer.docker.test, nextcloud.docker.test ou apache-interne.docker.test : toutes les requêtes arrivent sur le port 80 ou 443 de la VM, au conteneur Nginx Proxy Manager. Celui-ci lit le nom demandé et transmet la requête au conteneur correspondant (portainer, nextcloud, test-apache) à travers des réseaux Docker partagés, sans que ces conteneurs publient de port." loading="lazy" src="../images/reverse-proxy.svg" /></p>
+<p><img alt="Le navigateur du PC demande portainer.docker.test, nextcloud.docker.test ou apache-interne.docker.test : toutes les requêtes arrivent sur le port 80 ou 443 de la VM, au conteneur Nginx Proxy Manager. Celui-ci lit le nom demandé et transmet la requête au conteneur correspondant (portainer, nextcloud, test-apache-interne) à travers des réseaux Docker partagés, sans que ces conteneurs publient de port." loading="lazy" src="../images/reverse-proxy.svg" /></p>
 <figcaption>
 <p>Un seul point d'entrée, qui aiguille chaque requête selon le nom demandé.</p>
 </figcaption>
@@ -3937,7 +3937,7 @@
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">services</span><span class="p">:</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">app</span><span class="p">:</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jc21/nginx-proxy-manager:latest</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jc21/nginx-proxy-manager:2.17.1</span>
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
 <a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
 <a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80:80</span>
@@ -3957,6 +3957,10 @@
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><code>image: jc21/nginx-proxy-manager:2.17.1</code></td>
+<td>La version est <strong>figée</strong> : une mise à jour se fera quand on l'aura décidé, en changeant ce numéro (partie 12), et non par surprise lors d'un <code>docker compose pull</code></td>
+</tr>
 <tr>
 <td><code>80:80</code> et <code>443:443</code></td>
 <td>Les ports <strong>publics</strong> : HTTP et <abbr title="HTTP sécurisé par TLS">HTTPS</abbr>, par lesquels passeront tous les sites</td>
@@ -3979,6 +3983,10 @@
 </tr>
 </tbody>
 </table>
+<div class="admonition warning">
+<p class="admonition-title">L'interface d'administration reste ouverte</p>
+<p>Le port <strong>81</strong> donne accès à toute la configuration de <abbr title="Nginx Proxy Manager">NPM</abbr>, en HTTP non chiffré, avec un mot de passe publié dans ce parcours. Dans le lab, la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> n'est joignable que depuis le PC (réseau NAT ou privé hôte) : c'est acceptable. Sur un serveur, une fois les hôtes créés, on publie ce port seulement en local (<code>127.0.0.1:81:81</code>) et on y accède par un tunnel SSH (<code>ssh -L 8081:127.0.0.1:81 adminlab@IP-de-la-VM</code>, puis <code>http://localhost:8081</code> sur le PC).</p>
+</div>
 </li>
 <li>
 <p>🐧 Démarrer <abbr title="Nginx Proxy Manager">NPM</abbr> :</p>
@@ -3986,7 +3994,7 @@
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>docker<span class="w"> </span>compose<span class="w"> </span>ps
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>NAME        IMAGE                             COMMAND   SERVICE   CREATED         STATUS                  PORTS
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>npm-app-1   jc21/nginx-proxy-manager:latest   "/init"   app       2 seconds ago   Up Less than a second   0.0.0.0:80-81-&gt;80-81/tcp, [::]:80-81-&gt;80-81/tcp, 0.0.0.0:443-&gt;443/tcp, [::]:443-&gt;443/tcp
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>npm-app-1   jc21/nginx-proxy-manager:2.17.1   "/init"   app       2 seconds ago   Up Less than a second   0.0.0.0:80-81-&gt;80-81/tcp, [::]:80-81-&gt;80-81/tcp, 0.0.0.0:443-&gt;443/tcp, [::]:443-&gt;443/tcp
 </code></pre></div>
 <p>Au premier démarrage, <abbr title="Nginx Proxy Manager">NPM</abbr> prépare sa base de données (journaux <code>Migrating Up…</code>) : attendre quelques secondes.</p>
 </li>
@@ -4029,7 +4037,7 @@
 </tr>
 <tr>
 <td><strong>Nouveau mot de passe</strong></td>
-<td><code>TutoDocker2026!</code></td>
+<td><code>TutoDocker-Lab1!</code></td>
 </tr>
 </tbody>
 </table>
@@ -4151,7 +4159,7 @@
 <p>Essayer seul d'abord ; le corrigé détaillé est replié ci-dessous.</p>
 <details class="success">
 <summary>Corrigé pas à pas</summary>
-<p><strong>1. Créer l'hôte proxy… et constater l'erreur.</strong> 🌐 Dans <abbr title="Nginx Proxy Manager">NPM</abbr>, ajouter un hôte proxy <code>portainer.docker.test</code> → <code>http</code>, <code>portainer</code>, port <code>9000</code>. Ouvrir <code>http://portainer.docker.test</code> :</p>
+<p><strong>1. Créer l'hôte proxy… et constater l'erreur.</strong> 🌐 Dans <abbr title="Nginx Proxy Manager">NPM</abbr>, ajouter un hôte proxy <code>portainer.docker.test</code> → <code>http</code>, <code>portainer</code>, port <code>9000</code>, en cochant <strong>Prise en charge de WebSockets</strong> : la <strong>console</strong> et les journaux en direct de Portainer passent par des WebSockets, et sans cette option <abbr title="Nginx Proxy Manager">NPM</abbr> les refuse (la console reste vide). Ouvrir <code>http://portainer.docker.test</code> :</p>
 <figure>
 <p><img alt="Page blanche avec le titre « 502 Bad Gateway » et la mention openresty." loading="lazy" src="../images/09-erreur-502.png" /></p>
 <figcaption>
@@ -4177,7 +4185,7 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>npm_default 172.18.0.2 portainer_network 172.19.0.3
 </code></pre></div>
 <p><abbr title="Nginx Proxy Manager">NPM</abbr> est maintenant sur ses deux réseaux.</p>
-<p><strong>5. Vérifier.</strong> 🌐 Rafraîchir <code>http://portainer.docker.test</code> (si l'erreur 502 persiste, attendre quelques secondes : Portainer démarre). La page de connexion de Portainer s'affiche, et les identifiants <code>admin</code> / <code>TutoDocker2026!</code> fonctionnent : le volume a gardé le compte.</p>
+<p><strong>5. Vérifier.</strong> 🌐 Rafraîchir <code>http://portainer.docker.test</code> (si l'erreur 502 persiste, attendre quelques secondes : Portainer démarre). La page de connexion de Portainer s'affiche, et les identifiants <code>admin</code> / <code>TutoDocker-Lab1!</code> fonctionnent : le volume a gardé le compte.</p>
 <figure>
 <p><img alt="Page de connexion de Portainer, « Log in to your account », avec les champs Username et Password et le bouton Login." loading="lazy" src="../images/09-portainer-par-son-nom.png" /></p>
 <figcaption>
@@ -4217,7 +4225,7 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>curl<span class="w"> </span>-s<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span><span class="s1">'%{http_code}\n'</span><span class="w"> </span>-H<span class="w"> </span><span class="s1">'Host: portainer.docker.test'</span><span class="w"> </span>http://localhost/
 <a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>docker<span class="w"> </span>ps<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Names}}  {{.Ports}}'</span>
 </code></pre></div>
-<p>Résultat attendu : <code>200</code> (sortie relevée dans le lab), puis une liste où <strong>seul</strong> <code>npm-app-1</code> publie des ports (<code>0.0.0.0:80-81-&gt;80-81/tcp…</code>). 🌐 Depuis le PC, <code>http://portainer.docker.test</code> affiche Portainer.</p>
+<p>Résultat attendu : <code>200</code>, puis une liste où <strong>seul</strong> <code>npm-app-1</code> publie des ports (<code>0.0.0.0:80-81-&gt;80-81/tcp…</code>). 🌐 Depuis le PC, <code>http://portainer.docker.test</code> affiche Portainer.</p>
 </div>
 <h2 id="9-questions-de-revision">9. Questions de révision<a class="headerlink" href="#9-questions-de-revision" title="Permanent link">&para;</a></h2>
 <ol>

@@ -16,7 +16,7 @@ if [ "$(id -u)" -eq 0 ]; then
 elif command -v sudo >/dev/null 2>&1; then
   SUDO="sudo"
 else
-  echo -e "$ERROR Lance ce script en root (su -) ou installe sudo."
+  echo -e "$ERROR Lancer ce script en root (su -) ou installer sudo."
   exit 1
 fi
 
@@ -60,7 +60,7 @@ EOF
   [ -s /etc/apt/sources.list.d/docker.sources ] || { echo -e "$ERROR Le fichier du dépôt n'a pas pu être écrit."; exit 1; }
   $SUDO apt-get update || { echo -e "$ERROR Le dépôt de Docker est injoignable ou mal déclaré."; exit 1; }
   if ! $SUDO apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin; then
-    echo -e "$ERROR L'installation des paquets Docker a échoué : lis les messages ci-dessus."
+    echo -e "$ERROR L'installation des paquets Docker a échoué : lire les messages ci-dessus."
     exit 1
   fi
   # Démarrage du service maintenant et à chaque démarrage de la machine
@@ -78,10 +78,10 @@ fi
 
 # Étape 3 : ajout d'un utilisateur au groupe docker
 if demander_confirmation "$INFO Voulez-vous ajouter un utilisateur au groupe docker ?"; then
-  echo "Veuillez entrer le nom de l'utilisateur :"
+  echo "Nom de l'utilisateur à ajouter :"
   read -r utilisateur
   if ! id "$utilisateur" &>/dev/null; then
-    echo -e "$ERROR L'utilisateur $utilisateur n'existe pas. Veuillez vérifier son nom."
+    echo -e "$ERROR L'utilisateur $utilisateur n'existe pas : vérifier son nom."
   elif $SUDO usermod -aG docker "$utilisateur"; then
     echo -e "$SUCCESS L'utilisateur $utilisateur a été ajouté au groupe docker. Il doit se déconnecter et se reconnecter pour que ce soit pris en compte."
   else

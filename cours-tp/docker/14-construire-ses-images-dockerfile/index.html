@@ -4090,7 +4090,7 @@
 <hr />
 <div class="admonition info">
 <p class="admonition-title">Convention de lecture</p>
-<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>tssr</code> · 🌐 <strong>navigateur</strong> du PC · ✍️ <strong>exercice</strong> · 🛟 <strong>instantané</strong>. Point de départ : l'instantané <code>05-exploitation</code> (fin de la partie 12), ou la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> telle qu'elle est à la fin de la partie 13.</p>
+<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>adminlab</code> · 🌐 <strong>navigateur</strong> du PC · ✍️ <strong>exercice</strong> · 🛟 <strong>instantané</strong>. Point de départ : l'instantané <code>05-exploitation</code> (fin de la partie 12), ou la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> telle qu'elle est à la fin de la partie 13.</p>
 </div>
 <h2 id="1-pourquoi-ecrire-un-dockerfile">1. Pourquoi écrire un Dockerfile ?<a class="headerlink" href="#1-pourquoi-ecrire-un-dockerfile" title="Permanent link">&para;</a></h2>
 <p>En partie 6, on a créé une image avec <code>docker commit</code> : on installe des logiciels à la main dans un conteneur, puis on le fige. Ça marche, mais l'image obtenue est une <strong>boîte noire</strong> : <code>docker history</code> affiche une couche de 28 Mo sans dire ce qu'elle contient, et personne ne peut la refaire à l'identique.</p>
@@ -4290,7 +4290,7 @@
 <tbody>
 <tr>
 <td><code>FROM httpd:latest</code></td>
-<td>Part de l'image officielle d'Apache (<code>httpd</code>), déjà croisée en partie 3. <code>latest</code> simplifie ce premier essai ; la section 6 explique pourquoi, pour un vrai service, on fige la version (<code>httpd:2.4</code>)</td>
+<td>Part de l'image officielle d'Apache (<code>httpd</code>), déjà croisée aux parties 2 et 9. <code>latest</code> simplifie ce premier essai ; la section 6 explique pourquoi, pour un vrai service, on fige la version (<code>httpd:2.4</code>)</td>
 </tr>
 <tr>
 <td><code>COPY index.html /usr/local/apache2/htdocs/</code></td>
@@ -4346,7 +4346,7 @@
 <a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a> …
 <a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a> =&gt; =&gt; naming to docker.io/library/web:latest                              0.0s
 </code></pre></div>
-<p>Le moteur de construction, <strong><abbr title="moteur de construction d'images de Docker">BuildKit</abbr></strong>, affiche une ligne par étape : <code>[1/2] FROM</code>, puis <code>[2/2] COPY</code>. Cette sortie a été obtenue avec l'image <code>httpd</code> déjà présente sur la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<code>CACHED</code> sur la ligne <code>FROM</code>) : si elle manque, Docker la télécharge d'abord, et la construction prend environ 5 secondes au lieu d'une.</p>
+<p>Le moteur de construction, <strong><abbr title="moteur de construction d'images de Docker">BuildKit</abbr></strong>, affiche une ligne par étape : <code>[1/2] FROM</code>, puis <code>[2/2] COPY</code>. Ici l'image <code>httpd</code> est déjà sur la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<code>CACHED</code> sur la ligne <code>FROM</code>) ; si elle manque, Docker la télécharge d'abord, et la construction prend environ 5 secondes au lieu d'une.</p>
 <p>🐧 Regarder l'image et ses couches :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>docker<span class="w"> </span>image<span class="w"> </span>ls<span class="w"> </span>web
 <a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>docker<span class="w"> </span><span class="nb">history</span><span class="w"> </span>web
@@ -4450,7 +4450,7 @@
 <p><strong>Mission :</strong> écrire un Dockerfile qui construit une image <code>debian-ssh</code> à partir de <code>debian:13</code>, avec :</p>
 <ul>
 <li>le serveur <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> installé (paquet <code>openssh-server</code>) ;</li>
-<li>un utilisateur <strong><code>user</code></strong> (avec un dossier personnel et le shell <code>/bin/bash</code>), mot de passe <code>TutoDocker2026!</code> ;</li>
+<li>un utilisateur <strong><code>user</code></strong> (avec un dossier personnel et le shell <code>/bin/bash</code>), mot de passe <code>TutoDocker-Lab1!</code> ;</li>
 <li>le port 22 documenté ;</li>
 <li>le serveur <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> lancé automatiquement, au premier plan, à chaque démarrage du conteneur.</li>
 </ul>
@@ -4483,7 +4483,7 @@
 <a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="k">RUN</span><span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/run/sshd
 <a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="c"># Créer un utilisateur nommé « user » avec un mot de passe</span>
 <a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="k">RUN</span><span class="w"> </span>useradd<span class="w"> </span>-ms<span class="w"> </span>/bin/bash<span class="w"> </span>user<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s1">'user:TutoDocker2026!'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>chpasswd
+<a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s1">'user:TutoDocker-Lab1!'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>chpasswd
 <a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a><span class="c"># Documenter le port du serveur SSH</span>
 <a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a><span class="k">EXPOSE</span><span class="w"> </span><span class="s">22</span>
 <a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a><span class="c"># Démarrer le serveur SSH au premier plan à chaque lancement du conteneur</span>
@@ -4522,7 +4522,7 @@
 <td>Crée l'utilisateur <code>user</code> : <code>-m</code> crée son dossier personnel <code>/home/user</code>, <code>-s /bin/bash</code> choisit son shell</td>
 </tr>
 <tr>
-<td><code>echo 'user:TutoDocker2026!' | chpasswd</code></td>
+<td><code>echo 'user:TutoDocker-Lab1!' | chpasswd</code></td>
 <td><code>chpasswd</code> reçoit <code>utilisateur:motdepasse</code> et définit le mot de passe. Les guillemets <strong>simples</strong> empêchent le shell d'interpréter le <code>!</code></td>
 </tr>
 <tr>
@@ -4544,6 +4544,10 @@
 <a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>debian-ssh:latest   bed81129faab        263MB           69MB
 </code></pre></div>
 <p>La première construction dure une vingtaine de secondes (téléchargement et installation des paquets). Avec <code>apt</code> au lieu d'<code>apt-get</code>, la construction afficherait <code>WARNING: apt does not have a stable CLI interface</code>, sans gravité, et l'image garderait la liste des paquets (301 Mo au lieu de 263 Mo).</p>
+<div class="admonition warning">
+<p class="admonition-title">Un <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> avec un mot de passe publié</p>
+<p>Comme en partie 3, ce conteneur accepte une connexion <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> avec un mot de passe écrit sur cette page, sur le port 54321 de <strong>toutes</strong> les adresses de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, sans passer par son pare-feu (partie 7). La <abbr title="Virtual Machine — machine virtuelle">VM</abbr> reste en NAT ou en réseau privé hôte, jamais en mode pont, et le conteneur se supprime dès la fin de l'essai (<code>docker rm -f debian-ssh-container</code>). Pour un test depuis la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> seulement, <code>-p 127.0.0.1:54321:22</code> suffit.</p>
+</div>
 <p><strong>Démarrer le conteneur.</strong> 🐧</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">54321</span>:22<span class="w"> </span>--name<span class="w"> </span>debian-ssh-container<span class="w"> </span>debian-ssh
 <a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>docker<span class="w"> </span>ps<span class="w"> </span>--filter<span class="w"> </span><span class="nv">name</span><span class="o">=</span>debian-ssh<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Names}} | {{.Status}} | {{.Ports}}'</span>
@@ -4584,7 +4588,7 @@
 <p><strong>Se connecter.</strong> 🐧 Depuis la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (ou 🖥️ depuis le PC avec <code>ssh user@IP-de-la-VM -p 54321</code>) :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>ssh<span class="w"> </span>user@localhost<span class="w"> </span>-p<span class="w"> </span><span class="m">54321</span>
 </code></pre></div>
-<p>Répondre <code>yes</code> à la question sur l'empreinte du serveur (première connexion), puis taper le mot de passe <code>TutoDocker2026!</code>. Dans la session :</p>
+<p>Répondre <code>yes</code> à la question sur l'empreinte du serveur (première connexion), puis taper le mot de passe <code>TutoDocker-Lab1!</code>. Dans la session :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>whoami<span class="p">;</span><span class="w"> </span>hostname<span class="p">;</span><span class="w"> </span>cat<span class="w"> </span>/etc/debian_version<span class="p">;</span><span class="w"> </span>id
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>user
@@ -4621,7 +4625,7 @@
 <p>🐧 Essayer :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>docker<span class="w"> </span><span class="nb">history</span><span class="w"> </span>--no-trunc<span class="w"> </span>debian-ssh<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.CreatedBy}}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>chpasswd
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>RUN /bin/sh -c useradd -ms /bin/bash user &amp;&amp;     echo 'user:TutoDocker2026!' | chpasswd # buildkit
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>RUN /bin/sh -c useradd -ms /bin/bash user &amp;&amp;     echo 'user:TutoDocker-Lab1!' | chpasswd # buildkit
 </code></pre></div>
 <p>Toute personne qui récupère l'image lit le mot de passe. Même chose pour un fichier copié dans l'image : le script <code>init.sh</code> de la section 5 contient le mot de passe de la base, lisible par <code>docker run --rm --entrypoint cat lamp-wordpress /init.sh</code>. Pour un lab, c'est acceptable ; pour une image partagée (partie 15), jamais. En production, les secrets se passent <strong>au lancement</strong> (variables d'environnement, fichiers montés, <em>secrets</em> Docker), pas dans l'image. Et, comme en partie 3, un serveur <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> dans un conteneur reste une exception : pour administrer un conteneur, <code>docker exec</code> suffit.</p>
 </div>
@@ -4720,7 +4724,7 @@
 <a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a>service<span class="w"> </span>mariadb<span class="w"> </span>start
 <a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a><span class="c1"># Crée la base et l'utilisateur de WordPress (IF NOT EXISTS : pas d'erreur au redémarrage du conteneur)</span>
 <a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a>mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">"CREATE DATABASE IF NOT EXISTS wordpress DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"</span>
-<a id="__codelineno-33-6" name="__codelineno-33-6" href="#__codelineno-33-6"></a>mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">"CREATE USER IF NOT EXISTS 'wordpress'@'localhost' IDENTIFIED BY 'TutoDocker2026!';"</span>
+<a id="__codelineno-33-6" name="__codelineno-33-6" href="#__codelineno-33-6"></a>mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">"CREATE USER IF NOT EXISTS 'wordpress'@'localhost' IDENTIFIED BY 'TutoDocker-Lab1!';"</span>
 <a id="__codelineno-33-7" name="__codelineno-33-7" href="#__codelineno-33-7"></a>mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">"GRANT ALL PRIVILEGES ON wordpress.* TO 'wordpress'@'localhost';"</span>
 <a id="__codelineno-33-8" name="__codelineno-33-8" href="#__codelineno-33-8"></a>mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">"FLUSH PRIVILEGES;"</span>
 <a id="__codelineno-33-9" name="__codelineno-33-9" href="#__codelineno-33-9"></a><span class="c1"># Démarre Apache au premier plan : c'est lui qui garde le conteneur en vie</span>
@@ -4790,7 +4794,7 @@
 </div>
 </li>
 <li>
-<p>🐧 Démarrer le conteneur et lire ses journaux :</p>
+<p>🐧 Démarrer le conteneur et lire ses journaux. Tant que l'assistant d'installation n'est pas terminé, le <strong>premier visiteur</strong> du port 65432 peut créer le compte administrateur du site : le terminer aussitôt (étape 3), et garder la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> en NAT ou en réseau privé hôte.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">65432</span>:80<span class="w"> </span>--name<span class="w"> </span>wordpress-lamp<span class="w"> </span>lamp-wordpress
 <a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a>sleep<span class="w"> </span><span class="m">6</span>
 <a id="__codelineno-38-3" name="__codelineno-38-3" href="#__codelineno-38-3"></a>docker<span class="w"> </span>logs<span class="w"> </span>wordpress-lamp
@@ -4833,7 +4837,7 @@
 </tr>
 <tr>
 <td>Mot de passe</td>
-<td><code>TutoDocker2026!</code></td>
+<td><code>TutoDocker-Lab1!</code></td>
 </tr>
 <tr>
 <td>Adresse de la base de données</td>
@@ -4862,7 +4866,7 @@
 </figure>
 </li>
 <li>
-<p>🌐 Cliquer sur <strong>Lancer l'installation</strong>, puis remplir <strong>Titre du site</strong> (au choix), <strong>Identifiant</strong> <code>admin</code>, <strong>Mot de passe</strong> <code>TutoDocker2026!</code> (WordPress le juge « Forte ») et <strong>Votre e-mail</strong> avec une adresse fictive (<code>admin@lab.local</code>). Cliquer sur <strong>Installer WordPress</strong> : le message « Quel succès ! » confirme l'installation.</p>
+<p>🌐 Cliquer sur <strong>Lancer l'installation</strong>, puis remplir <strong>Titre du site</strong> (au choix), <strong>Identifiant</strong> <code>admin</code>, <strong>Mot de passe</strong> <code>TutoDocker-Lab1!</code> (WordPress le juge « Forte ») et <strong>Votre e-mail</strong> avec une adresse fictive (<code>admin@lab.local</code>). Cliquer sur <strong>Installer WordPress</strong> : le message « Quel succès ! » confirme l'installation.</p>
 </li>
 </ol>
 <h3 id="55-pourquoi-on-ne-fait-pas-ainsi-en-production">5.5 Pourquoi on ne fait pas ainsi en production<a class="headerlink" href="#55-pourquoi-on-ne-fait-pas-ainsi-en-production" title="Permanent link">&para;</a></h3>

@@ -3906,7 +3906,7 @@
 <hr />
 <div class="admonition info">
 <p class="admonition-title">Convention de lecture</p>
-<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>tssr</code> · 🌐 <strong>navigateur du PC</strong> · ✍️ <strong>exercice</strong> · 🛟 <strong>instantané</strong>. Suite de la <a href="../09-reverse-proxy-nginx-proxy-manager/">partie 9</a> : <abbr title="Nginx Proxy Manager">NPM</abbr> et Portainer tournent, et le fichier <code>hosts</code> du PC contient <code>nextcloud.docker.test</code> et <code>wordpress.docker.test</code>.</p>
+<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>adminlab</code> · 🌐 <strong>navigateur du PC</strong> · ✍️ <strong>exercice</strong> · 🛟 <strong>instantané</strong>. Suite de la <a href="../09-reverse-proxy-nginx-proxy-manager/">partie 9</a> : <abbr title="Nginx Proxy Manager">NPM</abbr> et Portainer tournent, et le fichier <code>hosts</code> du PC contient <code>nextcloud.docker.test</code> et <code>wordpress.docker.test</code>.</p>
 </div>
 <h2 id="1-le-fichier-compose-de-nextcloud-derriere-un-proxy">1. Le fichier Compose de Nextcloud derrière un proxy<a class="headerlink" href="#1-le-fichier-compose-de-nextcloud-derriere-un-proxy" title="Permanent link">&para;</a></h2>
 <p>On repart d'un <strong>nouveau</strong> projet, dans son propre dossier, pour ne pas mélanger avec le Nextcloud de la partie 8.</p>
@@ -3941,8 +3941,8 @@
 <a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
 <a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_DATABASE=nextcloud</span>
 <a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_USER=nextcloud</span>
-<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_ROOT_PASSWORD=TutoDocker2026!</span>
-<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_PASSWORD=TutoDocker2026!</span>
+<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_ROOT_PASSWORD=TutoDocker-Lab1!</span>
+<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_PASSWORD=TutoDocker-Lab1!</span>
 <a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="w">    </span><span class="nt">expose</span><span class="p">:</span>
 <a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3306</span>
 <a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a><span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
@@ -3966,7 +3966,7 @@
 <a id="__codelineno-1-44" name="__codelineno-1-44" href="#__codelineno-1-44"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_HOST=mariadb</span>
 <a id="__codelineno-1-45" name="__codelineno-1-45" href="#__codelineno-1-45"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_DATABASE=nextcloud</span>
 <a id="__codelineno-1-46" name="__codelineno-1-46" href="#__codelineno-1-46"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_USER=nextcloud</span>
-<a id="__codelineno-1-47" name="__codelineno-1-47" href="#__codelineno-1-47"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_PASSWORD=TutoDocker2026!</span>
+<a id="__codelineno-1-47" name="__codelineno-1-47" href="#__codelineno-1-47"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_PASSWORD=TutoDocker-Lab1!</span>
 <a id="__codelineno-1-48" name="__codelineno-1-48" href="#__codelineno-1-48"></a><span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
 <a id="__codelineno-1-49" name="__codelineno-1-49" href="#__codelineno-1-49"></a><span class="w">      </span><span class="nt">mariadb</span><span class="p">:</span>
 <a id="__codelineno-1-50" name="__codelineno-1-50" href="#__codelineno-1-50"></a><span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
@@ -4040,7 +4040,18 @@
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>d228d6be6161   nextcloud-proxy_mariadb   bridge    local
 <a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>66d095acc251   nextcloud-proxy_redis     bridge    local
 </code></pre></div>
-<p><abbr title="Nginx Proxy Manager">NPM</abbr> rejoint Nextcloud par <code>app</code>, mais n'a <strong>aucun</strong> accès à la base de données ni à Redis : ils sont sur d'autres réseaux. Comme en partie 9, rendre ce branchement durable en ajoutant <code>nextcloud-proxy_app</code> à la liste <code>networks:</code> du service <code>app</code> de <code>~/npm/docker-compose.yml</code>, et <code>nextcloud-proxy_app: external: true</code> à la section <code>networks:</code> de fin de fichier, puis <code>cd ~/npm &amp;&amp; docker compose up -d</code>.</p>
+<p><abbr title="Nginx Proxy Manager">NPM</abbr> rejoint Nextcloud par <code>app</code>, mais n'a <strong>aucun</strong> accès à la base de données ni à Redis : ils sont sur d'autres réseaux. Comme en partie 9, rendre ce branchement durable : dans <code>~/npm/docker-compose.yml</code>, ajouter <code>nextcloud-proxy_app</code> aux réseaux du service <code>app</code> et à la section <code>networks:</code> de fin de fichier. La fin du fichier devient :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">portainer_network</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nextcloud-proxy_app</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span><span class="nt">portainer_network</span><span class="p">:</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span><span class="nt">external</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">  </span><span class="nt">nextcloud-proxy_app</span><span class="p">:</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span><span class="nt">external</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+<p>Puis <code>cd ~/npm &amp;&amp; docker compose up -d</code>. Sans cette déclaration, la prochaine recréation de <abbr title="Nginx Proxy Manager">NPM</abbr> (partie 12) le débrancherait de Nextcloud : erreur 502.</p>
 </li>
 <li>
 <p>🌐 Dans <abbr title="Nginx Proxy Manager">NPM</abbr>, <strong>Ajouter Hôte proxy</strong> :</p>
@@ -4081,15 +4092,15 @@
 <p>Laisser l'onglet <strong>SSL</strong> tel quel pour l'instant, et <strong>Enregistrer</strong>.</p>
 </li>
 <li>
-<p>🌐 Ouvrir <code>http://nextcloud.docker.test</code> : l'assistant d'installation s'affiche. Créer le compte <code>admin</code> / <code>TutoDocker2026!</code> comme en <a href="../08-docker-compose-nextcloud/#52-creer-le-compte-administrateur">partie 8</a>, puis <strong>Installer</strong> (environ une minute).</p>
+<p>🌐 Ouvrir <code>http://nextcloud.docker.test</code> : l'assistant d'installation s'affiche. Créer le compte <code>admin</code> / <code>TutoDocker-Lab1!</code> comme en <a href="../08-docker-compose-nextcloud/#52-creer-le-compte-administrateur">partie 8</a>, puis <strong>Installer</strong> (environ une minute).</p>
 </li>
 </ol>
 <div class="admonition info">
 <p class="admonition-title">Le nom de domaine retenu par Nextcloud</p>
 <p>Pendant l'installation, Nextcloud enregistre le nom par lequel on l'a joint comme <strong>domaine de confiance</strong> (<em>trusted domain</em>). On le vérifie avec <code>occ</code> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-u<span class="w"> </span>www-data<span class="w"> </span>nextcloud<span class="w"> </span>php<span class="w"> </span>occ<span class="w"> </span>config:system:get<span class="w"> </span>trusted_domains
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-u<span class="w"> </span>www-data<span class="w"> </span>nextcloud<span class="w"> </span>php<span class="w"> </span>occ<span class="w"> </span>config:system:get<span class="w"> </span>trusted_domains
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>nextcloud.docker.test
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>nextcloud.docker.test
 </code></pre></div>
 <p>Ouvert par un autre nom (son adresse IP, par exemple), Nextcloud refuserait avec le message <strong>Accès par un domaine non approuvé</strong>. Pour ajouter un nom : <code>docker exec -u www-data nextcloud php occ config:system:set trusted_domains 1 --value=autre.nom</code>.</p>
 </div>
@@ -4100,12 +4111,12 @@
 <h3 id="32-generer-le-certificat-avec-openssl">3.2 Générer le certificat avec <code>openssl</code><a class="headerlink" href="#32-generer-le-certificat-avec-openssl" title="Permanent link">&para;</a></h3>
 <p>Un même certificat peut être valable pour <strong>plusieurs noms</strong> : on en fabrique un seul pour les trois services du jour 3 (Nextcloud, Portainer et WordPress).</p>
 <p>🐧 Créer un dossier et le certificat (une seule commande, sur plusieurs lignes) :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>mkdir<span class="w"> </span>~/certs<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/certs
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>openssl<span class="w"> </span>req<span class="w"> </span>-x509<span class="w"> </span>-nodes<span class="w"> </span>-days<span class="w"> </span><span class="m">365</span><span class="w"> </span>-newkey<span class="w"> </span>rsa:2048<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span>-keyout<span class="w"> </span>docker.test.key<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">  </span>-out<span class="w"> </span>docker.test.crt<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">  </span>-subj<span class="w"> </span><span class="s2">"/C=FR/ST=France/L=Paris/O=Lab Docker/CN=docker.test"</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">  </span>-addext<span class="w"> </span><span class="s2">"subjectAltName=DNS:nextcloud.docker.test,DNS:portainer.docker.test,DNS:wordpress.docker.test"</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>mkdir<span class="w"> </span>~/certs<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/certs
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>openssl<span class="w"> </span>req<span class="w"> </span>-x509<span class="w"> </span>-nodes<span class="w"> </span>-days<span class="w"> </span><span class="m">365</span><span class="w"> </span>-newkey<span class="w"> </span>rsa:2048<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span>-keyout<span class="w"> </span>docker.test.key<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">  </span>-out<span class="w"> </span>docker.test.crt<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">  </span>-subj<span class="w"> </span><span class="s2">"/C=FR/ST=France/L=Paris/O=Lab Docker/CN=docker.test"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">  </span>-addext<span class="w"> </span><span class="s2">"subjectAltName=DNS:nextcloud.docker.test,DNS:portainer.docker.test,DNS:wordpress.docker.test"</span>
 </code></pre></div>
 <table>
 <thead>
@@ -4146,22 +4157,22 @@
 </tbody>
 </table>
 <p>🐧 Vérifier :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>ls<span class="w"> </span>-l
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>docker.test.crt<span class="w"> </span>-noout<span class="w"> </span>-subject<span class="w"> </span>-enddate<span class="w"> </span>-ext<span class="w"> </span>subjectAltName
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>ls<span class="w"> </span>-l
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>docker.test.crt<span class="w"> </span>-noout<span class="w"> </span>-subject<span class="w"> </span>-enddate<span class="w"> </span>-ext<span class="w"> </span>subjectAltName
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>-rw-rw-r-- 1 tssr tssr 1411 24 nov.  08:31 docker.test.crt
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>-rw------- 1 tssr tssr 1704 24 nov.  08:31 docker.test.key
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>subject=C=FR, ST=France, L=Paris, O=Lab Docker, CN=docker.test
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>notAfter=Nov 24 07:31:21 2027 GMT
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>X509v3 Subject Alternative Name:
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>    DNS:nextcloud.docker.test, DNS:portainer.docker.test, DNS:wordpress.docker.test
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>-rw-rw-r-- 1 adminlab adminlab 1411 24 nov.  08:31 docker.test.crt
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>-rw------- 1 adminlab adminlab 1704 24 nov.  08:31 docker.test.key
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>subject=C=FR, ST=France, L=Paris, O=Lab Docker, CN=docker.test
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>notAfter=Nov 24 07:31:21 2027 GMT
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>X509v3 Subject Alternative Name:
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>    DNS:nextcloud.docker.test, DNS:portainer.docker.test, DNS:wordpress.docker.test
 </code></pre></div>
-<p>La clé privée n'est lisible que par <code>tssr</code> (<code>-rw-------</code>) : elle ne doit jamais être partagée.</p>
+<p>La clé privée n'est lisible que par <code>adminlab</code> (<code>-rw-------</code>) : elle ne doit jamais être partagée.</p>
 <h3 id="33-copier-les-fichiers-sur-le-pc">3.3 Copier les fichiers sur le PC<a class="headerlink" href="#33-copier-les-fichiers-sur-le-pc" title="Permanent link">&para;</a></h3>
 <p><abbr title="Nginx Proxy Manager">NPM</abbr> importe les certificats en <strong>envoyant des fichiers</strong> depuis le navigateur : il faut donc les avoir sur le PC.</p>
 <p>🖥️ Dans PowerShell, copier les deux fichiers de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> vers le dossier courant du PC :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nb">cd </span><span class="nv">$HOME</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">scp</span> <span class="n">tssr</span><span class="nv">@IP</span><span class="n">-de-la-VM</span><span class="p">:</span><span class="n">certs</span><span class="p">/</span><span class="n">docker</span><span class="p">.</span><span class="n">test</span><span class="p">.*</span> <span class="p">.</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nb">cd </span><span class="nv">$HOME</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="n">scp</span> <span class="n">adminlab</span><span class="nv">@IP</span><span class="n">-de-la-VM</span><span class="p">:</span><span class="n">certs</span><span class="p">/</span><span class="n">docker</span><span class="p">.</span><span class="n">test</span><span class="p">.*</span> <span class="p">.</span>
 </code></pre></div>
 <p>Les fichiers arrivent dans le dossier personnel de Windows (<code>C:\Users\&lt;nom&gt;</code>). Après l'import dans <abbr title="Nginx Proxy Manager">NPM</abbr>, supprimer la <strong>clé privée</strong> du PC : <code>Remove-Item .\docker.test.key</code>.</p>
 <h3 id="34-importer-le-certificat-dans-npm">3.4 Importer le certificat dans <abbr title="Nginx Proxy Manager">NPM</abbr><a class="headerlink" href="#34-importer-le-certificat-dans-npm" title="Permanent link">&para;</a></h3>
@@ -4235,11 +4246,11 @@
 <ol>
 <li>
 <p>🐧 Depuis la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, vérifier la redirection et le <abbr title="HTTP sécurisé par TLS">HTTPS</abbr> (l'option <code>-k</code> accepte le certificat autosigné, <code>--resolve</code> remplace le fichier <code>hosts</code>) :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>curl<span class="w"> </span>-s<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span><span class="s1">'%{http_code} %{redirect_url}\n'</span><span class="w"> </span>--resolve<span class="w"> </span>nextcloud.docker.test:80:127.0.0.1<span class="w"> </span>http://nextcloud.docker.test/
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>curl<span class="w"> </span>-sk<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span><span class="s1">'%{http_code} HTTP/%{http_version}\n'</span><span class="w"> </span>--resolve<span class="w"> </span>nextcloud.docker.test:443:127.0.0.1<span class="w"> </span>https://nextcloud.docker.test/status.php
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>curl<span class="w"> </span>-s<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span><span class="s1">'%{http_code} %{redirect_url}\n'</span><span class="w"> </span>--resolve<span class="w"> </span>nextcloud.docker.test:80:127.0.0.1<span class="w"> </span>http://nextcloud.docker.test/
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>curl<span class="w"> </span>-sk<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span><span class="s1">'%{http_code} HTTP/%{http_version}\n'</span><span class="w"> </span>--resolve<span class="w"> </span>nextcloud.docker.test:443:127.0.0.1<span class="w"> </span>https://nextcloud.docker.test/status.php
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>301 https://nextcloud.docker.test/
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>200 HTTP/2
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>301 https://nextcloud.docker.test/
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>200 HTTP/2
 </code></pre></div>
 <p>La visite en HTTP est <strong>redirigée</strong> (code 301) vers <abbr title="HTTP sécurisé par TLS">HTTPS</abbr>, qui répond en HTTP/2.</p>
 </li>
@@ -4258,8 +4269,8 @@
 </div>
 <h2 id="4-dire-a-nextcloud-quil-est-derriere-un-proxy-https">4. Dire à Nextcloud qu'il est derrière un proxy <abbr title="HTTP sécurisé par TLS">HTTPS</abbr><a class="headerlink" href="#4-dire-a-nextcloud-quil-est-derriere-un-proxy-https" title="Permanent link">&para;</a></h2>
 <p>🌐 Se connecter à Nextcloud, puis ouvrir <strong>Paramètres d'administration &gt; Vue d'ensemble</strong> (menu de l'avatar en haut à droite). Nextcloud signale une erreur :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>Accès HTTPS et URL
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>Vous accédez au site de manière non sécurisée via HTTP. Il est fortement recommandé de configurer votre serveur pour exiger HTTPS.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>Accès HTTPS et URL
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>Vous accédez au site de manière non sécurisée via HTTP. Il est fortement recommandé de configurer votre serveur pour exiger HTTPS.
 </code></pre></div>
 <p>Pourtant, le navigateur est bien en <abbr title="HTTP sécurisé par TLS">HTTPS</abbr> ! C'est le piège classique du reverse proxy : le <strong>chiffrement s'arrête au proxy</strong>. Entre <abbr title="Nginx Proxy Manager">NPM</abbr> et Nextcloud, sur le réseau Docker <code>app</code>, la requête circule en HTTP simple. Nextcloud ne voit donc que du HTTP, et risque de fabriquer des liens en <code>http://</code>.</p>
 <figure>
@@ -4272,9 +4283,9 @@
 <ol>
 <li>
 <p>🐧 Dans <code>~/nextcloud-proxy/docker-compose.yml</code>, ajouter au bloc <code>environment</code> du service <code>nextcloud</code> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TRUSTED_PROXIES=172.16.0.0/12</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OVERWRITEPROTOCOL=https</span>
-<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OVERWRITECLIURL=https://nextcloud.docker.test</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TRUSTED_PROXIES=172.16.0.0/12</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OVERWRITEPROTOCOL=https</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OVERWRITECLIURL=https://nextcloud.docker.test</span>
 </code></pre></div>
 <table>
 <thead>
@@ -4301,13 +4312,13 @@
 </li>
 <li>
 <p>🐧 Appliquer : Compose recrée seulement le conteneur <code>nextcloud</code> ; les données sont dans les volumes.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="nb">cd</span><span class="w"> </span>~/nextcloud-proxy
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="nb">cd</span><span class="w"> </span>~/nextcloud-proxy
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a> Container nextcloud Recreate
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a> Container nextcloud Recreated
-<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a> Container nextcloud Starting
-<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a> Container nextcloud Started
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a> Container nextcloud Recreate
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a> Container nextcloud Recreated
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a> Container nextcloud Starting
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a> Container nextcloud Started
 </code></pre></div>
 </li>
 <li>
@@ -4321,7 +4332,7 @@
 <h2 id="5-exercice-publier-wordpress-derriere-le-proxy">5. Exercice — Publier WordPress derrière le proxy<a class="headerlink" href="#5-exercice-publier-wordpress-derriere-le-proxy" title="Permanent link">&para;</a></h2>
 <p>✍️ Écrire un projet Compose dans <code>~/wordpress</code> avec deux services :</p>
 <ul>
-<li><code>database</code> : MariaDB 11.8 (avec test de santé), base <code>wordpress</code>, utilisateur <code>wordpress</code>, mot de passe <code>TutoDocker2026!</code>, volume <code>db_data</code>, sur un réseau <code>db_wordpress</code> seulement ;</li>
+<li><code>database</code> : MariaDB 11.8 (avec test de santé), base <code>wordpress</code>, utilisateur <code>wordpress</code>, mot de passe <code>TutoDocker-Lab1!</code>, volume <code>db_data</code>, sur un réseau <code>db_wordpress</code> seulement ;</li>
 <li><code>wordpress</code> : image <code>wordpress</code>, volume <code>wp_data</code>, sur <code>db_wordpress</code> <strong>et</strong> sur le réseau <strong>existant</strong> <code>npm_default</code> de <abbr title="Nginx Proxy Manager">NPM</abbr>, aucun port publié.</li>
 </ul>
 <p>Le publier en <code>https://wordpress.docker.test</code>, avec le certificat <code>docker.test</code>, <strong>avant</strong> de lancer l'assistant d'installation de WordPress (installé en HTTP, WordPress enregistrerait des adresses en <code>http://</code> et continuerait à produire de tels liens après le passage en <abbr title="HTTP sécurisé par TLS">HTTPS</abbr>).</p>
@@ -4332,55 +4343,55 @@
 <details class="success">
 <summary>Réponse</summary>
 <p>🐧 <code>~/wordpress/docker-compose.yml</code> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="nt">services</span><span class="p">:</span>
-<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">  </span><span class="nt">database</span><span class="p">:</span>
-<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mariadb:11.8</span>
-<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">database</span>
-<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">always</span>
-<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
-<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">db_wordpress</span>
-<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
-<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MARIADB_ROOT_PASSWORD=TutoDocker2026!</span>
-<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MARIADB_DATABASE=wordpress</span>
-<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MARIADB_USER=wordpress</span>
-<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MARIADB_PASSWORD=TutoDocker2026!</span>
-<a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
-<a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">db_data:/var/lib/mysql</span>
-<a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a><span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
-<a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a><span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"CMD"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"healthcheck.sh"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"--connect"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"--innodb_initialized"</span><span class="p p-Indicator">]</span>
-<a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a><span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
-<a id="__codelineno-18-18" name="__codelineno-18-18" href="#__codelineno-18-18"></a><span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5s</span>
-<a id="__codelineno-18-19" name="__codelineno-18-19" href="#__codelineno-18-19"></a><span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
-<a id="__codelineno-18-20" name="__codelineno-18-20" href="#__codelineno-18-20"></a><span class="w">      </span><span class="nt">start_period</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
-<a id="__codelineno-18-21" name="__codelineno-18-21" href="#__codelineno-18-21"></a><span class="w">  </span><span class="nt">wordpress</span><span class="p">:</span>
-<a id="__codelineno-18-22" name="__codelineno-18-22" href="#__codelineno-18-22"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wordpress:latest</span>
-<a id="__codelineno-18-23" name="__codelineno-18-23" href="#__codelineno-18-23"></a><span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wordpress</span>
-<a id="__codelineno-18-24" name="__codelineno-18-24" href="#__codelineno-18-24"></a><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">always</span>
-<a id="__codelineno-18-25" name="__codelineno-18-25" href="#__codelineno-18-25"></a><span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
-<a id="__codelineno-18-26" name="__codelineno-18-26" href="#__codelineno-18-26"></a><span class="w">      </span><span class="nt">database</span><span class="p">:</span>
-<a id="__codelineno-18-27" name="__codelineno-18-27" href="#__codelineno-18-27"></a><span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
-<a id="__codelineno-18-28" name="__codelineno-18-28" href="#__codelineno-18-28"></a><span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
-<a id="__codelineno-18-29" name="__codelineno-18-29" href="#__codelineno-18-29"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">db_wordpress</span>
-<a id="__codelineno-18-30" name="__codelineno-18-30" href="#__codelineno-18-30"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">npm_default</span>
-<a id="__codelineno-18-31" name="__codelineno-18-31" href="#__codelineno-18-31"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
-<a id="__codelineno-18-32" name="__codelineno-18-32" href="#__codelineno-18-32"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WORDPRESS_DB_HOST=database:3306</span>
-<a id="__codelineno-18-33" name="__codelineno-18-33" href="#__codelineno-18-33"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WORDPRESS_DB_NAME=wordpress</span>
-<a id="__codelineno-18-34" name="__codelineno-18-34" href="#__codelineno-18-34"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WORDPRESS_DB_USER=wordpress</span>
-<a id="__codelineno-18-35" name="__codelineno-18-35" href="#__codelineno-18-35"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WORDPRESS_DB_PASSWORD=TutoDocker2026!</span>
-<a id="__codelineno-18-36" name="__codelineno-18-36" href="#__codelineno-18-36"></a><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
-<a id="__codelineno-18-37" name="__codelineno-18-37" href="#__codelineno-18-37"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wp_data:/var/www/html</span>
-<a id="__codelineno-18-38" name="__codelineno-18-38" href="#__codelineno-18-38"></a><span class="nt">networks</span><span class="p">:</span>
-<a id="__codelineno-18-39" name="__codelineno-18-39" href="#__codelineno-18-39"></a><span class="w">  </span><span class="nt">db_wordpress</span><span class="p">:</span>
-<a id="__codelineno-18-40" name="__codelineno-18-40" href="#__codelineno-18-40"></a><span class="w">  </span><span class="nt">npm_default</span><span class="p">:</span>
-<a id="__codelineno-18-41" name="__codelineno-18-41" href="#__codelineno-18-41"></a><span class="w">    </span><span class="nt">external</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<a id="__codelineno-18-42" name="__codelineno-18-42" href="#__codelineno-18-42"></a><span class="nt">volumes</span><span class="p">:</span>
-<a id="__codelineno-18-43" name="__codelineno-18-43" href="#__codelineno-18-43"></a><span class="w">  </span><span class="nt">db_data</span><span class="p">:</span>
-<a id="__codelineno-18-44" name="__codelineno-18-44" href="#__codelineno-18-44"></a><span class="w">  </span><span class="nt">wp_data</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="nt">services</span><span class="p">:</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">  </span><span class="nt">database</span><span class="p">:</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mariadb:11.8</span>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">database</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">always</span>
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">db_wordpress</span>
+<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MARIADB_ROOT_PASSWORD=TutoDocker-Lab1!</span>
+<a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MARIADB_DATABASE=wordpress</span>
+<a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MARIADB_USER=wordpress</span>
+<a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MARIADB_PASSWORD=TutoDocker-Lab1!</span>
+<a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">db_data:/var/lib/mysql</span>
+<a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a><span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
+<a id="__codelineno-19-16" name="__codelineno-19-16" href="#__codelineno-19-16"></a><span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"CMD"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"healthcheck.sh"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"--connect"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"--innodb_initialized"</span><span class="p p-Indicator">]</span>
+<a id="__codelineno-19-17" name="__codelineno-19-17" href="#__codelineno-19-17"></a><span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<a id="__codelineno-19-18" name="__codelineno-19-18" href="#__codelineno-19-18"></a><span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5s</span>
+<a id="__codelineno-19-19" name="__codelineno-19-19" href="#__codelineno-19-19"></a><span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<a id="__codelineno-19-20" name="__codelineno-19-20" href="#__codelineno-19-20"></a><span class="w">      </span><span class="nt">start_period</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+<a id="__codelineno-19-21" name="__codelineno-19-21" href="#__codelineno-19-21"></a><span class="w">  </span><span class="nt">wordpress</span><span class="p">:</span>
+<a id="__codelineno-19-22" name="__codelineno-19-22" href="#__codelineno-19-22"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wordpress:latest</span>
+<a id="__codelineno-19-23" name="__codelineno-19-23" href="#__codelineno-19-23"></a><span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wordpress</span>
+<a id="__codelineno-19-24" name="__codelineno-19-24" href="#__codelineno-19-24"></a><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">always</span>
+<a id="__codelineno-19-25" name="__codelineno-19-25" href="#__codelineno-19-25"></a><span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<a id="__codelineno-19-26" name="__codelineno-19-26" href="#__codelineno-19-26"></a><span class="w">      </span><span class="nt">database</span><span class="p">:</span>
+<a id="__codelineno-19-27" name="__codelineno-19-27" href="#__codelineno-19-27"></a><span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+<a id="__codelineno-19-28" name="__codelineno-19-28" href="#__codelineno-19-28"></a><span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-19-29" name="__codelineno-19-29" href="#__codelineno-19-29"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">db_wordpress</span>
+<a id="__codelineno-19-30" name="__codelineno-19-30" href="#__codelineno-19-30"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">npm_default</span>
+<a id="__codelineno-19-31" name="__codelineno-19-31" href="#__codelineno-19-31"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<a id="__codelineno-19-32" name="__codelineno-19-32" href="#__codelineno-19-32"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WORDPRESS_DB_HOST=database:3306</span>
+<a id="__codelineno-19-33" name="__codelineno-19-33" href="#__codelineno-19-33"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WORDPRESS_DB_NAME=wordpress</span>
+<a id="__codelineno-19-34" name="__codelineno-19-34" href="#__codelineno-19-34"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WORDPRESS_DB_USER=wordpress</span>
+<a id="__codelineno-19-35" name="__codelineno-19-35" href="#__codelineno-19-35"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WORDPRESS_DB_PASSWORD=TutoDocker-Lab1!</span>
+<a id="__codelineno-19-36" name="__codelineno-19-36" href="#__codelineno-19-36"></a><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<a id="__codelineno-19-37" name="__codelineno-19-37" href="#__codelineno-19-37"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wp_data:/var/www/html</span>
+<a id="__codelineno-19-38" name="__codelineno-19-38" href="#__codelineno-19-38"></a><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-19-39" name="__codelineno-19-39" href="#__codelineno-19-39"></a><span class="w">  </span><span class="nt">db_wordpress</span><span class="p">:</span>
+<a id="__codelineno-19-40" name="__codelineno-19-40" href="#__codelineno-19-40"></a><span class="w">  </span><span class="nt">npm_default</span><span class="p">:</span>
+<a id="__codelineno-19-41" name="__codelineno-19-41" href="#__codelineno-19-41"></a><span class="w">    </span><span class="nt">external</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-19-42" name="__codelineno-19-42" href="#__codelineno-19-42"></a><span class="nt">volumes</span><span class="p">:</span>
+<a id="__codelineno-19-43" name="__codelineno-19-43" href="#__codelineno-19-43"></a><span class="w">  </span><span class="nt">db_data</span><span class="p">:</span>
+<a id="__codelineno-19-44" name="__codelineno-19-44" href="#__codelineno-19-44"></a><span class="w">  </span><span class="nt">wp_data</span><span class="p">:</span>
 </code></pre></div>
 <p>🐧 <code>cd ~/wordpress &amp;&amp; docker compose up -d</code>, puis 🌐 un hôte proxy <code>wordpress.docker.test</code> → <code>wordpress</code>, port <code>80</code>, avec dans l'onglet <strong>SSL</strong> le certificat <code>docker.test</code>, <strong>Forcer SSL</strong> et <strong>HTTP/2</strong>. 🐧 Vérifier :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>curl<span class="w"> </span>-sk<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span><span class="s1">'%{http_code} %{redirect_url}\n'</span><span class="w"> </span>--resolve<span class="w"> </span>wordpress.docker.test:443:127.0.0.1<span class="w"> </span>https://wordpress.docker.test/
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>curl<span class="w"> </span>-sk<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span><span class="s1">'%{http_code} %{redirect_url}\n'</span><span class="w"> </span>--resolve<span class="w"> </span>wordpress.docker.test:443:127.0.0.1<span class="w"> </span>https://wordpress.docker.test/
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>302 https://wordpress.docker.test/wp-admin/install.php
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>302 https://wordpress.docker.test/wp-admin/install.php
 </code></pre></div>
 <p>L'image WordPress lit l'en-tête <code>X-Forwarded-Proto</code> du proxy : elle redirige bien vers une adresse en <code>https://</code>. L'assistant d'installation commence par le choix de la langue :</p>
 <figure>
@@ -4395,8 +4406,8 @@
 <div class="admonition success">
 <p class="admonition-title">Vérifier son lab</p>
 <p>🐧 Depuis la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>curl<span class="w"> </span>-sk<span class="w"> </span>--resolve<span class="w"> </span>nextcloud.docker.test:443:127.0.0.1<span class="w"> </span>https://nextcloud.docker.test/status.php
-<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>docker<span class="w"> </span>ps<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Names}}  {{.Ports}}'</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>curl<span class="w"> </span>-sk<span class="w"> </span>--resolve<span class="w"> </span>nextcloud.docker.test:443:127.0.0.1<span class="w"> </span>https://nextcloud.docker.test/status.php
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>docker<span class="w"> </span>ps<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Names}}  {{.Ports}}'</span>
 </code></pre></div>
 <p>Résultat attendu : une ligne <code>{"installed":true,…,"versionstring":"35.0.3",…}</code>, et une liste de conteneurs où <strong>seul</strong> <code>npm-app-1</code> publie des ports. 🌐 <code>https://nextcloud.docker.test</code> ouvre Nextcloud (après l'alerte de certificat), et <strong>Vue d'ensemble</strong> ne signale plus l'erreur <abbr title="HTTP sécurisé par TLS">HTTPS</abbr>.</p>
 </div>

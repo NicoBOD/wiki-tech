@@ -4219,7 +4219,38 @@
 <hr />
 <div class="admonition info">
 <p class="admonition-title">Convention de lecture</p>
-<p>🖥️ <strong>PC hôte</strong> · 🐧 dans une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : <strong>1️⃣</strong> <code>docker-hote</code> (le manager), <strong>2️⃣</strong> <code>docker-n2</code>, <strong>3️⃣</strong> <code>docker-n3</code> · 🌐 <strong>navigateur</strong> · ✍️ <strong>exercice</strong> · 🛟 <strong>instantané</strong>. Toutes les commandes Docker se tapent en <code>tssr</code>, sauf mention de <code>sudo</code>. Point de départ : l'instantané <code>06-registre</code> (fin de la partie 15).</p>
+<p>🖥️ <strong>PC hôte</strong> · 🐧 dans une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : <strong>1️⃣</strong> <code>docker-hote</code> (le manager), <strong>2️⃣</strong> <code>docker-n2</code>, <strong>3️⃣</strong> <code>docker-n3</code> · 🌐 <strong>navigateur</strong> · ✍️ <strong>exercice</strong> · 🛟 <strong>instantané</strong>. Toutes les commandes Docker se tapent en <code>adminlab</code>, sauf mention de <code>sudo</code>. Point de départ : l'instantané <code>06-registre</code> (fin de la partie 15).</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Adapter les adresses à son lab</p>
+<p>Les commandes et les sorties de cette partie montrent les adresses du lab de référence (réseau <code>192.168.8.0/24</code>). Avant de copier une commande, <strong>remplacer</strong> chaque adresse par celle de sa propre <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (relevée avec <code>ip -br a</code>) :</p>
+<table>
+<thead>
+<tr>
+<th>Machine</th>
+<th>Lab de référence</th>
+<th>Chez soi (à noter)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1️⃣ <code>docker-hote</code> (manager et registre privé)</td>
+<td><code>192.168.8.71</code></td>
+<td>IP-de-la-<abbr title="Virtual Machine — machine virtuelle">VM</abbr></td>
+</tr>
+<tr>
+<td>2️⃣ <code>docker-n2</code></td>
+<td><code>192.168.8.73</code></td>
+<td>IP-de-n2</td>
+</tr>
+<tr>
+<td>3️⃣ <code>docker-n3</code></td>
+<td><code>192.168.8.74</code></td>
+<td>IP-de-n3</td>
+</tr>
+</tbody>
+</table>
+<p>Sous VirtualBox, ce sont les adresses de la carte 2 (<code>192.168.56.x</code>). Une adresse oubliée donne des erreurs peu parlantes (<code>connection refused</code>, tâches « Rejected ») : en cas de doute, relire la commande.</p>
 </div>
 <h2 id="1-pourquoi-un-cluster">1. Pourquoi un cluster ?<a class="headerlink" href="#1-pourquoi-un-cluster" title="Permanent link">&para;</a></h2>
 <h3 id="11-le-probleme-dun-seul-serveur">1.1 Le problème d'un seul serveur<a class="headerlink" href="#11-le-probleme-dun-seul-serveur" title="Permanent link">&para;</a></h3>
@@ -4344,7 +4375,7 @@
 </table>
 <ol>
 <li>
-<p>🖥️ Créer les deux <abbr title="Virtual Machine — machine virtuelle">VM</abbr> en refaisant, pour chacune, les <strong>sections 2.1 à 2.4 de la <a href="../01-decouvrir-et-installer-docker/#2-creer-la-vm-docker-hote">partie 1</a></strong> : réglages de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, installation de Debian 13 sans bureau (comptes <code>root</code> et <code>tssr</code>, mot de passe du lab), adresse de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (sous VirtualBox, <strong>configuration de la carte <code>enp0s8</code></strong>), connexion SSH. Changer seulement le <strong>nom d'hôte</strong> (<code>docker-n2</code>, <code>docker-n3</code>) et les ressources du tableau. <strong>Ne pas</strong> refaire la section 3 de la partie 1 : Docker s'installe plus bas, par le script. Éteindre <code>docker-plateforme</code> si elle tourne : les trois <abbr title="Virtual Machine — machine virtuelle">VM</abbr> du cluster demandent 6 Go.</p>
+<p>🖥️ Créer les deux <abbr title="Virtual Machine — machine virtuelle">VM</abbr> en refaisant, pour chacune, les <strong>sections 2.1 à 2.4 de la <a href="../01-decouvrir-et-installer-docker/#2-creer-la-vm-docker-hote">partie 1</a></strong> : réglages de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, installation de Debian 13 sans bureau (comptes <code>root</code> et <code>adminlab</code>, mot de passe du lab), adresse de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (sous VirtualBox, <strong>configuration de la carte <code>enp0s8</code></strong>), connexion SSH. Changer seulement le <strong>nom d'hôte</strong> (<code>docker-n2</code>, <code>docker-n3</code>) et les ressources du tableau. <strong>Ne pas</strong> refaire la section 3 de la partie 1 : Docker s'installe plus bas, par le script. Éteindre <code>docker-plateforme</code> si elle tourne : les trois <abbr title="Virtual Machine — machine virtuelle">VM</abbr> du cluster demandent 6 Go.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">VMware Workstation</label><label for="__tabbed_1_2">VirtualBox</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -4372,17 +4403,17 @@
 </div>
 <p>Dans la suite, les adresses sont celles du lab : <code>192.168.8.71</code> pour <code>docker-hote</code>, <code>.73</code> pour <code>docker-n2</code>, <code>.74</code> pour <code>docker-n3</code>. Les remplacer par les siennes.</p>
 <h3 id="22-installer-docker-sur-les-deux-workers">2.2 Installer Docker sur les deux workers<a class="headerlink" href="#22-installer-docker-sur-les-deux-workers" title="Permanent link">&para;</a></h3>
-<p>2️⃣ 3️⃣ Sur <strong>chacune</strong> des deux nouvelles <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, connecté en SSH en <code>tssr</code>, devenir <code>root</code> avec <code>su -</code>, puis :</p>
+<p>2️⃣ 3️⃣ Sur <strong>chacune</strong> des deux nouvelles <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, connecté en SSH en <code>adminlab</code>, devenir <code>root</code> avec <code>su -</code>, puis :</p>
 <ol>
 <li>
-<p>Installer <code>sudo</code> (que Debian n'installe pas quand <code>root</code> a un mot de passe, voir la section 3.2 de la partie 1) et <code>curl</code>, et autoriser <code>tssr</code> à utiliser <code>sudo</code> :</p>
+<p>Installer <code>sudo</code> (que Debian n'installe pas quand <code>root</code> a un mot de passe, voir la section 3.2 de la partie 1) et <code>curl</code>, et autoriser <code>adminlab</code> à utiliser <code>sudo</code> :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>apt<span class="w"> </span>update
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>sudo<span class="w"> </span>curl
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>usermod<span class="w"> </span>-aG<span class="w"> </span>sudo<span class="w"> </span>tssr
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>usermod<span class="w"> </span>-aG<span class="w"> </span>sudo<span class="w"> </span>adminlab
 </code></pre></div>
 </li>
 <li>
-<p>Installer Docker avec le script de la partie 1, en répondant <code>oui</code>, <code>oui</code>, <code>oui</code>, puis <code>tssr</code> :</p>
+<p>Installer Docker avec le script de la partie 1, en répondant <code>oui</code>, <code>oui</code>, <code>oui</code>, puis <code>adminlab</code> :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>curl<span class="w"> </span>-fsSLO<span class="w"> </span>https://wiki.bodaine.fr/cours-tp/docker/fichiers/installer-docker.sh
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>chmod<span class="w"> </span>+x<span class="w"> </span>installer-docker.sh
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>./installer-docker.sh
@@ -4390,7 +4421,7 @@
 <p>L'installation prend moins d'une minute.</p>
 </li>
 <li>
-<p>Fermer <strong>toutes</strong> les sessions (<code>exit</code> deux fois) et se reconnecter en <code>tssr</code> : les groupes <code>sudo</code> et <code>docker</code> ne sont pris en compte qu'à la connexion. Vérifier : <code>id -nG</code> contient <code>sudo</code> et <code>docker</code>, et <code>docker version --format '{{.Server.Version}}'</code> affiche <code>29.10.0</code> (ou plus récent).</p>
+<p>Fermer <strong>toutes</strong> les sessions (<code>exit</code> deux fois) et se reconnecter en <code>adminlab</code> : les groupes <code>sudo</code> et <code>docker</code> ne sont pris en compte qu'à la connexion. Vérifier : <code>id -nG</code> contient <code>sudo</code> et <code>docker</code>, et <code>docker version --format '{{.Server.Version}}'</code> affiche <code>29.10.0</code> (ou plus récent).</p>
 </li>
 </ol>
 <div class="admonition tip">
@@ -4460,7 +4491,8 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">VMware Workstation</label><label for="__tabbed_2_2">VirtualBox</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>docker<span class="w"> </span>swarm<span class="w"> </span>init<span class="w"> </span>--advertise-addr<span class="w"> </span><span class="m">192</span>.168.8.71
+<p>L'adresse est celle de <code>docker-hote</code> (<code>192.168.8.71</code> dans le lab de référence) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>docker<span class="w"> </span>swarm<span class="w"> </span>init<span class="w"> </span>--advertise-addr<span class="w"> </span>IP-de-la-VM
 </code></pre></div>
 </div>
 <div class="tabbed-block">
@@ -4636,12 +4668,12 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>ID             NAME        IMAGE                           NODE        DESIRED STATE   CURRENT STATE            ERROR     PORTS
 <a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>szqbhv5l4x2c   bonjour.1   192.168.8.71:5000/bonjour:1.0   docker-n2   Running         Running 21 seconds ago
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>192.168.8.71 -&gt; Bonjour depuis le conteneur fb211602f3fb
-<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>192.168.8.73 -&gt; Bonjour depuis le conteneur fb211602f3fb
-<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>192.168.8.74 -&gt; Bonjour depuis le conteneur fb211602f3fb
-</code></pre></div>
 <p>1️⃣ Interroger les trois nœuds :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="k">for</span><span class="w"> </span>ip<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">192</span>.168.8.71<span class="w"> </span><span class="m">192</span>.168.8.73<span class="w"> </span><span class="m">192</span>.168.8.74<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$ip</span><span class="s2"> -&gt; </span><span class="k">$(</span>curl<span class="w"> </span>-s<span class="w"> </span>http://<span class="nv">$ip</span>:8080/<span class="k">)</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="k">for</span><span class="w"> </span>ip<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">192</span>.168.8.71<span class="w"> </span><span class="m">192</span>.168.8.73<span class="w"> </span><span class="m">192</span>.168.8.74<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$ip</span><span class="s2"> -&gt; </span><span class="k">$(</span>curl<span class="w"> </span>-s<span class="w"> </span>http://<span class="nv">$ip</span>:8080/<span class="k">)</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>192.168.8.71 -&gt; Bonjour depuis le conteneur fb211602f3fb
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>192.168.8.73 -&gt; Bonjour depuis le conteneur fb211602f3fb
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>192.168.8.74 -&gt; Bonjour depuis le conteneur fb211602f3fb
 </code></pre></div>
 <p>La seule réplique tourne sur <code>docker-n2</code>, et pourtant <code>docker-hote</code> et <code>docker-n3</code> répondent aussi sur le port 8080 : ils <strong>transmettent</strong> la requête à <code>docker-n2</code> par le réseau <code>ingress</code>. On peut donc placer un répartiteur de charge (ou un reverse proxy comme <abbr title="Nginx Proxy Manager">NPM</abbr>) devant n'importe quel nœud, ou devant tous.</p>
 <p>1️⃣ Revenir à trois répliques : <code>docker service scale bonjour=3</code>.</p>
@@ -4859,7 +4891,7 @@
 <a id="__codelineno-48-16" name="__codelineno-48-16" href="#__codelineno-48-16"></a><span class="w">  </span><span class="nt">front</span><span class="p">:</span>
 <a id="__codelineno-48-17" name="__codelineno-48-17" href="#__codelineno-48-17"></a><span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">overlay</span>
 </code></pre></div>
-<p><code>condition: any</code> (la valeur par défaut, écrite ici pour être visible) recrée une réplique <strong>quelle que soit</strong> la raison de son arrêt. Avec <code>on-failure</code>, une réplique arrêtée <strong>proprement</strong> (code de sortie 0), par exemple lors de l'arrêt normal d'un nœud, est considérée comme terminée (<code>Complete</code>) et <strong>n'est pas remplacée</strong> : dans le lab, après un arrêt propre des trois <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, un service en <code>on-failure</code> est resté à <code>1/3</code>.</p>
+<p><code>condition: any</code> (la valeur par défaut, écrite ici pour être visible) recrée une réplique <strong>quelle que soit</strong> la raison de son arrêt. Avec <code>on-failure</code>, une réplique arrêtée <strong>proprement</strong> (code de sortie 0), par exemple lors de l'arrêt normal d'un nœud, est considérée comme terminée (<code>Complete</code>) et <strong>n'est pas remplacée</strong> : après un arrêt propre des trois <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, un service en <code>on-failure</code> peut rester à <code>1/3</code>.</p>
 <p>Deux différences avec un fichier pour <code>docker compose</code> : l'image doit <strong>déjà exister dans un registre</strong> (pas de <code>build:</code> : les nœuds ne peuvent pas construire), et les réseaux sont de type <strong><code>overlay</code></strong>.</p>
 </li>
 <li>

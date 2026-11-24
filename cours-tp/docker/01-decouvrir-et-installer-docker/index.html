@@ -3109,10 +3109,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#32-donner-les-droits-dadministration-a-tssr" class="md-nav__link">
+  <a href="#32-donner-les-droits-dadministration-a-adminlab" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.2 Donner les droits d'administration à tssr
+        3.2 Donner les droits d'administration à adminlab
       
     </span>
   </a>
@@ -3181,10 +3181,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#42-ajouter-tssr-au-groupe-docker" class="md-nav__link">
+  <a href="#42-ajouter-adminlab-au-groupe-docker" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4.2 Ajouter tssr au groupe docker
+        4.2 Ajouter adminlab au groupe docker
       
     </span>
   </a>
@@ -3913,10 +3913,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#32-donner-les-droits-dadministration-a-tssr" class="md-nav__link">
+  <a href="#32-donner-les-droits-dadministration-a-adminlab" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.2 Donner les droits d'administration à tssr
+        3.2 Donner les droits d'administration à adminlab
       
     </span>
   </a>
@@ -3985,10 +3985,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#42-ajouter-tssr-au-groupe-docker" class="md-nav__link">
+  <a href="#42-ajouter-adminlab-au-groupe-docker" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4.2 Ajouter tssr au groupe docker
+        4.2 Ajouter adminlab au groupe docker
       
     </span>
   </a>
@@ -4369,7 +4369,7 @@
 <tr>
 <td><strong>Docker Hub</strong></td>
 <td>Tout le monde : le registre public d'images</td>
-<td>Gratuit avec des limites (voir la <a href="../#jour-5-construire-distribuer-orchestrer">partie 15</a>)</td>
+<td>Gratuit avec des limites (voir la <a href="../15-distribuer-ses-images-registre/">partie 15</a>)</td>
 </tr>
 </tbody>
 </table>
@@ -4462,15 +4462,15 @@
 </tr>
 <tr>
 <td>Mot de passe du superutilisateur (<code>root</code>)</td>
-<td><code>TutoDocker2026!</code></td>
+<td><code>TutoDocker-Lab1!</code></td>
 </tr>
 <tr>
 <td>Nom complet et identifiant du nouvel utilisateur</td>
-<td><code>tssr</code> et <code>tssr</code></td>
+<td><code>adminlab</code> et <code>adminlab</code></td>
 </tr>
 <tr>
-<td>Mot de passe de <code>tssr</code></td>
-<td><code>TutoDocker2026!</code></td>
+<td>Mot de passe de <code>adminlab</code></td>
+<td><code>TutoDocker-Lab1!</code></td>
 </tr>
 <tr>
 <td>Partitionnement</td>
@@ -4512,50 +4512,50 @@
 </div>
 </div>
 <h3 id="24-se-connecter-en-ssh-depuis-le-pc">2.4 Se connecter en <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> depuis le PC<a class="headerlink" href="#24-se-connecter-en-ssh-depuis-le-pc" title="Permanent link">&para;</a></h3>
-<p>🖥️ Ouvrir <strong>PowerShell</strong> sur le PC et se connecter avec le compte <code>tssr</code> (remplacer <code>IP-de-la-VM</code> par l'adresse notée) :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">ssh</span> <span class="n">tssr</span><span class="nv">@IP</span><span class="n">-de-la-VM</span>
+<p>🖥️ Ouvrir <strong>PowerShell</strong> sur le PC et se connecter avec le compte <code>adminlab</code> (remplacer <code>IP-de-la-VM</code> par l'adresse notée) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">ssh</span> <span class="n">adminlab</span><span class="nv">@IP</span><span class="n">-de-la-VM</span>
 </code></pre></div>
 <p>À la première connexion, répondre <code>yes</code> pour accepter l'empreinte de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, puis taper le mot de passe (rien ne s'affiche pendant la saisie, c'est normal). À partir de maintenant, toutes les commandes 🐧 peuvent se taper dans cette fenêtre, où le <strong>copier-coller</strong> fonctionne.</p>
 <div class="admonition success">
-<p class="admonition-title">🛟 Prendre l'instantané <code>00-debian-installee</code></p>
-<p>🐧 Éteindre la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : dans la session <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr>, <code>su -</code> (mot de passe de <code>root</code>), puis <code>poweroff</code> ; ou directement <code>poweroff</code> sur la console de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, connecté en <code>root</code>. 🖥️ Ensuite, 🖥️ prendre un instantané nommé <code>00-debian-installee</code> : <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Snapshot &gt; Take Snapshot</strong> dans Workstation, <strong>Instantanés &gt; Prendre</strong> dans VirtualBox. Il permet de recommencer l'installation de Docker autant de fois que nécessaire.</p>
+<p class="admonition-title">Prendre l'instantané <code>00-debian-installee</code></p>
+<p>🐧 Éteindre la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : dans la session <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr>, <code>su -</code> (mot de passe de <code>root</code>), puis <code>poweroff</code> ; ou directement <code>poweroff</code> sur la console de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, connecté en <code>root</code>. 🖥️ Ensuite, prendre un instantané nommé <code>00-debian-installee</code> : <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Snapshot &gt; Take Snapshot</strong> dans Workstation, <strong>Instantanés &gt; Prendre</strong> dans VirtualBox. Il permet de recommencer l'installation de Docker autant de fois que nécessaire.</p>
 </div>
 <h2 id="3-installer-docker-depuis-le-depot-officiel">3. Installer Docker depuis le dépôt officiel<a class="headerlink" href="#3-installer-docker-depuis-le-depot-officiel" title="Permanent link">&para;</a></h2>
 <h3 id="31-pourquoi-pas-le-paquet-dockerio-de-debian">3.1 Pourquoi pas le paquet <code>docker.io</code> de Debian ?<a class="headerlink" href="#31-pourquoi-pas-le-paquet-dockerio-de-debian" title="Permanent link">&para;</a></h3>
 <p>Debian propose son propre paquet Docker, <code>docker.io</code>. Il s'installe en une commande (<code>apt install docker.io</code>), mais il est <strong>figé</strong> sur la version choisie à la sortie de Debian 13 : en novembre 2026, Debian propose <code>docker.io</code> en version <strong>26.1</strong>, alors que Docker publie la version <strong>29.10</strong>. On installe donc Docker depuis <strong>son propre dépôt</strong>, comme le recommande la <a href="https://docs.docker.com/engine/install/debian/">documentation officielle</a> : on obtient la dernière version, ses correctifs de sécurité au fil de l'eau, et le module <strong>Docker Compose</strong> qui servira au jour 2.</p>
 <div class="admonition danger">
 <p class="admonition-title">Ne pas mélanger les deux</p>
-<p>Les paquets <code>docker.io</code> (Debian) et <code>docker-ce</code> (Docker) <strong>entrent en conflit</strong>. Si <code>docker.io</code> a déjà été installé sur une machine, le désinstaller d'abord : <code>apt remove docker.io docker-compose docker-doc podman-docker containerd runc</code>.</p>
+<p>Les paquets <code>docker.io</code> (Debian) et <code>docker-ce</code> (Docker) <strong>entrent en conflit</strong>. Si <code>docker.io</code> a déjà été installé sur une machine, le désinstaller d'abord, en <code>root</code> (<code>su -</code>, car <code>sudo</code> n'est installé qu'à la section suivante) : <code>apt remove docker.io docker-compose docker-doc podman-docker containerd runc</code>.</p>
 </div>
-<h3 id="32-donner-les-droits-dadministration-a-tssr">3.2 Donner les droits d'administration à <code>tssr</code><a class="headerlink" href="#32-donner-les-droits-dadministration-a-tssr" title="Permanent link">&para;</a></h3>
-<p>Quand un mot de passe <code>root</code> est défini pendant l'installation, Debian <strong>n'installe pas</strong> <code>sudo</code>. Or toutes les commandes de la documentation Docker commencent par <code>sudo</code>. On l'installe donc, et on autorise <code>tssr</code> à s'en servir.</p>
+<h3 id="32-donner-les-droits-dadministration-a-adminlab">3.2 Donner les droits d'administration à <code>adminlab</code><a class="headerlink" href="#32-donner-les-droits-dadministration-a-adminlab" title="Permanent link">&para;</a></h3>
+<p>Quand un mot de passe <code>root</code> est défini pendant l'installation, Debian <strong>n'installe pas</strong> <code>sudo</code>. Or toutes les commandes de la documentation Docker commencent par <code>sudo</code>. On l'installe donc, et on autorise <code>adminlab</code> à s'en servir.</p>
 <ol>
-<li>🖥️ Démarrer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, puis s'y connecter en <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> depuis PowerShell : <code>ssh tssr@IP-de-la-VM</code>.</li>
+<li>🖥️ Démarrer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, puis s'y connecter en <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> depuis PowerShell : <code>ssh adminlab@IP-de-la-VM</code>.</li>
 <li>
 <p>🐧 Devenir <strong><code>root</code></strong> avec <code>su -</code> (le mot de passe demandé est celui de <code>root</code>), puis :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>apt<span class="w"> </span>update
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>sudo
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>usermod<span class="w"> </span>-aG<span class="w"> </span>sudo<span class="w"> </span>tssr
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>usermod<span class="w"> </span>-aG<span class="w"> </span>sudo<span class="w"> </span>adminlab
 </code></pre></div>
 </li>
 <li>
-<p>🐧 Taper <code>exit</code> <strong>deux fois</strong> : la première fois pour quitter <code>root</code> et revenir à <code>tssr</code>, la seconde pour fermer la session <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr>. Les groupes d'un utilisateur ne sont lus qu'à la <strong>connexion</strong> : une session ouverte avant le <code>usermod</code> ne connaît pas encore le groupe <code>sudo</code>.</p>
+<p>🐧 Taper <code>exit</code> <strong>deux fois</strong> : la première fois pour quitter <code>root</code> et revenir à <code>adminlab</code>, la seconde pour fermer la session <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr>. Les groupes d'un utilisateur ne sont lus qu'à la <strong>connexion</strong> : une session ouverte avant le <code>usermod</code> ne connaît pas encore le groupe <code>sudo</code>.</p>
 </li>
-<li>🖥️ Se reconnecter : <code>ssh tssr@IP-de-la-VM</code>.</li>
+<li>🖥️ Se reconnecter : <code>ssh adminlab@IP-de-la-VM</code>.</li>
 <li>
-<p>🐧 Vérifier les groupes <strong>de la session en cours</strong>, puis que <code>sudo</code> fonctionne (il demande le mot de passe de <code>tssr</code>) :</p>
+<p>🐧 Vérifier les groupes <strong>de la session en cours</strong>, puis que <code>sudo</code> fonctionne (il demande le mot de passe de <code>adminlab</code>) :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>id<span class="w"> </span>-nG
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>-v
 </code></pre></div>
-<p>La liste affichée par <code>id -nG</code> doit <strong>contenir</strong> <code>sudo</code> (l'installateur de Debian ajoute aussi <code>tssr</code> à d'autres groupes comme <code>cdrom</code>, <code>audio</code> ou <code>video</code> : c'est normal). <code>sudo -v</code> ne doit afficher aucune erreur.</p>
+<p>La liste affichée par <code>id -nG</code> doit <strong>contenir</strong> <code>sudo</code> (l'installateur de Debian ajoute aussi <code>adminlab</code> à d'autres groupes comme <code>cdrom</code>, <code>audio</code> ou <code>video</code> : c'est normal). <code>sudo -v</code> ne doit afficher aucune erreur.</p>
 <div class="admonition failure">
-<p class="admonition-title"><code>tssr n'apparaît pas dans le fichier sudoers</code></p>
-<p>La session a été ouverte <strong>avant</strong> l'ajout au groupe <code>sudo</code>. Fermer <strong>toutes</strong> les sessions de <code>tssr</code> (y compris celle d'où l'on avait tapé <code>su -</code>) et se reconnecter.</p>
+<p class="admonition-title"><code>adminlab n'apparaît pas dans le fichier sudoers</code></p>
+<p>La session a été ouverte <strong>avant</strong> l'ajout au groupe <code>sudo</code>. Fermer <strong>toutes</strong> les sessions de <code>adminlab</code> (y compris celle d'où l'on avait tapé <code>su -</code>) et se reconnecter.</p>
 </div>
 </li>
 </ol>
 <h3 id="33-ajouter-le-depot-de-docker">3.3 Ajouter le dépôt de Docker<a class="headerlink" href="#33-ajouter-le-depot-de-docker" title="Permanent link">&para;</a></h3>
-<p>🐧 En <code>tssr</code>, taper les commandes <strong>une par une</strong> (le mot de passe de <code>tssr</code> est demandé au premier <code>sudo</code>) :</p>
+<p>🐧 En <code>adminlab</code>, taper les commandes <strong>une par une</strong> (le mot de passe de <code>adminlab</code> est demandé au premier <code>sudo</code>) :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Outils nécessaires pour télécharger en HTTPS</span>
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>apt<span class="w"> </span>update
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>ca-certificates<span class="w"> </span>curl
@@ -4693,7 +4693,7 @@
 </ol>
 <h2 id="4-utiliser-docker-sans-sudo-le-groupe-docker">4. Utiliser Docker sans <code>sudo</code> : le groupe <code>docker</code><a class="headerlink" href="#4-utiliser-docker-sans-sudo-le-groupe-docker" title="Permanent link">&para;</a></h2>
 <h3 id="41-le-constat">4.1 Le constat<a class="headerlink" href="#41-le-constat" title="Permanent link">&para;</a></h3>
-<p>🐧 En <code>tssr</code>, sans <code>sudo</code> :</p>
+<p>🐧 En <code>adminlab</code>, sans <code>sudo</code> :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>docker<span class="w"> </span>ps
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
@@ -4703,11 +4703,17 @@
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>srw-rw---- 1 root docker 0 24 nov.  00:07 /var/run/docker.sock
 </code></pre></div>
-<h3 id="42-ajouter-tssr-au-groupe-docker">4.2 Ajouter <code>tssr</code> au groupe <code>docker</code><a class="headerlink" href="#42-ajouter-tssr-au-groupe-docker" title="Permanent link">&para;</a></h3>
+<figure>
+<p><img alt="Schéma : la commande docker, le client, envoie ses ordres au socket /var/run/docker.sock (srw-rw---- root:docker), puis à dockerd, containerd et aux conteneurs. Peuvent écrire dans le socket : root, le groupe docker et Portainer qui le monte ; les autres utilisateurs sont refusés. Qui parle au socket peut monter tout le disque de la VM dans un conteneur : groupe docker = root." loading="lazy" src="../images/client-socket-dockerd.svg" /></p>
+<figcaption>
+<p>La commande <code>docker</code> ne fait que parler au socket : qui peut écrire dedans contrôle la machine.</p>
+</figcaption>
+</figure>
+<h3 id="42-ajouter-adminlab-au-groupe-docker">4.2 Ajouter <code>adminlab</code> au groupe <code>docker</code><a class="headerlink" href="#42-ajouter-adminlab-au-groupe-docker" title="Permanent link">&para;</a></h3>
 <ol>
 <li>
-<p>🐧 Ajouter <code>tssr</code> au groupe :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>sudo<span class="w"> </span>usermod<span class="w"> </span>-aG<span class="w"> </span>docker<span class="w"> </span>tssr
+<p>🐧 Ajouter <code>adminlab</code> au groupe :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>sudo<span class="w"> </span>usermod<span class="w"> </span>-aG<span class="w"> </span>docker<span class="w"> </span>adminlab
 </code></pre></div>
 </li>
 <li>
@@ -4718,10 +4724,10 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>id<span class="w"> </span>-nG
 <a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>docker<span class="w"> </span>ps
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>tssr … sudo … docker
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>adminlab … sudo … docker
 <a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 </code></pre></div>
-<p>La liste des conteneurs en marche est vide, mais la commande fonctionne : <code>tssr</code> parle maintenant à Docker sans <code>sudo</code>.</p>
+<p>La liste des conteneurs en marche est vide, mais la commande fonctionne : <code>adminlab</code> parle maintenant à Docker sans <code>sudo</code>.</p>
 </li>
 </ol>
 <div class="admonition danger">
@@ -4753,7 +4759,7 @@
 <p>Cette section est <strong>facultative</strong> : elle repart d'une Debian neuve pour essayer le script, ce qui efface l'installation faite en section 3 (le résultat final est le même). Si le temps manque, passer directement à la <a href="#6-verifier-son-lab">section 6</a>.</p>
 <p>Le script <a href="../fichiers/installer-docker.sh"><code>installer-docker.sh</code></a> reprend <strong>exactement</strong> les étapes de la section 3, avec des questions à chaque étape et des messages en couleur. Il fonctionne en <code>root</code> (même sans <code>sudo</code> installé) ou avec <code>sudo</code>.</p>
 <ol>
-<li>🖥️ Revenir à l'instantané <code>00-debian-installee</code> (<abbr title="Virtual Machine — machine virtuelle">VM</abbr> éteinte), redémarrer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, s'y connecter en <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> en <code>tssr</code>, puis 🐧 devenir <code>root</code> avec <code>su -</code> (<abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> refuse la connexion directe de <code>root</code> par mot de passe).</li>
+<li>🖥️ Revenir à l'instantané <code>00-debian-installee</code> (<abbr title="Virtual Machine — machine virtuelle">VM</abbr> éteinte), redémarrer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, s'y connecter en <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> en <code>adminlab</code>, puis 🐧 devenir <code>root</code> avec <code>su -</code> (<abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> refuse la connexion directe de <code>root</code> par mot de passe).</li>
 <li>
 <p>🐧 Télécharger le script, puis <strong>le lire</strong> avant de l'exécuter :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>curl
@@ -4766,17 +4772,17 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>chmod<span class="w"> </span>+x<span class="w"> </span>installer-docker.sh
 <a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>./installer-docker.sh
 </code></pre></div>
-<p>Répondre <code>oui</code> aux trois questions, puis <code>tssr</code> quand le script demande le nom de l'utilisateur :</p>
+<p>Répondre <code>oui</code> aux trois questions, puis <code>adminlab</code> quand le script demande le nom de l'utilisateur :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>[INFO] Voulez-vous supprimer les anciennes versions de Docker ? (oui/non)
-<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>[SUCCÈS] Anciennes versions de Docker supprimées.
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>[SUCCÈS] Anciennes versions de Docker supprimées (s'il y en avait).
 <a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>[INFO] Voulez-vous installer Docker (installation basée sur la documentation officielle) ? (oui/non)
 <a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>...
 <a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a>Hello from Docker!
 <a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a>[SUCCÈS] Docker installé avec succès.
 <a id="__codelineno-28-7" name="__codelineno-28-7" href="#__codelineno-28-7"></a>[INFO] Voulez-vous ajouter un utilisateur au groupe docker ? (oui/non)
-<a id="__codelineno-28-8" name="__codelineno-28-8" href="#__codelineno-28-8"></a>[SUCCÈS] L'utilisateur tssr a été ajouté au groupe docker. Il doit se déconnecter et se reconnecter pour que ce soit pris en compte.
+<a id="__codelineno-28-8" name="__codelineno-28-8" href="#__codelineno-28-8"></a>[SUCCÈS] L'utilisateur adminlab a été ajouté au groupe docker. Il doit se déconnecter et se reconnecter pour que ce soit pris en compte.
 </code></pre></div>
-<p>Le script n'installe pas <code>sudo</code> : si on l'utilise sur une machine neuve, refaire la <a href="#32-donner-les-droits-dadministration-a-tssr">section 3.2</a> pour que <code>tssr</code> puisse administrer la machine.</p>
+<p>Le script n'installe pas <code>sudo</code> : si on l'utilise sur une machine neuve, refaire la <a href="#32-donner-les-droits-dadministration-a-adminlab">section 3.2</a> pour que <code>adminlab</code> puisse administrer la machine.</p>
 </li>
 </ol>
 <div class="admonition failure">
@@ -4794,7 +4800,7 @@
 <h2 id="6-verifier-son-lab">6. Vérifier son lab<a class="headerlink" href="#6-verifier-son-lab" title="Permanent link">&para;</a></h2>
 <div class="admonition success">
 <p class="admonition-title">Vérifier son lab</p>
-<p>🐧 En <code>tssr</code>, dans une <strong>nouvelle</strong> session <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> :</p>
+<p>🐧 En <code>adminlab</code>, dans une <strong>nouvelle</strong> session <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>docker<span class="w"> </span>--version<span class="w">          </span><span class="c1"># Docker version 29.x</span>
 <a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>systemctl<span class="w"> </span>is-enabled<span class="w"> </span>docker
 <a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>id<span class="w"> </span>-nG<span class="w">                    </span><span class="c1"># doit contenir sudo et docker</span>
@@ -4803,13 +4809,13 @@
 <p>Résultat attendu (la ligne de <code>id -nG</code> peut contenir d'autres groupes, comme <code>cdrom</code> ou <code>audio</code>) :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>Docker version 29.10.0, build fdd4b8e
 <a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>enabled
-<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>tssr … sudo … docker
+<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>adminlab … sudo … docker
 <a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a>Hello from Docker!
 </code></pre></div>
 <p>L'option <code>--rm</code> supprime le conteneur dès qu'il s'arrête : on n'encombre pas la machine de conteneurs terminés.</p>
 </div>
 <div class="admonition success">
-<p class="admonition-title">🛟 Prendre l'instantané <code>01-docker-installe</code></p>
+<p class="admonition-title">Prendre l'instantané <code>01-docker-installe</code></p>
 <p>🐧 Éteindre la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<code>sudo poweroff</code>), puis 🖥️ prendre un instantané nommé <code>01-docker-installe</code>. C'est le point de départ de toutes les parties suivantes.</p>
 </div>
 <h2 id="7-questions-de-revision">7. Questions de révision<a class="headerlink" href="#7-questions-de-revision" title="Permanent link">&para;</a></h2>
@@ -4821,7 +4827,7 @@
     d) une image téléchargeable depuis Docker Hub.</li>
 <li>Pourquoi un conteneur démarre-t-il beaucoup plus vite qu'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ?</li>
 <li>Quelle commande installe Docker <strong>depuis les dépôts de Debian</strong> ? Pourquoi préfère-t-on le dépôt de Docker ?</li>
-<li>À quoi sert <code>sudo usermod -aG docker tssr</code> ? Quel risque cette commande fait-elle prendre ?</li>
+<li>À quoi sert <code>sudo usermod -aG docker adminlab</code> ? Quel risque cette commande fait-elle prendre ?</li>
 <li>Comment vérifier que le service Docker est en marche et qu'il démarrera avec la machine ?</li>
 <li>Pourquoi faut-il se déconnecter puis se reconnecter après avoir ajouté un utilisateur à un groupe ?</li>
 </ol>
@@ -4831,7 +4837,7 @@
 <li><strong>b)</strong>. Un conteneur est une image qui tourne. Il ne contient <strong>pas</strong> de système d'exploitation complet (réponse a) : il partage le noyau de la machine. Docker ne crée pas de <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (réponse c), et ce qu'on télécharge depuis Docker Hub, ce sont des <strong>images</strong>, pas des conteneurs (réponse d).</li>
 <li>Il n'y a <strong>pas de système d'exploitation à démarrer</strong> : le noyau de la machine tourne déjà. Démarrer un conteneur, c'est seulement lancer un programme dans un espace isolé (espaces de noms et groupes de contrôle).</li>
 <li><code>apt install docker.io</code>. Le dépôt de Docker fournit la <strong>dernière version</strong> (29.10 contre 26.1 dans Debian 13), ses correctifs au fil de l'eau, et le module Docker Compose.</li>
-<li>Elle permet à <code>tssr</code> d'utiliser Docker <strong>sans <code>sudo</code></strong>, parce que le groupe <code>docker</code> a accès au socket <code>/var/run/docker.sock</code>. Le risque : tout membre du groupe <code>docker</code> peut devenir <strong><code>root</code></strong> sur la machine (par exemple en montant <code>/</code> dans un conteneur). On n'y met que des administrateurs de confiance.</li>
+<li>Elle permet à <code>adminlab</code> d'utiliser Docker <strong>sans <code>sudo</code></strong>, parce que le groupe <code>docker</code> a accès au socket <code>/var/run/docker.sock</code>. Le risque : tout membre du groupe <code>docker</code> peut devenir <strong><code>root</code></strong> sur la machine (par exemple en montant <code>/</code> dans un conteneur). On n'y met que des administrateurs de confiance.</li>
 <li><code>sudo systemctl status docker</code> : la ligne <code>Active: active (running)</code> montre qu'il tourne, et le mot <code>enabled</code> sur la ligne <code>Loaded</code> qu'il démarrera avec la machine. <code>systemctl is-enabled docker</code> répond directement <code>enabled</code>.</li>
 <li>La liste des groupes d'un utilisateur est <strong>calculée à la connexion</strong> et transmise à tous les programmes de la session. Une session déjà ouverte garde l'ancienne liste.</li>
 </ol>

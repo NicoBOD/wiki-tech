@@ -3869,7 +3869,7 @@
 <hr />
 <div class="admonition info">
 <p class="admonition-title">Convention de lecture</p>
-<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-plateforme</code> (nouvelle <abbr title="Virtual Machine — machine virtuelle">VM</abbr>), connecté en <code>root</code> · 🌐 <strong>navigateur du PC</strong> · ✍️ <strong>exercice</strong> · 🛟 <strong>instantané</strong>. Coolify n'existe qu'en anglais : ses menus sont écrits en gras, en anglais, avec une traduction entre parenthèses.</p>
+<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-plateforme</code> (nouvelle <abbr title="Virtual Machine — machine virtuelle">VM</abbr>), connecté en <code>root</code> (connexion SSH en <code>adminlab</code>, puis <code>su -</code> : SSH refuse <code>root</code> avec un mot de passe) · 🌐 <strong>navigateur du PC</strong> · ✍️ <strong>exercice</strong> · 🛟 <strong>instantané</strong>. Coolify n'existe qu'en anglais : ses menus sont écrits en gras, en anglais, avec une traduction entre parenthèses.</p>
 </div>
 <h2 id="1-pourquoi-une-plateforme">1. Pourquoi une plateforme ?<a class="headerlink" href="#1-pourquoi-une-plateforme" title="Permanent link">&para;</a></h2>
 <p>Pour publier Nextcloud proprement en partie 10, il a fallu : écrire un fichier Compose, créer des réseaux, brancher le proxy, fabriquer un certificat, l'importer, déclarer le proxy à l'application. Une <strong>plateforme tout-en-un</strong> (on parle aussi de <strong><abbr title="Platform as a Service — plateforme pour déployer des applications">PaaS</abbr></strong> auto-hébergé, <em>Platform as a Service</em>) regroupe ces étapes :</p>
@@ -3970,7 +3970,7 @@
 <p>🖥️ Sur un PC de 16 Go, éteindre <code>docker-hote</code> pendant l'installation si la mémoire manque, et le rallumer pour l'exercice de la section 6.</p>
 <p>🐧 Noter l'adresse de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<code>ip -br a</code>) : elle est écrite <strong>IP-de-plateforme</strong> dans la suite. Sous VirtualBox, c'est celle de <code>enp0s8</code> (<code>192.168.56.1xx</code>), <strong>jamais</strong> <code>10.0.2.15</code>.</p>
 <div class="admonition success">
-<p class="admonition-title">🛟 Prendre l'instantané <code>00-debian-installee</code> de <code>docker-plateforme</code></p>
+<p class="admonition-title">Prendre l'instantané <code>00-debian-installee</code> de <code>docker-plateforme</code></p>
 <p><abbr title="Virtual Machine — machine virtuelle">VM</abbr> éteinte, comme en partie 1 : il permet de recommencer l'installation de Coolify.</p>
 </div>
 <h2 id="3-installer-coolify">3. Installer Coolify<a class="headerlink" href="#3-installer-coolify" title="Permanent link">&para;</a></h2>
@@ -4024,7 +4024,7 @@
 </div>
 <h2 id="4-creer-le-compte-et-connecter-le-serveur">4. Créer le compte et connecter le serveur<a class="headerlink" href="#4-creer-le-compte-et-connecter-le-serveur" title="Permanent link">&para;</a></h2>
 <ol>
-<li>🌐 Ouvrir <code>http://IP-de-plateforme:8000</code> : la page <strong>Register</strong> (inscription) s'affiche. Remplir <strong>Name</strong> (<code>Administrateur</code>), <strong>Email</strong> (<code>admin@lab.local</code>), <strong>Password</strong> et <strong>Confirm Password</strong> (<code>TutoDocker2026!</code>), puis <strong>Create Account</strong>.</li>
+<li>🌐 Ouvrir <code>http://IP-de-plateforme:8000</code> : la page <strong>Register</strong> (inscription) s'affiche. Remplir <strong>Name</strong> (<code>Administrateur</code>), <strong>Email</strong> (<code>admin@lab.local</code>), <strong>Password</strong> et <strong>Confirm Password</strong> (<code>TutoDocker-Lab1!</code>), puis <strong>Create Account</strong>.</li>
 <li>🌐 L'assistant <strong>Welcome to Coolify</strong> s'ouvre : <strong>Continue</strong>.</li>
 <li>
 <p>🌐 <strong>Choose Server Type</strong> (type de serveur) : choisir <strong>This machine</strong> (cette machine). Coolify déploiera sur la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> où il est installé ; il saurait aussi piloter d'autres serveurs en SSH, ou en créer chez des hébergeurs.</p>
@@ -4034,7 +4034,7 @@
 <p>Coolify peut gérer la machine où il tourne, ou d'autres serveurs par SSH.</p>
 </figcaption>
 </figure>
-<p>Avec <strong>This machine</strong>, le script a donné à Coolify une <strong>clé SSH <code>root</code></strong> vers la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (étape 7/9) et l'accès au socket Docker : comme pour Portainer en partie 4, <strong>un administrateur de Coolify est <code>root</code> sur la <abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong>.</p>
+<p>Avec <strong>This machine</strong>, le script a donné à Coolify une <strong>clé SSH <code>root</code></strong> vers la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (étape 7/9) et l'accès au socket Docker : comme pour Portainer en partie 4, <strong>un administrateur de Coolify est <code>root</code> sur la <abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong>. De plus, l'interface s'ouvre ici en HTTP simple (port 8000, non chiffré) : c'est acceptable dans le lab, joignable seulement depuis le PC ; sur un vrai serveur, on n'y accède que par un <abbr title="Virtual Private Network — réseau privé virtuel">VPN</abbr> ou derrière un reverse proxy en HTTPS.</p>
 </li>
 <li>
 <p>🌐 <strong>Project Setup</strong> : <strong>Create "My First Project"</strong> (créer le premier projet). Un projet regroupe des ressources ; il contient un environnement <strong>production</strong>.</p>
@@ -4049,7 +4049,15 @@
 </div>
 <ol>
 <li>🌐 Menu <strong>Servers</strong> (serveurs), cliquer sur <strong>localhost</strong>.</li>
-<li>🌐 Dans <strong>Wildcard domain</strong> (domaine générique), saisir <code>http://IP-de-plateforme.sslip.io</code> (par exemple <code>http://192.168.56.110.sslip.io</code>), puis <strong>Save</strong> (enregistrer).</li>
+<li>
+<p>🌐 Dans <strong>Wildcard domain</strong> (domaine générique), saisir <code>http://IP-de-plateforme.sslip.io</code> (par exemple <code>http://192.168.56.110.sslip.io</code>), puis <strong>Save</strong> (enregistrer).</p>
+<figure>
+<p><img alt="Page Servers &gt; localhost de Coolify, section Connection : champs Name (localhost), IP address or domain (masqué), SSH user (root), SSH port (22), Connection timeout, Server timezone (UTC) et Wildcard domain rempli avec http://192.168.8.72.sslip.io." loading="lazy" src="../images/11-coolify-wildcard-domain.png" /></p>
+<figcaption>
+<p>Le champ <strong>Wildcard domain</strong> (en bas à droite), rempli avec l'adresse de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> du lab de référence.</p>
+</figcaption>
+</figure>
+</li>
 </ol>
 <div class="admonition failure">
 <p class="admonition-title">Le nom en sslip.io ne répond pas</p>
@@ -4094,7 +4102,7 @@
 </figure>
 </li>
 </ol>
-<p>✍️ <strong>Exercice</strong> — Terminer l'installation d'Uptime Kuma (base <strong>SQLite</strong>, compte <code>admin</code> / <code>TutoDocker2026!</code>), puis ajouter une <strong>sonde</strong> (<em>monitor</em>) de type <strong>HTTP(s)</strong> qui surveille Nginx Proxy Manager sur <code>docker-hote</code> (<code>http://IP-de-la-VM:81</code>). Éteindre <code>docker-hote</code> et regarder la sonde passer au rouge.</p>
+<p>✍️ <strong>Exercice</strong> — Terminer l'installation d'Uptime Kuma (base <strong>SQLite</strong>, compte <code>admin</code> / <code>TutoDocker-Lab1!</code>), puis ajouter une <strong>sonde</strong> (<em>monitor</em>) de type <strong>HTTP(s)</strong> qui surveille Nginx Proxy Manager sur <code>docker-hote</code> (<code>http://IP-de-la-VM:81</code>). Éteindre <code>docker-hote</code> et regarder la sonde passer au rouge.</p>
 <details class="success">
 <summary>Réponse</summary>
 <p>Dans Uptime Kuma : <strong>Ajouter une nouvelle sonde</strong>, <strong>Type de sonde</strong> <strong>HTTP(s)</strong>, URL <code>http://IP-de-la-VM:81</code>, intervalle par défaut (60 s), <strong>Sauvegarder</strong>. La sonde est verte (<strong>En ligne</strong>) tant que NPM répond ; une à deux minutes après l'extinction de <code>docker-hote</code>, elle passe <strong>Hors ligne</strong> et l'historique montre la coupure. On pourrait y ajouter une notification (courriel, Discord, Telegram…).</p>
@@ -4150,6 +4158,16 @@
 <div class="admonition success">
 <p class="admonition-title">Prendre l'instantané <code>01-coolify</code> de <code>docker-plateforme</code></p>
 <p>🛟 <abbr title="Virtual Machine — machine virtuelle">VM</abbr> éteinte (<code>poweroff</code>).</p>
+</div>
+<div class="admonition abstract">
+<p class="admonition-title">Le jour 3 en résumé</p>
+<p>Avant les questions, relire cette carte : chaque branche reprend une partie du jour, avec ses notions et ses commandes clés.</p>
+<figure>
+<p><img alt="Carte mentale du jour 3 : le reverse proxy, brancher Nginx Proxy Manager aux réseaux des conteneurs, HTTPS avec un certificat autosigné, plateformes tout-en-un comme Coolify" loading="lazy" src="../images/carte-mentale-jour3.svg" /></p>
+<figcaption>
+<p>Le jour 3 en un coup d'œil : publier plusieurs services derrière un seul point d'entrée.</p>
+</figcaption>
+</figure>
 </div>
 <h2 id="9-questions-de-revision">9. Questions de révision<a class="headerlink" href="#9-questions-de-revision" title="Permanent link">&para;</a></h2>
 <ol>

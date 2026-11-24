@@ -4090,7 +4090,7 @@
 <hr />
 <div class="admonition info">
 <p class="admonition-title">Convention de lecture</p>
-<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>tssr</code> · 📦 <strong>dans un conteneur</strong> · 🌐 <strong>navigateur du PC</strong> · ✍️ <strong>exercice</strong>. Point de départ : l'instantané <code>01-docker-installe</code>. 🖥️ Démarrer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, puis s'y connecter en SSH : <code>ssh tssr@IP-de-la-VM</code>.</p>
+<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>adminlab</code> · 📦 <strong>dans un conteneur</strong> · 🌐 <strong>navigateur du PC</strong> · ✍️ <strong>exercice</strong>. Point de départ : l'instantané <code>01-docker-installe</code>. 🖥️ Démarrer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, puis s'y connecter en SSH : <code>ssh adminlab@IP-de-la-VM</code>.</p>
 </div>
 <h2 id="1-ce-qui-sest-passe-pendant-hello-world">1. Ce qui s'est passé pendant <code>hello-world</code><a class="headerlink" href="#1-ce-qui-sest-passe-pendant-hello-world" title="Permanent link">&para;</a></h2>
 <p>🐧 Relancer le conteneur de test, en lisant cette fois le message en entier :</p>
@@ -4508,18 +4508,19 @@
 </code></pre></div>
 <p>(le dernier nombre dépend de l'ordre de démarrage des conteneurs : Docker donne la première adresse libre). Ce réseau <code>172.17.0.0/16</code> n'existe <strong>qu'à l'intérieur de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> : le PC n'a aucune route vers lui. Depuis l'extérieur, on passe toujours par un <strong>port publié</strong> de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</p>
 </details>
-<p>✍️ <strong>Exercice 5</strong> — Faire le ménage : supprimer <code>web2</code> et <code>apache</code>, puis l'image <code>httpd</code>.</p>
+<p>✍️ <strong>Exercice 5</strong> — Faire le ménage : supprimer <code>web2</code>, <code>web3</code> (resté à l'état <code>Created</code> après l'exercice 2, s'il n'a pas déjà été supprimé) et <code>apache</code>, puis l'image <code>httpd</code>.</p>
 <details class="success">
 <summary>Réponse</summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a>docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>web2<span class="w"> </span>apache
+<div class="highlight"><pre><span></span><code><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a>docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>web2<span class="w"> </span>web3<span class="w"> </span>apache
 <a id="__codelineno-47-2" name="__codelineno-47-2" href="#__codelineno-47-2"></a>docker<span class="w"> </span>image<span class="w"> </span>rm<span class="w"> </span>httpd
 </code></pre></div>
+<p>Un conteneur déjà supprimé donne <code>Error response from daemon: No such container</code>, sans gêner la suppression des autres.</p>
 <p>L'ordre compte : tant qu'un conteneur (même arrêté) utilise l'image <code>httpd</code>, Docker refuse de la supprimer.</p>
 </details>
 <h2 id="9-verifier-son-lab">9. Vérifier son lab<a class="headerlink" href="#9-verifier-son-lab" title="Permanent link">&para;</a></h2>
 <div class="admonition success">
 <p class="admonition-title">Vérifier son lab</p>
-<p>🐧 En <code>tssr</code> :</p>
+<p>🐧 En <code>adminlab</code> :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>controle<span class="w"> </span>-p<span class="w"> </span><span class="m">8080</span>:80<span class="w"> </span>nginx
 <a id="__codelineno-48-2" name="__codelineno-48-2" href="#__codelineno-48-2"></a>curl<span class="w"> </span>-s<span class="w"> </span>http://localhost:8080<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>title
 <a id="__codelineno-48-3" name="__codelineno-48-3" href="#__codelineno-48-3"></a>docker<span class="w"> </span>ps<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Names}} {{.Status}} {{.Ports}}'</span>

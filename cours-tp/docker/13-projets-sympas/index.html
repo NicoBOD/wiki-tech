@@ -3920,7 +3920,7 @@
 <hr />
 <div class="admonition info">
 <p class="admonition-title">Convention de lecture</p>
-<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>tssr</code> · 🌐 <strong>navigateur du PC</strong> · ✍️ <strong>exercice</strong>. Point de départ : l'instantané <code>05-exploitation</code>. Ces images sont <strong>grosses</strong> (souvent plusieurs Go) : vérifier la place disponible avec <code>df -h /</code> et <code>docker system df</code> avant de commencer, et supprimer chaque projet après l'avoir essayé.</p>
+<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>adminlab</code> · 🌐 <strong>navigateur du PC</strong> · ✍️ <strong>exercice</strong>. Point de départ : l'instantané <code>05-exploitation</code>. Ces images sont <strong>grosses</strong> (souvent plusieurs Go) : vérifier la place disponible avec <code>df -h /</code> et <code>docker system df</code> avant de commencer, et supprimer chaque projet après l'avoir essayé.</p>
 </div>
 <h2 id="1-le-catalogue">1. Le catalogue<a class="headerlink" href="#1-le-catalogue" title="Permanent link">&para;</a></h2>
 <table>
@@ -3998,7 +3998,7 @@
 <ol>
 <li>
 <p>🐧 Lancer l'image Firefox :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>kasm-firefox<span class="w"> </span>--shm-size<span class="o">=</span>512m<span class="w"> </span>-p<span class="w"> </span><span class="m">6901</span>:6901<span class="w"> </span>-e<span class="w"> </span><span class="nv">VNC_PW</span><span class="o">=</span>TutoDocker2026!<span class="w"> </span>kasmweb/firefox:1.18.0-rolling-daily
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>kasm-firefox<span class="w"> </span>--shm-size<span class="o">=</span>512m<span class="w"> </span>-p<span class="w"> </span><span class="m">6901</span>:6901<span class="w"> </span>-e<span class="w"> </span><span class="nv">VNC_PW</span><span class="o">=</span>TutoDocker-Lab1!<span class="w"> </span>kasmweb/firefox:1.18.0-rolling-daily
 </code></pre></div>
 <table>
 <thead>
@@ -4024,7 +4024,7 @@
 </table>
 </li>
 <li>
-<p>🌐 Ouvrir <code>https://IP-de-la-VM:6901</code>, accepter l'alerte de certificat, puis se connecter avec <code>kasm_user</code> / <code>TutoDocker2026!</code>. Firefox s'affiche dans l'onglet : il tourne <strong>dans le conteneur</strong>, sur la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</p>
+<p>🌐 Ouvrir <code>https://IP-de-la-VM:6901</code>, accepter l'alerte de certificat, puis se connecter avec <code>kasm_user</code> / <code>TutoDocker-Lab1!</code>. Firefox s'affiche dans l'onglet : il tourne <strong>dans le conteneur</strong>, sur la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</p>
 <figure>
 <p><img alt="Firefox affiché dans un onglet du navigateur du PC : barre d'adresse et page d'accueil de Firefox, servis par le conteneur Kasm." loading="lazy" src="../images/13-kasm-firefox.png" /></p>
 <figcaption>
@@ -4046,11 +4046,17 @@
 <p><strong>Open WebUI</strong> est une interface web, en français, pour discuter avec des <strong>modèles de langage</strong>. Ils peuvent tourner <strong>en local</strong> avec <strong>Ollama</strong>, un logiciel qui télécharge et exécute des modèles ouverts (Mistral, Gemma, Llama…), sans envoyer les conversations à un service en ligne.</p>
 <h3 id="31-ou-faire-tourner-ollama">3.1 Où faire tourner Ollama ?<a class="headerlink" href="#31-ou-faire-tourner-ollama" title="Permanent link">&para;</a></h3>
 <p>Un modèle de langage demande beaucoup de mémoire et, idéalement, une carte graphique : la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> de 4 Go est trop petite. Le plus confortable est d'installer <strong>Ollama sur le PC</strong> (version Windows sur <a href="https://ollama.com/download">ollama.com</a>), puis de le rendre joignable depuis la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> par un <strong>tunnel SSH</strong> : Ollama reste fermé au réseau, et le pare-feu de Windows n'a rien à autoriser.</p>
+<figure>
+<p><img alt="Schéma : sur le PC hôte, Ollama écoute sur 127.0.0.1:11434, fermé au réseau. Un tunnel SSH inverse, créé depuis le PC avec ssh -N -R 127.0.0.1:11434:127.0.0.1:11434 adminlab@IP-de-la-VM, ouvre sur la VM docker-hote le port 127.0.0.1:11434, joignable seulement depuis la VM. Le conteneur open-webui, lancé avec --network host et OLLAMA_BASE_URL=http://127.0.0.1:11434, partage le réseau de la VM, atteint ce port et écoute sur le port 3000, où le navigateur du PC se connecte." loading="lazy" src="../images/tunnel-ollama.svg" /></p>
+<figcaption>
+<p>Ollama reste sur le PC ; le tunnel SSH le rend joignable à la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> seule, et Open WebUI le trouve sur 127.0.0.1:11434.</p>
+</figcaption>
+</figure>
 <ol>
 <li>🖥️ Installer Ollama sur le PC, puis télécharger un modèle dans PowerShell, par exemple <code>ollama pull ministral-3</code> (plusieurs Go ; un modèle plus petit comme <code>gemma3:1b</code> suffit pour essayer).</li>
 <li>
 <p>🖥️ Ouvrir une <strong>seconde</strong> fenêtre PowerShell et y créer le tunnel, à laisser ouvert pendant tout le TP :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">ssh</span> <span class="n">-N</span> <span class="n">-R</span> <span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">11434</span><span class="p">:</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">11434</span> <span class="n">tssr</span><span class="nv">@IP</span><span class="n">-de-la-VM</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">ssh</span> <span class="n">-N</span> <span class="n">-R</span> <span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">11434</span><span class="p">:</span><span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">:</span><span class="n">11434</span> <span class="n">adminlab</span><span class="nv">@IP</span><span class="n">-de-la-VM</span>
 </code></pre></div>
 <p><code>-R</code> crée sur la <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> un port 11434, réservé à la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> elle-même (<code>127.0.0.1</code>), qui mène au port 11434 du <strong>PC</strong>, où écoute Ollama. <code>-N</code> : pas de terminal, seulement le tunnel. La fenêtre semble figée après le mot de passe : c'est normal.</p>
 </li>
@@ -4072,7 +4078,7 @@
 </code></pre></div>
 </li>
 <li>
-<p>🌐 Ouvrir <code>http://IP-de-la-VM:3000</code>, cliquer sur <strong>Démarrer</strong>, puis créer le <strong>compte administrateur</strong> (le premier compte créé l'est automatiquement) : nom <code>Administrateur</code>, e-mail <code>admin@lab.local</code>, mot de passe <code>TutoDocker2026!</code>, <strong>Créer un compte administrateur</strong>.</p>
+<p>🌐 <strong>Sans attendre</strong>, ouvrir <code>http://IP-de-la-VM:3000</code>, cliquer sur <strong>Démarrer</strong>, puis créer le <strong>compte administrateur</strong>. Le premier compte créé devient administrateur, et en mode <code>host</code> le port 3000 est ouvert sur toutes les adresses de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : tant que ce compte n'existe pas, quiconque joint la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> pourrait le créer à sa place. Compte : nom <code>Administrateur</code>, e-mail <code>admin@lab.local</code>, mot de passe <code>TutoDocker-Lab1!</code>, <strong>Créer un compte administrateur</strong>.</p>
 </li>
 <li>
 <p>🌐 En haut de la conversation, choisir le modèle (par exemple <code>ministral-3:latest</code>), et poser une question.</p>
@@ -4090,7 +4096,7 @@
 </div>
 <h2 id="4-les-autres-projets-en-bref">4. Les autres projets en bref<a class="headerlink" href="#4-les-autres-projets-en-bref" title="Permanent link">&para;</a></h2>
 <h3 id="41-uptime-kuma-la-supervision-simple">4.1 Uptime Kuma, la supervision simple<a class="headerlink" href="#41-uptime-kuma-la-supervision-simple" title="Permanent link">&para;</a></h3>
-<p>Déployé par Coolify en <a href="../11-plateformes-tout-en-un/#6-deployer-uptime-kuma-en-un-clic">partie 11</a>, il se lance aussi en une commande (commande officielle) :</p>
+<p>Déployé par Coolify en <a href="../11-plateformes-tout-en-un/#6-deployer-uptime-kuma-en-un-clic">partie 11</a>, il se lance aussi en une commande (commande officielle), 🐧 dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--restart<span class="o">=</span>always<span class="w"> </span>-p<span class="w"> </span><span class="m">3001</span>:3001<span class="w"> </span>-v<span class="w"> </span>uptime-kuma:/app/data<span class="w"> </span>--name<span class="w"> </span>uptime-kuma<span class="w"> </span>louislam/uptime-kuma:2
 </code></pre></div>
 <p>Puis 🌐 <code>http://IP-de-la-VM:3001</code>. Idée : une sonde par service du parcours (NPM, Nextcloud, Portainer…), avec une notification par courriel.</p>
@@ -4117,8 +4123,8 @@
 <p>✍️ Choisir un projet de ce catalogue (Uptime Kuma, Open WebUI ou Kasm) et le publier en <code>https://&lt;nom&gt;.docker.test</code> derrière Nginx Proxy Manager, <strong>sans aucun port publié</strong>, avec un certificat autosigné qui couvre ce nom, une limite de mémoire, et une politique de redémarrage. Vérifier avec <code>docker ps</code> que seul <code>npm-app-1</code> publie des ports.</p>
 <details class="success">
 <summary>Corrigé (exemple avec Uptime Kuma)</summary>
+<p>Avant de commencer, 🐧 supprimer les conteneurs des sections précédentes (les volumes sont gardés) : <code>docker rm -f uptime-kuma open-webui kasm-firefox 2&gt;/dev/null</code>.</p>
 <ol>
-<li>🐧 Supprimer d'abord les conteneurs des sections précédentes (les volumes sont gardés) : <code>docker rm -f uptime-kuma open-webui kasm-firefox 2&gt;/dev/null</code>.</li>
 <li>
 <p>🐧 Réseau et conteneur, sans <code>-p</code> :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>docker<span class="w"> </span>network<span class="w"> </span>create<span class="w"> </span>kuma_net
@@ -4156,6 +4162,16 @@ Pour les autres projets : <strong>Kasm</strong> → schéma <code>https</code> (
 <a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>curl<span class="w"> </span>-sk<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span><span class="s1">'%{http_code}\n'</span><span class="w"> </span>https://localhost:6901/
 </code></pre></div>
 <p>Résultat attendu : <code>kasm-firefox  0.0.0.0:6901-&gt;6901/tcp, [::]:6901-&gt;6901/tcp</code>, puis <code>401</code> (le serveur répond et demande l'identifiant <code>kasm_user</code>, ce qui prouve qu'il fonctionne).</p>
+</div>
+<div class="admonition abstract">
+<p class="admonition-title">Le jour 4 en résumé</p>
+<p>Avant les questions, relire cette carte : chaque branche reprend une partie du jour, avec ses notions et ses commandes clés.</p>
+<figure>
+<p><img alt="Carte mentale du jour 4 : mettre à jour une image, lire et limiter les journaux, limiter le processeur et la mémoire, durcir un conteneur, analyse Trivy et ménage, projets sympas" loading="lazy" src="../images/carte-mentale-jour4.svg" /></p>
+<figcaption>
+<p>Le jour 4 en un coup d'œil : exploiter Docker au quotidien, puis les projets à déployer.</p>
+</figcaption>
+</figure>
 </div>
 <h2 id="8-questions-de-revision">8. Questions de révision<a class="headerlink" href="#8-questions-de-revision" title="Permanent link">&para;</a></h2>
 <ol>

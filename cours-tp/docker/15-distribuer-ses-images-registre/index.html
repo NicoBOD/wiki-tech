@@ -4031,7 +4031,7 @@
 <hr />
 <div class="admonition info">
 <p class="admonition-title">Convention de lecture</p>
-<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>tssr</code> · 🌐 <strong>navigateur</strong> du PC · ✍️ <strong>exercice</strong> · 🛟 <strong>instantané</strong>. Point de départ : la fin de la partie 14 (images <code>web</code> et <code>debian-ssh</code> construites).</p>
+<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>adminlab</code> · 🌐 <strong>navigateur</strong> du PC · ✍️ <strong>exercice</strong> · 🛟 <strong>instantané</strong>. Point de départ : la fin de la partie 14 (images <code>web</code> et <code>debian-ssh</code> construites).</p>
 </div>
 <h2 id="1-registre-depot-etiquette-bien-lire-le-nom-dune-image">1. Registre, dépôt, étiquette : bien lire le nom d'une image<a class="headerlink" href="#1-registre-depot-etiquette-bien-lire-le-nom-dune-image" title="Permanent link">&para;</a></h2>
 <p>Un <strong>registre</strong> (<em>registry</em>) est un serveur qui stocke des images. <strong>Docker Hub</strong> est le registre public de Docker, celui qu'on utilise depuis le début sans le savoir. D'autres existent : GitHub Container Registry (<code>ghcr.io</code>, croisé en partie 13 avec Open WebUI), le registre de GitLab, Quay, Harbor pour héberger le sien…</p>
@@ -4073,6 +4073,12 @@
 </tbody>
 </table>
 <p>Ainsi, <code>docker pull nginx</code> télécharge en réalité <code>docker.io/library/nginx:latest</code>. Et pour <strong>envoyer</strong> une image quelque part, il faut d'abord lui donner un nom qui contient la bonne adresse : c'est le rôle de <code>docker tag</code>.</p>
+<figure>
+<p><img alt="Schéma : un nom d'image se lit registre / espace / dépôt : étiquette. Trois exemples : nginx, que Docker complète en docker.io/library/nginx:latest ; &lt;identifiant&gt;/initiation-docker:tagname, sur Docker Hub avec un compte ; 192.168.8.71:5000/web:1.0, sur le registre privé du lab. En dessous : docker tag donne à l'image web le nom localhost:5000/web:1.0 (même image, aucune copie), docker push l'envoie au registre privé IP-de-la-VM:5000, et docker pull IP-de-la-VM:5000/web:1.0 la télécharge sur une autre machine." loading="lazy" src="../images/nom-d-une-image.svg" /></p>
+<figcaption>
+<p>Le nom d'une image est une adresse : <code>docker tag</code> la change, <code>docker push</code> et <code>docker pull</code> s'en servent.</p>
+</figcaption>
+</figure>
 <div class="admonition info">
 <p class="admonition-title">Les limites de téléchargement de Docker Hub</p>
 <p>Docker Hub limite les téléchargements : <strong>100 par période de 6 heures</strong> sans compte (par adresse IP publique), <strong>200</strong> avec un compte personnel gratuit connecté par <code>docker login</code>. Dans une salle où tous les PC sortent par la même adresse IP, la limite anonyme peut être atteinte : se connecter, ou installer un registre local qui garde une copie des images, règle le problème.</p>
@@ -4091,7 +4097,7 @@
 <figure>
 <p><img alt="Docker account center : menu de l'avatar ouvert, entrée Account settings repérée ; à gauche, page Personal access tokens avec le bouton Generate new token." loading="lazy" src="../images/15-hub-jetons.png" /></p>
 <figcaption>
-<p>Avatar &gt; <strong>Account settings</strong>, puis <strong>Personal access tokens</strong> &gt; <strong>Generate new token</strong> (interface de 2025 : l'emplacement des menus peut avoir changé)</p>
+<p>Avatar &gt; <strong>Account settings</strong>, puis <strong>Personal access tokens</strong> &gt; <strong>Generate new token</strong></p>
 </figcaption>
 </figure>
 </li>
@@ -4122,7 +4128,7 @@
 <figure>
 <p><img alt="Formulaire Create access token : description, date d'expiration None, droits Read, Write, Delete, boutons Cancel et Generate." loading="lazy" src="../images/15-hub-creer-jeton.png" /></p>
 <figcaption>
-<p>Le formulaire de création du jeton (ici avec les droits les plus larges et sans expiration : pour un TP, préférer <strong>Read &amp; Write</strong> et 30 jours)</p>
+<p>Le formulaire de création du jeton. Les réglages visibles (tous les droits, aucune expiration) sont à éviter : choisir <strong>Read &amp; Write</strong> et 30 jours</p>
 </figcaption>
 </figure>
 </li>
@@ -4146,7 +4152,7 @@
 <figure>
 <p><img alt="Formulaire Create repository : namespace, nom du dépôt initiation-docker, description courte, visibilité Public ou Private avec la mention Using 0 of 1 private repositories, boutons Cancel et Create." loading="lazy" src="../images/15-hub-creer-depot.png" /></p>
 <figcaption>
-<p>Création du dépôt <code>initiation-docker</code> (interface de 2025) : le compteur « Using 0 of 1 private repositories » rappelle le dépôt privé unique d'un compte gratuit</p>
+<p>Création du dépôt <code>initiation-docker</code> : le compteur « Using 0 of 1 private repositories » rappelle le dépôt privé unique d'un compte gratuit</p>
 </figcaption>
 </figure>
 </li>
@@ -4163,13 +4169,13 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span>login<span class="w"> </span>-u<span class="w"> </span>&lt;identifiant&gt;
 </code></pre></div>
 <p>À l'invite <code>Password:</code>, <strong>coller le jeton</strong> (rien ne s'affiche pendant la saisie, c'est normal), puis <span class="keys"><kbd class="key-enter">Enter</kbd></span>. Docker répond <code>Login Succeeded</code>, précédé d'un avertissement :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>WARNING! Your credentials are stored unencrypted in '/home/tssr/.docker/config.json'.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>WARNING! Your credentials are stored unencrypted in '/home/adminlab/.docker/config.json'.
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Configure a credential helper to remove this warning. See
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>https://docs.docker.com/go/credential-store/
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>Login Succeeded
 </code></pre></div>
-<p>Sur une Debian sans bureau, aucun coffre de mots de passe n'est installé : le jeton est rangé dans <code>~/.docker/config.json</code>, simplement <strong>encodé</strong> en base64 (ce n'est pas un chiffrement), lisible seulement par <code>tssr</code> (droits <code>600</code>). C'est une raison de plus d'utiliser un jeton limité et qui expire. <code>docker logout</code> l'efface.</p>
+<p>Sur une Debian sans bureau, aucun coffre de mots de passe n'est installé : le jeton est rangé dans <code>~/.docker/config.json</code>, simplement <strong>encodé</strong> en base64 (ce n'est pas un chiffrement), lisible seulement par <code>adminlab</code> (droits <code>600</code>). C'est une raison de plus d'utiliser un jeton limité et qui expire. <code>docker logout</code> l'efface.</p>
 <div class="admonition info">
 <p class="admonition-title">Et <code>docker login</code> sans <code>-u</code> ?</p>
 <p>Sans identifiant, Docker propose une <strong>connexion par le navigateur</strong> :</p>
@@ -4204,7 +4210,7 @@
 <figure>
 <p><img alt="Page du dépôt initiation-docker sur Docker Hub, onglet General : la section Tags contient l'étiquette latest, avec les colonnes OS, Type, Pulled et Pushed." loading="lazy" src="../images/15-hub-depot-avec-tag.png" /></p>
 <figcaption>
-<p>L'image publiée apparaît dans les étiquettes du dépôt (ici une image poussée avec l'étiquette <code>latest</code>)</p>
+<p>L'image publiée apparaît dans la section <strong>Tags</strong> (étiquettes) du dépôt, avec la date de son envoi (<strong>Pushed</strong>)</p>
 </figcaption>
 </figure>
 </li>

@@ -3430,6 +3430,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#le-jour-5-en-resume" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Le jour 5 en résumé
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#ressources" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3696,6 +3707,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#le-jour-5-en-resume" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Le jour 5 en résumé
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#ressources" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3894,11 +3916,21 @@
 </table>
 <hr />
 <div class="admonition info">
+<p class="admonition-title">Convention de lecture</p>
+<p>🖥️ <strong>PC hôte</strong> · 🐧 dans une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : <strong>1️⃣</strong> <code>docker-hote</code> (le manager), <strong>2️⃣</strong> <code>docker-n2</code>, <strong>3️⃣</strong> <code>docker-n3</code> · 🌐 <strong>navigateur du PC</strong>. Les commandes Docker se tapent en <code>adminlab</code>. Les adresses <code>192.168.8.x</code> du corrigé sont celles du lab de référence : les remplacer par les siennes (tableau en tête de la <a href="../16-cluster-docker-swarm/">partie 16</a>).</p>
+</div>
+<div class="admonition info">
 <p class="admonition-title">Point de départ</p>
 <p>L'instantané <code>07-swarm</code> des trois <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (fin de la partie 16) : le cluster <code>docker-hote</code> + <code>docker-n2</code> + <code>docker-n3</code>, le registre privé sur <code>IP-de-la-VM:5000</code>, Nginx Proxy Manager sur <code>docker-hote</code>, et le service <code>bonjour</code> qui occupe le port 8080.</p>
 </div>
 <h2 id="1-la-mission">1. La mission<a class="headerlink" href="#1-la-mission" title="Permanent link">&para;</a></h2>
 <p>L'association veut un <strong>intranet</strong> : une page d'accueil simple, accessible à l'adresse <strong><code>http://intranet.docker.test</code></strong>, qui doit rester disponible même si une machine tombe en panne.</p>
+<figure>
+<p><img alt="Schéma de l'architecture visée : le navigateur du PC ouvre http://intranet.docker.test (nom déclaré dans le fichier hosts) ; Nginx Proxy Manager, sur docker-hote, transmet à IP-de-la-VM:8085. Le port 8085 est ouvert sur les trois nœuds du cluster Swarm (docker-hote, docker-n2, docker-n3) par le maillage de routage, qui envoie chaque requête à l'une des trois répliques du service intranet (limite de 64 Mo chacune). Les répliques sont reliées par un réseau overlay. L'image intranet:1.0 est rangée dans le registre privé IP-de-la-VM:5000, sur docker-hote." loading="lazy" src="../images/defi-final-cible.svg" /></p>
+<figcaption>
+<p>L'architecture à obtenir : trois répliques sur trois nœuds, publiées derrière Nginx Proxy Manager.</p>
+</figcaption>
+</figure>
 <p>Un collègue a commencé le travail. Il a laissé ce fichier <code>compose.yaml</code>, mais « le déploiement ne marche pas » :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">services</span><span class="p">:</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">intranet</span><span class="p">:</span>
@@ -3930,11 +3962,29 @@
 <h3 id="12-criteres-de-reussite">1.2 Critères de réussite<a class="headerlink" href="#12-criteres-de-reussite" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>docker service ls</code> affiche <code>intranet_intranet</code> en <strong>3/3</strong>, image <code>IP-de-la-VM:5000/intranet:1.0</code> (le registre de la partie 15), port <code>*:8085-&gt;80/tcp</code>.</li>
-<li>Les trois répliques sont sur <strong>trois nœuds différents</strong>, et <code>docker ps</code> sur un nœud montre la sienne <strong><code>(healthy)</code></strong>.</li>
+<li>Les trois répliques sont sur <strong>trois nœuds différents</strong> (au besoin après une nouvelle répartition), et <code>docker ps</code> sur un nœud montre la sienne <strong><code>(healthy)</code></strong>.</li>
 <li><code>http://intranet.docker.test</code> affiche la page dans le navigateur du PC.</li>
 <li>Pendant la coupure d'un worker, le site reste joignable (au plus une ou deux requêtes perdues), et le service revient à 3/3 tout seul.</li>
 <li>Chaque erreur du fichier du collègue est <strong>expliquée</strong> : message obtenu, cause, correction.</li>
 </ul>
+<div class="admonition success">
+<p class="admonition-title">Vérifier son lab</p>
+<p>1️⃣ Sur <code>docker-hote</code>, une fois le défi terminé :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span>service<span class="w"> </span>ls<span class="w"> </span>--filter<span class="w"> </span><span class="nv">name</span><span class="o">=</span>intranet
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>docker<span class="w"> </span>service<span class="w"> </span>ps<span class="w"> </span>intranet_intranet<span class="w"> </span>--filter<span class="w"> </span>desired-state<span class="o">=</span>running<span class="w"> </span>--format<span class="w"> </span><span class="s2">"{{.Name}}  {{.Node}}  {{.CurrentState}}"</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>docker<span class="w"> </span>ps<span class="w"> </span>--filter<span class="w"> </span><span class="nv">name</span><span class="o">=</span>intranet<span class="w"> </span>--format<span class="w"> </span><span class="s2">"{{.Names}}  {{.Status}}"</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>curl<span class="w"> </span>-s<span class="w"> </span>--resolve<span class="w"> </span>intranet.docker.test:80:127.0.0.1<span class="w"> </span>http://intranet.docker.test/<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-o<span class="w"> </span><span class="s2">"&lt;title&gt;.*&lt;/title&gt;"</span>
+</code></pre></div>
+<p>Résultat attendu (les identifiants et les durées changent) : le service en <code>3/3</code> avec l'image du registre privé et le port 8085, une réplique par nœud (Swarm étale les tâches entre les nœuds disponibles, sans le garantir : après une panne ou un redéploiement, des répliques peuvent s'entasser, et <code>docker service update --force intranet_intranet</code> les répartit de nouveau), la réplique locale <code>(healthy)</code>, et le titre de la page servi <strong>à travers <abbr title="Nginx Proxy Manager">NPM</abbr></strong> (l'option <code>--resolve</code> de <code>curl</code> remplace le fichier <code>hosts</code> pour ce test) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ID             NAME                MODE         REPLICAS   IMAGE                            PORTS
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>a3mrmkm9x9zy   intranet_intranet   replicated   3/3        192.168.8.71:5000/intranet:1.0   *:8085-&gt;80/tcp
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>intranet_intranet.1  docker-n3  Running 3 hours ago
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>intranet_intranet.2  docker-n2  Running 3 hours ago
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>intranet_intranet.3  docker-hote  Running 3 hours ago
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>intranet_intranet.3.y8zk6cmp5uxsj51at02vakauy  Up 3 hours (healthy)
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>&lt;title&gt;Intranet de l'association&lt;/title&gt;
+</code></pre></div>
+</div>
 <div class="admonition tip">
 <p class="admonition-title">Indices, à ouvrir seulement en cas de blocage</p>
 <details class="note">
@@ -3956,101 +4006,101 @@
 <summary>Corrigé détaillé</summary>
 <h3 id="etape-1-limage">Étape 1 : l'image<a class="headerlink" href="#etape-1-limage" title="Permanent link">&para;</a></h3>
 <p>1️⃣ Sur <code>docker-hote</code> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/defi/intranet<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/defi/intranet
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>nano<span class="w"> </span>index.html
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/defi/intranet<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/defi/intranet
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>nano<span class="w"> </span>index.html
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="cp">&lt;!DOCTYPE html&gt;</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">"fr"</span><span class="p">&gt;&lt;</span><span class="nt">head</span><span class="p">&gt;&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">"UTF-8"</span><span class="p">&gt;&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Intranet de l'association<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Intranet de l'association<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Service déployé sur le cluster Swarm.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;&lt;/</span><span class="nt">body</span><span class="p">&gt;&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">"fr"</span><span class="p">&gt;&lt;</span><span class="nt">head</span><span class="p">&gt;&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">"UTF-8"</span><span class="p">&gt;&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Intranet de l'association<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Intranet de l'association<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Service déployé sur le cluster Swarm.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;&lt;/</span><span class="nt">body</span><span class="p">&gt;&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>nano<span class="w"> </span>Dockerfile
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>nano<span class="w"> </span>Dockerfile
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">FROM</span><span class="w"> </span><span class="s">nginx:1.31-alpine</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">COPY</span><span class="w"> </span>index.html<span class="w"> </span>/usr/share/nginx/html/index.html
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="k">HEALTHCHECK</span><span class="w"> </span>--interval<span class="o">=</span>10s<span class="w"> </span>--timeout<span class="o">=</span>3s<span class="w"> </span>--retries<span class="o">=</span><span class="m">3</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="k">CMD</span><span class="w"> </span>wget<span class="w"> </span>-q<span class="w"> </span>--spider<span class="w"> </span>http://127.0.0.1/<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">FROM</span><span class="w"> </span><span class="s">nginx:1.31-alpine</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">COPY</span><span class="w"> </span>index.html<span class="w"> </span>/usr/share/nginx/html/index.html
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="k">HEALTHCHECK</span><span class="w"> </span>--interval<span class="o">=</span>10s<span class="w"> </span>--timeout<span class="o">=</span>3s<span class="w"> </span>--retries<span class="o">=</span><span class="m">3</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="k">CMD</span><span class="w"> </span>wget<span class="w"> </span>-q<span class="w"> </span>--spider<span class="w"> </span>http://127.0.0.1/<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
 </code></pre></div>
 <p>Le test de santé demande la page toutes les 10 secondes, avec <code>wget</code> (présent dans les images Alpine) ; trois échecs de suite rendent le conteneur <code>unhealthy</code>, et Swarm le remplace.</p>
 <h3 id="etape-2-le-registre">Étape 2 : le registre<a class="headerlink" href="#etape-2-le-registre" title="Permanent link">&para;</a></h3>
 <p>Comme en partie 16, les adresses sont celles du lab (<code>192.168.8.71</code> pour <code>docker-hote</code>) : les remplacer par les siennes.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span><span class="m">192</span>.168.8.71:5000/intranet:1.0<span class="w"> </span>.
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>docker<span class="w"> </span>push<span class="w"> </span><span class="m">192</span>.168.8.71:5000/intranet:1.0
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>curl<span class="w"> </span>-s<span class="w"> </span>http://192.168.8.71:5000/v2/intranet/tags/list
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span><span class="m">192</span>.168.8.71:5000/intranet:1.0<span class="w"> </span>.
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>docker<span class="w"> </span>push<span class="w"> </span><span class="m">192</span>.168.8.71:5000/intranet:1.0
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>curl<span class="w"> </span>-s<span class="w"> </span>http://192.168.8.71:5000/v2/intranet/tags/list
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>{"name":"intranet","tags":["1.0"]}
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>{"name":"intranet","tags":["1.0"]}
 </code></pre></div>
 <h3 id="etape-3-les-trois-erreurs-du-fichier">Étape 3 : les trois erreurs du fichier<a class="headerlink" href="#etape-3-les-trois-erreurs-du-fichier" title="Permanent link">&para;</a></h3>
 <p>1️⃣ Copier le fichier du collègue tel quel, et le déployer pour lire les erreurs :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/defi/panne<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/defi/panne
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>nano<span class="w"> </span>compose.yaml<span class="w">          </span><span class="c1"># coller le fichier de la section 1</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>docker<span class="w"> </span>stack<span class="w"> </span>deploy<span class="w"> </span>-c<span class="w"> </span>compose.yaml<span class="w"> </span>intranet
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/defi/panne<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/defi/panne
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>nano<span class="w"> </span>compose.yaml<span class="w">          </span><span class="c1"># coller le fichier de la section 1</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>docker<span class="w"> </span>stack<span class="w"> </span>deploy<span class="w"> </span>-c<span class="w"> </span>compose.yaml<span class="w"> </span>intranet
 </code></pre></div>
 <p><strong>Erreur 1 : le réseau <code>bridge</code>.</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Creating network intranet_interne
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>Creating service intranet_intranet
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>failed to create service intranet_intranet: Error response from daemon: The network intranet_interne cannot be used with services. Only networks scoped to the swarm can be used, such as those created with the overlay driver.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>Creating network intranet_interne
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>Creating service intranet_intranet
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>failed to create service intranet_intranet: Error response from daemon: The network intranet_interne cannot be used with services. Only networks scoped to the swarm can be used, such as those created with the overlay driver.
 </code></pre></div>
 <p>Un réseau <code>bridge</code> n'existe que sur <strong>une</strong> machine ; un service Swarm s'étend sur plusieurs : il lui faut un réseau <strong><code>overlay</code></strong>. Correction : <code>driver: overlay</code>.</p>
 <p>Piège : après la correction, le même message revient. Le réseau <code>intranet_interne</code> a été <strong>créé</strong> (en <code>bridge</code>) au premier essai et la pile le réutilise sans le modifier. Supprimer d'abord la pile, ce qui supprime son réseau :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>docker<span class="w"> </span>stack<span class="w"> </span>rm<span class="w"> </span>intranet
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>docker<span class="w"> </span>stack<span class="w"> </span>rm<span class="w"> </span>intranet
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>Removing network intranet_interne
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>Removing network intranet_interne
 </code></pre></div>
 <p><strong>Erreur 2 : le port 8080 déjà pris.</strong> Au déploiement suivant :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>failed to create service intranet_intranet: Error response from daemon: rpc error: code = InvalidArgument desc = port '8080' is already in use by service 'bonjour' (bfy6rguo107w4s7zfmqgqkzjy) as an ingress port
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>failed to create service intranet_intranet: Error response from daemon: rpc error: code = InvalidArgument desc = port '8080' is already in use by service 'bonjour' (bfy6rguo107w4s7zfmqgqkzjy) as an ingress port
 </code></pre></div>
 <p>Avec le maillage de routage, un port publié est réservé sur <strong>tous</strong> les nœuds : le service <code>bonjour</code> de la partie 16 occupe déjà le 8080. Correction : <code>"8085:80"</code>.</p>
 <p><strong>Erreur 3 : l'image en <code>localhost</code>.</strong> Cette fois, le déploiement réussit… mais le service ne se comporte pas comme prévu :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>docker<span class="w"> </span>service<span class="w"> </span>ls<span class="w"> </span>--filter<span class="w"> </span><span class="nv">name</span><span class="o">=</span>intranet
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>docker<span class="w"> </span>service<span class="w"> </span>ps<span class="w"> </span>intranet_intranet<span class="w"> </span>--filter<span class="w"> </span>desired-state<span class="o">=</span>running<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Name}} {{.Node}}'</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>docker<span class="w"> </span>service<span class="w"> </span>ls<span class="w"> </span>--filter<span class="w"> </span><span class="nv">name</span><span class="o">=</span>intranet
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>docker<span class="w"> </span>service<span class="w"> </span>ps<span class="w"> </span>intranet_intranet<span class="w"> </span>--filter<span class="w"> </span>desired-state<span class="o">=</span>running<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Name}} {{.Node}}'</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>ID             NAME                MODE         REPLICAS   IMAGE                         PORTS
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>a3mrmkm9x9zy   intranet_intranet   replicated   2/3        localhost:5000/intranet:1.0   *:8085-&gt;80/tcp
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>intranet_intranet.1 docker-hote
-<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>intranet_intranet.2 docker-hote
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>ID             NAME                MODE         REPLICAS   IMAGE                         PORTS
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>a3mrmkm9x9zy   intranet_intranet   replicated   2/3        localhost:5000/intranet:1.0   *:8085-&gt;80/tcp
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>intranet_intranet.1 docker-hote
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>intranet_intranet.2 docker-hote
 </code></pre></div>
 <p>Les répliques s'entassent <strong>toutes sur <code>docker-hote</code></strong>, et le service peine à atteindre 3/3 : le critère « trois nœuds différents » démasque l'erreur. L'historique complet des tâches donne la cause :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>docker<span class="w"> </span>service<span class="w"> </span>ps<span class="w"> </span>intranet_intranet<span class="w"> </span>--no-trunc<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Node}} | {{.CurrentState}} | {{.Error}}'</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>docker<span class="w"> </span>service<span class="w"> </span>ps<span class="w"> </span>intranet_intranet<span class="w"> </span>--no-trunc<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Node}} | {{.CurrentState}} | {{.Error}}'</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>docker-n2 | Rejected 4 seconds ago | "failed to resolve reference "localhost:5000/intranet:1.0": failed to do request: Head "https://localhost:5000/v2/intranet/manifests/1.0": dial tcp [::1]:5000: connect: connection refused"
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>docker-n3 | Rejected 9 seconds ago | "failed to resolve reference "localhost:5000/intranet:1.0": … connect: connection refused"
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>docker-n2 | Rejected 4 seconds ago | "failed to resolve reference "localhost:5000/intranet:1.0": failed to do request: Head "https://localhost:5000/v2/intranet/manifests/1.0": dial tcp [::1]:5000: connect: connection refused"
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>docker-n3 | Rejected 9 seconds ago | "failed to resolve reference "localhost:5000/intranet:1.0": … connect: connection refused"
 </code></pre></div>
 <p>Chaque nœud télécharge l'image <strong>lui-même</strong>. Sur <code>docker-n2</code> et <code>docker-n3</code>, <code>localhost</code> désigne le nœud lui-même, où aucun registre n'écoute : <code>connection refused</code>, et la tâche est rejetée. Seul <code>docker-hote</code>, où <code>localhost:5000</code> mène bien au registre (grâce aux plages locales ajoutées à <code>insecure-registries</code> en partie 15), lance les répliques. Le service semble fonctionner, mais une panne de <code>docker-hote</code> emporterait tout. Sans ces plages locales, <code>docker-hote</code> échouerait aussi (<code>server gave HTTP response to HTTPS client</code>) et le service resterait à <code>0/3</code>. Correction : <code>image: 192.168.8.71:5000/intranet:1.0</code>.</p>
 <h3 id="etape-4-le-fichier-corrige-et-complete">Étape 4 : le fichier corrigé et complété<a class="headerlink" href="#etape-4-le-fichier-corrige-et-complete" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="nt">services</span><span class="p">:</span>
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="w">  </span><span class="nt">intranet</span><span class="p">:</span>
-<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.8.71:5000/intranet:1.0</span>
-<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
-<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"8085:80"</span>
-<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
-<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">interne</span>
-<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="w">    </span><span class="nt">deploy</span><span class="p">:</span>
-<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="w">      </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
-<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="w">      </span><span class="nt">resources</span><span class="p">:</span>
-<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="w">        </span><span class="nt">limits</span><span class="p">:</span>
-<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="w">          </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64M</span>
-<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a><span class="w">      </span><span class="nt">restart_policy</span><span class="p">:</span>
-<a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a><span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span>
-<a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a><span class="nt">networks</span><span class="p">:</span>
-<a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a><span class="w">  </span><span class="nt">interne</span><span class="p">:</span>
-<a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a><span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">overlay</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="nt">services</span><span class="p">:</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">  </span><span class="nt">intranet</span><span class="p">:</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.8.71:5000/intranet:1.0</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"8085:80"</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">interne</span>
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="w">    </span><span class="nt">deploy</span><span class="p">:</span>
+<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a><span class="w">      </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="w">      </span><span class="nt">resources</span><span class="p">:</span>
+<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="w">        </span><span class="nt">limits</span><span class="p">:</span>
+<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a><span class="w">          </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64M</span>
+<a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a><span class="w">      </span><span class="nt">restart_policy</span><span class="p">:</span>
+<a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a><span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span>
+<a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a><span class="w">  </span><span class="nt">interne</span><span class="p">:</span>
+<a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a><span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">overlay</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>docker<span class="w"> </span>stack<span class="w"> </span>deploy<span class="w"> </span>-c<span class="w"> </span>compose.yaml<span class="w"> </span>intranet
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>docker<span class="w"> </span>service<span class="w"> </span>ls<span class="w"> </span>--filter<span class="w"> </span><span class="nv">name</span><span class="o">=</span>intranet
-<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>docker<span class="w"> </span>service<span class="w"> </span>ps<span class="w"> </span>intranet_intranet<span class="w"> </span>--filter<span class="w"> </span>desired-state<span class="o">=</span>running<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Name}} {{.Node}}'</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>docker<span class="w"> </span>stack<span class="w"> </span>deploy<span class="w"> </span>-c<span class="w"> </span>compose.yaml<span class="w"> </span>intranet
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>docker<span class="w"> </span>service<span class="w"> </span>ls<span class="w"> </span>--filter<span class="w"> </span><span class="nv">name</span><span class="o">=</span>intranet
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>docker<span class="w"> </span>service<span class="w"> </span>ps<span class="w"> </span>intranet_intranet<span class="w"> </span>--filter<span class="w"> </span>desired-state<span class="o">=</span>running<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Name}} {{.Node}}'</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>ID             NAME                MODE         REPLICAS   IMAGE                            PORTS
-<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>a3mrmkm9x9zy   intranet_intranet   replicated   3/3        192.168.8.71:5000/intranet:1.0   *:8085-&gt;80/tcp
-<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>intranet_intranet.1 docker-n3
-<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>intranet_intranet.2 docker-n2
-<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>intranet_intranet.3 docker-hote
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>ID             NAME                MODE         REPLICAS   IMAGE                            PORTS
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>a3mrmkm9x9zy   intranet_intranet   replicated   3/3        192.168.8.71:5000/intranet:1.0   *:8085-&gt;80/tcp
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>intranet_intranet.1 docker-n3
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>intranet_intranet.2 docker-n2
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>intranet_intranet.3 docker-hote
 </code></pre></div>
-<p><code>condition: any</code> (valeur par défaut, écrite pour être explicite) : avec <code>on-failure</code>, une réplique arrêtée proprement, par exemple quand on éteint normalement un nœud, passe à <code>Complete</code> et n'est <strong>pas</strong> recréée. Dans le lab, après un arrêt propre des trois <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, le service est resté à <code>1/3</code> avec <code>on-failure</code>, et revient à <code>3/3</code> avec <code>any</code>.</p>
+<p><code>condition: any</code> (valeur par défaut, écrite pour être explicite) : avec <code>on-failure</code>, une réplique arrêtée proprement, par exemple quand on éteint normalement un nœud, passe à <code>Complete</code> et n'est <strong>pas</strong> recréée. Après un arrêt propre des trois <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, le service peut rester à <code>1/3</code> avec <code>on-failure</code> ; avec <code>any</code>, il revient à <code>3/3</code>.</p>
 <p>Si les répliques ne sont pas réparties (restes des essais précédents) : <code>docker service update --force intranet_intranet</code>.</p>
 <p>2️⃣ Sur <code>docker-n2</code>, la santé de la réplique qu'il exécute :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>docker<span class="w"> </span>ps<span class="w"> </span>--filter<span class="w"> </span><span class="nv">name</span><span class="o">=</span>intranet<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Names}} {{.Status}}'</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>docker<span class="w"> </span>ps<span class="w"> </span>--filter<span class="w"> </span><span class="nv">name</span><span class="o">=</span>intranet<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Names}} {{.Status}}'</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>intranet_intranet.2.uxa503wzbho9vbdk4j9tp6kf8 Up 45 seconds (healthy)
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>intranet_intranet.2.uxa503wzbho9vbdk4j9tp6kf8 Up 45 seconds (healthy)
 </code></pre></div>
 <h3 id="etape-5-la-publication">Étape 5 : la publication<a class="headerlink" href="#etape-5-la-publication" title="Permanent link">&para;</a></h3>
 <ol>
@@ -4060,12 +4110,12 @@
 <p>Ici, <abbr title="Nginx Proxy Manager">NPM</abbr> n'utilise <strong>pas</strong> un nom de conteneur comme en partie 9 : il tourne hors du cluster (lancé par <code>docker compose</code>), et n'est pas branché sur le réseau overlay de la pile. Il passe donc par le <strong>port publié</strong>, que le maillage de routage ouvre sur la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</p>
 </li>
 <li>
-<p>🌐 Ouvrir <code>http://intranet.docker.test</code> : la page « Intranet de l'association » s'affiche. Avec le certificat <code>*.docker.test</code> de la partie 10, l'onglet <strong>SSL</strong> de l'hôte permet de passer en <abbr title="HTTP sécurisé par TLS">HTTPS</abbr>.</p>
+<p>🌐 Ouvrir <code>http://intranet.docker.test</code> : la page « Intranet de l'association » s'affiche. Pour passer en <abbr title="HTTP sécurisé par TLS">HTTPS</abbr>, il faut un certificat qui contient le nom <code>intranet.docker.test</code> : celui de la partie 10 ne couvre que <code>nextcloud</code>, <code>portainer</code> et <code>wordpress</code>. Le refaire avec la même commande <code>openssl</code> en ajoutant <code>DNS:intranet.docker.test</code> dans <code>subjectAltName</code>, l'importer dans <abbr title="Nginx Proxy Manager">NPM</abbr>, puis le choisir dans l'onglet <strong>SSL</strong> de l'hôte.</p>
 </li>
 </ol>
 <h3 id="etape-6-la-preuve-de-tolerance-aux-pannes">Étape 6 : la preuve de tolérance aux pannes<a class="headerlink" href="#etape-6-la-preuve-de-tolerance-aux-pannes" title="Permanent link">&para;</a></h3>
 <p>1️⃣ Dans une session sur <code>docker-hote</code>, une requête par seconde <strong>à travers <abbr title="Nginx Proxy Manager">NPM</abbr></strong> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="k">while</span><span class="w"> </span>true<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>date<span class="w"> </span>+%T<span class="k">)</span><span class="s2"> </span><span class="k">$(</span>curl<span class="w"> </span>-s<span class="w"> </span>-m<span class="w"> </span><span class="m">2</span><span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span><span class="s1">'%{http_code}'</span><span class="w"> </span>--resolve<span class="w"> </span>intranet.docker.test:80:127.0.0.1<span class="w"> </span>http://intranet.docker.test/<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span>ECHEC<span class="k">)</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="k">while</span><span class="w"> </span>true<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>date<span class="w"> </span>+%T<span class="k">)</span><span class="s2"> </span><span class="k">$(</span>curl<span class="w"> </span>-s<span class="w"> </span>-m<span class="w"> </span><span class="m">2</span><span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span><span class="s1">'%{http_code}'</span><span class="w"> </span>--resolve<span class="w"> </span>intranet.docker.test:80:127.0.0.1<span class="w"> </span>http://intranet.docker.test/<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span>ECHEC<span class="k">)</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
 </code></pre></div>
 <p><code>--resolve</code> fait pointer le nom vers la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> elle-même, sans modifier son fichier <code>hosts</code>.</p>
 <p>🖥️ Couper <code>docker-n2</code> brutalement (comme en partie 16). Résultat attendu : une requête perdue au plus, deux secondes environ après la coupure (elle s'affiche <code>000ECHEC</code> : <code>curl</code> écrit le code <code>000</code>, puis la boucle ajoute <code>ECHEC</code>) ; toutes les autres répondent <code>200</code>. Sur 60 requêtes, une seule a été perdue. <code>docker node ls</code> passe <code>docker-n2</code> en <code>Down</code>, et la réplique perdue est recréée sur un autre nœud : <code>docker service ls</code> revient à <strong>3/3</strong>.</p>
@@ -4103,6 +4153,13 @@
 </table>
 </details>
 <hr />
+<h2 id="le-jour-5-en-resume">Le jour 5 en résumé<a class="headerlink" href="#le-jour-5-en-resume" title="Permanent link">&para;</a></h2>
+<figure>
+<p><img alt="Carte mentale du jour 5 : Dockerfile, registre privé, création du cluster Swarm, services et pannes, mises à jour et piles, défi final" loading="lazy" src="../images/carte-mentale-jour5.svg" /></p>
+<figcaption>
+<p>Le jour 5 en un coup d'œil : construire, distribuer, orchestrer.</p>
+</figcaption>
+</figure>
 <h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="https://docs.docker.com/reference/compose-file/deploy/">Référence du fichier Compose : <code>deploy</code></a> — répliques, limites, redémarrage (en anglais).</li>

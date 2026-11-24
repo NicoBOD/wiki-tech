@@ -4075,14 +4075,14 @@
 <hr />
 <div class="admonition info">
 <p class="admonition-title">Convention de lecture</p>
-<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>tssr</code> · 📦 <strong>dans un conteneur</strong> · 🌐 <strong>navigateur du PC</strong> · ✍️ <strong>exercice</strong>. Point de départ : l'instantané <code>02-fin-jour-1</code>. 🖥️ Démarrer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, puis s'y connecter en SSH : <code>ssh tssr@IP-de-la-VM</code>. Seul le conteneur <code>portainer</code> doit tourner (<code>docker ps</code>).</p>
+<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>adminlab</code> · 📦 <strong>dans un conteneur</strong> · 🌐 <strong>navigateur du PC</strong> · ✍️ <strong>exercice</strong>. Point de départ : l'instantané <code>02-fin-jour-1</code>. 🖥️ Démarrer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, puis s'y connecter en SSH : <code>ssh adminlab@IP-de-la-VM</code>. Seul le conteneur <code>portainer</code> doit tourner (<code>docker ps</code>).</p>
 </div>
 <h2 id="1-perdre-des-donnees-pour-comprendre">1. Perdre des données, pour comprendre<a class="headerlink" href="#1-perdre-des-donnees-pour-comprendre" title="Permanent link">&para;</a></h2>
 <h3 id="11-une-base-de-donnees-dans-un-conteneur">1.1 Une base de données dans un conteneur<a class="headerlink" href="#11-une-base-de-donnees-dans-un-conteneur" title="Permanent link">&para;</a></h3>
 <ol>
 <li>
 <p>🐧 Lancer un serveur de base de données <strong>MariaDB</strong>, avec un mot de passe pour son administrateur <code>root</code> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>bdd<span class="w"> </span>-e<span class="w"> </span><span class="nv">MARIADB_ROOT_PASSWORD</span><span class="o">=</span><span class="s1">'TutoDocker2026!'</span><span class="w"> </span>mariadb:11.8
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>bdd<span class="w"> </span>-e<span class="w"> </span><span class="nv">MARIADB_ROOT_PASSWORD</span><span class="o">=</span><span class="s1">'TutoDocker-Lab1!'</span><span class="w"> </span>mariadb:11.8
 </code></pre></div>
 <p>L'option <code>-e</code> (<em>environment</em>) passe une <strong>variable d'environnement</strong> au conteneur. C'est la façon habituelle de configurer une image : la documentation de chaque image (ici <a href="https://hub.docker.com/_/mariadb">MariaDB sur Docker Hub</a>) liste les variables qu'elle comprend. Le mot de passe est entre apostrophes <code>'…'</code> pour que le <code>!</code> ne soit pas interprété par le terminal.</p>
 </li>
@@ -4101,7 +4101,7 @@
 </li>
 <li>
 <p>🐧 Créer une base <code>tp</code>, une table et deux lignes, puis les afficher. La commande <code>mariadb</code> est le client en ligne de commande, lancé <strong>dans</strong> le conteneur avec <code>docker exec</code> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bdd<span class="w"> </span>mariadb<span class="w"> </span>-uroot<span class="w"> </span>-p<span class="s1">'TutoDocker2026!'</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"CREATE DATABASE tp; CREATE TABLE tp.personnes(nom VARCHAR(30)); INSERT INTO tp.personnes VALUES ('Alice'),('Bob'); SELECT * FROM tp.personnes;"</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bdd<span class="w"> </span>mariadb<span class="w"> </span>-uroot<span class="w"> </span>-p<span class="s1">'TutoDocker-Lab1!'</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"CREATE DATABASE tp; CREATE TABLE tp.personnes(nom VARCHAR(30)); INSERT INTO tp.personnes VALUES ('Alice'),('Bob'); SELECT * FROM tp.personnes;"</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>nom
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Alice
@@ -4119,12 +4119,12 @@
 <li>
 <p>🐧 Supprimer le conteneur et le recréer à l'identique :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>bdd
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>bdd<span class="w"> </span>-e<span class="w"> </span><span class="nv">MARIADB_ROOT_PASSWORD</span><span class="o">=</span><span class="s1">'TutoDocker2026!'</span><span class="w"> </span>mariadb:11.8
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>bdd<span class="w"> </span>-e<span class="w"> </span><span class="nv">MARIADB_ROOT_PASSWORD</span><span class="o">=</span><span class="s1">'TutoDocker-Lab1!'</span><span class="w"> </span>mariadb:11.8
 </code></pre></div>
 </li>
 <li>
 <p>🐧 Attendre la double ligne <code>ready for connections</code> (<code>docker logs -f bdd</code>), puis relire la table :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bdd<span class="w"> </span>mariadb<span class="w"> </span>-uroot<span class="w"> </span>-p<span class="s1">'TutoDocker2026!'</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"SELECT * FROM tp.personnes;"</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bdd<span class="w"> </span>mariadb<span class="w"> </span>-uroot<span class="w"> </span>-p<span class="s1">'TutoDocker-Lab1!'</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"SELECT * FROM tp.personnes;"</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>ERROR 1146 (42S02) at line 1: Table 'tp.personnes' doesn't exist
 </code></pre></div>
@@ -4164,7 +4164,7 @@
 <h2 id="2-les-volumes-nommes">2. Les volumes nommés<a class="headerlink" href="#2-les-volumes-nommes" title="Permanent link">&para;</a></h2>
 <h3 id="21-trois-facons-de-ranger-des-donnees">2.1 Trois façons de ranger des données<a class="headerlink" href="#21-trois-facons-de-ranger-des-donnees" title="Permanent link">&para;</a></h3>
 <figure>
-<p><img alt="Trois conteneurs dans la VM docker-hote. Le premier utilise un volume nommé, rangé par Docker dans /var/lib/docker/volumes. Le deuxième utilise un dossier monté : un dossier choisi de la VM, par exemple /home/tssr/site, apparaît dans le conteneur. Le troisième utilise un tmpfs, rangé dans la mémoire vive et effacé à l'arrêt du conteneur." loading="lazy" src="../images/types-de-stockage.svg" /></p>
+<p><img alt="Trois conteneurs dans la VM docker-hote. Le premier utilise un volume nommé, rangé par Docker dans /var/lib/docker/volumes. Le deuxième utilise un dossier monté : un dossier choisi de la VM, par exemple /home/adminlab/site, apparaît dans le conteneur. Le troisième utilise un tmpfs, rangé dans la mémoire vive et effacé à l'arrêt du conteneur." loading="lazy" src="../images/types-de-stockage.svg" /></p>
 <figcaption>
 <p>Volume, dossier monté, <abbr title="système de fichiers temporaire stocké en mémoire vive">tmpfs</abbr> : trois endroits où un conteneur peut garder ses fichiers.</p>
 </figcaption>
@@ -4208,12 +4208,12 @@
 </li>
 <li>
 <p>🐧 Lancer MariaDB en <strong>branchant</strong> ce volume sur <code>/var/lib/mysql</code>, avec l'option <code>-v nom-du-volume:chemin-dans-le-conteneur</code> :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>bdd<span class="w"> </span>-e<span class="w"> </span><span class="nv">MARIADB_ROOT_PASSWORD</span><span class="o">=</span><span class="s1">'TutoDocker2026!'</span><span class="w"> </span>-v<span class="w"> </span>donnees-bdd:/var/lib/mysql<span class="w"> </span>mariadb:11.8
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>bdd<span class="w"> </span>-e<span class="w"> </span><span class="nv">MARIADB_ROOT_PASSWORD</span><span class="o">=</span><span class="s1">'TutoDocker-Lab1!'</span><span class="w"> </span>-v<span class="w"> </span>donnees-bdd:/var/lib/mysql<span class="w"> </span>mariadb:11.8
 </code></pre></div>
 </li>
 <li>
 <p>🐧 Attendre la double ligne <code>ready for connections</code> (<code>docker logs -f bdd</code>), puis recréer la table :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bdd<span class="w"> </span>mariadb<span class="w"> </span>-uroot<span class="w"> </span>-p<span class="s1">'TutoDocker2026!'</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"CREATE DATABASE tp; CREATE TABLE tp.personnes(nom VARCHAR(30)); INSERT INTO tp.personnes VALUES ('Alice'),('Bob');"</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bdd<span class="w"> </span>mariadb<span class="w"> </span>-uroot<span class="w"> </span>-p<span class="s1">'TutoDocker-Lab1!'</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"CREATE DATABASE tp; CREATE TABLE tp.personnes(nom VARCHAR(30)); INSERT INTO tp.personnes VALUES ('Alice'),('Bob');"</span>
 </code></pre></div>
 </li>
 </ol>
@@ -4227,7 +4227,7 @@
 </li>
 <li>
 <p>🐧 Quelques secondes plus tard (cette fois, une seule ligne <code>ready for connections</code> : la base existe déjà, il n'y a rien à initialiser), relire la table :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bdd2<span class="w"> </span>mariadb<span class="w"> </span>-uroot<span class="w"> </span>-p<span class="s1">'TutoDocker2026!'</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"SELECT * FROM tp.personnes;"</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bdd2<span class="w"> </span>mariadb<span class="w"> </span>-uroot<span class="w"> </span>-p<span class="s1">'TutoDocker-Lab1!'</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"SELECT * FROM tp.personnes;"</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>nom
 <a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>Alice
@@ -4305,7 +4305,7 @@
 </tr>
 <tr>
 <td><code>-v "$PWD":/sauvegarde</code></td>
-<td>Le dossier courant de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<code>$PWD</code>, ici <code>/home/tssr</code>) apparaît dans <code>/sauvegarde</code> : c'est un <strong>dossier monté</strong></td>
+<td>Le dossier courant de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<code>$PWD</code>, ici <code>/home/adminlab</code>) apparaît dans <code>/sauvegarde</code> : c'est un <strong>dossier monté</strong></td>
 </tr>
 <tr>
 <td><code>debian:13 tar czf … -C /source .</code></td>
@@ -4326,7 +4326,7 @@
 <p>En production, l'archive part ensuite sur une autre machine (<code>scp</code>, <code>rsync</code>, un logiciel de sauvegarde comme Veeam ou Borg…). Pour une base de données, on préfère souvent un <strong>export logique</strong> à chaud (<code>mariadb-dump</code>), qui évite d'arrêter le service. La règle 3-2-1 (trois copies, deux supports, une hors site) s'applique comme pour n'importe quel serveur.</p>
 </div>
 <h3 id="32-restaurer-dans-un-volume-neuf">3.2 Restaurer dans un volume neuf<a class="headerlink" href="#32-restaurer-dans-un-volume-neuf" title="Permanent link">&para;</a></h3>
-<p>Simulons la perte du volume, puis sa restauration.</p>
+<p>On simule la perte du volume, puis sa restauration.</p>
 <ol>
 <li>
 <p>🐧 Tout supprimer : le conteneur, puis le volume.</p>
@@ -4343,7 +4343,7 @@
 <li>
 <p>🐧 Relancer MariaDB sur le volume restauré et vérifier :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>bdd3<span class="w"> </span>-v<span class="w"> </span>donnees-bdd:/var/lib/mysql<span class="w"> </span>mariadb:11.8
-<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bdd3<span class="w"> </span>mariadb<span class="w"> </span>-uroot<span class="w"> </span>-p<span class="s1">'TutoDocker2026!'</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"SELECT * FROM tp.personnes;"</span>
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bdd3<span class="w"> </span>mariadb<span class="w"> </span>-uroot<span class="w"> </span>-p<span class="s1">'TutoDocker-Lab1!'</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"SELECT * FROM tp.personnes;"</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>nom
 <a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>Alice
@@ -4357,7 +4357,7 @@
 <p>Un <strong>dossier monté</strong> fait apparaître un dossier <strong>choisi</strong> de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> à l'intérieur du conteneur. Les deux voient <strong>les mêmes fichiers</strong>, en direct.</p>
 <ol>
 <li>
-<p>🐧 Créer un petit site web dans le dossier personnel de <code>tssr</code> :</p>
+<p>🐧 Créer un petit site web dans le dossier personnel de <code>adminlab</code> :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/site
 <a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">'&lt;h1&gt;Mon site&lt;/h1&gt;'</span><span class="w"> </span>&gt;<span class="w"> </span>~/site/index.html
 </code></pre></div>
@@ -4369,7 +4369,7 @@
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>&lt;h1&gt;Mon site&lt;/h1&gt;
 </code></pre></div>
-<p>Quand la partie gauche de <code>-v</code> est un <strong>chemin</strong> (il commence par <code>/</code> ou <code>./</code>), Docker monte un dossier ; quand c'est un <strong>nom</strong>, il utilise un volume. Le terminal remplace <code>~</code> par <code>/home/tssr</code> avant même de lancer la commande : Docker reçoit donc un chemin.</p>
+<p>Quand la partie gauche de <code>-v</code> est un <strong>chemin</strong> (il commence par <code>/</code> ou <code>./</code>), Docker monte un dossier ; quand c'est un <strong>nom</strong>, il utilise un volume. Le terminal remplace <code>~</code> par <code>/home/adminlab</code> avant même de lancer la commande : Docker reçoit donc un chemin.</p>
 </li>
 <li>
 <p>🐧 Modifier la page <strong>depuis la <abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong>, sans toucher au conteneur :</p>

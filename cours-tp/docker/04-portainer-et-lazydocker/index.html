@@ -4080,7 +4080,7 @@
 <hr />
 <div class="admonition info">
 <p class="admonition-title">Convention de lecture</p>
-<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>tssr</code> · 🌐 <strong>navigateur du PC</strong> · ✍️ <strong>exercice</strong>. Portainer n'existe <strong>qu'en anglais</strong> : ses menus sont écrits en gras, en anglais, avec leur traduction entre parenthèses. Point de départ : <code>docker ps -a</code> ne montre <strong>aucun</strong> conteneur (sinon les supprimer avec <code>docker rm -f</code>), et les ports 8081 et 9443 de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> sont libres.</p>
+<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>adminlab</code> · 🌐 <strong>navigateur du PC</strong> · ✍️ <strong>exercice</strong>. Portainer n'existe <strong>qu'en anglais</strong> : ses menus sont écrits en gras, en anglais, avec leur traduction entre parenthèses. Point de départ : <code>docker ps -a</code> ne montre <strong>aucun</strong> conteneur (sinon les supprimer avec <code>docker rm -f</code>), et les ports 8081 et 9443 de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> sont libres.</p>
 </div>
 <h2 id="1-ligne-de-commande-interface-web-interface-texte">1. Ligne de commande, interface web, interface texte<a class="headerlink" href="#1-ligne-de-commande-interface-web-interface-texte" title="Permanent link">&para;</a></h2>
 <table>
@@ -4210,7 +4210,7 @@
 </tr>
 <tr>
 <td><strong>Password</strong> et <strong>Confirm password</strong> (mot de passe, confirmation)</td>
-<td><code>TutoDocker2026!</code></td>
+<td><code>TutoDocker-Lab1!</code></td>
 </tr>
 <tr>
 <td><strong>Setup token</strong> (jeton de configuration)</td>
@@ -4406,7 +4406,13 @@
 <p>Dans <strong>Containers</strong>, cocher la case de <code>web-portainer</code>, puis utiliser les boutons <strong>Stop</strong> (arrêter), <strong>Start</strong> (démarrer) et <strong>Remove</strong> (supprimer) au-dessus de la liste. Portainer demande une confirmation avant la suppression. Après la suppression, <code>docker ps -a</code> ne montre plus que <code>portainer</code>.</p>
 </details>
 <h2 id="5-le-socket-docker-les-cles-de-la-maison">5. Le socket Docker : les clés de la maison<a class="headerlink" href="#5-le-socket-docker-les-cles-de-la-maison" title="Permanent link">&para;</a></h2>
-<p>Pour piloter Docker, Portainer a besoin du <strong>socket</strong> <code>/var/run/docker.sock</code>, qu'on lui a donné avec <code>-v /var/run/docker.sock:/var/run/docker.sock</code>. En <a href="../01-decouvrir-et-installer-docker/#42-ajouter-tssr-au-groupe-docker">partie 1</a>, on a vu que l'accès à ce socket permet de <strong>devenir <code>root</code> sur la machine</strong>.</p>
+<p>Pour piloter Docker, Portainer a besoin du <strong>socket</strong> <code>/var/run/docker.sock</code>, qu'on lui a donné avec <code>-v /var/run/docker.sock:/var/run/docker.sock</code>. En <a href="../01-decouvrir-et-installer-docker/#42-ajouter-adminlab-au-groupe-docker">partie 1</a>, on a vu que l'accès à ce socket permet de <strong>devenir <code>root</code> sur la machine</strong>.</p>
+<figure>
+<p><img alt="Schéma : la commande docker, le client, envoie ses ordres au socket /var/run/docker.sock (srw-rw---- root:docker), puis à dockerd, containerd et aux conteneurs. Peuvent écrire dans le socket : root, le groupe docker et Portainer qui le monte ; les autres utilisateurs sont refusés. Qui parle au socket peut monter tout le disque de la VM dans un conteneur : groupe docker = root." loading="lazy" src="../images/client-socket-dockerd.svg" /></p>
+<figcaption>
+<p>Portainer monte le socket : qui administre Portainer contrôle la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</p>
+</figcaption>
+</figure>
 <p>Conséquence directe : <strong>quiconque se connecte à Portainer en administrateur contrôle la <abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong>. Il peut lancer un conteneur qui monte <code>/</code> et lire ou modifier n'importe quel fichier.</p>
 <div class="admonition danger">
 <p class="admonition-title">Protéger Portainer comme un accès root</p>
@@ -4418,12 +4424,12 @@
 </ul>
 </div>
 <h2 id="6-lazydocker-linterface-en-mode-texte">6. LazyDocker, l'interface en mode texte<a class="headerlink" href="#6-lazydocker-linterface-en-mode-texte" title="Permanent link">&para;</a></h2>
-<p><strong>LazyDocker</strong> est un petit programme qui s'utilise <strong>dans le terminal</strong>, par exemple dans la session <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> ouverte depuis le PC. Il affiche les conteneurs, les images, les volumes et les réseaux, avec les journaux et les statistiques en direct, et se pilote au clavier. Aucun port à ouvrir, aucun mot de passe de plus : il utilise les droits de l'utilisateur qui le lance (ici <code>tssr</code>, membre du groupe <code>docker</code>).</p>
+<p><strong>LazyDocker</strong> est un petit programme qui s'utilise <strong>dans le terminal</strong>, par exemple dans la session <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> ouverte depuis le PC. Il affiche les conteneurs, les images, les volumes et les réseaux, avec les journaux et les statistiques en direct, et se pilote au clavier. Aucun port à ouvrir, aucun mot de passe de plus : il utilise les droits de l'utilisateur qui le lance (ici <code>adminlab</code>, membre du groupe <code>docker</code>).</p>
 <h3 id="61-linstaller">6.1 L'installer<a class="headerlink" href="#61-linstaller" title="Permanent link">&para;</a></h3>
 <p>Son auteur fournit un script d'installation. Comme vu en partie 1, on le <strong>lit</strong> avant de l'exécuter.</p>
 <ol>
 <li>
-<p>🐧 Télécharger le script, le lire, puis l'exécuter <strong>en <code>tssr</code></strong> (pas en <code>root</code>, ni avec <code>sudo</code> : il s'installe dans le dossier personnel) :</p>
+<p>🐧 Télécharger le script, le lire, puis l'exécuter <strong>en <code>adminlab</code></strong> (pas en <code>root</code>, ni avec <code>sudo</code> : il s'installe dans le dossier personnel) :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>curl<span class="w"> </span>-fsSLO<span class="w"> </span>https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh
 <a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>less<span class="w"> </span>install_update_linux.sh
 <a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>bash<span class="w"> </span>install_update_linux.sh
@@ -4440,7 +4446,7 @@
 </li>
 </ol>
 <h3 id="62-lutiliser">6.2 L'utiliser<a class="headerlink" href="#62-lutiliser" title="Permanent link">&para;</a></h3>
-<p>🐧 Relancer d'abord le conteneur de l'exercice, pour avoir quelque chose à regarder, puis lancer LazyDocker :</p>
+<p>🐧 Relancer d'abord le conteneur de l'exercice, pour avoir quelque chose à regarder (s'il existe encore, le supprimer avant : <code>docker rm -f web-portainer</code>), puis lancer LazyDocker :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>web-portainer<span class="w"> </span>-p<span class="w"> </span><span class="m">8081</span>:80<span class="w"> </span>nginx
 <a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>lazydocker
 </code></pre></div>
@@ -4526,7 +4532,7 @@
 <h2 id="8-verifier-son-lab">8. Vérifier son lab<a class="headerlink" href="#8-verifier-son-lab" title="Permanent link">&para;</a></h2>
 <div class="admonition success">
 <p class="admonition-title">Vérifier son lab</p>
-<p>🐧 En <code>tssr</code> :</p>
+<p>🐧 En <code>adminlab</code> :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>docker<span class="w"> </span>ps<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Names}}  {{.Status}}'</span><span class="w"> </span>--filter<span class="w"> </span><span class="nv">name</span><span class="o">=</span>^portainer$
 <a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>docker<span class="w"> </span>inspect<span class="w"> </span>portainer<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.HostConfig.RestartPolicy.Name}}'</span>
 <a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>docker<span class="w"> </span>volume<span class="w"> </span>ls
@@ -4539,12 +4545,22 @@
 <a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>local     portainer_data
 <a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>Version: 0.25.2
 </code></pre></div>
-<p>🌐 <code>https://IP-de-la-VM:9443</code> affiche la page de connexion de Portainer, et l'on se connecte avec <code>admin</code> / <code>TutoDocker2026!</code>.</p>
+<p>🌐 <code>https://IP-de-la-VM:9443</code> affiche la page de connexion de Portainer, et l'on se connecte avec <code>admin</code> / <code>TutoDocker-Lab1!</code>.</p>
 <p>🐧 Pour aller plus loin : redémarrer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<code>sudo reboot</code>), se reconnecter en <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr>, et vérifier avec <code>docker ps</code> que <strong>Portainer est revenu tout seul</strong>, grâce à <code>--restart=always</code>.</p>
 </div>
 <div class="admonition success">
-<p class="admonition-title">🛟 Prendre l'instantané <code>02-fin-jour-1</code></p>
+<p class="admonition-title">Prendre l'instantané <code>02-fin-jour-1</code></p>
 <p>🐧 Éteindre la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<code>sudo poweroff</code>), puis 🖥️ prendre un instantané nommé <code>02-fin-jour-1</code>. Portainer et son compte <code>admin</code> resservent aux jours suivants.</p>
+</div>
+<div class="admonition abstract">
+<p class="admonition-title">Le jour 1 en résumé</p>
+<p>Avant les questions, relire cette carte : chaque branche reprend une partie du jour, avec ses notions et ses commandes clés.</p>
+<figure>
+<p><img alt="Carte mentale du jour 1 : quatre branches, comprendre et installer Docker, premiers conteneurs (docker run, ps, logs, exec), Debian avec Apache et SSH, Portainer et LazyDocker" loading="lazy" src="../images/carte-mentale-jour1.svg" /></p>
+<figcaption>
+<p>Le jour 1 en un coup d'œil : les notions et les commandes à retenir.</p>
+</figcaption>
+</figure>
 </div>
 <h2 id="9-questions-de-revision">9. Questions de révision<a class="headerlink" href="#9-questions-de-revision" title="Permanent link">&para;</a></h2>
 <ol>

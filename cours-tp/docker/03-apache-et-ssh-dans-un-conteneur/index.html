@@ -4031,7 +4031,7 @@
 <hr />
 <div class="admonition info">
 <p class="admonition-title">Convention de lecture</p>
-<p>🖥️ <strong>PC hôte</strong> (PowerShell) · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>tssr</code> · 📦 <strong>dans le conteneur</strong> <code>debian</code> · 🌐 <strong>navigateur du PC</strong> · ✍️ <strong>exercice</strong>. Aucun conteneur ne doit utiliser les ports 8080 et 2222 de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : vérifier avec <code>docker ps</code>.</p>
+<p>🖥️ <strong>PC hôte</strong> (PowerShell) · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>adminlab</code> · 📦 <strong>dans le conteneur</strong> <code>debian</code> · 🌐 <strong>navigateur du PC</strong> · ✍️ <strong>exercice</strong>. Aucun conteneur ne doit utiliser les ports 8080 et 2222 de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : vérifier avec <code>docker ps</code>.</p>
 </div>
 <h2 id="1-lancer-un-conteneur-debian">1. Lancer un conteneur Debian<a class="headerlink" href="#1-lancer-un-conteneur-debian" title="Permanent link">&para;</a></h2>
 <h3 id="11-ou-est-on">1.1 Où est-on ?<a class="headerlink" href="#11-ou-est-on" title="Permanent link">&para;</a></h3>
@@ -4043,7 +4043,7 @@
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>VERSION_ID="13"
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>VERSION="13 (trixie)"
 </code></pre></div>
-<p>On fera la même vérification <strong>dans</strong> le conteneur : il faudra savoir à tout moment si l'on tape dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ou dans le conteneur. Le plus simple est de regarder l'<strong>invite</strong> du terminal : <code>tssr@docker-hote:~$</code> dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, <code>root@</code> suivi d'un identifiant dans le conteneur.</p>
+<p>On fera la même vérification <strong>dans</strong> le conteneur : il faudra savoir à tout moment si l'on tape dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ou dans le conteneur. Le plus simple est de regarder l'<strong>invite</strong> du terminal : <code>adminlab@docker-hote:~$</code> dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, <code>root@</code> suivi d'un identifiant dans le conteneur.</p>
 <h3 id="12-demarrer-le-conteneur">1.2 Démarrer le conteneur<a class="headerlink" href="#12-demarrer-le-conteneur" title="Permanent link">&para;</a></h3>
 <p>🐧 Lancer un conteneur Debian en arrière-plan, avec deux ports publiés :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--name<span class="w"> </span>debian<span class="w"> </span>-dit<span class="w"> </span>-p8080:80<span class="w"> </span>-p2222:22<span class="w"> </span>debian:latest
@@ -4225,7 +4225,7 @@
 <p>Enregistrer et quitter : <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-x">X</kbd></span>, puis <span class="keys"><kbd class="key-y">Y</kbd></span> (<em>yes</em> : <code>nano</code> est en anglais dans ce conteneur, sans traductions) et <span class="keys"><kbd class="key-enter">Enter</kbd></span>.</p>
 </li>
 <li>
-<p>📦 Donner un mot de passe à <code>root</code> (il n'en a pas dans l'image) : taper <code>TutoDocker2026!</code> deux fois.</p>
+<p>📦 Donner un mot de passe à <code>root</code> (il n'en a pas dans l'image) : taper <code>TutoDocker-Lab1!</code> deux fois.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>passwd
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>New password:
@@ -4277,7 +4277,7 @@
 </li>
 </ol>
 <h2 id="4-que-se-passe-t-il-au-redemarrage">4. Que se passe-t-il au redémarrage ?<a class="headerlink" href="#4-que-se-passe-t-il-au-redemarrage" title="Permanent link">&para;</a></h2>
-<p>Tout fonctionne. Simulons maintenant ce qui arrive chaque fois qu'un serveur redémarre, ou que Docker est mis à jour.</p>
+<p>Tout fonctionne. On simule maintenant ce qui arrive chaque fois qu'un serveur redémarre, ou que Docker est mis à jour.</p>
 <ol>
 <li>
 <p>🐧 Redémarrer le conteneur :</p>
@@ -4313,20 +4313,65 @@
 </code></pre></div>
 <p><code>bash</code> ne sait rien d'Apache ni de <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr>. Au redémarrage, Docker relance <code>bash</code>, et seulement <code>bash</code>. Les services lancés à la main par <code>service … start</code> ne faisaient pas partie du conteneur : ils ont disparu avec l'ancien processus.</p>
 </div>
+<figure>
+<p><img alt="Schéma en deux colonnes. À gauche, une machine virtuelle : le processus numéro 1 est systemd, qui démarre apache2 et sshd, et les relance après un redémarrage. À droite, le conteneur debian : le processus numéro 1 est bash, apache2 et sshd ont été lancés à la main avec service apache2 start et service ssh start ; après docker restart debian, seul bash est relancé et les deux services ne tournent plus." loading="lazy" src="../images/pid1-vm-ou-conteneur.svg" /></p>
+<figcaption>
+<p>Dans une <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, systemd relance les services ; dans le conteneur, Docker ne relance que le programme principal.</p>
+</figcaption>
+</figure>
 <p>✍️ <strong>Exercice</strong> — Remettre le site et <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> en service <strong>sans</strong> recréer le conteneur, puis vérifier avec <code>curl</code> et <code>ssh</code>.</p>
 <details class="success">
 <summary>Réponse</summary>
+<p>Les fichiers sont toujours dans le conteneur : il suffit de <strong>relancer les deux services</strong>, comme aux sections 2.2 et 3.1. Inutile d'entrer dans le conteneur : <code>docker exec</code> y lance une commande depuis la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</p>
+<ol>
+<li>
+<p>🐧 Relancer Apache et <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>debian<span class="w"> </span>service<span class="w"> </span>apache2<span class="w"> </span>start
 <a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>debian<span class="w"> </span>service<span class="w"> </span>ssh<span class="w"> </span>start
-<a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a>curl<span class="w"> </span>http://localhost:8080
-<a id="__codelineno-37-4" name="__codelineno-37-4" href="#__codelineno-37-4"></a>ssh<span class="w"> </span>root@localhost<span class="w"> </span>-p2222<span class="w"> </span>hostname
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>Welcome to Docker
-<a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a>root@localhost's password:
-<a id="__codelineno-38-3" name="__codelineno-38-3" href="#__codelineno-38-3"></a>0d0be42f5b3e
+</li>
+<li>
+<p>🐧 Vérifier le <strong>site web</strong>. C'est la même commande qui échouait juste après le redémarrage (<code>curl: (56)</code>) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>curl<span class="w"> </span>http://localhost:8080
 </code></pre></div>
-<p>La connexion <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> répond avec le nom de machine du conteneur (son identifiant).
-Tout revient, puisque les fichiers sont toujours là. Mais il faudra recommencer <strong>à chaque redémarrage</strong> : ce n'est pas tenable sur un serveur.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>Welcome to Docker
+</code></pre></div>
+<p>La page revient : Apache écoute de nouveau derrière le port 8080.</p>
+</li>
+<li>
+<p>🐧 Vérifier <strong><abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr></strong>. On cherche une preuve simple : derrière le port 2222, est-ce bien le serveur <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> <strong>du conteneur</strong> qui répond ? On pourrait ouvrir une session comme en section 3.2, regarder l'invite, puis taper <code>exit</code>. Plus rapide : écrire une commande <strong>à la fin</strong> de <code>ssh</code>. <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> se connecte, exécute cette seule commande de l'autre côté, affiche son résultat, puis se déconnecte tout seul.</p>
+<p>On choisit <code>hostname</code>, qui affiche le <strong>nom de la machine</strong> sur laquelle elle s'exécute. C'est elle qui dit <strong>qui a répondu</strong> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>ssh<span class="w"> </span>root@localhost<span class="w"> </span>-p2222<span class="w"> </span>hostname
+</code></pre></div>
+<p>Taper le mot de passe de <code>root</code> du conteneur (<code>TutoDocker-Lab1!</code>, choisi en section 3.1) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>root@localhost's password:
+<a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a>0d0be42f5b3e
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Ce qu'on voit</th>
+<th>Ce que ça prouve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>La demande de mot de passe</td>
+<td>Un serveur <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> répond derrière le port 2222 : <code>sshd</code> tourne de nouveau dans le conteneur. Sans la relance, la connexion échoue, car plus rien n'écoute</td>
+</tr>
+<tr>
+<td><code>0d0be42f5b3e</code></td>
+<td>La commande s'est exécutée <strong>dans le conteneur</strong>, et non dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : Docker donne à chaque conteneur, comme nom de machine, son <strong>identifiant court</strong>. Tapée directement dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, <code>hostname</code> afficherait <code>docker-hote</code></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Comparer soi-même</p>
+<p>🐧 Dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, <code>hostname</code> affiche <code>docker-hote</code>, et <code>docker ps --format '{{.ID}}  {{.Names}}'</code> affiche <code>0d0be42f5b3e  debian</code> : c'est bien le même identifiant que celui renvoyé par <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr>. L'identifiant change d'un conteneur à l'autre : chez soi, la valeur est différente.</p>
+</div>
+<p>Tout revient, puisque les fichiers sont toujours là. Mais il faudra recommencer ces deux <code>service … start</code> <strong>à chaque redémarrage</strong> du conteneur : ce n'est pas tenable sur un serveur. La section suivante explique pourquoi, et la partie 14 montre la bonne méthode (un conteneur dont le programme principal est le service lui-même).</p>
 </details>
 <h2 id="5-pourquoi-on-ne-fait-pas-ca-en-production">5. Pourquoi on ne fait pas ça en production<a class="headerlink" href="#5-pourquoi-on-ne-fait-pas-ca-en-production" title="Permanent link">&para;</a></h2>
 <p>Ce TP montre qu'on <strong>peut</strong> utiliser un conteneur comme une petite <abbr title="Virtual Machine — machine virtuelle">VM</abbr>. Mais c'est un <strong>anti-modèle</strong> (une façon de faire à éviter), pour plusieurs raisons :</p>
@@ -4364,9 +4409,9 @@ Tout revient, puisque les fichiers sont toujours là. Mais il faudra recommencer
 <div class="admonition tip">
 <p class="admonition-title">Le même service, version production</p>
 <p>Le serveur web de ce TP, fait correctement, tient en une commande : l'image officielle <code>httpd</code>, la page servie depuis un dossier de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, et un redémarrage automatique.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/site<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"Welcome to Docker"</span><span class="w"> </span>&gt;<span class="w"> </span>~/site/index.html
-<a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>apache<span class="w"> </span>--restart<span class="w"> </span>unless-stopped<span class="w"> </span>-p<span class="w"> </span><span class="m">8081</span>:80<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-39-3" name="__codelineno-39-3" href="#__codelineno-39-3"></a><span class="w">  </span>-v<span class="w"> </span>~/site:/usr/local/apache2/htdocs/<span class="w"> </span>httpd:2.4
+<div class="highlight"><pre><span></span><code><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/site<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"Welcome to Docker"</span><span class="w"> </span>&gt;<span class="w"> </span>~/site/index.html
+<a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>apache<span class="w"> </span>--restart<span class="w"> </span>unless-stopped<span class="w"> </span>-p<span class="w"> </span><span class="m">8081</span>:80<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-42-3" name="__codelineno-42-3" href="#__codelineno-42-3"></a><span class="w">  </span>-v<span class="w"> </span>~/site:/usr/local/apache2/htdocs/<span class="w"> </span>httpd:2.4
 </code></pre></div>
 <p>L'option <code>-v</code> (un « dossier monté ») et l'option <code>--restart</code> sont expliquées aux parties 4 et 5. Ce conteneur-là survit aux redémarrages, et la page web survit même à sa suppression.</p>
 </div>
@@ -4374,28 +4419,29 @@ Tout revient, puisque les fichiers sont toujours là. Mais il faudra recommencer
 <div class="admonition success">
 <p class="admonition-title">Vérifier son lab</p>
 <p>🐧 Avec les services relancés (exercice de la section 4) :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>curl<span class="w"> </span>-s<span class="w"> </span>http://localhost:8080
-<a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>debian<span class="w"> </span>service<span class="w"> </span>apache2<span class="w"> </span>status
-<a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>debian<span class="w"> </span>service<span class="w"> </span>ssh<span class="w"> </span>status
-<a id="__codelineno-40-4" name="__codelineno-40-4" href="#__codelineno-40-4"></a>docker<span class="w"> </span>port<span class="w"> </span>debian
+<div class="highlight"><pre><span></span><code><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a>curl<span class="w"> </span>-s<span class="w"> </span>http://localhost:8080
+<a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>debian<span class="w"> </span>service<span class="w"> </span>apache2<span class="w"> </span>status
+<a id="__codelineno-43-3" name="__codelineno-43-3" href="#__codelineno-43-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>debian<span class="w"> </span>service<span class="w"> </span>ssh<span class="w"> </span>status
+<a id="__codelineno-43-4" name="__codelineno-43-4" href="#__codelineno-43-4"></a>docker<span class="w"> </span>port<span class="w"> </span>debian
 </code></pre></div>
 <p>Résultat attendu :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>Welcome to Docker
-<a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a>apache2 is running.
-<a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a>sshd is running.
-<a id="__codelineno-41-4" name="__codelineno-41-4" href="#__codelineno-41-4"></a>22/tcp -&gt; 0.0.0.0:2222
-<a id="__codelineno-41-5" name="__codelineno-41-5" href="#__codelineno-41-5"></a>22/tcp -&gt; [::]:2222
-<a id="__codelineno-41-6" name="__codelineno-41-6" href="#__codelineno-41-6"></a>80/tcp -&gt; 0.0.0.0:8080
-<a id="__codelineno-41-7" name="__codelineno-41-7" href="#__codelineno-41-7"></a>80/tcp -&gt; [::]:8080
+<div class="highlight"><pre><span></span><code><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a>Welcome to Docker
+<a id="__codelineno-44-2" name="__codelineno-44-2" href="#__codelineno-44-2"></a>apache2 is running.
+<a id="__codelineno-44-3" name="__codelineno-44-3" href="#__codelineno-44-3"></a>sshd is running.
+<a id="__codelineno-44-4" name="__codelineno-44-4" href="#__codelineno-44-4"></a>22/tcp -&gt; 0.0.0.0:2222
+<a id="__codelineno-44-5" name="__codelineno-44-5" href="#__codelineno-44-5"></a>22/tcp -&gt; [::]:2222
+<a id="__codelineno-44-6" name="__codelineno-44-6" href="#__codelineno-44-6"></a>80/tcp -&gt; 0.0.0.0:8080
+<a id="__codelineno-44-7" name="__codelineno-44-7" href="#__codelineno-44-7"></a>80/tcp -&gt; [::]:8080
 </code></pre></div>
 <p><code>docker port</code> liste les ports publiés d'un conteneur : une commande pratique quand on ne sait plus par où le joindre.</p>
 </div>
 <h2 id="7-faire-le-menage">7. Faire le ménage<a class="headerlink" href="#7-faire-le-menage" title="Permanent link">&para;</a></h2>
 <p>🐧 Supprimer le conteneur <code>debian</code> (et <code>apache</code> si l'astuce ci-dessus a été essayée) :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>debian<span class="w"> </span>apache
+<div class="highlight"><pre><span></span><code><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a>docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>debian<span class="w"> </span>apache
 </code></pre></div>
+<p>Si l'astuce avec l'image <code>httpd</code> n'a pas été essayée, Docker répond aussi <code>No such container: apache</code> : c'est sans conséquence, <code>debian</code> est bien supprimé.</p>
 <p>Supprimer aussi l'empreinte <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> enregistrée pour le port 2222 : le prochain conteneur publié sur ce port aura une autre empreinte, et <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> refuserait de s'y connecter en criant à l'attaque (<code>REMOTE HOST IDENTIFICATION HAS CHANGED!</code>).</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a>ssh-keygen<span class="w"> </span>-R<span class="w"> </span><span class="s2">"[localhost]:2222"</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a>ssh-keygen<span class="w"> </span>-R<span class="w"> </span><span class="s2">"[localhost]:2222"</span>
 </code></pre></div>
 <p>🖥️ Sur le PC, dans PowerShell, faire de même si la connexion depuis le PC a été essayée : <code>ssh-keygen -R "[IP-de-la-VM]:2222"</code>.</p>
 <h2 id="8-questions-de-revision">8. Questions de révision<a class="headerlink" href="#8-questions-de-revision" title="Permanent link">&para;</a></h2>

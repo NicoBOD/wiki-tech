@@ -4024,7 +4024,7 @@
 <hr />
 <div class="admonition info">
 <p class="admonition-title">Convention de lecture</p>
-<p>🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>tssr</code> · 📦 <strong>dans un conteneur</strong> · ✍️ <strong>exercice</strong>. Suite directe de la <a href="../05-volumes-et-dossiers-montes/">partie 5</a> : seul <code>portainer</code> tourne.</p>
+<p>🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>adminlab</code> · 📦 <strong>dans un conteneur</strong> · ✍️ <strong>exercice</strong>. Suite directe de la <a href="../05-volumes-et-dossiers-montes/">partie 5</a> : seul <code>portainer</code> tourne.</p>
 </div>
 <h2 id="1-a-quoi-sert-docker-commit">1. À quoi sert <code>docker commit</code> ?<a class="headerlink" href="#1-a-quoi-sert-docker-commit" title="Permanent link">&para;</a></h2>
 <p><code>docker commit</code> transforme un <strong>conteneur</strong> (avec tout ce qu'on a modifié dedans) en une <strong>nouvelle image</strong>. Au lieu de reconfigurer un conteneur à la main à chaque fois, on fige le résultat une fois pour toutes. Cas d'usage :</p>
@@ -4101,10 +4101,10 @@
 <h2 id="3-exporter-limage-dans-une-archive-et-la-restaurer">3. Exporter l'image dans une archive, et la restaurer<a class="headerlink" href="#3-exporter-limage-dans-une-archive-et-la-restaurer" title="Permanent link">&para;</a></h2>
 <h3 id="31-docker-save-emballer-limage">3.1 <code>docker save</code> : emballer l'image<a class="headerlink" href="#31-docker-save-emballer-limage" title="Permanent link">&para;</a></h3>
 <p>🐧 Ranger l'image dans une archive <code>.tar</code> (<em>tape archive</em>, un fichier qui en regroupe plusieurs) :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>docker<span class="w"> </span>save<span class="w"> </span>-o<span class="w"> </span>backup-2025-image-debian-ping-nano.tar<span class="w"> </span>debian-ping-nano
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>ls<span class="w"> </span>-lh<span class="w"> </span>backup-2025-image-debian-ping-nano.tar
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>docker<span class="w"> </span>save<span class="w"> </span>-o<span class="w"> </span>sauvegarde-image-debian-ping-nano.tar<span class="w"> </span>debian-ping-nano
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>ls<span class="w"> </span>-lh<span class="w"> </span>sauvegarde-image-debian-ping-nano.tar
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>-rw------- 1 tssr tssr 66M 24 nov.  06:51 backup-2025-image-debian-ping-nano.tar
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>-rw------- 1 adminlab adminlab 66M 24 nov.  06:51 sauvegarde-image-debian-ping-nano.tar
 </code></pre></div>
 <p>Cette archive contient <strong>toutes les couches</strong> de l'image : on peut la copier sur une clé <abbr title="Universal Serial Bus">USB</abbr> ou un autre serveur (<code>scp</code>), même sans accès à Internet ni à un registre.</p>
 <h3 id="32-docker-load-la-restaurer">3.2 <code>docker load</code> : la restaurer<a class="headerlink" href="#32-docker-load-la-restaurer" title="Permanent link">&para;</a></h3>
@@ -4123,7 +4123,7 @@
 </li>
 <li>
 <p>🐧 Recharger l'image depuis l'archive :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>docker<span class="w"> </span>load<span class="w"> </span>-i<span class="w"> </span>backup-2025-image-debian-ping-nano.tar
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>docker<span class="w"> </span>load<span class="w"> </span>-i<span class="w"> </span>sauvegarde-image-debian-ping-nano.tar
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>Loaded image: debian-ping-nano:latest
 </code></pre></div>
@@ -4249,7 +4249,7 @@
 <p>🐧 Supprimer ce qui a servi au TP :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>restaure
 <a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>docker<span class="w"> </span>image<span class="w"> </span>rm<span class="w"> </span>debian-ping-nano<span class="w"> </span>debian-outils:v2
-<a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>rm<span class="w"> </span>-f<span class="w"> </span>backup-2025-image-debian-ping-nano.tar
+<a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>rm<span class="w"> </span>-f<span class="w"> </span>sauvegarde-image-debian-ping-nano.tar
 </code></pre></div>
 <h2 id="7-verifier-son-lab">7. Vérifier son lab<a class="headerlink" href="#7-verifier-son-lab" title="Permanent link">&para;</a></h2>
 <div class="admonition success">

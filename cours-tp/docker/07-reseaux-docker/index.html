@@ -4146,7 +4146,7 @@
 <hr />
 <div class="admonition info">
 <p class="admonition-title">Convention de lecture</p>
-<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>tssr</code> · 📦 <strong>dans un conteneur</strong> · ✍️ <strong>exercice</strong>. Suite de la partie 6 : seul <code>portainer</code> tourne.</p>
+<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>adminlab</code> · 📦 <strong>dans un conteneur</strong> · ✍️ <strong>exercice</strong>. Suite de la partie 6 : seul <code>portainer</code> tourne.</p>
 </div>
 <h2 id="1-les-reseaux-crees-par-docker">1. Les réseaux créés par Docker<a class="headerlink" href="#1-les-reseaux-crees-par-docker" title="Permanent link">&para;</a></h2>
 <p>🐧 Lister les réseaux de Docker :</p>
@@ -4298,10 +4298,10 @@
 </div>
 <h3 id="34-choisir-le-sous-reseau-et-ladresse">3.4 Choisir le sous-réseau et l'adresse<a class="headerlink" href="#34-choisir-le-sous-reseau-et-ladresse" title="Permanent link">&para;</a></h3>
 <p>🐧 Le sous-réseau d'un réseau personnalisé peut être imposé, par exemple pour éviter un conflit avec un réseau de l'entreprise, et un conteneur peut y recevoir une adresse fixe :</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>docker<span class="w"> </span>network<span class="w"> </span>create<span class="w"> </span>--driver<span class="w"> </span>bridge<span class="w"> </span>--subnet<span class="o">=</span><span class="m">192</span>.168.100.0/24<span class="w"> </span>mon_reseau_perso
-<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--network<span class="w"> </span>mon_reseau_perso<span class="w"> </span>--ip<span class="w"> </span><span class="m">192</span>.168.100.50<span class="w"> </span>debian:13<span class="w"> </span>hostname<span class="w"> </span>-I
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>docker<span class="w"> </span>network<span class="w"> </span>create<span class="w"> </span>--driver<span class="w"> </span>bridge<span class="w"> </span>--subnet<span class="o">=</span><span class="m">10</span>.77.0.0/24<span class="w"> </span>mon_reseau_perso
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--network<span class="w"> </span>mon_reseau_perso<span class="w"> </span>--ip<span class="w"> </span><span class="m">10</span>.77.0.50<span class="w"> </span>debian:13<span class="w"> </span>hostname<span class="w"> </span>-I
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>192.168.100.50
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>10.77.0.50
 </code></pre></div>
 <div class="admonition warning">
 <p class="admonition-title">Attention aux conflits d'adresses</p>
@@ -4413,7 +4413,7 @@
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>192.168.8.201 9e:d0:81:e5:7e:f8
 </code></pre></div>
-<p>(exemple : l'adresse est celle choisie, et l'adresse <abbr title="Media Access Control — adresse matérielle d'une carte réseau">MAC</abbr> est tirée au hasard par Docker).</p>
+<p>(exemple du lab de référence, sous KVM : l'adresse est celle choisie dans sa plage, et l'adresse <abbr title="Media Access Control — adresse matérielle d'une carte réseau">MAC</abbr> est tirée au hasard par Docker).</p>
 </li>
 </ol>
 <h3 id="53-tester-depuis-le-pc-et-depuis-la-vm">5.3 Tester depuis le PC… et depuis la <abbr title="Virtual Machine — machine virtuelle">VM</abbr><a class="headerlink" href="#53-tester-depuis-le-pc-et-depuis-la-vm" title="Permanent link">&para;</a></h3>
@@ -4447,7 +4447,7 @@
 </code></pre></div>
 <p><code>curl http://localhost:8085</code> fonctionne dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ; 🌐 <code>http://IP-de-la-VM:8085</code> échoue depuis le PC.</p>
 <h3 id="62-les-ports-publies-contournent-le-pare-feu">6.2 Les ports publiés contournent le pare-feu<a class="headerlink" href="#62-les-ports-publies-contournent-le-pare-feu" title="Permanent link">&para;</a></h3>
-<p>Pour publier un port, Docker écrit lui-même des <strong>règles de <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr></strong> dans le pare-feu du noyau (iptables, ici sur sa variante nftables) :</p>
+<p>Pour publier un port, Docker écrit lui-même des <strong>règles de <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr></strong> dans le pare-feu du noyau (iptables, ici sur sa variante nftables). 🐧 Pour les voir :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>sudo<span class="w"> </span>iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-S<span class="w"> </span>DOCKER
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>-N DOCKER
@@ -4455,6 +4455,12 @@
 <a id="__codelineno-38-3" name="__codelineno-38-3" href="#__codelineno-38-3"></a>-A DOCKER -d 127.0.0.1/32 ! -i docker0 -p tcp -m tcp --dport 8085 -j DNAT --to-destination 172.17.0.3:80
 </code></pre></div>
 <p>Chaque port publié devient une règle <strong><abbr title="Destination NAT — traduction de l'adresse de destination">DNAT</abbr></strong> (traduction d'adresse de destination), comme une redirection de port sur un routeur. Le paquet est redirigé vers le conteneur <strong>dès son arrivée</strong>, avant d'atteindre les règles qui protègent la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> elle-même (la chaîne <code>INPUT</code>, celle qu'utilise <abbr title="Uncomplicated Firewall — interface simplifiée du pare-feu Linux">UFW</abbr>) : il est <strong>routé</strong> vers le conteneur, pas <strong>reçu</strong> par la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</p>
+<figure>
+<p><img alt="Schéma : avec docker run -p 8080:80, un paquet destiné au port 8080 de la VM passe par la table nat PREROUTING, puis la chaîne DOCKER qui applique un DNAT vers l'IP du conteneur sur le port 80, puis FORWARD où il est routé, et arrive au conteneur. La chaîne DOCKER-USER, réservée aux règles de l'administrateur, est consultée à ce niveau. La chaîne INPUT, où agit UFW, n'est jamais atteinte par ce paquet : ufw deny 8080 ne protège donc pas un port publié." loading="lazy" src="../images/chemin-port-publie-pare-feu.svg" /></p>
+<figcaption>
+<p>Le paquet est redirigé vers le conteneur avant la chaîne INPUT : les règles d'<abbr title="Uncomplicated Firewall — interface simplifiée du pare-feu Linux">UFW</abbr> ne le voient pas.</p>
+</figcaption>
+</figure>
 <div class="admonition danger">
 <p class="admonition-title"><abbr title="Uncomplicated Firewall — interface simplifiée du pare-feu Linux">UFW</abbr> et Docker : un piège classique</p>
 <p>Sur une machine protégée par <strong><abbr title="Uncomplicated Firewall — interface simplifiée du pare-feu Linux">UFW</abbr></strong> (ou firewalld), un administrateur bloque le port 8080 avec <code>ufw deny 8080</code>, puis lance <code>docker run -p 8080:80 …</code>. Le port est <strong>quand même joignable</strong> depuis l'extérieur : le paquet est redirigé vers le conteneur sans jamais passer par les règles d'<abbr title="Uncomplicated Firewall — interface simplifiée du pare-feu Linux">UFW</abbr>. La documentation de Docker le signale explicitement.</p>
@@ -4519,18 +4525,18 @@
 </tbody>
 </table>
 <h2 id="8-exercice">8. Exercice<a class="headerlink" href="#8-exercice" title="Permanent link">&para;</a></h2>
-<p>✍️ Créer deux réseaux, <code>front</code> et <code>back</code>. Lancer un conteneur <code>bdd</code> (image <code>mariadb:11.8</code>, mot de passe root <code>TutoDocker2026!</code>) sur <code>back</code> seulement, et un conteneur <code>web</code> (image <code>nginx</code>) sur <code>front</code> <strong>et</strong> <code>back</code>. Lancer enfin un conteneur jetable <code>intrus</code> sur <code>front</code> seulement. Vérifier que <code>web</code> résout le nom <code>bdd</code>, et que <code>intrus</code>, lui, ne le résout pas.</p>
+<p>✍️ Créer deux réseaux, <code>front</code> et <code>back</code>. Lancer un conteneur <code>bdd</code> (image <code>mariadb:11.8</code>, mot de passe root <code>TutoDocker-Lab1!</code>) sur <code>back</code> seulement, et un conteneur <code>web</code> (image <code>nginx</code>) sur <code>front</code> <strong>et</strong> <code>back</code>. Lancer enfin un conteneur jetable <code>intrus</code> sur <code>front</code> seulement. Vérifier que <code>web</code> résout le nom <code>bdd</code>, et que <code>intrus</code>, lui, ne le résout pas.</p>
 <details class="success">
 <summary>Réponse</summary>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>docker<span class="w"> </span>network<span class="w"> </span>create<span class="w"> </span>front
 <a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a>docker<span class="w"> </span>network<span class="w"> </span>create<span class="w"> </span>back
-<a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>bdd<span class="w"> </span>--network<span class="w"> </span>back<span class="w"> </span>-e<span class="w"> </span><span class="nv">MARIADB_ROOT_PASSWORD</span><span class="o">=</span><span class="s1">'TutoDocker2026!'</span><span class="w"> </span>mariadb:11.8
+<a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>bdd<span class="w"> </span>--network<span class="w"> </span>back<span class="w"> </span>-e<span class="w"> </span><span class="nv">MARIADB_ROOT_PASSWORD</span><span class="o">=</span><span class="s1">'TutoDocker-Lab1!'</span><span class="w"> </span>mariadb:11.8
 <a id="__codelineno-40-4" name="__codelineno-40-4" href="#__codelineno-40-4"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>web<span class="w"> </span>--network<span class="w"> </span>front<span class="w"> </span>nginx
 <a id="__codelineno-40-5" name="__codelineno-40-5" href="#__codelineno-40-5"></a>docker<span class="w"> </span>network<span class="w"> </span>connect<span class="w"> </span>back<span class="w"> </span>web
 <a id="__codelineno-40-6" name="__codelineno-40-6" href="#__codelineno-40-6"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>web<span class="w"> </span>getent<span class="w"> </span>hosts<span class="w"> </span>bdd<span class="w">                                   </span><span class="c1"># répond : 172.x.x.x bdd</span>
 <a id="__codelineno-40-7" name="__codelineno-40-7" href="#__codelineno-40-7"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--name<span class="w"> </span>intrus<span class="w"> </span>--network<span class="w"> </span>front<span class="w"> </span>debian:13<span class="w"> </span>getent<span class="w"> </span>hosts<span class="w"> </span>bdd<span class="p">;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"code=</span><span class="nv">$?</span><span class="s2">"</span><span class="w">   </span><span class="c1"># rien, code=2</span>
 </code></pre></div>
-<p><code>web</code>, branché sur les deux réseaux, joint la base ; <code>intrus</code>, seulement sur <code>front</code>, ne la trouve même pas. C'est le schéma classique : le serveur web est exposé, la base de données est cachée derrière lui. Nettoyer ensuite : <code>docker rm -f bdd web</code> puis <code>docker network rm front back</code>.</p>
+<p><code>web</code>, branché sur les deux réseaux, joint la base ; <code>intrus</code>, seulement sur <code>front</code>, ne la trouve même pas. C'est le schéma classique : le serveur web est exposé, la base de données est cachée derrière lui. Nettoyer ensuite : <code>docker rm -fv bdd web</code> (le <code>v</code> supprime aussi le volume anonyme de MariaDB) puis <code>docker network rm front back</code>.</p>
 </details>
 <h2 id="9-verifier-son-lab">9. Vérifier son lab<a class="headerlink" href="#9-verifier-son-lab" title="Permanent link">&para;</a></h2>
 <div class="admonition success">

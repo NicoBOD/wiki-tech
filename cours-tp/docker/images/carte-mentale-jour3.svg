@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="530" viewBox="0 0 1200 530" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">
+  <title>Jour 3 — Publier des services : carte mentale de révision</title>
+  <rect x="0" y="0" width="1200" height="530" fill="#ffffff"/>
+  <path d="M600,265 C460,265 470,50 420,50" fill="none" stroke="#1565c0" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M600,265 C460,265 470,296 420,296" fill="none" stroke="#2e7d32" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M600,265 C740,265 730,50 780,50" fill="none" stroke="#ef6c00" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M600,265 C740,265 730,296 780,296" fill="none" stroke="#6a1b9a" stroke-width="3.5" stroke-linecap="round"/>
+  <rect x="20" y="30" width="400" height="224" rx="12" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="36" y="55" font-size="16" font-weight="bold" fill="#1565c0">09 Le reverse proxy</text>
+  <rect x="34" y="78" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="96" fill="#263238">Un seul point d'entrée : ports 80 et 443</text>
+  <rect x="34" y="112" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="130" fill="#263238">Le proxy lit le nom demandé</text>
+  <rect x="34" y="146" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="164" fill="#263238">Fichier hosts du PC : nom vers IP de la VM</text>
+  <rect x="34" y="180" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="198" fill="#263238">Nginx Proxy Manager : admin sur le port 81</text>
+  <rect x="34" y="214" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="232" fill="#263238">Conteneur sans port publié, joint par nom</text>
+  <rect x="20" y="276" width="400" height="224" rx="12" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+  <text x="36" y="301" font-size="16" font-weight="bold" fill="#2e7d32">09 Brancher le proxy aux conteneurs</text>
+  <rect x="34" y="324" width="372" height="28" rx="6" fill="#ffffff" stroke="#2e7d32" stroke-opacity="0.55"/>
+  <text x="44" y="342" font-family="Consolas, monospace" font-size="12" fill="#263238">docker network create portainer_network</text>
+  <rect x="34" y="358" width="372" height="28" rx="6" fill="#ffffff" stroke="#2e7d32" stroke-opacity="0.55"/>
+  <text x="44" y="376" font-family="Consolas, monospace" font-size="12" fill="#263238">docker network connect &lt;réseau&gt; npm-app-1</text>
+  <rect x="34" y="392" width="372" height="28" rx="6" fill="#ffffff" stroke="#2e7d32" stroke-opacity="0.55"/>
+  <text x="44" y="410" fill="#263238">Un réseau par application, NPM branché dessus</text>
+  <rect x="34" y="426" width="372" height="28" rx="6" fill="#ffffff" stroke="#2e7d32" stroke-opacity="0.55"/>
+  <text x="44" y="444" fill="#263238">Erreur 502 : aucun réseau en commun</text>
+  <rect x="34" y="460" width="372" height="28" rx="6" fill="#ffffff" stroke="#2e7d32" stroke-opacity="0.55"/>
+  <text x="44" y="478" font-family="Consolas, monospace" font-size="12" fill="#263238">docker network inspect npm_default</text>
+  <rect x="780" y="30" width="400" height="224" rx="12" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+  <text x="796" y="55" font-size="16" font-weight="bold" fill="#ef6c00">10 HTTPS devant Nextcloud</text>
+  <rect x="794" y="78" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="804" y="96" fill="#263238">Certificat autosigné pour le lab</text>
+  <rect x="794" y="112" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="804" y="130" font-family="Consolas, monospace" font-size="12" fill="#263238">openssl req -x509 -nodes -days 365 ...</text>
+  <rect x="794" y="146" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="804" y="164" fill="#263238">Importé dans NPM, onglet SSL</text>
+  <rect x="794" y="180" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="804" y="198" fill="#263238">trusted_domains : noms acceptés</text>
+  <rect x="794" y="214" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="804" y="232" font-family="Consolas, monospace" font-size="12" fill="#263238">curl -k --resolve nom:443:127.0.0.1 https://nom</text>
+  <rect x="780" y="276" width="400" height="224" rx="12" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="2"/>
+  <text x="796" y="301" font-size="16" font-weight="bold" fill="#6a1b9a">11 Plateformes tout-en-un</text>
+  <rect x="794" y="324" width="372" height="28" rx="6" fill="#ffffff" stroke="#6a1b9a" stroke-opacity="0.55"/>
+  <text x="804" y="342" fill="#263238">Coolify : installation par un script</text>
+  <rect x="794" y="358" width="372" height="28" rx="6" fill="#ffffff" stroke="#6a1b9a" stroke-opacity="0.55"/>
+  <text x="804" y="376" fill="#263238">Créer le compte, connecter le serveur</text>
+  <rect x="794" y="392" width="372" height="28" rx="6" fill="#ffffff" stroke="#6a1b9a" stroke-opacity="0.55"/>
+  <text x="804" y="410" fill="#263238">sslip.io : un nom qui contient l’IP</text>
+  <rect x="794" y="426" width="372" height="28" rx="6" fill="#ffffff" stroke="#6a1b9a" stroke-opacity="0.55"/>
+  <text x="804" y="444" fill="#263238">Uptime Kuma déployé en un clic</text>
+  <rect x="794" y="460" width="372" height="28" rx="6" fill="#ffffff" stroke="#6a1b9a" stroke-opacity="0.55"/>
+  <text x="804" y="478" fill="#263238">Cosmos Server et BunkerWeb en bref</text>
+  <ellipse cx="600" cy="265" rx="135" ry="62" fill="#f4f6f8" stroke="#37474f" stroke-width="3"/>
+  <text x="600" y="259" text-anchor="middle" font-size="26" font-weight="bold" fill="#263238">Jour 3</text>
+  <text x="600" y="281" text-anchor="middle" font-size="14" fill="#37474f">Publier des services</text>
+</svg>

@@ -21,7 +21,7 @@
   <text x="160" y="310" text-anchor="middle" font-size="12" fill="#546e7a">géré par Docker</text>
   <rect x="320" y="220" width="240" height="100" rx="10" fill="#e8f5e9" stroke="#43a047"/>
   <text x="440" y="248" text-anchor="middle" font-weight="bold">Dossier monté</text>
-  <text x="440" y="272" text-anchor="middle" font-family="Consolas, monospace" font-size="12">/home/tssr/site</text>
+  <text x="440" y="272" text-anchor="middle" font-family="Consolas, monospace" font-size="12">/home/adminlab/site</text>
   <text x="440" y="292" text-anchor="middle" font-size="12" fill="#546e7a">dossier choisi de la VM,</text>
   <text x="440" y="310" text-anchor="middle" font-size="12" fill="#546e7a">modifiable depuis la VM</text>
   <rect x="600" y="220" width="240" height="100" rx="10" fill="#fce4ec" stroke="#d81b60"/>

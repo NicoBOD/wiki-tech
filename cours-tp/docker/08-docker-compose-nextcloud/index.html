@@ -4153,7 +4153,7 @@
 <hr />
 <div class="admonition info">
 <p class="admonition-title">Convention de lecture</p>
-<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>tssr</code> · 🌐 <strong>navigateur du PC</strong> · ✍️ <strong>exercice</strong> · 🛟 <strong>instantané</strong>. Le port <strong>80</strong> de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> doit être libre : <code>docker ps</code> ne doit montrer que <code>portainer</code>. Il reste environ 600 Mo d'images à télécharger (MariaDB est déjà là depuis la partie 5), qui occuperont environ 2,5 Go sur le disque de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</p>
+<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>adminlab</code> · 🌐 <strong>navigateur du PC</strong> · ✍️ <strong>exercice</strong> · 🛟 <strong>instantané</strong>. Le port <strong>80</strong> de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> doit être libre : <code>docker ps</code> ne doit montrer que <code>portainer</code>. Il reste environ 600 Mo d'images à télécharger (MariaDB est déjà là depuis la partie 5), qui occuperont environ 2,5 Go sur le disque de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</p>
 </div>
 <h2 id="1-docker-compose-cest-quoi">1. Docker Compose, c'est quoi ?<a class="headerlink" href="#1-docker-compose-cest-quoi" title="Permanent link">&para;</a></h2>
 <p><strong>Docker Compose</strong> est un outil qui <strong>décrit</strong> une application à plusieurs conteneurs dans un fichier texte au format <strong><abbr title="YAML Ain't Markup Language — format de fichier de configuration lisible">YAML</abbr></strong>, puis la crée, la démarre, l'arrête ou la supprime <strong>en une seule commande</strong>. Au lieu de taper <code>docker network create</code>, <code>docker volume create</code> et trois <code>docker run</code> avec des dizaines d'options, on écrit une fois pour toutes <strong>ce qu'on veut obtenir</strong>, et Compose s'en charge.</p>
@@ -4186,7 +4186,7 @@
 <a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_HOST=db</span>
 <a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_DATABASE=nextcloud</span>
 <a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_USER=nextcloud</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_PASSWORD=TutoDocker2026!</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_PASSWORD=TutoDocker-Lab1!</span>
 <a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">  </span><span class="nt">redis</span><span class="p">:</span>
 <a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis:alpine</span>
 <a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">always</span>
@@ -4205,8 +4205,8 @@
 <a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
 <a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_DATABASE=nextcloud</span>
 <a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_USER=nextcloud</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_ROOT_PASSWORD=TutoDocker2026!</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_PASSWORD=TutoDocker2026!</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_ROOT_PASSWORD=TutoDocker-Lab1!</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_PASSWORD=TutoDocker-Lab1!</span>
 <a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a><span class="w">    </span><span class="nt">expose</span><span class="p">:</span>
 <a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3306</span>
 <a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a><span class="nt">volumes</span><span class="p">:</span>
@@ -4216,7 +4216,7 @@
 <a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a><span class="w">  </span><span class="nt">dbnet</span><span class="p">:</span>
 <a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a><span class="w">  </span><span class="nt">redisnet</span><span class="p">:</span>
 </code></pre></div>
-<p>Ce fichier contient trois <strong>services</strong> (un service = un conteneur, ou plusieurs copies du même) : Nextcloud (<code>nc</code>), Redis (<code>redis</code>) pour la mise en cache, et MariaDB (<code>db</code>) comme base de données. Regardons-les un par un.</p>
+<p>Ce fichier contient trois <strong>services</strong> (un service = un conteneur, ou plusieurs copies du même) : Nextcloud (<code>nc</code>), Redis (<code>redis</code>) pour la mise en cache, et MariaDB (<code>db</code>) comme base de données. Voici chacun d'eux, un par un.</p>
 <figure>
 <p><img alt="Trois conteneurs créés par Compose dans la VM. Le conteneur nc (Nextcloud) publie le port 80 de la VM et range ses fichiers dans le volume nc_data. Il est branché sur deux réseaux : redisnet, où se trouve le conteneur redis, et dbnet, où se trouve le conteneur db (MariaDB), qui range sa base dans le volume db_data. redis et db ne partagent aucun réseau." loading="lazy" src="../images/compose-nextcloud.svg" /></p>
 <figcaption>
@@ -4452,7 +4452,7 @@
 </tr>
 <tr>
 <td><strong>Mot de passe du compte administrateur</strong></td>
-<td><code>TutoDocker2026!</code></td>
+<td><code>TutoDocker-Lab1!</code></td>
 </tr>
 </tbody>
 </table>
@@ -4648,7 +4648,7 @@
 <a id="__codelineno-21-14" name="__codelineno-21-14" href="#__codelineno-21-14"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_HOST=db</span>
 <a id="__codelineno-21-15" name="__codelineno-21-15" href="#__codelineno-21-15"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_DATABASE=nextcloud</span>
 <a id="__codelineno-21-16" name="__codelineno-21-16" href="#__codelineno-21-16"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_USER=nextcloud</span>
-<a id="__codelineno-21-17" name="__codelineno-21-17" href="#__codelineno-21-17"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_PASSWORD=TutoDocker2026!</span>
+<a id="__codelineno-21-17" name="__codelineno-21-17" href="#__codelineno-21-17"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_PASSWORD=TutoDocker-Lab1!</span>
 <a id="__codelineno-21-18" name="__codelineno-21-18" href="#__codelineno-21-18"></a><span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
 <a id="__codelineno-21-19" name="__codelineno-21-19" href="#__codelineno-21-19"></a><span class="w">      </span><span class="nt">db</span><span class="p">:</span>
 <a id="__codelineno-21-20" name="__codelineno-21-20" href="#__codelineno-21-20"></a><span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
@@ -4672,8 +4672,8 @@
 <a id="__codelineno-21-38" name="__codelineno-21-38" href="#__codelineno-21-38"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
 <a id="__codelineno-21-39" name="__codelineno-21-39" href="#__codelineno-21-39"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_DATABASE=nextcloud</span>
 <a id="__codelineno-21-40" name="__codelineno-21-40" href="#__codelineno-21-40"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_USER=nextcloud</span>
-<a id="__codelineno-21-41" name="__codelineno-21-41" href="#__codelineno-21-41"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_ROOT_PASSWORD=TutoDocker2026!</span>
-<a id="__codelineno-21-42" name="__codelineno-21-42" href="#__codelineno-21-42"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_PASSWORD=TutoDocker2026!</span>
+<a id="__codelineno-21-41" name="__codelineno-21-41" href="#__codelineno-21-41"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_ROOT_PASSWORD=TutoDocker-Lab1!</span>
+<a id="__codelineno-21-42" name="__codelineno-21-42" href="#__codelineno-21-42"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_PASSWORD=TutoDocker-Lab1!</span>
 <a id="__codelineno-21-43" name="__codelineno-21-43" href="#__codelineno-21-43"></a><span class="w">    </span><span class="nt">expose</span><span class="p">:</span>
 <a id="__codelineno-21-44" name="__codelineno-21-44" href="#__codelineno-21-44"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3306</span>
 <a id="__codelineno-21-45" name="__codelineno-21-45" href="#__codelineno-21-45"></a><span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
@@ -4734,7 +4734,7 @@
 <a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a><span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
 <a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dbnet</span>
 </code></pre></div>
-<p>Puis <code>docker compose up -d</code> : Compose ne crée <strong>que</strong> le nouveau service, sans toucher aux trois autres. 🌐 Sur <code>http://IP-de-la-VM:8080</code>, choisir le système <strong>MySQL / MariaDB</strong>, serveur <code>db</code>, utilisateur <code>nextcloud</code>, mot de passe <code>TutoDocker2026!</code>, base <code>nextcloud</code> : les tables de Nextcloud (<code>oc_…</code>) s'affichent. Adminer joint <code>db</code> <strong>par son nom</strong>, puisqu'ils partagent <code>dbnet</code>.</p>
+<p>Puis <code>docker compose up -d</code> : Compose ne crée <strong>que</strong> le nouveau service, sans toucher aux trois autres. 🌐 Sur <code>http://IP-de-la-VM:8080</code>, choisir le système <strong>MySQL / MariaDB</strong>, serveur <code>db</code>, utilisateur <code>nextcloud</code>, mot de passe <code>TutoDocker-Lab1!</code>, base <code>nextcloud</code> : les tables de Nextcloud (<code>oc_…</code>) s'affichent. Adminer joint <code>db</code> <strong>par son nom</strong>, puisqu'ils partagent <code>dbnet</code>.</p>
 <p>Retirer ensuite le service du fichier et lancer <code>docker compose up -d --remove-orphans</code> pour supprimer le conteneur devenu orphelin : un outil d'administration de base de données ne doit pas rester exposé.</p>
 </details>
 <h2 id="9-verifier-son-lab">9. Vérifier son lab<a class="headerlink" href="#9-verifier-son-lab" title="Permanent link">&para;</a></h2>
@@ -4750,7 +4750,7 @@
 <a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>redis Up 5 minutes
 <a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>{"installed":true,"maintenance":false,"needsDbUpgrade":false,"version":"35.0.3.2","versionstring":"35.0.3","edition":"","productname":"Nextcloud","extendedSupport":false}
 </code></pre></div>
-<p>🌐 <code>http://IP-de-la-VM</code> affiche la page de connexion de Nextcloud, et le compte <code>admin</code> / <code>TutoDocker2026!</code> fonctionne.</p>
+<p>🌐 <code>http://IP-de-la-VM</code> affiche la page de connexion de Nextcloud, et le compte <code>admin</code> / <code>TutoDocker-Lab1!</code> fonctionne.</p>
 </div>
 <div class="admonition success">
 <p class="admonition-title">Prendre l'instantané <code>03-fin-jour-2</code></p>
@@ -4759,6 +4759,16 @@
 <a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>docker<span class="w"> </span>compose<span class="w"> </span>down
 </code></pre></div>
 <p>🐧 Éteindre la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<code>sudo poweroff</code>), puis 🖥️ prendre un instantané nommé <code>03-fin-jour-2</code>.</p>
+</div>
+<div class="admonition abstract">
+<p class="admonition-title">Le jour 2 en résumé</p>
+<p>Avant les questions, relire cette carte : chaque branche reprend une partie du jour, avec ses notions et ses commandes clés.</p>
+<figure>
+<p><img alt="Carte mentale du jour 2 : volumes et dossiers montés, docker commit, save et load, réseaux Docker, Docker Compose avec ses commandes" loading="lazy" src="../images/carte-mentale-jour2.svg" /></p>
+<figcaption>
+<p>Le jour 2 en un coup d'œil : garder ses données, relier les conteneurs, tout lancer avec Compose.</p>
+</figcaption>
+</figure>
 </div>
 <h2 id="10-questions-de-revision">10. Questions de révision<a class="headerlink" href="#10-questions-de-revision" title="Permanent link">&para;</a></h2>
 <ol>
