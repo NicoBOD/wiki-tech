@@ -50,7 +50,7 @@ Un **reverse proxy** (« mandataire inverse ») est un serveur placé **devant**
 
 C'est l'**accueil d'un immeuble de bureaux** : les visiteurs entrent tous par la même porte (le port 80 ou 443), disent qui ils viennent voir (le **nom de domaine**), et l'hôtesse les oriente vers le bon bureau (le bon conteneur). Les bureaux, eux, n'ont pas besoin de porte sur la rue.
 
-![Le navigateur du PC demande portainer.docker.test, nextcloud.docker.test ou apache.docker.test : toutes les requêtes arrivent sur le port 80 ou 443 de la VM, au conteneur Nginx Proxy Manager. Celui-ci lit le nom demandé et transmet la requête au conteneur correspondant (portainer, nextcloud, test-apache) à travers des réseaux Docker partagés, sans que ces conteneurs publient de port.](images/reverse-proxy.svg){ loading=lazy }
+![Le navigateur du PC demande portainer.docker.test, nextcloud.docker.test ou apache-interne.docker.test : toutes les requêtes arrivent sur le port 80 ou 443 de la VM, au conteneur Nginx Proxy Manager. Celui-ci lit le nom demandé et transmet la requête au conteneur correspondant (portainer, nextcloud, test-apache) à travers des réseaux Docker partagés, sans que ces conteneurs publient de port.](images/reverse-proxy.svg){ loading=lazy }
 /// caption
 Un seul point d'entrée, qui aiguille chaque requête selon le nom demandé.
 ///
@@ -95,10 +95,12 @@ Pour que le navigateur du PC trouve `portainer.docker.test`, il faut que ce nom 
 ping -n 1 portainer.docker.test
 ```
 
-La première ligne doit afficher l'adresse de la VM entre crochets. (Les noms suivants, comme `nextcloud.docker.test`, serviront aux parties suivantes : autant les ajouter tout de suite.)
+La ligne `Envoi d'une requête 'ping' sur portainer.docker.test [IP-de-la-VM] …` doit afficher l'adresse de la VM entre crochets (sous Linux ou macOS : `ping -c 1 portainer.docker.test`). (Les noms suivants, comme `nextcloud.docker.test`, serviront aux parties suivantes : autant les ajouter tout de suite.)
 
 !!! failure "Le navigateur ne trouve toujours pas le site"
-    Certains navigateurs utilisent leur propre DNS chiffré (*DNS over HTTPS*) et ignorent alors le fichier `hosts`. Le désactiver dans les paramètres de sécurité du navigateur, ou essayer avec un autre navigateur. Après une modification du fichier `hosts`, fermer et rouvrir le navigateur.
+    - Taper l'adresse **avec** `http://` : sans lui, comme `.test` n'est pas un domaine connu, le navigateur lance une recherche sur Internet.
+    - Un **proxy** est configuré sur le poste (réseau d'entreprise ou d'école) : ajouter `*.docker.test` à ses exceptions.
+    - Fermer et rouvrir le navigateur après une modification du fichier `hosts`, ou essayer avec un autre navigateur.
 
 ## 3. Installer Nginx Proxy Manager
 
@@ -128,7 +130,7 @@ La première ligne doit afficher l'adresse de la VM entre crochets. (Les noms su
     | Ligne | Explication |
     |---|---|
     | `80:80` et `443:443` | Les ports **publics** : HTTP et HTTPS, par lesquels passeront tous les sites |
-    | `81:81` | L'interface d'**administration** de NPM |
+    | `81:81` | L'interface d'**administration** de NPM (en HTTP non chiffré : en production, on ne l'expose pas, ou on la limite à l'adresse d'administration avec `127.0.0.1:81:81` et un tunnel SSH) |
     | `TZ: Europe/Paris` | Le fuseau horaire, pour des journaux à l'heure française |
     | `./data:/data` | La configuration et la base de NPM, dans le dossier `~/npm/data` de la VM (**dossier monté**, partie 5) et non dans `/var/lib/docker/volumes` |
     | `./letsencrypt:/etc/letsencrypt` | Les certificats |
@@ -162,7 +164,7 @@ La première ligne doit afficher l'adresse de la VM entre crochets. (Les noms su
 ## 4. Créer le compte administrateur
 
 1. 🌐 Ouvrir `http://IP-de-la-VM:81`.
-2. 🌐 En haut à droite, l'icône de **globe** permet de choisir la langue : sélectionner **FR Français**.
+2. 🌐 NPM s'affiche en français si le navigateur est en français. Sinon, l'icône de **globe** en haut à droite permet de choisir **FR Français**.
 3. 🌐 Au premier accès, NPM demande de **créer le compte administrateur** :
 
     ![Écran « Bienvenue ! Commencez par créer votre compte administrateur » de Nginx Proxy Manager en français, avec les champs Nom complet (Administrateur), Adresse e-mail (admin@lab.local), Nouveau mot de passe, et le bouton Enregistrer.](images/09-npm-creer-compte.png){ loading=lazy }
@@ -173,7 +175,7 @@ La première ligne doit afficher l'adresse de la VM entre crochets. (Les noms su
     | Champ | Valeur |
     |---|---|
     | **Nom complet** | `Administrateur` |
-    | **Adresse e-mail** | `admin@lab.local` (sert d'identifiant de connexion) |
+    | **Adresse e-mail** | `admin@lab.local` (ne sert que d'identifiant de connexion : elle n'est jamais utilisée sur le réseau) |
     | **Nouveau mot de passe** | `TutoDocker2026!` |
 
 4. 🌐 Cliquer sur **Enregistrer** : le **Tableau de bord** s'affiche, sans aucun hôte pour l'instant.
@@ -246,7 +248,7 @@ Mieux : le conteneur ne publie **rien**, et NPM le rejoint par un **réseau Dock
 
 ![Liste des hôtes proxy de NPM : apache-interne.docker.test vers http://test-apache-interne:80, apache.docker.test vers http://192.168.8.71:7777, et d'autres hôtes créés plus loin dans le parcours, tous « En ligne ».](images/09-npm-liste-hotes.png){ loading=lazy }
 /// caption
-La liste des hôtes proxy, au fil du jour 3 : chaque nom de domaine a sa destination.
+La liste des hôtes proxy telle qu'elle sera à la fin du jour 3 : chaque nom de domaine a sa destination, et le HTTPS est ajouté en partie 10.
 ///
 
 !!! tip "Un réseau par application"
@@ -314,6 +316,24 @@ Essayer seul d'abord ; le corrigé détaillé est replié ci-dessous.
     Portainer, joint par son nom à travers le proxy.
     ///
 
+    **6. Rendre le branchement durable.** 🐧 Un branchement fait avec `docker network connect` **disparaît** dès que Compose recrée le conteneur de NPM (modification du fichier, mise à jour de l'image…) : Portainer retomberait en 502. On le déclare donc dans `~/npm/docker-compose.yml`, en ajoutant au service `app` (au même niveau que `volumes:`) :
+
+    ```yaml
+        networks:
+          - default
+          - portainer_network
+    ```
+
+    et, à la fin du fichier, sans indentation :
+
+    ```yaml
+    networks:
+      portainer_network:
+        external: true
+    ```
+
+    Puis `cd ~/npm && docker compose up -d` : NPM est recréé, déjà branché sur ses deux réseaux.
+
     🐧 Plus aucun port publié pour Portainer :
 
     ```bash
@@ -325,7 +345,7 @@ Essayer seul d'abord ; le corrigé détaillé est replié ci-dessous.
     ```
 
 !!! warning "Portainer en HTTP"
-    Pour l'instant, Portainer passe par le proxy en **HTTP** : le mot de passe circule en clair entre le PC et la VM. La [partie 10](10-nextcloud-https-derriere-le-proxy.md) ajoute le HTTPS au proxy ; on pourra alors l'activer aussi pour `portainer.docker.test`.
+    Pour l'instant, Portainer passe par le proxy en **HTTP** : le mot de passe d'un compte qui contrôle toute la VM circule en clair entre le PC et la VM. La [partie 10](10-nextcloud-https-derriere-le-proxy.md) ajoute un certificat au proxy et active le HTTPS pour `portainer.docker.test` : ne pas s'en servir pour de vrai avant.
 
 ## 7. Faire le ménage
 
@@ -335,7 +355,7 @@ Essayer seul d'abord ; le corrigé détaillé est replié ci-dessous.
 docker rm -f test-apache test-apache-interne
 ```
 
-🌐 Dans NPM, **Hôtes > Hôtes proxy** : supprimer les hôtes `apache.docker.test` et `apache-interne.docker.test` (menu **⋮** au bout de la ligne, **Supprimer**). Sinon, ils apparaîtraient **Hors ligne**.
+🌐 Dans NPM, **Hôtes > Hôtes proxy** : supprimer les hôtes `apache.docker.test` et `apache-interne.docker.test` (menu **⋮** au bout de la ligne, **Supprimer**). Sinon, ils resteraient dans la liste et renverraient une erreur 502.
 
 ## 8. Vérifier son lab
 
@@ -347,7 +367,7 @@ docker rm -f test-apache test-apache-interne
     docker ps --format '{{.Names}}  {{.Ports}}'
     ```
 
-    Résultat attendu : `200`, puis une liste où **seul** `npm-app-1` publie des ports (`0.0.0.0:80-81->80-81/tcp…`). 🌐 Depuis le PC, `http://portainer.docker.test` affiche Portainer.
+    Résultat attendu : `200` (sortie relevée dans le lab), puis une liste où **seul** `npm-app-1` publie des ports (`0.0.0.0:80-81->80-81/tcp…`). 🌐 Depuis le PC, `http://portainer.docker.test` affiche Portainer.
 
 ## 9. Questions de révision
 

@@ -336,6 +336,7 @@ nav:
       - "Jour 3 — Publier des services":
         - "9. Un reverse proxy avec Nginx Proxy Manager": cours-tp/docker/09-reverse-proxy-nginx-proxy-manager.md
         - "10. Nextcloud en HTTPS derrière le reverse proxy": cours-tp/docker/10-nextcloud-https-derriere-le-proxy.md
+        - "11. Les plateformes tout-en-un": cours-tp/docker/11-plateformes-tout-en-un.md
   - Tags: tags.md
 
 copyright: >

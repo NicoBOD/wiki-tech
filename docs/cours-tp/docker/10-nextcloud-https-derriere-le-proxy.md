@@ -122,6 +122,7 @@ Les différences avec la partie 8 :
 | Ligne | Explication |
 |---|---|
 | **Aucun** `ports:` | Nextcloud ne publie plus rien : seul le proxy le joindra |
+| Volumes `mariadb` et `app` | La base de données et les fichiers de Nextcloud (le volume `app` n'a rien à voir avec le réseau du même nom) |
 | `container_name: nextcloud` | Un nom fixe et court pour le conteneur (au lieu de `nextcloud-proxy-nextcloud-1`), plus pratique à indiquer dans NPM |
 | Réseau `app` | Un réseau réservé à la liaison entre Nextcloud et le proxy |
 | `MYSQL_HOST=mariadb` | Le service de base de données s'appelle maintenant `mariadb` |
@@ -158,7 +159,7 @@ Les différences avec la partie 8 :
     66d095acc251   nextcloud-proxy_redis     bridge    local
     ```
 
-    NPM rejoint Nextcloud par `app`, mais n'a **aucun** accès à la base de données ni à Redis : ils sont sur d'autres réseaux.
+    NPM rejoint Nextcloud par `app`, mais n'a **aucun** accès à la base de données ni à Redis : ils sont sur d'autres réseaux. Comme en partie 9, rendre ce branchement durable en ajoutant `nextcloud-proxy_app` à la liste `networks:` du service `app` de `~/npm/docker-compose.yml`, et `nextcloud-proxy_app: external: true` à la section `networks:` de fin de fichier, puis `cd ~/npm && docker compose up -d`.
 
 2. 🌐 Dans NPM, **Ajouter Hôte proxy** :
 
@@ -198,15 +199,17 @@ Dans un lab, on fabrique donc soi-même un certificat **autosigné** : il chiffr
 
 ### 3.2 Générer le certificat avec `openssl`
 
+Un même certificat peut être valable pour **plusieurs noms** : on en fabrique un seul pour les trois services du jour 3 (Nextcloud, Portainer et WordPress).
+
 🐧 Créer un dossier et le certificat (une seule commande, sur plusieurs lignes) :
 
 ```bash
 mkdir ~/certs && cd ~/certs
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-  -keyout nextcloud.docker.test.key \
-  -out nextcloud.docker.test.crt \
-  -subj "/C=FR/ST=France/L=Paris/O=Lab Docker/CN=nextcloud.docker.test" \
-  -addext "subjectAltName=DNS:nextcloud.docker.test"
+  -keyout docker.test.key \
+  -out docker.test.crt \
+  -subj "/C=FR/ST=France/L=Paris/O=Lab Docker/CN=docker.test" \
+  -addext "subjectAltName=DNS:nextcloud.docker.test,DNS:portainer.docker.test,DNS:wordpress.docker.test"
 ```
 
 | Option | Explication |
@@ -216,23 +219,23 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 | `-days 365` | Valable un an |
 | `-newkey rsa:2048` | Créer en même temps une nouvelle clé RSA de 2048 bits |
 | `-keyout`, `-out` | Les fichiers produits : la **clé privée** (secrète) et le **certificat** (public) |
-| `-subj "…/CN=nextcloud.docker.test"` | L'identité inscrite dans le certificat ; `CN` est le nom du site |
-| `-addext "subjectAltName=DNS:…"` | Le ou les noms pour lesquels le certificat est valable. **Indispensable** : les navigateurs récents ne regardent plus le `CN`, seulement ce champ |
+| `-subj "…/CN=docker.test"` | L'identité inscrite dans le certificat ; `CN` est son nom principal |
+| `-addext "subjectAltName=DNS:…,DNS:…"` | Les noms pour lesquels le certificat est valable, séparés par des virgules. **Indispensable** : les navigateurs récents ne regardent plus le `CN`, seulement ce champ |
 
 🐧 Vérifier :
 
 ```bash
 ls -l
-openssl x509 -in nextcloud.docker.test.crt -noout -subject -enddate -ext subjectAltName
+openssl x509 -in docker.test.crt -noout -subject -enddate -ext subjectAltName
 ```
 
 ```text
--rw-rw-r-- 1 tssr tssr 1375 24 nov.  08:00 nextcloud.docker.test.crt
--rw------- 1 tssr tssr 1704 24 nov.  08:00 nextcloud.docker.test.key
-subject=C=FR, ST=France, L=Paris, O=Lab Docker, CN=nextcloud.docker.test
-notAfter=Nov 24 07:00:36 2027 GMT
+-rw-rw-r-- 1 tssr tssr 1411 24 nov.  08:31 docker.test.crt
+-rw------- 1 tssr tssr 1704 24 nov.  08:31 docker.test.key
+subject=C=FR, ST=France, L=Paris, O=Lab Docker, CN=docker.test
+notAfter=Nov 24 07:31:21 2027 GMT
 X509v3 Subject Alternative Name:
-    DNS:nextcloud.docker.test
+    DNS:nextcloud.docker.test, DNS:portainer.docker.test, DNS:wordpress.docker.test
 ```
 
 La clé privée n'est lisible que par `tssr` (`-rw-------`) : elle ne doit jamais être partagée.
@@ -244,8 +247,11 @@ NPM importe les certificats en **envoyant des fichiers** depuis le navigateur : 
 🖥️ Dans PowerShell, copier les deux fichiers de la VM vers le dossier courant du PC :
 
 ```powershell
-scp tssr@IP-de-la-VM:certs/nextcloud.docker.test.* .
+cd $HOME
+scp tssr@IP-de-la-VM:certs/docker.test.* .
 ```
+
+Les fichiers arrivent dans le dossier personnel de Windows (`C:\Users\<nom>`). Après l'import dans NPM, supprimer la **clé privée** du PC : `Remove-Item .\docker.test.key`.
 
 ### 3.4 Importer le certificat dans NPM
 
@@ -254,12 +260,12 @@ scp tssr@IP-de-la-VM:certs/nextcloud.docker.test.* .
 
     | Champ | Valeur |
     |---|---|
-    | **Nom** | `nextcloud.docker.test` |
-    | **Clé du certificat** | le fichier `nextcloud.docker.test.key` |
-    | **Certificat** | le fichier `nextcloud.docker.test.crt` |
+    | **Nom** | `docker.test` |
+    | **Clé du certificat** | le fichier `docker.test.key` |
+    | **Certificat** | le fichier `docker.test.crt` |
     | **Certificat intermédiaire** | vide (inutile pour un certificat autosigné) |
 
-    ![Fenêtre « Ajouter un certificat personnalisé » de NPM : champ Nom rempli avec nextcloud.docker.test, puis trois sélecteurs de fichier : Clé du certificat (nextcloud.docker.test.key), Certificat (nextcloud.docker.test.crt) et Certificat intermédiaire (vide).](images/10-npm-certificat-personnalise.png){ loading=lazy }
+    ![Fenêtre « Ajouter un certificat personnalisé » de NPM : champ Nom rempli avec docker.test, puis trois sélecteurs de fichier : Clé du certificat (docker.test.key), Certificat (docker.test.crt) et Certificat intermédiaire (vide).](images/10-npm-certificat-personnalise.png){ loading=lazy }
     /// caption
     Le certificat et sa clé, envoyés depuis le PC.
     ///
@@ -269,16 +275,17 @@ scp tssr@IP-de-la-VM:certs/nextcloud.docker.test.* .
 ### 3.5 Activer HTTPS sur l'hôte Nextcloud
 
 1. 🌐 **Hôtes > Hôtes proxy**, menu **⋮** au bout de la ligne `nextcloud.docker.test`, **Modifier**, onglet **SSL**.
-2. 🌐 Choisir le certificat `nextcloud.docker.test`, puis activer :
+2. 🌐 Choisir le certificat `docker.test`, puis activer :
     - **Forcer SSL** : toute visite en `http://` est redirigée vers `https://` ;
     - **Prise en charge de HTTP/2** : une version plus rapide du protocole HTTP.
 
-    ![Onglet SSL de la fenêtre « Modifier Hôte proxy » : certificat nextcloud.docker.test choisi, options Forcer SSL et Prise en charge de HTTP/2 activées, HSTS désactivé.](images/10-npm-onglet-ssl.png){ loading=lazy }
+    ![Onglet SSL de la fenêtre « Modifier Hôte proxy » : certificat choisi, options Forcer SSL et Prise en charge de HTTP/2 activées, HSTS désactivé.](images/10-npm-onglet-ssl.png){ loading=lazy }
     /// caption
     Le certificat associé à l'hôte, HTTPS forcé.
     ///
 
 3. 🌐 **Enregistrer**.
+4. 🌐 Faire de même pour l'hôte `portainer.docker.test` (partie 9) : Portainer devient joignable en `https://portainer.docker.test`, et son mot de passe ne circule plus en clair.
 
 !!! warning "Ne pas activer HSTS dans un lab"
     L'option **HSTS** demande au navigateur de ne **plus jamais** accepter ce site autrement qu'en HTTPS valide, pendant des mois. Avec un certificat autosigné, on risque de ne plus pouvoir ouvrir le site du tout dans ce navigateur. HSTS est une bonne pratique en production, avec un vrai certificat.
@@ -306,7 +313,7 @@ scp tssr@IP-de-la-VM:certs/nextcloud.docker.test.* .
     Un clic sur le cadenas (ou sur **Non sécurisé**) de la barre d'adresse permet d'afficher le certificat : on y retrouve `Lab Docker` et la date d'expiration.
 
 !!! tip "Faire confiance au certificat sur le PC"
-    Pour ne plus voir l'alerte, on peut ajouter le certificat aux **autorités de confiance** du PC. 🖥️ Sous Windows : double-cliquer sur `nextcloud.docker.test.crt`, **Installer le certificat…**, **Utilisateur actuel**, **Placer tous les certificats dans le magasin suivant**, **Parcourir…**, **Autorités de certification racines de confiance**, puis **Terminer**, et redémarrer le navigateur. Firefox utilise son propre magasin : **Paramètres > Vie privée et sécurité > Certificats > Afficher les certificats > Autorités > Importer**. À ne faire **que** pour un certificat de son propre lab : une autorité de confiance peut usurper n'importe quel site.
+    Pour ne plus voir l'alerte, on peut ajouter le certificat aux **autorités de confiance** du PC. 🖥️ Sous Windows : double-cliquer sur `docker.test.crt`, **Installer le certificat…**, **Utilisateur actuel**, **Placer tous les certificats dans le magasin suivant**, **Parcourir…**, **Autorités de certification racines de confiance**, puis **Terminer** ; Windows demande une confirmation (**Oui**). Redémarrer le navigateur. Pour le retirer à la fin du parcours : `certmgr.msc`, **Autorités de certification racines de confiance > Certificats**, supprimer `docker.test`. Firefox utilise son propre magasin : **Paramètres > Vie privée et sécurité > Certificats > Afficher les certificats > Autorités > Importer**. À ne faire **que** pour un certificat de son propre lab : une autorité de confiance peut usurper n'importe quel site.
 
 ## 4. Dire à Nextcloud qu'il est derrière un proxy HTTPS
 
@@ -357,7 +364,7 @@ Le proxy ajoute à chaque requête des **en-têtes** qui racontent ce qui s'est 
 3. 🌐 Recharger **Vue d'ensemble** : l'erreur **Accès HTTPS et URL** a disparu. Les autres avertissements (fenêtre de maintenance, types MIME, répertoire de données…) concernent le réglage fin de Nextcloud et peuvent être ignorés dans ce lab.
 
 !!! question "Pourquoi une plage aussi large ?"
-    L'adresse de NPM sur le réseau `app` est attribuée par Docker et peut changer si le réseau est recréé. La plage `172.16.0.0/12` couvre tous les réseaux que Docker crée par défaut. En production, on la restreint en fixant le sous-réseau du réseau partagé avec le proxy (`ipam` dans Compose) et en ne déclarant que lui.
+    L'adresse de NPM sur le réseau `app` est attribuée par Docker et peut changer si le réseau est recréé. La plage `172.16.0.0/12` couvre les réseaux que Docker crée par défaut tant qu'il en existe moins d'une quinzaine ; au-delà, il passe en `192.168.x.0/20`. Le vérifier : `docker network inspect nextcloud-proxy_app --format '{{range .IPAM.Config}}{{.Subnet}}{{end}}'`. En production, on la restreint en fixant le sous-réseau du réseau partagé avec le proxy (`ipam` dans Compose) et en ne déclarant que lui.
 
 ## 5. Exercice — Publier WordPress derrière le proxy
 
@@ -366,7 +373,7 @@ Le proxy ajoute à chaque requête des **en-têtes** qui racontent ce qui s'est 
 - `database` : MariaDB 11.8 (avec test de santé), base `wordpress`, utilisateur `wordpress`, mot de passe `TutoDocker2026!`, volume `db_data`, sur un réseau `db_wordpress` seulement ;
 - `wordpress` : image `wordpress`, volume `wp_data`, sur `db_wordpress` **et** sur le réseau **existant** `npm_default` de NPM, aucun port publié.
 
-Le publier en `http://wordpress.docker.test`, puis en HTTPS avec un second certificat autosigné.
+Le publier en `https://wordpress.docker.test`, avec le certificat `docker.test`, **avant** de lancer l'assistant d'installation de WordPress (installé en HTTP, WordPress enregistrerait des adresses en `http://` et continuerait à produire de tels liens après le passage en HTTPS).
 
 !!! tip "Indice"
     Un réseau **créé par un autre projet** (ici `npm_default`, créé par le projet `npm`) se déclare avec `external: true` dans la section `networks:`. Sans cette ligne, Compose créerait un **nouveau** réseau `wordpress_npm_default`, et NPM ne joindrait pas WordPress (erreur 502).
@@ -421,14 +428,24 @@ Le publier en `http://wordpress.docker.test`, puis en HTTPS avec un second certi
       wp_data:
     ```
 
-    🐧 `cd ~/wordpress && docker compose up -d`, puis 🌐 un hôte proxy `wordpress.docker.test` → `wordpress`, port `80`. `http://wordpress.docker.test` redirige vers l'assistant d'installation de WordPress (`/wp-admin/install.php`), qui commence par le choix de la langue :
+    🐧 `cd ~/wordpress && docker compose up -d`, puis 🌐 un hôte proxy `wordpress.docker.test` → `wordpress`, port `80`, avec dans l'onglet **SSL** le certificat `docker.test`, **Forcer SSL** et **HTTP/2**. 🐧 Vérifier :
+
+    ```bash
+    curl -sk -o /dev/null -w '%{http_code} %{redirect_url}\n' --resolve wordpress.docker.test:443:127.0.0.1 https://wordpress.docker.test/
+    ```
+
+    ```text
+    302 https://wordpress.docker.test/wp-admin/install.php
+    ```
+
+    L'image WordPress lit l'en-tête `X-Forwarded-Proto` du proxy : elle redirige bien vers une adresse en `https://`. L'assistant d'installation commence par le choix de la langue :
 
     ![Premier écran de l'installation de WordPress : choix de la langue, avec English (United States) sélectionné en haut d'une longue liste de langues, et un bouton Continuer.](images/10-wordpress-installation.png){ loading=lazy }
     /// caption
     WordPress, joint par son nom à travers le proxy.
     ///
 
-    Ici, NPM est déjà sur `npm_default` : pas besoin de `docker network connect`, c'est WordPress qui vient sur le réseau du proxy. Pour le HTTPS : un second certificat avec `CN` et `subjectAltName` à `wordpress.docker.test`, importé dans NPM, puis associé à l'hôte (onglet **SSL**). Les variables `MARIADB_*` sont les nouveaux noms des variables `MYSQL_*`, que l'image MariaDB accepte toutes deux.
+    Ici, NPM est déjà sur `npm_default` : pas besoin de `docker network connect`, c'est WordPress qui vient sur le réseau du proxy. Le certificat `docker.test` couvre déjà `wordpress.docker.test`. Les variables `MARIADB_*` sont les nouveaux noms des variables `MYSQL_*`, que l'image MariaDB accepte toutes deux.
 
 ## 6. Vérifier son lab
 
@@ -442,8 +459,8 @@ Le publier en `http://wordpress.docker.test`, puis en HTTPS avec un second certi
 
     Résultat attendu : une ligne `{"installed":true,…,"versionstring":"35.0.3",…}`, et une liste de conteneurs où **seul** `npm-app-1` publie des ports. 🌐 `https://nextcloud.docker.test` ouvre Nextcloud (après l'alerte de certificat), et **Vue d'ensemble** ne signale plus l'erreur HTTPS.
 
-!!! success "Prendre l'instantané `04-fin-jour-3a`"
-    🛟 🐧 Éteindre la VM (`sudo poweroff`), puis 🖥️ prendre un instantané nommé `04-fin-jour-3a` : le proxy et ses hôtes sont prêts pour la suite.
+!!! success "Prendre l'instantané `04-fin-jour-3`"
+    🛟 🐧 Éteindre la VM (`sudo poweroff`), puis 🖥️ prendre un instantané nommé `04-fin-jour-3` : le proxy et ses hôtes sont prêts pour la suite.
 
 ## 7. Questions de révision
 
@@ -470,7 +487,7 @@ Le publier en `http://wordpress.docker.test`, puis en HTTPS avec un second certi
 - [Nextcloud — Configuration d'un reverse proxy](https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/reverse_proxy_configuration.html) — `trusted_proxies` et les en-têtes `X-Forwarded-*`.
 - [Let's Encrypt — Fonctionnement](https://letsencrypt.org/fr/how-it-works/) — comment une autorité vérifie qu'on contrôle un domaine.
 - [Image officielle WordPress sur Docker Hub](https://hub.docker.com/_/wordpress) — variables d'environnement `WORDPRESS_DB_*`.
-- Partie précédente : [Un reverse proxy avec Nginx Proxy Manager](09-reverse-proxy-nginx-proxy-manager.md).
+- Partie précédente : [Un reverse proxy avec Nginx Proxy Manager](09-reverse-proxy-nginx-proxy-manager.md) · Partie suivante : [Les plateformes tout-en-un](11-plateformes-tout-en-un.md).
 
 *[NPM]: Nginx Proxy Manager
 *[HTTPS]: HTTP sécurisé par TLS

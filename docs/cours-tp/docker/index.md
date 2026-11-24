@@ -83,7 +83,7 @@ Chaque partie dure entre 1 h et 2 h 30 et mêle explications et pratique. Les du
 |:---:|---|---|---|---|
 | [9. Un reverse proxy avec Nginx Proxy Manager](09-reverse-proxy-nginx-proxy-manager.md) | Cours et TP | 2 h | Fichier `hosts`, hôtes de proxy, réseaux Docker partagés, Portainer derrière le proxy | `docker-hote` |
 | [10. Nextcloud en HTTPS derrière le reverse proxy](10-nextcloud-https-derriere-le-proxy.md) | TP | 2 h | Compose et proxy, certificat autosigné, WordPress en exercice | `docker-hote` |
-| 11. Les plateformes tout-en-un | Cours et TP | 2 h | Coolify, Cosmos Server, BunkerWeb | `docker-hote`, `docker-plateforme` |
+| [11. Les plateformes tout-en-un](11-plateformes-tout-en-un.md) | Cours et TP | 2 h | Coolify, Cosmos Server, BunkerWeb | `docker-hote`, `docker-plateforme` |
 
 ### Jour 4 — Exploiter et s'amuser
 
@@ -138,6 +138,8 @@ La VM `docker-hote` reçoit son adresse automatiquement (DHCP). Elle change d'un
     | Serveur DHCP du réseau privé hôte | `192.168.56.100` | Créé par VirtualBox |
     | VM `docker-hote` (carte 2) | à partir de `192.168.56.101` | **C'est cette adresse** qu'on utilise depuis le PC |
 
+La VM `docker-plateforme` de la partie 11 se branche sur le **même réseau** que `docker-hote` (mêmes réglages) et reçoit elle aussi son adresse par DHCP : elle est écrite **IP-de-plateforme**.
+
 À l'intérieur de la VM, Docker crée en plus son propre réseau privé pour les conteneurs, `172.17.0.0/16` par défaut : on le découvre en [partie 2](02-premiers-conteneurs.md).
 
 ## Comptes et mots de passe
@@ -154,6 +156,9 @@ Ce lab est **pédagogique** : les mots de passe sont écrits ici volontairement 
 | MariaDB de Nextcloud | `root`, et `nextcloud` (base `nextcloud`) | `TutoDocker2026!` | Partie 8 |
 | Nextcloud | `admin` | `TutoDocker2026!` | Parties 8 et 10 |
 | Nginx Proxy Manager | `admin@lab.local` | `TutoDocker2026!` | Partie 9 |
+| Coolify | `admin@lab.local` | `TutoDocker2026!` | Partie 11 |
+| Uptime Kuma | `admin` | `TutoDocker2026!` | Partie 11 |
+| VM `docker-plateforme` | `root` et `tssr` | `TutoDocker2026!` | Partie 11 |
 | MariaDB de WordPress | `root`, et `wordpress` (base `wordpress`) | `TutoDocker2026!` | Partie 10 |
 
 !!! info "Pourquoi un mot de passe aussi long ?"
@@ -182,7 +187,8 @@ Un **instantané** (*snapshot*) fige l'état d'une machine virtuelle. En cas d'e
 | `01-docker-installe` | `docker-hote` | Fin de la partie 1, VM éteinte | Toutes les parties suivantes avec un Docker propre |
 | `02-fin-jour-1` | `docker-hote` | Fin de la partie 4, VM éteinte : Docker, Portainer (compte `admin` créé) et LazyDocker | Le jour 2 |
 | `03-fin-jour-2` | `docker-hote` | Fin de la partie 8, VM éteinte, Nextcloud arrêté (`docker compose down`) mais ses volumes gardés | Le jour 3 |
-| `04-fin-jour-3a` | `docker-hote` | Fin de la partie 10, VM éteinte : NPM, Portainer et Nextcloud derrière le proxy en HTTPS | La partie 11 et le jour 4 |
+| `04-fin-jour-3` | `docker-hote` | Fin de la partie 10, VM éteinte : NPM, Portainer et Nextcloud derrière le proxy en HTTPS | La partie 11 et le jour 4 |
+| `00-debian-installee`, `01-coolify` | `docker-plateforme` | Partie 11 : avant, puis après l'installation de Coolify et d'Uptime Kuma | L'installation de Coolify |
 
 !!! warning "Un instantané n'est pas une sauvegarde"
     L'instantané reste **dans le dossier de la VM**, sur le **même disque** que la machine virtuelle, et il **dépend** du disque d'origine : si le disque du PC tombe en panne, ou si le dossier de la VM est supprimé, les instantanés disparaissent avec lui.
@@ -209,7 +215,7 @@ Dans les TP, chaque action précise où elle se fait :
 | ✍️ | Exercice à faire seul, corrigé replié en dessous |
 | 🛟 | Prendre un instantané |
 
-Les commandes à taper sont dans des blocs de code ; le texte après `#` est un commentaire, il ne se tape pas. Les interfaces qui n'existent qu'en anglais (Portainer, Nginx Proxy Manager…) ont leurs menus écrits **en gras, en anglais**, avec une traduction entre parenthèses.
+Les commandes à taper sont dans des blocs de code ; le texte après `#` est un commentaire, il ne se tape pas. Les interfaces qui n'existent qu'en anglais (Portainer, Coolify…) ont leurs menus écrits **en gras, en anglais**, avec une traduction entre parenthèses.
 
 !!! tip "Travailler en SSH depuis le PC"
     La console de l'hyperviseur ne permet pas toujours le copier-coller. Mieux vaut ouvrir **PowerShell** sur le PC et se connecter à la VM en SSH : `ssh tssr@IP-de-la-VM`. Le copier-coller fonctionne alors normalement (clic droit pour coller dans le terminal Windows).
