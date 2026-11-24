@@ -1,0 +1,4492 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+      
+      
+        <meta name="author" content="Nicolas BODAINE">
+      
+      
+        <link rel="canonical" href="https://wiki.bodaine.fr/cours-tp/docker/07-reseaux-docker/">
+      
+      
+        <link rel="prev" href="../06-sauvegarder-un-conteneur-en-image/">
+      
+      
+        <link rel="next" href="../08-docker-compose-nextcloud/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
+    
+    
+      
+        <title>Les réseaux Docker : bridge par défaut et personnalisé, résolution de noms, host, none, macvlan, et le pare-feu - Wiki Tech — NicoBOD</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        
+        <link rel="stylesheet" href="../../../assets/external/fonts.googleapis.com/css.56f7ac64.css">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+    
+    
+      
+    
+    
+
+    <!-- SEO -->
+    <meta name="author" content="Nicolas BODAINE">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph : compléments non gérés par le plugin social.     -->
+    <!-- og:type/title/description/image/url sont posés par social.   -->
+    <meta property="og:site_name" content="Wiki Tech — NicoBOD">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card : la grande image et l'image elle-même sont      -->
+    <!-- héritées des balises og:image générées par le plugin social.  -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Les réseaux Docker : bridge par défaut et personnalisé, résolution de noms, host, none, macvlan, et le pare-feu — Wiki Tech — NicoBOD">
+    <meta name="twitter:description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+  
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#les-reseaux-docker" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-header__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wiki Tech — NicoBOD
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Les réseaux Docker : bridge par défaut et personnalisé, résolution de noms, host, none, macvlan, et le pare-feu
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer en mode clair"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer en mode clair" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Passer en mode sombre"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer en mode sombre" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Revenir au thème système"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Revenir au thème système" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Partager" aria-label="Partager" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../systemes/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h16v10H4m16 2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4c-1.11 0-2 .89-2 2v10a2 2 0 0 0 2 2H0v2h24v-2z"/></svg>
+    
+  
+  Systèmes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../reseaux/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v2h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+    
+  
+  Réseaux
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cloud/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 20q-2.28 0-3.89-1.57Q1 16.85 1 14.58q0-1.95 1.17-3.48 1.18-1.53 3.08-1.95.63-2.3 2.5-3.72Q9.63 4 12 4q2.93 0 4.96 2.04Q19 8.07 19 11q1.73.2 2.86 1.5 1.14 1.28 1.14 3 0 1.88-1.31 3.19T18.5 20Z"/></svg>
+    
+  
+  Cloud
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cybersecurite/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12h7c-.53 4.11-3.28 7.78-7 8.92zH5V6.3l7-3.11M12 1 3 5v6c0 5.55 3.84 10.73 9 12 5.16-1.27 9-6.45 9-12V5z"/></svg>
+    
+  
+  Cybersécurité
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../ia/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/></svg>
+    
+  
+  IA
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../automatisation/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+    
+  
+  Automatisation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../logiciels/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m0 5H3V4h18z"/></svg>
+    
+  
+  Logiciels
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../debug/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 12h-4v-2h4m0 6h-4v-2h4m6-6h-2.81a6 6 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6 6 0 0 0-2.83 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20z"/></svg>
+    
+  
+  Debug
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../astuces/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+    
+  
+  Astuces
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+    
+  
+  Cours et TP
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../tags/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tags
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-nav__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    Wiki Tech — NicoBOD
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../systemes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Systèmes
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../reseaux/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Réseaux
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cybersecurite/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cybersécurité
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../ia/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IA
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../automatisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automatisation
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../logiciels/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logiciels
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../debug/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../astuces/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Astuces
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cours et TP
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cours et TP
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../veeam/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Veeam Backup & Replication
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_2" id="__nav_11_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Veeam Backup & Replication
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/01-comprendre-la-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/02-decouvrir-veeam-data-platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Découvrir Veeam Data Platform 13
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/03-preparer-le-lab-installer-appliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Préparer le lab et installer l'appliance
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/04-ajouter-des-depots-de-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Ajouter des dépôts de sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/05-sauvegarder-configuration-et-serveur-de-fichiers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Sauvegarder la configuration et un serveur de fichiers
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/06-sauvegarder-restaurer-serveur-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Sauvegarder et restaurer un serveur Linux
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/07-sauvegarder-vers-azure-blob/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Sauvegarder vers Azure Blob Storage
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pfsense-ha/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cluster pfSense en haute disponibilité
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_3" id="__nav_11_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cluster pfSense en haute disponibilité
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/01-comprendre-haute-disponibilite/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la haute disponibilité
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/02-preparer-lab-installer-pfsense/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Préparer le lab et installer pfSense
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/03-configuration-initiale/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Configuration initiale
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/04-synchroniser-le-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Synchroniser le cluster
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/05-vip-carp-nat-sortant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. VIP CARP et NAT sortant
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/06-tester-la-bascule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Tester la bascule
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/07-agregation-lacp-troisieme-noeud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Agrégation LACP et troisième nœud
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/08-mettre-a-jour-le-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8. Mettre à jour le cluster
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../virtualisation/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Virtualisation (5 jours)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_4" id="__nav_11_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Virtualisation (5 jours)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/01-comprendre-la-virtualisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 1 — Comprendre et créer ses VM
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/05-virtualiser-des-serveurs/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 2 — Serveurs, réseau, stockage
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/09-panorama-des-technologies/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 3 — Technologies du système
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/12-stockage-sds-hyperconvergence/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 4 — Stockage, réseau, applications
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/15-le-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 5 — Cloud, tendances, défi final
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../virtualisation/annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker (5 jours)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_5" id="__nav_11_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Docker (5 jours)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../01-decouvrir-et-installer-docker/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 1 — Installer Docker et lancer ses premiers conteneurs
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_5_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_11_5_3" id="__nav_11_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 2 — Données, réseaux et Docker Compose
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_11_5_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Jour 2 — Données, réseaux et Docker Compose
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-volumes-et-dossiers-montes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Garder ses données : volumes et dossiers montés
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-sauvegarder-un-conteneur-en-image/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Sauvegarder un conteneur sous forme d'image
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Les réseaux Docker
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Les réseaux Docker
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-les-reseaux-crees-par-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Les réseaux créés par Docker
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-le-bridge-par-defaut-pas-de-noms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Le bridge par défaut : pas de noms
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-un-bridge-personnalise-les-noms-fonctionnent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Un bridge personnalisé : les noms fonctionnent
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Un bridge personnalisé : les noms fonctionnent">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-creer-un-reseau-et-y-brancher-des-conteneurs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Créer un réseau et y brancher des conteneurs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-le-dns-integre-de-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Le DNS intégré de Docker
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-isoler-des-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Isoler des services
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-choisir-le-sous-reseau-et-ladresse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Choisir le sous-réseau et l'adresse
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-les-modes-host-et-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Les modes host et none
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Les modes host et none">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-host-pas-disolation-reseau" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 host : pas d'isolation réseau
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-none-aucun-reseau" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 none : aucun réseau
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-le-mode-macvlan-une-vraie-machine-sur-le-reseau" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Le mode macvlan : une vraie machine sur le réseau
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Le mode macvlan : une vraie machine sur le réseau">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-preparer-lhyperviseur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Préparer l'hyperviseur
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-creer-le-reseau-macvlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Créer le réseau macvlan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-tester-depuis-le-pc-et-depuis-la-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Tester depuis le PC… et depuis la VM
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-docker-et-le-pare-feu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Docker et le pare-feu
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Docker et le pare-feu">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-publier-un-port-seulement-en-local" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Publier un port seulement en local
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-les-ports-publies-contournent-le-pare-feu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Les ports publiés contournent le pare-feu
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-synthese" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Synthèse
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-exercice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Exercice
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-verifier-son-lab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Vérifier son lab
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-docker-compose-nextcloud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8. Docker Compose : Nextcloud en une commande
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tags/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.5 7A1.5 1.5 0 0 1 4 5.5 1.5 1.5 0 0 1 5.5 4 1.5 1.5 0 0 1 7 5.5 1.5 1.5 0 0 1 5.5 7m15.91 4.58-9-9C12.05 2.22 11.55 2 11 2H4c-1.11 0-2 .89-2 2v7c0 .55.22 1.05.59 1.41l8.99 9c.37.36.87.59 1.42.59s1.05-.23 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.56-.23-1.06-.59-1.42"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-les-reseaux-crees-par-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Les réseaux créés par Docker
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-le-bridge-par-defaut-pas-de-noms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Le bridge par défaut : pas de noms
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-un-bridge-personnalise-les-noms-fonctionnent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Un bridge personnalisé : les noms fonctionnent
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Un bridge personnalisé : les noms fonctionnent">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-creer-un-reseau-et-y-brancher-des-conteneurs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Créer un réseau et y brancher des conteneurs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-le-dns-integre-de-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Le DNS intégré de Docker
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-isoler-des-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Isoler des services
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-choisir-le-sous-reseau-et-ladresse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Choisir le sous-réseau et l'adresse
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-les-modes-host-et-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Les modes host et none
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Les modes host et none">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-host-pas-disolation-reseau" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 host : pas d'isolation réseau
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-none-aucun-reseau" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 none : aucun réseau
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-le-mode-macvlan-une-vraie-machine-sur-le-reseau" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Le mode macvlan : une vraie machine sur le réseau
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Le mode macvlan : une vraie machine sur le réseau">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-preparer-lhyperviseur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Préparer l'hyperviseur
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-creer-le-reseau-macvlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Créer le réseau macvlan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-tester-depuis-le-pc-et-depuis-la-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Tester depuis le PC… et depuis la VM
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-docker-et-le-pare-feu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Docker et le pare-feu
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Docker et le pare-feu">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-publier-un-port-seulement-en-local" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Publier un port seulement en local
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-les-ports-publies-contournent-le-pare-feu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Les ports publiés contournent le pare-feu
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-synthese" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Synthèse
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-exercice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Exercice
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-verifier-son-lab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Vérifier son lab
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Cours et TP
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Docker (5 jours)
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../05-volumes-et-dossiers-montes/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Jour 2 — Données, réseaux et Docker Compose
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:cours" class="md-tag">cours</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:docker" class="md-tag">docker</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:reseau" class="md-tag">reseau</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:travaux-pratiques" class="md-tag">travaux-pratiques</a>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/NicoBOD/wiki-tech/edit/main/docs/cours-tp/docker/07-reseaux-docker.md" title="Editer cette page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/NicoBOD/wiki-tech/raw/main/docs/cours-tp/docker/07-reseaux-docker.md" title="Consulter la source de cette page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<!-- ============================================================ -->
+<!-- ⚠️ RAPPEL IMPORTANT :                                          -->
+<!-- Pensez TOUJOURS à ajouter une entrée dans le fichier d'index  -->
+<!-- (index.md) du dossier correspondant (ex: docs/cloud/index.md) -->
+<!-- afin de référencer ce nouvel article et permettre aux         -->
+<!-- visiteurs de le trouver et de cliquer dessus !                -->
+<!-- ============================================================ -->
+
+<h1 id="les-reseaux-docker">Les réseaux Docker<a class="headerlink" href="#les-reseaux-docker" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Résumé</p>
+<p>Chaque conteneur a sa propre carte réseau et sa propre adresse IP. Mais sur quel réseau ? Ce TP explore les <strong>réseaux de Docker</strong> du point de vue d'un administrateur réseau : le <strong>bridge</strong> par défaut, où les conteneurs ne se trouvent pas par leur nom, puis un <strong>bridge personnalisé</strong>, où ils se trouvent grâce à un <strong><abbr title="Domain Name System — résolution des noms">DNS</abbr></strong> intégré. On isole des services en les mettant sur des réseaux séparés.</p>
+<p>On essaie ensuite les modes <strong>host</strong> (le conteneur partage la carte réseau de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>), <strong>none</strong> (aucun réseau) et <strong>macvlan</strong> (le conteneur apparaît comme une vraie machine sur le réseau local). On termine par une surprise qui piège beaucoup d'administrateurs : <strong>les ports publiés par Docker contournent le pare-feu</strong> de la machine.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Propriété</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Difficulté</td>
+<td>Intermédiaire</td>
+</tr>
+<tr>
+<td>Durée estimée</td>
+<td>2 h</td>
+</tr>
+<tr>
+<td>Version décrite</td>
+<td>Docker Engine 29.10, nginx 1.31</td>
+</tr>
+<tr>
+<td>Place dans le parcours</td>
+<td>Partie 7 sur 17 du parcours <a href="../">Docker</a> — jour 2</td>
+</tr>
+<tr>
+<td>Dernière mise à jour</td>
+<td>2026-11-24</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<div class="admonition info">
+<p class="admonition-title">Convention de lecture</p>
+<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>tssr</code> · 📦 <strong>dans un conteneur</strong> · ✍️ <strong>exercice</strong>. Suite de la partie 6 : seul <code>portainer</code> tourne.</p>
+</div>
+<h2 id="1-les-reseaux-crees-par-docker">1. Les réseaux créés par Docker<a class="headerlink" href="#1-les-reseaux-crees-par-docker" title="Permanent link">&para;</a></h2>
+<p>🐧 Lister les réseaux de Docker :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span>network<span class="w"> </span>ls
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>NETWORK ID     NAME      DRIVER    SCOPE
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>0e400028062e   bridge    bridge    local
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>ddb20127b014   host      host      local
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>daa08a4d4af5   none      null      local
+</code></pre></div>
+<p>Docker crée trois réseaux à son installation. La colonne <code>DRIVER</code> (pilote) indique le <strong>type</strong> de réseau :</p>
+<table>
+<thead>
+<tr>
+<th>Pilote</th>
+<th>Ce qu'il fait</th>
+<th>Utilisé par défaut ?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bridge</code></td>
+<td>Un <strong>commutateur virtuel</strong> dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, sur lequel on branche des conteneurs ; Docker fait du <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> vers l'extérieur</td>
+<td>Oui : tout conteneur lancé sans <code>--network</code></td>
+</tr>
+<tr>
+<td><code>host</code></td>
+<td>Pas d'isolation : le conteneur utilise directement la carte réseau de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr></td>
+<td>Non</td>
+</tr>
+<tr>
+<td><code>null</code> (réseau <code>none</code>)</td>
+<td>Aucune carte réseau, à part la boucle locale</td>
+<td>Non</td>
+</tr>
+<tr>
+<td><code>macvlan</code></td>
+<td>Le conteneur reçoit sa propre adresse <abbr title="Media Access Control — adresse matérielle d'une carte réseau">MAC</abbr> et une adresse IP <strong>du réseau local</strong></td>
+<td>Non, à créer</td>
+</tr>
+<tr>
+<td><code>overlay</code></td>
+<td>Un réseau qui s'étend sur <strong>plusieurs</strong> serveurs Docker (cluster Swarm, partie 16)</td>
+<td>Non, à créer</td>
+</tr>
+</tbody>
+</table>
+<p>🐧 Le réseau <code>bridge</code> correspond à une carte réseau de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, <code>docker0</code>, qui sert de <strong>passerelle</strong> aux conteneurs :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ip<span class="w"> </span>-br<span class="w"> </span>a<span class="w"> </span>show<span class="w"> </span>docker0
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>docker<span class="w"> </span>network<span class="w"> </span>inspect<span class="w"> </span>bridge<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{range .IPAM.Config}}{{.Subnet}} {{.Gateway}}{{end}}'</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>docker0          UP             172.17.0.1/16 fe80::1497:fbff:fe0a:c916/64
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>172.17.0.0/16 172.17.0.1
+</code></pre></div>
+<figure>
+<p><img alt="La VM docker-hote, avec sa carte réseau reliée au réseau du lab. À l'intérieur, le commutateur virtuel docker0 (172.17.0.1) relie les conteneurs web1 (172.17.0.3) et web2 (172.17.0.4) ; un second commutateur, mon_reseau (172.18.0.1), relie les mêmes conteneurs sous d'autres adresses et fournit un DNS interne en 127.0.0.11. Les sorties vers l'extérieur passent par le NAT de la VM." loading="lazy" src="../images/reseaux-bridge.svg" /></p>
+<figcaption>
+<p>Chaque réseau bridge est un commutateur virtuel dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, avec son propre sous-réseau.</p>
+</figcaption>
+</figure>
+<h2 id="2-le-bridge-par-defaut-pas-de-noms">2. Le bridge par défaut : pas de noms<a class="headerlink" href="#2-le-bridge-par-defaut-pas-de-noms" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p>🐧 Lancer deux serveurs web, sans préciser de réseau :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>web1<span class="w"> </span>nginx
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>web2<span class="w"> </span>nginx
+</code></pre></div>
+</li>
+<li>
+<p>🐧 Depuis <code>web1</code>, essayer de joindre <code>web2</code> <strong>par son nom</strong> (l'image nginx contient la commande <code>curl</code>) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>web1<span class="w"> </span>curl<span class="w"> </span>-s<span class="w"> </span>-m3<span class="w"> </span>http://web2<span class="p">;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"code=</span><span class="nv">$?</span><span class="s2">"</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>code=28
+</code></pre></div>
+<p>Aucune page, et un code d'erreur : <code>web1</code> ne sait pas où est <code>web2</code>. Faute de connaître ce nom, la question part vers le <abbr title="Domain Name System — résolution des noms">DNS</abbr> de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, qui ne le connaît pas non plus, et <code>curl</code> abandonne au bout des 3 secondes (<code>-m3</code>) ; le code 28 de <code>curl</code> signifie « délai dépassé ».</p>
+</li>
+<li>
+<p>🐧 Essayer avec son <strong>adresse IP</strong> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>docker<span class="w"> </span>inspect<span class="w"> </span>-f<span class="w"> </span><span class="s1">'{{.NetworkSettings.Networks.bridge.IPAddress}}'</span><span class="w"> </span>web2
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>web1<span class="w"> </span>curl<span class="w"> </span>-s<span class="w"> </span>-m3<span class="w"> </span>http://172.17.0.4<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>title
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>172.17.0.4
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+</code></pre></div>
+<p>(remplacer <code>172.17.0.4</code> par l'adresse affichée). Par l'adresse, ça marche : les deux conteneurs sont bien sur le même réseau.</p>
+</li>
+</ol>
+<p>Sur le bridge <strong>par défaut</strong>, les conteneurs se joignent seulement <strong>par adresse IP</strong>. Or ces adresses changent quand on recrée un conteneur : impossible de s'en servir dans une configuration durable (« le serveur web parle à la base de données en 172.17.0.5 »…).</p>
+<h2 id="3-un-bridge-personnalise-les-noms-fonctionnent">3. Un bridge personnalisé : les noms fonctionnent<a class="headerlink" href="#3-un-bridge-personnalise-les-noms-fonctionnent" title="Permanent link">&para;</a></h2>
+<h3 id="31-creer-un-reseau-et-y-brancher-des-conteneurs">3.1 Créer un réseau et y brancher des conteneurs<a class="headerlink" href="#31-creer-un-reseau-et-y-brancher-des-conteneurs" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>🐧 Créer un réseau <code>mon_reseau</code> (pilote <code>bridge</code> par défaut) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>docker<span class="w"> </span>network<span class="w"> </span>create<span class="w"> </span>mon_reseau
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>docker<span class="w"> </span>network<span class="w"> </span>inspect<span class="w"> </span>mon_reseau<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Driver}} {{range .IPAM.Config}}{{.Subnet}} {{.Gateway}}{{end}}'</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>bridge 172.18.0.0/16 172.18.0.1
+</code></pre></div>
+<p>Docker a choisi tout seul le sous-réseau suivant, <code>172.18.0.0/16</code>.</p>
+</li>
+<li>
+<p>🐧 <strong>Brancher</strong> les deux conteneurs existants sur ce réseau, comme on brancherait un second câble à une machine :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>docker<span class="w"> </span>network<span class="w"> </span>connect<span class="w"> </span>mon_reseau<span class="w"> </span>web1
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>docker<span class="w"> </span>network<span class="w"> </span>connect<span class="w"> </span>mon_reseau<span class="w"> </span>web2
+</code></pre></div>
+</li>
+<li>
+<p>🐧 Réessayer par le nom :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>web1<span class="w"> </span>curl<span class="w"> </span>-s<span class="w"> </span>-m3<span class="w"> </span>http://web2<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>title
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>web1<span class="w"> </span>getent<span class="w"> </span>hosts<span class="w"> </span>web2
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>172.18.0.3      web2
+</code></pre></div>
+<p>Cette fois, <code>web2</code> est trouvé, à son adresse <strong>sur <code>mon_reseau</code></strong>.</p>
+</li>
+</ol>
+<h3 id="32-le-dns-integre-de-docker">3.2 Le <abbr title="Domain Name System — résolution des noms">DNS</abbr> intégré de Docker<a class="headerlink" href="#32-le-dns-integre-de-docker" title="Permanent link">&para;</a></h3>
+<p>🐧 Regarder le serveur <abbr title="Domain Name System — résolution des noms">DNS</abbr> utilisé par <code>web1</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>web1<span class="w"> </span>grep<span class="w"> </span>-v<span class="w"> </span><span class="s1">'^#'</span><span class="w"> </span>/etc/resolv.conf
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>nameserver 127.0.0.11
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>search .
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>options ndots:0
+</code></pre></div>
+<p>(<code>grep -v '^#'</code> masque les lignes de commentaire écrites par Docker). Sur le bridge <strong>par défaut</strong>, ce même fichier contient simplement les serveurs <abbr title="Domain Name System — résolution des noms">DNS</abbr> de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</p>
+<p>Sur un réseau <strong>personnalisé</strong>, Docker fournit à chaque conteneur un <strong>serveur <abbr title="Domain Name System — résolution des noms">DNS</abbr> interne</strong>, à l'adresse <code>127.0.0.11</code> : une adresse de boucle locale <strong>dans chaque conteneur</strong>, que Docker intercepte. Il répond avec les <strong>noms des conteneurs</strong> branchés sur le même réseau, et transmet les autres questions (<code>debian.org</code>…) au <abbr title="Domain Name System — résolution des noms">DNS</abbr> de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</p>
+<p>🐧 Un conteneur créé <strong>directement</strong> sur le réseau est trouvé aussi :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>app<span class="w"> </span>--network<span class="w"> </span>mon_reseau<span class="w"> </span>nginx
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--network<span class="w"> </span>mon_reseau<span class="w"> </span>debian:13<span class="w"> </span>getent<span class="w"> </span>hosts<span class="w"> </span>app
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>172.18.0.4      app
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">La règle à retenir</p>
+<p>Pour que des conteneurs se parlent, on les met sur un <strong>réseau personnalisé</strong> commun et on utilise leurs <strong>noms</strong>. C'est exactement ce que fera Docker Compose en <a href="../08-docker-compose-nextcloud/">partie 8</a>, automatiquement.</p>
+</div>
+<h3 id="33-isoler-des-services">3.3 Isoler des services<a class="headerlink" href="#33-isoler-des-services" title="Permanent link">&para;</a></h3>
+<p>🐧 <strong>Débrancher</strong> <code>web2</code> de <code>mon_reseau</code>, puis réessayer :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>docker<span class="w"> </span>network<span class="w"> </span>disconnect<span class="w"> </span>mon_reseau<span class="w"> </span>web2
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>web1<span class="w"> </span>curl<span class="w"> </span>-s<span class="w"> </span>-m3<span class="w"> </span>http://web2<span class="p">;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"code=</span><span class="nv">$?</span><span class="s2">"</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>code=28
+</code></pre></div>
+<p>Le code 28 de <code>curl</code> signifie « délai dépassé » : <code>web1</code> ne peut plus joindre <code>web2</code> par <code>mon_reseau</code>. Deux conteneurs qui ne partagent <strong>aucun</strong> réseau personnalisé ne se voient pas par leur nom. On s'en sert pour <strong>cloisonner</strong> : un serveur web et sa base de données sur un réseau, un autre site et sa base sur un autre, sans que l'un puisse joindre la base de l'autre. C'est le principe de la <strong>segmentation</strong> réseau, appliqué aux conteneurs.</p>
+<div class="admonition info">
+<p class="admonition-title">Et le bridge par défaut ?</p>
+<p><code>web1</code> et <code>web2</code> sont toujours tous les deux sur le bridge <strong>par défaut</strong>, où ils se joignent par adresse IP. C'est une raison de plus de ne pas l'utiliser pour des services sérieux : tout conteneur lancé sans <code>--network</code> y atterrit et peut joindre tous les autres.</p>
+</div>
+<h3 id="34-choisir-le-sous-reseau-et-ladresse">3.4 Choisir le sous-réseau et l'adresse<a class="headerlink" href="#34-choisir-le-sous-reseau-et-ladresse" title="Permanent link">&para;</a></h3>
+<p>🐧 Le sous-réseau d'un réseau personnalisé peut être imposé, par exemple pour éviter un conflit avec un réseau de l'entreprise, et un conteneur peut y recevoir une adresse fixe :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>docker<span class="w"> </span>network<span class="w"> </span>create<span class="w"> </span>--driver<span class="w"> </span>bridge<span class="w"> </span>--subnet<span class="o">=</span><span class="m">192</span>.168.100.0/24<span class="w"> </span>mon_reseau_perso
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--network<span class="w"> </span>mon_reseau_perso<span class="w"> </span>--ip<span class="w"> </span><span class="m">192</span>.168.100.50<span class="w"> </span>debian:13<span class="w"> </span>hostname<span class="w"> </span>-I
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>192.168.100.50
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Attention aux conflits d'adresses</p>
+<p>Docker pioche ses sous-réseaux dans <code>172.17.0.0/16</code> à <code>172.31.0.0/16</code>, puis dans <code>192.168.0.0/16</code>. Si le réseau de l'entreprise ou un <abbr title="Virtual Private Network — réseau privé virtuel">VPN</abbr> utilise déjà l'une de ces plages, les machines concernées deviennent <strong>injoignables</strong> depuis la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : les paquets partent vers le réseau Docker au lieu de la bonne route. C'est un incident classique, qu'on évite en choisissant les plages de Docker (<code>--subnet</code>, ou le réglage <code>default-address-pools</code> de Docker).</p>
+</div>
+<p>🐧 Nettoyer :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>web1<span class="w"> </span>web2<span class="w"> </span>app
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>docker<span class="w"> </span>network<span class="w"> </span>rm<span class="w"> </span>mon_reseau<span class="w"> </span>mon_reseau_perso
+</code></pre></div>
+<h2 id="4-les-modes-host-et-none">4. Les modes host et none<a class="headerlink" href="#4-les-modes-host-et-none" title="Permanent link">&para;</a></h2>
+<h3 id="41-host-pas-disolation-reseau">4.1 <code>host</code> : pas d'isolation réseau<a class="headerlink" href="#41-host-pas-disolation-reseau" title="Permanent link">&para;</a></h3>
+<p>🐧 Un conteneur en mode <code>host</code> voit <strong>les cartes réseau de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> et porte son nom de machine :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--network<span class="w"> </span>host<span class="w"> </span>debian:13<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">'cat /etc/hostname; cat /proc/net/dev | cut -d: -f1'</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>docker-hote
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>Inter-|   Receive                                                |  Transmit
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a> face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>    lo
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>enp1s0
+<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>docker0
+<a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a>vethf27f806
+</code></pre></div>
+<p>On retrouve <code>enp1s0</code> (la carte de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>), <code>docker0</code> et une carte <code>veth…</code> (la moitié côté <abbr title="Virtual Machine — machine virtuelle">VM</abbr> du « câble virtuel » d'un autre conteneur en marche, ici Portainer).</p>
+<p>Pas de publication de port en mode <code>host</code> : un nginx lancé avec <code>--network host</code> écoute <strong>directement</strong> sur le port 80 de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>. C'est un peu plus rapide (pas de <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr>), et utile pour des outils qui doivent voir tout le trafic de la machine (supervision réseau…). Mais le conteneur n'est plus isolé du réseau de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : à réserver aux cas où c'est indispensable.</p>
+<h3 id="42-none-aucun-reseau">4.2 <code>none</code> : aucun réseau<a class="headerlink" href="#42-none-aucun-reseau" title="Permanent link">&para;</a></h3>
+<p>🐧 En mode <code>none</code>, le conteneur n'a que sa boucle locale <code>lo</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--network<span class="w"> </span>none<span class="w"> </span>debian:13<span class="w"> </span>cat<span class="w"> </span>/proc/net/dev
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>Inter-|   Receive                                                |  Transmit
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a> face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>    lo:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0
+</code></pre></div>
+<p>Utile pour un traitement qui ne doit <strong>jamais</strong> communiquer : conversion de fichiers, calcul, analyse d'un fichier suspect…</p>
+<h2 id="5-le-mode-macvlan-une-vraie-machine-sur-le-reseau">5. Le mode macvlan : une vraie machine sur le réseau<a class="headerlink" href="#5-le-mode-macvlan-une-vraie-machine-sur-le-reseau" title="Permanent link">&para;</a></h2>
+<p>Avec <strong>macvlan</strong>, le conteneur obtient <strong>sa propre adresse <abbr title="Media Access Control — adresse matérielle d'une carte réseau">MAC</abbr></strong> et une <strong>adresse IP du réseau local</strong>, comme s'il était branché directement sur le commutateur. Pas de <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr> ni de publication de port : les autres machines du réseau le joignent directement.</p>
+<h3 id="51-preparer-lhyperviseur">5.1 Préparer l'hyperviseur<a class="headerlink" href="#51-preparer-lhyperviseur" title="Permanent link">&para;</a></h3>
+<p>La carte réseau de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> va émettre des trames avec <strong>plusieurs adresses <abbr title="Media Access Control — adresse matérielle d'une carte réseau">MAC</abbr></strong> (la sienne et celles des conteneurs). Par sécurité, les hyperviseurs les bloquent souvent : il faut autoriser le <strong>mode promiscuité</strong> sur la carte de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</p>
+<p>🖥️ Selon l'hyperviseur :</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">VMware Workstation</label><label for="__tabbed_1_2">VirtualBox</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Workstation n'a pas de case « promiscuité » dans les réglages de la carte réseau : sur un PC Windows, il n'y a en général rien à régler. Si le conteneur macvlan reste injoignable depuis le PC, vérifier que la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> est bien sur <strong>VMnet8</strong>, et refaire l'essai depuis une autre <abbr title="Virtual Machine — machine virtuelle">VM</abbr> du même réseau.</p>
+</div>
+<div class="tabbed-block">
+<p><abbr title="Virtual Machine — machine virtuelle">VM</abbr> éteinte : <strong>Configuration &gt; Réseau &gt; Carte 2</strong> (le réseau privé hôte), section <strong>Avancé</strong>, <strong>Mode promiscuité</strong> : <strong>Tout autoriser</strong>. La carte parente sera alors <code>enp0s8</code>, sur le réseau <code>192.168.56.0/24</code>.</p>
+</div>
+</div>
+</div>
+<h3 id="52-creer-le-reseau-macvlan">5.2 Créer le réseau macvlan<a class="headerlink" href="#52-creer-le-reseau-macvlan" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>🐧 Repérer la carte de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, son adresse et sa passerelle :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>ip<span class="w"> </span>-br<span class="w"> </span>a
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>ip<span class="w"> </span>route<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>default
+</code></pre></div>
+</li>
+<li>
+<p>🐧 Créer le réseau macvlan. On réserve aux conteneurs une petite plage de <strong>8 adresses libres</strong>, choisie <strong>en dehors</strong> de la plage du <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> de l'hyperviseur, pour ne jamais voler l'adresse d'une autre machine :</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">VMware Workstation</label><label for="__tabbed_2_2">VirtualBox</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Carte <code>ens33</code> (le nom peut varier), réseau VMnet8 <code>192.168.x.0/24</code>, passerelle <code>192.168.x.2</code>, <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> de <code>.128</code> à <code>.254</code>. Plage réservée : <code>192.168.x.96</code> à <code>192.168.x.103</code>. Remplacer <code>x</code> par le troisième octet de son réseau :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>docker<span class="w"> </span>network<span class="w"> </span>create<span class="w"> </span>-d<span class="w"> </span>macvlan<span class="w"> </span>--subnet<span class="o">=</span><span class="m">192</span>.168.x.0/24<span class="w"> </span>--gateway<span class="o">=</span><span class="m">192</span>.168.x.2<span class="w"> </span>--ip-range<span class="o">=</span><span class="m">192</span>.168.x.96/29<span class="w"> </span>-o<span class="w"> </span><span class="nv">parent</span><span class="o">=</span>ens33<span class="w"> </span>mon_macvlan
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>web-macvlan<span class="w"> </span>--network<span class="w"> </span>mon_macvlan<span class="w"> </span>--ip<span class="w"> </span><span class="m">192</span>.168.x.100<span class="w"> </span>nginx
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>Carte <code>enp0s8</code> (la seconde, réseau privé hôte), réseau <code>192.168.56.0/24</code>, <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> à partir de <code>.101</code>. Ce réseau n'a pas de routeur : on indique le PC (<code>.1</code>) comme passerelle. Plage réservée : <code>192.168.56.48</code> à <code>192.168.56.55</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>docker<span class="w"> </span>network<span class="w"> </span>create<span class="w"> </span>-d<span class="w"> </span>macvlan<span class="w"> </span>--subnet<span class="o">=</span><span class="m">192</span>.168.56.0/24<span class="w"> </span>--gateway<span class="o">=</span><span class="m">192</span>.168.56.1<span class="w"> </span>--ip-range<span class="o">=</span><span class="m">192</span>.168.56.48/29<span class="w"> </span>-o<span class="w"> </span><span class="nv">parent</span><span class="o">=</span>enp0s8<span class="w"> </span>mon_macvlan
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>web-macvlan<span class="w"> </span>--network<span class="w"> </span>mon_macvlan<span class="w"> </span>--ip<span class="w"> </span><span class="m">192</span>.168.56.50<span class="w"> </span>nginx
+</code></pre></div>
+</div>
+</div>
+</div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-d macvlan</code></td>
+<td>Pilote macvlan</td>
+</tr>
+<tr>
+<td><code>--subnet</code>, <code>--gateway</code></td>
+<td>Le réseau <strong>local</strong> et sa passerelle (les mêmes que la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>)</td>
+</tr>
+<tr>
+<td><code>--ip-range=…/29</code></td>
+<td>Docker ne distribuera que ces 8 adresses</td>
+</tr>
+<tr>
+<td><code>-o parent=…</code></td>
+<td>La carte de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> sur laquelle se greffent les conteneurs</td>
+</tr>
+<tr>
+<td><code>--ip</code></td>
+<td>L'adresse fixe du conteneur, prise dans la plage réservée</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>🐧 Vérifier l'adresse et l'adresse <abbr title="Media Access Control — adresse matérielle d'une carte réseau">MAC</abbr> du conteneur :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>docker<span class="w"> </span>inspect<span class="w"> </span>-f<span class="w"> </span><span class="s1">'{{range .NetworkSettings.Networks}}{{.IPAddress}} {{.MacAddress}}{{end}}'</span><span class="w"> </span>web-macvlan
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>192.168.8.201 9e:d0:81:e5:7e:f8
+</code></pre></div>
+<p>(exemple : l'adresse est celle choisie, et l'adresse <abbr title="Media Access Control — adresse matérielle d'une carte réseau">MAC</abbr> est tirée au hasard par Docker).</p>
+</li>
+</ol>
+<h3 id="53-tester-depuis-le-pc-et-depuis-la-vm">5.3 Tester depuis le PC… et depuis la <abbr title="Virtual Machine — machine virtuelle">VM</abbr><a class="headerlink" href="#53-tester-depuis-le-pc-et-depuis-la-vm" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🌐 Depuis le PC, ouvrir <code>http://</code> suivi de l'adresse choisie pour le conteneur : la page de nginx s'affiche, <strong>sans aucun port publié</strong>. 🖥️ Le PC a appris l'adresse <abbr title="Media Access Control — adresse matérielle d'une carte réseau">MAC</abbr> du conteneur comme celle de n'importe quelle machine : <code>arp -a</code> dans PowerShell la montre.</li>
+<li>
+<p>🐧 Depuis la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, essayer la même adresse :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>curl<span class="w"> </span>-s<span class="w"> </span>-m3<span class="w"> </span>http://192.168.x.100<span class="p">;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"code=</span><span class="nv">$?</span><span class="s2">"</span><span class="w">     </span><span class="c1"># ou http://192.168.56.50 sous VirtualBox</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>code=28
+</code></pre></div>
+<p>Échec : c'est une <strong>limite connue</strong> de macvlan. Pour des raisons de conception du noyau Linux, la machine hôte ne peut pas joindre ses propres conteneurs macvlan, même si tout le reste du réseau le peut.</p>
+</li>
+</ol>
+<div class="admonition question">
+<p class="admonition-title">Quand utiliser macvlan ?</p>
+<p>Pour un service qui doit <strong>apparaître comme une machine à part entière</strong> sur le réseau local : un serveur <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> ou <abbr title="Domain Name System — résolution des noms">DNS</abbr> conteneurisé, un outil qui découvre les équipements du réseau, une application qui a besoin de son propre nom et de sa propre adresse. Pour un site web classique, un bridge et un port publié (ou un reverse proxy, jour 3) suffisent et sont plus simples.</p>
+</div>
+<p>🐧 Nettoyer :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>web-macvlan
+<a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>docker<span class="w"> </span>network<span class="w"> </span>rm<span class="w"> </span>mon_macvlan
+</code></pre></div>
+<p>🖥️ Sous VirtualBox, <abbr title="Virtual Machine — machine virtuelle">VM</abbr> éteinte, remettre le <strong>Mode promiscuité</strong> de la carte 2 sur <strong>Refuser</strong> : on ne laisse pas une carte en promiscuité sans raison.</p>
+<h2 id="6-docker-et-le-pare-feu">6. Docker et le pare-feu<a class="headerlink" href="#6-docker-et-le-pare-feu" title="Permanent link">&para;</a></h2>
+<h3 id="61-publier-un-port-seulement-en-local">6.1 Publier un port seulement en local<a class="headerlink" href="#61-publier-un-port-seulement-en-local" title="Permanent link">&para;</a></h3>
+<p>🐧 Par défaut, <code>-p 8085:80</code> publie sur <strong>toutes</strong> les adresses de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>. On peut limiter à une seule adresse, par exemple la boucle locale, pour un service qui ne doit être joignable <strong>que depuis la <abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>prive<span class="w"> </span>-p<span class="w"> </span><span class="m">127</span>.0.0.1:8085:80<span class="w"> </span>nginx
+<a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>docker<span class="w"> </span>ps<span class="w"> </span>--filter<span class="w"> </span><span class="nv">name</span><span class="o">=</span>prive<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Ports}}'</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>127.0.0.1:8085-&gt;80/tcp
+</code></pre></div>
+<p><code>curl http://localhost:8085</code> fonctionne dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ; 🌐 <code>http://IP-de-la-VM:8085</code> échoue depuis le PC.</p>
+<h3 id="62-les-ports-publies-contournent-le-pare-feu">6.2 Les ports publiés contournent le pare-feu<a class="headerlink" href="#62-les-ports-publies-contournent-le-pare-feu" title="Permanent link">&para;</a></h3>
+<p>Pour publier un port, Docker écrit lui-même des <strong>règles de <abbr title="Network Address Translation — traduction d'adresses">NAT</abbr></strong> dans le pare-feu du noyau (iptables, ici sur sa variante nftables) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>sudo<span class="w"> </span>iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-S<span class="w"> </span>DOCKER
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>-N DOCKER
+<a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a>-A DOCKER ! -i docker0 -p tcp -m tcp --dport 9443 -j DNAT --to-destination 172.17.0.2:9443
+<a id="__codelineno-38-3" name="__codelineno-38-3" href="#__codelineno-38-3"></a>-A DOCKER -d 127.0.0.1/32 ! -i docker0 -p tcp -m tcp --dport 8085 -j DNAT --to-destination 172.17.0.3:80
+</code></pre></div>
+<p>Chaque port publié devient une règle <strong><abbr title="Destination NAT — traduction de l'adresse de destination">DNAT</abbr></strong> (traduction d'adresse de destination), comme une redirection de port sur un routeur. Le paquet est redirigé vers le conteneur <strong>dès son arrivée</strong>, avant d'atteindre les règles qui protègent la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> elle-même (la chaîne <code>INPUT</code>, celle qu'utilise <abbr title="Uncomplicated Firewall — interface simplifiée du pare-feu Linux">UFW</abbr>) : il est <strong>routé</strong> vers le conteneur, pas <strong>reçu</strong> par la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</p>
+<div class="admonition danger">
+<p class="admonition-title"><abbr title="Uncomplicated Firewall — interface simplifiée du pare-feu Linux">UFW</abbr> et Docker : un piège classique</p>
+<p>Sur une machine protégée par <strong><abbr title="Uncomplicated Firewall — interface simplifiée du pare-feu Linux">UFW</abbr></strong> (ou firewalld), un administrateur bloque le port 8080 avec <code>ufw deny 8080</code>, puis lance <code>docker run -p 8080:80 …</code>. Le port est <strong>quand même joignable</strong> depuis l'extérieur : le paquet est redirigé vers le conteneur sans jamais passer par les règles d'<abbr title="Uncomplicated Firewall — interface simplifiée du pare-feu Linux">UFW</abbr>. La documentation de Docker le signale explicitement.</p>
+<p>Les bonnes pratiques :</p>
+<ul>
+<li>ne publier <strong>que</strong> les ports nécessaires, et les limiter à une adresse (<code>-p 127.0.0.1:…</code>) quand ils ne servent qu'en local ;</li>
+<li>mettre les services derrière un <strong>reverse proxy</strong> (jour 3), qui seul publie les ports 80 et 443 ;</li>
+<li>filtrer, si besoin, dans la chaîne <strong><code>DOCKER-USER</code></strong>, que Docker réserve aux règles de l'administrateur et qu'il ne modifie jamais ;</li>
+<li>protéger le serveur par un <strong>pare-feu réseau</strong> en amont (pfSense, OPNsense…), qui ne dépend pas de la machine.</li>
+</ul>
+</div>
+<p>🐧 Nettoyer :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>prive
+</code></pre></div>
+<h2 id="7-synthese">7. Synthèse<a class="headerlink" href="#7-synthese" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Type de réseau</th>
+<th>Communication</th>
+<th>Isolation</th>
+<th>Cas d'utilisation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bridge <strong>par défaut</strong></td>
+<td>Entre conteneurs, par adresse IP seulement</td>
+<td>Partielle</td>
+<td>Essais rapides</td>
+</tr>
+<tr>
+<td>Bridge <strong>personnalisé</strong></td>
+<td>Entre conteneurs du même réseau, <strong>par leur nom</strong></td>
+<td>Oui, par réseau</td>
+<td>Le cas général : une application à plusieurs conteneurs</td>
+</tr>
+<tr>
+<td>Host</td>
+<td>Utilise directement le réseau de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr></td>
+<td>Non</td>
+<td>Performances, outils de supervision réseau</td>
+</tr>
+<tr>
+<td>None</td>
+<td>Aucune</td>
+<td>Totale</td>
+<td>Traitements qui ne doivent pas communiquer</td>
+</tr>
+<tr>
+<td>Macvlan</td>
+<td>Le conteneur est une machine du réseau local</td>
+<td>Partielle</td>
+<td>Services qui ont besoin de leur propre adresse sur le réseau</td>
+</tr>
+<tr>
+<td>Overlay</td>
+<td>Entre conteneurs de <strong>plusieurs</strong> serveurs</td>
+<td>Oui</td>
+<td>Cluster Swarm (partie 16)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="8-exercice">8. Exercice<a class="headerlink" href="#8-exercice" title="Permanent link">&para;</a></h2>
+<p>✍️ Créer deux réseaux, <code>front</code> et <code>back</code>. Lancer un conteneur <code>bdd</code> (image <code>mariadb:11.8</code>, mot de passe root <code>TutoDocker2026!</code>) sur <code>back</code> seulement, et un conteneur <code>web</code> (image <code>nginx</code>) sur <code>front</code> <strong>et</strong> <code>back</code>. Lancer enfin un conteneur jetable <code>intrus</code> sur <code>front</code> seulement. Vérifier que <code>web</code> résout le nom <code>bdd</code>, et que <code>intrus</code>, lui, ne le résout pas.</p>
+<details class="success">
+<summary>Réponse</summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>docker<span class="w"> </span>network<span class="w"> </span>create<span class="w"> </span>front
+<a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a>docker<span class="w"> </span>network<span class="w"> </span>create<span class="w"> </span>back
+<a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>bdd<span class="w"> </span>--network<span class="w"> </span>back<span class="w"> </span>-e<span class="w"> </span><span class="nv">MARIADB_ROOT_PASSWORD</span><span class="o">=</span><span class="s1">'TutoDocker2026!'</span><span class="w"> </span>mariadb:11.8
+<a id="__codelineno-40-4" name="__codelineno-40-4" href="#__codelineno-40-4"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>web<span class="w"> </span>--network<span class="w"> </span>front<span class="w"> </span>nginx
+<a id="__codelineno-40-5" name="__codelineno-40-5" href="#__codelineno-40-5"></a>docker<span class="w"> </span>network<span class="w"> </span>connect<span class="w"> </span>back<span class="w"> </span>web
+<a id="__codelineno-40-6" name="__codelineno-40-6" href="#__codelineno-40-6"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>web<span class="w"> </span>getent<span class="w"> </span>hosts<span class="w"> </span>bdd<span class="w">                                   </span><span class="c1"># répond : 172.x.x.x bdd</span>
+<a id="__codelineno-40-7" name="__codelineno-40-7" href="#__codelineno-40-7"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--name<span class="w"> </span>intrus<span class="w"> </span>--network<span class="w"> </span>front<span class="w"> </span>debian:13<span class="w"> </span>getent<span class="w"> </span>hosts<span class="w"> </span>bdd<span class="p">;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"code=</span><span class="nv">$?</span><span class="s2">"</span><span class="w">   </span><span class="c1"># rien, code=2</span>
+</code></pre></div>
+<p><code>web</code>, branché sur les deux réseaux, joint la base ; <code>intrus</code>, seulement sur <code>front</code>, ne la trouve même pas. C'est le schéma classique : le serveur web est exposé, la base de données est cachée derrière lui. Nettoyer ensuite : <code>docker rm -f bdd web</code> puis <code>docker network rm front back</code>.</p>
+</details>
+<h2 id="9-verifier-son-lab">9. Vérifier son lab<a class="headerlink" href="#9-verifier-son-lab" title="Permanent link">&para;</a></h2>
+<div class="admonition success">
+<p class="admonition-title">Vérifier son lab</p>
+<p>🐧 Ce test crée un réseau personnalisé, y lance un conteneur et le résout par son nom :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>docker<span class="w"> </span>network<span class="w"> </span>create<span class="w"> </span>verif-net
+<a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>cible<span class="w"> </span>--network<span class="w"> </span>verif-net<span class="w"> </span>nginx
+<a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--network<span class="w"> </span>verif-net<span class="w"> </span>debian:13<span class="w"> </span>getent<span class="w"> </span>hosts<span class="w"> </span>cible
+<a id="__codelineno-41-4" name="__codelineno-41-4" href="#__codelineno-41-4"></a>docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>cible<span class="p">;</span><span class="w"> </span>docker<span class="w"> </span>network<span class="w"> </span>rm<span class="w"> </span>verif-net
+</code></pre></div>
+<p>Résultat attendu : une ligne <code>172.x.x.x      cible</code> (l'adresse dépend du sous-réseau choisi par Docker), puis <code>cible</code> et <code>verif-net</code>.</p>
+</div>
+<h2 id="10-questions-de-revision">10. Questions de révision<a class="headerlink" href="#10-questions-de-revision" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Pourquoi deux conteneurs sur le bridge par défaut ne se trouvent-ils pas par leur nom ? Comment y remédier ?</li>
+<li>À quelle adresse se trouve le <abbr title="Domain Name System — résolution des noms">DNS</abbr> intégré de Docker ? Que sait-il résoudre ?</li>
+<li>Comment empêcher un conteneur <code>web</code> d'atteindre la base de données d'une autre application ?</li>
+<li>Quelle est la différence entre <code>-p 8080:80</code> et <code>-p 127.0.0.1:8080:80</code> ?</li>
+<li>Un administrateur bloque le port 8080 avec <abbr title="Uncomplicated Firewall — interface simplifiée du pare-feu Linux">UFW</abbr>, mais un conteneur publié sur ce port reste joignable. Pourquoi ? Que faire ?</li>
+<li>Un conteneur macvlan est joignable depuis le PC, pas depuis la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> qui l'héberge. Est-ce une panne ?</li>
+</ol>
+<details class="success">
+<summary>Corrigé</summary>
+<ol>
+<li>Le bridge <strong>par défaut</strong> n'a pas de résolution de noms entre conteneurs. Il faut créer un <strong>réseau personnalisé</strong> (<code>docker network create</code>) et y brancher les conteneurs : ils s'y trouvent alors par leur nom.</li>
+<li>En <code>127.0.0.11</code>, dans chaque conteneur branché sur un réseau personnalisé. Il résout les <strong>noms des conteneurs</strong> du même réseau, et transmet les autres noms au <abbr title="Domain Name System — résolution des noms">DNS</abbr> de la machine.</li>
+<li>En ne les mettant <strong>sur aucun réseau commun</strong> : chaque application a son propre réseau pour sa base de données. Sans réseau partagé, le nom ne se résout pas et l'adresse n'est pas joignable, à condition qu'aucun des deux ne soit <strong>aussi</strong> sur le bridge par défaut (c'est le cas avec Docker Compose, qui ne s'en sert pas).</li>
+<li><code>-p 8080:80</code> publie le port sur <strong>toutes</strong> les adresses de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (joignable depuis le réseau) ; <code>-p 127.0.0.1:8080:80</code> le publie seulement sur la <strong>boucle locale</strong> : joignable uniquement depuis la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> elle-même.</li>
+<li>Docker écrit ses propres règles de <strong><abbr title="Network Address Translation — traduction d'adresses">NAT</abbr></strong> (<abbr title="Destination NAT — traduction de l'adresse de destination">DNAT</abbr>), traitées avant les règles de filtrage d'<abbr title="Uncomplicated Firewall — interface simplifiée du pare-feu Linux">UFW</abbr>. Il faut publier le moins de ports possible, les limiter à une adresse, passer par un reverse proxy, filtrer dans la chaîne <code>DOCKER-USER</code>, et compter sur un pare-feu réseau en amont.</li>
+<li>Non : c'est une <strong>limite connue</strong> de macvlan. L'hôte ne peut pas joindre ses propres sous-interfaces macvlan, alors que toutes les autres machines du réseau le peuvent.</li>
+</ol>
+</details>
+<hr />
+<h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://docs.docker.com/engine/network/">Docker — Vue d'ensemble des réseaux</a> — les pilotes et leur fonctionnement (en anglais).</li>
+<li><a href="https://docs.docker.com/engine/network/drivers/bridge/">Docker — Le pilote bridge</a> — différences entre bridge par défaut et personnalisé.</li>
+<li><a href="https://docs.docker.com/engine/network/drivers/macvlan/">Docker — Le pilote macvlan</a> — création et limites.</li>
+<li><a href="https://docs.docker.com/engine/network/packet-filtering-firewalls/">Docker — Filtrage des paquets et pare-feu</a> — Docker, iptables, <abbr title="Uncomplicated Firewall — interface simplifiée du pare-feu Linux">UFW</abbr> et la chaîne <code>DOCKER-USER</code>.</li>
+<li>Partie précédente : <a href="../06-sauvegarder-un-conteneur-en-image/">Sauvegarder un conteneur sous forme d'image</a> · Partie suivante : <a href="../08-docker-compose-nextcloud/">Docker Compose : Nextcloud en une commande</a>.</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../06-sauvegarder-un-conteneur-en-image/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 6. Sauvegarder un conteneur sous forme d&#39;image">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                6. Sauvegarder un conteneur sous forme d'image
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../08-docker-compose-nextcloud/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 8. Docker Compose : Nextcloud en une commande">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                8. Docker Compose : Nextcloud en une commande
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      <a href="/mentions-legales/">Mentions légales</a>
+
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/bodaine" target="_blank" rel="noopener" title="Nicolas BODAINE sur LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://github.com/NicoBOD" target="_blank" rel="noopener" title="NicoBOD sur GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://nicolas.bodaine.fr" target="_blank" rel="noopener" title="Portfolio de Nicolas BODAINE" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="/feed_rss_created.xml" target="_blank" rel="noopener" title="Flux RSS des derniers articles" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 64c0-17.7 14.3-32 32-32 229.8 0 416 186.2 416 416 0 17.7-14.3 32-32 32s-32-14.3-32-32C384 253.6 226.4 96 32 96 14.3 96 0 81.7 0 64m0 352a64 64 0 1 1 128 0 64 64 0 1 1-128 0m32-256c159.1 0 288 128.9 288 288 0 17.7-14.3 32-32 32s-32-14.3-32-32c0-123.7-100.3-224-224-224-17.7 0-32-14.3-32-32s14.3-32 32-32"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.path", "navigation.indexes", "navigation.prune", "navigation.footer", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "content.action.view", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>

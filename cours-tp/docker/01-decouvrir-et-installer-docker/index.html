@@ -1,0 +1,4765 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+      
+      
+        <meta name="author" content="Nicolas BODAINE">
+      
+      
+        <link rel="canonical" href="https://wiki.bodaine.fr/cours-tp/docker/01-decouvrir-et-installer-docker/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../02-premiers-conteneurs/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
+    
+    
+      
+        <title>Découvrir Docker et l'installer sur Debian 13 : conteneur ou VM, dépôt officiel, groupe docker, script d'installation - Wiki Tech — NicoBOD</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        
+        <link rel="stylesheet" href="../../../assets/external/fonts.googleapis.com/css.56f7ac64.css">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+    
+    
+      
+    
+    
+
+    <!-- SEO -->
+    <meta name="author" content="Nicolas BODAINE">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph : compléments non gérés par le plugin social.     -->
+    <!-- og:type/title/description/image/url sont posés par social.   -->
+    <meta property="og:site_name" content="Wiki Tech — NicoBOD">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card : la grande image et l'image elle-même sont      -->
+    <!-- héritées des balises og:image générées par le plugin social.  -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Découvrir Docker et l'installer sur Debian 13 : conteneur ou VM, dépôt officiel, groupe docker, script d'installation — Wiki Tech — NicoBOD">
+    <meta name="twitter:description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+  
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#decouvrir-docker-et-linstaller" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-header__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wiki Tech — NicoBOD
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Découvrir Docker et l'installer sur Debian 13 : conteneur ou VM, dépôt officiel, groupe docker, script d'installation
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer en mode clair"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer en mode clair" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Passer en mode sombre"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer en mode sombre" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Revenir au thème système"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Revenir au thème système" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Partager" aria-label="Partager" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../systemes/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h16v10H4m16 2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4c-1.11 0-2 .89-2 2v10a2 2 0 0 0 2 2H0v2h24v-2z"/></svg>
+    
+  
+  Systèmes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../reseaux/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v2h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+    
+  
+  Réseaux
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cloud/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 20q-2.28 0-3.89-1.57Q1 16.85 1 14.58q0-1.95 1.17-3.48 1.18-1.53 3.08-1.95.63-2.3 2.5-3.72Q9.63 4 12 4q2.93 0 4.96 2.04Q19 8.07 19 11q1.73.2 2.86 1.5 1.14 1.28 1.14 3 0 1.88-1.31 3.19T18.5 20Z"/></svg>
+    
+  
+  Cloud
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cybersecurite/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12h7c-.53 4.11-3.28 7.78-7 8.92zH5V6.3l7-3.11M12 1 3 5v6c0 5.55 3.84 10.73 9 12 5.16-1.27 9-6.45 9-12V5z"/></svg>
+    
+  
+  Cybersécurité
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../ia/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/></svg>
+    
+  
+  IA
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../automatisation/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+    
+  
+  Automatisation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../logiciels/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m0 5H3V4h18z"/></svg>
+    
+  
+  Logiciels
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../debug/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 12h-4v-2h4m0 6h-4v-2h4m6-6h-2.81a6 6 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6 6 0 0 0-2.83 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20z"/></svg>
+    
+  
+  Debug
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../astuces/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+    
+  
+  Astuces
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+    
+  
+  Cours et TP
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../tags/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tags
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-nav__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    Wiki Tech — NicoBOD
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../systemes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Systèmes
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../reseaux/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Réseaux
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cybersecurite/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cybersécurité
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../ia/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IA
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../automatisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automatisation
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../logiciels/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logiciels
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../debug/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../astuces/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Astuces
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cours et TP
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cours et TP
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../veeam/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Veeam Backup & Replication
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_2" id="__nav_11_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Veeam Backup & Replication
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/01-comprendre-la-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/02-decouvrir-veeam-data-platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Découvrir Veeam Data Platform 13
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/03-preparer-le-lab-installer-appliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Préparer le lab et installer l'appliance
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/04-ajouter-des-depots-de-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Ajouter des dépôts de sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/05-sauvegarder-configuration-et-serveur-de-fichiers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Sauvegarder la configuration et un serveur de fichiers
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/06-sauvegarder-restaurer-serveur-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Sauvegarder et restaurer un serveur Linux
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/07-sauvegarder-vers-azure-blob/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Sauvegarder vers Azure Blob Storage
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pfsense-ha/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cluster pfSense en haute disponibilité
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_3" id="__nav_11_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cluster pfSense en haute disponibilité
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/01-comprendre-haute-disponibilite/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la haute disponibilité
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/02-preparer-lab-installer-pfsense/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Préparer le lab et installer pfSense
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/03-configuration-initiale/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Configuration initiale
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/04-synchroniser-le-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Synchroniser le cluster
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/05-vip-carp-nat-sortant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. VIP CARP et NAT sortant
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/06-tester-la-bascule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Tester la bascule
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/07-agregation-lacp-troisieme-noeud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Agrégation LACP et troisième nœud
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/08-mettre-a-jour-le-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8. Mettre à jour le cluster
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../virtualisation/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Virtualisation (5 jours)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_4" id="__nav_11_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Virtualisation (5 jours)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/01-comprendre-la-virtualisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 1 — Comprendre et créer ses VM
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/05-virtualiser-des-serveurs/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 2 — Serveurs, réseau, stockage
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/09-panorama-des-technologies/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 3 — Technologies du système
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/12-stockage-sds-hyperconvergence/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 4 — Stockage, réseau, applications
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/15-le-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 5 — Cloud, tendances, défi final
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../virtualisation/annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker (5 jours)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_5" id="__nav_11_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Docker (5 jours)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_5_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_11_5_2" id="__nav_11_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 1 — Installer Docker et lancer ses premiers conteneurs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_11_5_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Jour 1 — Installer Docker et lancer ses premiers conteneurs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Découvrir Docker et l'installer
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Découvrir Docker et l'installer
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-docker-en-dix-minutes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Docker en dix minutes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Docker en dix minutes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-le-probleme-du-chez-moi-ca-marche" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Le problème du « chez moi, ça marche »
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-avant-docker-un-serveur-ou-une-vm-par-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Avant Docker : un serveur, ou une VM, par application
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-le-conteneur-isoler-lapplication-pas-tout-le-systeme" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Le conteneur : isoler l'application, pas tout le système
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-lidee-vient-des-ports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 L'idée vient des ports
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#15-les-mots-a-connaitre" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.5 Les mots à connaître
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#16-docker-docker-engine-docker-desktop-qui-est-qui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.6 Docker, Docker Engine, Docker Desktop : qui est qui ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-creer-la-vm-docker-hote" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Créer la VM docker-hote
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Créer la VM docker-hote">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-les-reglages-de-la-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Les réglages de la VM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-installer-debian-13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Installer Debian 13
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-noter-ladresse-de-la-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Noter l'adresse de la VM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-se-connecter-en-ssh-depuis-le-pc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Se connecter en SSH depuis le PC
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-installer-docker-depuis-le-depot-officiel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Installer Docker depuis le dépôt officiel
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Installer Docker depuis le dépôt officiel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-pourquoi-pas-le-paquet-dockerio-de-debian" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Pourquoi pas le paquet docker.io de Debian ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-donner-les-droits-dadministration-a-tssr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Donner les droits d'administration à tssr
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-ajouter-le-depot-de-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Ajouter le dépôt de Docker
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-installer-les-paquets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Installer les paquets
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-verifier-linstallation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 Vérifier l'installation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-utiliser-docker-sans-sudo-le-groupe-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Utiliser Docker sans sudo : le groupe docker
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Utiliser Docker sans sudo : le groupe docker">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-le-constat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Le constat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-ajouter-tssr-au-groupe-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Ajouter tssr au groupe docker
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-installer-docker-avec-un-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Installer Docker avec un script
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Installer Docker avec un script">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-le-script-officiel-de-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Le script officiel de Docker
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-le-script-tutotech-commente-facultatif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Le script TutoTech, commenté (facultatif)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-verifier-son-lab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Vérifier son lab
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-premiers-conteneurs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Premiers conteneurs
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-apache-et-ssh-dans-un-conteneur/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Un serveur web et SSH dans un conteneur Debian
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-portainer-et-lazydocker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Gérer Docker avec Portainer et LazyDocker
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../05-volumes-et-dossiers-montes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 2 — Données, réseaux et Docker Compose
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tags/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.5 7A1.5 1.5 0 0 1 4 5.5 1.5 1.5 0 0 1 5.5 4 1.5 1.5 0 0 1 7 5.5 1.5 1.5 0 0 1 5.5 7m15.91 4.58-9-9C12.05 2.22 11.55 2 11 2H4c-1.11 0-2 .89-2 2v7c0 .55.22 1.05.59 1.41l8.99 9c.37.36.87.59 1.42.59s1.05-.23 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.56-.23-1.06-.59-1.42"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-docker-en-dix-minutes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Docker en dix minutes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Docker en dix minutes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-le-probleme-du-chez-moi-ca-marche" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Le problème du « chez moi, ça marche »
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-avant-docker-un-serveur-ou-une-vm-par-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Avant Docker : un serveur, ou une VM, par application
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-le-conteneur-isoler-lapplication-pas-tout-le-systeme" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Le conteneur : isoler l'application, pas tout le système
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-lidee-vient-des-ports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 L'idée vient des ports
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#15-les-mots-a-connaitre" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.5 Les mots à connaître
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#16-docker-docker-engine-docker-desktop-qui-est-qui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.6 Docker, Docker Engine, Docker Desktop : qui est qui ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-creer-la-vm-docker-hote" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Créer la VM docker-hote
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Créer la VM docker-hote">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-les-reglages-de-la-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Les réglages de la VM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-installer-debian-13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Installer Debian 13
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-noter-ladresse-de-la-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Noter l'adresse de la VM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-se-connecter-en-ssh-depuis-le-pc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Se connecter en SSH depuis le PC
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-installer-docker-depuis-le-depot-officiel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Installer Docker depuis le dépôt officiel
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Installer Docker depuis le dépôt officiel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-pourquoi-pas-le-paquet-dockerio-de-debian" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Pourquoi pas le paquet docker.io de Debian ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-donner-les-droits-dadministration-a-tssr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Donner les droits d'administration à tssr
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-ajouter-le-depot-de-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Ajouter le dépôt de Docker
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-installer-les-paquets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Installer les paquets
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-verifier-linstallation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 Vérifier l'installation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-utiliser-docker-sans-sudo-le-groupe-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Utiliser Docker sans sudo : le groupe docker
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Utiliser Docker sans sudo : le groupe docker">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-le-constat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Le constat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-ajouter-tssr-au-groupe-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Ajouter tssr au groupe docker
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-installer-docker-avec-un-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Installer Docker avec un script
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Installer Docker avec un script">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-le-script-officiel-de-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Le script officiel de Docker
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-le-script-tutotech-commente-facultatif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Le script TutoTech, commenté (facultatif)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-verifier-son-lab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Vérifier son lab
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Cours et TP
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Docker (5 jours)
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="./" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Jour 1 — Installer Docker et lancer ses premiers conteneurs
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:cours" class="md-tag">cours</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:debian" class="md-tag">debian</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:docker" class="md-tag">docker</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:installation" class="md-tag">installation</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:travaux-pratiques" class="md-tag">travaux-pratiques</a>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/NicoBOD/wiki-tech/edit/main/docs/cours-tp/docker/01-decouvrir-et-installer-docker.md" title="Editer cette page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/NicoBOD/wiki-tech/raw/main/docs/cours-tp/docker/01-decouvrir-et-installer-docker.md" title="Consulter la source de cette page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<!-- ============================================================ -->
+<!-- ⚠️ RAPPEL IMPORTANT :                                          -->
+<!-- Pensez TOUJOURS à ajouter une entrée dans le fichier d'index  -->
+<!-- (index.md) du dossier correspondant (ex: docs/cloud/index.md) -->
+<!-- afin de référencer ce nouvel article et permettre aux         -->
+<!-- visiteurs de le trouver et de cliquer dessus !                -->
+<!-- ============================================================ -->
+
+<h1 id="decouvrir-docker-et-linstaller">Découvrir Docker et l'installer<a class="headerlink" href="#decouvrir-docker-et-linstaller" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Résumé</p>
+<p>Cette première partie répond en quelques minutes à la question <strong>« Docker, c'est quoi, et pourquoi tout le monde l'utilise ? »</strong>, puis passe tout de suite à la pratique. On crée la machine virtuelle <strong><code>docker-hote</code></strong> sous Debian 13, on y <strong>installe Docker depuis le dépôt officiel</strong>, exactement comme le recommande la documentation de Docker, et on vérifie que tout fonctionne avec le célèbre <code>hello-world</code>.</p>
+<p>On voit ensuite comment utiliser Docker <strong>sans taper <code>sudo</code></strong> à chaque commande, et pourquoi ce confort a un <strong>prix en sécurité</strong>. On termine par deux façons d'<strong>automatiser</strong> l'installation : le script officiel de Docker et un script maison commenté. À la fin, Docker 29 tourne dans <code>docker-hote</code> et un instantané le protège.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Propriété</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Difficulté</td>
+<td>Débutant</td>
+</tr>
+<tr>
+<td>Durée estimée</td>
+<td>2 h (dont environ 15 minutes d'installation de Debian)</td>
+</tr>
+<tr>
+<td>Version décrite</td>
+<td>Debian 13.7 « trixie », Docker Engine 29.10, Docker Compose 5.8</td>
+</tr>
+<tr>
+<td>Place dans le parcours</td>
+<td>Partie 1 sur 17 du parcours <a href="../">Docker</a> — jour 1</td>
+</tr>
+<tr>
+<td>Dernière mise à jour</td>
+<td>2026-11-24</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<div class="admonition info">
+<p class="admonition-title">Convention de lecture</p>
+<p>🖥️ <strong>PC hôte</strong> (Windows, hyperviseur, PowerShell) · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code> · ✍️ <strong>exercice</strong> · 🛟 <strong>instantané</strong>. Les <a href="../#comptes-et-mots-de-passe">comptes et mots de passe</a> sont rappelés sur la page d'accueil du parcours.</p>
+</div>
+<h2 id="1-docker-en-dix-minutes">1. Docker en dix minutes<a class="headerlink" href="#1-docker-en-dix-minutes" title="Permanent link">&para;</a></h2>
+<h3 id="11-le-probleme-du-chez-moi-ca-marche">1.1 Le problème du « chez moi, ça marche »<a class="headerlink" href="#11-le-probleme-du-chez-moi-ca-marche" title="Permanent link">&para;</a></h3>
+<p>Une application ne vit jamais seule. Un site WordPress, par exemple, a besoin d'un serveur web (Apache), du langage <abbr title="langage de programmation des sites web dynamiques">PHP</abbr> dans une version précise, de modules <abbr title="langage de programmation des sites web dynamiques">PHP</abbr>, d'une base de données… Sur le poste du développeur, tout fonctionne. Sur le serveur de <strong>production</strong> (celui qu'utilisent les vrais utilisateurs), la version de <abbr title="langage de programmation des sites web dynamiques">PHP</abbr> est différente, un module manque, et l'application plante. D'où la phrase que tout administrateur a entendue un jour : <strong>« Pourtant, chez moi, ça marche ! »</strong></p>
+<p>C'est un peu comme une recette de cuisine réussie chez soi, qui rate chez un ami parce que son four ne chauffe pas pareil : le plat n'a pas changé, c'est <strong>l'environnement</strong> qui est différent.</p>
+<h3 id="12-avant-docker-un-serveur-ou-une-vm-par-application">1.2 Avant Docker : un serveur, ou une <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, par application<a class="headerlink" href="#12-avant-docker-un-serveur-ou-une-vm-par-application" title="Permanent link">&para;</a></h3>
+<p>Pour éviter les conflits, on avait deux solutions :</p>
+<ul>
+<li><strong>tout installer sur le même serveur</strong> : économique, mais dangereux. Le jour où une application a besoin de <abbr title="langage de programmation des sites web dynamiques">PHP</abbr> 8.4 et qu'une autre ne supporte que <abbr title="langage de programmation des sites web dynamiques">PHP</abbr> 8.2, l'une des deux casse. Plus on ajoute d'applications, plus le risque de conflit grandit : c'est le <strong>piège du tout-en-un</strong> ;</li>
+<li><strong>une machine virtuelle par application</strong> : chaque application a son propre système, rien ne se mélange. Mais chaque <abbr title="Virtual Machine — machine virtuelle">VM</abbr> embarque un système d'exploitation <strong>complet</strong> (noyau, services, mises à jour à faire…), occupe plusieurs Go de disque et de mémoire, et met de longues secondes à démarrer.</li>
+</ul>
+<h3 id="13-le-conteneur-isoler-lapplication-pas-tout-le-systeme">1.3 Le conteneur : isoler l'application, pas tout le système<a class="headerlink" href="#13-le-conteneur-isoler-lapplication-pas-tout-le-systeme" title="Permanent link">&para;</a></h3>
+<p>Un <strong>conteneur</strong> isole une application <strong>avec tout ce dont elle a besoin</strong> (ses fichiers, ses bibliothèques, ses réglages), mais <strong>sans</strong> copier un système d'exploitation complet : tous les conteneurs d'une machine <strong>partagent le même noyau Linux</strong>, celui de la machine qui les héberge.</p>
+<figure>
+<p><img alt="À gauche, trois machines virtuelles : chacune contient une application, ses bibliothèques et un système invité complet avec son propre noyau, au-dessus d'un hyperviseur. À droite, trois conteneurs : chacun contient seulement l'application et ses bibliothèques, au-dessus de Docker Engine et d'un unique système hôte Linux dont le noyau est partagé." loading="lazy" src="../images/vm-ou-conteneur.svg" /></p>
+<figcaption>
+<p>Une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> copie un système complet ; un conteneur ne copie que l'application et ce dont elle dépend.</p>
+</figcaption>
+</figure>
+<p>Résultat :</p>
+<ul>
+<li>un conteneur <strong>démarre en une fraction de seconde</strong> : il n'y a pas de système à démarrer, seulement un programme ;</li>
+<li>il <strong>pèse peu</strong> : quelques Mo pour les plus petits, quelques centaines de Mo pour une application complète, contre plusieurs Go pour une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ;</li>
+<li>on peut en faire tourner <strong>des dizaines</strong> sur un même serveur, côte à côte, sans qu'ils se gênent.</li>
+</ul>
+<div class="admonition question">
+<p class="admonition-title">Comment le noyau sépare-t-il les conteneurs ?</p>
+<p>Le noyau Linux sait donner à un groupe de processus <strong>sa propre vue</strong> du système : ses propres processus, sa propre carte réseau, sa propre arborescence de fichiers, son propre nom de machine. Ce mécanisme s'appelle les <strong>espaces de noms</strong> (<em>namespaces</em>). Un autre mécanisme, les <strong>groupes de contrôle</strong> (<em>cgroups</em>), limite ce que ce groupe peut consommer en processeur et en mémoire. Un conteneur, c'est simplement un ou plusieurs processus enfermés par ces deux mécanismes. La <a href="../../virtualisation/11-conteneurs/">partie 11 du parcours Virtualisation</a> le montre en détail.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Un conteneur n'est pas une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> légère</p>
+<p>Puisque le noyau est <strong>partagé</strong>, un conteneur Linux a besoin d'un noyau Linux, et un conteneur est <strong>moins isolé</strong> qu'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : une faille dans le noyau concerne tous les conteneurs de la machine. C'est pour cela que, dans la vraie vie, on fait souvent tourner Docker <strong>dans des <abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> : la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> isole les clients ou les services sensibles entre eux, et les conteneurs simplifient le déploiement à l'intérieur. C'est exactement ce qu'on fait dans ce parcours.</p>
+</div>
+<h3 id="14-lidee-vient-des-ports">1.4 L'idée vient des ports<a class="headerlink" href="#14-lidee-vient-des-ports" title="Permanent link">&para;</a></h3>
+<p>Avant les années 1960, charger un navire prenait des jours : chaque marchandise (sacs, tonneaux, caisses de toutes tailles) était posée une par une dans la cale. Puis est arrivé le <strong>conteneur maritime</strong> : une boîte métallique de taille <strong>standard</strong>. Peu importe ce qu'elle contient, les grues, les trains, les camions et les navires savent tous la manipuler de la même façon.</p>
+<p>Docker applique cette idée aux applications. Peu importe ce que contient le conteneur (un serveur web, une base de données, un outil de supervision), on le <strong>lance</strong>, on l'<strong>arrête</strong>, on le <strong>déplace</strong> et on le <strong>supprime</strong> toujours avec les <strong>mêmes commandes</strong>. Le logo de Docker, une baleine qui porte des conteneurs, vient de là.</p>
+<h3 id="15-les-mots-a-connaitre">1.5 Les mots à connaître<a class="headerlink" href="#15-les-mots-a-connaitre" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Mot</th>
+<th>Ce que c'est</th>
+<th>Analogie</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Image</strong></td>
+<td>Un modèle en lecture seule qui contient une application et tout ce dont elle a besoin</td>
+<td>La recette, ou le moule</td>
+</tr>
+<tr>
+<td><strong>Conteneur</strong></td>
+<td>Une image <strong>en train de tourner</strong> : un ou plusieurs processus isolés</td>
+<td>Le plat préparé à partir de la recette</td>
+</tr>
+<tr>
+<td><strong>Docker Engine</strong></td>
+<td>Le logiciel qui fabrique et fait tourner les conteneurs sur une machine Linux : un service, <code>dockerd</code>, et une commande, <code>docker</code></td>
+<td>La cuisine et le cuisinier</td>
+</tr>
+<tr>
+<td><strong>Registre</strong></td>
+<td>Un serveur qui stocke et distribue des images. Le plus connu est <strong>Docker Hub</strong></td>
+<td>Le supermarché des recettes</td>
+</tr>
+</tbody>
+</table>
+<p>Une même image peut donner naissance à <strong>autant de conteneurs</strong> qu'on veut, comme une recette permet de cuisiner plusieurs fois le même plat. La <a href="../02-premiers-conteneurs/">partie 2</a> manipule tout cela concrètement.</p>
+<h3 id="16-docker-docker-engine-docker-desktop-qui-est-qui">1.6 Docker, Docker Engine, Docker Desktop : qui est qui ?<a class="headerlink" href="#16-docker-docker-engine-docker-desktop-qui-est-qui" title="Permanent link">&para;</a></h3>
+<p><strong>Docker</strong> est d'abord le nom d'une entreprise, Docker Inc., qui a lancé l'outil en <strong>2013</strong> en le publiant en logiciel libre. Écrit en langage <strong>Go</strong>, il s'est imposé comme la façon standard de fabriquer et de lancer des conteneurs, au point que tous les grands fournisseurs de cloud (Amazon Web Services, Microsoft Azure, Google Cloud…) savent exécuter des conteneurs au format Docker.</p>
+<table>
+<thead>
+<tr>
+<th>Produit</th>
+<th>Pour qui</th>
+<th>Prix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Docker Engine</strong></td>
+<td>Les serveurs Linux : c'est ce qu'on installe dans ce parcours</td>
+<td>Gratuit et libre (licence Apache 2.0)</td>
+</tr>
+<tr>
+<td><strong>Docker Desktop</strong></td>
+<td>Les postes de travail Windows, macOS et Linux : une application graphique qui fait tourner Docker Engine dans une petite <abbr title="Virtual Machine — machine virtuelle">VM</abbr> cachée</td>
+<td>Gratuit pour un usage personnel, l'enseignement, les projets libres non commerciaux et les entreprises de moins de 250 salariés <strong>et</strong> de moins de 10 millions de dollars de chiffre d'affaires annuel ; payant au-delà</td>
+</tr>
+<tr>
+<td><strong>Docker Hub</strong></td>
+<td>Tout le monde : le registre public d'images</td>
+<td>Gratuit avec des limites (voir la <a href="../#jour-5-construire-distribuer-orchestrer">partie 15</a>)</td>
+</tr>
+</tbody>
+</table>
+<p>Docker Desktop est présenté en <a href="../04-portainer-et-lazydocker/">partie 4</a>. Un administrateur systèmes et réseaux, lui, travaille surtout avec <strong>Docker Engine</strong> sur des serveurs Linux.</p>
+<h2 id="2-creer-la-vm-docker-hote">2. Créer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> <code>docker-hote</code><a class="headerlink" href="#2-creer-la-vm-docker-hote" title="Permanent link">&para;</a></h2>
+<h3 id="21-les-reglages-de-la-vm">2.1 Les réglages de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr><a class="headerlink" href="#21-les-reglages-de-la-vm" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Réglage</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nom de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr></td>
+<td><code>docker-hote</code></td>
+</tr>
+<tr>
+<td>Système invité</td>
+<td>Debian 12.x ou 13.x 64 bits (Workstation) · Debian (64-bit) (VirtualBox)</td>
+</tr>
+<tr>
+<td>Processeur</td>
+<td>2 <abbr title="processeur virtuel">vCPU</abbr></td>
+</tr>
+<tr>
+<td>Mémoire</td>
+<td>4 Go (4096 Mo)</td>
+</tr>
+<tr>
+<td>Disque</td>
+<td>40 Go, dynamique (alloué au fur et à mesure)</td>
+</tr>
+<tr>
+<td>Image d'installation</td>
+<td><code>debian-13.7.0-amd64-netinst.iso</code>, ou la version 13.x la plus récente (13.8…) : les commandes sont les mêmes</td>
+</tr>
+</tbody>
+</table>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">VMware Workstation</label><label for="__tabbed_1_2">VirtualBox</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<ol>
+<li>🖥️ <strong>File &gt; New Virtual Machine</strong> (Fichier &gt; Nouvelle machine virtuelle), choisir <strong>Typical (recommended)</strong>.</li>
+<li>🖥️ Choisir <strong>Installer disc image file (iso)</strong> (fichier image du disque d'installation) et l'image de Debian, puis <strong>Linux</strong> et la version <strong>Debian</strong> la plus récente de la liste en <strong>64-bit</strong> (<em>Debian 13.x 64-bit</em>, ou <em>Debian 12.x 64-bit</em> si la 13 n'apparaît pas).</li>
+<li>🖥️ Nommer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> <code>docker-hote</code>, fixer la taille du disque à <strong>40 Go</strong>, puis <strong>Customize Hardware</strong> (personnaliser le matériel) : <strong>Memory</strong> 4096 Mo, <strong>Processors</strong> 2.</li>
+<li>🖥️ Laisser la carte réseau en <strong><abbr title="Network Address Translation — traduction d'adresses">NAT</abbr></strong> (VMnet8). Rien d'autre à régler : le PC pourra joindre la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> par le réseau VMnet8.</li>
+</ol>
+<p>La <a href="../../virtualisation/03-creer-sa-premiere-vm/">partie 3 du parcours Virtualisation</a> détaille chaque écran de l'assistant.</p>
+</div>
+<div class="tabbed-block">
+<ol>
+<li>🖥️ <strong>Machine &gt; Nouvelle…</strong>, nommer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> <code>docker-hote</code>, choisir l'image <abbr title="format d'image d'un disque optique (CD, DVD)">ISO</abbr> de Debian, type <strong>Linux</strong>, version <strong>Debian (64-bit)</strong>. S'assurer que l'<strong>installation automatique</strong> (<em>Unattended Installation</em>) n'est <strong>pas</strong> activée : selon la version de VirtualBox, la case s'appelle <em>Skip Unattended Installation</em> (à cocher) ou <em>Proceed with Unattended Installation</em> (à laisser décochée). On veut faire l'installation soi-même pour choisir les logiciels.</li>
+<li>🖥️ Régler la mémoire à <strong>4096 Mo</strong>, <strong>2 processeurs</strong>, et un disque de <strong>40 Go</strong> (dynamique par défaut).</li>
+<li>🖥️ Avant le premier démarrage : <strong>Configuration &gt; Réseau</strong>. La <strong>carte 1</strong> reste en <strong><abbr title="Network Address Translation — traduction d'adresses">NAT</abbr></strong>. Activer la <strong>carte 2</strong>, mode d'accès <strong>Réseau privé hôte</strong> (<em>Host-only Adapter</em>), nom <strong>VirtualBox Host-Only Ethernet Adapter</strong>. Si l'onglet de la carte 2 n'apparaît pas, passer la fenêtre de configuration en mode <strong>Expert</strong> (bouton en haut de la fenêtre).</li>
+</ol>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi deux cartes réseau dans VirtualBox ?</p>
+<p>En mode <strong><abbr title="Network Address Translation — traduction d'adresses">NAT</abbr></strong> simple, VirtualBox cache la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> derrière le PC : elle sort sur Internet, mais <strong>le PC ne peut pas la joindre</strong> sans créer des règles de redirection de port. La seconde carte, en <strong>réseau privé hôte</strong>, relie directement le PC et la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> sur le réseau <code>192.168.56.0/24</code>. C'est par elle qu'on ouvrira les pages web des conteneurs depuis le navigateur du PC.</p>
+</div>
+</div>
+</div>
+</div>
+<h3 id="22-installer-debian-13">2.2 Installer Debian 13<a class="headerlink" href="#22-installer-debian-13" title="Permanent link">&para;</a></h3>
+<p>🖥️ Démarrer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> et 🐧 suivre l'installateur Debian, <strong>sans interface graphique</strong>, avec ces réponses :</p>
+<table>
+<thead>
+<tr>
+<th>Écran de l'installateur</th>
+<th>Réponse</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Langue, pays, clavier</td>
+<td>Français, France, Français</td>
+</tr>
+<tr>
+<td>Carte réseau principale (VirtualBox seulement)</td>
+<td>La première carte, <code>enp0s3</code></td>
+</tr>
+<tr>
+<td>Nom de machine</td>
+<td><code>docker-hote</code></td>
+</tr>
+<tr>
+<td>Domaine</td>
+<td>laisser vide</td>
+</tr>
+<tr>
+<td>Mot de passe du superutilisateur (<code>root</code>)</td>
+<td><code>TutoDocker2026!</code></td>
+</tr>
+<tr>
+<td>Nom complet et identifiant du nouvel utilisateur</td>
+<td><code>tssr</code> et <code>tssr</code></td>
+</tr>
+<tr>
+<td>Mot de passe de <code>tssr</code></td>
+<td><code>TutoDocker2026!</code></td>
+</tr>
+<tr>
+<td>Partitionnement</td>
+<td>Assisté, utiliser un disque entier, tout dans une seule partition</td>
+</tr>
+<tr>
+<td>Sélection des logiciels</td>
+<td><strong>Décocher</strong> « environnement de bureau Debian » et « GNOME » ; <strong>cocher</strong> « serveur <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> » et « utilitaires usuels du système »</td>
+</tr>
+<tr>
+<td>Programme de démarrage <abbr title="GRand Unified Bootloader — programme de démarrage de Linux">GRUB</abbr></td>
+<td>Oui, sur le disque proposé (<code>/dev/sda</code>, ou <code>/dev/nvme0n1</code> sur certaines <abbr title="Virtual Machine — machine virtuelle">VM</abbr> Workstation)</td>
+</tr>
+</tbody>
+</table>
+<p>L'installation dure environ 15 minutes. Le pas-à-pas illustré, écran par écran, est dans la <a href="../../virtualisation/03-creer-sa-premiere-vm/#4-installer-debian-13">partie 3 du parcours Virtualisation</a>.</p>
+<h3 id="23-noter-ladresse-de-la-vm">2.3 Noter l'adresse de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr><a class="headerlink" href="#23-noter-ladresse-de-la-vm" title="Permanent link">&para;</a></h3>
+<p>🐧 Se connecter en <strong><code>root</code></strong> sur la console de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, puis afficher ses adresses :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ip<span class="w"> </span>-br<span class="w"> </span>a
+</code></pre></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">VMware Workstation</label><label for="__tabbed_2_2">VirtualBox</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>La carte <code>ens33</code> (le nom peut varier) a une adresse en <code>192.168.x.N/24</code>, avec N entre 128 et 254 : c'est <strong>IP-de-la-<abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong>. La noter.</p>
+</div>
+<div class="tabbed-block">
+<p>La seconde carte, <code>enp0s8</code>, n'a <strong>pas encore d'adresse</strong> : l'installateur de Debian ne configure que la carte choisie pendant l'installation. Lui demander une adresse automatiquement à chaque démarrage :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>cat<span class="w"> </span>&gt;&gt;<span class="w"> </span>/etc/network/interfaces<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="s"># Seconde carte : réseau privé hôte de VirtualBox</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="s">allow-hotplug enp0s8</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="s">iface enp0s8 inet dhcp</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="s">EOF</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>ifup<span class="w"> </span>enp0s8
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>ip<span class="w"> </span>-br<span class="w"> </span>a
+</code></pre></div>
+<p>La carte <code>enp0s8</code> a maintenant une adresse en <code>192.168.56.1xx/24</code> : c'est <strong>IP-de-la-<abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong>. La noter.</p>
+</div>
+</div>
+</div>
+<h3 id="24-se-connecter-en-ssh-depuis-le-pc">2.4 Se connecter en <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> depuis le PC<a class="headerlink" href="#24-se-connecter-en-ssh-depuis-le-pc" title="Permanent link">&para;</a></h3>
+<p>🖥️ Ouvrir <strong>PowerShell</strong> sur le PC et se connecter avec le compte <code>tssr</code> (remplacer <code>IP-de-la-VM</code> par l'adresse notée) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">ssh</span> <span class="n">tssr</span><span class="nv">@IP</span><span class="n">-de-la-VM</span>
+</code></pre></div>
+<p>À la première connexion, répondre <code>yes</code> pour accepter l'empreinte de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, puis taper le mot de passe (rien ne s'affiche pendant la saisie, c'est normal). À partir de maintenant, toutes les commandes 🐧 peuvent se taper dans cette fenêtre, où le <strong>copier-coller</strong> fonctionne.</p>
+<div class="admonition success">
+<p class="admonition-title">🛟 Prendre l'instantané <code>00-debian-installee</code></p>
+<p>🐧 Éteindre la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : dans la session <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr>, <code>su -</code> (mot de passe de <code>root</code>), puis <code>poweroff</code> ; ou directement <code>poweroff</code> sur la console de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, connecté en <code>root</code>. 🖥️ Ensuite, 🖥️ prendre un instantané nommé <code>00-debian-installee</code> : <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr> &gt; Snapshot &gt; Take Snapshot</strong> dans Workstation, <strong>Instantanés &gt; Prendre</strong> dans VirtualBox. Il permet de recommencer l'installation de Docker autant de fois que nécessaire.</p>
+</div>
+<h2 id="3-installer-docker-depuis-le-depot-officiel">3. Installer Docker depuis le dépôt officiel<a class="headerlink" href="#3-installer-docker-depuis-le-depot-officiel" title="Permanent link">&para;</a></h2>
+<h3 id="31-pourquoi-pas-le-paquet-dockerio-de-debian">3.1 Pourquoi pas le paquet <code>docker.io</code> de Debian ?<a class="headerlink" href="#31-pourquoi-pas-le-paquet-dockerio-de-debian" title="Permanent link">&para;</a></h3>
+<p>Debian propose son propre paquet Docker, <code>docker.io</code>. Il s'installe en une commande (<code>apt install docker.io</code>), mais il est <strong>figé</strong> sur la version choisie à la sortie de Debian 13 : en novembre 2026, Debian propose <code>docker.io</code> en version <strong>26.1</strong>, alors que Docker publie la version <strong>29.10</strong>. On installe donc Docker depuis <strong>son propre dépôt</strong>, comme le recommande la <a href="https://docs.docker.com/engine/install/debian/">documentation officielle</a> : on obtient la dernière version, ses correctifs de sécurité au fil de l'eau, et le module <strong>Docker Compose</strong> qui servira au jour 2.</p>
+<div class="admonition danger">
+<p class="admonition-title">Ne pas mélanger les deux</p>
+<p>Les paquets <code>docker.io</code> (Debian) et <code>docker-ce</code> (Docker) <strong>entrent en conflit</strong>. Si <code>docker.io</code> a déjà été installé sur une machine, le désinstaller d'abord : <code>apt remove docker.io docker-compose docker-doc podman-docker containerd runc</code>.</p>
+</div>
+<h3 id="32-donner-les-droits-dadministration-a-tssr">3.2 Donner les droits d'administration à <code>tssr</code><a class="headerlink" href="#32-donner-les-droits-dadministration-a-tssr" title="Permanent link">&para;</a></h3>
+<p>Quand un mot de passe <code>root</code> est défini pendant l'installation, Debian <strong>n'installe pas</strong> <code>sudo</code>. Or toutes les commandes de la documentation Docker commencent par <code>sudo</code>. On l'installe donc, et on autorise <code>tssr</code> à s'en servir.</p>
+<ol>
+<li>🖥️ Démarrer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, puis s'y connecter en <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> depuis PowerShell : <code>ssh tssr@IP-de-la-VM</code>.</li>
+<li>
+<p>🐧 Devenir <strong><code>root</code></strong> avec <code>su -</code> (le mot de passe demandé est celui de <code>root</code>), puis :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>apt<span class="w"> </span>update
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>sudo
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>usermod<span class="w"> </span>-aG<span class="w"> </span>sudo<span class="w"> </span>tssr
+</code></pre></div>
+</li>
+<li>
+<p>🐧 Taper <code>exit</code> <strong>deux fois</strong> : la première fois pour quitter <code>root</code> et revenir à <code>tssr</code>, la seconde pour fermer la session <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr>. Les groupes d'un utilisateur ne sont lus qu'à la <strong>connexion</strong> : une session ouverte avant le <code>usermod</code> ne connaît pas encore le groupe <code>sudo</code>.</p>
+</li>
+<li>🖥️ Se reconnecter : <code>ssh tssr@IP-de-la-VM</code>.</li>
+<li>
+<p>🐧 Vérifier les groupes <strong>de la session en cours</strong>, puis que <code>sudo</code> fonctionne (il demande le mot de passe de <code>tssr</code>) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>id<span class="w"> </span>-nG
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>-v
+</code></pre></div>
+<p>La liste affichée par <code>id -nG</code> doit <strong>contenir</strong> <code>sudo</code> (l'installateur de Debian ajoute aussi <code>tssr</code> à d'autres groupes comme <code>cdrom</code>, <code>audio</code> ou <code>video</code> : c'est normal). <code>sudo -v</code> ne doit afficher aucune erreur.</p>
+<div class="admonition failure">
+<p class="admonition-title"><code>tssr n'apparaît pas dans le fichier sudoers</code></p>
+<p>La session a été ouverte <strong>avant</strong> l'ajout au groupe <code>sudo</code>. Fermer <strong>toutes</strong> les sessions de <code>tssr</code> (y compris celle d'où l'on avait tapé <code>su -</code>) et se reconnecter.</p>
+</div>
+</li>
+</ol>
+<h3 id="33-ajouter-le-depot-de-docker">3.3 Ajouter le dépôt de Docker<a class="headerlink" href="#33-ajouter-le-depot-de-docker" title="Permanent link">&para;</a></h3>
+<p>🐧 En <code>tssr</code>, taper les commandes <strong>une par une</strong> (le mot de passe de <code>tssr</code> est demandé au premier <code>sudo</code>) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Outils nécessaires pour télécharger en HTTPS</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>apt<span class="w"> </span>update
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>ca-certificates<span class="w"> </span>curl
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># Clé de Docker : elle permet à apt de vérifier que les paquets viennent bien de Docker</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>sudo<span class="w"> </span>install<span class="w"> </span>-m<span class="w"> </span><span class="m">0755</span><span class="w"> </span>-d<span class="w"> </span>/etc/apt/keyrings
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>sudo<span class="w"> </span>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://download.docker.com/linux/debian/gpg<span class="w"> </span>-o<span class="w"> </span>/etc/apt/keyrings/docker.asc
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>sudo<span class="w"> </span>chmod<span class="w"> </span>a+r<span class="w"> </span>/etc/apt/keyrings/docker.asc
+</code></pre></div>
+<p>🐧 Déclarer ensuite le dépôt. Cette commande s'étend sur <strong>plusieurs lignes</strong> : la copier-coller <strong>en entier</strong>, de <code>sudo tee</code> jusqu'au second <code>EOF</code> inclus.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/apt/sources.list.d/docker.sources<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="s">Types: deb</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="s">URIs: https://download.docker.com/linux/debian</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="s">Suites: $(. /etc/os-release &amp;&amp; echo "$VERSION_CODENAME")</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="s">Components: stable</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="s">Architectures: $(dpkg --print-architecture)</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="s">Signed-By: /etc/apt/keyrings/docker.asc</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="s">EOF</span>
+</code></pre></div>
+<p>Le terminal réaffiche le contenu écrit dans le fichier. Les deux expressions <code>$(…)</code> ont été remplacées automatiquement : la ligne <code>Suites:</code> contient le nom de code de la version de Debian (<code>trixie</code>), et la ligne <code>Architectures:</code> le type de processeur (<code>amd64</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Ligne du fichier</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Types: deb</code></td>
+<td>Le dépôt contient des paquets déjà compilés</td>
+</tr>
+<tr>
+<td><code>URIs:</code></td>
+<td>L'adresse du dépôt de Docker pour Debian</td>
+</tr>
+<tr>
+<td><code>Suites: trixie</code></td>
+<td>La version de Debian : Docker publie des paquets différents pour chaque version</td>
+</tr>
+<tr>
+<td><code>Components: stable</code></td>
+<td>Seulement les versions stables, pas les versions de test</td>
+</tr>
+<tr>
+<td><code>Architectures: amd64</code></td>
+<td>Le type de processeur de la machine</td>
+</tr>
+<tr>
+<td><code>Signed-By:</code></td>
+<td>La clé qui doit avoir signé les paquets de ce dépôt, et <strong>seulement</strong> de ce dépôt</td>
+</tr>
+</tbody>
+</table>
+<p>🐧 Mettre à jour la liste des paquets et vérifier d'où viendra Docker :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>update
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>apt-cache<span class="w"> </span>policy<span class="w"> </span>docker-ce
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>docker-ce:
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>  Installé : (aucun)
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>  Candidat : 5:29.10.0-1~debian.13~trixie
+</code></pre></div>
+<p>La ligne <strong>Candidat</strong> montre la version qui sera installée, et le suffixe <code>debian.13~trixie</code> confirme qu'elle vient bien du dépôt de Docker.</p>
+<div class="admonition info">
+<p class="admonition-title">Et l'ancienne méthode avec <code>apt-key</code> ?</p>
+<p>De nombreux tutoriels utilisent encore <code>apt-key add</code> ou <code>add-apt-repository</code>. La commande <code>apt-key</code> est <strong>obsolète</strong> depuis Debian 11 et n'existe <strong>plus du tout</strong> dans Debian 13 : ces vieux tutoriels échouent avec <code>apt-key : commande introuvable</code>. Elle faisait confiance à la clé pour <strong>tous</strong> les dépôts de la machine, ce qui était dangereux. On range désormais chaque clé dans <code>/etc/apt/keyrings/</code> et on l'associe à <strong>un seul</strong> dépôt avec <code>Signed-By</code>.</p>
+</div>
+<h3 id="34-installer-les-paquets">3.4 Installer les paquets<a class="headerlink" href="#34-installer-les-paquets" title="Permanent link">&para;</a></h3>
+<p>🐧 Installer Docker et ses modules :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>docker-ce<span class="w"> </span>docker-ce-cli<span class="w"> </span>containerd.io<span class="w"> </span>docker-buildx-plugin<span class="w"> </span>docker-compose-plugin
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Paquet</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>docker-ce</code></td>
+<td>Le moteur Docker, le service <code>dockerd</code> (<em><abbr title="Community Edition — édition communautaire, gratuite">CE</abbr></em> pour <em>Community Edition</em>, l'édition gratuite)</td>
+</tr>
+<tr>
+<td><code>docker-ce-cli</code></td>
+<td>La commande <code>docker</code>, qui envoie les ordres au moteur</td>
+</tr>
+<tr>
+<td><code>containerd.io</code></td>
+<td>Le composant qui démarre et surveille réellement les conteneurs pour le compte de Docker</td>
+</tr>
+<tr>
+<td><code>docker-buildx-plugin</code></td>
+<td>Le module de construction d'images (utilisé au jour 5)</td>
+</tr>
+<tr>
+<td><code>docker-compose-plugin</code></td>
+<td>Docker Compose, pour décrire des applications à plusieurs conteneurs (jour 2)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="35-verifier-linstallation">3.5 Vérifier l'installation<a class="headerlink" href="#35-verifier-linstallation" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>🐧 Le service doit être <strong>actif</strong> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>docker
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>● docker.service - Docker Application Container Engine
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>     Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; preset: enabled)
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>     Active: active (running) since Tue 2026-11-24 00:07:54 CET; 1s ago
+</code></pre></div>
+<p><code>enabled</code> signifie que Docker démarrera tout seul avec la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>. Taper <span class="keys"><kbd class="key-q">Q</kbd></span> pour quitter l'affichage.</p>
+</li>
+<li>
+<p>🐧 Afficher les versions :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>docker<span class="w"> </span>--version
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>docker<span class="w"> </span>compose<span class="w"> </span>version
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>Docker version 29.10.0, build fdd4b8e
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>Docker Compose version v5.8.0
+</code></pre></div>
+</li>
+<li>
+<p>🐧 Lancer le premier conteneur :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>sudo<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>hello-world
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>Unable to find image 'hello-world:latest' locally
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>latest: Pulling from library/hello-world
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>...
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>Hello from Docker!
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>This message shows that your installation appears to be working correctly.
+</code></pre></div>
+<p>Docker n'avait pas l'image <code>hello-world</code> : il l'a <strong>téléchargée</strong> depuis Docker Hub, en a fait un conteneur, et ce conteneur a affiché son message avant de s'arrêter. La <a href="../02-premiers-conteneurs/">partie 2</a> décortique ce qui vient de se passer.</p>
+</li>
+</ol>
+<h2 id="4-utiliser-docker-sans-sudo-le-groupe-docker">4. Utiliser Docker sans <code>sudo</code> : le groupe <code>docker</code><a class="headerlink" href="#4-utiliser-docker-sans-sudo-le-groupe-docker" title="Permanent link">&para;</a></h2>
+<h3 id="41-le-constat">4.1 Le constat<a class="headerlink" href="#41-le-constat" title="Permanent link">&para;</a></h3>
+<p>🐧 En <code>tssr</code>, sans <code>sudo</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>docker<span class="w"> </span>ps
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
+</code></pre></div>
+<p>La commande <code>docker</code> ne fait rien elle-même : elle envoie ses ordres au service <code>dockerd</code> à travers un fichier spécial, le <strong>socket</strong> <code>/var/run/docker.sock</code>. Et ce fichier n'est accessible qu'à <code>root</code> et au groupe <code>docker</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>ls<span class="w"> </span>-l<span class="w"> </span>/var/run/docker.sock
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>srw-rw---- 1 root docker 0 24 nov.  00:07 /var/run/docker.sock
+</code></pre></div>
+<h3 id="42-ajouter-tssr-au-groupe-docker">4.2 Ajouter <code>tssr</code> au groupe <code>docker</code><a class="headerlink" href="#42-ajouter-tssr-au-groupe-docker" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>🐧 Ajouter <code>tssr</code> au groupe :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>sudo<span class="w"> </span>usermod<span class="w"> </span>-aG<span class="w"> </span>docker<span class="w"> </span>tssr
+</code></pre></div>
+</li>
+<li>
+<p>🐧 Se <strong>déconnecter</strong> (<code>exit</code>) puis se <strong>reconnecter</strong> en <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> : comme pour <code>sudo</code>, le nouveau groupe n'est pris en compte qu'à la connexion suivante.</p>
+</li>
+<li>
+<p>🐧 Vérifier que la liste des groupes contient maintenant <code>docker</code>, puis réessayer :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>id<span class="w"> </span>-nG
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>docker<span class="w"> </span>ps
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>tssr … sudo … docker
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+</code></pre></div>
+<p>La liste des conteneurs en marche est vide, mais la commande fonctionne : <code>tssr</code> parle maintenant à Docker sans <code>sudo</code>.</p>
+</li>
+</ol>
+<div class="admonition danger">
+<p class="admonition-title">Le groupe <code>docker</code> vaut le compte <code>root</code></p>
+<p>Être membre du groupe <code>docker</code>, c'est pouvoir demander à Docker de <strong>monter tout le disque de la machine</strong> dans un conteneur dont on est <code>root</code>. Une seule commande, sans aucun mot de passe, suffit pour lire le fichier des mots de passe chiffrés de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-v<span class="w"> </span>/:/hote<span class="w"> </span>debian:13<span class="w"> </span>head<span class="w"> </span>-2<span class="w"> </span>/hote/etc/shadow
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>root:$y$j9T$…
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>daemon:*:207…
+</code></pre></div>
+<p>Un utilisateur du groupe <code>docker</code> peut donc tout lire, tout modifier, et devenir <code>root</code> sur la machine. En production, on n'y met <strong>que des administrateurs de confiance</strong>, exactement comme on le ferait pour <code>sudo</code>. Docker propose aussi un <strong>mode sans root</strong> (<em>rootless</em>), où le moteur tourne avec les droits d'un simple utilisateur : plus sûr, mais avec des limites (ports en dessous de 1024, certains réseaux) qui sortent du cadre de ce parcours.</p>
+</div>
+<h2 id="5-installer-docker-avec-un-script">5. Installer Docker avec un script<a class="headerlink" href="#5-installer-docker-avec-un-script" title="Permanent link">&para;</a></h2>
+<p>Taper ces commandes à la main est instructif, mais long quand on prépare dix serveurs. Deux scripts permettent d'automatiser l'installation.</p>
+<h3 id="51-le-script-officiel-de-docker">5.1 Le script officiel de Docker<a class="headerlink" href="#51-le-script-officiel-de-docker" title="Permanent link">&para;</a></h3>
+<p>Docker publie un script, <code>get.docker.com</code>, qui détecte la distribution et fait tout tout seul. On le rencontre dans beaucoup de tutoriels :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://get.docker.com<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>sh
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Ne pas lancer cette commande dans <code>docker-hote</code></p>
+<p>Docker y est déjà installé : le script ajouterait un second fichier de dépôt (<code>docker.list</code>, à côté de <code>docker.sources</code>) et <code>apt update</code> afficherait ensuite des avertissements. Elle est montrée ici pour savoir la <strong>reconnaître</strong> et en connaître les limites.</p>
+</div>
+<p>Il est pratique pour un <strong>lab</strong> (l'installation complète prend environ 40 secondes), mais la documentation de Docker le <strong>déconseille en production</strong> : on exécute en <code>root</code> un script téléchargé sans le lire, il installe toujours la toute dernière version, et il ajoute des paquets dont on n'a pas forcément besoin (<code>docker-ce-rootless-extras</code>, <code>docker-model-plugin</code>).</p>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi « <code>curl … | sh</code> » est-il risqué ?</p>
+<p>Cette syntaxe télécharge un script et l'exécute <strong>immédiatement</strong>, sans qu'on ait pu le lire. Si le site était piraté, ou si l'adresse était mal tapée et menait vers un site malveillant, on exécuterait n'importe quoi en <code>root</code>. Le bon réflexe, en production : <strong>télécharger</strong> le script, le <strong>lire</strong>, puis l'exécuter.</p>
+</div>
+<h3 id="52-le-script-tutotech-commente-facultatif">5.2 Le script TutoTech, commenté (facultatif)<a class="headerlink" href="#52-le-script-tutotech-commente-facultatif" title="Permanent link">&para;</a></h3>
+<p>Cette section est <strong>facultative</strong> : elle repart d'une Debian neuve pour essayer le script, ce qui efface l'installation faite en section 3 (le résultat final est le même). Si le temps manque, passer directement à la <a href="#6-verifier-son-lab">section 6</a>.</p>
+<p>Le script <a href="../fichiers/installer-docker.sh"><code>installer-docker.sh</code></a> reprend <strong>exactement</strong> les étapes de la section 3, avec des questions à chaque étape et des messages en couleur. Il fonctionne en <code>root</code> (même sans <code>sudo</code> installé) ou avec <code>sudo</code>.</p>
+<ol>
+<li>🖥️ Revenir à l'instantané <code>00-debian-installee</code> (<abbr title="Virtual Machine — machine virtuelle">VM</abbr> éteinte), redémarrer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, s'y connecter en <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> en <code>tssr</code>, puis 🐧 devenir <code>root</code> avec <code>su -</code> (<abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> refuse la connexion directe de <code>root</code> par mot de passe).</li>
+<li>
+<p>🐧 Télécharger le script, puis <strong>le lire</strong> avant de l'exécuter :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>curl
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>curl<span class="w"> </span>-fsSLO<span class="w"> </span>https://wiki.bodaine.fr/cours-tp/docker/fichiers/installer-docker.sh
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>less<span class="w"> </span>installer-docker.sh<span class="w">      </span><span class="c1"># flèches pour défiler, q pour quitter</span>
+</code></pre></div>
+</li>
+<li>
+<p>🐧 Le rendre exécutable et le lancer :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>chmod<span class="w"> </span>+x<span class="w"> </span>installer-docker.sh
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>./installer-docker.sh
+</code></pre></div>
+<p>Répondre <code>oui</code> aux trois questions, puis <code>tssr</code> quand le script demande le nom de l'utilisateur :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>[INFO] Voulez-vous supprimer les anciennes versions de Docker ? (oui/non)
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>[SUCCÈS] Anciennes versions de Docker supprimées.
+<a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>[INFO] Voulez-vous installer Docker (installation basée sur la documentation officielle) ? (oui/non)
+<a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>...
+<a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a>Hello from Docker!
+<a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a>[SUCCÈS] Docker installé avec succès.
+<a id="__codelineno-28-7" name="__codelineno-28-7" href="#__codelineno-28-7"></a>[INFO] Voulez-vous ajouter un utilisateur au groupe docker ? (oui/non)
+<a id="__codelineno-28-8" name="__codelineno-28-8" href="#__codelineno-28-8"></a>[SUCCÈS] L'utilisateur tssr a été ajouté au groupe docker. Il doit se déconnecter et se reconnecter pour que ce soit pris en compte.
+</code></pre></div>
+<p>Le script n'installe pas <code>sudo</code> : si on l'utilise sur une machine neuve, refaire la <a href="#32-donner-les-droits-dadministration-a-tssr">section 3.2</a> pour que <code>tssr</code> puisse administrer la machine.</p>
+</li>
+</ol>
+<div class="admonition failure">
+<p class="admonition-title">Dépannage du script</p>
+<ul>
+<li><strong><code>Permission denied</code></strong> au lancement de <code>./installer-docker.sh</code> : le fichier n'est pas exécutable. Vérifier avec <code>ls -l installer-docker.sh</code> (il doit y avoir des <code>x</code>), puis <code>chmod +x installer-docker.sh</code>. On peut aussi le lancer sans ce droit : <code>bash installer-docker.sh</code>.</li>
+<li><strong><code>$'\r': command not found</code></strong> : le fichier a été modifié ou enregistré sous Windows, qui termine les lignes par deux caractères au lieu d'un. Le convertir : <code>apt install -y dos2unix</code>, puis <code>dos2unix installer-docker.sh</code>.</li>
+<li><strong><code>Could not get lock /var/lib/apt/lists/lock</code></strong> : juste après le démarrage de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, Debian vérifie parfois ses mises à jour en arrière-plan et verrouille <code>apt</code>. Attendre une minute et relancer le script.</li>
+</ul>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Sur Ubuntu</p>
+<p>La procédure est identique sur Ubuntu Server 24.04 ou 26.04, en remplaçant <code>linux/debian</code> par <code>linux/ubuntu</code> dans les deux adresses de la section 3.3 (clé et dépôt), et <code>VERSION_CODENAME</code> par <code>UBUNTU_CODENAME</code>. Ubuntu installe <code>sudo</code> d'office : la section 3.2 est inutile. Voir la <a href="https://docs.docker.com/engine/install/ubuntu/">documentation Docker pour Ubuntu</a>.</p>
+</div>
+<h2 id="6-verifier-son-lab">6. Vérifier son lab<a class="headerlink" href="#6-verifier-son-lab" title="Permanent link">&para;</a></h2>
+<div class="admonition success">
+<p class="admonition-title">Vérifier son lab</p>
+<p>🐧 En <code>tssr</code>, dans une <strong>nouvelle</strong> session <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>docker<span class="w"> </span>--version<span class="w">          </span><span class="c1"># Docker version 29.x</span>
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>systemctl<span class="w"> </span>is-enabled<span class="w"> </span>docker
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>id<span class="w"> </span>-nG<span class="w">                    </span><span class="c1"># doit contenir sudo et docker</span>
+<a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>hello-world<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Hello
+</code></pre></div>
+<p>Résultat attendu (la ligne de <code>id -nG</code> peut contenir d'autres groupes, comme <code>cdrom</code> ou <code>audio</code>) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>Docker version 29.10.0, build fdd4b8e
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>enabled
+<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>tssr … sudo … docker
+<a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a>Hello from Docker!
+</code></pre></div>
+<p>L'option <code>--rm</code> supprime le conteneur dès qu'il s'arrête : on n'encombre pas la machine de conteneurs terminés.</p>
+</div>
+<div class="admonition success">
+<p class="admonition-title">🛟 Prendre l'instantané <code>01-docker-installe</code></p>
+<p>🐧 Éteindre la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<code>sudo poweroff</code>), puis 🖥️ prendre un instantané nommé <code>01-docker-installe</code>. C'est le point de départ de toutes les parties suivantes.</p>
+</div>
+<h2 id="7-questions-de-revision">7. Questions de révision<a class="headerlink" href="#7-questions-de-revision" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Qu'est-ce qu'un conteneur Docker ?
+    a) un programme de virtualisation qui contient un système d'exploitation complet ;
+    b) une instance en fonctionnement d'une image Docker, qui contient tout ce dont l'application a besoin ;
+    c) un outil pour créer des machines virtuelles ;
+    d) une image téléchargeable depuis Docker Hub.</li>
+<li>Pourquoi un conteneur démarre-t-il beaucoup plus vite qu'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ?</li>
+<li>Quelle commande installe Docker <strong>depuis les dépôts de Debian</strong> ? Pourquoi préfère-t-on le dépôt de Docker ?</li>
+<li>À quoi sert <code>sudo usermod -aG docker tssr</code> ? Quel risque cette commande fait-elle prendre ?</li>
+<li>Comment vérifier que le service Docker est en marche et qu'il démarrera avec la machine ?</li>
+<li>Pourquoi faut-il se déconnecter puis se reconnecter après avoir ajouté un utilisateur à un groupe ?</li>
+</ol>
+<details class="success">
+<summary>Corrigé</summary>
+<ol>
+<li><strong>b)</strong>. Un conteneur est une image qui tourne. Il ne contient <strong>pas</strong> de système d'exploitation complet (réponse a) : il partage le noyau de la machine. Docker ne crée pas de <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (réponse c), et ce qu'on télécharge depuis Docker Hub, ce sont des <strong>images</strong>, pas des conteneurs (réponse d).</li>
+<li>Il n'y a <strong>pas de système d'exploitation à démarrer</strong> : le noyau de la machine tourne déjà. Démarrer un conteneur, c'est seulement lancer un programme dans un espace isolé (espaces de noms et groupes de contrôle).</li>
+<li><code>apt install docker.io</code>. Le dépôt de Docker fournit la <strong>dernière version</strong> (29.10 contre 26.1 dans Debian 13), ses correctifs au fil de l'eau, et le module Docker Compose.</li>
+<li>Elle permet à <code>tssr</code> d'utiliser Docker <strong>sans <code>sudo</code></strong>, parce que le groupe <code>docker</code> a accès au socket <code>/var/run/docker.sock</code>. Le risque : tout membre du groupe <code>docker</code> peut devenir <strong><code>root</code></strong> sur la machine (par exemple en montant <code>/</code> dans un conteneur). On n'y met que des administrateurs de confiance.</li>
+<li><code>sudo systemctl status docker</code> : la ligne <code>Active: active (running)</code> montre qu'il tourne, et le mot <code>enabled</code> sur la ligne <code>Loaded</code> qu'il démarrera avec la machine. <code>systemctl is-enabled docker</code> répond directement <code>enabled</code>.</li>
+<li>La liste des groupes d'un utilisateur est <strong>calculée à la connexion</strong> et transmise à tous les programmes de la session. Une session déjà ouverte garde l'ancienne liste.</li>
+</ol>
+</details>
+<hr />
+<h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://docs.docker.com/engine/install/debian/">Docker — Installer Docker Engine sur Debian</a> — la procédure officielle suivie dans cette partie (en anglais).</li>
+<li><a href="https://docs.docker.com/engine/install/linux-postinstall/">Docker — Étapes après l'installation sous Linux</a> — le groupe <code>docker</code> et ses risques, le démarrage automatique.</li>
+<li><a href="https://docs.docker.com/engine/security/rootless/">Docker — Mode sans root (<em>rootless</em>)</a> — faire tourner le moteur sans les droits <code>root</code>.</li>
+<li><a href="https://docs.docker.com/subscription/desktop-license/">Docker — Licence de Docker Desktop</a> — qui peut utiliser Docker Desktop gratuitement.</li>
+<li>Partie suivante : <a href="../02-premiers-conteneurs/">Premiers conteneurs</a>.</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Précédent: Parcours Docker pour administrateurs systèmes et réseaux : cours et travaux pratiques en 5 jours">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                Parcours Docker pour administrateurs systèmes et réseaux : cours et travaux pratiques en 5 jours
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../02-premiers-conteneurs/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 2. Premiers conteneurs">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                2. Premiers conteneurs
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      <a href="/mentions-legales/">Mentions légales</a>
+
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/bodaine" target="_blank" rel="noopener" title="Nicolas BODAINE sur LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://github.com/NicoBOD" target="_blank" rel="noopener" title="NicoBOD sur GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://nicolas.bodaine.fr" target="_blank" rel="noopener" title="Portfolio de Nicolas BODAINE" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="/feed_rss_created.xml" target="_blank" rel="noopener" title="Flux RSS des derniers articles" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 64c0-17.7 14.3-32 32-32 229.8 0 416 186.2 416 416 0 17.7-14.3 32-32 32s-32-14.3-32-32C384 253.6 226.4 96 32 96 14.3 96 0 81.7 0 64m0 352a64 64 0 1 1 128 0 64 64 0 1 1-128 0m32-256c159.1 0 288 128.9 288 288 0 17.7-14.3 32-32 32s-32-14.3-32-32c0-123.7-100.3-224-224-224-17.7 0-32-14.3-32-32s14.3-32 32-32"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.path", "navigation.indexes", "navigation.prune", "navigation.footer", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "content.action.view", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>

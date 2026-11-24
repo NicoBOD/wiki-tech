@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="330" viewBox="0 0 900 330" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="14">
+  <title>Cycle de vie d'un conteneur Docker</title>
+  <defs>
+    <marker id="f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#455a64"/></marker>
+  </defs>
+  <!-- Image -->
+  <rect x="10" y="130" width="130" height="70" rx="10" fill="#f3e5f5" stroke="#8e24aa" stroke-width="2" stroke-dasharray="5 3"/>
+  <text x="75" y="160" text-anchor="middle" font-weight="bold">Image</text>
+  <text x="75" y="182" text-anchor="middle" font-size="12">modèle, pas un état</text>
+  <!-- Créé -->
+  <rect x="200" y="130" width="130" height="70" rx="10" fill="#eceff1" stroke="#607d8b" stroke-width="2"/>
+  <text x="265" y="160" text-anchor="middle" font-weight="bold">Créé</text>
+  <text x="265" y="182" text-anchor="middle" font-size="12">Created</text>
+  <!-- En marche -->
+  <rect x="400" y="130" width="130" height="70" rx="10" fill="#e8f5e9" stroke="#43a047" stroke-width="2"/>
+  <text x="465" y="160" text-anchor="middle" font-weight="bold">En marche</text>
+  <text x="465" y="182" text-anchor="middle" font-size="12">Up · running</text>
+  <!-- Arrêté -->
+  <rect x="600" y="130" width="130" height="70" rx="10" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/>
+  <text x="665" y="160" text-anchor="middle" font-weight="bold">Arrêté</text>
+  <text x="665" y="182" text-anchor="middle" font-size="12">Exited</text>
+  <!-- Supprimé -->
+  <rect x="770" y="130" width="120" height="70" rx="10" fill="#ffebee" stroke="#e53935" stroke-width="2"/>
+  <text x="830" y="160" text-anchor="middle" font-weight="bold">Supprimé</text>
+  <text x="830" y="180" text-anchor="middle" font-size="10">couche effacée,</text><text x="830" y="193" text-anchor="middle" font-size="10">volumes gardés</text>
+  <!-- Flèches -->
+  <line x1="140" y1="165" x2="198" y2="165" stroke="#455a64" stroke-width="2" marker-end="url(#f)"/>
+  <text x="169" y="152" text-anchor="middle" font-family="Consolas, monospace" font-size="12">create</text>
+  <line x1="330" y1="165" x2="398" y2="165" stroke="#455a64" stroke-width="2" marker-end="url(#f)"/>
+  <text x="364" y="152" text-anchor="middle" font-family="Consolas, monospace" font-size="12">start</text>
+  <path d="M75,130 C75,40 465,40 465,128" fill="none" stroke="#2e7d32" stroke-width="2" marker-end="url(#f)"/>
+  <text x="270" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="13" fill="#1b5e20">docker run = create + start</text>
+  <path d="M530,145 C560,115 570,115 598,145" fill="none" stroke="#455a64" stroke-width="2" marker-end="url(#f)"/>
+  <text x="565" y="105" text-anchor="middle" font-family="Consolas, monospace" font-size="12">docker stop</text>
+  <text x="565" y="90" text-anchor="middle" font-size="11" fill="#546e7a">ou fin du programme</text>
+  <path d="M598,185 C570,215 560,215 532,185" fill="none" stroke="#455a64" stroke-width="2" marker-end="url(#f)"/>
+  <text x="565" y="232" text-anchor="middle" font-family="Consolas, monospace" font-size="12">docker start</text>
+  <line x1="730" y1="165" x2="768" y2="165" stroke="#455a64" stroke-width="2" marker-end="url(#f)"/>
+  <text x="749" y="152" text-anchor="middle" font-family="Consolas, monospace" font-size="12">rm</text>
+  <path d="M465,200 C465,295 830,295 830,202" fill="none" stroke="#e53935" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#f)"/>
+  <text x="650" y="290" text-anchor="middle" font-family="Consolas, monospace" font-size="12" fill="#c62828">docker rm -f (sans arrêt préalable)</text>
+  <text x="265" y="225" text-anchor="middle" font-size="11" fill="#546e7a">un conteneur dont le démarrage</text>
+  <text x="265" y="240" text-anchor="middle" font-size="11" fill="#546e7a">échoue reste « Created »</text>
+</svg>

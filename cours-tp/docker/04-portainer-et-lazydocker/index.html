@@ -1,0 +1,4497 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+      
+      
+        <meta name="author" content="Nicolas BODAINE">
+      
+      
+        <link rel="canonical" href="https://wiki.bodaine.fr/cours-tp/docker/04-portainer-et-lazydocker/">
+      
+      
+        <link rel="prev" href="../03-apache-et-ssh-dans-un-conteneur/">
+      
+      
+        <link rel="next" href="../05-volumes-et-dossiers-montes/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
+    
+    
+      
+        <title>Gérer Docker avec une interface : Portainer CE (web), LazyDocker (texte) et Docker Desktop - Wiki Tech — NicoBOD</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        
+        <link rel="stylesheet" href="../../../assets/external/fonts.googleapis.com/css.56f7ac64.css">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+    
+    
+      
+    
+    
+
+    <!-- SEO -->
+    <meta name="author" content="Nicolas BODAINE">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph : compléments non gérés par le plugin social.     -->
+    <!-- og:type/title/description/image/url sont posés par social.   -->
+    <meta property="og:site_name" content="Wiki Tech — NicoBOD">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card : la grande image et l'image elle-même sont      -->
+    <!-- héritées des balises og:image générées par le plugin social.  -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Gérer Docker avec une interface : Portainer CE (web), LazyDocker (texte) et Docker Desktop — Wiki Tech — NicoBOD">
+    <meta name="twitter:description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+  
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#gerer-docker-avec-portainer-et-lazydocker" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-header__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wiki Tech — NicoBOD
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Gérer Docker avec une interface : Portainer CE (web), LazyDocker (texte) et Docker Desktop
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer en mode clair"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer en mode clair" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Passer en mode sombre"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer en mode sombre" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Revenir au thème système"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Revenir au thème système" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Partager" aria-label="Partager" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../systemes/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h16v10H4m16 2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4c-1.11 0-2 .89-2 2v10a2 2 0 0 0 2 2H0v2h24v-2z"/></svg>
+    
+  
+  Systèmes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../reseaux/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v2h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+    
+  
+  Réseaux
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cloud/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 20q-2.28 0-3.89-1.57Q1 16.85 1 14.58q0-1.95 1.17-3.48 1.18-1.53 3.08-1.95.63-2.3 2.5-3.72Q9.63 4 12 4q2.93 0 4.96 2.04Q19 8.07 19 11q1.73.2 2.86 1.5 1.14 1.28 1.14 3 0 1.88-1.31 3.19T18.5 20Z"/></svg>
+    
+  
+  Cloud
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cybersecurite/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12h7c-.53 4.11-3.28 7.78-7 8.92zH5V6.3l7-3.11M12 1 3 5v6c0 5.55 3.84 10.73 9 12 5.16-1.27 9-6.45 9-12V5z"/></svg>
+    
+  
+  Cybersécurité
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../ia/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/></svg>
+    
+  
+  IA
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../automatisation/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+    
+  
+  Automatisation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../logiciels/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m0 5H3V4h18z"/></svg>
+    
+  
+  Logiciels
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../debug/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 12h-4v-2h4m0 6h-4v-2h4m6-6h-2.81a6 6 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6 6 0 0 0-2.83 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20z"/></svg>
+    
+  
+  Debug
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../astuces/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+    
+  
+  Astuces
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+    
+  
+  Cours et TP
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../tags/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tags
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-nav__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    Wiki Tech — NicoBOD
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../systemes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Systèmes
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../reseaux/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Réseaux
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cybersecurite/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cybersécurité
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../ia/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IA
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../automatisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automatisation
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../logiciels/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logiciels
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../debug/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../astuces/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Astuces
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cours et TP
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cours et TP
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../veeam/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Veeam Backup & Replication
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_2" id="__nav_11_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Veeam Backup & Replication
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/01-comprendre-la-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/02-decouvrir-veeam-data-platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Découvrir Veeam Data Platform 13
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/03-preparer-le-lab-installer-appliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Préparer le lab et installer l'appliance
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/04-ajouter-des-depots-de-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Ajouter des dépôts de sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/05-sauvegarder-configuration-et-serveur-de-fichiers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Sauvegarder la configuration et un serveur de fichiers
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/06-sauvegarder-restaurer-serveur-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Sauvegarder et restaurer un serveur Linux
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/07-sauvegarder-vers-azure-blob/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Sauvegarder vers Azure Blob Storage
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pfsense-ha/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cluster pfSense en haute disponibilité
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_3" id="__nav_11_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cluster pfSense en haute disponibilité
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/01-comprendre-haute-disponibilite/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la haute disponibilité
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/02-preparer-lab-installer-pfsense/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Préparer le lab et installer pfSense
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/03-configuration-initiale/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Configuration initiale
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/04-synchroniser-le-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Synchroniser le cluster
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/05-vip-carp-nat-sortant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. VIP CARP et NAT sortant
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/06-tester-la-bascule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Tester la bascule
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/07-agregation-lacp-troisieme-noeud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Agrégation LACP et troisième nœud
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/08-mettre-a-jour-le-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8. Mettre à jour le cluster
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../virtualisation/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Virtualisation (5 jours)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_4" id="__nav_11_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Virtualisation (5 jours)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/01-comprendre-la-virtualisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 1 — Comprendre et créer ses VM
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/05-virtualiser-des-serveurs/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 2 — Serveurs, réseau, stockage
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/09-panorama-des-technologies/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 3 — Technologies du système
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/12-stockage-sds-hyperconvergence/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 4 — Stockage, réseau, applications
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/15-le-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 5 — Cloud, tendances, défi final
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../virtualisation/annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker (5 jours)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_5" id="__nav_11_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Docker (5 jours)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_5_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_11_5_2" id="__nav_11_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 1 — Installer Docker et lancer ses premiers conteneurs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_11_5_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Jour 1 — Installer Docker et lancer ses premiers conteneurs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-decouvrir-et-installer-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Découvrir Docker et l'installer
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-premiers-conteneurs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Premiers conteneurs
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-apache-et-ssh-dans-un-conteneur/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Un serveur web et SSH dans un conteneur Debian
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Gérer Docker avec Portainer et LazyDocker
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Gérer Docker avec Portainer et LazyDocker
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-ligne-de-commande-interface-web-interface-texte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Ligne de commande, interface web, interface texte
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-installer-portainer-ce" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Installer Portainer CE
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Installer Portainer CE">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-lancer-le-conteneur-portainer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Lancer le conteneur Portainer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-recuperer-le-jeton-de-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Récupérer le jeton de configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-creer-le-compte-administrateur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Créer le compte administrateur
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-faire-le-tour-de-portainer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Faire le tour de Portainer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Faire le tour de Portainer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-les-environnements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Les environnements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-le-tableau-de-bord" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Le tableau de bord
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-creer-et-depanner-un-conteneur-depuis-portainer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Créer et dépanner un conteneur depuis Portainer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Créer et dépanner un conteneur depuis Portainer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-creer-un-conteneur-nginx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Créer un conteneur nginx
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-lire-les-journaux-et-ouvrir-une-console" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Lire les journaux et ouvrir une console
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-le-socket-docker-les-cles-de-la-maison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Le socket Docker : les clés de la maison
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-lazydocker-linterface-en-mode-texte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. LazyDocker, l'interface en mode texte
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. LazyDocker, l&#39;interface en mode texte">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-linstaller" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 L'installer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-lutiliser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 L'utiliser
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-docker-desktop-pour-les-postes-de-travail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Docker Desktop, pour les postes de travail
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-verifier-son-lab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Vérifier son lab
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../05-volumes-et-dossiers-montes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 2 — Données, réseaux et Docker Compose
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tags/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.5 7A1.5 1.5 0 0 1 4 5.5 1.5 1.5 0 0 1 5.5 4 1.5 1.5 0 0 1 7 5.5 1.5 1.5 0 0 1 5.5 7m15.91 4.58-9-9C12.05 2.22 11.55 2 11 2H4c-1.11 0-2 .89-2 2v7c0 .55.22 1.05.59 1.41l8.99 9c.37.36.87.59 1.42.59s1.05-.23 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.56-.23-1.06-.59-1.42"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-ligne-de-commande-interface-web-interface-texte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Ligne de commande, interface web, interface texte
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-installer-portainer-ce" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Installer Portainer CE
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Installer Portainer CE">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-lancer-le-conteneur-portainer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Lancer le conteneur Portainer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-recuperer-le-jeton-de-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Récupérer le jeton de configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-creer-le-compte-administrateur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Créer le compte administrateur
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-faire-le-tour-de-portainer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Faire le tour de Portainer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Faire le tour de Portainer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-les-environnements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Les environnements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-le-tableau-de-bord" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Le tableau de bord
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-creer-et-depanner-un-conteneur-depuis-portainer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Créer et dépanner un conteneur depuis Portainer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Créer et dépanner un conteneur depuis Portainer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-creer-un-conteneur-nginx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Créer un conteneur nginx
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-lire-les-journaux-et-ouvrir-une-console" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Lire les journaux et ouvrir une console
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-le-socket-docker-les-cles-de-la-maison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Le socket Docker : les clés de la maison
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-lazydocker-linterface-en-mode-texte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. LazyDocker, l'interface en mode texte
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. LazyDocker, l&#39;interface en mode texte">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-linstaller" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 L'installer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-lutiliser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 L'utiliser
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-docker-desktop-pour-les-postes-de-travail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Docker Desktop, pour les postes de travail
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-verifier-son-lab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Vérifier son lab
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Cours et TP
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Docker (5 jours)
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../01-decouvrir-et-installer-docker/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Jour 1 — Installer Docker et lancer ses premiers conteneurs
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:docker" class="md-tag">docker</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:lazydocker" class="md-tag">lazydocker</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:portainer" class="md-tag">portainer</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:travaux-pratiques" class="md-tag">travaux-pratiques</a>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/NicoBOD/wiki-tech/edit/main/docs/cours-tp/docker/04-portainer-et-lazydocker.md" title="Editer cette page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/NicoBOD/wiki-tech/raw/main/docs/cours-tp/docker/04-portainer-et-lazydocker.md" title="Consulter la source de cette page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<!-- ============================================================ -->
+<!-- ⚠️ RAPPEL IMPORTANT :                                          -->
+<!-- Pensez TOUJOURS à ajouter une entrée dans le fichier d'index  -->
+<!-- (index.md) du dossier correspondant (ex: docs/cloud/index.md) -->
+<!-- afin de référencer ce nouvel article et permettre aux         -->
+<!-- visiteurs de le trouver et de cliquer dessus !                -->
+<!-- ============================================================ -->
+
+<h1 id="gerer-docker-avec-portainer-et-lazydocker">Gérer Docker avec Portainer et LazyDocker<a class="headerlink" href="#gerer-docker-avec-portainer-et-lazydocker" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Résumé</p>
+<p>La ligne de commande est indispensable, mais une <strong>interface</strong> aide à voir d'un coup d'œil ce qui tourne, à lire des journaux, à dépanner. Ce TP installe <strong>Portainer <abbr title="Community Edition — édition communautaire, gratuite">CE</abbr></strong>, l'interface web d'administration de Docker la plus répandue, <strong>dans un conteneur</strong>. On y crée un conteneur sans taper de commande, on lit ses journaux et on ouvre une console dedans, depuis le navigateur du PC.</p>
+<p>On découvre ensuite <strong>LazyDocker</strong>, une interface <strong>en mode texte</strong> qui s'utilise dans une session <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr>, puis on situe <strong>Docker Desktop</strong>, l'application graphique pour les postes de travail. Au passage, on comprend pourquoi donner à une interface l'accès au <strong>socket Docker</strong> revient à lui donner les <strong>clés de la machine</strong>.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Propriété</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Difficulté</td>
+<td>Débutant</td>
+</tr>
+<tr>
+<td>Durée estimée</td>
+<td>1 h 30</td>
+</tr>
+<tr>
+<td>Version décrite</td>
+<td>Portainer <abbr title="Community Edition — édition communautaire, gratuite">CE</abbr> 2.45.4 <abbr title="Long Term Support — version maintenue longtemps">LTS</abbr>, LazyDocker 0.25.2, Docker Engine 29.10</td>
+</tr>
+<tr>
+<td>Place dans le parcours</td>
+<td>Partie 4 sur 17 du parcours <a href="../">Docker</a> — jour 1</td>
+</tr>
+<tr>
+<td>Dernière mise à jour</td>
+<td>2026-11-24</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<div class="admonition info">
+<p class="admonition-title">Convention de lecture</p>
+<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>tssr</code> · 🌐 <strong>navigateur du PC</strong> · ✍️ <strong>exercice</strong>. Portainer n'existe <strong>qu'en anglais</strong> : ses menus sont écrits en gras, en anglais, avec leur traduction entre parenthèses. Point de départ : <code>docker ps -a</code> ne montre <strong>aucun</strong> conteneur (sinon les supprimer avec <code>docker rm -f</code>), et les ports 8081 et 9443 de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> sont libres.</p>
+</div>
+<h2 id="1-ligne-de-commande-interface-web-interface-texte">1. Ligne de commande, interface web, interface texte<a class="headerlink" href="#1-ligne-de-commande-interface-web-interface-texte" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Outil</th>
+<th>Type</th>
+<th>Où il tourne</th>
+<th>Pour quoi faire</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Commande <code>docker</code></td>
+<td>Ligne de commande</td>
+<td>Sur le serveur</td>
+<td>Tout, et surtout l'<strong>automatisation</strong> (scripts, fichiers de configuration)</td>
+</tr>
+<tr>
+<td><strong>Portainer <abbr title="Community Edition — édition communautaire, gratuite">CE</abbr></strong></td>
+<td>Interface <strong>web</strong></td>
+<td>Dans un conteneur, sur le serveur ; on l'utilise depuis un navigateur</td>
+<td>Voir et gérer un ou plusieurs serveurs Docker à plusieurs, sans être expert de la ligne de commande</td>
+</tr>
+<tr>
+<td><strong>LazyDocker</strong></td>
+<td>Interface <strong>texte</strong> (<abbr title="Text User Interface — interface en mode texte">TUI</abbr>)</td>
+<td>Dans le terminal, sur le serveur</td>
+<td>Surveiller et dépanner rapidement dans une session <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr>, sans rien ouvrir sur le réseau</td>
+</tr>
+<tr>
+<td><strong>Docker Desktop</strong></td>
+<td>Application graphique</td>
+<td>Sur un <strong>poste de travail</strong> Windows, macOS ou Linux</td>
+<td>Développer et tester des conteneurs sur son PC</td>
+</tr>
+</tbody>
+</table>
+<p>Ces interfaces ne remplacent pas la ligne de commande : elles envoient <strong>exactement les mêmes ordres</strong> au moteur Docker. Un conteneur créé dans Portainer apparaît dans <code>docker ps</code>, et inversement.</p>
+<h2 id="2-installer-portainer-ce">2. Installer Portainer <abbr title="Community Edition — édition communautaire, gratuite">CE</abbr><a class="headerlink" href="#2-installer-portainer-ce" title="Permanent link">&para;</a></h2>
+<h3 id="21-lancer-le-conteneur-portainer">2.1 Lancer le conteneur Portainer<a class="headerlink" href="#21-lancer-le-conteneur-portainer" title="Permanent link">&para;</a></h3>
+<p><strong>Portainer <abbr title="Community Edition — édition communautaire, gratuite">CE</abbr></strong> (<em>Community Edition</em>) est la version gratuite et libre de Portainer ; il existe aussi une version payante, <em>Business Edition</em>. Portainer publie deux branches : <strong><abbr title="Long Term Support — version maintenue longtemps">LTS</abbr></strong> (<em>Long Term Support</em>, maintenue longtemps, conseillée) et <strong><abbr title="Short Term Support — version maintenue peu de temps">STS</abbr></strong> (<em>Short Term Support</em>, nouveautés plus rapides). On installe la <abbr title="Long Term Support — version maintenue longtemps">LTS</abbr>, comme le recommande la <a href="https://docs.portainer.io/start/install-ce/server/docker/linux">documentation de Portainer</a>.</p>
+<ol>
+<li>
+<p>🐧 Créer le <strong>volume</strong> où Portainer rangera sa base de données (comptes, réglages) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span>volume<span class="w"> </span>create<span class="w"> </span>portainer_data
+</code></pre></div>
+<p>Un volume est un espace de stockage géré par Docker, qui <strong>survit</strong> à la suppression du conteneur. On en reparle en détail au jour 2 ; retenir pour l'instant que sans lui, supprimer le conteneur Portainer effacerait tous ses réglages.</p>
+</li>
+<li>
+<p>🐧 Lancer Portainer (une seule commande, sur une seule ligne) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">9443</span>:9443<span class="w"> </span>--name<span class="w"> </span>portainer<span class="w"> </span>--restart<span class="o">=</span>always<span class="w"> </span>-v<span class="w"> </span>/var/run/docker.sock:/var/run/docker.sock<span class="w"> </span>-v<span class="w"> </span>portainer_data:/data<span class="w"> </span>portainer/portainer-ce:lts
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Explication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-p 9443:9443</code></td>
+<td>L'interface web, en <strong><abbr title="HTTP sécurisé par TLS">HTTPS</abbr></strong></td>
+</tr>
+<tr>
+<td><code>--name portainer</code></td>
+<td>Nom du conteneur</td>
+</tr>
+<tr>
+<td><code>--restart=always</code></td>
+<td><strong>Politique de redémarrage</strong> : Docker relance le conteneur s'il s'arrête tout seul, et au démarrage de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr></td>
+</tr>
+<tr>
+<td><code>-v /var/run/docker.sock:/var/run/docker.sock</code></td>
+<td>Donne au conteneur l'accès au <strong>socket Docker</strong> de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : c'est ainsi que Portainer pilote Docker (voir la <a href="#5-le-socket-docker-les-cles-de-la-maison">section 5</a>)</td>
+</tr>
+<tr>
+<td><code>-v portainer_data:/data</code></td>
+<td>Range le dossier <code>/data</code> du conteneur dans le volume créé juste avant</td>
+</tr>
+<tr>
+<td><code>portainer/portainer-ce:lts</code></td>
+<td>L'image de Portainer <abbr title="Community Edition — édition communautaire, gratuite">CE</abbr>, branche <abbr title="Long Term Support — version maintenue longtemps">LTS</abbr></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>🐧 Vérifier :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker<span class="w"> </span>ps
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>CONTAINER ID   IMAGE                        COMMAND        CREATED         STATUS         PORTS                                                             NAMES
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>2fc8f7b7cb70   portainer/portainer-ce:lts   "/portainer"   5 seconds ago   Up 4 seconds   8000/tcp, 9000/tcp, 0.0.0.0:9443-&gt;9443/tcp, [::]:9443-&gt;9443/tcp   portainer
+</code></pre></div>
+<p>La colonne <code>PORTS</code> affiche aussi <code>8000/tcp</code> et <code>9000/tcp</code>, sans flèche : le conteneur écoute sur ces ports, mais ils ne sont <strong>pas publiés</strong>, donc injoignables depuis l'extérieur de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>. Le port 9000 sert une version HTTP non chiffrée de l'interface, que la documentation de Portainer ne garde que pour des raisons de compatibilité. Le port 8000 sert de tunnel aux agents <em>Edge</em> (des serveurs distants qui se connectent à Portainer) : la documentation le publie avec <code>-p 8000:8000</code>, mais on ne le fait que si l'on utilise ces agents. <strong>Moins de ports publiés, c'est moins de portes d'entrée.</strong></p>
+</li>
+</ol>
+<div class="admonition question">
+<p class="admonition-title">Que fait <code>--restart=always</code> ?</p>
+<p>En partie 3, les services ne revenaient pas après un redémarrage. Ici, c'est <strong>Docker lui-même</strong> qui relance le conteneur Portainer quand la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> redémarre, ou si Portainer plante. Les politiques possibles : <code>no</code> (par défaut, rien), <code>on-failure</code> (seulement après une erreur), <code>always</code> (relancé s'il s'arrête tout seul, et à chaque démarrage de Docker, <strong>même</strong> s'il avait été arrêté exprès avec <code>docker stop</code>) et <code>unless-stopped</code> (pareil, <strong>sauf</strong> s'il avait été arrêté exprès). Dans tous les cas, un <code>docker stop</code> arrête bien le conteneur sur le moment.</p>
+</div>
+<h3 id="22-recuperer-le-jeton-de-configuration">2.2 Récupérer le jeton de configuration<a class="headerlink" href="#22-recuperer-le-jeton-de-configuration" title="Permanent link">&para;</a></h3>
+<p>Pour qu'un inconnu ne puisse pas créer le compte administrateur à notre place pendant les premières minutes, Portainer demande un <strong>jeton de configuration</strong> (<em>setup token</em>), qu'il écrit dans ses journaux au démarrage.</p>
+<p>🐧 L'afficher :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span>logs<span class="w"> </span>portainer<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>setup_token
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>setup_token=8250ca100517ab9c328484c9b8b2ed25f37c23b8d0f755ded3d90b1032963779
+</code></pre></div>
+<p>Le jeton change à chaque installation : copier <strong>le sien</strong> (sélectionner la suite de chiffres et de lettres après <code>setup_token=</code> dans le terminal, puis clic droit ou <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-shift">Shift</kbd><span>+</span><kbd class="key-c">C</kbd></span> selon le terminal).</p>
+<h3 id="23-creer-le-compte-administrateur">2.3 Créer le compte administrateur<a class="headerlink" href="#23-creer-le-compte-administrateur" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🌐 Ouvrir <code>https://IP-de-la-VM:9443</code> (bien <strong>https</strong>). Le navigateur affiche une alerte de sécurité : Portainer utilise un <strong>certificat autosigné</strong>, qu'aucune autorité reconnue n'a signé. Dans un lab, c'est attendu : cliquer sur <strong>Paramètres avancés</strong>, puis <strong>Continuer vers le site</strong> (Chrome, Edge), ou <strong>Avancé</strong>, puis <strong>Accepter le risque et poursuivre</strong> (Firefox).</li>
+<li>
+<p>🌐 Remplir l'écran <strong>New Portainer installation</strong> (nouvelle installation) :</p>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Username</strong> (identifiant)</td>
+<td><code>admin</code></td>
+</tr>
+<tr>
+<td><strong>Password</strong> et <strong>Confirm password</strong> (mot de passe, confirmation)</td>
+<td><code>TutoDocker2026!</code></td>
+</tr>
+<tr>
+<td><strong>Setup token</strong> (jeton de configuration)</td>
+<td>Le jeton copié à l'étape précédente</td>
+</tr>
+</tbody>
+</table>
+<figure>
+<p><img alt="Écran « New Portainer installation » : champs Username (admin), Password et Confirm password masqués, Setup token rempli avec une longue suite hexadécimale, rappel « The password must be at least 12 characters long » coché, bouton Create user." loading="lazy" src="../images/04-portainer-creer-admin.png" /></p>
+<figcaption>
+<p>Création du compte administrateur : 12 caractères minimum et le jeton lu dans les journaux.</p>
+</figcaption>
+</figure>
+</li>
+<li>
+<p>🌐 Cliquer sur <strong>Create user</strong> (créer l'utilisateur).</p>
+</li>
+<li>
+<p>🌐 L'écran <strong>Set up Edge Compute</strong> propose d'activer la gestion de serveurs distants : cliquer sur <strong>Skip</strong> (passer).</p>
+<figure>
+<p><img alt="Écran « Set up Edge Compute » avec un interrupteur « Enable Edge Compute features » désactivé et les boutons Continue et Skip." loading="lazy" src="../images/04-portainer-edge-compute.png" /></p>
+<figcaption>
+<p>Les fonctions Edge servent à gérer des serveurs distants : inutiles ici.</p>
+</figcaption>
+</figure>
+</li>
+<li>
+<p>🌐 Sur l'écran d'accueil, cliquer sur <strong>Get Started</strong> (commencer) : Portainer se connecte au Docker de la machine sur laquelle il tourne, l'environnement <strong>local</strong>.</p>
+</li>
+</ol>
+<div class="admonition failure">
+<p class="admonition-title">« Your Portainer instance has timed out for security purposes »</p>
+<p>Pour limiter les risques, Portainer ne laisse qu'un <strong>temps limité</strong> pour créer le compte administrateur après son démarrage. Si ce message apparaît, redémarrer le conteneur, relire le jeton dans les journaux (<code>tail -1</code> garde la ligne la plus récente) et recommencer :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span>restart<span class="w"> </span>portainer
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>docker<span class="w"> </span>logs<span class="w"> </span>portainer<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>setup_token<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-1
+</code></pre></div>
+</div>
+<h2 id="3-faire-le-tour-de-portainer">3. Faire le tour de Portainer<a class="headerlink" href="#3-faire-le-tour-de-portainer" title="Permanent link">&para;</a></h2>
+<h3 id="31-les-environnements">3.1 Les environnements<a class="headerlink" href="#31-les-environnements" title="Permanent link">&para;</a></h3>
+<p>La page <strong>Home</strong> (accueil) liste les <strong>environnements</strong>, c'est-à-dire les serveurs Docker gérés par Portainer. Il n'y en a qu'un, <code>local</code>.</p>
+<figure>
+<p><img alt="Page Home de Portainer : un environnement « local », état Up, Standalone 29.10.0, socket unix:///var/run/docker.sock, 1 conteneur, 1 nœud, 2 cœurs, 4,1 Go de mémoire." loading="lazy" src="../images/04-portainer-environnements.png" /></p>
+<figcaption>
+<p>L'environnement <code>local</code> : le Docker de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, joint par son socket.</p>
+</figcaption>
+</figure>
+<p>On y lit la version de Docker (<strong>29.10.0</strong>), le mode (<strong>Standalone</strong>, un serveur seul, par opposition à un cluster Swarm), et les ressources de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : 2 cœurs, 4,1 Go. Un même Portainer peut gérer des dizaines de serveurs Docker, en leur installant un petit <strong>agent</strong>.</p>
+<p>🌐 Cliquer sur l'environnement <strong>local</strong>.</p>
+<h3 id="32-le-tableau-de-bord">3.2 Le tableau de bord<a class="headerlink" href="#32-le-tableau-de-bord" title="Permanent link">&para;</a></h3>
+<figure>
+<p><img alt="Tableau de bord de l'environnement local : 0 stack, 1 conteneur en marche, 5 images pour 655,7 Mo, 1 volume, 3 réseaux." loading="lazy" src="../images/04-portainer-tableau-de-bord.png" /></p>
+<figcaption>
+<p>Le tableau de bord résume tout ce que contient le Docker de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</p>
+</figcaption>
+</figure>
+<p>Le menu de gauche reprend les objets de Docker vus en ligne de commande :</p>
+<table>
+<thead>
+<tr>
+<th>Menu</th>
+<th>Contenu</th>
+<th>Équivalent en ligne de commande</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Containers</strong> (conteneurs)</td>
+<td>Liste, création, actions</td>
+<td><code>docker ps -a</code>, <code>docker run</code>, <code>docker stop</code>…</td>
+</tr>
+<tr>
+<td><strong>Images</strong></td>
+<td>Images présentes, téléchargement</td>
+<td><code>docker images</code>, <code>docker pull</code></td>
+</tr>
+<tr>
+<td><strong>Networks</strong> (réseaux)</td>
+<td>Réseaux Docker (jour 2)</td>
+<td><code>docker network ls</code></td>
+</tr>
+<tr>
+<td><strong>Volumes</strong></td>
+<td>Volumes (jour 2)</td>
+<td><code>docker volume ls</code></td>
+</tr>
+<tr>
+<td><strong>Stacks</strong> (piles)</td>
+<td>Applications décrites en Docker Compose (jour 2)</td>
+<td><code>docker compose</code></td>
+</tr>
+<tr>
+<td><strong>Templates</strong> (modèles)</td>
+<td>Applications prêtes à déployer en un clic</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Events</strong> (évènements)</td>
+<td>Journal de tout ce qui se passe dans Docker</td>
+<td><code>docker events</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-creer-et-depanner-un-conteneur-depuis-portainer">4. Créer et dépanner un conteneur depuis Portainer<a class="headerlink" href="#4-creer-et-depanner-un-conteneur-depuis-portainer" title="Permanent link">&para;</a></h2>
+<h3 id="41-creer-un-conteneur-nginx">4.1 Créer un conteneur nginx<a class="headerlink" href="#41-creer-un-conteneur-nginx" title="Permanent link">&para;</a></h3>
+<ol>
+<li>🌐 <strong>Containers</strong>, puis <strong>Add container</strong> (ajouter un conteneur).</li>
+<li>
+<p>🌐 Remplir :</p>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Name</strong> (nom)</td>
+<td><code>web-portainer</code></td>
+</tr>
+<tr>
+<td><strong>Image</strong></td>
+<td><code>nginx:latest</code> (registre <strong>Docker Hub (anonymous)</strong> déjà choisi)</td>
+</tr>
+<tr>
+<td><strong>Network ports configuration</strong> &gt; <strong>Map additional port</strong> (publier un port)</td>
+<td><strong>Host</strong> (hôte) <code>8081</code> → <strong>Container</strong> (conteneur) <code>80</code>, <strong>TCP</strong></td>
+</tr>
+</tbody>
+</table>
+<figure>
+<p><img alt="Formulaire « Create container » de Portainer : nom web-portainer, image nginx:latest sur Docker Hub, avertissement sur la limite de 100 téléchargements toutes les 6 heures en anonyme, port 8081 de l'hôte vers 80 du conteneur en TCP, contrôle d'accès réservé aux administrateurs, bouton Deploy the container, et en dessous les réglages avancés (commande, volumes, réseau, variables d'environnement, redémarrage, ressources)." loading="lazy" src="../images/04-portainer-ajouter-conteneur.png" /></p>
+<figcaption>
+<p>Chaque champ du formulaire correspond à une option de <code>docker run</code>.</p>
+</figcaption>
+</figure>
+</li>
+<li>
+<p>🌐 Cliquer sur <strong>Deploy the container</strong> (déployer le conteneur). Après quelques secondes, il apparaît dans la liste, à l'état <strong>running</strong> (en marche).</p>
+<figure>
+<p><img alt="Liste des conteneurs dans Portainer : portainer et web-portainer, tous deux running, avec leurs icônes d'actions rapides, leur image, leur date de création, leur adresse IP (172.17.0.2 et 172.17.0.3) et leurs ports publiés." loading="lazy" src="../images/04-portainer-liste-conteneurs.png" /></p>
+<figcaption>
+<p>Les deux conteneurs de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : Portainer lui-même, et celui qu'on vient de créer.</p>
+</figcaption>
+</figure>
+</li>
+<li>
+<p>🌐 Ouvrir <code>http://IP-de-la-VM:8081</code> : la page « Welcome to nginx! » s'affiche.</p>
+</li>
+<li>
+<p>🐧 Vérifier que la ligne de commande voit le même conteneur :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>docker<span class="w"> </span>ps<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Names}}  {{.Image}}  {{.Ports}}'</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>web-portainer  nginx:latest  0.0.0.0:8081-&gt;80/tcp, [::]:8081-&gt;80/tcp
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>portainer  portainer/portainer-ce:lts  8000/tcp, 9000/tcp, 0.0.0.0:9443-&gt;9443/tcp, [::]:9443-&gt;9443/tcp
+</code></pre></div>
+</li>
+</ol>
+<div class="admonition info">
+<p class="admonition-title">« You are currently using an anonymous account… limited to 100 pulls every 6 hours »</p>
+<p>Le message du formulaire rappelle une règle de <strong>Docker Hub</strong> : sans compte, on ne peut télécharger que <strong>100 images toutes les 6 heures</strong> par adresse IP publique (200 avec un compte personnel gratuit). Dans une salle de formation où vingt PC sortent sur Internet par la <strong>même</strong> adresse, la limite peut être atteinte : le message d'erreur contient alors <code>toomanyrequests</code>. Il suffit d'attendre, ou de se connecter à un compte Docker gratuit (<code>docker login</code>), ce que montre la partie 15.</p>
+</div>
+<h3 id="42-lire-les-journaux-et-ouvrir-une-console">4.2 Lire les journaux et ouvrir une console<a class="headerlink" href="#42-lire-les-journaux-et-ouvrir-une-console" title="Permanent link">&para;</a></h3>
+<p>Dans la colonne <strong>Quick Actions</strong> (actions rapides), chaque icône ouvre un outil : <strong>Logs</strong> (journaux), <strong>Inspect</strong> (inspecter), <strong>Stats</strong> (statistiques), <strong>Console</strong> (terminal dans le conteneur) et <strong>Attach</strong> (s'attacher au processus principal).</p>
+<ol>
+<li>
+<p>🌐 Cliquer sur l'icône <strong>Logs</strong> de <code>web-portainer</code> : c'est l'équivalent de <code>docker logs</code>. Les requêtes faites depuis le navigateur du PC y apparaissent, avec l'adresse du PC.</p>
+<figure>
+<p><img alt="Page Container logs de Portainer : réglages (rafraîchissement automatique, retour à la ligne, horodatage, nombre de lignes) et, en dessous, les journaux de démarrage de nginx suivis de deux requêtes GET venues de 192.168.8.1." loading="lazy" src="../images/04-portainer-journaux.png" /></p>
+<figcaption>
+<p>Les journaux du conteneur, avec recherche et téléchargement.</p>
+</figcaption>
+</figure>
+</li>
+<li>
+<p>🌐 Revenir à la liste, cliquer sur l'icône <strong>Console</strong> (<code>&gt;_</code>), laisser la commande <code>/bin/bash</code> et cliquer sur <strong>Connect</strong> (se connecter). Un terminal s'ouvre <strong>dans</strong> le conteneur, dans le navigateur : c'est l'équivalent de <code>docker exec -it web-portainer bash</code>. Taper par exemple :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>nginx<span class="w"> </span>-v<span class="p">;</span><span class="w"> </span>ls<span class="w"> </span>/usr/share/nginx/html
+</code></pre></div>
+<figure>
+<p><img alt="Console de Portainer connectée au conteneur web-portainer en tant que root, avec la commande bash : la sortie affiche nginx version: nginx/1.31.10, puis les fichiers 50x.html et index.html." loading="lazy" src="../images/04-portainer-console.png" /></p>
+<figcaption>
+<p>Une console dans le conteneur, depuis le navigateur du PC.</p>
+</figcaption>
+</figure>
+</li>
+<li>
+<p>🌐 Cliquer sur <strong>Disconnect</strong> (se déconnecter) pour fermer la console.</p>
+</li>
+</ol>
+<p>✍️ <strong>Exercice</strong> — Avec Portainer uniquement : arrêter <code>web-portainer</code>, vérifier que la page ne répond plus, le redémarrer, puis le <strong>supprimer</strong>. Vérifier ensuite avec <code>docker ps -a</code> dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</p>
+<details class="success">
+<summary>Réponse</summary>
+<p>Dans <strong>Containers</strong>, cocher la case de <code>web-portainer</code>, puis utiliser les boutons <strong>Stop</strong> (arrêter), <strong>Start</strong> (démarrer) et <strong>Remove</strong> (supprimer) au-dessus de la liste. Portainer demande une confirmation avant la suppression. Après la suppression, <code>docker ps -a</code> ne montre plus que <code>portainer</code>.</p>
+</details>
+<h2 id="5-le-socket-docker-les-cles-de-la-maison">5. Le socket Docker : les clés de la maison<a class="headerlink" href="#5-le-socket-docker-les-cles-de-la-maison" title="Permanent link">&para;</a></h2>
+<p>Pour piloter Docker, Portainer a besoin du <strong>socket</strong> <code>/var/run/docker.sock</code>, qu'on lui a donné avec <code>-v /var/run/docker.sock:/var/run/docker.sock</code>. En <a href="../01-decouvrir-et-installer-docker/#42-ajouter-tssr-au-groupe-docker">partie 1</a>, on a vu que l'accès à ce socket permet de <strong>devenir <code>root</code> sur la machine</strong>.</p>
+<p>Conséquence directe : <strong>quiconque se connecte à Portainer en administrateur contrôle la <abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong>. Il peut lancer un conteneur qui monte <code>/</code> et lire ou modifier n'importe quel fichier.</p>
+<div class="admonition danger">
+<p class="admonition-title">Protéger Portainer comme un accès root</p>
+<ul>
+<li>Un <strong>mot de passe fort</strong>, et pas de compte partagé : Portainer gère des utilisateurs, des équipes et des droits.</li>
+<li><strong>Jamais</strong> d'interface Portainer ouverte sur Internet sans protection : la réserver au réseau d'administration, ou la placer derrière un <abbr title="Virtual Private Network — réseau privé virtuel">VPN</abbr> ou un reverse proxy avec authentification (jour 3).</li>
+<li>Garder Portainer <strong>à jour</strong> : c'est un logiciel exposé, qui a déjà eu des failles de sécurité.</li>
+<li>Même règle pour <strong>tout</strong> conteneur à qui l'on donne le socket Docker (outils de supervision, de mise à jour automatique…) : se demander s'il en a vraiment besoin, et s'il vient d'une source de confiance.</li>
+</ul>
+</div>
+<h2 id="6-lazydocker-linterface-en-mode-texte">6. LazyDocker, l'interface en mode texte<a class="headerlink" href="#6-lazydocker-linterface-en-mode-texte" title="Permanent link">&para;</a></h2>
+<p><strong>LazyDocker</strong> est un petit programme qui s'utilise <strong>dans le terminal</strong>, par exemple dans la session <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> ouverte depuis le PC. Il affiche les conteneurs, les images, les volumes et les réseaux, avec les journaux et les statistiques en direct, et se pilote au clavier. Aucun port à ouvrir, aucun mot de passe de plus : il utilise les droits de l'utilisateur qui le lance (ici <code>tssr</code>, membre du groupe <code>docker</code>).</p>
+<h3 id="61-linstaller">6.1 L'installer<a class="headerlink" href="#61-linstaller" title="Permanent link">&para;</a></h3>
+<p>Son auteur fournit un script d'installation. Comme vu en partie 1, on le <strong>lit</strong> avant de l'exécuter.</p>
+<ol>
+<li>
+<p>🐧 Télécharger le script, le lire, puis l'exécuter <strong>en <code>tssr</code></strong> (pas en <code>root</code>, ni avec <code>sudo</code> : il s'installe dans le dossier personnel) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>curl<span class="w"> </span>-fsSLO<span class="w"> </span>https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>less<span class="w"> </span>install_update_linux.sh
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>bash<span class="w"> </span>install_update_linux.sh
+</code></pre></div>
+<p>Le programme est copié dans <code>~/.local/bin/lazydocker</code>.</p>
+</li>
+<li>
+<p>🐧 Se <strong>déconnecter et se reconnecter</strong> : à la connexion, Debian ajoute <code>~/.local/bin</code> à la liste des dossiers où chercher les commandes, s'il existe. Vérifier :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>lazydocker<span class="w"> </span>--version<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-1
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>Version: 0.25.2
+</code></pre></div>
+<p>Le script installe toujours la <strong>dernière</strong> version : le numéro peut être plus récent.</p>
+</li>
+</ol>
+<h3 id="62-lutiliser">6.2 L'utiliser<a class="headerlink" href="#62-lutiliser" title="Permanent link">&para;</a></h3>
+<p>🐧 Relancer d'abord le conteneur de l'exercice, pour avoir quelque chose à regarder, puis lancer LazyDocker :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>web-portainer<span class="w"> </span>-p<span class="w"> </span><span class="m">8081</span>:80<span class="w"> </span>nginx
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>lazydocker
+</code></pre></div>
+<figure>
+<p><img alt="LazyDocker dans un terminal : à gauche, les panneaux Conteneurs (portainer et web-portainer, running), Images (leur liste dépend de ce qui a déjà été téléchargé), Volumes (portainer_data) et Réseaux (bridge, host, none) ; à droite, les onglets Journaux, Statistiques, Env, Config et Top, avec les journaux de nginx ; en bas, l'aide des raccourcis clavier." loading="lazy" src="../images/04-lazydocker.png" /></p>
+<figcaption>
+<p>LazyDocker, en français, dans une session <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> : tout Docker sur un seul écran.</p>
+</figcaption>
+</figure>
+<table>
+<thead>
+<tr>
+<th>Touche</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="keys"><kbd class="key-arrow-up">Up</kbd></span> <span class="keys"><kbd class="key-arrow-down">Down</kbd></span></td>
+<td>Choisir un élément dans le panneau actif</td>
+</tr>
+<tr>
+<td><span class="keys"><kbd class="key-arrow-left">Left</kbd></span> <span class="keys"><kbd class="key-arrow-right">Right</kbd></span></td>
+<td>Changer de panneau (Conteneurs, Images, Volumes, Réseaux)</td>
+</tr>
+<tr>
+<td><span class="keys"><kbd class="key-bracket-left">[</kbd></span> <span class="keys"><kbd class="key-bracket-right">]</kbd></span></td>
+<td>Changer d'onglet à droite (Journaux, Statistiques, Env, Config, Top)</td>
+</tr>
+<tr>
+<td><span class="keys"><kbd class="key-x">X</kbd></span></td>
+<td>Ouvrir le menu des actions possibles sur l'élément choisi (arrêter, redémarrer, supprimer, ouvrir un terminal…)</td>
+</tr>
+<tr>
+<td><span class="keys"><kbd class="key-q">Q</kbd></span></td>
+<td>Quitter</td>
+</tr>
+</tbody>
+</table>
+<p>✍️ <strong>Exercice</strong> — Dans LazyDocker : afficher les <strong>statistiques</strong> de <code>web-portainer</code> (processeur et mémoire en direct), puis l'<strong>arrêter</strong> et le <strong>supprimer</strong> depuis le menu <span class="keys"><kbd class="key-x">X</kbd></span>.</p>
+<details class="success">
+<summary>Réponse</summary>
+<p>Sélectionner <code>web-portainer</code> dans <strong>Conteneurs</strong>, puis aller sur l'onglet <strong>Statistiques</strong> avec <span class="keys"><kbd class="key-bracket-right">]</kbd></span> : un graphique du processeur et de la mémoire s'affiche. Appuyer sur <span class="keys"><kbd class="key-x">X</kbd></span> et choisir l'action d'<strong>arrêt</strong> dans le menu, puis à nouveau <span class="keys"><kbd class="key-x">X</kbd></span> et l'action de <strong>suppression</strong>, et confirmer. Le menu <span class="keys"><kbd class="key-x">X</kbd></span> rappelle aussi la touche directe de chaque action.</p>
+</details>
+<h2 id="7-docker-desktop-pour-les-postes-de-travail">7. Docker Desktop, pour les postes de travail<a class="headerlink" href="#7-docker-desktop-pour-les-postes-de-travail" title="Permanent link">&para;</a></h2>
+<p><strong>Docker Desktop</strong> est une application graphique pour <strong>Windows</strong>, <strong>macOS</strong> et <strong>Linux</strong>, destinée aux postes de travail. Sous Windows, elle fait tourner Docker Engine dans une petite machine virtuelle Linux, gérée par <strong><abbr title="Windows Subsystem for Linux — sous-système Windows pour Linux">WSL</abbr> 2</strong> (le sous-système Windows pour Linux), puisque les conteneurs Linux ont besoin d'un noyau Linux. Elle ajoute une interface graphique proche de Portainer, et installe la commande <code>docker</code> dans PowerShell.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Docker Desktop</th>
+<th>Docker Engine sur un serveur Linux</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Usage</td>
+<td>Développer, tester, apprendre <strong>sur son PC</strong></td>
+<td><strong>Héberger</strong> des services pour les utilisateurs</td>
+</tr>
+<tr>
+<td>Système</td>
+<td>Windows 10/11, macOS, Linux avec bureau</td>
+<td>Linux (Debian, Ubuntu, Red Hat…)</td>
+</tr>
+<tr>
+<td>Mémoire conseillée</td>
+<td>8 Go de mémoire vive sur le PC au minimum (pré-requis de Docker pour Windows)</td>
+<td>Selon les conteneurs, à partir de 1 Go</td>
+</tr>
+<tr>
+<td>Licence</td>
+<td>Gratuit pour un usage personnel, l'enseignement, les projets libres non commerciaux et les entreprises de moins de 250 salariés <strong>et</strong> 10 millions de dollars de chiffre d'affaires ; <strong>payant</strong> au-delà</td>
+<td>Gratuit et libre</td>
+</tr>
+</tbody>
+</table>
+<p>Pour un administrateur systèmes et réseaux, Docker Desktop est pratique pour <strong>essayer</strong> une image sur son PC avant de la déployer sur un serveur. Mais ce n'est pas un outil de production : on ne fait pas tourner les services de l'entreprise sur un poste de travail.</p>
+<div class="admonition warning">
+<p class="admonition-title">Docker Desktop et les autres hyperviseurs</p>
+<p>Docker Desktop pour Windows active la virtualisation de Windows (<abbr title="Windows Subsystem for Linux — sous-système Windows pour Linux">WSL</abbr> 2, et Hyper-V dans certains modes). Sur un PC qui fait aussi tourner VMware Workstation ou VirtualBox, les deux cohabitent avec les versions récentes, mais les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> peuvent devenir <strong>plus lentes</strong>. Pour suivre ce parcours, Docker Desktop n'est <strong>pas</strong> nécessaire : tout se passe dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> <code>docker-hote</code>.</p>
+</div>
+<h2 id="8-verifier-son-lab">8. Vérifier son lab<a class="headerlink" href="#8-verifier-son-lab" title="Permanent link">&para;</a></h2>
+<div class="admonition success">
+<p class="admonition-title">Vérifier son lab</p>
+<p>🐧 En <code>tssr</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>docker<span class="w"> </span>ps<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Names}}  {{.Status}}'</span><span class="w"> </span>--filter<span class="w"> </span><span class="nv">name</span><span class="o">=</span>^portainer$
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>docker<span class="w"> </span>inspect<span class="w"> </span>portainer<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.HostConfig.RestartPolicy.Name}}'</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>docker<span class="w"> </span>volume<span class="w"> </span>ls
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>lazydocker<span class="w"> </span>--version<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-1
+</code></pre></div>
+<p>Résultat attendu :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>portainer  Up 20 minutes
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>always
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>DRIVER    VOLUME NAME
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>local     portainer_data
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>Version: 0.25.2
+</code></pre></div>
+<p>🌐 <code>https://IP-de-la-VM:9443</code> affiche la page de connexion de Portainer, et l'on se connecte avec <code>admin</code> / <code>TutoDocker2026!</code>.</p>
+<p>🐧 Pour aller plus loin : redémarrer la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<code>sudo reboot</code>), se reconnecter en <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr>, et vérifier avec <code>docker ps</code> que <strong>Portainer est revenu tout seul</strong>, grâce à <code>--restart=always</code>.</p>
+</div>
+<div class="admonition success">
+<p class="admonition-title">🛟 Prendre l'instantané <code>02-fin-jour-1</code></p>
+<p>🐧 Éteindre la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<code>sudo poweroff</code>), puis 🖥️ prendre un instantané nommé <code>02-fin-jour-1</code>. Portainer et son compte <code>admin</code> resservent aux jours suivants.</p>
+</div>
+<h2 id="9-questions-de-revision">9. Questions de révision<a class="headerlink" href="#9-questions-de-revision" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Un conteneur créé dans Portainer apparaît-il dans <code>docker ps</code> ? Pourquoi ?</li>
+<li>Pourquoi Portainer a-t-il besoin de <code>-v /var/run/docker.sock:/var/run/docker.sock</code> ? Quel risque cela fait-il prendre ?</li>
+<li>Pourquoi le navigateur affiche-t-il une alerte de sécurité en ouvrant <code>https://IP-de-la-VM:9443</code> ? Est-ce grave dans le lab ? Et en production ?</li>
+<li>À quoi sert le volume <code>portainer_data</code> ? Que se passerait-il sans lui si l'on supprimait puis recréait le conteneur ?</li>
+<li>Dans quel cas préférer LazyDocker à Portainer, et inversement ?</li>
+<li>Quelle est la différence entre Docker Desktop et Docker Engine ? Lequel installe-t-on sur un serveur ?</li>
+</ol>
+<details class="success">
+<summary>Corrigé</summary>
+<ol>
+<li>Oui. Portainer n'a pas son propre moteur : il envoie ses ordres <strong>au même Docker Engine</strong> que la commande <code>docker</code>, à travers le socket. Les deux voient donc exactement les mêmes conteneurs.</li>
+<li>C'est par ce socket que Portainer <strong>pilote Docker</strong>. Mais l'accès au socket permet de tout faire sur la machine, y compris devenir <code>root</code> : un administrateur de Portainer contrôle la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>. Il faut donc protéger Portainer comme un accès <code>root</code> (mot de passe fort, pas d'exposition sur Internet, mises à jour).</li>
+<li>Portainer chiffre la connexion avec un <strong>certificat autosigné</strong>, qu'aucune autorité reconnue par le navigateur n'a signé : le navigateur ne peut pas vérifier l'identité du serveur. Dans un lab, c'est acceptable. En production, on utilise un certificat signé par une autorité (par exemple Let's Encrypt, au jour 3), sinon les utilisateurs prennent l'habitude d'ignorer les alertes.</li>
+<li>Il conserve la <strong>base de données</strong> de Portainer (comptes, réglages, environnements). Sans lui, ces données seraient dans la couche du conteneur et disparaîtraient avec lui : il faudrait recréer le compte administrateur et tout reconfigurer.</li>
+<li>LazyDocker : pour un coup d'œil rapide <strong>dans une session <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr></strong>, sans rien exposer sur le réseau ni installer de service. Portainer : pour gérer <strong>plusieurs serveurs</strong>, travailler à plusieurs avec des droits différents, ou laisser des collègues moins à l'aise avec la ligne de commande gérer des conteneurs.</li>
+<li>Docker Engine est le moteur seul, pour serveurs Linux, gratuit et libre. Docker Desktop est une application pour postes de travail, qui fait tourner Docker Engine dans une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> cachée et ajoute une interface graphique, avec une licence payante dans les grandes entreprises. Sur un serveur, on installe <strong>Docker Engine</strong>.</li>
+</ol>
+</details>
+<hr />
+<h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://docs.portainer.io/start/install-ce/server/docker/linux">Portainer — Installer Portainer <abbr title="Community Edition — édition communautaire, gratuite">CE</abbr> avec Docker sur Linux</a> — la procédure suivie dans ce TP (en anglais).</li>
+<li><a href="https://docs.portainer.io/faqs/installing/setup-token">Portainer — Trouver ou personnaliser le jeton de configuration</a> — le <em>setup token</em> (en anglais).</li>
+<li><a href="https://github.com/jesseduffield/lazydocker">LazyDocker sur GitHub</a> — installation, raccourcis clavier, configuration.</li>
+<li><a href="https://docs.docker.com/engine/containers/start-containers-automatically/">Docker — Politiques de redémarrage</a> — <code>no</code>, <code>on-failure</code>, <code>unless-stopped</code>, <code>always</code>.</li>
+<li><a href="https://docs.docker.com/docker-hub/usage/">Docker — Limites de téléchargement de Docker Hub</a> — les quotas avec et sans compte.</li>
+<li><a href="https://docs.docker.com/desktop/setup/install/windows-install/">Docker Desktop pour Windows</a> — prérequis et installation.</li>
+<li>Partie précédente : <a href="../03-apache-et-ssh-dans-un-conteneur/">Un serveur web et <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> dans un conteneur Debian</a> · Partie suivante : <a href="../05-volumes-et-dossiers-montes/">Garder ses données : volumes et dossiers montés</a>.</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../03-apache-et-ssh-dans-un-conteneur/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 3. Un serveur web et SSH dans un conteneur Debian">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                3. Un serveur web et SSH dans un conteneur Debian
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../05-volumes-et-dossiers-montes/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 5. Garder ses données : volumes et dossiers montés">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                5. Garder ses données : volumes et dossiers montés
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      <a href="/mentions-legales/">Mentions légales</a>
+
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/bodaine" target="_blank" rel="noopener" title="Nicolas BODAINE sur LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://github.com/NicoBOD" target="_blank" rel="noopener" title="NicoBOD sur GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://nicolas.bodaine.fr" target="_blank" rel="noopener" title="Portfolio de Nicolas BODAINE" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="/feed_rss_created.xml" target="_blank" rel="noopener" title="Flux RSS des derniers articles" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 64c0-17.7 14.3-32 32-32 229.8 0 416 186.2 416 416 0 17.7-14.3 32-32 32s-32-14.3-32-32C384 253.6 226.4 96 32 96 14.3 96 0 81.7 0 64m0 352a64 64 0 1 1 128 0 64 64 0 1 1-128 0m32-256c159.1 0 288 128.9 288 288 0 17.7-14.3 32-32 32s-32-14.3-32-32c0-123.7-100.3-224-224-224-17.7 0-32-14.3-32-32s14.3-32 32-32"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.path", "navigation.indexes", "navigation.prune", "navigation.footer", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "content.action.view", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>

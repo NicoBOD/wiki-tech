@@ -1,0 +1,4710 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+      
+      
+        <meta name="author" content="Nicolas BODAINE">
+      
+      
+        <link rel="canonical" href="https://wiki.bodaine.fr/cours-tp/docker/08-docker-compose-nextcloud/">
+      
+      
+        <link rel="prev" href="../07-reseaux-docker/">
+      
+      
+        <link rel="next" href="../../../tags/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
+    
+    
+      
+        <title>Docker Compose : déployer Nextcloud, MariaDB et Redis en une commande - Wiki Tech — NicoBOD</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        
+        <link rel="stylesheet" href="../../../assets/external/fonts.googleapis.com/css.56f7ac64.css">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+    
+    
+      
+    
+    
+
+    <!-- SEO -->
+    <meta name="author" content="Nicolas BODAINE">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph : compléments non gérés par le plugin social.     -->
+    <!-- og:type/title/description/image/url sont posés par social.   -->
+    <meta property="og:site_name" content="Wiki Tech — NicoBOD">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card : la grande image et l'image elle-même sont      -->
+    <!-- héritées des balises og:image générées par le plugin social.  -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Docker Compose : déployer Nextcloud, MariaDB et Redis en une commande — Wiki Tech — NicoBOD">
+    <meta name="twitter:description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+  
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#docker-compose-nextcloud-en-une-commande" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-header__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wiki Tech — NicoBOD
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Docker Compose : déployer Nextcloud, MariaDB et Redis en une commande
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer en mode clair"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer en mode clair" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Passer en mode sombre"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer en mode sombre" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Revenir au thème système"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Revenir au thème système" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Partager" aria-label="Partager" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../systemes/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h16v10H4m16 2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4c-1.11 0-2 .89-2 2v10a2 2 0 0 0 2 2H0v2h24v-2z"/></svg>
+    
+  
+  Systèmes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../reseaux/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v2h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+    
+  
+  Réseaux
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cloud/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 20q-2.28 0-3.89-1.57Q1 16.85 1 14.58q0-1.95 1.17-3.48 1.18-1.53 3.08-1.95.63-2.3 2.5-3.72Q9.63 4 12 4q2.93 0 4.96 2.04Q19 8.07 19 11q1.73.2 2.86 1.5 1.14 1.28 1.14 3 0 1.88-1.31 3.19T18.5 20Z"/></svg>
+    
+  
+  Cloud
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cybersecurite/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12h7c-.53 4.11-3.28 7.78-7 8.92zH5V6.3l7-3.11M12 1 3 5v6c0 5.55 3.84 10.73 9 12 5.16-1.27 9-6.45 9-12V5z"/></svg>
+    
+  
+  Cybersécurité
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../ia/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/></svg>
+    
+  
+  IA
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../automatisation/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+    
+  
+  Automatisation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../logiciels/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m0 5H3V4h18z"/></svg>
+    
+  
+  Logiciels
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../debug/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 12h-4v-2h4m0 6h-4v-2h4m6-6h-2.81a6 6 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6 6 0 0 0-2.83 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20z"/></svg>
+    
+  
+  Debug
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../astuces/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+    
+  
+  Astuces
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+    
+  
+  Cours et TP
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../tags/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tags
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-nav__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    Wiki Tech — NicoBOD
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../systemes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Systèmes
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../reseaux/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Réseaux
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cybersecurite/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cybersécurité
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../ia/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IA
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../automatisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automatisation
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../logiciels/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logiciels
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../debug/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../astuces/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Astuces
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cours et TP
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cours et TP
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../veeam/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Veeam Backup & Replication
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_2" id="__nav_11_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Veeam Backup & Replication
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/01-comprendre-la-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/02-decouvrir-veeam-data-platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Découvrir Veeam Data Platform 13
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/03-preparer-le-lab-installer-appliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Préparer le lab et installer l'appliance
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/04-ajouter-des-depots-de-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Ajouter des dépôts de sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/05-sauvegarder-configuration-et-serveur-de-fichiers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Sauvegarder la configuration et un serveur de fichiers
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/06-sauvegarder-restaurer-serveur-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Sauvegarder et restaurer un serveur Linux
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/07-sauvegarder-vers-azure-blob/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Sauvegarder vers Azure Blob Storage
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pfsense-ha/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cluster pfSense en haute disponibilité
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_3" id="__nav_11_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cluster pfSense en haute disponibilité
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/01-comprendre-haute-disponibilite/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la haute disponibilité
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/02-preparer-lab-installer-pfsense/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Préparer le lab et installer pfSense
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/03-configuration-initiale/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Configuration initiale
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/04-synchroniser-le-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Synchroniser le cluster
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/05-vip-carp-nat-sortant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. VIP CARP et NAT sortant
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/06-tester-la-bascule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Tester la bascule
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/07-agregation-lacp-troisieme-noeud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Agrégation LACP et troisième nœud
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/08-mettre-a-jour-le-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8. Mettre à jour le cluster
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../virtualisation/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Virtualisation (5 jours)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_4" id="__nav_11_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Virtualisation (5 jours)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/01-comprendre-la-virtualisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 1 — Comprendre et créer ses VM
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/05-virtualiser-des-serveurs/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 2 — Serveurs, réseau, stockage
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/09-panorama-des-technologies/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 3 — Technologies du système
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/12-stockage-sds-hyperconvergence/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 4 — Stockage, réseau, applications
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/15-le-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 5 — Cloud, tendances, défi final
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../virtualisation/annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker (5 jours)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_5" id="__nav_11_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Docker (5 jours)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../01-decouvrir-et-installer-docker/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 1 — Installer Docker et lancer ses premiers conteneurs
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_5_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_11_5_3" id="__nav_11_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 2 — Données, réseaux et Docker Compose
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_11_5_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Jour 2 — Données, réseaux et Docker Compose
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-volumes-et-dossiers-montes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Garder ses données : volumes et dossiers montés
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-sauvegarder-un-conteneur-en-image/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Sauvegarder un conteneur sous forme d'image
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-reseaux-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Les réseaux Docker
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8. Docker Compose : Nextcloud en une commande
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8. Docker Compose : Nextcloud en une commande
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-docker-compose-cest-quoi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Docker Compose, c'est quoi ?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-le-fichier-docker-composeyml-explique" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Le fichier docker-compose.yml expliqué
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Le fichier docker-compose.yml expliqué">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-nextcloud-nc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Nextcloud (nc)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-redis-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Redis (redis)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-mariadb-db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 MariaDB (db)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-volumes-et-reseaux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Volumes et réseaux
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-deployer-nextcloud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Déployer Nextcloud
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Déployer Nextcloud">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-creer-le-dossier-et-le-fichier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Créer le dossier et le fichier
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-lancer-les-conteneurs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Lancer les conteneurs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-verifier-que-tout-tourne" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Vérifier que tout tourne
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Vérifier que tout tourne">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-letat-des-conteneurs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 L'état des conteneurs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-les-journaux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Les journaux
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-terminer-linstallation-de-nextcloud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Terminer l'installation de Nextcloud
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Terminer l&#39;installation de Nextcloud">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-attendre-que-la-base-de-donnees-soit-prete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Attendre que la base de données soit prête
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-creer-le-compte-administrateur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Créer le compte administrateur
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-administrer-nextcloud-en-ligne-de-commande" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Administrer Nextcloud en ligne de commande
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-le-cycle-de-vie-dune-application-compose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Le cycle de vie d'une application Compose
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-attendre-que-la-base-soit-prete-le-test-de-sante" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Attendre que la base soit prête : le test de santé
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-exercice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Exercice
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-verifier-son-lab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Vérifier son lab
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tags/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.5 7A1.5 1.5 0 0 1 4 5.5 1.5 1.5 0 0 1 5.5 4 1.5 1.5 0 0 1 7 5.5 1.5 1.5 0 0 1 5.5 7m15.91 4.58-9-9C12.05 2.22 11.55 2 11 2H4c-1.11 0-2 .89-2 2v7c0 .55.22 1.05.59 1.41l8.99 9c.37.36.87.59 1.42.59s1.05-.23 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.56-.23-1.06-.59-1.42"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-docker-compose-cest-quoi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Docker Compose, c'est quoi ?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-le-fichier-docker-composeyml-explique" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Le fichier docker-compose.yml expliqué
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Le fichier docker-compose.yml expliqué">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-nextcloud-nc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Nextcloud (nc)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-redis-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Redis (redis)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-mariadb-db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 MariaDB (db)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-volumes-et-reseaux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Volumes et réseaux
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-deployer-nextcloud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Déployer Nextcloud
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Déployer Nextcloud">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-creer-le-dossier-et-le-fichier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Créer le dossier et le fichier
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-lancer-les-conteneurs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Lancer les conteneurs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-verifier-que-tout-tourne" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Vérifier que tout tourne
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Vérifier que tout tourne">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-letat-des-conteneurs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 L'état des conteneurs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-les-journaux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Les journaux
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-terminer-linstallation-de-nextcloud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Terminer l'installation de Nextcloud
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Terminer l&#39;installation de Nextcloud">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-attendre-que-la-base-de-donnees-soit-prete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Attendre que la base de données soit prête
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-creer-le-compte-administrateur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Créer le compte administrateur
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-administrer-nextcloud-en-ligne-de-commande" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Administrer Nextcloud en ligne de commande
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-le-cycle-de-vie-dune-application-compose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Le cycle de vie d'une application Compose
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-attendre-que-la-base-soit-prete-le-test-de-sante" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Attendre que la base soit prête : le test de santé
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-exercice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Exercice
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-verifier-son-lab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Vérifier son lab
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Cours et TP
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Docker (5 jours)
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../05-volumes-et-dossiers-montes/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Jour 2 — Données, réseaux et Docker Compose
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:cours" class="md-tag">cours</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:docker" class="md-tag">docker</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:docker-compose" class="md-tag">docker-compose</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:nextcloud" class="md-tag">nextcloud</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:travaux-pratiques" class="md-tag">travaux-pratiques</a>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/NicoBOD/wiki-tech/edit/main/docs/cours-tp/docker/08-docker-compose-nextcloud.md" title="Editer cette page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/NicoBOD/wiki-tech/raw/main/docs/cours-tp/docker/08-docker-compose-nextcloud.md" title="Consulter la source de cette page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<!-- ============================================================ -->
+<!-- ⚠️ RAPPEL IMPORTANT :                                          -->
+<!-- Pensez TOUJOURS à ajouter une entrée dans le fichier d'index  -->
+<!-- (index.md) du dossier correspondant (ex: docs/cloud/index.md) -->
+<!-- afin de référencer ce nouvel article et permettre aux         -->
+<!-- visiteurs de le trouver et de cliquer dessus !                -->
+<!-- ============================================================ -->
+
+<h1 id="docker-compose-nextcloud-en-une-commande">Docker Compose : Nextcloud en une commande<a class="headerlink" href="#docker-compose-nextcloud-en-une-commande" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Résumé</p>
+<p>Une vraie application, c'est rarement un seul conteneur. <strong>Nextcloud</strong> (un service de partage de fichiers, d'agendas et de contacts, à héberger soi-même) a besoin d'une <strong>base de données MariaDB</strong> et d'un <strong>cache Redis</strong>. Lancer et relier ces trois conteneurs à la main demanderait une dizaine de commandes ; <strong>Docker Compose</strong> les décrit dans <strong>un seul fichier</strong> et les démarre en <strong>une seule commande</strong>.</p>
+<p>Ce TP explique ce fichier ligne par ligne, déploie Nextcloud, et fait le tour des commandes de Compose : état, journaux, arrêt, suppression. On rencontre au passage une panne typique (le service démarre avant sa base de données) et sa solution, le <strong>test de santé</strong>. À la fin, Nextcloud fonctionne, et l'on sait décrire n'importe quelle application en Compose.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Propriété</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Difficulté</td>
+<td>Débutant</td>
+</tr>
+<tr>
+<td>Durée estimée</td>
+<td>2 h (dont quelques minutes de téléchargement)</td>
+</tr>
+<tr>
+<td>Version décrite</td>
+<td>Docker Compose 5.8, Nextcloud 35.0.3, MariaDB 11.8, Redis (image <code>redis:alpine</code>)</td>
+</tr>
+<tr>
+<td>Place dans le parcours</td>
+<td>Partie 8 sur 17 du parcours <a href="../">Docker</a> — jour 2</td>
+</tr>
+<tr>
+<td>Dernière mise à jour</td>
+<td>2026-11-24</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<div class="admonition info">
+<p class="admonition-title">Convention de lecture</p>
+<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>tssr</code> · 🌐 <strong>navigateur du PC</strong> · ✍️ <strong>exercice</strong> · 🛟 <strong>instantané</strong>. Le port <strong>80</strong> de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> doit être libre : <code>docker ps</code> ne doit montrer que <code>portainer</code>. Il reste environ 600 Mo d'images à télécharger (MariaDB est déjà là depuis la partie 5), qui occuperont environ 2,5 Go sur le disque de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</p>
+</div>
+<h2 id="1-docker-compose-cest-quoi">1. Docker Compose, c'est quoi ?<a class="headerlink" href="#1-docker-compose-cest-quoi" title="Permanent link">&para;</a></h2>
+<p><strong>Docker Compose</strong> est un outil qui <strong>décrit</strong> une application à plusieurs conteneurs dans un fichier texte au format <strong><abbr title="YAML Ain't Markup Language — format de fichier de configuration lisible">YAML</abbr></strong>, puis la crée, la démarre, l'arrête ou la supprime <strong>en une seule commande</strong>. Au lieu de taper <code>docker network create</code>, <code>docker volume create</code> et trois <code>docker run</code> avec des dizaines d'options, on écrit une fois pour toutes <strong>ce qu'on veut obtenir</strong>, et Compose s'en charge.</p>
+<p>Pour un administrateur, c'est un énorme progrès :</p>
+<ul>
+<li>le fichier <strong>documente</strong> l'installation : on sait exactement quelles images, quels ports, quels volumes sont utilisés ;</li>
+<li>il est <strong>reproductible</strong> à l'identique sur un autre serveur, et se range dans un gestionnaire de versions (Git) ;</li>
+<li>la plupart des logiciels publiés pour Docker fournissent <strong>leur fichier Compose tout prêt</strong>.</li>
+</ul>
+<p>Compose a été installé en partie 1 (paquet <code>docker-compose-plugin</code>). Il s'utilise avec <strong><code>docker compose</code></strong>, en deux mots. L'ancienne commande <code>docker-compose</code>, avec un tiret, était un programme séparé qui n'est plus maintenu ; on la croise encore dans de vieux tutoriels.</p>
+<div class="admonition info">
+<p class="admonition-title">Le format <abbr title="YAML Ain't Markup Language — format de fichier de configuration lisible">YAML</abbr> en trente secondes</p>
+<p><abbr title="YAML Ain't Markup Language — format de fichier de configuration lisible">YAML</abbr> range des informations par <strong>indentation</strong> : ce qui est décalé vers la droite appartient à la ligne du dessus. On utilise des <strong>espaces</strong> (jamais de tabulations), en général deux par niveau. Une ligne <code>clé: valeur</code> donne une valeur ; une ligne qui commence par <code>-</code> est un élément de liste. Une erreur d'indentation suffit à rendre le fichier invalide : c'est la première chose à vérifier en cas d'erreur.</p>
+</div>
+<h2 id="2-le-fichier-docker-composeyml-explique">2. Le fichier <code>docker-compose.yml</code> expliqué<a class="headerlink" href="#2-le-fichier-docker-composeyml-explique" title="Permanent link">&para;</a></h2>
+<p>Voici le fichier complet. Il vient du dépôt d'exemples officiel de Docker (<a href="https://github.com/docker/awesome-compose/blob/master/nextcloud-redis-mariadb/compose.yaml">awesome-compose</a>), avec une version de MariaDB à jour et les mots de passe du lab :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">services</span><span class="p">:</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">nc</span><span class="p">:</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nextcloud:apache</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">always</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80:80</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nc_data:/var/www/html</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redisnet</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dbnet</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REDIS_HOST=redis</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_HOST=db</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_DATABASE=nextcloud</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_USER=nextcloud</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_PASSWORD=TutoDocker2026!</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">  </span><span class="nt">redis</span><span class="p">:</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis:alpine</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">always</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redisnet</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="w">    </span><span class="nt">expose</span><span class="p">:</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6379</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="w">  </span><span class="nt">db</span><span class="p">:</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mariadb:11.8</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--transaction-isolation=READ-COMMITTED --binlog-format=ROW</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">always</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">db_data:/var/lib/mysql</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dbnet</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_DATABASE=nextcloud</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_USER=nextcloud</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_ROOT_PASSWORD=TutoDocker2026!</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_PASSWORD=TutoDocker2026!</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a><span class="w">    </span><span class="nt">expose</span><span class="p">:</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3306</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a><span class="nt">volumes</span><span class="p">:</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a><span class="w">  </span><span class="nt">db_data</span><span class="p">:</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a><span class="w">  </span><span class="nt">nc_data</span><span class="p">:</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a><span class="w">  </span><span class="nt">dbnet</span><span class="p">:</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a><span class="w">  </span><span class="nt">redisnet</span><span class="p">:</span>
+</code></pre></div>
+<p>Ce fichier contient trois <strong>services</strong> (un service = un conteneur, ou plusieurs copies du même) : Nextcloud (<code>nc</code>), Redis (<code>redis</code>) pour la mise en cache, et MariaDB (<code>db</code>) comme base de données. Regardons-les un par un.</p>
+<figure>
+<p><img alt="Trois conteneurs créés par Compose dans la VM. Le conteneur nc (Nextcloud) publie le port 80 de la VM et range ses fichiers dans le volume nc_data. Il est branché sur deux réseaux : redisnet, où se trouve le conteneur redis, et dbnet, où se trouve le conteneur db (MariaDB), qui range sa base dans le volume db_data. redis et db ne partagent aucun réseau." loading="lazy" src="../images/compose-nextcloud.svg" /></p>
+<figcaption>
+<p>L'application décrite par le fichier : trois services, deux réseaux, deux volumes.</p>
+</figcaption>
+</figure>
+<h3 id="21-nextcloud-nc">2.1 Nextcloud (<code>nc</code>)<a class="headerlink" href="#21-nextcloud-nc" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Ligne du fichier</th>
+<th>Explication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>image: nextcloud:apache</code></td>
+<td>L'image officielle de Nextcloud, dans sa variante avec le serveur web Apache intégré</td>
+</tr>
+<tr>
+<td><code>restart: always</code></td>
+<td>Docker relance le conteneur s'il s'arrête, et à chaque démarrage de Docker (donc de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>) : la <strong>politique de redémarrage</strong> vue en partie 4</td>
+</tr>
+<tr>
+<td><code>ports: - 80:80</code></td>
+<td>Publie le port 80 du conteneur sur le port 80 de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr></td>
+</tr>
+<tr>
+<td><code>volumes: - nc_data:/var/www/html</code></td>
+<td>Range les fichiers de Nextcloud (application, configuration, fichiers des utilisateurs) dans le volume <code>nc_data</code></td>
+</tr>
+<tr>
+<td><code>networks:</code></td>
+<td>Branche ce conteneur sur les réseaux <code>redisnet</code> <strong>et</strong> <code>dbnet</code> : il doit parler aux deux autres services</td>
+</tr>
+<tr>
+<td><code>environment:</code></td>
+<td>Les variables d'environnement lues par l'image au premier démarrage</td>
+</tr>
+<tr>
+<td><code>REDIS_HOST=redis</code></td>
+<td>Utiliser Redis comme cache, sur la machine nommée <code>redis</code></td>
+</tr>
+<tr>
+<td><code>MYSQL_HOST=db</code></td>
+<td>La base de données est sur la machine nommée <code>db</code></td>
+</tr>
+<tr>
+<td><code>MYSQL_DATABASE</code>, <code>MYSQL_USER</code>, <code>MYSQL_PASSWORD</code></td>
+<td>Nom de la base, utilisateur et mot de passe pour s'y connecter</td>
+</tr>
+</tbody>
+</table>
+<p><code>redis</code> et <code>db</code> sont des <strong>noms de services</strong>. Comme en <a href="../07-reseaux-docker/#3-un-bridge-personnalise-les-noms-fonctionnent">partie 7</a>, Compose branche les conteneurs sur des réseaux personnalisés, où le <abbr title="Domain Name System — résolution des noms">DNS</abbr> de Docker résout ces noms : aucune adresse IP n'apparaît dans le fichier.</p>
+<h3 id="22-redis-redis">2.2 Redis (<code>redis</code>)<a class="headerlink" href="#22-redis-redis" title="Permanent link">&para;</a></h3>
+<p><strong>Redis</strong> est une base de données <strong>en mémoire</strong>, très rapide, que Nextcloud utilise comme <strong>cache</strong> : il y garde ce qu'il a déjà calculé et y gère les verrous de fichiers, ce qui soulage MariaDB.</p>
+<table>
+<thead>
+<tr>
+<th>Ligne du fichier</th>
+<th>Explication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>image: redis:alpine</code></td>
+<td>Redis, dans une image légère basée sur Alpine Linux</td>
+</tr>
+<tr>
+<td><code>networks: - redisnet</code></td>
+<td>Seulement sur <code>redisnet</code> : seul Nextcloud peut le joindre</td>
+</tr>
+<tr>
+<td><code>expose: - 6379</code></td>
+<td><strong>Documente</strong> que le service écoute sur le port 6379. Contrairement à <code>ports</code>, cela ne publie <strong>rien</strong> sur la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : le port n'est joignable que depuis les réseaux Docker</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-mariadb-db">2.3 MariaDB (<code>db</code>)<a class="headerlink" href="#23-mariadb-db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Ligne du fichier</th>
+<th>Explication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>image: mariadb:11.8</code></td>
+<td>MariaDB, une alternative libre à MySQL, en version 11.8 (maintenue à long terme et recommandée par Nextcloud)</td>
+</tr>
+<tr>
+<td><code>command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW</code></td>
+<td>Options passées au serveur MariaDB : ce sont les réglages exigés par Nextcloud pour l'intégrité des transactions</td>
+</tr>
+<tr>
+<td><code>volumes: - db_data:/var/lib/mysql</code></td>
+<td>La base de données est rangée dans le volume <code>db_data</code> (partie 5)</td>
+</tr>
+<tr>
+<td><code>networks: - dbnet</code></td>
+<td>Seulement sur <code>dbnet</code> : seul Nextcloud peut joindre la base</td>
+</tr>
+<tr>
+<td><code>MYSQL_DATABASE</code>, <code>MYSQL_USER</code>, <code>MYSQL_PASSWORD</code></td>
+<td>Au <strong>premier</strong> démarrage, l'image crée cette base et cet utilisateur</td>
+</tr>
+<tr>
+<td><code>MYSQL_ROOT_PASSWORD</code></td>
+<td>Mot de passe de l'administrateur <code>root</code> de MariaDB</td>
+</tr>
+</tbody>
+</table>
+<h3 id="24-volumes-et-reseaux">2.4 Volumes et réseaux<a class="headerlink" href="#24-volumes-et-reseaux" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">volumes</span><span class="p">:</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">db_data</span><span class="p">:</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">nc_data</span><span class="p">:</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="nt">dbnet</span><span class="p">:</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="nt">redisnet</span><span class="p">:</span>
+</code></pre></div>
+<p>Ces deux sections déclarent les volumes et les réseaux utilisés plus haut. Compose les crée s'ils n'existent pas, en leur ajoutant le <strong>nom du projet</strong> en préfixe (ici <code>nextcloud_</code>, le nom du dossier) : <code>nextcloud_db_data</code>, <code>nextcloud_dbnet</code>… Deux applications Compose peuvent donc avoir chacune leur volume <code>db_data</code> sans se mélanger.</p>
+<p>Les deux réseaux séparés appliquent la <strong>segmentation</strong> vue en partie 7 : Redis et MariaDB ne se voient pas, et seul Nextcloud est relié aux deux.</p>
+<div class="admonition note">
+<p class="admonition-title">Mots de passe et HTTP</p>
+<p>Dans ce lab, les mots de passe sont écrits en clair dans le fichier, et Nextcloud répond en HTTP non chiffré. En production, les mots de passe vont dans un fichier <code>.env</code> lisible seulement par l'administrateur (<code>chmod 600</code>) ou dans les <em>secrets</em> de Docker Compose, et le service passe en <strong>HTTPS</strong> : c'est le sujet du jour 3.</p>
+</div>
+<h2 id="3-deployer-nextcloud">3. Déployer Nextcloud<a class="headerlink" href="#3-deployer-nextcloud" title="Permanent link">&para;</a></h2>
+<h3 id="31-creer-le-dossier-et-le-fichier">3.1 Créer le dossier et le fichier<a class="headerlink" href="#31-creer-le-dossier-et-le-fichier" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>🐧 Créer un dossier pour le projet et s'y placer. Le nom du dossier devient le <strong>nom du projet</strong> Compose :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>mkdir<span class="w"> </span>~/nextcloud
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">cd</span><span class="w"> </span>~/nextcloud
+</code></pre></div>
+</li>
+<li>
+<p>🐧 Créer le fichier avec <code>nano</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>nano<span class="w"> </span>docker-compose.yml
+</code></pre></div>
+<p>Coller le contenu de la <a href="#2-le-fichier-docker-composeyml-explique">section 2</a> (clic droit dans le terminal Windows), puis enregistrer : <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-x">X</kbd></span>, <span class="keys"><kbd class="key-o">O</kbd></span> (ou <span class="keys"><kbd class="key-y">Y</kbd></span> si <code>nano</code> est en anglais), <span class="keys"><kbd class="key-enter">Enter</kbd></span>.</p>
+</li>
+<li>
+<p>🐧 Faire vérifier le fichier par Compose avant de le lancer :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>config<span class="w"> </span>--quiet<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"Fichier valide"</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Fichier valide
+</code></pre></div>
+<p>En cas d'erreur d'indentation, Compose indique la ligne fautive.</p>
+</li>
+</ol>
+<div class="admonition info">
+<p class="admonition-title"><code>docker-compose.yml</code> ou <code>compose.yaml</code> ?</p>
+<p>Compose cherche dans le dossier courant un fichier nommé <code>compose.yaml</code> (le nom recommandé aujourd'hui), <code>compose.yml</code>, <code>docker-compose.yaml</code> ou <code>docker-compose.yml</code>. Les quatre fonctionnent ; on garde ici le nom le plus répandu dans les tutoriels.</p>
+</div>
+<h3 id="32-lancer-les-conteneurs">3.2 Lancer les conteneurs<a class="headerlink" href="#32-lancer-les-conteneurs" title="Permanent link">&para;</a></h3>
+<p>🐧 Démarrer toute l'application, en arrière-plan (<code>-d</code>) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a> Image redis:alpine Pulling
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a> Image nextcloud:apache Pulling
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a> …
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a> Image nextcloud:apache Pulled
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a> Network nextcloud_dbnet Creating
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a> Volume nextcloud_nc_data Creating
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a> Network nextcloud_redisnet Creating
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a> Volume nextcloud_db_data Creating
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a> …
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a> Container nextcloud-redis-1 Started
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a> Container nextcloud-db-1 Started
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a> Container nextcloud-nc-1 Started
+</code></pre></div>
+<p>Compose télécharge les images absentes, crée les réseaux et les volumes, puis crée et démarre les trois conteneurs. Leur nom suit le modèle <code>projet-service-numéro</code> : <code>nextcloud-nc-1</code>. Le premier lancement prend une minute environ, à cause des téléchargements.</p>
+<h2 id="4-verifier-que-tout-tourne">4. Vérifier que tout tourne<a class="headerlink" href="#4-verifier-que-tout-tourne" title="Permanent link">&para;</a></h2>
+<h3 id="41-letat-des-conteneurs">4.1 L'état des conteneurs<a class="headerlink" href="#41-letat-des-conteneurs" title="Permanent link">&para;</a></h3>
+<p>🐧 <code>docker compose ps</code> liste les conteneurs <strong>du projet</strong> (il faut être dans le dossier <code>~/nextcloud</code>) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>ps
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>NAME                IMAGE              COMMAND                  SERVICE   CREATED         STATUS         PORTS
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>nextcloud-db-1      mariadb:11.8       "docker-entrypoint.s…"   db        3 minutes ago   Up 3 minutes   3306/tcp
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>nextcloud-nc-1      nextcloud:apache   "/entrypoint.sh apac…"   nc        3 minutes ago   Up 3 minutes   0.0.0.0:80-&gt;80/tcp, [::]:80-&gt;80/tcp
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>nextcloud-redis-1   redis:alpine       "docker-entrypoint.s…"   redis     3 minutes ago   Up 3 minutes   6379/tcp
+</code></pre></div>
+<p>Seul <code>nc</code> publie un port (<code>0.0.0.0:80-&gt;80/tcp</code>) ; <code>3306/tcp</code> et <code>6379/tcp</code>, sans flèche, ne sont joignables que depuis les réseaux de Docker.</p>
+<h3 id="42-les-journaux">4.2 Les journaux<a class="headerlink" href="#42-les-journaux" title="Permanent link">&para;</a></h3>
+<p>🐧 Les journaux de <strong>tous</strong> les services, ou d'un seul :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>logs
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>docker<span class="w"> </span>compose<span class="w"> </span>logs<span class="w"> </span>db<span class="w"> </span>--tail<span class="w"> </span><span class="m">3</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>db-1  | 2026-11-24  6:10:52 0 [Note] mariadbd: Event Scheduler: Loaded 0 events
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>db-1  | 2026-11-24  6:10:52 0 [Note] mariadbd: ready for connections.
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>db-1  | Version: '11.8.9-MariaDB-ubu2404'  socket: '/run/mysqld/mysqld.sock'  port: 3306  mariadb.org binary distribution
+</code></pre></div>
+<p>Chaque ligne est préfixée par le nom du service. <code>docker compose logs -f</code> suit les journaux en direct (<span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-c">C</kbd></span> pour arrêter). On peut aussi utiliser les commandes habituelles avec le nom complet du conteneur : <code>docker logs nextcloud-nc-1</code>.</p>
+<h2 id="5-terminer-linstallation-de-nextcloud">5. Terminer l'installation de Nextcloud<a class="headerlink" href="#5-terminer-linstallation-de-nextcloud" title="Permanent link">&para;</a></h2>
+<h3 id="51-attendre-que-la-base-de-donnees-soit-prete">5.1 Attendre que la base de données soit prête<a class="headerlink" href="#51-attendre-que-la-base-de-donnees-soit-prete" title="Permanent link">&para;</a></h3>
+<p>Au premier démarrage, MariaDB crée sa base : cela prend une dizaine de secondes, et Nextcloud copie ses fichiers dans son volume. 🐧 Attendre la ligne <code>MariaDB init process done</code> suivie de <code>ready for connections</code> dans <code>docker compose logs db</code>.</p>
+<div class="admonition failure">
+<p class="admonition-title">« Error while trying to create admin account … Connection refused »</p>
+<figure>
+<p><img alt="Assistant d'installation de Nextcloud affichant une erreur rouge : « Error while trying to create admin account: An exception occurred in the driver: SQLSTATE[HY000] [2002] Connection refused », au-dessus du formulaire de création du compte administrateur." loading="lazy" src="../images/08-nextcloud-erreur-base-pas-prete.png" /></p>
+<figcaption>
+<p>Installation lancée trop tôt : MariaDB n'écoutait pas encore.</p>
+</figcaption>
+</figure>
+<p>Ce message apparaît si l'on clique sur <strong>Installer</strong> pendant que MariaDB s'initialise encore : Nextcloud frappe à la porte de la base, et personne ne répond (<em>connection refused</em>). Attendre quelques secondes et cliquer à nouveau sur <strong>Installer</strong>. Si l'erreur change ou persiste, repartir de zéro : <code>docker compose down -v</code>, <code>docker compose up -d</code>, attendre <code>ready for connections</code> dans les journaux de <code>db</code>, puis recommencer. La <a href="#7-attendre-que-la-base-soit-prete-le-test-de-sante">section 7</a> montre comment l'éviter pour de bon.</p>
+</div>
+<h3 id="52-creer-le-compte-administrateur">5.2 Créer le compte administrateur<a class="headerlink" href="#52-creer-le-compte-administrateur" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>🌐 Ouvrir <code>http://IP-de-la-VM</code> dans le navigateur du PC.</p>
+<figure>
+<p><img alt="Assistant d'installation de Nextcloud, en français : un encadré vert « Fichier de configuration automatique détecté » indique que le formulaire est pré-rempli ; en dessous, les champs Nom du compte administrateur et Mot de passe du compte administrateur, une section repliée « Stockage &amp; base de données » et le bouton Installer." loading="lazy" src="../images/08-nextcloud-assistant.png" /></p>
+<figcaption>
+<p>L'assistant ne demande que le compte administrateur : la base est déjà configurée.</p>
+</figcaption>
+</figure>
+<p>Grâce aux variables <code>MYSQL_HOST</code>, <code>MYSQL_DATABASE</code>, <code>MYSQL_USER</code> et <code>MYSQL_PASSWORD</code> du fichier, Nextcloud connaît déjà sa base de données : l'encadré <strong>Fichier de configuration automatique détecté</strong> l'indique, et la section <strong>Stockage &amp; base de données</strong>, repliée, contient les valeurs pré-remplies (hôte <code>db</code>, utilisateur <code>nextcloud</code>, base <code>nextcloud</code>). Il n'y a rien à y changer.</p>
+</li>
+<li>
+<p>🌐 Remplir :</p>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Nom du compte administrateur</strong></td>
+<td><code>admin</code></td>
+</tr>
+<tr>
+<td><strong>Mot de passe du compte administrateur</strong></td>
+<td><code>TutoDocker2026!</code></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>🌐 Cliquer sur <strong>Installer</strong> et patienter : l'installation prend environ une minute.</p>
+</li>
+<li>
+<p>🌐 Nextcloud propose d'installer des <strong>applications recommandées</strong> (agenda, contacts, messagerie…) : cliquer sur <strong>Ignorer</strong> pour gagner du temps. Une fenêtre de bienvenue présente les nouveautés : la fermer avec <strong>Passer</strong>, puis la croix.</p>
+<figure>
+<p><img alt="Application Fichiers de Nextcloud, en français : menu de gauche (Tous les fichiers, Récents, Favoris, Partages…), et dans la partie principale le texte « Welcome to Nextcloud! », les dossiers Documents, Modèles, Photos et quelques fichiers d'exemple (Nextcloud.png, Nextcloud intro.mp4, Nextcloud Manual.pdf, Readme.md)." loading="lazy" src="../images/08-nextcloud-fichiers.png" /></p>
+<figcaption>
+<p>Nextcloud fonctionne : l'application Fichiers, avec ses fichiers d'exemple.</p>
+</figcaption>
+</figure>
+</li>
+<li>
+<p>🌐 Essayer : créer un dossier, déposer un fichier du PC par glisser-déposer, le télécharger.</p>
+</li>
+</ol>
+<h3 id="53-administrer-nextcloud-en-ligne-de-commande">5.3 Administrer Nextcloud en ligne de commande<a class="headerlink" href="#53-administrer-nextcloud-en-ligne-de-commande" title="Permanent link">&para;</a></h3>
+<p>Nextcloud fournit un outil d'administration en ligne de commande, <strong><code>occ</code></strong>. Il se lance <strong>dans</strong> le conteneur, avec l'utilisateur du serveur web (<code>www-data</code>), grâce à <code>docker compose exec</code> :</p>
+<p>🐧 Afficher l'état de Nextcloud et vérifier qu'il utilise bien Redis :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>docker<span class="w"> </span>compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-u<span class="w"> </span>www-data<span class="w"> </span>nc<span class="w"> </span>php<span class="w"> </span>occ<span class="w"> </span>status
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>docker<span class="w"> </span>compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-u<span class="w"> </span>www-data<span class="w"> </span>nc<span class="w"> </span>php<span class="w"> </span>occ<span class="w"> </span>config:system:get<span class="w"> </span>memcache.locking
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>  - installed: true
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>  - version: 35.0.3.2
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>  - versionstring: 35.0.3
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>  …
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>\OC\Memcache\Redis
+</code></pre></div>
+<p><code>docker compose exec &lt;service&gt;</code> fonctionne comme <code>docker exec</code>, mais avec le <strong>nom du service</strong> (<code>nc</code>) plutôt que celui du conteneur. L'option <code>-u www-data</code> exécute la commande sous cet utilisateur, comme l'exige <code>occ</code>.</p>
+<h2 id="6-le-cycle-de-vie-dune-application-compose">6. Le cycle de vie d'une application Compose<a class="headerlink" href="#6-le-cycle-de-vie-dune-application-compose" title="Permanent link">&para;</a></h2>
+<p>Toutes ces commandes se tapent <strong>dans le dossier du projet</strong> (<code>~/nextcloud</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Commande</th>
+<th>Effet</th>
+<th>Les données (volumes)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>docker compose up -d</code></td>
+<td>Crée et démarre tout ce qui manque ; <strong>met à jour</strong> les conteneurs dont la configuration a changé dans le fichier</td>
+<td>Gardées</td>
+</tr>
+<tr>
+<td><code>docker compose ps</code></td>
+<td>État des conteneurs du projet</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>docker compose logs [-f] [service]</code></td>
+<td>Journaux</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>docker compose stop</code> / <code>start</code></td>
+<td>Arrête / redémarre les conteneurs, sans les supprimer</td>
+<td>Gardées</td>
+</tr>
+<tr>
+<td><code>docker compose restart [service]</code></td>
+<td>Redémarre un ou tous les services</td>
+<td>Gardées</td>
+</tr>
+<tr>
+<td><code>docker compose down</code></td>
+<td><strong>Supprime</strong> les conteneurs et les réseaux du projet</td>
+<td><strong>Gardées</strong></td>
+</tr>
+<tr>
+<td><code>docker compose down -v</code></td>
+<td>Supprime aussi les <strong>volumes</strong></td>
+<td><strong>Effacées</strong></td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>
+<p>🐧 Supprimer l'application avec <code>down</code>, puis vérifier que les volumes sont toujours là :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>down
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>docker<span class="w"> </span>volume<span class="w"> </span>ls<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Name}}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>nextcloud
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a> Container nextcloud-redis-1 Stopping
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a> …
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a> Container nextcloud-redis-1 Removed
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a> Container nextcloud-db-1 Removed
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a> Container nextcloud-nc-1 Removed
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a> Network nextcloud_dbnet Removed
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a> Network nextcloud_redisnet Removed
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>nextcloud_db_data
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>nextcloud_nc_data
+</code></pre></div>
+</li>
+<li>
+<p>🐧 La recréer, attendre une quinzaine de secondes, et constater que le compte <code>admin</code> existe toujours :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>docker<span class="w"> </span>compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-u<span class="w"> </span>www-data<span class="w"> </span>nc<span class="w"> </span>php<span class="w"> </span>occ<span class="w"> </span>user:list
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>  - admin: admin
+</code></pre></div>
+<p>Si <code>occ</code> répond par une longue erreur <code>Connection refused</code>, MariaDB redémarre encore : réessayer quelques secondes plus tard.</p>
+</li>
+</ol>
+<div class="admonition info">
+<p class="admonition-title"><code>Exited (137)</code> après un arrêt</p>
+<p>À l'arrêt (<code>stop</code> ou <code>down</code>), Docker demande poliment au programme de s'arrêter, puis le <strong>tue</strong> au bout de 10 secondes s'il n'a pas fini : l'état affiche alors <code>Exited (137)</code>. Une base de données qui écrit beaucoup peut avoir besoin de plus de temps pour s'arrêter proprement. On lui en laisse davantage en ajoutant au service <code>db</code> la ligne <code>stop_grace_period: 1m</code>, ou ponctuellement avec <code>docker compose stop -t 60 db</code>.</p>
+</div>
+<div class="admonition danger">
+<p class="admonition-title"><code>docker compose down -v</code> efface les données</p>
+<p>L'option <code>-v</code> supprime les volumes du projet : la base de données et tous les fichiers des utilisateurs de Nextcloud disparaissent, sans confirmation. À n'utiliser que pour repartir de zéro, et jamais sur un service en production sans sauvegarde.</p>
+</div>
+<h2 id="7-attendre-que-la-base-soit-prete-le-test-de-sante">7. Attendre que la base soit prête : le test de santé<a class="headerlink" href="#7-attendre-que-la-base-soit-prete-le-test-de-sante" title="Permanent link">&para;</a></h2>
+<p>La panne de la section 5.1 vient d'un problème général : Docker démarre les conteneurs <strong>dans n'importe quel ordre</strong>, et considère qu'un conteneur est prêt dès que son programme est <strong>lancé</strong>, pas quand il <strong>répond</strong>. Une application démarre donc souvent avant sa base de données.</p>
+<p>La solution : un <strong>test de santé</strong> (<em>healthcheck</em>), une commande que Docker lance régulièrement dans le conteneur pour savoir s'il répond vraiment, et une <strong>dépendance</strong> qui fait attendre Nextcloud.</p>
+<ol>
+<li>
+<p>🐧 Supprimer l'application et ses données, pour repartir de zéro :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>down<span class="w"> </span>-v
+</code></pre></div>
+</li>
+<li>
+<p>🐧 Ouvrir le fichier (<code>nano docker-compose.yml</code>) et ajouter au service <code>nc</code> une dépendance (à la suite de son bloc <code>environment</code>, au même niveau d'indentation que <code>environment:</code>) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">      </span><span class="nt">db</span><span class="p">:</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="w">      </span><span class="nt">redis</span><span class="p">:</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_started</span>
+</code></pre></div>
+</li>
+<li>
+<p>🐧 Ajouter au service <code>db</code> un test de santé (à la suite de son bloc <code>expose</code>) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"CMD"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"healthcheck.sh"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"--connect"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"--innodb_initialized"</span><span class="p p-Indicator">]</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5s</span>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="w">      </span><span class="nt">start_period</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Ligne</th>
+<th>Explication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>test:</code></td>
+<td>La commande à lancer : <code>healthcheck.sh</code>, un script fourni par l'image MariaDB, qui vérifie qu'on peut <strong>se connecter</strong> et que le moteur de stockage est <strong>initialisé</strong></td>
+</tr>
+<tr>
+<td><code>interval: 10s</code></td>
+<td>Toutes les 10 secondes</td>
+</tr>
+<tr>
+<td><code>timeout: 5s</code></td>
+<td>Échec si la commande ne répond pas en 5 secondes</td>
+</tr>
+<tr>
+<td><code>retries: 5</code></td>
+<td>« Malade » (<em>unhealthy</em>) après 5 échecs de suite</td>
+</tr>
+<tr>
+<td><code>start_period: 30s</code></td>
+<td>Pendant les 30 premières secondes, les échecs ne comptent pas : le temps de l'initialisation</td>
+</tr>
+<tr>
+<td><code>condition: service_healthy</code></td>
+<td>Compose ne démarre <code>nc</code> que lorsque <code>db</code> est <strong>en bonne santé</strong></td>
+</tr>
+</tbody>
+</table>
+<details class="note">
+<summary>Le fichier complet après modification</summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="nt">services</span><span class="p">:</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="w">  </span><span class="nt">nc</span><span class="p">:</span>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nextcloud:apache</span>
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">always</span>
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80:80</span>
+<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nc_data:/var/www/html</span>
+<a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a><span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redisnet</span>
+<a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dbnet</span>
+<a id="__codelineno-21-12" name="__codelineno-21-12" href="#__codelineno-21-12"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<a id="__codelineno-21-13" name="__codelineno-21-13" href="#__codelineno-21-13"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REDIS_HOST=redis</span>
+<a id="__codelineno-21-14" name="__codelineno-21-14" href="#__codelineno-21-14"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_HOST=db</span>
+<a id="__codelineno-21-15" name="__codelineno-21-15" href="#__codelineno-21-15"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_DATABASE=nextcloud</span>
+<a id="__codelineno-21-16" name="__codelineno-21-16" href="#__codelineno-21-16"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_USER=nextcloud</span>
+<a id="__codelineno-21-17" name="__codelineno-21-17" href="#__codelineno-21-17"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_PASSWORD=TutoDocker2026!</span>
+<a id="__codelineno-21-18" name="__codelineno-21-18" href="#__codelineno-21-18"></a><span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<a id="__codelineno-21-19" name="__codelineno-21-19" href="#__codelineno-21-19"></a><span class="w">      </span><span class="nt">db</span><span class="p">:</span>
+<a id="__codelineno-21-20" name="__codelineno-21-20" href="#__codelineno-21-20"></a><span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+<a id="__codelineno-21-21" name="__codelineno-21-21" href="#__codelineno-21-21"></a><span class="w">      </span><span class="nt">redis</span><span class="p">:</span>
+<a id="__codelineno-21-22" name="__codelineno-21-22" href="#__codelineno-21-22"></a><span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_started</span>
+<a id="__codelineno-21-23" name="__codelineno-21-23" href="#__codelineno-21-23"></a><span class="w">  </span><span class="nt">redis</span><span class="p">:</span>
+<a id="__codelineno-21-24" name="__codelineno-21-24" href="#__codelineno-21-24"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis:alpine</span>
+<a id="__codelineno-21-25" name="__codelineno-21-25" href="#__codelineno-21-25"></a><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">always</span>
+<a id="__codelineno-21-26" name="__codelineno-21-26" href="#__codelineno-21-26"></a><span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-21-27" name="__codelineno-21-27" href="#__codelineno-21-27"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redisnet</span>
+<a id="__codelineno-21-28" name="__codelineno-21-28" href="#__codelineno-21-28"></a><span class="w">    </span><span class="nt">expose</span><span class="p">:</span>
+<a id="__codelineno-21-29" name="__codelineno-21-29" href="#__codelineno-21-29"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6379</span>
+<a id="__codelineno-21-30" name="__codelineno-21-30" href="#__codelineno-21-30"></a><span class="w">  </span><span class="nt">db</span><span class="p">:</span>
+<a id="__codelineno-21-31" name="__codelineno-21-31" href="#__codelineno-21-31"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mariadb:11.8</span>
+<a id="__codelineno-21-32" name="__codelineno-21-32" href="#__codelineno-21-32"></a><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--transaction-isolation=READ-COMMITTED --binlog-format=ROW</span>
+<a id="__codelineno-21-33" name="__codelineno-21-33" href="#__codelineno-21-33"></a><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">always</span>
+<a id="__codelineno-21-34" name="__codelineno-21-34" href="#__codelineno-21-34"></a><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<a id="__codelineno-21-35" name="__codelineno-21-35" href="#__codelineno-21-35"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">db_data:/var/lib/mysql</span>
+<a id="__codelineno-21-36" name="__codelineno-21-36" href="#__codelineno-21-36"></a><span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-21-37" name="__codelineno-21-37" href="#__codelineno-21-37"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dbnet</span>
+<a id="__codelineno-21-38" name="__codelineno-21-38" href="#__codelineno-21-38"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<a id="__codelineno-21-39" name="__codelineno-21-39" href="#__codelineno-21-39"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_DATABASE=nextcloud</span>
+<a id="__codelineno-21-40" name="__codelineno-21-40" href="#__codelineno-21-40"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_USER=nextcloud</span>
+<a id="__codelineno-21-41" name="__codelineno-21-41" href="#__codelineno-21-41"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_ROOT_PASSWORD=TutoDocker2026!</span>
+<a id="__codelineno-21-42" name="__codelineno-21-42" href="#__codelineno-21-42"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_PASSWORD=TutoDocker2026!</span>
+<a id="__codelineno-21-43" name="__codelineno-21-43" href="#__codelineno-21-43"></a><span class="w">    </span><span class="nt">expose</span><span class="p">:</span>
+<a id="__codelineno-21-44" name="__codelineno-21-44" href="#__codelineno-21-44"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3306</span>
+<a id="__codelineno-21-45" name="__codelineno-21-45" href="#__codelineno-21-45"></a><span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
+<a id="__codelineno-21-46" name="__codelineno-21-46" href="#__codelineno-21-46"></a><span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"CMD"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"healthcheck.sh"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"--connect"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"--innodb_initialized"</span><span class="p p-Indicator">]</span>
+<a id="__codelineno-21-47" name="__codelineno-21-47" href="#__codelineno-21-47"></a><span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<a id="__codelineno-21-48" name="__codelineno-21-48" href="#__codelineno-21-48"></a><span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5s</span>
+<a id="__codelineno-21-49" name="__codelineno-21-49" href="#__codelineno-21-49"></a><span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<a id="__codelineno-21-50" name="__codelineno-21-50" href="#__codelineno-21-50"></a><span class="w">      </span><span class="nt">start_period</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+<a id="__codelineno-21-51" name="__codelineno-21-51" href="#__codelineno-21-51"></a><span class="nt">volumes</span><span class="p">:</span>
+<a id="__codelineno-21-52" name="__codelineno-21-52" href="#__codelineno-21-52"></a><span class="w">  </span><span class="nt">db_data</span><span class="p">:</span>
+<a id="__codelineno-21-53" name="__codelineno-21-53" href="#__codelineno-21-53"></a><span class="w">  </span><span class="nt">nc_data</span><span class="p">:</span>
+<a id="__codelineno-21-54" name="__codelineno-21-54" href="#__codelineno-21-54"></a><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-21-55" name="__codelineno-21-55" href="#__codelineno-21-55"></a><span class="w">  </span><span class="nt">dbnet</span><span class="p">:</span>
+<a id="__codelineno-21-56" name="__codelineno-21-56" href="#__codelineno-21-56"></a><span class="w">  </span><span class="nt">redisnet</span><span class="p">:</span>
+</code></pre></div>
+</details>
+</li>
+<li>
+<p>🐧 Vérifier le fichier, puis relancer :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>config<span class="w"> </span>--quiet<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"Fichier valide"</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a> Container nextcloud-db-1 Started
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a> Container nextcloud-db-1 Waiting
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a> Container nextcloud-redis-1 Started
+<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a> Container nextcloud-db-1 Healthy
+<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a> Container nextcloud-nc-1 Started
+</code></pre></div>
+<p>Compose <strong>attend</strong> (<code>Waiting</code>) que MariaDB soit <code>Healthy</code> avant de démarrer Nextcloud. La commande rend la main au bout d'une quinzaine de secondes.</p>
+</li>
+<li>
+<p>🐧 L'état affiche maintenant la santé de la base :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>ps<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Service}} {{.Status}}'</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>db Up 16 seconds (healthy)
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>nc Up Less than a second
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>redis Up 15 seconds
+</code></pre></div>
+</li>
+<li>
+<p>🌐 Refaire l'installation de la <a href="#52-creer-le-compte-administrateur">section 5.2</a> : cette fois, plus de risque de <code>Connection refused</code>.</p>
+</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Trouver des fichiers Compose</p>
+<p>La plupart des logiciels auto-hébergeables publient leur fichier Compose dans leur documentation : c'est le premier endroit où chercher. Pour transformer une commande <code>docker run</code> trouvée sur Internet en fichier Compose, le site <a href="https://www.composerize.com/">Composerize</a> fait la conversion automatiquement (toujours relire le résultat). Dans Portainer, le menu <strong>Stacks</strong> (piles) permet aussi de coller un fichier Compose et de le déployer depuis le navigateur.</p>
+</div>
+<h2 id="8-exercice">8. Exercice<a class="headerlink" href="#8-exercice" title="Permanent link">&para;</a></h2>
+<p>✍️ Ajouter à l'application un quatrième service, <code>adminer</code> (image <code>adminer</code>), une petite interface web d'administration de bases de données, publié sur le port <strong>8080</strong> de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> et branché <strong>seulement</strong> sur le réseau <code>dbnet</code>. Se connecter à la base de Nextcloud depuis le navigateur.</p>
+<details class="success">
+<summary>Réponse</summary>
+<p>Ajouter dans <code>services:</code> (même indentation que <code>nc:</code>, <code>redis:</code> et <code>db:</code>) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="w">  </span><span class="nt">adminer</span><span class="p">:</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">adminer</span>
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">always</span>
+<a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a><span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080:8080</span>
+<a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a><span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dbnet</span>
+</code></pre></div>
+<p>Puis <code>docker compose up -d</code> : Compose ne crée <strong>que</strong> le nouveau service, sans toucher aux trois autres. 🌐 Sur <code>http://IP-de-la-VM:8080</code>, choisir le système <strong>MySQL / MariaDB</strong>, serveur <code>db</code>, utilisateur <code>nextcloud</code>, mot de passe <code>TutoDocker2026!</code>, base <code>nextcloud</code> : les tables de Nextcloud (<code>oc_…</code>) s'affichent. Adminer joint <code>db</code> <strong>par son nom</strong>, puisqu'ils partagent <code>dbnet</code>.</p>
+<p>Retirer ensuite le service du fichier et lancer <code>docker compose up -d --remove-orphans</code> pour supprimer le conteneur devenu orphelin : un outil d'administration de base de données ne doit pas rester exposé.</p>
+</details>
+<h2 id="9-verifier-son-lab">9. Vérifier son lab<a class="headerlink" href="#9-verifier-son-lab" title="Permanent link">&para;</a></h2>
+<div class="admonition success">
+<p class="admonition-title">Vérifier son lab</p>
+<p>🐧 Dans <code>~/nextcloud</code>, Nextcloud installé :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>ps<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Service}} {{.Status}}'</span>
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>curl<span class="w"> </span>-s<span class="w"> </span>http://localhost/status.php
+</code></pre></div>
+<p>Résultat attendu (les durées varient) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>db Up 5 minutes (healthy)
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>nc Up 5 minutes
+<a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>redis Up 5 minutes
+<a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>{"installed":true,"maintenance":false,"needsDbUpgrade":false,"version":"35.0.3.2","versionstring":"35.0.3","edition":"","productname":"Nextcloud","extendedSupport":false}
+</code></pre></div>
+<p>🌐 <code>http://IP-de-la-VM</code> affiche la page de connexion de Nextcloud, et le compte <code>admin</code> / <code>TutoDocker2026!</code> fonctionne.</p>
+</div>
+<div class="admonition success">
+<p class="admonition-title">Prendre l'instantané <code>03-fin-jour-2</code></p>
+<p>🛟 Le jour 3 installe un reverse proxy qui a besoin du port 80. 🐧 Arrêter et supprimer les conteneurs de Nextcloud, <strong>en gardant ses données</strong> (pas de <code>-v</code>) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="nb">cd</span><span class="w"> </span>~/nextcloud
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>docker<span class="w"> </span>compose<span class="w"> </span>down
+</code></pre></div>
+<p>🐧 Éteindre la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<code>sudo poweroff</code>), puis 🖥️ prendre un instantané nommé <code>03-fin-jour-2</code>.</p>
+</div>
+<h2 id="10-questions-de-revision">10. Questions de révision<a class="headerlink" href="#10-questions-de-revision" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Quel est l'intérêt de Docker Compose par rapport à une suite de <code>docker run</code> ?</li>
+<li>Dans le fichier, comment Nextcloud trouve-t-il sa base de données, sans aucune adresse IP ?</li>
+<li>Quelle est la différence entre <code>ports: - 80:80</code> et <code>expose: - 3306</code> ?</li>
+<li>Quelle est la différence entre <code>docker compose down</code> et <code>docker compose down -v</code> ?</li>
+<li>Pourquoi Nextcloud peut-il répondre <code>Connection refused</code> juste après <code>docker compose up -d</code> ? Quelle est la solution propre ?</li>
+<li>Pourquoi Redis et MariaDB sont-ils sur deux réseaux différents ?</li>
+</ol>
+<details class="success">
+<summary>Corrigé</summary>
+<ol>
+<li>Toute l'application (services, images, ports, volumes, réseaux, variables) est décrite dans <strong>un fichier</strong>, qui sert de documentation, se range dans Git et se reproduit à l'identique sur un autre serveur, en <strong>une commande</strong>.</li>
+<li>Par le <strong>nom du service</strong>, <code>db</code> (variable <code>MYSQL_HOST=db</code>). Compose branche les deux conteneurs sur le réseau personnalisé <code>dbnet</code>, où le <abbr title="Domain Name System — résolution des noms">DNS</abbr> intégré de Docker résout ce nom.</li>
+<li><code>ports</code> <strong>publie</strong> le port sur la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : il devient joignable depuis le réseau. <code>expose</code> ne fait que <strong>documenter</strong> le port écouté : il reste joignable uniquement depuis les réseaux Docker.</li>
+<li><code>down</code> supprime les conteneurs et les réseaux mais <strong>garde les volumes</strong>, donc les données. <code>down -v</code> supprime <strong>aussi les volumes</strong> : toutes les données sont perdues.</li>
+<li>Docker considère qu'un conteneur est démarré dès que son programme est lancé, pas quand il répond : Nextcloud peut contacter MariaDB pendant son initialisation. Solution : un <strong>test de santé</strong> sur <code>db</code> et <code>depends_on</code> avec <code>condition: service_healthy</code> sur <code>nc</code>.</li>
+<li>Pour la <strong>segmentation</strong> : seul Nextcloud a besoin de parler aux deux. Si Redis était compromis, il ne pourrait pas atteindre la base de données.</li>
+</ol>
+</details>
+<hr />
+<h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://docs.docker.com/compose/">Docker — Docker Compose</a> — présentation et guide de démarrage (en anglais).</li>
+<li><a href="https://docs.docker.com/reference/compose-file/">Docker — Référence du fichier Compose</a> — toutes les clés : <code>services</code>, <code>volumes</code>, <code>networks</code>, <code>healthcheck</code>, <code>depends_on</code>…</li>
+<li><a href="https://hub.docker.com/_/nextcloud">Image officielle Nextcloud sur Docker Hub</a> — variables d'environnement et exemples Compose.</li>
+<li><a href="https://docs.nextcloud.com/server/latest/admin_manual/installation/system_requirements.html">Nextcloud — Configuration requise</a> — versions de bases de données prises en charge.</li>
+<li><a href="https://docs.nextcloud.com/server/latest/admin_manual/occ_command.html">Nextcloud — Utiliser la commande occ</a> — l'administration en ligne de commande.</li>
+<li>Partie précédente : <a href="../07-reseaux-docker/">Les réseaux Docker</a>.</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../07-reseaux-docker/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 7. Les réseaux Docker">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                7. Les réseaux Docker
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../../tags/" class="md-footer__link md-footer__link--next" aria-label="Suivant: Tags">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                Tags
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      <a href="/mentions-legales/">Mentions légales</a>
+
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/bodaine" target="_blank" rel="noopener" title="Nicolas BODAINE sur LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://github.com/NicoBOD" target="_blank" rel="noopener" title="NicoBOD sur GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://nicolas.bodaine.fr" target="_blank" rel="noopener" title="Portfolio de Nicolas BODAINE" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="/feed_rss_created.xml" target="_blank" rel="noopener" title="Flux RSS des derniers articles" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 64c0-17.7 14.3-32 32-32 229.8 0 416 186.2 416 416 0 17.7-14.3 32-32 32s-32-14.3-32-32C384 253.6 226.4 96 32 96 14.3 96 0 81.7 0 64m0 352a64 64 0 1 1 128 0 64 64 0 1 1-128 0m32-256c159.1 0 288 128.9 288 288 0 17.7-14.3 32-32 32s-32-14.3-32-32c0-123.7-100.3-224-224-224-17.7 0-32-14.3-32-32s14.3-32 32-32"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.path", "navigation.indexes", "navigation.prune", "navigation.footer", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "content.action.view", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>
