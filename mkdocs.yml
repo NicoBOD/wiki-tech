@@ -337,6 +337,9 @@ nav:
         - "9. Un reverse proxy avec Nginx Proxy Manager": cours-tp/docker/09-reverse-proxy-nginx-proxy-manager.md
         - "10. Nextcloud en HTTPS derrière le reverse proxy": cours-tp/docker/10-nextcloud-https-derriere-le-proxy.md
         - "11. Les plateformes tout-en-un": cours-tp/docker/11-plateformes-tout-en-un.md
+      - "Jour 4 — Exploiter et s'amuser":
+        - "12. Exploiter Docker au quotidien": cours-tp/docker/12-exploiter-docker-au-quotidien.md
+        - "13. Des projets sympas à déployer": cours-tp/docker/13-projets-sympas.md
   - Tags: tags.md
 
 copyright: >
