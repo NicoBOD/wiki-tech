@@ -33,7 +33,7 @@ status: publié
 | Propriété | Valeur |
 |-----------|--------|
 | Public | Techniciens et administrateurs systèmes et réseaux en formation : savoir créer une VM Linux et taper quelques commandes suffit |
-| Durée totale | 5 jours de 7 h (35 h), dont environ 31 h 30 de parties ; le reste sert aux questions, aux révisions et aux QCM des [annexes](annexes.md) |
+| Durée totale | 5 jours de 7 h (35 h), dont environ 32 h de parties ; le reste sert aux questions, aux révisions et aux QCM des [annexes](annexes.md) |
 | Version décrite | Debian **13.7** « trixie », Docker Engine **29.10** (et son mode Swarm), Docker Compose **5.8**, Portainer CE **2.45 LTS**, registre `registry:3` |
 | Dernière mise à jour | 2026-11-24 |
 
@@ -75,7 +75,7 @@ Chaque partie dure entre 1 h et 2 h 30 et mêle explications et pratique. Les du
 | [5. Garder ses données : volumes et dossiers montés](05-volumes-et-dossiers-montes.md) | Cours et TP | 2 h | Couche du conteneur, volumes, *bind mounts*, sauvegarde et restauration d'un volume | `docker-hote` |
 | [6. Sauvegarder un conteneur sous forme d'image](06-sauvegarder-un-conteneur-en-image.md) | TP | 1 h | `docker commit`, `docker save`, `docker load`, et leurs limites | `docker-hote` |
 | [7. Les réseaux Docker](07-reseaux-docker.md) | Cours et TP | 2 h | Bridge par défaut et personnalisé, résolution de noms, host, none, macvlan, Docker et le pare-feu | `docker-hote` |
-| [8. Docker Compose : Nextcloud en une commande](08-docker-compose-nextcloud.md) | Cours et TP | 2 h | Fichier `compose.yaml`, services, volumes, réseaux, variables, journaux | `docker-hote` |
+| [8. Docker Compose : Nextcloud en une commande](08-docker-compose-nextcloud.md) | Cours et TP | 2 h | Fichier Compose (`docker-compose.yml`), services, volumes, réseaux, variables, journaux | `docker-hote` |
 
 ### Jour 3 — Publier des services
 
@@ -83,7 +83,7 @@ Chaque partie dure entre 1 h et 2 h 30 et mêle explications et pratique. Les du
 |:---:|---|---|---|---|
 | [9. Un reverse proxy avec Nginx Proxy Manager](09-reverse-proxy-nginx-proxy-manager.md) | Cours et TP | 2 h | Fichier `hosts`, hôtes de proxy, réseaux Docker partagés, Portainer derrière le proxy | `docker-hote` |
 | [10. Nextcloud en HTTPS derrière le reverse proxy](10-nextcloud-https-derriere-le-proxy.md) | TP | 2 h | Compose et proxy, certificat autosigné, WordPress en exercice | `docker-hote` |
-| [11. Les plateformes tout-en-un](11-plateformes-tout-en-un.md) | Cours et TP | 2 h | Coolify, Cosmos Server, BunkerWeb | `docker-hote`, `docker-plateforme` |
+| [11. Les plateformes tout-en-un](11-plateformes-tout-en-un.md) | Cours et TP | 2 h 30 | Coolify, Cosmos Server, BunkerWeb | `docker-hote`, `docker-plateforme` |
 
 ### Jour 4 — Exploiter et s'amuser
 
@@ -149,7 +149,7 @@ La VM `docker-hote` reçoit son adresse automatiquement (DHCP). Elle change d'un
 
 La VM `docker-plateforme` de la partie 11 se branche sur le **même réseau** que `docker-hote` (mêmes réglages) et reçoit elle aussi son adresse par DHCP : elle est écrite **IP-de-plateforme**.
 
-Les VM `docker-n2` et `docker-n3` du cluster Swarm (partie 16) se branchent elles aussi sur ce réseau. À partir de la partie 15, certaines adresses sont écrites en clair, celles du lab de référence (un lab sous KVM, dont le réseau est `192.168.8.0/24`) : `192.168.8.71` pour `docker-hote`, `192.168.8.73` pour `docker-n2`, `192.168.8.74` pour `docker-n3`. Chez soi, elles sont dans la plage de son hyperviseur (tableaux ci-dessus) : les remplacer par les siennes.
+Les VM `docker-n2` et `docker-n3` du cluster Swarm (partie 16) se branchent elles aussi sur ce réseau. Certaines captures (dès la partie 4) et, à partir de la partie 15, certaines commandes montrent en clair les adresses du lab de référence (un lab sous KVM, dont le réseau est `192.168.8.0/24`) : `192.168.8.71` pour `docker-hote`, `192.168.8.72` pour `docker-plateforme`, `192.168.8.73` pour `docker-n2`, `192.168.8.74` pour `docker-n3`. Chez soi, elles sont dans la plage de son hyperviseur (tableaux ci-dessus) : les remplacer par les siennes.
 
 À l'intérieur de la VM, Docker crée en plus son propre réseau privé pour les conteneurs, `172.17.0.0/16` par défaut : on le découvre en [partie 2](02-premiers-conteneurs.md).
 
@@ -206,7 +206,7 @@ Un **instantané** (*snapshot*) fige l'état d'une machine virtuelle. En cas d'e
 | `01-docker-installe` | `docker-hote` | Fin de la partie 1, VM éteinte | Toutes les parties suivantes avec un Docker propre |
 | `02-fin-jour-1` | `docker-hote` | Fin de la partie 4, VM éteinte : Docker, Portainer (compte `admin` créé) et LazyDocker | Le jour 2 |
 | `03-fin-jour-2` | `docker-hote` | Fin de la partie 8, VM éteinte, Nextcloud arrêté (`docker compose down`) mais ses volumes gardés | Le jour 3 |
-| `04-fin-jour-3` | `docker-hote` | Fin de la partie 10, VM éteinte : NPM, Portainer et Nextcloud derrière le proxy en HTTPS | La partie 11 et le jour 4 |
+| `04-fin-jour-3` | `docker-hote` | Fin de la partie 10, VM éteinte : NPM, Portainer et Nextcloud derrière le proxy en HTTPS (et WordPress si l'exercice a été fait) | La partie 11 et le jour 4 |
 | `05-exploitation` | `docker-hote` | Fin de la partie 12, VM éteinte : rotation des journaux réglée | La partie 13 |
 | `00-debian-installee`, `01-coolify` | `docker-plateforme` | Partie 11 : avant, puis après l'installation de Coolify et d'Uptime Kuma | L'installation de Coolify |
 | `06-registre` | `docker-hote` | Fin de la partie 15, VM éteinte : images `web` et `debian-ssh`, registre privé, `insecure-registries` | La partie 16 |

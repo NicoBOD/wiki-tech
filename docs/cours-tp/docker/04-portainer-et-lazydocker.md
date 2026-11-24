@@ -255,6 +255,11 @@ Dans la colonne **Quick Actions** (actions rapides), chaque icône ouvre un outi
 
 Pour piloter Docker, Portainer a besoin du **socket** `/var/run/docker.sock`, qu'on lui a donné avec `-v /var/run/docker.sock:/var/run/docker.sock`. En [partie 1](01-decouvrir-et-installer-docker.md#42-ajouter-adminlab-au-groupe-docker), on a vu que l'accès à ce socket permet de **devenir `root` sur la machine**.
 
+![Schéma : la commande docker, le client, envoie ses ordres au socket /var/run/docker.sock (srw-rw---- root:docker), puis à dockerd, containerd et aux conteneurs. Peuvent écrire dans le socket : root, le groupe docker et Portainer qui le monte ; les autres utilisateurs sont refusés. Qui parle au socket peut monter tout le disque de la VM dans un conteneur : groupe docker = root.](images/client-socket-dockerd.svg){ loading=lazy }
+/// caption
+Portainer monte le socket : qui administre Portainer contrôle la VM.
+///
+
 Conséquence directe : **quiconque se connecte à Portainer en administrateur contrôle la VM**. Il peut lancer un conteneur qui monte `/` et lire ou modifier n'importe quel fichier.
 
 !!! danger "Protéger Portainer comme un accès root"
@@ -295,7 +300,7 @@ Son auteur fournit un script d'installation. Comme vu en partie 1, on le **lit**
 
 ### 6.2 L'utiliser
 
-🐧 Relancer d'abord le conteneur de l'exercice, pour avoir quelque chose à regarder, puis lancer LazyDocker :
+🐧 Relancer d'abord le conteneur de l'exercice, pour avoir quelque chose à regarder (s'il existe encore, le supprimer avant : `docker rm -f web-portainer`), puis lancer LazyDocker :
 
 ```bash
 docker run -d --name web-portainer -p 8081:80 nginx
@@ -362,8 +367,16 @@ Pour un administrateur systèmes et réseaux, Docker Desktop est pratique pour *
 
     🐧 Pour aller plus loin : redémarrer la VM (`sudo reboot`), se reconnecter en SSH, et vérifier avec `docker ps` que **Portainer est revenu tout seul**, grâce à `--restart=always`.
 
-!!! success "🛟 Prendre l'instantané `02-fin-jour-1`"
+!!! success "Prendre l'instantané `02-fin-jour-1`"
     🐧 Éteindre la VM (`sudo poweroff`), puis 🖥️ prendre un instantané nommé `02-fin-jour-1`. Portainer et son compte `admin` resservent aux jours suivants.
+
+!!! abstract "Le jour 1 en résumé"
+    Avant les questions, relire cette carte : chaque branche reprend une partie du jour, avec ses notions et ses commandes clés.
+
+    ![Carte mentale du jour 1 : quatre branches, comprendre et installer Docker, premiers conteneurs (docker run, ps, logs, exec), Debian avec Apache et SSH, Portainer et LazyDocker](images/carte-mentale-jour1.svg){ loading=lazy }
+    /// caption
+    Le jour 1 en un coup d'œil : les notions et les commandes à retenir.
+    ///
 
 ## 9. Questions de révision
 

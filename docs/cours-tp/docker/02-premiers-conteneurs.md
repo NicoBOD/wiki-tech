@@ -511,13 +511,15 @@ Conteneurs arrêtés et images inutilisées s'accumulent vite.
 
     (le dernier nombre dépend de l'ordre de démarrage des conteneurs : Docker donne la première adresse libre). Ce réseau `172.17.0.0/16` n'existe **qu'à l'intérieur de la VM** : le PC n'a aucune route vers lui. Depuis l'extérieur, on passe toujours par un **port publié** de la VM.
 
-✍️ **Exercice 5** — Faire le ménage : supprimer `web2` et `apache`, puis l'image `httpd`.
+✍️ **Exercice 5** — Faire le ménage : supprimer `web2`, `web3` (resté à l'état `Created` après l'exercice 2, s'il n'a pas déjà été supprimé) et `apache`, puis l'image `httpd`.
 
 ??? success "Réponse"
     ```bash
-    docker rm -f web2 apache
+    docker rm -f web2 web3 apache
     docker image rm httpd
     ```
+
+    Un conteneur déjà supprimé donne `Error response from daemon: No such container`, sans gêner la suppression des autres.
 
     L'ordre compte : tant qu'un conteneur (même arrêté) utilise l'image `httpd`, Docker refuse de la supprimer.
 

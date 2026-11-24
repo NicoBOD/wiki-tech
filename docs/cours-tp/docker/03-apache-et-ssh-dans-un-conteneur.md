@@ -299,7 +299,7 @@ VERSION_CODENAME=trixie
 
 ## 4. Que se passe-t-il au redémarrage ?
 
-Tout fonctionne. Simulons maintenant ce qui arrive chaque fois qu'un serveur redémarre, ou que Docker est mis à jour.
+Tout fonctionne. On simule maintenant ce qui arrive chaque fois qu'un serveur redémarre, ou que Docker est mis à jour.
 
 1. 🐧 Redémarrer le conteneur :
 
@@ -347,6 +347,11 @@ Apache et SSH **ne sont pas revenus**. Le contenu du conteneur, lui, est intact 
     ```
 
     `bash` ne sait rien d'Apache ni de SSH. Au redémarrage, Docker relance `bash`, et seulement `bash`. Les services lancés à la main par `service … start` ne faisaient pas partie du conteneur : ils ont disparu avec l'ancien processus.
+
+![Schéma en deux colonnes. À gauche, une machine virtuelle : le processus numéro 1 est systemd, qui démarre apache2 et sshd, et les relance après un redémarrage. À droite, le conteneur debian : le processus numéro 1 est bash, apache2 et sshd ont été lancés à la main avec service apache2 start et service ssh start ; après docker restart debian, seul bash est relancé et les deux services ne tournent plus.](images/pid1-vm-ou-conteneur.svg){ loading=lazy }
+/// caption
+Dans une VM, systemd relance les services ; dans le conteneur, Docker ne relance que le programme principal.
+///
 
 ✍️ **Exercice** — Remettre le site et SSH en service **sans** recréer le conteneur, puis vérifier avec `curl` et `ssh`.
 
@@ -425,6 +430,8 @@ Ce dernier point est le plus grand changement d'habitude pour un administrateur 
 ```bash
 docker rm -f debian apache
 ```
+
+Si l'astuce avec l'image `httpd` n'a pas été essayée, Docker répond aussi `No such container: apache` : c'est sans conséquence, `debian` est bien supprimé.
 
 Supprimer aussi l'empreinte SSH enregistrée pour le port 2222 : le prochain conteneur publié sur ce port aura une autre empreinte, et SSH refuserait de s'y connecter en criant à l'attaque (`REMOTE HOST IDENTIFICATION HAS CHANGED!`).
 

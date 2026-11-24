@@ -159,7 +159,21 @@ Les différences avec la partie 8 :
     66d095acc251   nextcloud-proxy_redis     bridge    local
     ```
 
-    NPM rejoint Nextcloud par `app`, mais n'a **aucun** accès à la base de données ni à Redis : ils sont sur d'autres réseaux. Comme en partie 9, rendre ce branchement durable en ajoutant `nextcloud-proxy_app` à la liste `networks:` du service `app` de `~/npm/docker-compose.yml`, et `nextcloud-proxy_app: external: true` à la section `networks:` de fin de fichier, puis `cd ~/npm && docker compose up -d`.
+    NPM rejoint Nextcloud par `app`, mais n'a **aucun** accès à la base de données ni à Redis : ils sont sur d'autres réseaux. Comme en partie 9, rendre ce branchement durable : dans `~/npm/docker-compose.yml`, ajouter `nextcloud-proxy_app` aux réseaux du service `app` et à la section `networks:` de fin de fichier. La fin du fichier devient :
+
+    ```yaml
+        networks:
+          - default
+          - portainer_network
+          - nextcloud-proxy_app
+    networks:
+      portainer_network:
+        external: true
+      nextcloud-proxy_app:
+        external: true
+    ```
+
+    Puis `cd ~/npm && docker compose up -d`. Sans cette déclaration, la prochaine recréation de NPM (partie 12) le débrancherait de Nextcloud : erreur 502.
 
 2. 🌐 Dans NPM, **Ajouter Hôte proxy** :
 

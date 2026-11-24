@@ -301,7 +301,7 @@ La méthode recommandée par la documentation de Docker : lancer un conteneur **
 
 ### 3.2 Restaurer dans un volume neuf
 
-Simulons la perte du volume, puis sa restauration.
+On simule la perte du volume, puis sa restauration.
 
 1. 🐧 Tout supprimer : le conteneur, puis le volume.
 

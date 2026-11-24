@@ -36,6 +36,9 @@ status: publié
 
 ---
 
+!!! info "Convention de lecture"
+    🖥️ **PC hôte** · 🐧 dans une VM : **1️⃣** `docker-hote` (le manager), **2️⃣** `docker-n2`, **3️⃣** `docker-n3` · 🌐 **navigateur du PC**. Les commandes Docker se tapent en `adminlab`. Les adresses `192.168.8.x` du corrigé sont celles du lab de référence : les remplacer par les siennes (tableau en tête de la [partie 16](16-cluster-docker-swarm.md)).
+
 !!! info "Point de départ"
     L'instantané `07-swarm` des trois VM (fin de la partie 16) : le cluster `docker-hote` + `docker-n2` + `docker-n3`, le registre privé sur `IP-de-la-VM:5000`, Nginx Proxy Manager sur `docker-hote`, et le service `bonjour` qui occupe le port 8080.
 
@@ -44,6 +47,11 @@ status: publié
 ## 1. La mission
 
 L'association veut un **intranet** : une page d'accueil simple, accessible à l'adresse **`http://intranet.docker.test`**, qui doit rester disponible même si une machine tombe en panne.
+
+![Schéma de l'architecture visée : le navigateur du PC ouvre http://intranet.docker.test (nom déclaré dans le fichier hosts) ; Nginx Proxy Manager, sur docker-hote, transmet à IP-de-la-VM:8085. Le port 8085 est ouvert sur les trois nœuds du cluster Swarm (docker-hote, docker-n2, docker-n3) par le maillage de routage, qui envoie chaque requête à l'une des trois répliques du service intranet (limite de 64 Mo chacune). Les répliques sont reliées par un réseau overlay. L'image intranet:1.0 est rangée dans le registre privé IP-de-la-VM:5000, sur docker-hote.](images/defi-final-cible.svg){ loading=lazy }
+/// caption
+L'architecture à obtenir : trois répliques sur trois nœuds, publiées derrière Nginx Proxy Manager.
+///
 
 Un collègue a commencé le travail. Il a laissé ce fichier `compose.yaml`, mais « le déploiement ne marche pas » :
 
@@ -81,6 +89,28 @@ networks:
 - `http://intranet.docker.test` affiche la page dans le navigateur du PC.
 - Pendant la coupure d'un worker, le site reste joignable (au plus une ou deux requêtes perdues), et le service revient à 3/3 tout seul.
 - Chaque erreur du fichier du collègue est **expliquée** : message obtenu, cause, correction.
+
+!!! success "Vérifier son lab"
+    1️⃣ Sur `docker-hote`, une fois le défi terminé :
+
+    ```bash
+    docker service ls --filter name=intranet
+    docker service ps intranet_intranet --filter desired-state=running --format "{{.Name}}  {{.Node}}  {{.CurrentState}}"
+    docker ps --filter name=intranet --format "{{.Names}}  {{.Status}}"
+    curl -s --resolve intranet.docker.test:80:127.0.0.1 http://intranet.docker.test/ | grep -o "<title>.*</title>"
+    ```
+
+    Résultat attendu (les identifiants et les durées changent) : le service en `3/3` avec l'image du registre privé et le port 8085, une réplique par nœud, la réplique locale `(healthy)`, et le titre de la page servi **à travers NPM** (l'option `--resolve` de `curl` remplace le fichier `hosts` pour ce test) :
+
+    ```text
+    ID             NAME                MODE         REPLICAS   IMAGE                            PORTS
+    a3mrmkm9x9zy   intranet_intranet   replicated   3/3        192.168.8.71:5000/intranet:1.0   *:8085->80/tcp
+    intranet_intranet.1  docker-n3  Running 3 hours ago
+    intranet_intranet.2  docker-n2  Running 3 hours ago
+    intranet_intranet.3  docker-hote  Running 3 hours ago
+    intranet_intranet.3.y8zk6cmp5uxsj51at02vakauy  Up 3 hours (healthy)
+    <title>Intranet de l'association</title>
+    ```
 
 !!! tip "Indices, à ouvrir seulement en cas de blocage"
     ??? note "Indice 1 : les erreurs de déploiement"
@@ -240,7 +270,7 @@ networks:
     intranet_intranet.3 docker-hote
     ```
 
-    `condition: any` (valeur par défaut, écrite pour être explicite) : avec `on-failure`, une réplique arrêtée proprement, par exemple quand on éteint normalement un nœud, passe à `Complete` et n'est **pas** recréée. Dans le lab, après un arrêt propre des trois VM, le service est resté à `1/3` avec `on-failure`, et revient à `3/3` avec `any`.
+    `condition: any` (valeur par défaut, écrite pour être explicite) : avec `on-failure`, une réplique arrêtée proprement, par exemple quand on éteint normalement un nœud, passe à `Complete` et n'est **pas** recréée. Après un arrêt propre des trois VM, le service peut rester à `1/3` avec `on-failure` ; avec `any`, il revient à `3/3`.
 
     Si les répliques ne sont pas réparties (restes des essais précédents) : `docker service update --force intranet_intranet`.
 
@@ -261,7 +291,7 @@ networks:
 
         Ici, NPM n'utilise **pas** un nom de conteneur comme en partie 9 : il tourne hors du cluster (lancé par `docker compose`), et n'est pas branché sur le réseau overlay de la pile. Il passe donc par le **port publié**, que le maillage de routage ouvre sur la VM.
 
-    3. 🌐 Ouvrir `http://intranet.docker.test` : la page « Intranet de l'association » s'affiche. Avec le certificat `*.docker.test` de la partie 10, l'onglet **SSL** de l'hôte permet de passer en HTTPS.
+    3. 🌐 Ouvrir `http://intranet.docker.test` : la page « Intranet de l'association » s'affiche. Pour passer en HTTPS, il faut un certificat qui contient le nom `intranet.docker.test` : celui de la partie 10 ne couvre que `nextcloud`, `portainer` et `wordpress`. Le refaire avec la même commande `openssl` en ajoutant `DNS:intranet.docker.test` dans `subjectAltName`, l'importer dans NPM, puis le choisir dans l'onglet **SSL** de l'hôte.
 
     ### Étape 6 : la preuve de tolérance aux pannes
 
@@ -288,6 +318,13 @@ networks:
     | 16 | Pile Swarm, réseau overlay, maillage de routage, panne d'un nœud, rééquilibrage |
 
 ---
+
+## Le jour 5 en résumé
+
+![Carte mentale du jour 5 : Dockerfile, registre privé, création du cluster Swarm, services et pannes, mises à jour et piles, défi final](images/carte-mentale-jour5.svg){ loading=lazy }
+/// caption
+Le jour 5 en un coup d'œil : construire, distribuer, orchestrer.
+///
 
 ## Ressources
 

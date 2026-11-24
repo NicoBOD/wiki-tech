@@ -104,7 +104,7 @@ Une même image peut donner naissance à **autant de conteneurs** qu'on veut, co
 |---|---|---|
 | **Docker Engine** | Les serveurs Linux : c'est ce qu'on installe dans ce parcours | Gratuit et libre (licence Apache 2.0) |
 | **Docker Desktop** | Les postes de travail Windows, macOS et Linux : une application graphique qui fait tourner Docker Engine dans une petite VM cachée | Gratuit pour un usage personnel, l'enseignement, les projets libres non commerciaux et les entreprises de moins de 250 salariés **et** de moins de 10 millions de dollars de chiffre d'affaires annuel ; payant au-delà |
-| **Docker Hub** | Tout le monde : le registre public d'images | Gratuit avec des limites (voir la [partie 15](index.md#jour-5-construire-distribuer-orchestrer)) |
+| **Docker Hub** | Tout le monde : le registre public d'images | Gratuit avec des limites (voir la [partie 15](15-distribuer-ses-images-registre.md)) |
 
 Docker Desktop est présenté en [partie 4](04-portainer-et-lazydocker.md). Un administrateur systèmes et réseaux, lui, travaille surtout avec **Docker Engine** sur des serveurs Linux.
 
@@ -197,8 +197,8 @@ ssh adminlab@IP-de-la-VM
 
 À la première connexion, répondre `yes` pour accepter l'empreinte de la VM, puis taper le mot de passe (rien ne s'affiche pendant la saisie, c'est normal). À partir de maintenant, toutes les commandes 🐧 peuvent se taper dans cette fenêtre, où le **copier-coller** fonctionne.
 
-!!! success "🛟 Prendre l'instantané `00-debian-installee`"
-    🐧 Éteindre la VM : dans la session SSH, `su -` (mot de passe de `root`), puis `poweroff` ; ou directement `poweroff` sur la console de la VM, connecté en `root`. 🖥️ Ensuite, 🖥️ prendre un instantané nommé `00-debian-installee` : **VM > Snapshot > Take Snapshot** dans Workstation, **Instantanés > Prendre** dans VirtualBox. Il permet de recommencer l'installation de Docker autant de fois que nécessaire.
+!!! success "Prendre l'instantané `00-debian-installee`"
+    🐧 Éteindre la VM : dans la session SSH, `su -` (mot de passe de `root`), puis `poweroff` ; ou directement `poweroff` sur la console de la VM, connecté en `root`. 🖥️ Ensuite, prendre un instantané nommé `00-debian-installee` : **VM > Snapshot > Take Snapshot** dans Workstation, **Instantanés > Prendre** dans VirtualBox. Il permet de recommencer l'installation de Docker autant de fois que nécessaire.
 
 ## 3. Installer Docker depuis le dépôt officiel
 
@@ -207,7 +207,7 @@ ssh adminlab@IP-de-la-VM
 Debian propose son propre paquet Docker, `docker.io`. Il s'installe en une commande (`apt install docker.io`), mais il est **figé** sur la version choisie à la sortie de Debian 13 : en novembre 2026, Debian propose `docker.io` en version **26.1**, alors que Docker publie la version **29.10**. On installe donc Docker depuis **son propre dépôt**, comme le recommande la [documentation officielle](https://docs.docker.com/engine/install/debian/) : on obtient la dernière version, ses correctifs de sécurité au fil de l'eau, et le module **Docker Compose** qui servira au jour 2.
 
 !!! danger "Ne pas mélanger les deux"
-    Les paquets `docker.io` (Debian) et `docker-ce` (Docker) **entrent en conflit**. Si `docker.io` a déjà été installé sur une machine, le désinstaller d'abord : `apt remove docker.io docker-compose docker-doc podman-docker containerd runc`.
+    Les paquets `docker.io` (Debian) et `docker-ce` (Docker) **entrent en conflit**. Si `docker.io` a déjà été installé sur une machine, le désinstaller d'abord : `sudo apt remove docker.io docker-compose docker-doc podman-docker containerd runc`.
 
 ### 3.2 Donner les droits d'administration à `adminlab`
 
@@ -377,6 +377,11 @@ ls -l /var/run/docker.sock
 srw-rw---- 1 root docker 0 24 nov.  00:07 /var/run/docker.sock
 ```
 
+![Schéma : la commande docker, le client, envoie ses ordres au socket /var/run/docker.sock (srw-rw---- root:docker), puis à dockerd, containerd et aux conteneurs. Peuvent écrire dans le socket : root, le groupe docker et Portainer qui le monte ; les autres utilisateurs sont refusés. Qui parle au socket peut monter tout le disque de la VM dans un conteneur : groupe docker = root.](images/client-socket-dockerd.svg){ loading=lazy }
+/// caption
+La commande `docker` ne fait que parler au socket : qui peut écrire dedans contrôle la machine.
+///
+
 ### 4.2 Ajouter `adminlab` au groupe `docker`
 
 1. 🐧 Ajouter `adminlab` au groupe :
@@ -460,7 +465,7 @@ Le script [`installer-docker.sh`](fichiers/installer-docker.sh) reprend **exacte
 
     ```text
     [INFO] Voulez-vous supprimer les anciennes versions de Docker ? (oui/non)
-    [SUCCÈS] Anciennes versions de Docker supprimées.
+    [SUCCÈS] Anciennes versions de Docker supprimées (s'il y en avait).
     [INFO] Voulez-vous installer Docker (installation basée sur la documentation officielle) ? (oui/non)
     ...
     Hello from Docker!
@@ -502,7 +507,7 @@ Le script [`installer-docker.sh`](fichiers/installer-docker.sh) reprend **exacte
 
     L'option `--rm` supprime le conteneur dès qu'il s'arrête : on n'encombre pas la machine de conteneurs terminés.
 
-!!! success "🛟 Prendre l'instantané `01-docker-installe`"
+!!! success "Prendre l'instantané `01-docker-installe`"
     🐧 Éteindre la VM (`sudo poweroff`), puis 🖥️ prendre un instantané nommé `01-docker-installe`. C'est le point de départ de toutes les parties suivantes.
 
 ## 7. Questions de révision

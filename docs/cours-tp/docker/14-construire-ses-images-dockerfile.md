@@ -196,7 +196,7 @@ Objectif : une image `web` qui contient le serveur Apache **et** une page d'accu
 
     | Ligne | Rôle |
     |---|---|
-    | `FROM httpd:latest` | Part de l'image officielle d'Apache (`httpd`), déjà croisée en partie 3. `latest` simplifie ce premier essai ; la section 6 explique pourquoi, pour un vrai service, on fige la version (`httpd:2.4`) |
+    | `FROM httpd:latest` | Part de l'image officielle d'Apache (`httpd`), déjà croisée aux parties 2 et 9. `latest` simplifie ce premier essai ; la section 6 explique pourquoi, pour un vrai service, on fige la version (`httpd:2.4`) |
     | `COPY index.html /usr/local/apache2/htdocs/` | Copie la page dans le dossier que cette image publie (sa racine web) |
     | `EXPOSE 80` | Documente le port d'Apache. L'image `httpd` le déclare déjà : la ligne est redondante, mais elle rend le fichier lisible seul |
 
@@ -233,7 +233,7 @@ docker build -t web .
  => => naming to docker.io/library/web:latest                              0.0s
 ```
 
-Le moteur de construction, **BuildKit**, affiche une ligne par étape : `[1/2] FROM`, puis `[2/2] COPY`. Cette sortie a été obtenue avec l'image `httpd` déjà présente sur la VM (`CACHED` sur la ligne `FROM`) : si elle manque, Docker la télécharge d'abord, et la construction prend environ 5 secondes au lieu d'une.
+Le moteur de construction, **BuildKit**, affiche une ligne par étape : `[1/2] FROM`, puis `[2/2] COPY`. Ici l'image `httpd` est déjà sur la VM (`CACHED` sur la ligne `FROM`) ; si elle manque, Docker la télécharge d'abord, et la construction prend environ 5 secondes au lieu d'une.
 
 🐧 Regarder l'image et ses couches :
 
@@ -407,6 +407,9 @@ Puis : construire l'image, démarrer un conteneur `debian-ssh-container` qui pub
     ```
 
     La première construction dure une vingtaine de secondes (téléchargement et installation des paquets). Avec `apt` au lieu d'`apt-get`, la construction afficherait `WARNING: apt does not have a stable CLI interface`, sans gravité, et l'image garderait la liste des paquets (301 Mo au lieu de 263 Mo).
+
+    !!! warning "Un SSH avec un mot de passe publié"
+        Comme en partie 3, ce conteneur accepte une connexion SSH avec un mot de passe écrit sur cette page, sur le port 54321 de **toutes** les adresses de la VM, sans passer par son pare-feu (partie 7). La VM reste en NAT ou en réseau privé hôte, jamais en mode pont, et le conteneur se supprime dès la fin de l'essai (`docker rm -f debian-ssh-container`). Pour un test depuis la VM seulement, `-p 127.0.0.1:54321:22` suffit.
 
     **Démarrer le conteneur.** 🐧
 
@@ -599,7 +602,7 @@ Le script doit démarrer MariaDB, créer la base et l'utilisateur de WordPress, 
     !!! tip "Une image qui change à chaque construction"
         `latest-fr_FR.tar.gz` désigne toujours la dernière version : reconstruire l'image dans un mois peut donner un autre WordPress. Pour une image **reproductible**, on télécharge une version précise, par exemple `https://fr.wordpress.org/wordpress-7.1.5-fr_FR.tar.gz`, et on vérifie son empreinte, publiée à côté (même adresse suivie de `.sha1`) : même principe que figer l'étiquette d'une image (section 6).
 
-2. 🐧 Démarrer le conteneur et lire ses journaux :
+2. 🐧 Démarrer le conteneur et lire ses journaux. Tant que l'assistant d'installation n'est pas terminé, le **premier visiteur** du port 65432 peut créer le compte administrateur du site : le terminer aussitôt (étape 3), et garder la VM en NAT ou en réseau privé hôte.
 
     ```bash
     docker run -d -p 65432:80 --name wordpress-lamp lamp-wordpress

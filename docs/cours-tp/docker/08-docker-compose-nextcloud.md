@@ -110,7 +110,7 @@ networks:
   redisnet:
 ```
 
-Ce fichier contient trois **services** (un service = un conteneur, ou plusieurs copies du même) : Nextcloud (`nc`), Redis (`redis`) pour la mise en cache, et MariaDB (`db`) comme base de données. Regardons-les un par un.
+Ce fichier contient trois **services** (un service = un conteneur, ou plusieurs copies du même) : Nextcloud (`nc`), Redis (`redis`) pour la mise en cache, et MariaDB (`db`) comme base de données. Voici chacun d'eux, un par un.
 
 ![Trois conteneurs créés par Compose dans la VM. Le conteneur nc (Nextcloud) publie le port 80 de la VM et range ses fichiers dans le volume nc_data. Il est branché sur deux réseaux : redisnet, où se trouve le conteneur redis, et dbnet, où se trouve le conteneur db (MariaDB), qui range sa base dans le volume db_data. redis et db ne partagent aucun réseau.](images/compose-nextcloud.svg){ loading=lazy }
 /// caption
@@ -569,6 +569,14 @@ La solution : un **test de santé** (*healthcheck*), une commande que Docker lan
     ```
 
     🐧 Éteindre la VM (`sudo poweroff`), puis 🖥️ prendre un instantané nommé `03-fin-jour-2`.
+
+!!! abstract "Le jour 2 en résumé"
+    Avant les questions, relire cette carte : chaque branche reprend une partie du jour, avec ses notions et ses commandes clés.
+
+    ![Carte mentale du jour 2 : volumes et dossiers montés, docker commit, save et load, réseaux Docker, Docker Compose avec ses commandes](images/carte-mentale-jour2.svg){ loading=lazy }
+    /// caption
+    Le jour 2 en un coup d'œil : garder ses données, relier les conteneurs, tout lancer avec Compose.
+    ///
 
 ## 10. Questions de révision
 

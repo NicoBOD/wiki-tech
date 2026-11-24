@@ -41,6 +41,17 @@ status: publié
 !!! info "Convention de lecture"
     🖥️ **PC hôte** · 🐧 dans une VM : **1️⃣** `docker-hote` (le manager), **2️⃣** `docker-n2`, **3️⃣** `docker-n3` · 🌐 **navigateur** · ✍️ **exercice** · 🛟 **instantané**. Toutes les commandes Docker se tapent en `adminlab`, sauf mention de `sudo`. Point de départ : l'instantané `06-registre` (fin de la partie 15).
 
+!!! warning "Adapter les adresses à son lab"
+    Les commandes et les sorties de cette partie montrent les adresses du lab de référence (réseau `192.168.8.0/24`). Avant de copier une commande, **remplacer** chaque adresse par celle de sa propre VM (relevée avec `ip -br a`) :
+
+    | Machine | Lab de référence | Chez soi (à noter) |
+    |---|---|---|
+    | 1️⃣ `docker-hote` (manager et registre privé) | `192.168.8.71` | IP-de-la-VM |
+    | 2️⃣ `docker-n2` | `192.168.8.73` | IP-de-n2 |
+    | 3️⃣ `docker-n3` | `192.168.8.74` | IP-de-n3 |
+
+    Sous VirtualBox, ce sont les adresses de la carte 2 (`192.168.56.x`). Une adresse oubliée donne des erreurs peu parlantes (`connection refused`, tâches « Rejected ») : en cas de doute, relire la commande.
+
 <!-- NOTE DE RÉDACTION (non affichée) : le support « 14 TD - Cluster Docker Swarm » du formateur est un brouillon inachevé (création de VM par Vagrant, aucune commande Swarm) : partie écrite d'après la documentation officielle de Docker (swarm-tutorial, ingress, admin_guide, overlay, lue le 2026-11-24) et entièrement exécutée le 2026-11-24 sur trois VM KVM : docker-hote (192.168.8.71, 2 vCPU, 4 Go), docker-n2 (.73) et docker-n3 (.74), 1 vCPU / 1 Go / 20 Go chacune, Debian 13.7 en image cloud, Docker 29.10.0 installé par le script publié en partie 1 (54 s et 48 s). Sorties dans captures/16-*.txt. Mesure de panne : virsh destroy de docker-n3 à 13:00:36 ; nœud « Down » à 13:00:50 ; réplique remplaçante « Starting » à 13:00:55, « Running » à 13:00:57 ; une requête curl par seconde sur 192.168.8.71:8080 : 1 échec sur 70. Mémoire utilisée par un worker avec une réplique : environ 350 Mo sur 967. Les onglets Workstation et VirtualBox (création des VM, réseau) sont écrits d'après la documentation des éditeurs, non testés sur ces hyperviseurs ; le piège de l'adresse 10.0.2.15 commune à toutes les VM en NAT VirtualBox découle du fonctionnement documenté de ce mode. -->
 
 ## 1. Pourquoi un cluster ?
@@ -193,8 +204,10 @@ Les nœuds d'un cluster Swarm communiquent sur trois ports. Debian n'active pas 
 
 === "VMware Workstation"
 
+    L'adresse est celle de `docker-hote` (`192.168.8.71` dans le lab de référence) :
+
     ```bash
-    docker swarm init --advertise-addr 192.168.8.71
+    docker swarm init --advertise-addr IP-de-la-VM
     ```
 
 === "VirtualBox"
@@ -387,16 +400,16 @@ ID             NAME        IMAGE                           NODE        DESIRED S
 szqbhv5l4x2c   bonjour.1   192.168.8.71:5000/bonjour:1.0   docker-n2   Running         Running 21 seconds ago
 ```
 
-```text
-192.168.8.71 -> Bonjour depuis le conteneur fb211602f3fb
-192.168.8.73 -> Bonjour depuis le conteneur fb211602f3fb
-192.168.8.74 -> Bonjour depuis le conteneur fb211602f3fb
-```
-
 1️⃣ Interroger les trois nœuds :
 
 ```bash
 for ip in 192.168.8.71 192.168.8.73 192.168.8.74; do echo "$ip -> $(curl -s http://$ip:8080/)"; done
+```
+
+```text
+192.168.8.71 -> Bonjour depuis le conteneur fb211602f3fb
+192.168.8.73 -> Bonjour depuis le conteneur fb211602f3fb
+192.168.8.74 -> Bonjour depuis le conteneur fb211602f3fb
 ```
 
 La seule réplique tourne sur `docker-n2`, et pourtant `docker-hote` et `docker-n3` répondent aussi sur le port 8080 : ils **transmettent** la requête à `docker-n2` par le réseau `ingress`. On peut donc placer un répartiteur de charge (ou un reverse proxy comme NPM) devant n'importe quel nœud, ou devant tous.
@@ -644,7 +657,7 @@ Un fichier Compose (partie 8) peut être déployé **sur tout le cluster** : on 
         driver: overlay
     ```
 
-    `condition: any` (la valeur par défaut, écrite ici pour être visible) recrée une réplique **quelle que soit** la raison de son arrêt. Avec `on-failure`, une réplique arrêtée **proprement** (code de sortie 0), par exemple lors de l'arrêt normal d'un nœud, est considérée comme terminée (`Complete`) et **n'est pas remplacée** : dans le lab, après un arrêt propre des trois VM, un service en `on-failure` est resté à `1/3`.
+    `condition: any` (la valeur par défaut, écrite ici pour être visible) recrée une réplique **quelle que soit** la raison de son arrêt. Avec `on-failure`, une réplique arrêtée **proprement** (code de sortie 0), par exemple lors de l'arrêt normal d'un nœud, est considérée comme terminée (`Complete`) et **n'est pas remplacée** : après un arrêt propre des trois VM, un service en `on-failure` peut rester à `1/3`.
 
     Deux différences avec un fichier pour `docker compose` : l'image doit **déjà exister dans un registre** (pas de `build:` : les nœuds ne peuvent pas construire), et les réseaux sont de type **`overlay`**.
 

@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="632" viewBox="0 0 1200 632" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="13">
+  <title>Jour 2 — Données, réseaux et Compose : carte mentale de révision</title>
+  <rect x="0" y="0" width="1200" height="632" fill="#ffffff"/>
+  <path d="M600,316 C460,316 470,84 420,84" fill="none" stroke="#1565c0" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M600,316 C460,316 470,364 420,364" fill="none" stroke="#2e7d32" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M600,316 C740,316 730,50 780,50" fill="none" stroke="#ef6c00" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M600,316 C740,316 730,364 780,364" fill="none" stroke="#6a1b9a" stroke-width="3.5" stroke-linecap="round"/>
+  <rect x="20" y="64" width="400" height="258" rx="12" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="36" y="89" font-size="16" font-weight="bold" fill="#1565c0">05 Volumes et dossiers montés</text>
+  <rect x="34" y="112" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="130" fill="#263238">Sans volume, les données disparaissent</text>
+  <rect x="34" y="146" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="164" font-family="Consolas, monospace" font-size="12" fill="#263238">docker volume create donnees-bdd</text>
+  <rect x="34" y="180" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="198" font-family="Consolas, monospace" font-size="12" fill="#263238">-v donnees-bdd:/var/lib/mysql</text>
+  <rect x="34" y="214" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="232" font-family="Consolas, monospace" font-size="12" fill="#263238">-v ~/site:/usr/share/nginx/html:ro</text>
+  <rect x="34" y="248" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="266" font-family="Consolas, monospace" font-size="12" fill="#263238">--tmpfs /cache  (fichiers en mémoire)</text>
+  <rect x="34" y="282" width="372" height="28" rx="6" fill="#ffffff" stroke="#1565c0" stroke-opacity="0.55"/>
+  <text x="44" y="300" fill="#263238">Sauvegarde : tar dans un conteneur jetable</text>
+  <rect x="20" y="344" width="400" height="224" rx="12" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+  <text x="36" y="369" font-size="16" font-weight="bold" fill="#2e7d32">06 Conteneur en image</text>
+  <rect x="34" y="392" width="372" height="28" rx="6" fill="#ffffff" stroke="#2e7d32" stroke-opacity="0.55"/>
+  <text x="44" y="410" font-family="Consolas, monospace" font-size="12" fill="#263238">docker commit debian_test debian-ping-nano</text>
+  <rect x="34" y="426" width="372" height="28" rx="6" fill="#ffffff" stroke="#2e7d32" stroke-opacity="0.55"/>
+  <text x="44" y="444" font-family="Consolas, monospace" font-size="12" fill="#263238">docker save -o essai.tar essai:1</text>
+  <rect x="34" y="460" width="372" height="28" rx="6" fill="#ffffff" stroke="#2e7d32" stroke-opacity="0.55"/>
+  <text x="44" y="478" font-family="Consolas, monospace" font-size="12" fill="#263238">docker load -i essai.tar</text>
+  <rect x="34" y="494" width="372" height="28" rx="6" fill="#ffffff" stroke="#2e7d32" stroke-opacity="0.55"/>
+  <text x="44" y="512" fill="#263238">Un commit ne contient pas les volumes</text>
+  <rect x="34" y="528" width="372" height="28" rx="6" fill="#ffffff" stroke="#2e7d32" stroke-opacity="0.55"/>
+  <text x="44" y="546" fill="#263238">Boîte noire : préférer un Dockerfile</text>
+  <rect x="780" y="30" width="400" height="292" rx="12" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+  <text x="796" y="55" font-size="16" font-weight="bold" fill="#ef6c00">07 Réseaux Docker</text>
+  <rect x="794" y="78" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="804" y="96" fill="#263238">Bridge par défaut : pas de noms</text>
+  <rect x="794" y="112" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="804" y="130" font-family="Consolas, monospace" font-size="12" fill="#263238">docker network create mon_reseau</text>
+  <rect x="794" y="146" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="804" y="164" font-family="Consolas, monospace" font-size="12" fill="#263238">docker run -d --network mon_reseau nginx</text>
+  <rect x="794" y="180" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="804" y="198" fill="#263238">Bridge personnalisé : DNS intégré</text>
+  <rect x="794" y="214" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="804" y="232" font-family="Consolas, monospace" font-size="12" fill="#263238">docker network connect back web</text>
+  <rect x="794" y="248" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="804" y="266" fill="#263238">Autres modes : host, none, macvlan</text>
+  <rect x="794" y="282" width="372" height="28" rx="6" fill="#ffffff" stroke="#ef6c00" stroke-opacity="0.55"/>
+  <text x="804" y="300" font-family="Consolas, monospace" font-size="12" fill="#263238">-p 127.0.0.1:8085:80  (publier en local)</text>
+  <rect x="780" y="344" width="400" height="258" rx="12" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="2"/>
+  <text x="796" y="369" font-size="16" font-weight="bold" fill="#6a1b9a">08 Docker Compose</text>
+  <rect x="794" y="392" width="372" height="28" rx="6" fill="#ffffff" stroke="#6a1b9a" stroke-opacity="0.55"/>
+  <text x="804" y="410" fill="#263238">Fichier Compose : services, volumes, réseaux</text>
+  <rect x="794" y="426" width="372" height="28" rx="6" fill="#ffffff" stroke="#6a1b9a" stroke-opacity="0.55"/>
+  <text x="804" y="444" font-family="Consolas, monospace" font-size="12" fill="#263238">docker compose config --quiet</text>
+  <rect x="794" y="460" width="372" height="28" rx="6" fill="#ffffff" stroke="#6a1b9a" stroke-opacity="0.55"/>
+  <text x="804" y="478" font-family="Consolas, monospace" font-size="12" fill="#263238">docker compose up -d</text>
+  <rect x="794" y="494" width="372" height="28" rx="6" fill="#ffffff" stroke="#6a1b9a" stroke-opacity="0.55"/>
+  <text x="804" y="512" font-family="Consolas, monospace" font-size="12" fill="#263238">docker compose ps  ·  docker compose logs</text>
+  <rect x="794" y="528" width="372" height="28" rx="6" fill="#ffffff" stroke="#6a1b9a" stroke-opacity="0.55"/>
+  <text x="804" y="546" font-family="Consolas, monospace" font-size="12" fill="#263238">docker compose down  (-v : et les volumes)</text>
+  <rect x="794" y="562" width="372" height="28" rx="6" fill="#ffffff" stroke="#6a1b9a" stroke-opacity="0.55"/>
+  <text x="804" y="580" fill="#263238">Test de santé : attendre la base</text>
+  <ellipse cx="600" cy="316" rx="135" ry="62" fill="#f4f6f8" stroke="#37474f" stroke-width="3"/>
+  <text x="600" y="310" text-anchor="middle" font-size="26" font-weight="bold" fill="#263238">Jour 2</text>
+  <text x="600" y="330" text-anchor="middle" font-size="14" fill="#37474f">Données, réseaux</text>
+  <text x="600" y="347" text-anchor="middle" font-size="14" fill="#37474f">et Compose</text>
+</svg>
