@@ -85,7 +85,7 @@ networks:
 ### 1.2 Critères de réussite
 
 - `docker service ls` affiche `intranet_intranet` en **3/3**, image `IP-de-la-VM:5000/intranet:1.0` (le registre de la partie 15), port `*:8085->80/tcp`.
-- Les trois répliques sont sur **trois nœuds différents**, et `docker ps` sur un nœud montre la sienne **`(healthy)`**.
+- Les trois répliques sont sur **trois nœuds différents** (au besoin après une nouvelle répartition), et `docker ps` sur un nœud montre la sienne **`(healthy)`**.
 - `http://intranet.docker.test` affiche la page dans le navigateur du PC.
 - Pendant la coupure d'un worker, le site reste joignable (au plus une ou deux requêtes perdues), et le service revient à 3/3 tout seul.
 - Chaque erreur du fichier du collègue est **expliquée** : message obtenu, cause, correction.
@@ -100,7 +100,7 @@ networks:
     curl -s --resolve intranet.docker.test:80:127.0.0.1 http://intranet.docker.test/ | grep -o "<title>.*</title>"
     ```
 
-    Résultat attendu (les identifiants et les durées changent) : le service en `3/3` avec l'image du registre privé et le port 8085, une réplique par nœud, la réplique locale `(healthy)`, et le titre de la page servi **à travers NPM** (l'option `--resolve` de `curl` remplace le fichier `hosts` pour ce test) :
+    Résultat attendu (les identifiants et les durées changent) : le service en `3/3` avec l'image du registre privé et le port 8085, une réplique par nœud (Swarm étale les tâches entre les nœuds disponibles, sans le garantir : après une panne ou un redéploiement, des répliques peuvent s'entasser, et `docker service update --force intranet_intranet` les répartit de nouveau), la réplique locale `(healthy)`, et le titre de la page servi **à travers NPM** (l'option `--resolve` de `curl` remplace le fichier `hosts` pour ce test) :
 
     ```text
     ID             NAME                MODE         REPLICAS   IMAGE                            PORTS

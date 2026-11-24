@@ -207,7 +207,7 @@ ssh adminlab@IP-de-la-VM
 Debian propose son propre paquet Docker, `docker.io`. Il s'installe en une commande (`apt install docker.io`), mais il est **figé** sur la version choisie à la sortie de Debian 13 : en novembre 2026, Debian propose `docker.io` en version **26.1**, alors que Docker publie la version **29.10**. On installe donc Docker depuis **son propre dépôt**, comme le recommande la [documentation officielle](https://docs.docker.com/engine/install/debian/) : on obtient la dernière version, ses correctifs de sécurité au fil de l'eau, et le module **Docker Compose** qui servira au jour 2.
 
 !!! danger "Ne pas mélanger les deux"
-    Les paquets `docker.io` (Debian) et `docker-ce` (Docker) **entrent en conflit**. Si `docker.io` a déjà été installé sur une machine, le désinstaller d'abord : `sudo apt remove docker.io docker-compose docker-doc podman-docker containerd runc`.
+    Les paquets `docker.io` (Debian) et `docker-ce` (Docker) **entrent en conflit**. Si `docker.io` a déjà été installé sur une machine, le désinstaller d'abord, en `root` (`su -`, car `sudo` n'est installé qu'à la section suivante) : `apt remove docker.io docker-compose docker-doc podman-docker containerd runc`.
 
 ### 3.2 Donner les droits d'administration à `adminlab`
 
