@@ -84,7 +84,7 @@ Status: Downloaded newer image for debian:latest
 | `-dit` | Trois options en une : **d**étaché (arrière-plan), **i**nteractif (entrée clavier gardée ouverte), **t**erminal |
 | `-p8080:80` | Le port 80 du conteneur (Apache) est joignable sur le port 8080 de la VM |
 | `-p2222:22` | Le port 22 du conteneur (SSH) est joignable sur le port 2222 de la VM |
-| `debian:latest` | L'image officielle Debian, dans sa dernière version (Debian 13 aujourd'hui) |
+| `debian:latest` | L'image officielle Debian, dans sa dernière version (Debian 13 aujourd'hui). Pour un essai jetable comme celui-ci, `latest` convient ; pour un service durable, on écrirait `debian:13` (partie 2) |
 
 !!! question "Pourquoi `-dit`, alors que nginx n'en avait pas besoin ?"
     Le programme principal de l'image `debian` est **`bash`**, un interpréteur de commandes. Lancé sans terminal ni entrée clavier, `bash` n'a rien à lire : il se termine aussitôt, et le conteneur avec lui.
@@ -209,6 +209,9 @@ VERSION_CODENAME=trixie
 
 ## 3. Ajouter un accès SSH
 
+!!! warning "Garder la VM en NAT ou en réseau privé hôte"
+    Ce TP ouvre un SSH `root` avec un mot de passe **publié** sur cette page, sur le port 2222 de **toutes** les adresses de la VM. Les ports publiés par Docker ne passent même pas par le pare-feu de la VM (partie 7). Avec les réseaux du lab (NAT de Workstation, réseau privé hôte de VirtualBox), seul le PC peut le joindre. Ne **jamais** passer la VM en mode **pont** (*bridged*) pendant ce TP : elle serait alors joignable par tout le réseau local.
+
 ### 3.1 Installer et configurer le serveur SSH
 
 1. 🐧 Revenir dans le conteneur :
@@ -224,7 +227,7 @@ VERSION_CODENAME=trixie
     apt install ssh -y
     ```
 
-    Deux lignes `sysctl: permission denied on key "vm.max_map_count"` peuvent apparaître pendant l'installation : un conteneur n'a **pas le droit** de modifier les réglages du noyau, qui est partagé avec la VM. C'est normal et sans conséquence.
+    Deux lignes `sysctl: permission denied on key "vm.max_map_count"` et `sysctl: permission denied on key "kernel.pid_max"` peuvent apparaître pendant l'installation : un conteneur n'a **pas le droit** de modifier les réglages du noyau, qui est partagé avec la VM. C'est normal et sans conséquence.
 
 3. 📦 Autoriser la connexion de `root` par mot de passe, interdite par défaut. Ouvrir le fichier de configuration du serveur SSH :
 
@@ -352,12 +355,16 @@ Apache et SSH **ne sont pas revenus**. Le contenu du conteneur, lui, est intact 
     docker exec debian service apache2 start
     docker exec debian service ssh start
     curl http://localhost:8080
+    ssh root@localhost -p2222 hostname
     ```
 
     ```text
     Welcome to Docker
+    root@localhost's password:
+    0d0be42f5b3e
     ```
 
+    La connexion SSH répond avec le nom de machine du conteneur (son identifiant).
     Tout revient, puisque les fichiers sont toujours là. Mais il faudra recommencer **à chaque redémarrage** : ce n'est pas tenable sur un serveur.
 
 ## 5. Pourquoi on ne fait pas ça en production
@@ -385,26 +392,10 @@ Ce dernier point est le plus grand changement d'habitude pour un administrateur 
 
     L'option `-v` (un « dossier monté ») et l'option `--restart` sont expliquées aux parties 4 et 5. Ce conteneur-là survit aux redémarrages, et la page web survit même à sa suppression.
 
-## 6. Faire le ménage
-
-🐧 Supprimer le conteneur `debian` (et `apache` si l'astuce ci-dessus a été essayée) :
-
-```bash
-docker rm -f debian apache
-```
-
-Supprimer aussi l'empreinte SSH enregistrée pour le port 2222 : le prochain conteneur publié sur ce port aura une autre empreinte, et SSH refuserait de s'y connecter en criant à l'attaque (`REMOTE HOST IDENTIFICATION HAS CHANGED!`).
-
-```bash
-ssh-keygen -R "[localhost]:2222"
-```
-
-🖥️ Sur le PC, dans PowerShell, faire de même si la connexion depuis le PC a été essayée : `ssh-keygen -R "[IP-de-la-VM]:2222"`.
-
-## 7. Vérifier son lab
+## 6. Vérifier son lab
 
 !!! success "Vérifier son lab"
-    🐧 Avant le ménage de la section 6, avec les services relancés :
+    🐧 Avec les services relancés (exercice de la section 4) :
 
     ```bash
     curl -s http://localhost:8080
@@ -426,6 +417,22 @@ ssh-keygen -R "[localhost]:2222"
     ```
 
     `docker port` liste les ports publiés d'un conteneur : une commande pratique quand on ne sait plus par où le joindre.
+
+## 7. Faire le ménage
+
+🐧 Supprimer le conteneur `debian` (et `apache` si l'astuce ci-dessus a été essayée) :
+
+```bash
+docker rm -f debian apache
+```
+
+Supprimer aussi l'empreinte SSH enregistrée pour le port 2222 : le prochain conteneur publié sur ce port aura une autre empreinte, et SSH refuserait de s'y connecter en criant à l'attaque (`REMOTE HOST IDENTIFICATION HAS CHANGED!`).
+
+```bash
+ssh-keygen -R "[localhost]:2222"
+```
+
+🖥️ Sur le PC, dans PowerShell, faire de même si la connexion depuis le PC a été essayée : `ssh-keygen -R "[IP-de-la-VM]:2222"`.
 
 ## 8. Questions de révision
 

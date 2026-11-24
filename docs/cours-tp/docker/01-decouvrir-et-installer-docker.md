@@ -119,7 +119,7 @@ Docker Desktop est présenté en [partie 4](04-portainer-et-lazydocker.md). Un a
 | Processeur | 2 vCPU |
 | Mémoire | 4 Go (4096 Mo) |
 | Disque | 40 Go, dynamique (alloué au fur et à mesure) |
-| Image d'installation | `debian-13.7.0-amd64-netinst.iso` (ou une version 13.x plus récente) |
+| Image d'installation | `debian-13.7.0-amd64-netinst.iso`, ou la version 13.x la plus récente (13.8…) : les commandes sont les mêmes |
 
 === "VMware Workstation"
 
@@ -132,16 +132,16 @@ Docker Desktop est présenté en [partie 4](04-portainer-et-lazydocker.md). Un a
 
 === "VirtualBox"
 
-    1. 🖥️ **Machine > Nouvelle…**, nommer la VM `docker-hote`, choisir l'image ISO de Debian, type **Linux**, version **Debian (64-bit)**, et cocher la case qui **désactive l'installation automatique** (*Skip Unattended Installation*) : on veut faire l'installation soi-même pour choisir les logiciels.
+    1. 🖥️ **Machine > Nouvelle…**, nommer la VM `docker-hote`, choisir l'image ISO de Debian, type **Linux**, version **Debian (64-bit)**. S'assurer que l'**installation automatique** (*Unattended Installation*) n'est **pas** activée : selon la version de VirtualBox, la case s'appelle *Skip Unattended Installation* (à cocher) ou *Proceed with Unattended Installation* (à laisser décochée). On veut faire l'installation soi-même pour choisir les logiciels.
     2. 🖥️ Régler la mémoire à **4096 Mo**, **2 processeurs**, et un disque de **40 Go** (dynamique par défaut).
-    3. 🖥️ Avant le premier démarrage : **Configuration > Réseau**. La **carte 1** reste en **NAT**. Activer la **carte 2**, mode d'accès **Réseau privé hôte** (*Host-only Adapter*), nom **VirtualBox Host-Only Ethernet Adapter**.
+    3. 🖥️ Avant le premier démarrage : **Configuration > Réseau**. La **carte 1** reste en **NAT**. Activer la **carte 2**, mode d'accès **Réseau privé hôte** (*Host-only Adapter*), nom **VirtualBox Host-Only Ethernet Adapter**. Si l'onglet de la carte 2 n'apparaît pas, passer la fenêtre de configuration en mode **Expert** (bouton en haut de la fenêtre).
 
     !!! question "Pourquoi deux cartes réseau dans VirtualBox ?"
         En mode **NAT** simple, VirtualBox cache la VM derrière le PC : elle sort sur Internet, mais **le PC ne peut pas la joindre** sans créer des règles de redirection de port. La seconde carte, en **réseau privé hôte**, relie directement le PC et la VM sur le réseau `192.168.56.0/24`. C'est par elle qu'on ouvrira les pages web des conteneurs depuis le navigateur du PC.
 
 ### 2.2 Installer Debian 13
 
-🐧 Démarrer la VM et suivre l'installateur Debian, **sans interface graphique**, avec ces réponses :
+🖥️ Démarrer la VM et 🐧 suivre l'installateur Debian, **sans interface graphique**, avec ces réponses :
 
 | Écran de l'installateur | Réponse |
 |---|---|
@@ -154,7 +154,7 @@ Docker Desktop est présenté en [partie 4](04-portainer-et-lazydocker.md). Un a
 | Mot de passe de `tssr` | `TutoDocker2026!` |
 | Partitionnement | Assisté, utiliser un disque entier, tout dans une seule partition |
 | Sélection des logiciels | **Décocher** « environnement de bureau Debian » et « GNOME » ; **cocher** « serveur SSH » et « utilitaires usuels du système » |
-| Programme de démarrage GRUB | Oui, sur le disque `/dev/sda` |
+| Programme de démarrage GRUB | Oui, sur le disque proposé (`/dev/sda`, ou `/dev/nvme0n1` sur certaines VM Workstation) |
 
 L'installation dure environ 15 minutes. Le pas-à-pas illustré, écran par écran, est dans la [partie 3 du parcours Virtualisation](../virtualisation/03-creer-sa-premiere-vm.md#4-installer-debian-13).
 
@@ -168,7 +168,7 @@ ip -br a
 
 === "VMware Workstation"
 
-    La carte `ens33` (le nom peut varier) a une adresse en `192.168.x.1xx/24` : c'est **IP-de-la-VM**. La noter.
+    La carte `ens33` (le nom peut varier) a une adresse en `192.168.x.N/24`, avec N entre 128 et 254 : c'est **IP-de-la-VM**. La noter.
 
 === "VirtualBox"
 
@@ -198,7 +198,7 @@ ssh tssr@IP-de-la-VM
 À la première connexion, répondre `yes` pour accepter l'empreinte de la VM, puis taper le mot de passe (rien ne s'affiche pendant la saisie, c'est normal). À partir de maintenant, toutes les commandes 🐧 peuvent se taper dans cette fenêtre, où le **copier-coller** fonctionne.
 
 !!! success "🛟 Prendre l'instantané `00-debian-installee`"
-    🐧 Éteindre la VM (`poweroff` en `root`), puis 🖥️ prendre un instantané nommé `00-debian-installee` : **VM > Snapshot > Take Snapshot** dans Workstation, **Instantanés > Prendre** dans VirtualBox. Il permet de recommencer l'installation de Docker autant de fois que nécessaire.
+    🐧 Éteindre la VM : dans la session SSH, `su -` (mot de passe de `root`), puis `poweroff` ; ou directement `poweroff` sur la console de la VM, connecté en `root`. 🖥️ Ensuite, 🖥️ prendre un instantané nommé `00-debian-installee` : **VM > Snapshot > Take Snapshot** dans Workstation, **Instantanés > Prendre** dans VirtualBox. Il permet de recommencer l'installation de Docker autant de fois que nécessaire.
 
 ## 3. Installer Docker depuis le dépôt officiel
 
@@ -213,7 +213,8 @@ Debian propose son propre paquet Docker, `docker.io`. Il s'installe en une comma
 
 Quand un mot de passe `root` est défini pendant l'installation, Debian **n'installe pas** `sudo`. Or toutes les commandes de la documentation Docker commencent par `sudo`. On l'installe donc, et on autorise `tssr` à s'en servir.
 
-1. 🐧 En **`root`** (sur la console de la VM, ou après `su -` dans la session SSH de `tssr`) :
+1. 🖥️ Démarrer la VM, puis s'y connecter en SSH depuis PowerShell : `ssh tssr@IP-de-la-VM`.
+2. 🐧 Devenir **`root`** avec `su -` (le mot de passe demandé est celui de `root`), puis :
 
     ```bash
     apt update
@@ -221,15 +222,19 @@ Quand un mot de passe `root` est défini pendant l'installation, Debian **n'inst
     usermod -aG sudo tssr
     ```
 
-2. 🐧 Se **déconnecter** (`exit`) et se **reconnecter** en `tssr` : les groupes d'un utilisateur ne sont lus qu'à la connexion. Vérifier :
+3. 🐧 Taper `exit` **deux fois** : la première fois pour quitter `root` et revenir à `tssr`, la seconde pour fermer la session SSH. Les groupes d'un utilisateur ne sont lus qu'à la **connexion** : une session ouverte avant le `usermod` ne connaît pas encore le groupe `sudo`.
+4. 🖥️ Se reconnecter : `ssh tssr@IP-de-la-VM`.
+5. 🐧 Vérifier les groupes **de la session en cours**, puis que `sudo` fonctionne (il demande le mot de passe de `tssr`) :
 
     ```bash
-    id tssr
+    id -nG
+    sudo -v
     ```
 
-    ```text
-    uid=1000(tssr) gid=1000(tssr) groupes=1000(tssr),27(sudo)
-    ```
+    La liste affichée par `id -nG` doit **contenir** `sudo` (l'installateur de Debian ajoute aussi `tssr` à d'autres groupes comme `cdrom`, `audio` ou `video` : c'est normal). `sudo -v` ne doit afficher aucune erreur.
+
+    !!! failure "`tssr n'apparaît pas dans le fichier sudoers`"
+        La session a été ouverte **avant** l'ajout au groupe `sudo`. Fermer **toutes** les sessions de `tssr` (y compris celle d'où l'on avait tapé `su -`) et se reconnecter.
 
 ### 3.3 Ajouter le dépôt de Docker
 
@@ -286,7 +291,7 @@ docker-ce:
 La ligne **Candidat** montre la version qui sera installée, et le suffixe `debian.13~trixie` confirme qu'elle vient bien du dépôt de Docker.
 
 !!! info "Et l'ancienne méthode avec `apt-key` ?"
-    De nombreux tutoriels utilisent encore `apt-key add` ou `add-apt-repository`. La commande `apt-key` est **obsolète** depuis Debian 11 : elle faisait confiance à la clé pour **tous** les dépôts de la machine, ce qui était dangereux. On range désormais chaque clé dans `/etc/apt/keyrings/` et on l'associe à **un seul** dépôt avec `Signed-By`.
+    De nombreux tutoriels utilisent encore `apt-key add` ou `add-apt-repository`. La commande `apt-key` est **obsolète** depuis Debian 11 et n'existe **plus du tout** dans Debian 13 : ces vieux tutoriels échouent avec `apt-key : commande introuvable`. Elle faisait confiance à la clé pour **tous** les dépôts de la machine, ce qui était dangereux. On range désormais chaque clé dans `/etc/apt/keyrings/` et on l'associe à **un seul** dépôt avec `Signed-By`.
 
 ### 3.4 Installer les paquets
 
@@ -381,7 +386,7 @@ srw-rw---- 1 root docker 0 24 nov.  00:07 /var/run/docker.sock
     ```
 
 2. 🐧 Se **déconnecter** (`exit`) puis se **reconnecter** en SSH : comme pour `sudo`, le nouveau groupe n'est pris en compte qu'à la connexion suivante.
-3. 🐧 Vérifier, puis réessayer :
+3. 🐧 Vérifier que la liste des groupes contient maintenant `docker`, puis réessayer :
 
     ```bash
     id -nG
@@ -389,7 +394,7 @@ srw-rw---- 1 root docker 0 24 nov.  00:07 /var/run/docker.sock
     ```
 
     ```text
-    tssr sudo docker
+    tssr … sudo … docker
     CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
     ```
 
@@ -415,22 +420,27 @@ Taper ces commandes à la main est instructif, mais long quand on prépare dix s
 
 ### 5.1 Le script officiel de Docker
 
-Docker publie un script, `get.docker.com`, qui détecte la distribution et fait tout tout seul :
+Docker publie un script, `get.docker.com`, qui détecte la distribution et fait tout tout seul. On le rencontre dans beaucoup de tutoriels :
 
 ```bash
 curl -fsSL https://get.docker.com | sudo sh
 ```
+
+!!! warning "Ne pas lancer cette commande dans `docker-hote`"
+    Docker y est déjà installé : le script ajouterait un second fichier de dépôt (`docker.list`, à côté de `docker.sources`) et `apt update` afficherait ensuite des avertissements. Elle est montrée ici pour savoir la **reconnaître** et en connaître les limites.
 
 Il est pratique pour un **lab** (l'installation complète prend environ 40 secondes), mais la documentation de Docker le **déconseille en production** : on exécute en `root` un script téléchargé sans le lire, il installe toujours la toute dernière version, et il ajoute des paquets dont on n'a pas forcément besoin (`docker-ce-rootless-extras`, `docker-model-plugin`).
 
 !!! question "Pourquoi « `curl … | sh` » est-il risqué ?"
     Cette syntaxe télécharge un script et l'exécute **immédiatement**, sans qu'on ait pu le lire. Si le site était piraté, ou si l'adresse était mal tapée et menait vers un site malveillant, on exécuterait n'importe quoi en `root`. Le bon réflexe, en production : **télécharger** le script, le **lire**, puis l'exécuter.
 
-### 5.2 Le script TutoTech, commenté
+### 5.2 Le script TutoTech, commenté (facultatif)
+
+Cette section est **facultative** : elle repart d'une Debian neuve pour essayer le script, ce qui efface l'installation faite en section 3 (le résultat final est le même). Si le temps manque, passer directement à la [section 6](#6-verifier-son-lab).
 
 Le script [`installer-docker.sh`](fichiers/installer-docker.sh) reprend **exactement** les étapes de la section 3, avec des questions à chaque étape et des messages en couleur. Il fonctionne en `root` (même sans `sudo` installé) ou avec `sudo`.
 
-1. 🐧 Pour l'essayer sur une installation neuve, revenir d'abord à l'instantané `00-debian-installee` (VM éteinte), redémarrer la VM et se connecter en **`root`**.
+1. 🖥️ Revenir à l'instantané `00-debian-installee` (VM éteinte), redémarrer la VM, s'y connecter en SSH en `tssr`, puis 🐧 devenir `root` avec `su -` (SSH refuse la connexion directe de `root` par mot de passe).
 2. 🐧 Télécharger le script, puis **le lire** avant de l'exécuter :
 
     ```bash
@@ -481,12 +491,12 @@ Le script [`installer-docker.sh`](fichiers/installer-docker.sh) reprend **exacte
     docker run --rm hello-world | grep Hello
     ```
 
-    Résultat attendu :
+    Résultat attendu (la ligne de `id -nG` peut contenir d'autres groupes, comme `cdrom` ou `audio`) :
 
     ```text
     Docker version 29.10.0, build fdd4b8e
     enabled
-    tssr sudo docker
+    tssr … sudo … docker
     Hello from Docker!
     ```
 

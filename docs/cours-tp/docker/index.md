@@ -70,36 +70,36 @@ Chaque partie dure entre 1 h et 2 h 30 et mêle explications et pratique. Les du
 
 ### Jour 2 — Données, réseaux et Docker Compose
 
-| Partie | Type | Durée | Contenu |
-|:---:|---|---|---|
-| 5. Garder ses données : volumes et dossiers montés | Cours et TP | 2 h | Couche du conteneur, volumes, *bind mounts*, sauvegarde et restauration d'un volume |
-| 6. Sauvegarder un conteneur sous forme d'image | TP | 1 h | `docker commit`, `docker save`, `docker load`, et leurs limites |
-| 7. Les réseaux Docker | Cours et TP | 2 h | Bridge par défaut et personnalisé, résolution de noms, host, none, macvlan, Docker et le pare-feu |
-| 8. Docker Compose : Nextcloud en une commande | Cours et TP | 2 h | Fichier `compose.yaml`, services, volumes, réseaux, variables, journaux |
+| Partie | Type | Durée | Contenu | Machines allumées |
+|:---:|---|---|---|---|
+| 5. Garder ses données : volumes et dossiers montés | Cours et TP | 2 h | Couche du conteneur, volumes, *bind mounts*, sauvegarde et restauration d'un volume | `docker-hote` |
+| 6. Sauvegarder un conteneur sous forme d'image | TP | 1 h | `docker commit`, `docker save`, `docker load`, et leurs limites | `docker-hote` |
+| 7. Les réseaux Docker | Cours et TP | 2 h | Bridge par défaut et personnalisé, résolution de noms, host, none, macvlan, Docker et le pare-feu | `docker-hote` |
+| 8. Docker Compose : Nextcloud en une commande | Cours et TP | 2 h | Fichier `compose.yaml`, services, volumes, réseaux, variables, journaux | `docker-hote` |
 
 ### Jour 3 — Publier des services
 
-| Partie | Type | Durée | Contenu |
-|:---:|---|---|---|
-| 9. Un reverse proxy avec Nginx Proxy Manager | Cours et TP | 2 h | Fichier `hosts`, hôtes de proxy, réseaux Docker partagés, Portainer derrière le proxy |
-| 10. Nextcloud en HTTPS derrière le reverse proxy | TP | 2 h | Compose et proxy, certificat autosigné, WordPress en exercice |
-| 11. Les plateformes tout-en-un | Cours et TP | 2 h | Coolify, Cosmos Server, BunkerWeb |
+| Partie | Type | Durée | Contenu | Machines allumées |
+|:---:|---|---|---|---|
+| 9. Un reverse proxy avec Nginx Proxy Manager | Cours et TP | 2 h | Fichier `hosts`, hôtes de proxy, réseaux Docker partagés, Portainer derrière le proxy | `docker-hote` |
+| 10. Nextcloud en HTTPS derrière le reverse proxy | TP | 2 h | Compose et proxy, certificat autosigné, WordPress en exercice | `docker-hote` |
+| 11. Les plateformes tout-en-un | Cours et TP | 2 h | Coolify, Cosmos Server, BunkerWeb | `docker-hote`, `docker-plateforme` |
 
 ### Jour 4 — Exploiter et s'amuser
 
-| Partie | Type | Durée | Contenu |
-|:---:|---|---|---|
-| 12. Exploiter Docker au quotidien | Cours et TP | 2 h | Mises à jour d'images, journaux, limites de ressources, nettoyage, sécurité, analyse avec Trivy |
-| 13. Des projets sympas à déployer | TP au choix | 2 h 30 | Uptime Kuma, Kasm, rétrogaming, Open WebUI, Presenton, Windows dans un conteneur, agent Hermes |
+| Partie | Type | Durée | Contenu | Machines allumées |
+|:---:|---|---|---|---|
+| 12. Exploiter Docker au quotidien | Cours et TP | 2 h | Mises à jour d'images, journaux, limites de ressources, nettoyage, sécurité, analyse avec Trivy | `docker-hote` |
+| 13. Des projets sympas à déployer | TP au choix | 2 h 30 | Uptime Kuma, Kasm, rétrogaming, Open WebUI, Presenton, Windows dans un conteneur, agent Hermes | `docker-hote` |
 
 ### Jour 5 — Construire, distribuer, orchestrer
 
-| Partie | Type | Durée | Contenu |
-|:---:|---|---|---|
-| 14. Construire ses images avec un Dockerfile | Cours et TP | 2 h | Instructions, construction, TP serveur SSH, pile LAMP |
-| 15. Distribuer ses images : Docker Hub et registre privé | TP | 1 h 30 | Compte, jeton, `tag`, `push`, registre local |
-| 16. Un cluster Docker Swarm | Cours et TP | 2 h | Trois nœuds, services répliqués, panne d'un nœud |
-| 17. Défi final | Projet | 1 h 30 | Une petite infrastructure à monter et à dépanner sans pas-à-pas |
+| Partie | Type | Durée | Contenu | Machines allumées |
+|:---:|---|---|---|---|
+| 14. Construire ses images avec un Dockerfile | Cours et TP | 2 h | Instructions, construction, TP serveur SSH, pile LAMP | `docker-hote` |
+| 15. Distribuer ses images : Docker Hub et registre privé | TP | 1 h 30 | Compte, jeton, `tag`, `push`, registre local | `docker-hote` |
+| 16. Un cluster Docker Swarm | Cours et TP | 2 h | Trois nœuds, services répliqués, panne d'un nœud | `docker-hote`, `docker-n2`, `docker-n3` |
+| 17. Défi final | Projet | 1 h 30 | Une petite infrastructure à monter et à dépanner sans pas-à-pas | Au choix |
 
 !!! tip "Suivre l'ordre"
     Chaque TP s'appuie sur le précédent : la VM `docker-hote` créée en partie 1 sert pendant tout le parcours. Les explications sont placées **juste avant** la manipulation qui en a besoin : il n'y a pas de gros chapitre théorique à lire d'abord.
@@ -162,7 +162,7 @@ Le parcours est prévu pour des PC de **16 Go de mémoire vive** et un processeu
 |---|---|---|---|
 | `docker-hote` (Debian 13 sans interface graphique) | 2 vCPU, 4 Go | 1 vCPU, 2 Go | 40 Go, dynamique |
 
-<!-- NOTE DE RÉDACTION (non affichée) : minimal 1 vCPU / 1 Go mesuré sur docker-n2 pour l'installation de Docker (jour 1) ; 2 Go gardés comme minimum pour les jours suivants (Nextcloud, NPM). -->
+<!-- NOTE DE RÉDACTION (non affichée) : minimal mesuré le 2026-11-24 : VM à 1 vCPU / 2 Go, Portainer + nginx + conteneur Debian/Apache en même temps : 492 Mo utilisés sur 1874, tout répond. L'installation de Docker passe aussi à 1 Go (docker-n2). -->
 
 - Une Debian sans bureau occupe environ 2 Go de disque. Les **images Docker** prennent vite de la place (de quelques Mo à plusieurs Go chacune) : 40 Go en disque **dynamique** (qui ne grossit qu'au fur et à mesure) évitent d'être à l'étroit sans occuper 40 Go tout de suite sur le PC.
 - Les besoins des jours suivants (plateformes, projets gourmands, cluster Swarm) sont indiqués au début de chaque partie.
@@ -175,6 +175,7 @@ Un **instantané** (*snapshot*) fige l'état d'une machine virtuelle. En cas d'e
 |---|---|---|---|
 | `00-debian-installee` | `docker-hote` | Partie 1, juste après l'installation de Debian, VM éteinte | L'installation de Docker |
 | `01-docker-installe` | `docker-hote` | Fin de la partie 1, VM éteinte | Toutes les parties suivantes avec un Docker propre |
+| `02-fin-jour-1` | `docker-hote` | Fin de la partie 4, VM éteinte : Docker, Portainer (compte `admin` créé) et LazyDocker | Les jours 2 et 3, qui réutilisent Portainer |
 
 !!! warning "Un instantané n'est pas une sauvegarde"
     L'instantané reste **dans le dossier de la VM**, sur le **même disque** que la machine virtuelle, et il **dépend** du disque d'origine : si le disque du PC tombe en panne, ou si le dossier de la VM est supprimé, les instantanés disparaissent avec lui.
@@ -201,7 +202,7 @@ Dans les TP, chaque action précise où elle se fait :
 | ✍️ | Exercice à faire seul, corrigé replié en dessous |
 | 🛟 | Prendre un instantané |
 
-Les commandes à taper sont dans des blocs de code ; le texte après `#` est un commentaire, il ne se tape pas. Le symbole `$` en début de ligne n'est **pas** à taper : il rappelle seulement qu'on est connecté en tant que `tssr` ; `#` en début de ligne signale une commande à taper en `root`. Les interfaces qui n'existent qu'en anglais (Portainer, Nginx Proxy Manager…) ont leurs menus écrits **en gras, en anglais**, avec une traduction entre parenthèses.
+Les commandes à taper sont dans des blocs de code ; le texte après `#` est un commentaire, il ne se tape pas. Les interfaces qui n'existent qu'en anglais (Portainer, Nginx Proxy Manager…) ont leurs menus écrits **en gras, en anglais**, avec une traduction entre parenthèses.
 
 !!! tip "Travailler en SSH depuis le PC"
     La console de l'hyperviseur ne permet pas toujours le copier-coller. Mieux vaut ouvrir **PowerShell** sur le PC et se connecter à la VM en SSH : `ssh tssr@IP-de-la-VM`. Le copier-coller fonctionne alors normalement (clic droit pour coller dans le terminal Windows).

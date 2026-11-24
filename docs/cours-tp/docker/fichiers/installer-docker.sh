@@ -24,26 +24,29 @@ fi
 demander_confirmation() {
   echo -e "$1 (oui/non)"
   read -r reponse
-  [[ "$reponse" == "oui" ]]
+  # Accepte « oui », « Oui », « o »…
+  [[ "${reponse,,}" =~ ^(o|oui)$ ]]
 }
 
 # Étape 1 : suppression des paquets non officiels qui entrent en conflit avec Docker
 if demander_confirmation "$INFO Voulez-vous supprimer les anciennes versions de Docker ?"; then
   for pkg in docker.io docker-compose docker-doc podman-docker containerd runc; do
-    $SUDO apt-get remove -y "$pkg" 2>/dev/null
+    # Paquet absent : rien à faire (pas une erreur)
+    dpkg -s "$pkg" >/dev/null 2>&1 && $SUDO apt-get remove -y "$pkg"
   done
-  echo -e "$SUCCESS Anciennes versions de Docker supprimées."
+  echo -e "$SUCCESS Anciennes versions de Docker supprimées (s'il y en avait)."
 else
   echo -e "$WARNING Passage à l'étape suivante sans supprimer les anciennes versions."
 fi
 
 # Étape 2 : installation de Docker depuis le dépôt officiel
 if demander_confirmation "$INFO Voulez-vous installer Docker (installation basée sur la documentation officielle) ?"; then
-  $SUDO apt-get update
-  $SUDO apt-get install -y ca-certificates curl
+  $SUDO apt-get update || { echo -e "$ERROR apt-get update a échoué (réseau ? apt verrouillé ?)."; exit 1; }
+  $SUDO apt-get install -y ca-certificates curl || { echo -e "$ERROR Installation de curl impossible."; exit 1; }
   # Clé qui permet à apt de vérifier la signature des paquets Docker
   $SUDO install -m 0755 -d /etc/apt/keyrings
-  $SUDO curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+  $SUDO curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc \
+    || { echo -e "$ERROR Téléchargement de la clé de Docker impossible."; exit 1; }
   $SUDO chmod a+r /etc/apt/keyrings/docker.asc
   # Déclaration du dépôt Docker (format .sources)
   $SUDO tee /etc/apt/sources.list.d/docker.sources > /dev/null <<EOF
@@ -54,7 +57,7 @@ Components: stable
 Architectures: $(dpkg --print-architecture)
 Signed-By: /etc/apt/keyrings/docker.asc
 EOF
-  $SUDO apt-get update
+  $SUDO apt-get update || { echo -e "$ERROR Le dépôt de Docker est injoignable ou mal déclaré."; exit 1; }
   if ! $SUDO apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin; then
     echo -e "$ERROR L'installation des paquets Docker a échoué : lis les messages ci-dessus."
     exit 1
@@ -62,7 +65,11 @@ EOF
   # Démarrage du service maintenant et à chaque démarrage de la machine
   $SUDO systemctl enable --now docker
   # Vérification
-  $SUDO docker run --rm hello-world && echo -e "$SUCCESS Docker installé avec succès."
+  if $SUDO docker run --rm hello-world; then
+    echo -e "$SUCCESS Docker installé avec succès."
+  else
+    echo -e "$ERROR Docker est installé mais le conteneur de test a échoué : voir « systemctl status docker »."
+  fi
 else
   echo -e "$WARNING Docker n'a pas été installé."
 fi

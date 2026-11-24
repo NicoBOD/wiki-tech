@@ -326,8 +326,8 @@ nav:
       - "Jour 1 — Installer Docker et lancer ses premiers conteneurs":
         - "1. Découvrir Docker et l'installer": cours-tp/docker/01-decouvrir-et-installer-docker.md
         - "2. Premiers conteneurs": cours-tp/docker/02-premiers-conteneurs.md
-        - "3. Apache et SSH dans un conteneur Debian": cours-tp/docker/03-apache-et-ssh-dans-un-conteneur.md
-        - "4. Portainer et LazyDocker": cours-tp/docker/04-portainer-et-lazydocker.md
+        - "3. Un serveur web et SSH dans un conteneur Debian": cours-tp/docker/03-apache-et-ssh-dans-un-conteneur.md
+        - "4. Gérer Docker avec Portainer et LazyDocker": cours-tp/docker/04-portainer-et-lazydocker.md
   - Tags: tags.md
 
 copyright: >

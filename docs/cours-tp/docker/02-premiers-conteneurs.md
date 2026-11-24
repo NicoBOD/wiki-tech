@@ -38,7 +38,7 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `tssr` · 📦 **dans un conteneur** · 🌐 **navigateur du PC** · ✍️ **exercice**. Point de départ : l'instantané `01-docker-installe`.
+    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `tssr` · 📦 **dans un conteneur** · 🌐 **navigateur du PC** · ✍️ **exercice**. Point de départ : l'instantané `01-docker-installe`. 🖥️ Démarrer la VM, puis s'y connecter en SSH : `ssh tssr@IP-de-la-VM`.
 
 <!-- NOTE DE RÉDACTION (non affichée) : reprend la section « Utiliser les commandes Docker de base » et l'aide-mémoire du cours « 00 Théorie Docker » du formateur, réorganisés en TP. Correction : « docker run -it ubuntu /bin/ » (commande tronquée) → « docker run -it debian:13 bash ». Sorties recopiées de la VM de test (Docker 29.10.0, 2026-11-24) ; la colonne EXTRA et les colonnes DISK USAGE / CONTENT SIZE de « docker images » sont propres à Docker 29. -->
 
@@ -86,7 +86,7 @@ CONTAINER ID   IMAGE         COMMAND    CREATED        STATUS                   
 1023f8e4aa98   hello-world   "/hello"   1 second ago   Exited (0) Less than a second ago             kind_mestorf
 ```
 
-Aucun conteneur ne tourne, mais le conteneur `hello-world` **existe toujours**, à l'état `Exited (0)` (terminé, code de retour 0 = sans erreur). Un conteneur vit **aussi longtemps que son programme principal** : `hello-world` affiche son message et se termine, donc le conteneur s'arrête aussitôt. Faute de nom choisi, Docker lui en a donné un au hasard (`kind_mestorf`).
+Aucun conteneur ne tourne, mais le conteneur `hello-world` **existe toujours** (il y en a même un par `docker run hello-world` déjà tapé : la liste peut en montrer plusieurs), à l'état `Exited (0)` (terminé, code de retour 0 = sans erreur). Un conteneur vit **aussi longtemps que son programme principal** : `hello-world` affiche son message et se termine, donc le conteneur s'arrête aussitôt. Faute de nom choisi, Docker lui en a donné un au hasard (`kind_mestorf`).
 
 ## 2. Lancer un serveur web
 
@@ -179,7 +179,7 @@ Un conteneur a sa **propre adresse IP**, sur un réseau privé que Docker crée 
 
 ![Une image donne, avec docker run, un conteneur en marche. docker stop l'arrête (il passe à l'état Exited), docker start le relance. docker rm supprime un conteneur arrêté et ses fichiers ; docker rm -f supprime directement un conteneur en marche.](images/cycle-de-vie-conteneur.svg){ loading=lazy }
 /// caption
-Les quatre états d'un conteneur et les commandes qui le font passer de l'un à l'autre.
+Les états d'un conteneur et les commandes qui le font passer de l'un à l'autre.
 ///
 
 1. 🐧 **Arrêter** le conteneur, puis regarder les deux listes :
@@ -286,7 +286,7 @@ docker inspect web --format '{{.NetworkSettings.Networks.bridge.IPAddress}} {{.S
 
 ```bash
 docker top web
-docker stats --no-stream
+docker stats --no-stream --format 'table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}'
 ```
 
 ```text
@@ -302,7 +302,7 @@ web    0.00%   3.355MiB / 3.83GiB
 Deux constats importants pour un administrateur :
 
 - les processus du conteneur sont de **simples processus de la VM**, avec un numéro (PID) visible depuis la VM : on les retrouve dans `ps aux` ou `top`. Un conteneur n'est pas une machine à part ;
-- nginx tourne sous l'utilisateur numéro **101** du conteneur (qui s'y appelle `nginx`). La VM ne connaît pas ce nom, mais elle a son propre utilisateur 101… `uuidd`. Les numéros d'utilisateur sont **partagés** entre le conteneur et la machine : c'est une raison de plus pour ne pas lancer n'importe quelle image en `root`.
+- les processus *worker* de nginx tournent sous l'utilisateur numéro **101** du conteneur (qui s'y appelle `nginx`). La VM ne connaît pas ce nom : `docker top` affiche donc le nom de **son propre** utilisateur 101, quel qu'il soit (ici `uuidd` ; sur une autre installation, ce peut être `sshd`, `messagebus`… ou simplement `101`). La commande `getent passwd 101` montre qui c'est sur la VM. Les numéros d'utilisateur sont **partagés** entre le conteneur et la machine : c'est une raison de plus pour ne pas lancer n'importe quelle image en `root`.
 
 Un serveur nginx consomme ici **3 Mo** de mémoire : c'est ce qui permet d'empiler autant de conteneurs sur un seul serveur.
 
@@ -470,6 +470,10 @@ Conteneurs arrêtés et images inutilisées s'accumulent vite.
 ✍️ **Exercice 2** — Lancer un troisième conteneur nommé `web3`, encore sur le port 8081. Que se passe-t-il ? Dans quel état est `web3` ensuite ?
 
 ??? success "Réponse"
+    ```bash
+    docker run -d --name web3 -p 8081:80 nginx
+    ```
+
     ```text
     docker: Error response from daemon: failed to set up container networking: driver failed programming
     external connectivity on endpoint web3 (…): Bind for 0.0.0.0:8081 failed: port is already allocated
@@ -502,10 +506,10 @@ Conteneurs arrêtés et images inutilisées s'accumulent vite.
     ```
 
     ```text
-    172.17.0.4
+    172.17.0.2
     ```
 
-    (le dernier nombre dépend de l'ordre de démarrage des conteneurs). Ce réseau `172.17.0.0/16` n'existe **qu'à l'intérieur de la VM** : le PC n'a aucune route vers lui. Depuis l'extérieur, on passe toujours par un **port publié** de la VM.
+    (le dernier nombre dépend de l'ordre de démarrage des conteneurs : Docker donne la première adresse libre). Ce réseau `172.17.0.0/16` n'existe **qu'à l'intérieur de la VM** : le PC n'a aucune route vers lui. Depuis l'extérieur, on passe toujours par un **port publié** de la VM.
 
 ✍️ **Exercice 5** — Faire le ménage : supprimer `web2` et `apache`, puis l'image `httpd`.
 

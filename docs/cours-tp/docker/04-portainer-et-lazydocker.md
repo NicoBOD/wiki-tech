@@ -38,7 +38,7 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `tssr` · 🌐 **navigateur du PC** · ✍️ **exercice**. Portainer n'existe **qu'en anglais** : ses menus sont écrits en gras, en anglais, avec leur traduction entre parenthèses.
+    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `tssr` · 🌐 **navigateur du PC** · ✍️ **exercice**. Portainer n'existe **qu'en anglais** : ses menus sont écrits en gras, en anglais, avec leur traduction entre parenthèses. Point de départ : `docker ps -a` ne montre **aucun** conteneur (sinon les supprimer avec `docker rm -f`), et les ports 8000, 8081 et 9443 de la VM sont libres.
 
 <!-- NOTE DE RÉDACTION (non affichée) : le TD « 10 Portainer » du formateur ne contenait que le script d'installation interactif (Docker + Portainer CE/EE + Rancher « à corriger ») : partie écrite d'après la documentation de Portainer (docs.portainer.io, novembre 2026) et rejouée dans le lab. Écarts avec le script du formateur : image portainer/portainer-ce:lts (et non :latest), volume portainer_data, port 9000 (HTTP) plus publié par défaut (la doc le garde « for legacy reasons »), champ « Setup token » apparu dans les versions récentes (jeton dans docker logs), mot de passe ≥ 12 caractères, Rancher non repris (Rancher sert à gérer Kubernetes, pas Docker seul). Captures Portainer prises à travers un relais local (certificat autosigné) le 2026-11-24 ; LazyDocker capturé dans tmux, rendu en image. -->
 
@@ -97,7 +97,7 @@ Ces interfaces ne remplacent pas la ligne de commande : elles envoient **exactem
     La colonne `PORTS` affiche aussi `9000/tcp`, sans flèche : le conteneur écoute en HTTP simple sur ce port, mais il n'est **pas publié**, donc injoignable depuis l'extérieur. La documentation de Portainer ne le garde que pour des raisons de compatibilité (`-p 9000:9000` si on en a vraiment besoin).
 
 !!! question "Que fait `--restart=always` ?"
-    En partie 3, les services ne revenaient pas après un redémarrage. Ici, c'est **Docker lui-même** qui relance le conteneur Portainer quand la VM redémarre, ou si Portainer plante. Les politiques possibles : `no` (par défaut, rien), `on-failure` (seulement après une erreur), `unless-stopped` (toujours, sauf si on l'a arrêté exprès avec `docker stop`) et `always` (toujours).
+    En partie 3, les services ne revenaient pas après un redémarrage. Ici, c'est **Docker lui-même** qui relance le conteneur Portainer quand la VM redémarre, ou si Portainer plante. Les politiques possibles : `no` (par défaut, rien), `on-failure` (seulement après une erreur), `always` (relancé s'il s'arrête tout seul, et à chaque démarrage de Docker, **même** s'il avait été arrêté exprès avec `docker stop`) et `unless-stopped` (pareil, **sauf** s'il avait été arrêté exprès). Dans tous les cas, un `docker stop` arrête bien le conteneur sur le moment.
 
 ### 2.2 Récupérer le jeton de configuration
 
@@ -285,12 +285,14 @@ Son auteur fournit un script d'installation. Comme vu en partie 1, on le **lit**
 2. 🐧 Se **déconnecter et se reconnecter** : à la connexion, Debian ajoute `~/.local/bin` à la liste des dossiers où chercher les commandes, s'il existe. Vérifier :
 
     ```bash
-    lazydocker --version
+    lazydocker --version | head -1
     ```
 
     ```text
     Version: 0.25.2
     ```
+
+    Le script installe toujours la **dernière** version : le numéro peut être plus récent.
 
 ### 6.2 L'utiliser
 
@@ -301,7 +303,7 @@ docker run -d --name web-portainer -p 8081:80 nginx
 lazydocker
 ```
 
-![LazyDocker dans un terminal : à gauche, les panneaux Conteneurs (portainer et web-portainer, running), Images (alpine, debian, hello-world, nginx, portainer-ce), Volumes (portainer_data) et Réseaux (bridge, host, none) ; à droite, les onglets Journaux, Statistiques, Env, Config et Top, avec les journaux de nginx ; en bas, l'aide des raccourcis clavier.](images/04-lazydocker.png){ loading=lazy }
+![LazyDocker dans un terminal : à gauche, les panneaux Conteneurs (portainer et web-portainer, running), Images (alpine, debian, nginx, portainer-ce…), Volumes (portainer_data) et Réseaux (bridge, host, none) ; à droite, les onglets Journaux, Statistiques, Env, Config et Top, avec les journaux de nginx ; en bas, l'aide des raccourcis clavier.](images/04-lazydocker.png){ loading=lazy }
 /// caption
 LazyDocker, en français, dans une session SSH : tout Docker sur un seul écran.
 ///
@@ -310,7 +312,7 @@ LazyDocker, en français, dans une session SSH : tout Docker sur un seul écran.
 |---|---|
 | ++arrow-up++ ++arrow-down++ | Choisir un élément dans le panneau actif |
 | ++arrow-left++ ++arrow-right++ | Changer de panneau (Conteneurs, Images, Volumes, Réseaux) |
-| ++bracket-left++ ++bracket-right++ | Changer d'onglet à droite (Journaux, Statistiques, Config, Top) |
+| ++bracket-left++ ++bracket-right++ | Changer d'onglet à droite (Journaux, Statistiques, Env, Config, Top) |
 | ++x++ | Ouvrir le menu des actions possibles sur l'élément choisi (arrêter, redémarrer, supprimer, ouvrir un terminal…) |
 | ++q++ | Quitter |
 
@@ -359,7 +361,10 @@ Pour un administrateur systèmes et réseaux, Docker Desktop est pratique pour *
 
     🌐 `https://IP-de-la-VM:9443` affiche la page de connexion de Portainer, et l'on se connecte avec `admin` / `TutoDocker2026!`.
 
-    🐧 Bonus : redémarrer la VM (`sudo reboot`), se reconnecter en SSH, et vérifier avec `docker ps` que **Portainer est revenu tout seul**, grâce à `--restart=always`.
+    🐧 Pour aller plus loin : redémarrer la VM (`sudo reboot`), se reconnecter en SSH, et vérifier avec `docker ps` que **Portainer est revenu tout seul**, grâce à `--restart=always`.
+
+!!! success "🛟 Prendre l'instantané `02-fin-jour-1`"
+    🐧 Éteindre la VM (`sudo poweroff`), puis 🖥️ prendre un instantané nommé `02-fin-jour-1`. Portainer et son compte `admin` resservent aux jours suivants.
 
 ## 9. Questions de révision
 
