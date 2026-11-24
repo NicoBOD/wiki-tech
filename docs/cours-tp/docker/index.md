@@ -81,8 +81,8 @@ Chaque partie dure entre 1 h et 2 h 30 et mêle explications et pratique. Les du
 
 | Partie | Type | Durée | Contenu | Machines allumées |
 |:---:|---|---|---|---|
-| 9. Un reverse proxy avec Nginx Proxy Manager | Cours et TP | 2 h | Fichier `hosts`, hôtes de proxy, réseaux Docker partagés, Portainer derrière le proxy | `docker-hote` |
-| 10. Nextcloud en HTTPS derrière le reverse proxy | TP | 2 h | Compose et proxy, certificat autosigné, WordPress en exercice | `docker-hote` |
+| [9. Un reverse proxy avec Nginx Proxy Manager](09-reverse-proxy-nginx-proxy-manager.md) | Cours et TP | 2 h | Fichier `hosts`, hôtes de proxy, réseaux Docker partagés, Portainer derrière le proxy | `docker-hote` |
+| [10. Nextcloud en HTTPS derrière le reverse proxy](10-nextcloud-https-derriere-le-proxy.md) | TP | 2 h | Compose et proxy, certificat autosigné, WordPress en exercice | `docker-hote` |
 | 11. Les plateformes tout-en-un | Cours et TP | 2 h | Coolify, Cosmos Server, BunkerWeb | `docker-hote`, `docker-plateforme` |
 
 ### Jour 4 — Exploiter et s'amuser
@@ -152,7 +152,9 @@ Ce lab est **pédagogique** : les mots de passe sont écrits ici volontairement 
 | Portainer | `admin` | `TutoDocker2026!` | Partie 4 |
 | MariaDB (essais de la partie 5) | `root` | `TutoDocker2026!` | Partie 5 |
 | MariaDB de Nextcloud | `root`, et `nextcloud` (base `nextcloud`) | `TutoDocker2026!` | Partie 8 |
-| Nextcloud | `admin` | `TutoDocker2026!` | Partie 8 |
+| Nextcloud | `admin` | `TutoDocker2026!` | Parties 8 et 10 |
+| Nginx Proxy Manager | `admin@lab.local` | `TutoDocker2026!` | Partie 9 |
+| MariaDB de WordPress | `root`, et `wordpress` (base `wordpress`) | `TutoDocker2026!` | Partie 10 |
 
 !!! info "Pourquoi un mot de passe aussi long ?"
     Portainer refuse les mots de passe de **moins de 12 caractères**. Plutôt que d'avoir un mot de passe différent par logiciel, le lab en utilise un seul, assez long pour être accepté partout. Sur un clavier AZERTY, le `!` se tape **sans** ++shift++, sur la touche à gauche de la touche ++shift++ de droite.
@@ -179,7 +181,8 @@ Un **instantané** (*snapshot*) fige l'état d'une machine virtuelle. En cas d'e
 | `00-debian-installee` | `docker-hote` | Partie 1, juste après l'installation de Debian, VM éteinte | L'installation de Docker |
 | `01-docker-installe` | `docker-hote` | Fin de la partie 1, VM éteinte | Toutes les parties suivantes avec un Docker propre |
 | `02-fin-jour-1` | `docker-hote` | Fin de la partie 4, VM éteinte : Docker, Portainer (compte `admin` créé) et LazyDocker | Le jour 2 |
-| `03-fin-jour-2` | `docker-hote` | Fin de la partie 8, VM éteinte, Nextcloud arrêté (`docker compose down`) mais ses volumes gardés | Le jour 3, qui remet Nextcloud derrière un reverse proxy |
+| `03-fin-jour-2` | `docker-hote` | Fin de la partie 8, VM éteinte, Nextcloud arrêté (`docker compose down`) mais ses volumes gardés | Le jour 3 |
+| `04-fin-jour-3a` | `docker-hote` | Fin de la partie 10, VM éteinte : NPM, Portainer et Nextcloud derrière le proxy en HTTPS | La partie 11 et le jour 4 |
 
 !!! warning "Un instantané n'est pas une sauvegarde"
     L'instantané reste **dans le dossier de la VM**, sur le **même disque** que la machine virtuelle, et il **dépend** du disque d'origine : si le disque du PC tombe en panne, ou si le dossier de la VM est supprimé, les instantanés disparaissent avec lui.
