@@ -108,7 +108,7 @@ Les deux nouvelles VM sont petites : Docker et quelques conteneurs légers tienn
         !!! warning "Ne jamais utiliser l'adresse 10.0.2.15"
             En mode NAT, **toutes** les VM VirtualBox reçoivent la même adresse `10.0.2.15`, sur des réseaux isolés les uns des autres. Le cluster doit être créé avec les adresses `192.168.56.x` de la carte 2.
 
-        Swarm choisit les sous-réseaux de ses réseaux overlay dans `10.0.0.0/8`, par tranches de 256 adresses : `10.0.0.0/24`, `10.0.1.0/24`, puis `10.0.2.0/24`, qui est **aussi** le réseau NAT de VirtualBox. Pour éviter tout chevauchement, ajouter à la commande `docker swarm init` de la section 3.1 l'option `--default-addr-pool 10.20.0.0/16` : les réseaux overlay seront pris dans `10.20.0.0/16`.
+        Swarm choisit les sous-réseaux de ses réseaux overlay dans `10.0.0.0/8`, par tranches de 256 adresses : `10.0.0.0/24`, `10.0.1.0/24`, puis `10.0.2.0/24`, qui est **aussi** le réseau NAT de VirtualBox. Pour éviter tout chevauchement, la commande `docker swarm init` de la section 3.1 (onglet VirtualBox) ajoute l'option `--default-addr-pool 10.20.0.0/16` : les réseaux overlay sont alors pris dans `10.20.0.0/16`, et leurs adresses diffèrent de celles affichées dans cette page (`10.0.1.0/24`…).
 
 !!! success "Prendre l'instantané `00-debian-installee`"
     🛟 Sur `docker-n2` et `docker-n3`, VM éteinte (`poweroff` en `root`), prendre l'instantané `00-debian-installee`.
@@ -191,9 +191,19 @@ Les nœuds d'un cluster Swarm communiquent sur trois ports. Debian n'active pas 
 
 1️⃣ Sur `docker-hote`, créer le cluster en précisant l'adresse que les autres nœuds utiliseront pour le joindre :
 
-```bash
-docker swarm init --advertise-addr 192.168.8.71
-```
+=== "VMware Workstation"
+
+    ```bash
+    docker swarm init --advertise-addr 192.168.8.71
+    ```
+
+=== "VirtualBox"
+
+    L'adresse est celle de la carte 2 (`192.168.56.x`), et l'option `--default-addr-pool` éloigne les réseaux overlay du réseau NAT de VirtualBox (section 2.1) :
+
+    ```bash
+    docker swarm init --advertise-addr 192.168.56.x --default-addr-pool 10.20.0.0/16
+    ```
 
 ```text
 Swarm initialized: current node (62jg8791fu1r9lbaqajvs3oty) is now a manager.

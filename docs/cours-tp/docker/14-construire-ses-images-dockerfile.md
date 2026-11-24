@@ -31,7 +31,7 @@ status: publié
 |-----------|--------|
 | Difficulté | Intermédiaire |
 | Durée estimée | 2 h |
-| Version décrite | Docker Engine 29.10 (BuildKit), images `httpd` 2.4.71, `debian:13` (13.7), WordPress 7.1 |
+| Version décrite | Docker Engine 29.10 (BuildKit), images `httpd` 2.4.71, `debian:13` (13.7), WordPress 7.1.5 |
 | Place dans le parcours | Partie 14 sur 17 du parcours [Docker](index.md) — jour 5 |
 | Dernière mise à jour | 2026-11-24 |
 
@@ -526,7 +526,7 @@ Une pile **LAMP**, c'est **L**inux, **A**pache, **M**ariaDB (ou MySQL) et **P**H
     | `ENV TZ=…` puis `RUN ln -snf …` | Règle le fuseau horaire du conteneur sur Paris (lien `/etc/localtime`) |
     | `RUN apt-get update && apt-get install -y …` | Installe Apache, MariaDB, PHP et son module pour Apache, `wget` et `nano`, **en une seule couche** |
     | `apt-get clean && rm -rf /var/lib/apt/lists/*` | Supprime le cache des paquets **dans le même `RUN`**, pour qu'il ne pèse pas dans l'image |
-    | `RUN wget … && tar … && …` | Télécharge la dernière version française de WordPress, la décompresse dans `/var/www/html`, donne les fichiers à `www-data` (l'utilisateur d'Apache), puis supprime l'archive |
+    | `RUN wget … && tar … && …` | Télécharge la **dernière** version française de WordPress (celle du jour de la construction), la décompresse dans `/var/www/html`, donne les fichiers à `www-data` (l'utilisateur d'Apache), puis supprime l'archive |
     | `COPY init.sh /init.sh` et `RUN chmod +x` | Copie le script de démarrage et le rend exécutable |
     | `ENTRYPOINT ["/init.sh"]` | Le conteneur exécute `init.sh` à chaque démarrage |
 
@@ -594,7 +594,10 @@ Le script doit démarrer MariaDB, créer la base et l'utilisateur de WordPress, 
     lamp-wordpress:latest   ba6f11143aa8        949MB          185MB
     ```
 
-    Compter environ **2 minutes** (téléchargement de plus de 100 paquets et de WordPress). L'image contient PHP 8.4, MariaDB 11.8, Apache 2.4 et WordPress 7.1.
+    Compter environ **2 minutes** (téléchargement de plus de 100 paquets et de WordPress). L'image contient PHP 8.4, MariaDB 11.8, Apache 2.4, et la version de WordPress du jour de la construction (7.1.5 le 24 novembre 2026).
+
+    !!! tip "Une image qui change à chaque construction"
+        `latest-fr_FR.tar.gz` désigne toujours la dernière version : reconstruire l'image dans un mois peut donner un autre WordPress. Pour une image **reproductible**, on télécharge une version précise, par exemple `https://fr.wordpress.org/wordpress-7.1.5-fr_FR.tar.gz`, et on vérifie son empreinte, publiée à côté (même adresse suivie de `.sha1`) : même principe que figer l'étiquette d'une image (section 6).
 
 2. 🐧 Démarrer le conteneur et lire ses journaux :
 
