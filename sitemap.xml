@@ -257,6 +257,26 @@
          <lastmod>2026-11-24</lastmod>
     </url>
     <url>
+         <loc>https://wiki.bodaine.fr/cours-tp/docker/14-construire-ses-images-dockerfile/</loc>
+         <lastmod>2026-11-24</lastmod>
+    </url>
+    <url>
+         <loc>https://wiki.bodaine.fr/cours-tp/docker/15-distribuer-ses-images-registre/</loc>
+         <lastmod>2026-11-24</lastmod>
+    </url>
+    <url>
+         <loc>https://wiki.bodaine.fr/cours-tp/docker/16-cluster-docker-swarm/</loc>
+         <lastmod>2026-11-24</lastmod>
+    </url>
+    <url>
+         <loc>https://wiki.bodaine.fr/cours-tp/docker/17-defi-final/</loc>
+         <lastmod>2026-11-24</lastmod>
+    </url>
+    <url>
+         <loc>https://wiki.bodaine.fr/cours-tp/docker/annexes/</loc>
+         <lastmod>2026-11-24</lastmod>
+    </url>
+    <url>
          <loc>https://wiki.bodaine.fr/cours-tp/pfsense-ha/</loc>
          <lastmod>2026-11-24</lastmod>
     </url>

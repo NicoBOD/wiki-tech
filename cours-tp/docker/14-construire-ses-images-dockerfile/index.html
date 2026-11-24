@@ -1,0 +1,5130 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+      
+      
+        <meta name="author" content="Nicolas BODAINE">
+      
+      
+        <link rel="canonical" href="https://wiki.bodaine.fr/cours-tp/docker/14-construire-ses-images-dockerfile/">
+      
+      
+        <link rel="prev" href="../13-projets-sympas/">
+      
+      
+        <link rel="next" href="../15-distribuer-ses-images-registre/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
+    
+    
+      
+        <title>Construire ses images Docker avec un Dockerfile : instructions, construction, serveur SSH, pile LAMP avec WordPress - Wiki Tech — NicoBOD</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        
+        <link rel="stylesheet" href="../../../assets/external/fonts.googleapis.com/css.56f7ac64.css">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+    
+    
+      
+    
+    
+
+    <!-- SEO -->
+    <meta name="author" content="Nicolas BODAINE">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph : compléments non gérés par le plugin social.     -->
+    <!-- og:type/title/description/image/url sont posés par social.   -->
+    <meta property="og:site_name" content="Wiki Tech — NicoBOD">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card : la grande image et l'image elle-même sont      -->
+    <!-- héritées des balises og:image générées par le plugin social.  -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Construire ses images Docker avec un Dockerfile : instructions, construction, serveur SSH, pile LAMP avec WordPress — Wiki Tech — NicoBOD">
+    <meta name="twitter:description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+  
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#construire-ses-images-avec-un-dockerfile" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-header__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wiki Tech — NicoBOD
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Construire ses images Docker avec un Dockerfile : instructions, construction, serveur SSH, pile LAMP avec WordPress
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer en mode clair"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer en mode clair" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Passer en mode sombre"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer en mode sombre" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Revenir au thème système"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Revenir au thème système" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Partager" aria-label="Partager" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../systemes/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h16v10H4m16 2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4c-1.11 0-2 .89-2 2v10a2 2 0 0 0 2 2H0v2h24v-2z"/></svg>
+    
+  
+  Systèmes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../reseaux/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v2h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+    
+  
+  Réseaux
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cloud/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 20q-2.28 0-3.89-1.57Q1 16.85 1 14.58q0-1.95 1.17-3.48 1.18-1.53 3.08-1.95.63-2.3 2.5-3.72Q9.63 4 12 4q2.93 0 4.96 2.04Q19 8.07 19 11q1.73.2 2.86 1.5 1.14 1.28 1.14 3 0 1.88-1.31 3.19T18.5 20Z"/></svg>
+    
+  
+  Cloud
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cybersecurite/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12h7c-.53 4.11-3.28 7.78-7 8.92zH5V6.3l7-3.11M12 1 3 5v6c0 5.55 3.84 10.73 9 12 5.16-1.27 9-6.45 9-12V5z"/></svg>
+    
+  
+  Cybersécurité
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../ia/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/></svg>
+    
+  
+  IA
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../automatisation/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+    
+  
+  Automatisation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../logiciels/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m0 5H3V4h18z"/></svg>
+    
+  
+  Logiciels
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../debug/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 12h-4v-2h4m0 6h-4v-2h4m6-6h-2.81a6 6 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6 6 0 0 0-2.83 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20z"/></svg>
+    
+  
+  Debug
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../astuces/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+    
+  
+  Astuces
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+    
+  
+  Cours et TP
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../tags/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tags
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-nav__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    Wiki Tech — NicoBOD
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../systemes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Systèmes
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../reseaux/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Réseaux
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cybersecurite/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cybersécurité
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../ia/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IA
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../automatisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automatisation
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../logiciels/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logiciels
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../debug/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../astuces/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Astuces
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cours et TP
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cours et TP
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../veeam/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Veeam Backup & Replication
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_2" id="__nav_11_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Veeam Backup & Replication
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/01-comprendre-la-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/02-decouvrir-veeam-data-platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Découvrir Veeam Data Platform 13
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/03-preparer-le-lab-installer-appliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Préparer le lab et installer l'appliance
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/04-ajouter-des-depots-de-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Ajouter des dépôts de sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/05-sauvegarder-configuration-et-serveur-de-fichiers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Sauvegarder la configuration et un serveur de fichiers
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/06-sauvegarder-restaurer-serveur-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Sauvegarder et restaurer un serveur Linux
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/07-sauvegarder-vers-azure-blob/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Sauvegarder vers Azure Blob Storage
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pfsense-ha/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cluster pfSense en haute disponibilité
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_3" id="__nav_11_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cluster pfSense en haute disponibilité
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/01-comprendre-haute-disponibilite/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la haute disponibilité
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/02-preparer-lab-installer-pfsense/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Préparer le lab et installer pfSense
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/03-configuration-initiale/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Configuration initiale
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/04-synchroniser-le-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Synchroniser le cluster
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/05-vip-carp-nat-sortant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. VIP CARP et NAT sortant
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/06-tester-la-bascule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Tester la bascule
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/07-agregation-lacp-troisieme-noeud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Agrégation LACP et troisième nœud
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/08-mettre-a-jour-le-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8. Mettre à jour le cluster
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../virtualisation/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Virtualisation (5 jours)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_4" id="__nav_11_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Virtualisation (5 jours)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/01-comprendre-la-virtualisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 1 — Comprendre et créer ses VM
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/05-virtualiser-des-serveurs/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 2 — Serveurs, réseau, stockage
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/09-panorama-des-technologies/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 3 — Technologies du système
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/12-stockage-sds-hyperconvergence/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 4 — Stockage, réseau, applications
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/15-le-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 5 — Cloud, tendances, défi final
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../virtualisation/annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker (5 jours)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_5" id="__nav_11_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Docker (5 jours)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../01-decouvrir-et-installer-docker/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 1 — Installer Docker et lancer ses premiers conteneurs
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../05-volumes-et-dossiers-montes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 2 — Données, réseaux et Docker Compose
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../09-reverse-proxy-nginx-proxy-manager/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 3 — Publier des services
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../12-exploiter-docker-au-quotidien/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 4 — Exploiter et s'amuser
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_5_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_11_5_6" id="__nav_11_5_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 5 — Construire, distribuer, orchestrer
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_11_5_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_5_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Jour 5 — Construire, distribuer, orchestrer
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14. Construire ses images avec un Dockerfile
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14. Construire ses images avec un Dockerfile
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-pourquoi-ecrire-un-dockerfile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Pourquoi écrire un Dockerfile ?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-les-instructions-principales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Les instructions principales
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Les instructions principales">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-essayer-cmd-entrypoint-arg-et-env" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Essayer CMD, ENTRYPOINT, ARG et ENV
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-tp-guide-un-serveur-apache-construit-avec-un-dockerfile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. TP guidé : un serveur Apache construit avec un Dockerfile
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. TP guidé : un serveur Apache construit avec un Dockerfile">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-preparer-le-dossier-du-projet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Préparer le dossier du projet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-construire-limage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Construire l'image
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-demarrer-le-conteneur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Démarrer le conteneur
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-verifier-que-expose-ne-publie-rien" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Vérifier que EXPOSE ne publie rien
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-le-cache-de-construction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 Le cache de construction
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-tp-un-serveur-ssh-dans-une-image-debian" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. TP : un serveur SSH dans une image Debian ✍️
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-tp-guide-une-pile-lamp-avec-wordpress-dans-une-seule-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. TP guidé : une pile LAMP avec WordPress dans une seule image
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. TP guidé : une pile LAMP avec WordPress dans une seule image">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-le-dockerfile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Le Dockerfile
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-le-script-initsh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Le script init.sh
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-construire-et-demarrer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Construire et démarrer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-installer-wordpress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Installer WordPress
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#55-pourquoi-on-ne-fait-pas-ainsi-en-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.5 Pourquoi on ne fait pas ainsi en production
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-les-bonnes-pratiques-dun-dockerfile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Les bonnes pratiques d'un Dockerfile
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-verifier-son-lab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Vérifier son lab
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-distribuer-ses-images-registre/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15. Distribuer ses images : Docker Hub et registre privé
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../16-cluster-docker-swarm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16. Un cluster Docker Swarm
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../17-defi-final/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    17. Défi final
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tags/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.5 7A1.5 1.5 0 0 1 4 5.5 1.5 1.5 0 0 1 5.5 4 1.5 1.5 0 0 1 7 5.5 1.5 1.5 0 0 1 5.5 7m15.91 4.58-9-9C12.05 2.22 11.55 2 11 2H4c-1.11 0-2 .89-2 2v7c0 .55.22 1.05.59 1.41l8.99 9c.37.36.87.59 1.42.59s1.05-.23 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.56-.23-1.06-.59-1.42"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-pourquoi-ecrire-un-dockerfile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Pourquoi écrire un Dockerfile ?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-les-instructions-principales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Les instructions principales
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Les instructions principales">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-essayer-cmd-entrypoint-arg-et-env" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Essayer CMD, ENTRYPOINT, ARG et ENV
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-tp-guide-un-serveur-apache-construit-avec-un-dockerfile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. TP guidé : un serveur Apache construit avec un Dockerfile
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. TP guidé : un serveur Apache construit avec un Dockerfile">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-preparer-le-dossier-du-projet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Préparer le dossier du projet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-construire-limage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Construire l'image
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-demarrer-le-conteneur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Démarrer le conteneur
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-verifier-que-expose-ne-publie-rien" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Vérifier que EXPOSE ne publie rien
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-le-cache-de-construction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 Le cache de construction
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-tp-un-serveur-ssh-dans-une-image-debian" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. TP : un serveur SSH dans une image Debian ✍️
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-tp-guide-une-pile-lamp-avec-wordpress-dans-une-seule-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. TP guidé : une pile LAMP avec WordPress dans une seule image
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. TP guidé : une pile LAMP avec WordPress dans une seule image">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-le-dockerfile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Le Dockerfile
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-le-script-initsh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Le script init.sh
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-construire-et-demarrer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Construire et démarrer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-installer-wordpress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Installer WordPress
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#55-pourquoi-on-ne-fait-pas-ainsi-en-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.5 Pourquoi on ne fait pas ainsi en production
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-les-bonnes-pratiques-dun-dockerfile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Les bonnes pratiques d'un Dockerfile
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-verifier-son-lab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Vérifier son lab
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Cours et TP
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Docker (5 jours)
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="./" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Jour 5 — Construire, distribuer, orchestrer
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:cours" class="md-tag">cours</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:docker" class="md-tag">docker</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:dockerfile" class="md-tag">dockerfile</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:travaux-pratiques" class="md-tag">travaux-pratiques</a>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/NicoBOD/wiki-tech/edit/main/docs/cours-tp/docker/14-construire-ses-images-dockerfile.md" title="Editer cette page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/NicoBOD/wiki-tech/raw/main/docs/cours-tp/docker/14-construire-ses-images-dockerfile.md" title="Consulter la source de cette page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<!-- ============================================================ -->
+<!-- ⚠️ RAPPEL IMPORTANT :                                          -->
+<!-- Pensez TOUJOURS à ajouter une entrée dans le fichier d'index  -->
+<!-- (index.md) du dossier correspondant (ex: docs/cloud/index.md) -->
+<!-- afin de référencer ce nouvel article et permettre aux         -->
+<!-- visiteurs de le trouver et de cliquer dessus !                -->
+<!-- ============================================================ -->
+
+<h1 id="construire-ses-images-avec-un-dockerfile">Construire ses images avec un Dockerfile<a class="headerlink" href="#construire-ses-images-avec-un-dockerfile" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Résumé</p>
+<p>Jusqu'ici, toutes les images venaient de Docker Hub. On apprend maintenant à <strong>fabriquer ses propres images</strong> à partir d'un <strong>Dockerfile</strong>, un simple fichier texte qui décrit, ligne par ligne, comment construire l'image. Contrairement à <code>docker commit</code> (partie 6), la recette est lisible, reproductible et se range avec le reste du projet.</p>
+<p>Au programme : les instructions principales (<code>FROM</code>, <code>RUN</code>, <code>COPY</code>, <code>CMD</code>, <code>ENTRYPOINT</code>, <code>EXPOSE</code>…), la construction avec <code>docker build</code> et son <strong>cache</strong>, puis trois réalisations : un <strong>site Apache</strong> personnalisé, un <strong>serveur <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr></strong> dans une image Debian (à faire seul, corrigé replié), et une <strong>pile <abbr title="Linux, Apache, MariaDB (ou MySQL), PHP">LAMP</abbr> avec WordPress</strong> dans une seule image, avec ses limites.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Propriété</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Difficulté</td>
+<td>Intermédiaire</td>
+</tr>
+<tr>
+<td>Durée estimée</td>
+<td>2 h</td>
+</tr>
+<tr>
+<td>Version décrite</td>
+<td>Docker Engine 29.10 (<abbr title="moteur de construction d'images de Docker">BuildKit</abbr>), images <code>httpd</code> 2.4.71, <code>debian:13</code> (13.7), WordPress 7.1.5</td>
+</tr>
+<tr>
+<td>Place dans le parcours</td>
+<td>Partie 14 sur 17 du parcours <a href="../">Docker</a> — jour 5</td>
+</tr>
+<tr>
+<td>Dernière mise à jour</td>
+<td>2026-11-24</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<div class="admonition info">
+<p class="admonition-title">Convention de lecture</p>
+<p>🖥️ <strong>PC hôte</strong> · 🐧 <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> <code>docker-hote</code>, connecté en <code>tssr</code> · 🌐 <strong>navigateur</strong> du PC · ✍️ <strong>exercice</strong> · 🛟 <strong>instantané</strong>. Point de départ : l'instantané <code>05-exploitation</code> (fin de la partie 12), ou la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> telle qu'elle est à la fin de la partie 13.</p>
+</div>
+<h2 id="1-pourquoi-ecrire-un-dockerfile">1. Pourquoi écrire un Dockerfile ?<a class="headerlink" href="#1-pourquoi-ecrire-un-dockerfile" title="Permanent link">&para;</a></h2>
+<p>En partie 6, on a créé une image avec <code>docker commit</code> : on installe des logiciels à la main dans un conteneur, puis on le fige. Ça marche, mais l'image obtenue est une <strong>boîte noire</strong> : <code>docker history</code> affiche une couche de 28 Mo sans dire ce qu'elle contient, et personne ne peut la refaire à l'identique.</p>
+<p>Un <strong>Dockerfile</strong> règle ce problème. C'est une <strong>recette de cuisine</strong> : la liste des ingrédients (l'image de départ, les fichiers à copier) et des étapes (les commandes à exécuter). Docker lit la recette et prépare le plat, l'<strong>image</strong>, toujours de la même façon. On peut relire la recette, la corriger, la versionner avec Git, et la donner à un collègue qui obtiendra la même image.</p>
+<figure>
+<p><img alt="Le dossier du projet, qui contient le Dockerfile et les fichiers à copier, devient une image avec docker build. L'image devient un conteneur avec docker run. Avec docker tag et docker push, l'image part dans un registre, Docker Hub ou un registre privé, d'où d'autres machines la récupèrent avec docker pull." loading="lazy" src="../images/dockerfile-build-run-push.svg" /></p>
+<figcaption>
+<p>Du Dockerfile au conteneur : <code>build</code>, puis <code>run</code>. La distribution par un registre (<code>push</code>, <code>pull</code>) fait l'objet de la partie 15.</p>
+</figcaption>
+</figure>
+<p>Le <strong>contexte de construction</strong> est le dossier qu'on donne à <code>docker build</code> (souvent <code>.</code>, le dossier courant) : Docker n'a accès <strong>qu'aux fichiers de ce dossier</strong>. Un <code>COPY</code> ne peut pas aller chercher un fichier ailleurs sur la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</p>
+<h2 id="2-les-instructions-principales">2. Les instructions principales<a class="headerlink" href="#2-les-instructions-principales" title="Permanent link">&para;</a></h2>
+<p>Un Dockerfile contient une instruction par ligne, en majuscules par convention, suivie de ses arguments. Elles s'exécutent <strong>de haut en bas</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Instruction</th>
+<th>Rôle</th>
+<th>Exemple</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FROM</code></td>
+<td>Choisit l'<strong>image de base</strong>, le point de départ</td>
+<td><code>FROM debian:13</code></td>
+</tr>
+<tr>
+<td><code>ARG</code></td>
+<td>Déclare une variable <strong>utilisée seulement pendant la construction</strong> ; modifiable avec <code>--build-arg</code></td>
+<td><code>ARG APP_VERSION=1.0</code></td>
+</tr>
+<tr>
+<td><code>ENV</code></td>
+<td>Définit une <strong>variable d'environnement</strong>, présente pendant la construction <strong>et</strong> dans les conteneurs</td>
+<td><code>ENV APP_ENV=production</code></td>
+</tr>
+<tr>
+<td><code>WORKDIR</code></td>
+<td>Change le <strong>dossier de travail</strong> des instructions suivantes (et du conteneur) ; le crée s'il n'existe pas</td>
+<td><code>WORKDIR /app</code></td>
+</tr>
+<tr>
+<td><code>RUN</code></td>
+<td><strong>Exécute une commande</strong> pendant la construction, et enregistre le résultat dans une nouvelle <strong>couche</strong></td>
+<td><code>RUN apt-get update &amp;&amp; apt-get install -y curl</code></td>
+</tr>
+<tr>
+<td><code>COPY</code></td>
+<td><strong>Copie</strong> des fichiers du contexte dans l'image</td>
+<td><code>COPY index.html /usr/local/apache2/htdocs/</code></td>
+</tr>
+<tr>
+<td><code>ADD</code></td>
+<td>Comme <code>COPY</code>, mais sait aussi décompresser une archive locale ou télécharger une URL ; on lui préfère <code>COPY</code> quand on n'a pas besoin de ces fonctions</td>
+<td><code>ADD site.tar.gz /var/www/</code></td>
+</tr>
+<tr>
+<td><code>USER</code></td>
+<td>Change l'<strong>utilisateur</strong> des instructions suivantes et du conteneur (au lieu de <code>root</code>)</td>
+<td><code>USER appli</code></td>
+</tr>
+<tr>
+<td><code>CMD</code></td>
+<td>La <strong>commande lancée au démarrage</strong> du conteneur, ou les <strong>arguments par défaut</strong> de l'<code>ENTRYPOINT</code> ; remplacée par ce qu'on tape après le nom de l'image dans <code>docker run</code></td>
+<td><code>CMD ["apachectl", "-D", "FOREGROUND"]</code></td>
+</tr>
+<tr>
+<td><code>ENTRYPOINT</code></td>
+<td>Le <strong>programme principal</strong> du conteneur ; ce qu'on tape après le nom de l'image devient ses arguments</td>
+<td><code>ENTRYPOINT ["/init.sh"]</code></td>
+</tr>
+<tr>
+<td><code>EXPOSE</code></td>
+<td><strong>Documente</strong> le port sur lequel l'application écoute. N'ouvre et ne publie <strong>rien</strong></td>
+<td><code>EXPOSE 80</code></td>
+</tr>
+<tr>
+<td><code>VOLUME</code></td>
+<td>Déclare un dossier dont les données doivent vivre <strong>hors du conteneur</strong> : Docker y crée un volume anonyme si on n'en monte pas un</td>
+<td><code>VOLUME /var/lib/mysql</code></td>
+</tr>
+<tr>
+<td><code>LABEL</code></td>
+<td>Ajoute des <strong>étiquettes</strong> descriptives (version, description)</td>
+<td><code>LABEL version="1.0"</code></td>
+</tr>
+<tr>
+<td><code>HEALTHCHECK</code></td>
+<td>Commande qui teste la <strong>santé</strong> du conteneur, comme en partie 8</td>
+<td><code>HEALTHCHECK CMD wget -q --spider http://127.0.0.1/</code></td>
+</tr>
+</tbody>
+</table>
+<p>Quelques précisions utiles :</p>
+<ul>
+<li><strong><code>FROM</code> vient en premier.</strong> Seule exception : un <code>ARG</code> peut le précéder pour choisir la version de l'image de base (<code>ARG VERSION=13</code> puis <code>FROM debian:$VERSION</code>). Un Dockerfile peut contenir plusieurs <code>FROM</code> (construction en plusieurs étapes, citée en section 6).</li>
+<li><strong>Chaque <code>RUN</code>, <code>COPY</code> ou <code>ADD</code> crée une couche.</strong> On regroupe donc les commandes liées dans un seul <code>RUN</code> avec <code>&amp;&amp;</code>, et on y supprime les fichiers temporaires : un fichier supprimé dans un <code>RUN</code> <strong>suivant</strong> reste stocké dans la couche précédente.</li>
+<li><strong>Forme « exec » ou forme « shell ».</strong> <code>CMD ["/usr/sbin/sshd", "-D"]</code> (entre crochets, avec des guillemets doubles) lance le programme directement : il devient le processus n°1 du conteneur et reçoit le signal d'arrêt de <code>docker stop</code>. <code>CMD /usr/sbin/sshd -D</code> passe par <code>/bin/sh -c</code>. En forme exec, aucun shell ne cherche le programme dans le <code>PATH</code> : on donne son <strong>chemin complet</strong> (<code>sshd</code> lui-même refuse d'ailleurs de démarrer sans : <code>sshd requires execution with an absolute path</code>). On préfère la forme exec pour <code>CMD</code> et <code>ENTRYPOINT</code>.</li>
+<li><strong>Un conteneur vit tant que son processus principal tourne</strong> (partie 2). La commande de démarrage doit donc rester <strong>au premier plan</strong> : <code>apachectl -D FOREGROUND</code>, <code>sshd -D</code>, <code>nginx -g 'daemon off;'</code>. Un service lancé « en arrière-plan » rend la main, le processus principal se termine, et le conteneur s'arrête aussitôt.</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title"><code>EXPOSE</code> ne publie aucun port</p>
+<p><code>EXPOSE 80</code> est une <strong>étiquette</strong> qui indique « cette application écoute sur le port 80 ». C'est utile à la lecture et à certains outils, mais le port reste <strong>fermé</strong> depuis l'extérieur tant qu'on ne le publie pas avec <code>-p</code> au lancement (ou <code>-P</code>, qui publie tous les ports déclarés sur des ports pris au hasard). À l'inverse, une image <strong>sans</strong> <code>EXPOSE</code> se publie très bien avec <code>-p</code>. La section 3.4 le vérifie.</p>
+</div>
+<h3 id="21-essayer-cmd-entrypoint-arg-et-env">2.1 Essayer CMD, ENTRYPOINT, ARG et ENV<a class="headerlink" href="#21-essayer-cmd-entrypoint-arg-et-env" title="Permanent link">&para;</a></h3>
+<p>Ces instructions se comprennent mieux en les essayant. 🐧 Créer un dossier d'essai et ce Dockerfile :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/essais<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/essais
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>nano<span class="w"> </span>Dockerfile
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">FROM</span><span class="w"> </span><span class="s">alpine:3.24</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">ARG</span><span class="w"> </span><span class="nv">VERSION_APP</span><span class="o">=</span><span class="m">1</span>.0
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">ENV</span><span class="w"> </span><span class="nv">APP_ENV</span><span class="o">=</span>production
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="k">RUN</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"construit en version </span><span class="nv">$VERSION_APP</span><span class="s2">"</span><span class="w"> </span>&gt;<span class="w"> </span>/version.txt
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">RUN</span><span class="w"> </span>adduser<span class="w"> </span>-D<span class="w"> </span>appli
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">WORKDIR</span><span class="w"> </span><span class="s">/home/appli</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="k">USER</span><span class="w"> </span><span class="s">appli</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="k">ENTRYPOINT</span><span class="w"> </span><span class="p">[</span><span class="s2">"echo"</span><span class="p">,</span><span class="w"> </span><span class="s2">"Bonjour"</span><span class="p">]</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">"tout le monde"</span><span class="p">]</span>
+</code></pre></div>
+<p>🐧 Construire l'image en changeant la valeur de l'<code>ARG</code>, puis lancer trois conteneurs :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker<span class="w"> </span>build<span class="w"> </span>-q<span class="w"> </span>-t<span class="w"> </span>essai<span class="w"> </span>--build-arg<span class="w"> </span><span class="nv">VERSION_APP</span><span class="o">=</span><span class="m">2</span>.0<span class="w"> </span>.
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>essai
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>essai<span class="w"> </span><span class="s2">"les admins"</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--entrypoint<span class="w"> </span>sh<span class="w"> </span>essai<span class="w"> </span>-c<span class="w"> </span><span class="s1">'cat /version.txt; echo "APP_ENV=$APP_ENV VERSION_APP=$VERSION_APP"; id; pwd'</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sha256:a27dfd65273b8ad28952f4887a7ebf6dca091126b62d03bd9f43865bd4a8f596
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Bonjour tout le monde
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>Bonjour les admins
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>construit en version 2.0
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>APP_ENV=production VERSION_APP=
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>uid=1000(appli) gid=1000(appli) groups=1000(appli)
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>/home/appli
+</code></pre></div>
+<p>Ce qu'on observe :</p>
+<ul>
+<li><code>ENTRYPOINT</code> + <code>CMD</code> : le conteneur lance <code>echo Bonjour tout le monde</code>. Ce qu'on tape après le nom de l'image (<code>"les admins"</code>) <strong>remplace le <code>CMD</code></strong>, pas l'<code>ENTRYPOINT</code>. Pour changer l'<code>ENTRYPOINT</code>, il faut l'option <code>--entrypoint</code>.</li>
+<li><code>ARG</code> a servi pendant la construction (<code>version 2.0</code> dans le fichier), mais <strong>n'existe plus</strong> dans le conteneur (<code>VERSION_APP=</code> vide). <code>ENV</code>, lui, est toujours là.</li>
+<li><code>USER</code> et <code>WORKDIR</code> : le conteneur tourne avec l'utilisateur <code>appli</code> (uid 1000), pas <code>root</code>, dans <code>/home/appli</code>.</li>
+</ul>
+<p>🐧 Supprimer l'image d'essai : <code>docker image rm essai</code>.</p>
+<h2 id="3-tp-guide-un-serveur-apache-construit-avec-un-dockerfile">3. TP guidé : un serveur Apache construit avec un Dockerfile<a class="headerlink" href="#3-tp-guide-un-serveur-apache-construit-avec-un-dockerfile" title="Permanent link">&para;</a></h2>
+<p>Objectif : une image <code>web</code> qui contient le serveur Apache <strong>et</strong> une page d'accueil personnalisée.</p>
+<h3 id="31-preparer-le-dossier-du-projet">3.1 Préparer le dossier du projet<a class="headerlink" href="#31-preparer-le-dossier-du-projet" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>🐧 Créer un dossier <code>apache</code> et s'y placer :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>mkdir<span class="w"> </span>~/apache<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/apache
+</code></pre></div>
+</li>
+<li>
+<p>🐧 Créer la page d'accueil :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>nano<span class="w"> </span>index.html
+</code></pre></div>
+<p>Coller ce contenu, puis enregistrer avec <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-x">X</kbd></span>, <span class="keys"><kbd class="key-o">O</kbd></span> (ou <span class="keys"><kbd class="key-y">Y</kbd></span> selon la langue de <code>nano</code>) et <span class="keys"><kbd class="key-enter">Enter</kbd></span> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">"fr"</span><span class="p">&gt;</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">"UTF-8"</span><span class="p">&gt;</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">"viewport"</span> <span class="na">content</span><span class="o">=</span><span class="s">"width=device-width, initial-scale=1.0"</span><span class="p">&gt;</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Cours Docker - TutoTech<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">"https://cdn.tailwindcss.com"</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="p">&lt;</span><span class="nt">body</span> <span class="na">class</span><span class="o">=</span><span class="s">"bg-gray-100"</span><span class="p">&gt;</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">"container mx-auto my-10 p-6 bg-white shadow-lg rounded-xl text-center"</span><span class="p">&gt;</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="p">&lt;</span><span class="nt">h1</span> <span class="na">class</span><span class="o">=</span><span class="s">"text-4xl font-bold text-blue-600"</span><span class="p">&gt;</span>Cours Docker<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">"mt-2 text-gray-700 text-lg"</span><span class="p">&gt;</span>Apprenez à maîtriser Docker avec Nicolas BODAINE<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">"mt-1 text-gray-500"</span><span class="p">&gt;</span>Une formation proposée par <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">"font-semibold"</span><span class="p">&gt;</span>TutoTech<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">"mt-6 p-4 bg-blue-50 rounded-lg"</span><span class="p">&gt;</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="p">&lt;</span><span class="nt">h2</span> <span class="na">class</span><span class="o">=</span><span class="s">"text-2xl font-semibold text-blue-800"</span><span class="p">&gt;</span>Travaux Pratiques - Dockerfile<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">"mt-2 text-gray-600"</span><span class="p">&gt;</span>Créez et testez vos propres Dockerfiles pour mieux comprendre l'environnement de conteneurisation.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">"mt-8"</span><span class="p">&gt;</span>
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="p">&lt;</span><span class="nt">button</span> <span class="na">class</span><span class="o">=</span><span class="s">"px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700"</span><span class="p">&gt;</span>Commencer<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a><span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a><span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</code></pre></div>
+<p>La mise en forme vient de <strong>Tailwind <abbr title="Cascading Style Sheets — mise en forme des pages web">CSS</abbr></strong>, chargé depuis Internet par le navigateur (ligne <code>&lt;script src=…&gt;</code>) : sans accès à Internet sur le PC, la page s'affiche sans couleurs, mais elle s'affiche.</p>
+</li>
+<li>
+<p>🐧 Créer le Dockerfile, <strong>dans le même dossier</strong> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>nano<span class="w"> </span>Dockerfile
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">FROM</span><span class="w"> </span><span class="s">httpd:latest</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="k">COPY</span><span class="w"> </span>index.html<span class="w"> </span>/usr/local/apache2/htdocs/
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="k">EXPOSE</span><span class="w"> </span><span class="s">80</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Ligne</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FROM httpd:latest</code></td>
+<td>Part de l'image officielle d'Apache (<code>httpd</code>), déjà croisée en partie 3. <code>latest</code> simplifie ce premier essai ; la section 6 explique pourquoi, pour un vrai service, on fige la version (<code>httpd:2.4</code>)</td>
+</tr>
+<tr>
+<td><code>COPY index.html /usr/local/apache2/htdocs/</code></td>
+<td>Copie la page dans le dossier que cette image publie (sa racine web)</td>
+</tr>
+<tr>
+<td><code>EXPOSE 80</code></td>
+<td>Documente le port d'Apache. L'image <code>httpd</code> le déclare déjà : la ligne est redondante, mais elle rend le fichier lisible seul</td>
+</tr>
+</tbody>
+</table>
+<p>Le fichier s'appelle exactement <code>Dockerfile</code>, avec un <strong>D majuscule</strong> et <strong>sans extension</strong>.</p>
+</li>
+</ol>
+<h3 id="32-construire-limage">3.2 Construire l'image<a class="headerlink" href="#32-construire-limage" title="Permanent link">&para;</a></h3>
+<p>🐧 Lancer la construction :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>web<span class="w"> </span>.
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Élément</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>docker build</code></td>
+<td>Construit une image à partir d'un Dockerfile</td>
+</tr>
+<tr>
+<td><code>-t web</code></td>
+<td>Donne le nom (<em>tag</em>) <code>web</code> à l'image ; sans étiquette après <code>:</code>, c'est <code>web:latest</code></td>
+</tr>
+<tr>
+<td><code>.</code></td>
+<td>Le <strong>contexte</strong> : le dossier courant, où se trouvent le Dockerfile et <code>index.html</code>. Ne pas l'oublier</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>[+] Building 1.1s (7/7) FINISHED                                 docker:default
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a> =&gt; [internal] load build definition from Dockerfile                       0.0s
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a> =&gt; =&gt; transferring dockerfile: 108B                                       0.0s
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a> =&gt; [internal] load metadata for docker.io/library/httpd:latest            0.1s
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a> =&gt; [internal] load .dockerignore                                          0.0s
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a> =&gt; =&gt; transferring context: 2B                                            0.0s
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a> =&gt; [internal] load build context                                          0.0s
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a> =&gt; =&gt; transferring context: 1.09kB                                        0.0s
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a> =&gt; CACHED [1/2] FROM docker.io/library/httpd:latest@sha256:32e9403360ab2  0.1s
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a> =&gt; =&gt; resolve docker.io/library/httpd:latest@sha256:32e9403360ab2f104752  0.0s
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a> =&gt; [2/2] COPY index.html /usr/local/apache2/htdocs/                       0.1s
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a> =&gt; exporting to image                                                     0.5s
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a> …
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a> =&gt; =&gt; naming to docker.io/library/web:latest                              0.0s
+</code></pre></div>
+<p>Le moteur de construction, <strong><abbr title="moteur de construction d'images de Docker">BuildKit</abbr></strong>, affiche une ligne par étape : <code>[1/2] FROM</code>, puis <code>[2/2] COPY</code>. Cette sortie a été obtenue avec l'image <code>httpd</code> déjà présente sur la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<code>CACHED</code> sur la ligne <code>FROM</code>) : si elle manque, Docker la télécharge d'abord, et la construction prend environ 5 secondes au lieu d'une.</p>
+<p>🐧 Regarder l'image et ses couches :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>docker<span class="w"> </span>image<span class="w"> </span>ls<span class="w"> </span>web
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>docker<span class="w"> </span><span class="nb">history</span><span class="w"> </span>web
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>IMAGE        ID             DISK USAGE   CONTENT SIZE   EXTRA
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>web:latest   efe2f0c5ed33        175MB         45.4MB
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>IMAGE          CREATED        CREATED BY                                      SIZE      COMMENT
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>efe2f0c5ed33   1 second ago   EXPOSE 80/tcp                                   0B        buildkit.dockerfile.v0
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>&lt;missing&gt;      1 second ago   COPY index.html /usr/local/apache2/htdocs/ #…   24.6kB    buildkit.dockerfile.v0
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>&lt;missing&gt;      12 days ago    CMD ["httpd-foreground"]                        0B        buildkit.dockerfile.v0
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>&lt;missing&gt;      12 days ago    EXPOSE map[80/tcp:{}]                           0B        buildkit.dockerfile.v0
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>…
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>&lt;missing&gt;      2 weeks ago    # debian.sh --arch 'amd64' out/ 'trixie' '@1…   87.7MB    debuerreotype 0.17
+</code></pre></div>
+<p>Cette fois, <code>docker history</code> raconte <strong>toute l'histoire</strong> : nos deux lignes en haut, puis celles du Dockerfile de l'image <code>httpd</code>, jusqu'à la Debian 13 « trixie » de départ. On voit aussi que notre image n'a <strong>pas de <code>CMD</code></strong> à elle : elle hérite de celui de <code>httpd</code> (<code>httpd-foreground</code>).</p>
+<h3 id="33-demarrer-le-conteneur">3.3 Démarrer le conteneur<a class="headerlink" href="#33-demarrer-le-conteneur" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>🐧 Essayer de publier le port 80, comme on le ferait sur une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> neuve :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>apache<span class="w"> </span>-p<span class="w"> </span><span class="m">80</span>:80<span class="w"> </span>web
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>docker: Error response from daemon: failed to set up container networking: driver failed programming external connectivity on endpoint apache (c96aec89…): Bind for 0.0.0.0:80 failed: port is already allocated
+</code></pre></div>
+<p>Le port 80 de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> est <strong>déjà pris</strong> par Nginx Proxy Manager depuis la partie 9. Le conteneur a été créé mais pas démarré (état <code>Created</code>) : le supprimer, puis le relancer sur le port 8080 :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>docker<span class="w"> </span>rm<span class="w"> </span>apache
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>apache<span class="w"> </span>-p<span class="w"> </span><span class="m">8080</span>:80<span class="w"> </span>web
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-d</code></td>
+<td>Lance le conteneur en arrière-plan</td>
+</tr>
+<tr>
+<td><code>--name apache</code></td>
+<td>Nom du conteneur</td>
+</tr>
+<tr>
+<td><code>-p 8080:80</code></td>
+<td>Publie le port 8080 de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> vers le port 80 du conteneur</td>
+</tr>
+<tr>
+<td><code>web</code></td>
+<td>Nom de l'image construite à l'étape précédente</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>🌐 Ouvrir <code>http://IP-de-la-VM:8080</code> :</p>
+<figure>
+<p><img alt="Page web « Cours Docker » : titre bleu, ligne « Apprenez à maîtriser Docker avec Nicolas BODAINE », encadré « Travaux Pratiques - Dockerfile » et bouton « Commencer »." loading="lazy" src="../images/14-page-apache.png" /></p>
+<figcaption>
+<p>La page copiée dans l'image par le Dockerfile, servie par Apache</p>
+</figcaption>
+</figure>
+</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Publier sur le port 80 quand même ?</p>
+<p>Pour que le site réponde sans <code>:8080</code>, deux solutions : arrêter le conteneur qui tient déjà le port 80 (ce n'est pas le but ici), ou mieux, ajouter un <strong>hôte de proxy</strong> dans Nginx Proxy Manager vers <code>IP-de-la-VM:8080</code>, comme en partie 9.</p>
+</div>
+<h3 id="34-verifier-que-expose-ne-publie-rien">3.4 Vérifier que <code>EXPOSE</code> ne publie rien<a class="headerlink" href="#34-verifier-que-expose-ne-publie-rien" title="Permanent link">&para;</a></h3>
+<p>🐧 Lancer deux autres conteneurs de la même image : l'un <strong>sans</strong> <code>-p</code>, l'autre avec <code>-P</code> (P majuscule) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>apache-sans-p<span class="w"> </span>web
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>apache-P<span class="w"> </span>-P<span class="w"> </span>web
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>docker<span class="w"> </span>ps<span class="w"> </span>--filter<span class="w"> </span><span class="nv">name</span><span class="o">=</span>apache<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Names}} | {{.Ports}}'</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>apache-P | 0.0.0.0:32768-&gt;80/tcp, [::]:32768-&gt;80/tcp
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>apache-sans-p | 80/tcp
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>apache | 0.0.0.0:8080-&gt;80/tcp, [::]:8080-&gt;80/tcp
+</code></pre></div>
+<ul>
+<li><code>apache-sans-p</code> affiche seulement <code>80/tcp</code> : le port est <strong>déclaré</strong>, mais <strong>aucun</strong> port de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> ne mène à lui. Depuis le PC, impossible de le joindre.</li>
+<li><code>apache-P</code> : <code>-P</code> a publié le port déclaré par <code>EXPOSE</code> sur un port <strong>pris au hasard</strong> (<code>32768</code>). C'est le seul effet concret d'<code>EXPOSE</code>.</li>
+</ul>
+<p>🐧 Supprimer les deux conteneurs d'essai : <code>docker rm -f apache-sans-p apache-P</code>.</p>
+<h3 id="35-le-cache-de-construction">3.5 Le cache de construction<a class="headerlink" href="#35-le-cache-de-construction" title="Permanent link">&para;</a></h3>
+<p>🐧 Modifier la page, puis reconstruire :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">'&lt;!-- modif --&gt;'</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>index.html
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="nb">time</span><span class="w"> </span>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>web<span class="w"> </span>.
+</code></pre></div>
+<p>La construction ne prend qu'une seconde et demie environ : Docker <strong>réutilise</strong> les couches dont rien n'a changé (<code>CACHED</code>) et ne refait que l'étape <code>COPY</code>, dont le fichier source a changé, <strong>et toutes celles qui suivent</strong>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Ordonner un Dockerfile pour profiter du cache</p>
+<p>On place en haut ce qui change rarement (installation des paquets) et en bas ce qui change souvent (copie du code ou du site). Si le <code>COPY</code> du site était avant un long <code>apt-get install</code>, chaque modification de la page relancerait toute l'installation.</p>
+</div>
+<p>🐧 Le conteneur <code>apache</code> tourne toujours avec l'<strong>ancienne</strong> image : une image reconstruite ne met pas à jour les conteneurs existants. Pour en profiter, il faut <strong>recréer</strong> le conteneur (comme une mise à jour, partie 12) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>apache
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>apache<span class="w"> </span>-p<span class="w"> </span><span class="m">8080</span>:80<span class="w"> </span>web
+</code></pre></div>
+<h2 id="4-tp-un-serveur-ssh-dans-une-image-debian">4. TP : un serveur <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> dans une image Debian ✍️<a class="headerlink" href="#4-tp-un-serveur-ssh-dans-une-image-debian" title="Permanent link">&para;</a></h2>
+<p>En partie 3, on a installé <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> <strong>à la main</strong> dans un conteneur Debian, et on a vu que tout était perdu, ou à relancer, au redémarrage. On fait maintenant la même chose <strong>proprement</strong>, avec un Dockerfile.</p>
+<p><strong>Mission :</strong> écrire un Dockerfile qui construit une image <code>debian-ssh</code> à partir de <code>debian:13</code>, avec :</p>
+<ul>
+<li>le serveur <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> installé (paquet <code>openssh-server</code>) ;</li>
+<li>un utilisateur <strong><code>user</code></strong> (avec un dossier personnel et le shell <code>/bin/bash</code>), mot de passe <code>TutoDocker2026!</code> ;</li>
+<li>le port 22 documenté ;</li>
+<li>le serveur <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> lancé automatiquement, au premier plan, à chaque démarrage du conteneur.</li>
+</ul>
+<p>Puis : construire l'image, démarrer un conteneur <code>debian-ssh-container</code> qui publie le port <strong>54321</strong> de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> vers le port 22, et s'y connecter en <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> avec l'utilisateur <code>user</code>.</p>
+<p><strong>Ce qu'il faut obtenir :</strong></p>
+<ul>
+<li>l'image se construit <strong>sans erreur</strong> ;</li>
+<li>le conteneur reste démarré (<code>Up</code> dans <code>docker ps</code>) ;</li>
+<li>la connexion <code>ssh user@localhost -p 54321</code> depuis la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> aboutit, avec <code>user</code> (et pas <code>root</code>) ;</li>
+<li>on sait expliquer chaque ligne du Dockerfile et chaque option de <code>docker run</code>.</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Indices</p>
+<ul>
+<li>Le programme du serveur <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> est <code>/usr/sbin/sshd</code> ; l'option <code>-D</code> le garde au premier plan.</li>
+<li><code>useradd -ms /bin/bash user</code> crée l'utilisateur ; <code>chpasswd</code> lit des lignes <code>utilisateur:motdepasse</code> sur son entrée.</li>
+<li><code>sshd</code> a besoin du dossier <code>/run/sshd</code> pour démarrer.</li>
+</ul>
+</div>
+<details class="success">
+<summary>Corrigé</summary>
+<p><strong>Le Dockerfile.</strong> 🐧 Dans un dossier <code>~/debian-ssh</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c"># Utiliser Debian 13 comme image de base</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="k">FROM</span><span class="w"> </span><span class="s">debian:13</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="c"># Mettre à jour la liste des paquets et installer le serveur SSH</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="k">RUN</span><span class="w"> </span>apt-get<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="w">    </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>openssh-server<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="w">    </span>rm<span class="w"> </span>-rf<span class="w"> </span>/var/lib/apt/lists/*
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="c"># Créer le répertoire nécessaire au serveur SSH</span>
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="k">RUN</span><span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/run/sshd
+<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="c"># Créer un utilisateur nommé « user » avec un mot de passe</span>
+<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="k">RUN</span><span class="w"> </span>useradd<span class="w"> </span>-ms<span class="w"> </span>/bin/bash<span class="w"> </span>user<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s1">'user:TutoDocker2026!'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>chpasswd
+<a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a><span class="c"># Documenter le port du serveur SSH</span>
+<a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a><span class="k">EXPOSE</span><span class="w"> </span><span class="s">22</span>
+<a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a><span class="c"># Démarrer le serveur SSH au premier plan à chaque lancement du conteneur</span>
+<a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a><span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">"/usr/sbin/sshd"</span><span class="p">,</span><span class="w"> </span><span class="s2">"-D"</span><span class="p">]</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Ligne</th>
+<th>Explication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FROM debian:13</code></td>
+<td>Image officielle Debian 13. Une version précise (<code>13</code>) plutôt que <code>latest</code> : l'image ne change pas de version majeure dans le dos de l'administrateur (partie 12)</td>
+</tr>
+<tr>
+<td><code>apt-get update</code></td>
+<td>Met à jour la liste des paquets disponibles (l'image de base n'en contient aucune). <code>apt-get</code> plutôt qu'<code>apt</code>, prévu pour un humain, qui affiche un avertissement dans les scripts</td>
+</tr>
+<tr>
+<td><code>apt-get install -y openssh-server</code></td>
+<td>Installe le serveur <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> ; <code>-y</code> répond « oui » à la confirmation, car personne n'est là pour taper pendant la construction</td>
+</tr>
+<tr>
+<td><code>rm -rf /var/lib/apt/lists/*</code></td>
+<td>Supprime la liste des paquets, inutile une fois l'installation faite, <strong>dans le même <code>RUN</code></strong> (section 2)</td>
+</tr>
+<tr>
+<td><code>mkdir -p /run/sshd</code></td>
+<td><code>sshd</code> range des fichiers de travail dans <code>/run/sshd</code> et refuse de démarrer si ce dossier manque. Sur Debian 13, le paquet le crée déjà : <code>-p</code> évite l'erreur « File exists » si le dossier existe, et le crée sur les systèmes où il manque</td>
+</tr>
+<tr>
+<td><code>useradd -ms /bin/bash user</code></td>
+<td>Crée l'utilisateur <code>user</code> : <code>-m</code> crée son dossier personnel <code>/home/user</code>, <code>-s /bin/bash</code> choisit son shell</td>
+</tr>
+<tr>
+<td><code>echo 'user:TutoDocker2026!' | chpasswd</code></td>
+<td><code>chpasswd</code> reçoit <code>utilisateur:motdepasse</code> et définit le mot de passe. Les guillemets <strong>simples</strong> empêchent le shell d'interpréter le <code>!</code></td>
+</tr>
+<tr>
+<td><code>EXPOSE 22</code></td>
+<td>Documente le port de <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr>. <strong>N'ouvre rien</strong> : la publication se fait avec <code>-p</code> au lancement</td>
+</tr>
+<tr>
+<td><code>CMD ["/usr/sbin/sshd", "-D"]</code></td>
+<td><strong>Commande de démarrage</strong> du conteneur (ce n'est pas un <code>RUN</code>, qui s'exécuterait une seule fois, pendant la construction). <code>-D</code> (<em>don't detach</em>) garde <code>sshd</code> au premier plan : il devient le processus principal et le conteneur reste en vie</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Construire l'image.</strong> 🐧</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="nb">cd</span><span class="w"> </span>~/debian-ssh
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>debian-ssh<span class="w"> </span>.
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>docker<span class="w"> </span>image<span class="w"> </span>ls<span class="w"> </span>debian-ssh
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>IMAGE               ID             DISK USAGE   CONTENT SIZE   EXTRA
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>debian-ssh:latest   bed81129faab        263MB           69MB
+</code></pre></div>
+<p>La première construction dure une vingtaine de secondes (téléchargement et installation des paquets). Avec <code>apt</code> au lieu d'<code>apt-get</code>, la construction afficherait <code>WARNING: apt does not have a stable CLI interface</code>, sans gravité, et l'image garderait la liste des paquets (301 Mo au lieu de 263 Mo).</p>
+<p><strong>Démarrer le conteneur.</strong> 🐧</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">54321</span>:22<span class="w"> </span>--name<span class="w"> </span>debian-ssh-container<span class="w"> </span>debian-ssh
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>docker<span class="w"> </span>ps<span class="w"> </span>--filter<span class="w"> </span><span class="nv">name</span><span class="o">=</span>debian-ssh<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Names}} | {{.Status}} | {{.Ports}}'</span>
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>debian-ssh-container<span class="w"> </span>ps<span class="w"> </span>-ef
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>debian-ssh-container | Up 2 seconds | 0.0.0.0:54321-&gt;22/tcp, [::]:54321-&gt;22/tcp
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>UID          PID    PPID  C STIME TTY          TIME CMD
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>root           1       0  2 11:27 ?        00:00:00 sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>root           7       0 57 11:27 ?        00:00:00 ps -ef
+</code></pre></div>
+<p><code>sshd</code> est bien le <strong>processus n°1</strong>. Comparer avec la partie 3, où le <abbr title="Process Identifier — numéro d'un processus">PID</abbr> 1 était <code>bash</code> et où <code>sshd</code> disparaissait au redémarrage : ici, <code>docker restart</code> relance <code>sshd</code> automatiquement.</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Explication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-d</code></td>
+<td>Lance le conteneur en arrière-plan</td>
+</tr>
+<tr>
+<td><code>-p 54321:22</code></td>
+<td>Le port 54321 de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> mène au port 22 (<abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr>) du conteneur. Le port 22 de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> reste celui du <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> <strong>de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong></td>
+</tr>
+<tr>
+<td><code>--name debian-ssh-container</code></td>
+<td>Nom du conteneur</td>
+</tr>
+<tr>
+<td><code>debian-ssh</code></td>
+<td>L'image construite</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Se connecter.</strong> 🐧 Depuis la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (ou 🖥️ depuis le PC avec <code>ssh user@IP-de-la-VM -p 54321</code>) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>ssh<span class="w"> </span>user@localhost<span class="w"> </span>-p<span class="w"> </span><span class="m">54321</span>
+</code></pre></div>
+<p>Répondre <code>yes</code> à la question sur l'empreinte du serveur (première connexion), puis taper le mot de passe <code>TutoDocker2026!</code>. Dans la session :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>whoami<span class="p">;</span><span class="w"> </span>hostname<span class="p">;</span><span class="w"> </span>cat<span class="w"> </span>/etc/debian_version<span class="p">;</span><span class="w"> </span>id
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>user
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>c5b81c450779
+<a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>13.7
+<a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a>uid=1000(user) gid=1000(user) groups=1000(user)
+</code></pre></div>
+<p>Le nom d'hôte est l'<strong>identifiant du conteneur</strong>. Taper <code>exit</code> pour revenir à la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>.</p>
+<table>
+<thead>
+<tr>
+<th>Élément</th>
+<th>Explication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>user</code></td>
+<td>L'utilisateur créé dans le Dockerfile</td>
+</tr>
+<tr>
+<td><code>localhost</code></td>
+<td>La <abbr title="Virtual Machine — machine virtuelle">VM</abbr> elle-même, qui fait tourner Docker</td>
+</tr>
+<tr>
+<td><code>-p 54321</code></td>
+<td>Le port publié de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, qui renvoie vers le port 22 du conteneur</td>
+</tr>
+</tbody>
+</table>
+</details>
+<div class="admonition danger">
+<p class="admonition-title">Un mot de passe dans un Dockerfile reste lisible dans l'image</p>
+<p>🐧 Essayer :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>docker<span class="w"> </span><span class="nb">history</span><span class="w"> </span>--no-trunc<span class="w"> </span>debian-ssh<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.CreatedBy}}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>chpasswd
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>RUN /bin/sh -c useradd -ms /bin/bash user &amp;&amp;     echo 'user:TutoDocker2026!' | chpasswd # buildkit
+</code></pre></div>
+<p>Toute personne qui récupère l'image lit le mot de passe. Même chose pour un fichier copié dans l'image : le script <code>init.sh</code> de la section 5 contient le mot de passe de la base, lisible par <code>docker run --rm --entrypoint cat lamp-wordpress /init.sh</code>. Pour un lab, c'est acceptable ; pour une image partagée (partie 15), jamais. En production, les secrets se passent <strong>au lancement</strong> (variables d'environnement, fichiers montés, <em>secrets</em> Docker), pas dans l'image. Et, comme en partie 3, un serveur <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> dans un conteneur reste une exception : pour administrer un conteneur, <code>docker exec</code> suffit.</p>
+</div>
+<h2 id="5-tp-guide-une-pile-lamp-avec-wordpress-dans-une-seule-image">5. TP guidé : une pile <abbr title="Linux, Apache, MariaDB (ou MySQL), PHP">LAMP</abbr> avec WordPress dans une seule image<a class="headerlink" href="#5-tp-guide-une-pile-lamp-avec-wordpress-dans-une-seule-image" title="Permanent link">&para;</a></h2>
+<p>Une pile <strong><abbr title="Linux, Apache, MariaDB (ou MySQL), PHP">LAMP</abbr></strong>, c'est **L**inux, **A**pache, **M**ariaDB (ou MySQL) et **P**HP : la base de très nombreux sites web, dont WordPress. Ce TP met <strong>les quatre</strong> dans une seule image, avec un petit script de démarrage. C'est un bon exercice pour comprendre <code>ENTRYPOINT</code> et un script d'initialisation ; la section 5.5 explique pourquoi on ne fait pas ainsi en production.</p>
+<h3 id="51-le-dockerfile">5.1 Le Dockerfile<a class="headerlink" href="#51-le-dockerfile" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>🐧 Créer le dossier du projet :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>mkdir<span class="w"> </span>~/lamp-wordpress<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/lamp-wordpress
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>nano<span class="w"> </span>Dockerfile
+</code></pre></div>
+</li>
+<li>
+<p>Coller ce contenu :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="c"># Image de base : Debian 13</span>
+<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a><span class="k">FROM</span><span class="w"> </span><span class="s">debian:13</span>
+<a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a><span class="c"># Métadonnées décrivant l'image</span>
+<a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a><span class="k">LABEL</span><span class="w"> </span><span class="nv">version</span><span class="o">=</span><span class="s2">"1.0"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a><span class="w">      </span><span class="nv">description</span><span class="o">=</span><span class="s2">"Dockerfile pédagogique pour déployer un serveur LAMP avec WordPress"</span>
+<a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a><span class="c"># Fuseau horaire</span>
+<a id="__codelineno-31-7" name="__codelineno-31-7" href="#__codelineno-31-7"></a><span class="k">ENV</span><span class="w"> </span><span class="nv">TZ</span><span class="o">=</span>Europe/Paris
+<a id="__codelineno-31-8" name="__codelineno-31-8" href="#__codelineno-31-8"></a><span class="k">RUN</span><span class="w"> </span>ln<span class="w"> </span>-snf<span class="w"> </span>/usr/share/zoneinfo/<span class="nv">$TZ</span><span class="w"> </span>/etc/localtime<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="nv">$TZ</span><span class="w"> </span>&gt;<span class="w"> </span>/etc/timezone
+<a id="__codelineno-31-9" name="__codelineno-31-9" href="#__codelineno-31-9"></a><span class="c"># Apache, MariaDB, PHP, wget et nano, puis nettoyage du cache des paquets</span>
+<a id="__codelineno-31-10" name="__codelineno-31-10" href="#__codelineno-31-10"></a><span class="k">RUN</span><span class="w"> </span>apt-get<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-31-11" name="__codelineno-31-11" href="#__codelineno-31-11"></a><span class="w">    </span>apache2<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-31-12" name="__codelineno-31-12" href="#__codelineno-31-12"></a><span class="w">    </span>mariadb-server<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-31-13" name="__codelineno-31-13" href="#__codelineno-31-13"></a><span class="w">    </span>php<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-31-14" name="__codelineno-31-14" href="#__codelineno-31-14"></a><span class="w">    </span>php-mysql<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-31-15" name="__codelineno-31-15" href="#__codelineno-31-15"></a><span class="w">    </span>libapache2-mod-php<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-31-16" name="__codelineno-31-16" href="#__codelineno-31-16"></a><span class="w">    </span>wget<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-31-17" name="__codelineno-31-17" href="#__codelineno-31-17"></a><span class="w">    </span>nano<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-31-18" name="__codelineno-31-18" href="#__codelineno-31-18"></a><span class="w">    </span>apt-get<span class="w"> </span>clean<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>/var/lib/apt/lists/*
+<a id="__codelineno-31-19" name="__codelineno-31-19" href="#__codelineno-31-19"></a><span class="c"># WordPress en français</span>
+<a id="__codelineno-31-20" name="__codelineno-31-20" href="#__codelineno-31-20"></a><span class="k">RUN</span><span class="w"> </span>wget<span class="w"> </span>https://fr.wordpress.org/latest-fr_FR.tar.gz<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-31-21" name="__codelineno-31-21" href="#__codelineno-31-21"></a><span class="w">    </span>tar<span class="w"> </span>-xzf<span class="w"> </span>latest-fr_FR.tar.gz<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-31-22" name="__codelineno-31-22" href="#__codelineno-31-22"></a><span class="w">    </span>rm<span class="w"> </span>-rf<span class="w"> </span>/var/www/html/*<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-31-23" name="__codelineno-31-23" href="#__codelineno-31-23"></a><span class="w">    </span>cp<span class="w"> </span>-r<span class="w"> </span>wordpress/*<span class="w"> </span>/var/www/html<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-31-24" name="__codelineno-31-24" href="#__codelineno-31-24"></a><span class="w">    </span>chown<span class="w"> </span>-R<span class="w"> </span>www-data:www-data<span class="w"> </span>/var/www/html<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-31-25" name="__codelineno-31-25" href="#__codelineno-31-25"></a><span class="w">    </span>rm<span class="w"> </span>-rf<span class="w"> </span>wordpress<span class="w"> </span>latest-fr_FR.tar.gz
+<a id="__codelineno-31-26" name="__codelineno-31-26" href="#__codelineno-31-26"></a><span class="c"># Script de démarrage</span>
+<a id="__codelineno-31-27" name="__codelineno-31-27" href="#__codelineno-31-27"></a><span class="k">COPY</span><span class="w"> </span>init.sh<span class="w"> </span>/init.sh
+<a id="__codelineno-31-28" name="__codelineno-31-28" href="#__codelineno-31-28"></a><span class="k">RUN</span><span class="w"> </span>chmod<span class="w"> </span>+x<span class="w"> </span>/init.sh
+<a id="__codelineno-31-29" name="__codelineno-31-29" href="#__codelineno-31-29"></a><span class="k">EXPOSE</span><span class="w"> </span><span class="s">80</span>
+<a id="__codelineno-31-30" name="__codelineno-31-30" href="#__codelineno-31-30"></a><span class="k">ENTRYPOINT</span><span class="w"> </span><span class="p">[</span><span class="s2">"/init.sh"</span><span class="p">]</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Ligne</th>
+<th>Explication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LABEL …</code></td>
+<td>Étiquettes descriptives, visibles avec <code>docker inspect</code></td>
+</tr>
+<tr>
+<td><code>ENV TZ=…</code> puis <code>RUN ln -snf …</code></td>
+<td>Règle le fuseau horaire du conteneur sur Paris (lien <code>/etc/localtime</code>)</td>
+</tr>
+<tr>
+<td><code>RUN apt-get update &amp;&amp; apt-get install -y …</code></td>
+<td>Installe Apache, MariaDB, <abbr title="langage de programmation des sites web dynamiques">PHP</abbr> et son module pour Apache, <code>wget</code> et <code>nano</code>, <strong>en une seule couche</strong></td>
+</tr>
+<tr>
+<td><code>apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/*</code></td>
+<td>Supprime le cache des paquets <strong>dans le même <code>RUN</code></strong>, pour qu'il ne pèse pas dans l'image</td>
+</tr>
+<tr>
+<td><code>RUN wget … &amp;&amp; tar … &amp;&amp; …</code></td>
+<td>Télécharge la <strong>dernière</strong> version française de WordPress (celle du jour de la construction), la décompresse dans <code>/var/www/html</code>, donne les fichiers à <code>www-data</code> (l'utilisateur d'Apache), puis supprime l'archive</td>
+</tr>
+<tr>
+<td><code>COPY init.sh /init.sh</code> et <code>RUN chmod +x</code></td>
+<td>Copie le script de démarrage et le rend exécutable</td>
+</tr>
+<tr>
+<td><code>ENTRYPOINT ["/init.sh"]</code></td>
+<td>Le conteneur exécute <code>init.sh</code> à chaque démarrage</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ol>
+<h3 id="52-le-script-initsh">5.2 Le script <code>init.sh</code><a class="headerlink" href="#52-le-script-initsh" title="Permanent link">&para;</a></h3>
+<p>Le script doit démarrer MariaDB, créer la base et l'utilisateur de WordPress, puis lancer Apache <strong>au premier plan</strong>.</p>
+<ol>
+<li>
+<p>🐧 Dans le même dossier :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>nano<span class="w"> </span>init.sh
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="ch">#!/bin/bash</span>
+<a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a><span class="c1"># Démarre MariaDB (sur Debian 13, le service s'appelle « mariadb »)</span>
+<a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a>service<span class="w"> </span>mariadb<span class="w"> </span>start
+<a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a><span class="c1"># Crée la base et l'utilisateur de WordPress (IF NOT EXISTS : pas d'erreur au redémarrage du conteneur)</span>
+<a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a>mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">"CREATE DATABASE IF NOT EXISTS wordpress DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"</span>
+<a id="__codelineno-33-6" name="__codelineno-33-6" href="#__codelineno-33-6"></a>mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">"CREATE USER IF NOT EXISTS 'wordpress'@'localhost' IDENTIFIED BY 'TutoDocker2026!';"</span>
+<a id="__codelineno-33-7" name="__codelineno-33-7" href="#__codelineno-33-7"></a>mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">"GRANT ALL PRIVILEGES ON wordpress.* TO 'wordpress'@'localhost';"</span>
+<a id="__codelineno-33-8" name="__codelineno-33-8" href="#__codelineno-33-8"></a>mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">"FLUSH PRIVILEGES;"</span>
+<a id="__codelineno-33-9" name="__codelineno-33-9" href="#__codelineno-33-9"></a><span class="c1"># Démarre Apache au premier plan : c'est lui qui garde le conteneur en vie</span>
+<a id="__codelineno-33-10" name="__codelineno-33-10" href="#__codelineno-33-10"></a>apachectl<span class="w"> </span>-D<span class="w"> </span>FOREGROUND
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Commande</th>
+<th>Explication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>service mariadb start</code></td>
+<td>Démarre le serveur de bases de données. Il n'y a pas de <code>systemd</code> dans un conteneur : on passe par le script de service</td>
+</tr>
+<tr>
+<td><code>CREATE DATABASE IF NOT EXISTS wordpress …</code></td>
+<td>Crée la base <code>wordpress</code>, en <code>utf8mb4</code> (tous les caractères, émojis compris)</td>
+</tr>
+<tr>
+<td><code>CREATE USER IF NOT EXISTS 'wordpress'@'localhost' …</code></td>
+<td>Crée l'utilisateur <code>wordpress</code>, qui ne peut se connecter que depuis le conteneur lui-même</td>
+</tr>
+<tr>
+<td><code>GRANT ALL PRIVILEGES …</code> puis <code>FLUSH PRIVILEGES</code></td>
+<td>Lui donne tous les droits sur sa base, et applique</td>
+</tr>
+<tr>
+<td><code>apachectl -D FOREGROUND</code></td>
+<td>Lance Apache <strong>au premier plan</strong> : tant qu'Apache tourne, le conteneur vit</td>
+</tr>
+</tbody>
+</table>
+<p><code>IF NOT EXISTS</code> compte : le script s'exécute à <strong>chaque</strong> démarrage du conteneur. Sans lui, le deuxième démarrage afficherait des erreurs « la base existe déjà ».</p>
+</li>
+<li>
+<p>🐧 Rendre le script exécutable :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>chmod<span class="w"> </span>+x<span class="w"> </span>init.sh
+</code></pre></div>
+</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Sur Debian 13, le service s'appelle <code>mariadb</code>, pas <code>mysql</code></p>
+<p>Avec <code>service mysql start</code>, le conteneur démarre quand même, mais ses journaux montrent l'échec :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>grep: /etc/init.d/mysql: No such file or directory
+<a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>mysql: unrecognized service
+<a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a>ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+</code></pre></div>
+<p>Le piège : Apache démarre, et l'assistant de WordPress <strong>s'affiche normalement</strong>. L'erreur n'apparaît qu'à l'étape de connexion à la base. D'où le réflexe : <code>docker logs</code> après chaque premier démarrage.</p>
+</div>
+<h3 id="53-construire-et-demarrer">5.3 Construire et démarrer<a class="headerlink" href="#53-construire-et-demarrer" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>🐧 Construire l'image :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>lamp-wordpress<span class="w"> </span>.
+<a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>docker<span class="w"> </span>image<span class="w"> </span>ls<span class="w"> </span>lamp-wordpress
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>IMAGE                   ID             DISK USAGE   CONTENT SIZE   EXTRA
+<a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>lamp-wordpress:latest   ba6f11143aa8        949MB          185MB
+</code></pre></div>
+<p>Compter environ <strong>2 minutes</strong> (téléchargement de plus de 100 paquets et de WordPress). L'image contient <abbr title="langage de programmation des sites web dynamiques">PHP</abbr> 8.4, MariaDB 11.8, Apache 2.4, et la version de WordPress du jour de la construction (7.1.5 le 24 novembre 2026).</p>
+<div class="admonition tip">
+<p class="admonition-title">Une image qui change à chaque construction</p>
+<p><code>latest-fr_FR.tar.gz</code> désigne toujours la dernière version : reconstruire l'image dans un mois peut donner un autre WordPress. Pour une image <strong>reproductible</strong>, on télécharge une version précise, par exemple <code>https://fr.wordpress.org/wordpress-7.1.5-fr_FR.tar.gz</code>, et on vérifie son empreinte, publiée à côté (même adresse suivie de <code>.sha1</code>) : même principe que figer l'étiquette d'une image (section 6).</p>
+</div>
+</li>
+<li>
+<p>🐧 Démarrer le conteneur et lire ses journaux :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">65432</span>:80<span class="w"> </span>--name<span class="w"> </span>wordpress-lamp<span class="w"> </span>lamp-wordpress
+<a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a>sleep<span class="w"> </span><span class="m">6</span>
+<a id="__codelineno-38-3" name="__codelineno-38-3" href="#__codelineno-38-3"></a>docker<span class="w"> </span>logs<span class="w"> </span>wordpress-lamp
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>Starting MariaDB database server: mariadbd ..
+<a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a>AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.17.0.3. Set the 'ServerName' directive globally to suppress this message
+</code></pre></div>
+<p>MariaDB a démarré ; le message <code>AH00558</code> d'Apache est sans gravité (déjà vu en partie 3).</p>
+</li>
+<li>
+<p>🐧 Vérifier la base et les processus :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>wordpress-lamp<span class="w"> </span>mysql<span class="w"> </span>-e<span class="w"> </span><span class="s2">"SHOW DATABASES;"</span>
+<a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>wordpress-lamp<span class="w"> </span>ps<span class="w"> </span>-eo<span class="w"> </span>pid,user,comm
+</code></pre></div>
+<p>La liste des bases contient <code>wordpress</code>. Le processus n°1 est <code>init.sh</code>, avec <code>mariadbd</code> et plusieurs <code>apache2</code> en dessous.</p>
+</li>
+</ol>
+<h3 id="54-installer-wordpress">5.4 Installer WordPress<a class="headerlink" href="#54-installer-wordpress" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>🌐 Ouvrir <code>http://IP-de-la-VM:65432</code>. L'assistant de WordPress s'ouvre en français. Cliquer sur <strong>C'est parti !</strong>.</p>
+</li>
+<li>
+<p>🌐 Saisir les informations de la base :</p>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nom de la base de données</td>
+<td><code>wordpress</code></td>
+</tr>
+<tr>
+<td>Identifiant</td>
+<td><code>wordpress</code></td>
+</tr>
+<tr>
+<td>Mot de passe</td>
+<td><code>TutoDocker2026!</code></td>
+</tr>
+<tr>
+<td>Adresse de la base de données</td>
+<td><code>localhost</code> (la base est <strong>dans le même conteneur</strong>)</td>
+</tr>
+<tr>
+<td>Préfixe des tables</td>
+<td><code>wp_</code> (ne pas changer)</td>
+</tr>
+</tbody>
+</table>
+<figure>
+<p><img alt="Formulaire WordPress de connexion à la base : nom de la base wordpress, identifiant wordpress, mot de passe masqué, adresse localhost, préfixe wp_, bouton Envoyer." loading="lazy" src="../images/14-wordpress-base.png" /></p>
+<figcaption>
+<p>Les détails de connexion à la base MariaDB du conteneur</p>
+</figcaption>
+</figure>
+</li>
+<li>
+<p>🌐 Cliquer sur <strong>Envoyer</strong> :</p>
+<figure>
+<p><img alt="Message de WordPress : « C'est parfait ! Vous avez passé la première partie de l'installation. WordPress peut désormais communiquer avec votre base de données. » et bouton Lancer l'installation." loading="lazy" src="../images/14-wordpress-connexion-ok.png" /></p>
+<figcaption>
+<p>WordPress joint bien la base créée par <code>init.sh</code></p>
+</figcaption>
+</figure>
+</li>
+<li>
+<p>🌐 Cliquer sur <strong>Lancer l'installation</strong>, puis remplir <strong>Titre du site</strong> (au choix), <strong>Identifiant</strong> <code>admin</code>, <strong>Mot de passe</strong> <code>TutoDocker2026!</code> (WordPress le juge « Forte ») et <strong>Votre e-mail</strong> avec une adresse fictive (<code>admin@lab.local</code>). Cliquer sur <strong>Installer WordPress</strong> : le message « Quel succès ! » confirme l'installation.</p>
+</li>
+</ol>
+<h3 id="55-pourquoi-on-ne-fait-pas-ainsi-en-production">5.5 Pourquoi on ne fait pas ainsi en production<a class="headerlink" href="#55-pourquoi-on-ne-fait-pas-ainsi-en-production" title="Permanent link">&para;</a></h3>
+<p>🐧 Essayer : supprimer le conteneur et en recréer un, à partir de la même image :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>wordpress-lamp
+<a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">65432</span>:80<span class="w"> </span>--name<span class="w"> </span>wordpress-lamp<span class="w"> </span>lamp-wordpress
+<a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a>sleep<span class="w"> </span><span class="m">6</span>
+<a id="__codelineno-41-4" name="__codelineno-41-4" href="#__codelineno-41-4"></a>curl<span class="w"> </span>-s<span class="w"> </span>-o<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span><span class="s1">'code=%{http_code} -&gt; %{redirect_url}\n'</span><span class="w"> </span>http://localhost:65432/
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>code=302 -&gt; http://localhost:65432/wp-admin/setup-config.php
+</code></pre></div>
+<p>Retour à l'assistant d'installation : le site, sa configuration (<code>wp-config.php</code>) et la base étaient dans la <strong>couche du conteneur</strong>, supprimée avec lui (partie 5). Un simple <code>docker restart</code> les aurait gardés, mais la moindre mise à jour de l'image (qui impose de recréer le conteneur) les perd.</p>
+<p>Les autres défauts de cette image « tout-en-un » :</p>
+<ul>
+<li><strong>Un seul processus principal</strong> : si MariaDB s'arrête, Docker ne le voit pas (il ne surveille qu'<code>init.sh</code> et Apache), et rien ne le relance.</li>
+<li><strong>Mise à jour</strong> : changer de version de <abbr title="langage de programmation des sites web dynamiques">PHP</abbr> oblige à reconstruire et recréer <strong>toute</strong> la pile, base comprise.</li>
+<li><strong>Pas de passage à l'échelle</strong> : impossible de lancer trois serveurs web devant une seule base.</li>
+</ul>
+<p>La bonne pratique, déjà appliquée en partie 10 : <strong>un service par conteneur</strong> (WordPress d'un côté, MariaDB de l'autre), des <strong>volumes</strong> pour les données, et un fichier <strong>Compose</strong> pour décrire l'ensemble. Ce TP reste utile pour comprendre ce qui se passe <strong>dans</strong> une image comme <code>wordpress:latest</code>.</p>
+<p>🐧 Faire le ménage : <code>docker rm -f wordpress-lamp debian-ssh-container apache</code>. Garder les images <code>web</code> et <code>debian-ssh</code> : elles servent en partie 15.</p>
+<h2 id="6-les-bonnes-pratiques-dun-dockerfile">6. Les bonnes pratiques d'un Dockerfile<a class="headerlink" href="#6-les-bonnes-pratiques-dun-dockerfile" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Pratique</th>
+<th>Pourquoi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Partir d'une image <strong>officielle</strong> et <strong>figer sa version</strong> (<code>debian:13</code>, <code>nginx:1.31-alpine</code>)</td>
+<td>Image suivie et corrigée ; pas de changement de version majeure surprise</td>
+</tr>
+<tr>
+<td>Préférer une image de base <strong>légère</strong> (<code>-alpine</code>, <code>-slim</code>) quand elle suffit</td>
+<td>Moins de place, moins de failles à corriger (partie 12, Trivy)</td>
+</tr>
+<tr>
+<td><strong>Regrouper</strong> les commandes liées dans un seul <code>RUN</code>, et nettoyer dans ce même <code>RUN</code></td>
+<td>Moins de couches, image plus petite</td>
+</tr>
+<tr>
+<td>Mettre en haut ce qui change rarement, en bas ce qui change souvent</td>
+<td>Le cache accélère les reconstructions</td>
+</tr>
+<tr>
+<td>Un fichier <strong><code>.dockerignore</code></strong> dans le dossier du projet</td>
+<td>Exclut du contexte les fichiers inutiles ou sensibles (<code>.git</code>, sauvegardes, <code>.env</code>), comme un <code>.gitignore</code></td>
+</tr>
+<tr>
+<td><strong>Aucun secret</strong> dans l'image (mot de passe, clé, jeton)</td>
+<td><code>docker history</code> les révèle à quiconque récupère l'image</td>
+</tr>
+<tr>
+<td>Un utilisateur <strong>non root</strong> (<code>USER</code>) quand l'application le permet</td>
+<td>Limite les dégâts en cas de faille (partie 12)</td>
+</tr>
+<tr>
+<td><strong>Une application par conteneur</strong>, qui reste au premier plan</td>
+<td>Docker surveille et relance le bon processus</td>
+</tr>
+<tr>
+<td><code>HEALTHCHECK</code> pour les services</td>
+<td>Docker, Compose et Swarm savent si le service répond vraiment</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition info">
+<p class="admonition-title">Pour aller plus loin : la construction en plusieurs étapes</p>
+<p>Un Dockerfile peut contenir plusieurs <code>FROM</code> : une première étape compile une application avec tous les outils nécessaires, une seconde ne récupère que le résultat (<code>COPY --from=…</code>) dans une image légère. C'est le <em>multi-stage build</em>, très utilisé par les développeurs ; la documentation de Docker le présente en détail (voir Ressources).</p>
+</div>
+<h2 id="7-verifier-son-lab">7. Vérifier son lab<a class="headerlink" href="#7-verifier-son-lab" title="Permanent link">&para;</a></h2>
+<div class="admonition success">
+<p class="admonition-title">Vérifier son lab</p>
+<p>🐧 Après la section 5 :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a>docker<span class="w"> </span>image<span class="w"> </span>ls<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Repository}}:{{.Tag}} {{.Size}}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'^(web|debian-ssh|lamp-wordpress):'</span>
+<a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>debian-ssh<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">'id user; ls -ld /run/sshd'</span>
+<a id="__codelineno-43-3" name="__codelineno-43-3" href="#__codelineno-43-3"></a>docker<span class="w"> </span>inspect<span class="w"> </span>web<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{json .Config.ExposedPorts}}'</span>
+</code></pre></div>
+<p>Résultat attendu (l'ordre des images et la date du dossier peuvent varier) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a>debian-ssh:latest 263MB
+<a id="__codelineno-44-2" name="__codelineno-44-2" href="#__codelineno-44-2"></a>web:latest 175MB
+<a id="__codelineno-44-3" name="__codelineno-44-3" href="#__codelineno-44-3"></a>lamp-wordpress:latest 949MB
+<a id="__codelineno-44-4" name="__codelineno-44-4" href="#__codelineno-44-4"></a>uid=1000(user) gid=1000(user) groups=1000(user)
+<a id="__codelineno-44-5" name="__codelineno-44-5" href="#__codelineno-44-5"></a>drwxr-xr-x 2 root root 4096 Nov 24 12:52 /run/sshd
+<a id="__codelineno-44-6" name="__codelineno-44-6" href="#__codelineno-44-6"></a>{"80/tcp":{}}
+</code></pre></div>
+<p>La dernière ligne est le port <strong>déclaré</strong> par <code>EXPOSE</code>.</p>
+</div>
+<h2 id="8-questions-de-revision">8. Questions de révision<a class="headerlink" href="#8-questions-de-revision" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Quelle différence entre une image créée avec <code>docker commit</code> et une image construite avec un Dockerfile ?</li>
+<li>Un conteneur lancé avec <code>docker run -d monimage</code> s'arrête aussitôt, alors que la construction s'est bien passée. Quelle est la cause la plus probable ?</li>
+<li><code>EXPOSE 80</code> est dans le Dockerfile, mais le site est injoignable depuis le PC. Pourquoi ?</li>
+<li>Différence entre <code>RUN</code>, <code>CMD</code> et <code>ENTRYPOINT</code> ?</li>
+<li>Pourquoi écrire <code>apt-get update &amp;&amp; apt-get install -y … &amp;&amp; rm -rf /var/lib/apt/lists/*</code> dans <strong>un seul</strong> <code>RUN</code> ?</li>
+<li>Pourquoi ne faut-il pas écrire un mot de passe réel dans un Dockerfile ?</li>
+</ol>
+<details class="success">
+<summary>Corrigé</summary>
+<ol>
+<li><code>docker commit</code> fige un conteneur modifié à la main : on ne sait pas ce qu'il contient ni comment le refaire. Le Dockerfile est une <strong>recette</strong> lisible, versionnable et reproductible : la même image se reconstruit à l'identique, et <code>docker history</code> montre chaque étape.</li>
+<li>Le <strong>processus principal</strong> se termine : la commande de démarrage (<code>CMD</code> ou <code>ENTRYPOINT</code>) lance un service en arrière-plan puis rend la main, ou finit tout de suite. Il faut une commande qui reste <strong>au premier plan</strong> (<code>sshd -D</code>, <code>apachectl -D FOREGROUND</code>). <code>docker logs</code> aide à trouver la cause.</li>
+<li><code>EXPOSE</code> ne fait que <strong>documenter</strong> le port. Il faut le <strong>publier</strong> au lancement : <code>-p 8080:80</code> (ou <code>-P</code>).</li>
+<li><code>RUN</code> s'exécute <strong>pendant la construction</strong> et laisse son résultat dans une couche. <code>CMD</code> et <code>ENTRYPOINT</code> s'exécutent <strong>au démarrage de chaque conteneur</strong> : <code>ENTRYPOINT</code> est le programme principal, <code>CMD</code> sa commande ou ses arguments par défaut, remplaçables en fin de <code>docker run</code>.</li>
+<li>Chaque <code>RUN</code> crée une couche. Un fichier supprimé dans un <code>RUN</code> suivant reste stocké dans la couche précédente : l'image ne maigrit pas. Dans un seul <code>RUN</code>, le cache des paquets n'est jamais enregistré. Et <code>update</code> + <code>install</code> ensemble évitent d'installer à partir d'une liste de paquets ancienne restée en cache.</li>
+<li>Le texte du Dockerfile est enregistré dans l'image : <code>docker history --no-trunc</code> l'affiche à toute personne qui récupère l'image, par exemple depuis un registre. Les secrets se fournissent au lancement.</li>
+</ol>
+</details>
+<hr />
+<h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://docs.docker.com/reference/dockerfile/">Référence du Dockerfile</a> — toutes les instructions et leurs options (en anglais).</li>
+<li><a href="https://docs.docker.com/build/building/best-practices/">Bonnes pratiques de construction</a> — les conseils officiels de Docker.</li>
+<li><a href="https://docs.docker.com/build/building/multi-stage/">Construction en plusieurs étapes</a> — le <em>multi-stage build</em>.</li>
+<li><a href="https://hub.docker.com/_/httpd">Image officielle <code>httpd</code></a> — l'image Apache utilisée en section 3.</li>
+<li>Partie précédente : <a href="../13-projets-sympas/">Des projets sympas à déployer</a> · Partie suivante : <a href="../15-distribuer-ses-images-registre/">Distribuer ses images : Docker Hub et registre privé</a>.</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../13-projets-sympas/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 13. Des projets sympas à déployer">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                13. Des projets sympas à déployer
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../15-distribuer-ses-images-registre/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 15. Distribuer ses images : Docker Hub et registre privé">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                15. Distribuer ses images : Docker Hub et registre privé
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      <a href="/mentions-legales/">Mentions légales</a>
+
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/bodaine" target="_blank" rel="noopener" title="Nicolas BODAINE sur LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://github.com/NicoBOD" target="_blank" rel="noopener" title="NicoBOD sur GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://nicolas.bodaine.fr" target="_blank" rel="noopener" title="Portfolio de Nicolas BODAINE" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="/feed_rss_created.xml" target="_blank" rel="noopener" title="Flux RSS des derniers articles" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 64c0-17.7 14.3-32 32-32 229.8 0 416 186.2 416 416 0 17.7-14.3 32-32 32s-32-14.3-32-32C384 253.6 226.4 96 32 96 14.3 96 0 81.7 0 64m0 352a64 64 0 1 1 128 0 64 64 0 1 1-128 0m32-256c159.1 0 288 128.9 288 288 0 17.7-14.3 32-32 32s-32-14.3-32-32c0-123.7-100.3-224-224-224-17.7 0-32-14.3-32-32s14.3-32 32-32"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.path", "navigation.indexes", "navigation.prune", "navigation.footer", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "content.action.view", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>

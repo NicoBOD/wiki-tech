@@ -1,0 +1,5092 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+      
+      
+        <meta name="author" content="Nicolas BODAINE">
+      
+      
+        <link rel="canonical" href="https://wiki.bodaine.fr/cours-tp/docker/16-cluster-docker-swarm/">
+      
+      
+        <link rel="prev" href="../15-distribuer-ses-images-registre/">
+      
+      
+        <link rel="next" href="../17-defi-final/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
+    
+    
+      
+        <title>Un cluster Docker Swarm à trois nœuds : services répliqués, maillage de routage, panne d'un nœud, réseau overlay - Wiki Tech — NicoBOD</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        
+        <link rel="stylesheet" href="../../../assets/external/fonts.googleapis.com/css.56f7ac64.css">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+    
+    
+      
+    
+    
+
+    <!-- SEO -->
+    <meta name="author" content="Nicolas BODAINE">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph : compléments non gérés par le plugin social.     -->
+    <!-- og:type/title/description/image/url sont posés par social.   -->
+    <meta property="og:site_name" content="Wiki Tech — NicoBOD">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card : la grande image et l'image elle-même sont      -->
+    <!-- héritées des balises og:image générées par le plugin social.  -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Un cluster Docker Swarm à trois nœuds : services répliqués, maillage de routage, panne d'un nœud, réseau overlay — Wiki Tech — NicoBOD">
+    <meta name="twitter:description" content="Wiki technique personnel — systèmes, réseaux, cloud, cybersécurité, IA, automatisation, cours et travaux pratiques">
+  
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#un-cluster-docker-swarm" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-header__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wiki Tech — NicoBOD
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Un cluster Docker Swarm à trois nœuds : services répliqués, maillage de routage, panne d'un nœud, réseau overlay
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Passer en mode clair"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Passer en mode clair" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Passer en mode sombre"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Passer en mode sombre" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Revenir au thème système"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Revenir au thème système" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Partager" aria-label="Partager" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../systemes/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h16v10H4m16 2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4c-1.11 0-2 .89-2 2v10a2 2 0 0 0 2 2H0v2h24v-2z"/></svg>
+    
+  
+  Systèmes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../reseaux/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v2h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+    
+  
+  Réseaux
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cloud/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 20q-2.28 0-3.89-1.57Q1 16.85 1 14.58q0-1.95 1.17-3.48 1.18-1.53 3.08-1.95.63-2.3 2.5-3.72Q9.63 4 12 4q2.93 0 4.96 2.04Q19 8.07 19 11q1.73.2 2.86 1.5 1.14 1.28 1.14 3 0 1.88-1.31 3.19T18.5 20Z"/></svg>
+    
+  
+  Cloud
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cybersecurite/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12h7c-.53 4.11-3.28 7.78-7 8.92zH5V6.3l7-3.11M12 1 3 5v6c0 5.55 3.84 10.73 9 12 5.16-1.27 9-6.45 9-12V5z"/></svg>
+    
+  
+  Cybersécurité
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../ia/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/></svg>
+    
+  
+  IA
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../automatisation/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+    
+  
+  Automatisation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../logiciels/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m0 5H3V4h18z"/></svg>
+    
+  
+  Logiciels
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../debug/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 12h-4v-2h4m0 6h-4v-2h4m6-6h-2.81a6 6 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6 6 0 0 0-2.83 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20z"/></svg>
+    
+  
+  Debug
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../astuces/" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+    
+  
+  Astuces
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+    
+  
+  Cours et TP
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../tags/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tags
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Wiki Tech — NicoBOD" class="md-nav__button md-logo" aria-label="Wiki Tech — NicoBOD" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    Wiki Tech — NicoBOD
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../systemes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Systèmes
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../reseaux/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Réseaux
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../cybersecurite/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cybersécurité
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../ia/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IA
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../automatisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automatisation
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../logiciels/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logiciels
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../debug/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../../astuces/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Astuces
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cours et TP
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cours et TP
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../veeam/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Veeam Backup & Replication
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_2" id="__nav_11_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Veeam Backup & Replication
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/01-comprendre-la-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/02-decouvrir-veeam-data-platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Découvrir Veeam Data Platform 13
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/03-preparer-le-lab-installer-appliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Préparer le lab et installer l'appliance
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/04-ajouter-des-depots-de-sauvegarde/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Ajouter des dépôts de sauvegarde
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/05-sauvegarder-configuration-et-serveur-de-fichiers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Sauvegarder la configuration et un serveur de fichiers
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/06-sauvegarder-restaurer-serveur-linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Sauvegarder et restaurer un serveur Linux
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../veeam/07-sauvegarder-vers-azure-blob/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Sauvegarder vers Azure Blob Storage
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pfsense-ha/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cluster pfSense en haute disponibilité
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_3" id="__nav_11_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cluster pfSense en haute disponibilité
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/01-comprendre-haute-disponibilite/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Comprendre la haute disponibilité
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/02-preparer-lab-installer-pfsense/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Préparer le lab et installer pfSense
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/03-configuration-initiale/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Configuration initiale
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/04-synchroniser-le-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Synchroniser le cluster
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/05-vip-carp-nat-sortant/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. VIP CARP et NAT sortant
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/06-tester-la-bascule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Tester la bascule
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/07-agregation-lacp-troisieme-noeud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Agrégation LACP et troisième nœud
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/08-mettre-a-jour-le-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8. Mettre à jour le cluster
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pfsense-ha/annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../virtualisation/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Virtualisation (5 jours)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_4" id="__nav_11_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Virtualisation (5 jours)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/01-comprendre-la-virtualisation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 1 — Comprendre et créer ses VM
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/05-virtualiser-des-serveurs/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 2 — Serveurs, réseau, stockage
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/09-panorama-des-technologies/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 3 — Technologies du système
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/12-stockage-sds-hyperconvergence/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 4 — Stockage, réseau, applications
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../virtualisation/15-le-cloud/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 5 — Cloud, tendances, défi final
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../virtualisation/annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker (5 jours)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_5" id="__nav_11_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Docker (5 jours)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../01-decouvrir-et-installer-docker/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 1 — Installer Docker et lancer ses premiers conteneurs
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../05-volumes-et-dossiers-montes/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 2 — Données, réseaux et Docker Compose
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../09-reverse-proxy-nginx-proxy-manager/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 3 — Publier des services
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../12-exploiter-docker-au-quotidien/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 4 — Exploiter et s'amuser
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_5_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_11_5_6" id="__nav_11_5_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 5 — Construire, distribuer, orchestrer
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_11_5_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_5_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Jour 5 — Construire, distribuer, orchestrer
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../14-construire-ses-images-dockerfile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14. Construire ses images avec un Dockerfile
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-distribuer-ses-images-registre/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15. Distribuer ses images : Docker Hub et registre privé
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16. Un cluster Docker Swarm
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16. Un cluster Docker Swarm
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-pourquoi-un-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Pourquoi un cluster ?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Pourquoi un cluster ?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-le-probleme-dun-seul-serveur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Le problème d'un seul serveur
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-le-vocabulaire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Le vocabulaire
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-combien-de-managers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Combien de managers ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-preparer-les-trois-nuds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Préparer les trois nœuds
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Préparer les trois nœuds">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-creer-docker-n2-et-docker-n3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Créer docker-n2 et docker-n3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-installer-docker-sur-les-deux-workers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Installer Docker sur les deux workers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-autoriser-le-registre-prive-sur-les-workers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Autoriser le registre privé sur les workers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-les-ports-du-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Les ports du cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-creer-le-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Créer le cluster
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Créer le cluster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-initialiser-le-manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Initialiser le manager
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-ajouter-les-workers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Ajouter les workers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-verifier-le-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Vérifier le cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-un-premier-service-a-trois-repliques" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Un premier service à trois répliques
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Un premier service à trois répliques">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-une-image-qui-dit-qui-elle-est" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Une image qui dit qui elle est
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-creer-le-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Créer le service
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-le-maillage-de-routage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Le maillage de routage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-la-panne-dun-nud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. La panne d'un nœud
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-maintenance-dun-nud-le-mode-drain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Maintenance d'un nœud : le mode Drain
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-un-reseau-overlay-entre-les-nuds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Un réseau overlay entre les nœuds
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-mise-a-jour-progressive-et-retour-arriere" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Mise à jour progressive et retour arrière
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-deployer-une-pile-compose-sur-le-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Déployer une pile Compose sur le cluster
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-verifier-son-lab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Vérifier son lab
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../17-defi-final/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    17. Défi final
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tags/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.5 7A1.5 1.5 0 0 1 4 5.5 1.5 1.5 0 0 1 5.5 4 1.5 1.5 0 0 1 7 5.5 1.5 1.5 0 0 1 5.5 7m15.91 4.58-9-9C12.05 2.22 11.55 2 11 2H4c-1.11 0-2 .89-2 2v7c0 .55.22 1.05.59 1.41l8.99 9c.37.36.87.59 1.42.59s1.05-.23 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.56-.23-1.06-.59-1.42"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-pourquoi-un-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Pourquoi un cluster ?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Pourquoi un cluster ?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-le-probleme-dun-seul-serveur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Le problème d'un seul serveur
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-le-vocabulaire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Le vocabulaire
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-combien-de-managers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Combien de managers ?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-preparer-les-trois-nuds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Préparer les trois nœuds
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Préparer les trois nœuds">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-creer-docker-n2-et-docker-n3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Créer docker-n2 et docker-n3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-installer-docker-sur-les-deux-workers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Installer Docker sur les deux workers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-autoriser-le-registre-prive-sur-les-workers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Autoriser le registre privé sur les workers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-les-ports-du-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Les ports du cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-creer-le-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Créer le cluster
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Créer le cluster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-initialiser-le-manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Initialiser le manager
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-ajouter-les-workers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Ajouter les workers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-verifier-le-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Vérifier le cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-un-premier-service-a-trois-repliques" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Un premier service à trois répliques
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Un premier service à trois répliques">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-une-image-qui-dit-qui-elle-est" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Une image qui dit qui elle est
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-creer-le-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Créer le service
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-le-maillage-de-routage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Le maillage de routage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-la-panne-dun-nud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. La panne d'un nœud
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-maintenance-dun-nud-le-mode-drain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Maintenance d'un nœud : le mode Drain
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-un-reseau-overlay-entre-les-nuds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Un réseau overlay entre les nœuds
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-mise-a-jour-progressive-et-retour-arriere" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Mise à jour progressive et retour arrière
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-deployer-une-pile-compose-sur-le-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Déployer une pile Compose sur le cluster
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-verifier-son-lab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Vérifier son lab
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-questions-de-revision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Questions de révision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ressources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Accueil
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Cours et TP
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Docker (5 jours)
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../14-construire-ses-images-dockerfile/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Jour 5 — Construire, distribuer, orchestrer
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:cours" class="md-tag">cours</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:docker" class="md-tag">docker</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:haute-disponibilite" class="md-tag">haute-disponibilite</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:swarm" class="md-tag">swarm</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../tags/#tag:travaux-pratiques" class="md-tag">travaux-pratiques</a>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/NicoBOD/wiki-tech/edit/main/docs/cours-tp/docker/16-cluster-docker-swarm.md" title="Editer cette page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/NicoBOD/wiki-tech/raw/main/docs/cours-tp/docker/16-cluster-docker-swarm.md" title="Consulter la source de cette page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<!-- ============================================================ -->
+<!-- ⚠️ RAPPEL IMPORTANT :                                          -->
+<!-- Pensez TOUJOURS à ajouter une entrée dans le fichier d'index  -->
+<!-- (index.md) du dossier correspondant (ex: docs/cloud/index.md) -->
+<!-- afin de référencer ce nouvel article et permettre aux         -->
+<!-- visiteurs de le trouver et de cliquer dessus !                -->
+<!-- ============================================================ -->
+
+<h1 id="un-cluster-docker-swarm">Un cluster Docker Swarm<a class="headerlink" href="#un-cluster-docker-swarm" title="Permanent link">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">Résumé</p>
+<p>Jusqu'ici, tout tournait sur <strong>une seule</strong> <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : si elle tombe, tous les services tombent avec elle. <strong>Docker Swarm</strong>, intégré à Docker Engine, regroupe plusieurs machines en un <strong>cluster</strong> : on ne lance plus des conteneurs sur une machine précise, on demande un <strong>service</strong> (« trois copies de ce site web ») et Swarm les répartit, les surveille et les <strong>remplace</strong> quand un nœud disparaît.</p>
+<p>On monte un cluster de <strong>trois nœuds</strong> (<code>docker-hote</code> et deux petites <abbr title="Virtual Machine — machine virtuelle">VM</abbr>), on y déploie un service à trois répliques, dont on construit l'image (partie 14) et qu'on range dans le registre (partie 15), puis on vérifie le <strong>maillage de routage</strong>, on <strong>coupe un nœud</strong> en mesurant l'effet, on crée un <strong>réseau overlay</strong> entre machines, on fait une <strong>mise à jour progressive</strong> et on déploie une <strong>pile</strong> Compose sur le cluster.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Propriété</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Difficulté</td>
+<td>Intermédiaire</td>
+</tr>
+<tr>
+<td>Durée estimée</td>
+<td>2 h 30</td>
+</tr>
+<tr>
+<td>Version décrite</td>
+<td>Docker Engine 29.10 en mode Swarm, Debian 13.7</td>
+</tr>
+<tr>
+<td>Place dans le parcours</td>
+<td>Partie 16 sur 17 du parcours <a href="../">Docker</a> — jour 5</td>
+</tr>
+<tr>
+<td>Dernière mise à jour</td>
+<td>2026-11-24</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<div class="admonition info">
+<p class="admonition-title">Convention de lecture</p>
+<p>🖥️ <strong>PC hôte</strong> · 🐧 dans une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> : <strong>1️⃣</strong> <code>docker-hote</code> (le manager), <strong>2️⃣</strong> <code>docker-n2</code>, <strong>3️⃣</strong> <code>docker-n3</code> · 🌐 <strong>navigateur</strong> · ✍️ <strong>exercice</strong> · 🛟 <strong>instantané</strong>. Toutes les commandes Docker se tapent en <code>tssr</code>, sauf mention de <code>sudo</code>. Point de départ : l'instantané <code>06-registre</code> (fin de la partie 15).</p>
+</div>
+<h2 id="1-pourquoi-un-cluster">1. Pourquoi un cluster ?<a class="headerlink" href="#1-pourquoi-un-cluster" title="Permanent link">&para;</a></h2>
+<h3 id="11-le-probleme-dun-seul-serveur">1.1 Le problème d'un seul serveur<a class="headerlink" href="#11-le-probleme-dun-seul-serveur" title="Permanent link">&para;</a></h3>
+<p>Avec Docker seul, un conteneur tourne sur <strong>une</strong> machine. Si elle tombe en panne, ou s'il faut la redémarrer pour une mise à jour du système, le service est coupé jusqu'à son retour. Et si le service doit absorber plus de visiteurs, on ne peut pas facilement en lancer plusieurs copies sur plusieurs machines.</p>
+<p>Un <strong>orchestrateur</strong> résout ces problèmes. On lui décrit l'<strong>état voulu</strong> (« trois copies de cette image, port 8080 ») et il s'occupe du reste : il choisit sur quelles machines lancer les conteneurs, vérifie en permanence que l'état réel correspond à l'état voulu, et corrige tout écart. Analogie : un chef d'équipe à qui l'on dit « il faut toujours trois personnes à l'accueil » ; si l'une part, il en envoie une autre, sans qu'on ait à le lui redemander.</p>
+<p><strong>Docker Swarm</strong> (le « mode Swarm » de Docker Engine) est l'orchestrateur <strong>intégré</strong> à Docker : rien à installer de plus. <strong>Kubernetes</strong> est l'orchestrateur le plus répandu dans les grandes infrastructures, beaucoup plus riche, mais aussi beaucoup plus complexe ; Swarm est un excellent moyen d'en comprendre les notions de base.</p>
+<h3 id="12-le-vocabulaire">1.2 Le vocabulaire<a class="headerlink" href="#12-le-vocabulaire" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Terme</th>
+<th>Définition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Nœud</strong> (<em>node</em>)</td>
+<td>Une machine (ici une <abbr title="Virtual Machine — machine virtuelle">VM</abbr>) avec Docker, membre du cluster</td>
+</tr>
+<tr>
+<td><strong>Manager</strong></td>
+<td>Nœud qui <strong>garde l'état</strong> du cluster et <strong>décide</strong> : où lancer quoi, quoi remplacer. On administre le cluster depuis un manager</td>
+</tr>
+<tr>
+<td><strong>Worker</strong></td>
+<td>Nœud qui <strong>exécute</strong> les conteneurs que le manager lui confie. Un manager est aussi worker par défaut</td>
+</tr>
+<tr>
+<td><strong>Service</strong></td>
+<td>La description de ce qu'on veut : une image, un nombre de répliques, des ports, des réseaux…</td>
+</tr>
+<tr>
+<td><strong>Tâche</strong> (<em>task</em>) ou <strong>réplique</strong></td>
+<td>Un conteneur lancé pour un service, sur un nœud. Un service à 3 répliques = 3 tâches</td>
+</tr>
+<tr>
+<td><strong>Maillage de routage</strong> (<em>routing mesh</em>)</td>
+<td>Le port publié d'un service est ouvert sur <strong>tous</strong> les nœuds, et chacun transmet la requête à une réplique, où qu'elle soit</td>
+</tr>
+<tr>
+<td><strong>Réseau overlay</strong></td>
+<td>Réseau virtuel qui s'étend sur <strong>plusieurs</strong> machines : des conteneurs de nœuds différents s'y parlent comme s'ils étaient sur le même réseau</td>
+</tr>
+</tbody>
+</table>
+<h3 id="13-combien-de-managers">1.3 Combien de managers ?<a class="headerlink" href="#13-combien-de-managers" title="Permanent link">&para;</a></h3>
+<p>Les managers se mettent d'accord sur l'état du cluster avec l'algorithme <strong>Raft</strong> : une décision n'est valable que si la <strong>majorité</strong> des managers l'accepte (le <strong>quorum</strong>). Sans majorité, le cluster continue de faire tourner les conteneurs existants, mais ne peut plus rien changer ni rien réparer.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Managers</th>
+<th style="text-align: center;">Majorité nécessaire</th>
+<th style="text-align: center;">Managers qui peuvent tomber</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">3</td>
+</tr>
+</tbody>
+</table>
+<p>La règle : avec <strong>N</strong> managers, le cluster supporte la perte de <strong>(N-1)/2</strong> d'entre eux. On choisit donc un nombre <strong>impair</strong> (avec 4 managers, on ne supporte toujours qu'une panne, comme avec 3). Le lab utilise <strong>un seul</strong> manager, <code>docker-hote</code>, pour rester léger : si <code>docker-hote</code> tombe, les conteneurs des workers continuent de tourner, mais plus rien ne les répare. En production, on prévoit <strong>trois</strong> managers.</p>
+<figure>
+<p><img alt="Trois VM : docker-hote, manager, 192.168.8.71 ; docker-n2 et docker-n3, workers, 192.168.8.73 et .74. Chacune exécute une réplique du service bonjour. Un réseau overlay ingress, en VXLAN sur UDP 4789, relie les trois : un navigateur qui joint le port 8080 de n'importe quel nœud est servi par une réplique, sur n'importe quel nœud." loading="lazy" src="../images/cluster-swarm.svg" /></p>
+<figcaption>
+<p>Le cluster du lab : un manager, deux workers, et le maillage de routage qui rend le service joignable par chaque nœud</p>
+</figcaption>
+</figure>
+<h2 id="2-preparer-les-trois-nuds">2. Préparer les trois nœuds<a class="headerlink" href="#2-preparer-les-trois-nuds" title="Permanent link">&para;</a></h2>
+<h3 id="21-creer-docker-n2-et-docker-n3">2.1 Créer <code>docker-n2</code> et <code>docker-n3</code><a class="headerlink" href="#21-creer-docker-n2-et-docker-n3" title="Permanent link">&para;</a></h3>
+<p>Les deux nouvelles <abbr title="Virtual Machine — machine virtuelle">VM</abbr> sont petites : Docker et quelques conteneurs légers tiennent largement dans 1 Go (environ 350 Mo utilisés sur un worker qui exécute une réplique).</p>
+<table>
+<thead>
+<tr>
+<th><abbr title="Virtual Machine — machine virtuelle">VM</abbr></th>
+<th><abbr title="processeur virtuel">vCPU</abbr></th>
+<th>Mémoire</th>
+<th>Disque</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>docker-hote</code></td>
+<td>2</td>
+<td>4 Go</td>
+<td>40 Go</td>
+<td>Manager (et worker), registre privé</td>
+</tr>
+<tr>
+<td><code>docker-n2</code></td>
+<td>1</td>
+<td>1 Go</td>
+<td>20 Go</td>
+<td>Worker</td>
+</tr>
+<tr>
+<td><code>docker-n3</code></td>
+<td>1</td>
+<td>1 Go</td>
+<td>20 Go</td>
+<td>Worker</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>
+<p>🖥️ Créer les deux <abbr title="Virtual Machine — machine virtuelle">VM</abbr> en refaisant, pour chacune, les <strong>sections 2.1 à 2.4 de la <a href="../01-decouvrir-et-installer-docker/#2-creer-la-vm-docker-hote">partie 1</a></strong> : réglages de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, installation de Debian 13 sans bureau (comptes <code>root</code> et <code>tssr</code>, mot de passe du lab), adresse de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (sous VirtualBox, <strong>configuration de la carte <code>enp0s8</code></strong>), connexion SSH. Changer seulement le <strong>nom d'hôte</strong> (<code>docker-n2</code>, <code>docker-n3</code>) et les ressources du tableau. <strong>Ne pas</strong> refaire la section 3 de la partie 1 : Docker s'installe plus bas, par le script. Éteindre <code>docker-plateforme</code> si elle tourne : les trois <abbr title="Virtual Machine — machine virtuelle">VM</abbr> du cluster demandent 6 Go.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">VMware Workstation</label><label for="__tabbed_1_2">VirtualBox</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Les trois <abbr title="Virtual Machine — machine virtuelle">VM</abbr> sont sur <strong>VMnet8 (NAT)</strong>. Elles se joignent entre elles par leurs adresses <code>192.168.x.y</code>. Noter l'adresse de chaque <abbr title="Virtual Machine — machine virtuelle">VM</abbr> (<code>ip -br a</code>).</p>
+</div>
+<div class="tabbed-block">
+<p>Chaque <abbr title="Virtual Machine — machine virtuelle">VM</abbr> doit avoir, comme <code>docker-hote</code>, <strong>deux cartes</strong> : NAT (carte 1) et <strong>Réseau privé hôte</strong> (carte 2). C'est par la carte 2 (<code>192.168.56.x</code>) que les nœuds se parlent.</p>
+<div class="admonition warning">
+<p class="admonition-title">Ne jamais utiliser l'adresse 10.0.2.15</p>
+<p>En mode NAT, <strong>toutes</strong> les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> VirtualBox reçoivent la même adresse <code>10.0.2.15</code>, sur des réseaux isolés les uns des autres. Le cluster doit être créé avec les adresses <code>192.168.56.x</code> de la carte 2.</p>
+</div>
+<p>Swarm choisit les sous-réseaux de ses réseaux overlay dans <code>10.0.0.0/8</code>, par tranches de 256 adresses : <code>10.0.0.0/24</code>, <code>10.0.1.0/24</code>, puis <code>10.0.2.0/24</code>, qui est <strong>aussi</strong> le réseau NAT de VirtualBox. Pour éviter tout chevauchement, la commande <code>docker swarm init</code> de la section 3.1 (onglet VirtualBox) ajoute l'option <code>--default-addr-pool 10.20.0.0/16</code> : les réseaux overlay sont alors pris dans <code>10.20.0.0/16</code>, et leurs adresses diffèrent de celles affichées dans cette page (<code>10.0.1.0/24</code>…).</p>
+</div>
+</div>
+</div>
+</li>
+</ol>
+<div class="admonition success">
+<p class="admonition-title">Prendre l'instantané <code>00-debian-installee</code></p>
+<p>🛟 Sur <code>docker-n2</code> et <code>docker-n3</code>, <abbr title="Virtual Machine — machine virtuelle">VM</abbr> éteinte (<code>poweroff</code> en <code>root</code>), prendre l'instantané <code>00-debian-installee</code>.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Des adresses IP qui ne changent pas</p>
+<p>Les nœuds d'un cluster se retrouvent par leur adresse IP : si le <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> change l'adresse du manager après un redémarrage, les workers ne le retrouvent plus. Pour la durée du TP, l'adresse distribuée par l'hyperviseur reste en général la même ; en production, chaque nœud a une <strong>adresse fixe</strong> (ou une réservation <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr>).</p>
+</div>
+<p>Dans la suite, les adresses sont celles du lab : <code>192.168.8.71</code> pour <code>docker-hote</code>, <code>.73</code> pour <code>docker-n2</code>, <code>.74</code> pour <code>docker-n3</code>. Les remplacer par les siennes.</p>
+<h3 id="22-installer-docker-sur-les-deux-workers">2.2 Installer Docker sur les deux workers<a class="headerlink" href="#22-installer-docker-sur-les-deux-workers" title="Permanent link">&para;</a></h3>
+<p>2️⃣ 3️⃣ Sur <strong>chacune</strong> des deux nouvelles <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, connecté en SSH en <code>tssr</code>, devenir <code>root</code> avec <code>su -</code>, puis :</p>
+<ol>
+<li>
+<p>Installer <code>sudo</code> (que Debian n'installe pas quand <code>root</code> a un mot de passe, voir la section 3.2 de la partie 1) et <code>curl</code>, et autoriser <code>tssr</code> à utiliser <code>sudo</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>apt<span class="w"> </span>update
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>sudo<span class="w"> </span>curl
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>usermod<span class="w"> </span>-aG<span class="w"> </span>sudo<span class="w"> </span>tssr
+</code></pre></div>
+</li>
+<li>
+<p>Installer Docker avec le script de la partie 1, en répondant <code>oui</code>, <code>oui</code>, <code>oui</code>, puis <code>tssr</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>curl<span class="w"> </span>-fsSLO<span class="w"> </span>https://wiki.bodaine.fr/cours-tp/docker/fichiers/installer-docker.sh
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>chmod<span class="w"> </span>+x<span class="w"> </span>installer-docker.sh
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>./installer-docker.sh
+</code></pre></div>
+<p>L'installation prend moins d'une minute.</p>
+</li>
+<li>
+<p>Fermer <strong>toutes</strong> les sessions (<code>exit</code> deux fois) et se reconnecter en <code>tssr</code> : les groupes <code>sudo</code> et <code>docker</code> ne sont pris en compte qu'à la connexion. Vérifier : <code>id -nG</code> contient <code>sudo</code> et <code>docker</code>, et <code>docker version --format '{{.Server.Version}}'</code> affiche <code>29.10.0</code> (ou plus récent).</p>
+</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Juste après le démarrage d'une <abbr title="Virtual Machine — machine virtuelle">VM</abbr> neuve</p>
+<p>Si le script s'arrête sur <code>Could not get lock /var/lib/apt/lists/lock</code>, une mise à jour automatique tourne encore : attendre une minute et relancer.</p>
+</div>
+<h3 id="23-autoriser-le-registre-prive-sur-les-workers">2.3 Autoriser le registre privé sur les workers<a class="headerlink" href="#23-autoriser-le-registre-prive-sur-les-workers" title="Permanent link">&para;</a></h3>
+<p>Les workers vont télécharger l'image du service depuis le registre de <code>docker-hote</code> (partie 15), en HTTP. Ils ont besoin du même réglage que <code>docker-hote</code>.</p>
+<ol>
+<li>
+<p>2️⃣ 3️⃣ Sur chaque worker, créer le fichier (il n'existe pas encore), en remplaçant l'adresse par celle de <code>docker-hote</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/docker/daemon.json
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">"insecure-registries"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"192.168.8.71:5000"</span><span class="p">]</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="p">}</span>
+</code></pre></div>
+<p>Les plages <code>127.0.0.0/8</code> et <code>::1/128</code> ne sont pas utiles ici : aucun registre ne tourne sur les workers.</p>
+</li>
+<li>
+<p>2️⃣ 3️⃣ Redémarrer Docker et tester :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>docker
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>docker<span class="w"> </span>pull<span class="w"> </span><span class="m">192</span>.168.8.71:5000/web:1.0
+</code></pre></div>
+<p>Le téléchargement doit aboutir (<code>Status: Downloaded newer image…</code>).</p>
+</li>
+</ol>
+<h3 id="24-les-ports-du-cluster">2.4 Les ports du cluster<a class="headerlink" href="#24-les-ports-du-cluster" title="Permanent link">&para;</a></h3>
+<p>Les nœuds d'un cluster Swarm communiquent sur trois ports. Debian n'active pas de pare-feu par défaut : rien à ouvrir dans le lab. Sur des serveurs protégés par un pare-feu (<code>nftables</code>, UFW, pare-feu du réseau), ces ports doivent être ouverts <strong>entre les nœuds</strong>, et <strong>seulement</strong> entre eux.</p>
+<table>
+<thead>
+<tr>
+<th>Port</th>
+<th>Protocole</th>
+<th>Où</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>2377</strong></td>
+<td><abbr title="Transmission Control Protocol">TCP</abbr></td>
+<td>Vers les <strong>managers</strong></td>
+<td>Gestion du cluster : les nœuds rejoignent le cluster et reçoivent leurs ordres par ce port ; les managers s'y synchronisent (Raft)</td>
+</tr>
+<tr>
+<td><strong>7946</strong></td>
+<td><abbr title="Transmission Control Protocol">TCP</abbr> et <abbr title="User Datagram Protocol">UDP</abbr></td>
+<td>Entre <strong>tous</strong> les nœuds</td>
+<td>Découverte des nœuds et échange d'informations sur les réseaux overlay (qui est où, qui est vivant)</td>
+</tr>
+<tr>
+<td><strong>4789</strong></td>
+<td><abbr title="User Datagram Protocol">UDP</abbr></td>
+<td>Entre <strong>tous</strong> les nœuds</td>
+<td>Le <strong>trafic des conteneurs</strong> sur les réseaux overlay, encapsulé en <strong><abbr title="Virtual eXtensible LAN — réseau virtuel transporté dans des paquets UDP">VXLAN</abbr></strong> (des trames réseau transportées dans des paquets <abbr title="User Datagram Protocol">UDP</abbr>)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition danger">
+<p class="admonition-title">Ne jamais exposer 2377 ni 4789 sur Internet</p>
+<p>Le trafic <abbr title="Virtual eXtensible LAN — réseau virtuel transporté dans des paquets UDP">VXLAN</abbr> (4789) n'est <strong>pas chiffré</strong> par défaut, et n'est pas authentifié : quelqu'un qui peut envoyer des paquets sur ce port peut injecter du trafic dans les réseaux des conteneurs. Ces ports restent dans un réseau de confiance. Un réseau overlay peut être chiffré (<code>docker network create --opt encrypted …</code>), au prix d'un peu de performance ; il faut alors aussi autoriser le protocole IP 50 (<abbr title="Encapsulating Security Payload — protocole de chiffrement d'IPsec">ESP</abbr>) entre les nœuds.</p>
+</div>
+<h2 id="3-creer-le-cluster">3. Créer le cluster<a class="headerlink" href="#3-creer-le-cluster" title="Permanent link">&para;</a></h2>
+<h3 id="31-initialiser-le-manager">3.1 Initialiser le manager<a class="headerlink" href="#31-initialiser-le-manager" title="Permanent link">&para;</a></h3>
+<p>1️⃣ Sur <code>docker-hote</code>, créer le cluster en précisant l'adresse que les autres nœuds utiliseront pour le joindre :</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">VMware Workstation</label><label for="__tabbed_2_2">VirtualBox</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>docker<span class="w"> </span>swarm<span class="w"> </span>init<span class="w"> </span>--advertise-addr<span class="w"> </span><span class="m">192</span>.168.8.71
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>L'adresse est celle de la carte 2 (<code>192.168.56.x</code>), et l'option <code>--default-addr-pool</code> éloigne les réseaux overlay du réseau NAT de VirtualBox (section 2.1) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span>swarm<span class="w"> </span>init<span class="w"> </span>--advertise-addr<span class="w"> </span><span class="m">192</span>.168.56.x<span class="w"> </span>--default-addr-pool<span class="w"> </span><span class="m">10</span>.20.0.0/16
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Swarm initialized: current node (62jg8791fu1r9lbaqajvs3oty) is now a manager.
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>To add a worker to this swarm, run the following command:
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    docker swarm join --token SWMTKN-1-64bci2lpkbmt5fijn30llrpb146glc1fauwv5x7n2gw275e206-a9oriaq… 192.168.8.71:2377
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+</code></pre></div>
+<ul>
+<li><code>--advertise-addr</code> : l'adresse annoncée aux autres nœuds. Sans elle, Docker choisit tout seul, et refuse de choisir quand la machine a plusieurs adresses (cas des deux cartes de VirtualBox) : la donner toujours.</li>
+<li>Le <strong>jeton</strong> (<em>token</em>) <code>SWMTKN-1-…</code> est le <strong>mot de passe d'entrée</strong> dans le cluster en tant que worker. Le garder pour soi : avec lui, n'importe quelle machine peut rejoindre le cluster et recevoir des conteneurs. Il se réaffiche avec <code>docker swarm join-token worker</code>.</li>
+</ul>
+<h3 id="32-ajouter-les-workers">3.2 Ajouter les workers<a class="headerlink" href="#32-ajouter-les-workers" title="Permanent link">&para;</a></h3>
+<p>2️⃣ 3️⃣ Sur <code>docker-n2</code>, puis sur <code>docker-n3</code>, <strong>copier-coller</strong> la commande <code>docker swarm join …</code> affichée par le manager (avec son jeton complet) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>docker<span class="w"> </span>swarm<span class="w"> </span>join<span class="w"> </span>--token<span class="w"> </span>SWMTKN-1-…<span class="w"> </span><span class="m">192</span>.168.8.71:2377
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>This node joined a swarm as a worker.
+</code></pre></div>
+<h3 id="33-verifier-le-cluster">3.3 Vérifier le cluster<a class="headerlink" href="#33-verifier-le-cluster" title="Permanent link">&para;</a></h3>
+<p>1️⃣ Sur le manager :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>docker<span class="w"> </span>node<span class="w"> </span>ls
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>ID                            HOSTNAME      STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>62jg8791fu1r9lbaqajvs3oty *   docker-hote   Ready     Active         Leader           29.10.0
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>z7dtkky7cgmlloflc1c058bn7     docker-n2     Ready     Active                          29.10.0
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>n6wxt7pq24hahxra0mfv99h2r     docker-n3     Ready     Active                          29.10.0
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Colonne</th>
+<th>Signification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>*</code></td>
+<td>Le nœud sur lequel on tape la commande</td>
+</tr>
+<tr>
+<td><code>STATUS</code></td>
+<td><code>Ready</code> : le nœud répond ; <code>Down</code> : le manager ne l'entend plus</td>
+</tr>
+<tr>
+<td><code>AVAILABILITY</code></td>
+<td><code>Active</code> : peut recevoir des tâches ; <code>Drain</code> : vidé pour maintenance (section 7)</td>
+</tr>
+<tr>
+<td><code>MANAGER STATUS</code></td>
+<td><code>Leader</code> : le manager qui décide ; vide pour un worker</td>
+</tr>
+</tbody>
+</table>
+<p><code>docker node ls</code> ne fonctionne <strong>que sur un manager</strong>. Sur un worker, Docker répond : <code>This node is not a swarm manager. Worker nodes can't be used to view or modify cluster state.</code></p>
+<p>1️⃣ puis 2️⃣ Comparer les ports ouverts sur un manager et sur un worker (<code>sudo ss -tulnp | grep -E ':(2377|7946|4789)\b'</code>) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>== docker-hote (manager)
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>udp 0.0.0.0:4789
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>udp *:7946   users:(("dockerd",…))
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>tcp *:2377   users:(("dockerd",…))
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>tcp *:7946   users:(("dockerd",…))
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>== docker-n2 (worker)
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>udp 0.0.0.0:4789
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>udp *:7946   users:(("dockerd",…))
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>tcp *:7946   users:(("dockerd",…))
+</code></pre></div>
+<p>Seul le manager écoute sur <strong>2377</strong>. Le port 4789 n'affiche pas de processus : il est géré directement par le noyau Linux (<abbr title="Virtual eXtensible LAN — réseau virtuel transporté dans des paquets UDP">VXLAN</abbr>).</p>
+<p>1️⃣ 2️⃣ 3️⃣ <code>docker network ls</code> montre aussi deux nouveaux réseaux sur chaque nœud : <strong><code>ingress</code></strong> (driver <code>overlay</code>, portée <code>swarm</code>), qui porte le maillage de routage, et <strong><code>docker_gwbridge</code></strong>, un pont local qui relie les réseaux overlay à la machine.</p>
+<h2 id="4-un-premier-service-a-trois-repliques">4. Un premier service à trois répliques<a class="headerlink" href="#4-un-premier-service-a-trois-repliques" title="Permanent link">&para;</a></h2>
+<h3 id="41-une-image-qui-dit-qui-elle-est">4.1 Une image qui dit qui elle est<a class="headerlink" href="#41-une-image-qui-dit-qui-elle-est" title="Permanent link">&para;</a></h3>
+<p>Pour <strong>voir</strong> quelle réplique répond, on construit une petite image qui affiche le nom de son conteneur. On réutilise la partie 14 (Dockerfile) et la partie 15 (registre).</p>
+<ol>
+<li>
+<p>1️⃣ Créer le dossier du projet et un script de démarrage :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>mkdir<span class="w"> </span>~/bonjour<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/bonjour
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>nano<span class="w"> </span><span class="m">50</span>-bonjour.sh
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="ch">#!/bin/sh</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="c1"># Écrit une page qui affiche le nom du conteneur qui répond</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"Bonjour depuis le conteneur </span><span class="k">$(</span>hostname<span class="k">)</span><span class="s2">"</span><span class="w"> </span>&gt;<span class="w"> </span>/usr/share/nginx/html/index.html
+</code></pre></div>
+</li>
+<li>
+<p>1️⃣ Le Dockerfile :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>nano<span class="w"> </span>Dockerfile
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="k">FROM</span><span class="w"> </span><span class="s">nginx:1.31-alpine</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="c"># Les scripts de /docker-entrypoint.d/ sont lancés par l'image nginx avant le serveur</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="k">COPY</span><span class="w"> </span><span class="m">50</span>-bonjour.sh<span class="w"> </span>/docker-entrypoint.d/50-bonjour.sh
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="k">RUN</span><span class="w"> </span>chmod<span class="w"> </span>+x<span class="w"> </span>/docker-entrypoint.d/50-bonjour.sh
+</code></pre></div>
+<p>L'image officielle <code>nginx</code> exécute au démarrage tous les scripts du dossier <code>/docker-entrypoint.d/</code> avant de lancer le serveur : chaque conteneur écrit ainsi <strong>sa propre</strong> page, avec <strong>son</strong> nom.</p>
+</li>
+<li>
+<p>1️⃣ Construire directement avec le nom du registre, et pousser :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span><span class="m">192</span>.168.8.71:5000/bonjour:1.0<span class="w"> </span>.
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>docker<span class="w"> </span>push<span class="w"> </span><span class="m">192</span>.168.8.71:5000/bonjour:1.0
+</code></pre></div>
+</li>
+</ol>
+<div class="admonition question">
+<p class="admonition-title">Pourquoi passer par le registre ?</p>
+<p>Une image construite sur <code>docker-hote</code> n'existe <strong>que</strong> sur <code>docker-hote</code>. Quand le manager confie une réplique à <code>docker-n2</code>, c'est <code>docker-n2</code> qui doit télécharger l'image : il lui faut une adresse qu'il peut joindre. D'où l'adresse IP du registre dans le nom de l'image, et <strong>jamais</strong> <code>localhost</code> : sur <code>docker-n2</code>, <code>localhost</code> désigne <code>docker-n2</code> lui-même. Le défi final revient sur ce piège.</p>
+</div>
+<h3 id="42-creer-le-service">4.2 Créer le service<a class="headerlink" href="#42-creer-le-service" title="Permanent link">&para;</a></h3>
+<p>1️⃣ Demander trois répliques, avec le port 8080 publié :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>docker<span class="w"> </span>service<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>bonjour<span class="w"> </span>--replicas<span class="w"> </span><span class="m">3</span><span class="w"> </span>-p<span class="w"> </span><span class="m">8080</span>:80<span class="w"> </span><span class="m">192</span>.168.8.71:5000/bonjour:1.0
+</code></pre></div>
+<p>La commande affiche la progression (<code>overall progress: 3 out of 3 tasks</code>) puis attend quelques secondes que les tâches soient stables (<code>verify: Service … converged</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--name bonjour</code></td>
+<td>Nom du service</td>
+</tr>
+<tr>
+<td><code>--replicas 3</code></td>
+<td>Nombre de copies voulues : Swarm les maintiendra</td>
+</tr>
+<tr>
+<td><code>-p 8080:80</code></td>
+<td>Publie le port 8080 <strong>sur tous les nœuds</strong> (maillage de routage) vers le port 80 des répliques</td>
+</tr>
+</tbody>
+</table>
+<p>1️⃣ Observer le service et ses tâches :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>docker<span class="w"> </span>service<span class="w"> </span>ls
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>docker<span class="w"> </span>service<span class="w"> </span>ps<span class="w"> </span>bonjour
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>ID             NAME      MODE         REPLICAS   IMAGE                           PORTS
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>bfy6rguo107w   bonjour   replicated   3/3        192.168.8.71:5000/bonjour:1.0   *:8080-&gt;80/tcp
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>ID             NAME        IMAGE                           NODE          DESIRED STATE   CURRENT STATE           ERROR     PORTS
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>szqbhv5l4x2c   bonjour.1   192.168.8.71:5000/bonjour:1.0   docker-n2     Running         Running 5 seconds ago
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>i4d622nkb4vs   bonjour.2   192.168.8.71:5000/bonjour:1.0   docker-n3     Running         Running 5 seconds ago
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>job1e9t29ig1   bonjour.3   192.168.8.71:5000/bonjour:1.0   docker-hote   Running         Running 8 seconds ago
+</code></pre></div>
+<p>Swarm a réparti les trois répliques, <strong>une par nœud</strong>. <code>REPLICAS 3/3</code> : trois voulues, trois en marche.</p>
+<p>1️⃣ 2️⃣ 3️⃣ Sur chaque nœud, <code>docker ps --filter name=bonjour</code> montre <strong>le</strong> conteneur local, au nom composé : <code>bonjour.1.szqbhv5l…</code>. Ce sont des conteneurs ordinaires, lancés par Swarm. Ne pas les supprimer à la main : Swarm les recréerait aussitôt.</p>
+<h2 id="5-le-maillage-de-routage">5. Le maillage de routage<a class="headerlink" href="#5-le-maillage-de-routage" title="Permanent link">&para;</a></h2>
+<p>🖥️ Depuis PowerShell sur le PC, interroger <strong>chaque</strong> nœud trois fois (<code>curl.exe</code>, livré avec Windows 10 et 11, et non l'alias <code>curl</code> de PowerShell) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="k">foreach</span> <span class="p">(</span><span class="nv">$ip</span> <span class="k">in</span> <span class="s2">"192.168.8.71"</span><span class="p">,</span><span class="s2">"192.168.8.73"</span><span class="p">,</span><span class="s2">"192.168.8.74"</span><span class="p">)</span> <span class="p">{</span> <span class="n">1</span><span class="p">..</span><span class="n">3</span> <span class="p">|</span> <span class="k">ForEach</span><span class="n">-Object</span> <span class="p">{</span> <span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="s2">"http://</span><span class="p">$(</span><span class="nv">$ip</span><span class="p">)</span><span class="s2">:8080/"</span> <span class="p">}</span> <span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>Bonjour depuis le conteneur a29d84ca759f
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>Bonjour depuis le conteneur fb211602f3fb
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>Bonjour depuis le conteneur 347c52d87d07
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>Bonjour depuis le conteneur a29d84ca759f
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>Bonjour depuis le conteneur fb211602f3fb
+<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>Bonjour depuis le conteneur 347c52d87d07
+<a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>Bonjour depuis le conteneur fb211602f3fb
+<a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>Bonjour depuis le conteneur a29d84ca759f
+<a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a>Bonjour depuis le conteneur 347c52d87d07
+</code></pre></div>
+<p>Quel que soit le nœud interrogé, les trois répliques répondent <strong>à tour de rôle</strong> : chaque nœud répartit les requêtes entre toutes les répliques du cluster (en tourniquet, <em>round robin</em>).</p>
+<p>1️⃣ Plus parlant : ne garder qu'<strong>une</strong> réplique, puis interroger les trois nœuds :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>docker<span class="w"> </span>service<span class="w"> </span>scale<span class="w"> </span><span class="nv">bonjour</span><span class="o">=</span><span class="m">1</span>
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>docker<span class="w"> </span>service<span class="w"> </span>ps<span class="w"> </span>bonjour<span class="w"> </span>--filter<span class="w"> </span>desired-state<span class="o">=</span>running
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>ID             NAME        IMAGE                           NODE        DESIRED STATE   CURRENT STATE            ERROR     PORTS
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>szqbhv5l4x2c   bonjour.1   192.168.8.71:5000/bonjour:1.0   docker-n2   Running         Running 21 seconds ago
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>192.168.8.71 -&gt; Bonjour depuis le conteneur fb211602f3fb
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>192.168.8.73 -&gt; Bonjour depuis le conteneur fb211602f3fb
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>192.168.8.74 -&gt; Bonjour depuis le conteneur fb211602f3fb
+</code></pre></div>
+<p>1️⃣ Interroger les trois nœuds :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="k">for</span><span class="w"> </span>ip<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">192</span>.168.8.71<span class="w"> </span><span class="m">192</span>.168.8.73<span class="w"> </span><span class="m">192</span>.168.8.74<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$ip</span><span class="s2"> -&gt; </span><span class="k">$(</span>curl<span class="w"> </span>-s<span class="w"> </span>http://<span class="nv">$ip</span>:8080/<span class="k">)</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
+</code></pre></div>
+<p>La seule réplique tourne sur <code>docker-n2</code>, et pourtant <code>docker-hote</code> et <code>docker-n3</code> répondent aussi sur le port 8080 : ils <strong>transmettent</strong> la requête à <code>docker-n2</code> par le réseau <code>ingress</code>. On peut donc placer un répartiteur de charge (ou un reverse proxy comme <abbr title="Nginx Proxy Manager">NPM</abbr>) devant n'importe quel nœud, ou devant tous.</p>
+<p>1️⃣ Revenir à trois répliques : <code>docker service scale bonjour=3</code>.</p>
+<h2 id="6-la-panne-dun-nud">6. La panne d'un nœud<a class="headerlink" href="#6-la-panne-dun-nud" title="Permanent link">&para;</a></h2>
+<p>On simule une vraie panne : <code>docker-n3</code> s'éteint <strong>brutalement</strong>, comme une coupure de courant.</p>
+<ol>
+<li>
+<p>1️⃣ Dans une <strong>deuxième</strong> session SSH sur <code>docker-hote</code>, lancer une requête par seconde, qui affiche l'heure et la réponse (ou <code>ECHEC</code>) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="k">while</span><span class="w"> </span>true<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>date<span class="w"> </span>+%T<span class="k">)</span><span class="s2"> </span><span class="k">$(</span>curl<span class="w"> </span>-s<span class="w"> </span>-m<span class="w"> </span><span class="m">1</span><span class="w"> </span>http://192.168.8.71:8080/<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span>ECHEC<span class="k">)</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
+</code></pre></div>
+</li>
+<li>
+<p>1️⃣ Dans la première session, suivre l'état du cluster toutes les 2 secondes :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>watch<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="s1">'docker node ls; docker service ps bonjour --filter desired-state=running'</span>
+</code></pre></div>
+</li>
+<li>
+<p>🖥️ Couper <code>docker-n3</code> <strong>sans arrêt propre</strong> :</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">VMware Workstation</label><label for="__tabbed_3_2">VirtualBox</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Sélectionner <code>docker-n3</code>, menu <strong><abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong> &gt; <strong>Power</strong> &gt; <strong>Power Off</strong> (couper l'alimentation), et non <em>Shut Down Guest</em>.</p>
+</div>
+<div class="tabbed-block">
+<p>Fermer la fenêtre de <code>docker-n3</code> (croix en haut à droite), puis choisir <strong>Éteindre la machine</strong> (<em>Power off the machine</em>), et non l'extinction par <abbr title="Advanced Configuration and Power Interface — gestion de l'alimentation">ACPI</abbr>, qui arrêterait Debian proprement.</p>
+</div>
+</div>
+</div>
+<p>Déroulé type, <code>docker-n3</code> étant coupé à 13:00:36 :</p>
+<table>
+<thead>
+<tr>
+<th>Moment</th>
+<th>Ce qui se passe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>~14 s après la coupure</td>
+<td><code>docker node ls</code> passe <code>docker-n3</code> en <strong><code>Down</code></strong> : le manager ne reçoit plus ses signes de vie</td>
+</tr>
+<tr>
+<td>~19 s</td>
+<td>Une nouvelle réplique <code>bonjour.3</code> est créée sur un nœud vivant (ici <code>docker-hote</code>) : <code>Starting</code></td>
+</tr>
+<tr>
+<td>~21 s</td>
+<td>Elle est <code>Running</code> : le service est revenu à <strong>3/3</strong></td>
+</tr>
+<tr>
+<td>Pendant toute la panne</td>
+<td>Sur 70 requêtes (une par seconde), <strong>une seule</strong> a échoué (<code>ECHEC</code>), deux secondes après la coupure</td>
+</tr>
+</tbody>
+</table>
+<p>Résumé, ligne par ligne, de ce qu'affiche <code>watch</code> au fil de la panne :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>13:00:50 docker-hote=Ready docker-n2=Ready docker-n3=Down bonjour.1@docker-n2:Running … bonjour.2@docker-hote:Running …
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>13:00:55 … bonjour.3@docker-hote:Starting less than a second ago
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>13:00:57 … bonjour.3@docker-hote:Running 2 seconds ago
+</code></pre></div>
+<p>Swarm a constaté l'écart entre l'état voulu (3 répliques) et l'état réel (2) et l'a corrigé <strong>seul</strong>. Arrêter les deux boucles avec <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-c">C</kbd></span>.</p>
+</li>
+<li>
+<p>🖥️ Redémarrer <code>docker-n3</code>, puis 1️⃣ attendre qu'il redevienne <code>Ready</code> (<code>docker node ls</code>) et regarder où sont les répliques :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>docker<span class="w"> </span>service<span class="w"> </span>ps<span class="w"> </span>bonjour<span class="w"> </span>--filter<span class="w"> </span>desired-state<span class="o">=</span>running
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>ID             NAME        IMAGE                           NODE          DESIRED STATE   CURRENT STATE                ERROR     PORTS
+<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>szqbhv5l4x2c   bonjour.1   192.168.8.71:5000/bonjour:1.0   docker-n2     Running         Running 2 minutes ago
+<a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a>robvsm0r7pli   bonjour.2   192.168.8.71:5000/bonjour:1.0   docker-hote   Running         Running about a minute ago
+<a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a>o3ndj05n2xyc   bonjour.3   192.168.8.71:5000/bonjour:1.0   docker-hote   Running         Running about a minute ago
+</code></pre></div>
+<p>Deux répliques restent sur <code>docker-hote</code> et <strong>aucune</strong> ne revient sur <code>docker-n3</code> : Swarm ne déplace jamais des conteneurs qui fonctionnent, pour ne pas couper le service sans raison. Pour <strong>rééquilibrer</strong>, on force le remplacement des tâches, une par une :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>docker<span class="w"> </span>service<span class="w"> </span>update<span class="w"> </span>--force<span class="w"> </span>bonjour
+<a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>docker<span class="w"> </span>service<span class="w"> </span>ps<span class="w"> </span>bonjour<span class="w"> </span>--filter<span class="w"> </span>desired-state<span class="o">=</span>running
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>ID             NAME        IMAGE                           NODE          DESIRED STATE   CURRENT STATE            ERROR     PORTS
+<a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>0fxpddh99ep3   bonjour.1   192.168.8.71:5000/bonjour:1.0   docker-n2     Running         Running 2 seconds ago
+<a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a>2o3m817wtmlh   bonjour.2   192.168.8.71:5000/bonjour:1.0   docker-hote   Running         Running 6 seconds ago
+<a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a>9u8op0v647ef   bonjour.3   192.168.8.71:5000/bonjour:1.0   docker-n3     Running         Running 11 seconds ago
+</code></pre></div>
+</li>
+</ol>
+<div class="admonition question">
+<p class="admonition-title">Et si c'est le manager qui tombe ?</p>
+<p>Avec un seul manager, les conteneurs des workers <strong>continuent de tourner</strong> et de répondre, mais plus personne ne surveille ni ne répare : une nouvelle panne ne serait pas corrigée, et aucune commande <code>docker service …</code> ne fonctionne. Avec trois managers, la perte de l'un d'eux ne change rien : les deux autres gardent la majorité (section 1.3). Pour passer à trois managers, on promeut les deux workers <strong>d'un coup</strong> : <code>docker node promote docker-n2 docker-n3</code> (un nombre impair, toujours : avec deux managers, la perte d'un seul bloquerait tout).</p>
+</div>
+<h2 id="7-maintenance-dun-nud-le-mode-drain">7. Maintenance d'un nœud : le mode Drain<a class="headerlink" href="#7-maintenance-dun-nud-le-mode-drain" title="Permanent link">&para;</a></h2>
+<p>Avant de redémarrer un nœud pour une mise à jour du système, on le <strong>vide</strong> proprement : ses tâches sont déplacées <strong>avant</strong> l'arrêt, sans attendre la détection de panne.</p>
+<p>1️⃣ Vider <code>docker-hote</code> (le manager garde son rôle de manager, il ne reçoit simplement plus de tâches) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>docker<span class="w"> </span>node<span class="w"> </span>update<span class="w"> </span>--availability<span class="w"> </span>drain<span class="w"> </span>docker-hote
+<a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>docker<span class="w"> </span>node<span class="w"> </span>ls
+<a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a>docker<span class="w"> </span>service<span class="w"> </span>ps<span class="w"> </span>bonjour<span class="w"> </span>--filter<span class="w"> </span>desired-state<span class="o">=</span>running
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>ID                            HOSTNAME      STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION
+<a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>62jg8791fu1r9lbaqajvs3oty *   docker-hote   Ready     Drain          Leader           29.10.0
+<a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a>z7dtkky7cgmlloflc1c058bn7     docker-n2     Ready     Active                          29.10.0
+<a id="__codelineno-35-4" name="__codelineno-35-4" href="#__codelineno-35-4"></a>n6wxt7pq24hahxra0mfv99h2r     docker-n3     Ready     Active                          29.10.0
+<a id="__codelineno-35-5" name="__codelineno-35-5" href="#__codelineno-35-5"></a>
+<a id="__codelineno-35-6" name="__codelineno-35-6" href="#__codelineno-35-6"></a>ID             NAME        IMAGE                           NODE        DESIRED STATE   CURRENT STATE            ERROR     PORTS
+<a id="__codelineno-35-7" name="__codelineno-35-7" href="#__codelineno-35-7"></a>0fxpddh99ep3   bonjour.1   192.168.8.71:5000/bonjour:1.0   docker-n2   Running         Running 12 seconds ago
+<a id="__codelineno-35-8" name="__codelineno-35-8" href="#__codelineno-35-8"></a>a9j4hxgru6qq   bonjour.2   192.168.8.71:5000/bonjour:1.0   docker-n2   Running         Running 5 seconds ago
+<a id="__codelineno-35-9" name="__codelineno-35-9" href="#__codelineno-35-9"></a>9u8op0v647ef   bonjour.3   192.168.8.71:5000/bonjour:1.0   docker-n3   Running         Running 21 seconds ago
+</code></pre></div>
+<p>À retenir :</p>
+<ul>
+<li>Le mode <code>Drain</code> ne concerne que les <strong>tâches Swarm</strong>. Les conteneurs lancés avec <code>docker run</code> ou <code>docker compose</code> sur <code>docker-hote</code> (<abbr title="Nginx Proxy Manager">NPM</abbr>, Nextcloud, le registre…) continuent de tourner.</li>
+<li>Le service reste joignable sur <code>http://192.168.8.71:8080</code> : le nœud vidé participe toujours au maillage de routage.</li>
+<li>En production, on garde souvent les managers en <code>Drain</code> : ils se consacrent à la gestion du cluster.</li>
+</ul>
+<p>1️⃣ Remettre <code>docker-hote</code> en service : <code>docker node update --availability active docker-hote</code>.</p>
+<h2 id="8-un-reseau-overlay-entre-les-nuds">8. Un réseau overlay entre les nœuds<a class="headerlink" href="#8-un-reseau-overlay-entre-les-nuds" title="Permanent link">&para;</a></h2>
+<p>Le service <code>bonjour</code> est joignable de l'extérieur par son port publié. Mais une base de données, par exemple, ne doit être joignable <strong>que</strong> par l'application, quel que soit le nœud où elle tourne. C'est le rôle d'un <strong>réseau overlay</strong> personnalisé, l'équivalent multi-machines du réseau bridge personnalisé de la partie 7.</p>
+<ol>
+<li>
+<p>1️⃣ Créer le réseau :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>docker<span class="w"> </span>network<span class="w"> </span>create<span class="w"> </span>-d<span class="w"> </span>overlay<span class="w"> </span>--attachable<span class="w"> </span>reseau-app
+<a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>docker<span class="w"> </span>network<span class="w"> </span>ls<span class="w"> </span>--filter<span class="w"> </span><span class="nv">driver</span><span class="o">=</span>overlay
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>NETWORK ID     NAME         DRIVER    SCOPE
+<a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>e75ta7tnrpza   ingress      overlay   swarm
+<a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a>3s22muisqdtd   reseau-app   overlay   swarm
+</code></pre></div>
+<p>Portée <strong><code>swarm</code></strong> : le réseau existe dans tout le cluster (sous-réseau <code>10.0.1.0/24</code> ici). <code>--attachable</code> autorise aussi de <strong>simples conteneurs</strong> (lancés par <code>docker run</code>) à s'y brancher, ce qui sert au test ci-dessous.</p>
+</li>
+<li>
+<p>1️⃣ Lancer un service <strong>sans port publié</strong>, branché sur ce réseau :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>docker<span class="w"> </span>service<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>interne<span class="w"> </span>--replicas<span class="w"> </span><span class="m">2</span><span class="w"> </span>--network<span class="w"> </span>reseau-app<span class="w"> </span><span class="m">192</span>.168.8.71:5000/bonjour:1.0
+<a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a>docker<span class="w"> </span>service<span class="w"> </span>ps<span class="w"> </span>interne<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Name}} {{.Node}} {{.CurrentState}}'</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>interne.1 docker-n2 Running 7 seconds ago
+<a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a>interne.2 docker-n3 Running 7 seconds ago
+</code></pre></div>
+</li>
+<li>
+<p>3️⃣ Depuis <code>docker-n3</code>, lancer un petit conteneur sur le même réseau et appeler le service <strong>par son nom</strong>, plusieurs fois :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a><span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">4</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--network<span class="w"> </span>reseau-app<span class="w"> </span>alpine<span class="w"> </span>wget<span class="w"> </span>-qO-<span class="w"> </span>http://interne<span class="p">;</span><span class="w"> </span><span class="k">done</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>Bonjour depuis le conteneur 6a9214774e9e
+<a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a>Bonjour depuis le conteneur f363eee705f3
+<a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a>Bonjour depuis le conteneur 6a9214774e9e
+<a id="__codelineno-41-4" name="__codelineno-41-4" href="#__codelineno-41-4"></a>Bonjour depuis le conteneur f363eee705f3
+</code></pre></div>
+<p>Les deux répliques répondent, dont celle de <strong><code>docker-n2</code></strong> : le trafic a traversé le réseau des <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, encapsulé en <abbr title="Virtual eXtensible LAN — réseau virtuel transporté dans des paquets UDP">VXLAN</abbr> sur le port <abbr title="User Datagram Protocol">UDP</abbr> 4789.</p>
+</li>
+<li>
+<p>3️⃣ Comment le nom est-il résolu ?</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--network<span class="w"> </span>reseau-app<span class="w"> </span>alpine<span class="w"> </span>nslookup<span class="w"> </span>interne
+<a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--network<span class="w"> </span>reseau-app<span class="w"> </span>alpine<span class="w"> </span>nslookup<span class="w"> </span>tasks.interne
+</code></pre></div>
+<p><code>interne</code> donne <strong>une seule</strong> adresse (<code>10.0.1.2</code>) : l'<strong>IP virtuelle</strong> (<abbr title="Virtual IP — adresse IP virtuelle d'un service">VIP</abbr>) du service, qui répartit les connexions entre les répliques. <code>tasks.interne</code> donne l'adresse <strong>de chaque</strong> réplique (<code>10.0.1.3</code>, <code>10.0.1.4</code>). Comme en partie 7, c'est le <abbr title="Domain Name System — résolution des noms en adresses IP">DNS</abbr> intégré de Docker qui répond.</p>
+</li>
+</ol>
+<p>Depuis le PC, <code>interne</code> est <strong>injoignable</strong> : aucun port publié. C'est exactement ce qu'on veut pour une base de données.</p>
+<p>1️⃣ Supprimer le service de test : <code>docker service rm interne</code>. Le réseau <code>reseau-app</code> peut rester.</p>
+<h2 id="9-mise-a-jour-progressive-et-retour-arriere">9. Mise à jour progressive et retour arrière<a class="headerlink" href="#9-mise-a-jour-progressive-et-retour-arriere" title="Permanent link">&para;</a></h2>
+<p>Swarm met à jour un service <strong>réplique par réplique</strong> : le service ne s'arrête jamais complètement.</p>
+<ol>
+<li>
+<p>1️⃣ Construire une version 2 de l'image (le message change) et la pousser :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a><span class="nb">cd</span><span class="w"> </span>~/bonjour
+<a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">'s/Bonjour depuis/Bonjour (version 2) depuis/'</span><span class="w"> </span><span class="m">50</span>-bonjour.sh
+<a id="__codelineno-43-3" name="__codelineno-43-3" href="#__codelineno-43-3"></a>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span><span class="m">192</span>.168.8.71:5000/bonjour:2.0<span class="w"> </span>.
+<a id="__codelineno-43-4" name="__codelineno-43-4" href="#__codelineno-43-4"></a>docker<span class="w"> </span>push<span class="w"> </span><span class="m">192</span>.168.8.71:5000/bonjour:2.0
+</code></pre></div>
+</li>
+<li>
+<p>1️⃣ Lancer la mise à jour, une réplique à la fois, avec 5 secondes entre chaque, et observer pendant ce temps (une requête toutes les 2 secondes) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a>docker<span class="w"> </span>service<span class="w"> </span>update<span class="w"> </span>--image<span class="w"> </span><span class="m">192</span>.168.8.71:5000/bonjour:2.0<span class="w"> </span>--update-parallelism<span class="w"> </span><span class="m">1</span><span class="w"> </span>--update-delay<span class="w"> </span>5s<span class="w"> </span>--detach<span class="w"> </span>bonjour
+<a id="__codelineno-44-2" name="__codelineno-44-2" href="#__codelineno-44-2"></a><span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>seq<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">10</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>date<span class="w"> </span>+%T<span class="k">)</span><span class="s2"> </span><span class="k">$(</span>curl<span class="w"> </span>-s<span class="w"> </span>http://192.168.8.71:8080/<span class="k">)</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">2</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a>13:03:25 Bonjour depuis le conteneur f0e5c9890a9f
+<a id="__codelineno-45-2" name="__codelineno-45-2" href="#__codelineno-45-2"></a>13:03:27 Bonjour depuis le conteneur 37d67bc212a6
+<a id="__codelineno-45-3" name="__codelineno-45-3" href="#__codelineno-45-3"></a>13:03:30 Bonjour depuis le conteneur f0e5c9890a9f
+<a id="__codelineno-45-4" name="__codelineno-45-4" href="#__codelineno-45-4"></a>13:03:32 Bonjour (version 2) depuis le conteneur 4a098df68700
+<a id="__codelineno-45-5" name="__codelineno-45-5" href="#__codelineno-45-5"></a>13:03:34 Bonjour depuis le conteneur 37d67bc212a6
+<a id="__codelineno-45-6" name="__codelineno-45-6" href="#__codelineno-45-6"></a>13:03:36 Bonjour depuis le conteneur f0e5c9890a9f
+<a id="__codelineno-45-7" name="__codelineno-45-7" href="#__codelineno-45-7"></a>13:03:38 Bonjour (version 2) depuis le conteneur 4a098df68700
+<a id="__codelineno-45-8" name="__codelineno-45-8" href="#__codelineno-45-8"></a>13:03:40 Bonjour depuis le conteneur 37d67bc212a6
+<a id="__codelineno-45-9" name="__codelineno-45-9" href="#__codelineno-45-9"></a>13:03:42 Bonjour (version 2) depuis le conteneur 1f14e626a3fc
+<a id="__codelineno-45-10" name="__codelineno-45-10" href="#__codelineno-45-10"></a>13:03:44 Bonjour (version 2) depuis le conteneur 4a098df68700
+</code></pre></div>
+<p>Pendant la mise à jour, les deux versions répondent <strong>en même temps</strong>, puis la version 2 remplace peu à peu la version 1. Aucune requête n'a échoué.</p>
+</li>
+<li>
+<p>1️⃣ Revenir à la version précédente d'une seule commande :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a>docker<span class="w"> </span>service<span class="w"> </span>rollback<span class="w"> </span>bonjour
+<a id="__codelineno-46-2" name="__codelineno-46-2" href="#__codelineno-46-2"></a>docker<span class="w"> </span>service<span class="w"> </span>ps<span class="w"> </span>bonjour<span class="w"> </span>--filter<span class="w"> </span>desired-state<span class="o">=</span>running<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Name}} {{.Image}} {{.Node}}'</span>
+</code></pre></div>
+<p>Les trois répliques reviennent sur <code>bonjour:1.0</code>. Swarm garde en mémoire la configuration précédente du service : c'est elle que <code>rollback</code> réapplique.</p>
+</li>
+</ol>
+<h2 id="10-deployer-une-pile-compose-sur-le-cluster">10. Déployer une pile Compose sur le cluster<a class="headerlink" href="#10-deployer-une-pile-compose-sur-le-cluster" title="Permanent link">&para;</a></h2>
+<p>Un fichier Compose (partie 8) peut être déployé <strong>sur tout le cluster</strong> : on parle alors de <strong>pile</strong> (<em>stack</em>). La section <code>deploy:</code> du fichier, dont <code>docker compose</code> n'applique qu'une partie (les limites de ressources, partie 12), prend tout son sens avec Swarm : répartition des répliques sur les nœuds, mise à jour progressive, politique de redémarrage.</p>
+<ol>
+<li>
+<p>1️⃣ Créer le fichier :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a>mkdir<span class="w"> </span>~/pile-demo<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/pile-demo
+<a id="__codelineno-47-2" name="__codelineno-47-2" href="#__codelineno-47-2"></a>nano<span class="w"> </span>compose.yaml
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a><span class="nt">services</span><span class="p">:</span>
+<a id="__codelineno-48-2" name="__codelineno-48-2" href="#__codelineno-48-2"></a><span class="w">  </span><span class="nt">web</span><span class="p">:</span>
+<a id="__codelineno-48-3" name="__codelineno-48-3" href="#__codelineno-48-3"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.8.71:5000/bonjour:1.0</span>
+<a id="__codelineno-48-4" name="__codelineno-48-4" href="#__codelineno-48-4"></a><span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<a id="__codelineno-48-5" name="__codelineno-48-5" href="#__codelineno-48-5"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"8090:80"</span>
+<a id="__codelineno-48-6" name="__codelineno-48-6" href="#__codelineno-48-6"></a><span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-48-7" name="__codelineno-48-7" href="#__codelineno-48-7"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">front</span>
+<a id="__codelineno-48-8" name="__codelineno-48-8" href="#__codelineno-48-8"></a><span class="w">    </span><span class="nt">deploy</span><span class="p">:</span>
+<a id="__codelineno-48-9" name="__codelineno-48-9" href="#__codelineno-48-9"></a><span class="w">      </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<a id="__codelineno-48-10" name="__codelineno-48-10" href="#__codelineno-48-10"></a><span class="w">      </span><span class="nt">restart_policy</span><span class="p">:</span>
+<a id="__codelineno-48-11" name="__codelineno-48-11" href="#__codelineno-48-11"></a><span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span>
+<a id="__codelineno-48-12" name="__codelineno-48-12" href="#__codelineno-48-12"></a><span class="w">      </span><span class="nt">resources</span><span class="p">:</span>
+<a id="__codelineno-48-13" name="__codelineno-48-13" href="#__codelineno-48-13"></a><span class="w">        </span><span class="nt">limits</span><span class="p">:</span>
+<a id="__codelineno-48-14" name="__codelineno-48-14" href="#__codelineno-48-14"></a><span class="w">          </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64M</span>
+<a id="__codelineno-48-15" name="__codelineno-48-15" href="#__codelineno-48-15"></a><span class="nt">networks</span><span class="p">:</span>
+<a id="__codelineno-48-16" name="__codelineno-48-16" href="#__codelineno-48-16"></a><span class="w">  </span><span class="nt">front</span><span class="p">:</span>
+<a id="__codelineno-48-17" name="__codelineno-48-17" href="#__codelineno-48-17"></a><span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">overlay</span>
+</code></pre></div>
+<p><code>condition: any</code> (la valeur par défaut, écrite ici pour être visible) recrée une réplique <strong>quelle que soit</strong> la raison de son arrêt. Avec <code>on-failure</code>, une réplique arrêtée <strong>proprement</strong> (code de sortie 0), par exemple lors de l'arrêt normal d'un nœud, est considérée comme terminée (<code>Complete</code>) et <strong>n'est pas remplacée</strong> : dans le lab, après un arrêt propre des trois <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, un service en <code>on-failure</code> est resté à <code>1/3</code>.</p>
+<p>Deux différences avec un fichier pour <code>docker compose</code> : l'image doit <strong>déjà exister dans un registre</strong> (pas de <code>build:</code> : les nœuds ne peuvent pas construire), et les réseaux sont de type <strong><code>overlay</code></strong>.</p>
+</li>
+<li>
+<p>1️⃣ Déployer la pile sous le nom <code>demo</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-49-1" name="__codelineno-49-1" href="#__codelineno-49-1"></a>docker<span class="w"> </span>stack<span class="w"> </span>deploy<span class="w"> </span>-c<span class="w"> </span>compose.yaml<span class="w"> </span>demo
+<a id="__codelineno-49-2" name="__codelineno-49-2" href="#__codelineno-49-2"></a>docker<span class="w"> </span>stack<span class="w"> </span>services<span class="w"> </span>demo
+<a id="__codelineno-49-3" name="__codelineno-49-3" href="#__codelineno-49-3"></a>docker<span class="w"> </span>stack<span class="w"> </span>ps<span class="w"> </span>demo<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Name}} {{.Node}} {{.CurrentState}}'</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-50-1" name="__codelineno-50-1" href="#__codelineno-50-1"></a>Creating network demo_front
+<a id="__codelineno-50-2" name="__codelineno-50-2" href="#__codelineno-50-2"></a>Creating service demo_web
+<a id="__codelineno-50-3" name="__codelineno-50-3" href="#__codelineno-50-3"></a>ID             NAME       MODE         REPLICAS   IMAGE                           PORTS
+<a id="__codelineno-50-4" name="__codelineno-50-4" href="#__codelineno-50-4"></a>wy5dkg1ay06y   demo_web   replicated   2/2        192.168.8.71:5000/bonjour:1.0   *:8090-&gt;80/tcp
+<a id="__codelineno-50-5" name="__codelineno-50-5" href="#__codelineno-50-5"></a>demo_web.1 docker-hote Running 8 seconds ago
+<a id="__codelineno-50-6" name="__codelineno-50-6" href="#__codelineno-50-6"></a>demo_web.2 docker-n2 Running 8 seconds ago
+</code></pre></div>
+<p>Comme avec Compose, les noms sont préfixés par le nom de la pile (<code>demo_web</code>, <code>demo_front</code>). <code>http://192.168.8.74:8090</code> répond, bien qu'aucune réplique ne tourne sur <code>docker-n3</code>.</p>
+</li>
+<li>
+<p>1️⃣ Pour modifier la pile, on change le fichier et on relance <strong>la même</strong> commande <code>docker stack deploy</code> : seuls les services modifiés sont mis à jour. Pour la supprimer :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-51-1" name="__codelineno-51-1" href="#__codelineno-51-1"></a>docker<span class="w"> </span>stack<span class="w"> </span>rm<span class="w"> </span>demo
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-52-1" name="__codelineno-52-1" href="#__codelineno-52-1"></a>Removing service demo_web
+<a id="__codelineno-52-2" name="__codelineno-52-2" href="#__codelineno-52-2"></a>Removing network demo_front
+</code></pre></div>
+</li>
+</ol>
+<h2 id="11-verifier-son-lab">11. Vérifier son lab<a class="headerlink" href="#11-verifier-son-lab" title="Permanent link">&para;</a></h2>
+<div class="admonition success">
+<p class="admonition-title">Vérifier son lab</p>
+<p>1️⃣ Sur <code>docker-hote</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-53-1" name="__codelineno-53-1" href="#__codelineno-53-1"></a>docker<span class="w"> </span>node<span class="w"> </span>ls<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Hostname}} {{.Status}} {{.Availability}} {{.ManagerStatus}}'</span>
+<a id="__codelineno-53-2" name="__codelineno-53-2" href="#__codelineno-53-2"></a>docker<span class="w"> </span>service<span class="w"> </span>ls<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Name}} {{.Replicas}} {{.Ports}}'</span>
+<a id="__codelineno-53-3" name="__codelineno-53-3" href="#__codelineno-53-3"></a>docker<span class="w"> </span>service<span class="w"> </span>ps<span class="w"> </span>bonjour<span class="w"> </span>--filter<span class="w"> </span>desired-state<span class="o">=</span>running<span class="w"> </span>--format<span class="w"> </span><span class="s1">'{{.Node}}'</span>
+</code></pre></div>
+<p>Résultat attendu (l'ordre des nœuds de la dernière commande peut varier) :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-54-1" name="__codelineno-54-1" href="#__codelineno-54-1"></a>docker-hote Ready Active Leader
+<a id="__codelineno-54-2" name="__codelineno-54-2" href="#__codelineno-54-2"></a>docker-n2 Ready Active
+<a id="__codelineno-54-3" name="__codelineno-54-3" href="#__codelineno-54-3"></a>docker-n3 Ready Active
+<a id="__codelineno-54-4" name="__codelineno-54-4" href="#__codelineno-54-4"></a>bonjour 3/3 *:8080-&gt;80/tcp
+<a id="__codelineno-54-5" name="__codelineno-54-5" href="#__codelineno-54-5"></a>docker-hote
+<a id="__codelineno-54-6" name="__codelineno-54-6" href="#__codelineno-54-6"></a>docker-n3
+<a id="__codelineno-54-7" name="__codelineno-54-7" href="#__codelineno-54-7"></a>docker-n2
+</code></pre></div>
+<p>Les trois répliques doivent être sur trois nœuds différents ; sinon, <code>docker service update --force bonjour</code>.</p>
+<p>🖥️ Puis, depuis le PC, chacune des trois adresses répond sur le port 8080 par une ligne <code>Bonjour depuis le conteneur …</code> :</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-55-1" name="__codelineno-55-1" href="#__codelineno-55-1"></a><span class="k">foreach</span> <span class="p">(</span><span class="nv">$ip</span> <span class="k">in</span> <span class="s2">"192.168.8.71"</span><span class="p">,</span><span class="s2">"192.168.8.73"</span><span class="p">,</span><span class="s2">"192.168.8.74"</span><span class="p">)</span> <span class="p">{</span> <span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-s</span> <span class="s2">"http://</span><span class="p">$(</span><span class="nv">$ip</span><span class="p">)</span><span class="s2">:8080/"</span> <span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="admonition success">
+<p class="admonition-title">Prendre l'instantané <code>07-swarm</code></p>
+<p>🛟 Éteindre <strong>d'abord les workers</strong>, puis le manager (<code>sudo poweroff</code> sur chacun), et prendre l'instantané <code>07-swarm</code> des <strong>trois</strong> <abbr title="Virtual Machine — machine virtuelle">VM</abbr>. Au redémarrage, rallumer d'abord <code>docker-hote</code> : le cluster et le service <code>bonjour</code> se reconstituent seuls.</p>
+</div>
+<h2 id="12-questions-de-revision">12. Questions de révision<a class="headerlink" href="#12-questions-de-revision" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Quelle différence entre un <strong>service</strong> et un <strong>conteneur</strong> ? Qui crée les conteneurs d'un service ?</li>
+<li>Pourquoi un cluster de production a-t-il 3 managers plutôt que 2 ou 4 ?</li>
+<li>À quoi servent les ports 2377, 7946 et 4789 ? Lequel n'est ouvert que sur les managers ?</li>
+<li>Une seule réplique tourne, sur <code>docker-n2</code>. Pourquoi <code>http://IP-de-docker-n3:8080</code> répond-il quand même ?</li>
+<li>Après le retour d'un nœud tombé en panne, aucune réplique n'y revient. Est-ce un problème ? Comment rééquilibrer ?</li>
+<li>Pourquoi l'image d'un service Swarm ne doit-elle jamais s'appeler <code>localhost:5000/…</code> ?</li>
+</ol>
+<details class="success">
+<summary>Corrigé</summary>
+<ol>
+<li>Le <strong>service</strong> est une description de l'état voulu (image, nombre de répliques, ports, réseaux). Les <strong>conteneurs</strong> (les tâches) sont créés par <strong>Swarm</strong>, sur les nœuds qu'il choisit, et recréés s'ils disparaissent. On ne gère plus les conteneurs à la main.</li>
+<li>Les managers décident à la <strong>majorité</strong> (Raft). Avec 3, la majorité est 2 : on supporte la perte d'un manager. Avec 2, la majorité est 2 : la perte d'un seul bloque tout, ce n'est pas mieux qu'un. Avec 4, la majorité est 3 : on ne supporte toujours qu'une panne, pour un manager de plus. D'où un nombre impair.</li>
+<li><strong>2377/<abbr title="Transmission Control Protocol">TCP</abbr></strong> : gestion du cluster (adhésion, ordres, synchronisation des managers), ouvert <strong>seulement sur les managers</strong>. <strong>7946/<abbr title="Transmission Control Protocol">TCP</abbr> et <abbr title="User Datagram Protocol">UDP</abbr></strong> : découverte des nœuds et informations des réseaux overlay, entre tous les nœuds. <strong>4789/<abbr title="User Datagram Protocol">UDP</abbr></strong> : trafic des conteneurs sur les réseaux overlay (<abbr title="Virtual eXtensible LAN — réseau virtuel transporté dans des paquets UDP">VXLAN</abbr>), entre tous les nœuds.</li>
+<li>Grâce au <strong>maillage de routage</strong> : un port publié par un service est ouvert sur <strong>tous</strong> les nœuds, et chacun transmet la requête, par le réseau <code>ingress</code>, à une réplique en marche, où qu'elle soit.</li>
+<li>Ce n'est pas une panne : le service a bien ses répliques. Swarm ne déplace pas des conteneurs qui fonctionnent, pour ne pas couper le service. Pour rééquilibrer : <code>docker service update --force &lt;service&gt;</code>, qui remplace les tâches une par une.</li>
+<li>Chaque nœud télécharge l'image <strong>lui-même</strong> : sur un worker, <code>localhost</code> désigne le worker, où il n'y a pas de registre. Il faut une adresse joignable par tous les nœuds (IP ou nom du registre).</li>
+</ol>
+</details>
+<hr />
+<h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://docs.docker.com/engine/swarm/">Mode Swarm : vue d'ensemble</a> — notions et fonctionnement (en anglais).</li>
+<li><a href="https://docs.docker.com/engine/swarm/swarm-tutorial/">Tutoriel Swarm</a> — créer un cluster, ajouter des nœuds, ports à ouvrir.</li>
+<li><a href="https://docs.docker.com/engine/swarm/ingress/">Le maillage de routage</a> — publication des ports dans un cluster.</li>
+<li><a href="https://docs.docker.com/engine/swarm/admin_guide/">Administrer un cluster Swarm</a> — nombre de managers, quorum, sauvegarde, maintenance.</li>
+<li><a href="https://docs.docker.com/engine/network/drivers/overlay/">Le pilote réseau overlay</a> — réseaux entre machines, chiffrement.</li>
+<li><a href="https://docs.docker.com/engine/swarm/stack-deploy/">Déployer une pile</a> — <code>docker stack deploy</code> avec un fichier Compose.</li>
+<li>Partie précédente : <a href="../15-distribuer-ses-images-registre/">Distribuer ses images : Docker Hub et registre privé</a> · Partie suivante : <a href="../17-defi-final/">Défi final</a>.</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+        
+          
+          <a href="../15-distribuer-ses-images-registre/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: 15. Distribuer ses images : Docker Hub et registre privé">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              <div class="md-ellipsis">
+                15. Distribuer ses images : Docker Hub et registre privé
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../17-defi-final/" class="md-footer__link md-footer__link--next" aria-label="Suivant: 17. Défi final">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              <div class="md-ellipsis">
+                17. Défi final
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      <a href="/mentions-legales/">Mentions légales</a>
+
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/bodaine" target="_blank" rel="noopener" title="Nicolas BODAINE sur LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://github.com/NicoBOD" target="_blank" rel="noopener" title="NicoBOD sur GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://nicolas.bodaine.fr" target="_blank" rel="noopener" title="Portfolio de Nicolas BODAINE" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="/feed_rss_created.xml" target="_blank" rel="noopener" title="Flux RSS des derniers articles" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 64c0-17.7 14.3-32 32-32 229.8 0 416 186.2 416 416 0 17.7-14.3 32-32 32s-32-14.3-32-32C384 253.6 226.4 96 32 96 14.3 96 0 81.7 0 64m0 352a64 64 0 1 1 128 0 64 64 0 1 1-128 0m32-256c159.1 0 288 128.9 288 288 0 17.7-14.3 32-32 32s-32-14.3-32-32c0-123.7-100.3-224-224-224-17.7 0-32-14.3-32-32s14.3-32 32-32"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.path", "navigation.indexes", "navigation.prune", "navigation.footer", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "content.action.view", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>

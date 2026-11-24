@@ -2725,6 +2725,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -3036,6 +3040,105 @@
   
 
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="14-construire-ses-images-dockerfile/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 5 — Construire, distribuer, orchestrer
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="annexes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annexes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--publié"></span>
+  
+
+  
+
+      </a>
     </li>
   
 
@@ -3432,7 +3535,7 @@
 <div class="admonition abstract">
 <p class="admonition-title">Résumé</p>
 <p>Ce parcours de <strong>cinq jours</strong> apprend à <strong>déployer et exploiter des services conteneurisés avec Docker</strong>, du point de vue d'un <strong>administrateur</strong> ou d'un <strong>technicien systèmes et réseaux</strong> : installer Docker proprement, lancer et dépanner des conteneurs, garder leurs données, les brancher sur le réseau, publier plusieurs services derrière un <strong>reverse proxy</strong> en <abbr title="HTTP sécurisé par TLS">HTTPS</abbr>, et les surveiller au quotidien. La théorie arrive <strong>au fil des travaux pratiques</strong>, au moment où elle sert.</p>
-<p>Tout se passe dans une machine virtuelle <strong>Debian 13</strong> créée avec <strong>VMware Workstation Pro</strong> ou <strong>VirtualBox</strong>. On y manipule aussi des outils qui simplifient la vie : <strong>Portainer</strong> (interface web), <strong>LazyDocker</strong> (interface en mode texte), <strong>Nginx Proxy Manager</strong>, des plateformes « tout-en-un » comme <strong>Coolify</strong>, et une série de projets amusants à déployer soi-même.</p>
+<p>Tout se passe dans une machine virtuelle <strong>Debian 13</strong> créée avec <strong>VMware Workstation Pro</strong> ou <strong>VirtualBox</strong>. On y manipule aussi des outils qui simplifient la vie : <strong>Portainer</strong> (interface web), <strong>LazyDocker</strong> (interface en mode texte), <strong>Nginx Proxy Manager</strong>, des plateformes « tout-en-un » comme <strong>Coolify</strong>, et une série de projets amusants à déployer soi-même. Le dernier jour, on <strong>construit ses propres images</strong> avec un Dockerfile, on les range dans un <strong>registre</strong>, et on les déploie sur un <strong>cluster Docker Swarm</strong> de trois <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, capable de survivre à la panne d'une machine.</p>
 <p>Cette page rassemble ce qu'il faut garder sous la main pendant tout le parcours : le plan, le schéma du lab, les comptes et mots de passe, le dimensionnement des machines virtuelles et les instantanés conseillés.</p>
 </div>
 <table>
@@ -3449,11 +3552,11 @@
 </tr>
 <tr>
 <td>Durée totale</td>
-<td>5 jours de 7 h (35 h)</td>
+<td>5 jours de 7 h (35 h), dont environ 31 h 30 de parties ; le reste sert aux questions, aux révisions et aux QCM des <a href="annexes/">annexes</a></td>
 </tr>
 <tr>
 <td>Version décrite</td>
-<td>Debian <strong>13.7</strong> « trixie », Docker Engine <strong>29.10</strong>, Docker Compose <strong>5.8</strong>, Portainer CE <strong>2.45 LTS</strong></td>
+<td>Debian <strong>13.7</strong> « trixie », Docker Engine <strong>29.10</strong> (et son mode Swarm), Docker Compose <strong>5.8</strong>, Portainer CE <strong>2.45 LTS</strong>, registre <code>registry:3</code></td>
 </tr>
 <tr>
 <td>Dernière mise à jour</td>
@@ -3637,35 +3740,36 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align: center;">14. Construire ses images avec un Dockerfile</td>
+<td style="text-align: center;"><a href="14-construire-ses-images-dockerfile/">14. Construire ses images avec un Dockerfile</a></td>
 <td>Cours et TP</td>
 <td>2 h</td>
-<td>Instructions, construction, TP serveur <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr>, pile <abbr title="Linux, Apache, MariaDB (ou MySQL), PHP">LAMP</abbr></td>
+<td>Instructions, construction et cache, TP serveur <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr>, pile <abbr title="Linux, Apache, MariaDB (ou MySQL), PHP">LAMP</abbr> avec WordPress</td>
 <td><code>docker-hote</code></td>
 </tr>
 <tr>
-<td style="text-align: center;">15. Distribuer ses images : Docker Hub et registre privé</td>
-<td>TP</td>
+<td style="text-align: center;"><a href="15-distribuer-ses-images-registre/">15. Distribuer ses images : Docker Hub et registre privé</a></td>
+<td>Cours et TP</td>
 <td>1 h 30</td>
-<td>Compte, jeton, <code>tag</code>, <code>push</code>, registre local</td>
+<td>Nom d'une image, jeton d'accès, <code>tag</code>, <code>push</code>, registre privé, registre en HTTP</td>
 <td><code>docker-hote</code></td>
 </tr>
 <tr>
-<td style="text-align: center;">16. Un cluster Docker Swarm</td>
+<td style="text-align: center;"><a href="16-cluster-docker-swarm/">16. Un cluster Docker Swarm</a></td>
 <td>Cours et TP</td>
-<td>2 h</td>
-<td>Trois nœuds, services répliqués, panne d'un nœud</td>
+<td>2 h 30</td>
+<td>Trois nœuds, service répliqué, maillage de routage, panne d'un nœud, réseau overlay, mise à jour progressive, pile</td>
 <td><code>docker-hote</code>, <code>docker-n2</code>, <code>docker-n3</code></td>
 </tr>
 <tr>
-<td style="text-align: center;">17. Défi final</td>
+<td style="text-align: center;"><a href="17-defi-final/">17. Défi final</a></td>
 <td>Projet</td>
-<td>1 h 30</td>
-<td>Une petite infrastructure à monter et à dépanner sans pas-à-pas</td>
-<td>Au choix</td>
+<td>1 h</td>
+<td>Un intranet à construire, dépanner, déployer sur le cluster et publier derrière le proxy, sans pas-à-pas</td>
+<td><code>docker-hote</code>, <code>docker-n2</code>, <code>docker-n3</code></td>
 </tr>
 </tbody>
 </table>
+<p>Les <a href="annexes/">annexes</a> rassemblent un aide-mémoire des commandes, un guide de dépannage, un glossaire et deux QCM.</p>
 <div class="admonition tip">
 <p class="admonition-title">Suivre l'ordre</p>
 <p>Chaque TP s'appuie sur le précédent : la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> <code>docker-hote</code> créée en partie 1 sert pendant tout le parcours. Les explications sont placées <strong>juste avant</strong> la manipulation qui en a besoin : il n'y a pas de gros chapitre théorique à lire d'abord.</p>
@@ -3678,6 +3782,13 @@
 </figcaption>
 </figure>
 <p>Le PC ne joint <strong>jamais</strong> un conteneur directement : il joint un <strong>port de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr></strong>, que Docker redirige vers le bon conteneur. C'est la <strong>publication de port</strong>, expliquée en <a href="02-premiers-conteneurs/">partie 2</a>.</p>
+<p>Au jour 5, deux petites <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, <code>docker-n2</code> et <code>docker-n3</code>, rejoignent <code>docker-hote</code> pour former un cluster Swarm :</p>
+<figure>
+<p><img alt="Trois VM : docker-hote, manager, 192.168.8.71 ; docker-n2 et docker-n3, workers, 192.168.8.73 et .74. Chacune exécute une réplique du service bonjour. Un réseau overlay ingress, en VXLAN sur UDP 4789, relie les trois : un navigateur qui joint le port 8080 de n'importe quel nœud est servi par une réplique, sur n'importe quel nœud." loading="lazy" src="images/cluster-swarm.svg" /></p>
+<figcaption>
+<p>Le lab du jour 5 (parties 16 et 17) : un manager, deux workers, et le maillage de routage</p>
+</figcaption>
+</figure>
 <h2 id="plan-dadressage">Plan d'adressage<a class="headerlink" href="#plan-dadressage" title="Permanent link">&para;</a></h2>
 <p>La <abbr title="Virtual Machine — machine virtuelle">VM</abbr> <code>docker-hote</code> reçoit son adresse automatiquement (<abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr>). Elle change d'un PC à l'autre : la noter dès la fin de son installation (commande <code>ip -br a</code>), elle sert pendant tout le parcours. Dans les pages du parcours, elle est écrite <strong><code>IP-de-la-VM</code></strong>.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">VMware Workstation</label><label for="__tabbed_1_2">VirtualBox</label></div>
@@ -3757,6 +3868,7 @@
 </div>
 </div>
 <p>La <abbr title="Virtual Machine — machine virtuelle">VM</abbr> <code>docker-plateforme</code> de la partie 11 se branche sur le <strong>même réseau</strong> que <code>docker-hote</code> (mêmes réglages) et reçoit elle aussi son adresse par <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> : elle est écrite <strong>IP-de-plateforme</strong>.</p>
+<p>Les <abbr title="Virtual Machine — machine virtuelle">VM</abbr> <code>docker-n2</code> et <code>docker-n3</code> du cluster Swarm (partie 16) se branchent elles aussi sur ce réseau. À partir de la partie 15, certaines adresses sont écrites en clair, celles du lab de référence (un lab sous KVM, dont le réseau est <code>192.168.8.0/24</code>) : <code>192.168.8.71</code> pour <code>docker-hote</code>, <code>192.168.8.73</code> pour <code>docker-n2</code>, <code>192.168.8.74</code> pour <code>docker-n3</code>. Chez soi, elles sont dans la plage de son hyperviseur (tableaux ci-dessus) : les remplacer par les siennes.</p>
 <p>À l'intérieur de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, Docker crée en plus son propre réseau privé pour les conteneurs, <code>172.17.0.0/16</code> par défaut : on le découvre en <a href="02-premiers-conteneurs/">partie 2</a>.</p>
 <h2 id="comptes-et-mots-de-passe">Comptes et mots de passe<a class="headerlink" href="#comptes-et-mots-de-passe" title="Permanent link">&para;</a></h2>
 <p>Ce lab est <strong>pédagogique</strong> : les mots de passe sont écrits ici volontairement pour que chacun puisse suivre à l'identique. En production, chaque mot de passe serait unique, long et rangé dans un gestionnaire de mots de passe.</p>
@@ -3854,6 +3966,30 @@
 <td><code>TutoDocker2026!</code></td>
 <td>Partie 10</td>
 </tr>
+<tr>
+<td>Conteneur <code>debian-ssh-container</code> (<abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr>, port 54321)</td>
+<td><code>user</code></td>
+<td><code>TutoDocker2026!</code></td>
+<td>Partie 14</td>
+</tr>
+<tr>
+<td>WordPress de l'image <abbr title="Linux, Apache, MariaDB (ou MySQL), PHP">LAMP</abbr> (base <code>wordpress</code>, puis site)</td>
+<td><code>wordpress</code> (base), <code>admin</code> (site)</td>
+<td><code>TutoDocker2026!</code></td>
+<td>Partie 14</td>
+</tr>
+<tr>
+<td>Docker Hub</td>
+<td>son propre compte, avec un <strong>jeton d'accès</strong></td>
+<td>personnel, jamais publié</td>
+<td>Partie 15</td>
+</tr>
+<tr>
+<td><abbr title="Virtual Machine — machine virtuelle">VM</abbr> <code>docker-n2</code> et <code>docker-n3</code></td>
+<td><code>root</code> et <code>tssr</code></td>
+<td><code>TutoDocker2026!</code></td>
+<td>Partie 16</td>
+</tr>
 </tbody>
 </table>
 <div class="admonition info">
@@ -3877,6 +4013,18 @@
 <td>2 <abbr title="processeur virtuel">vCPU</abbr>, 4 Go</td>
 <td>1 <abbr title="processeur virtuel">vCPU</abbr>, 2 Go</td>
 <td>40 Go, dynamique</td>
+</tr>
+<tr>
+<td><code>docker-plateforme</code> (partie 11)</td>
+<td>2 <abbr title="processeur virtuel">vCPU</abbr>, 4 Go</td>
+<td>2 <abbr title="processeur virtuel">vCPU</abbr>, 2 Go (minimum indiqué par Coolify)</td>
+<td>40 Go, dynamique</td>
+</tr>
+<tr>
+<td><code>docker-n2</code> et <code>docker-n3</code> (partie 16)</td>
+<td>1 <abbr title="processeur virtuel">vCPU</abbr>, 1 Go</td>
+<td>1 <abbr title="processeur virtuel">vCPU</abbr>, 1 Go</td>
+<td>20 Go, dynamique</td>
 </tr>
 </tbody>
 </table>
@@ -3938,6 +4086,24 @@
 <td>Partie 11 : avant, puis après l'installation de Coolify et d'Uptime Kuma</td>
 <td>L'installation de Coolify</td>
 </tr>
+<tr>
+<td><code>06-registre</code></td>
+<td><code>docker-hote</code></td>
+<td>Fin de la partie 15, <abbr title="Virtual Machine — machine virtuelle">VM</abbr> éteinte : images <code>web</code> et <code>debian-ssh</code>, registre privé, <code>insecure-registries</code></td>
+<td>La partie 16</td>
+</tr>
+<tr>
+<td><code>00-debian-installee</code></td>
+<td><code>docker-n2</code>, <code>docker-n3</code></td>
+<td>Partie 16, juste après l'installation de Debian</td>
+<td>L'installation de Docker</td>
+</tr>
+<tr>
+<td><code>07-swarm</code></td>
+<td><code>docker-hote</code>, <code>docker-n2</code>, <code>docker-n3</code></td>
+<td>Fin de la partie 16, les trois <abbr title="Virtual Machine — machine virtuelle">VM</abbr> éteintes : cluster et service <code>bonjour</code></td>
+<td>Le défi final</td>
+</tr>
 </tbody>
 </table>
 <div class="admonition warning">
@@ -3974,6 +4140,11 @@
 <td>Installés depuis la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> pendant les TP</td>
 <td>Rien à télécharger sur le PC</td>
 </tr>
+<tr>
+<td>Compte Docker Hub</td>
+<td><a href="https://hub.docker.com/">hub.docker.com</a></td>
+<td>Gratuit, compte requis ; facultatif : la partie 15 se fait aussi entièrement avec le registre privé du lab</td>
+</tr>
 </tbody>
 </table>
 <h2 id="convention-de-lecture">Convention de lecture<a class="headerlink" href="#convention-de-lecture" title="Permanent link">&para;</a></h2>
@@ -4005,6 +4176,10 @@
 <tr>
 <td>✍️</td>
 <td>Exercice à faire seul, corrigé replié en dessous</td>
+</tr>
+<tr>
+<td>1️⃣ 2️⃣ 3️⃣</td>
+<td>Parties 16 et 17 : dans la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> <code>docker-hote</code> (le manager), <code>docker-n2</code> ou <code>docker-n3</code></td>
 </tr>
 <tr>
 <td>🛟</td>
