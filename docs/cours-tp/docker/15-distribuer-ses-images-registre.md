@@ -39,7 +39,7 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `tssr` · 🌐 **navigateur** du PC · ✍️ **exercice** · 🛟 **instantané**. Point de départ : la fin de la partie 14 (images `web` et `debian-ssh` construites).
+    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `adminlab` · 🌐 **navigateur** du PC · ✍️ **exercice** · 🛟 **instantané**. Point de départ : la fin de la partie 14 (images `web` et `debian-ssh` construites).
 
 <!-- NOTE DE RÉDACTION (non affichée) : partie construite à partir du TD 08 du formateur (publier sur Docker Hub). La création d'un compte Docker Hub n'a pas été faite dans le lab (compte personnel requis) : la section 2 suit le TD 08, ses captures (mars 2025) et la documentation Docker lue le 2026-11-24 (jetons : avatar > Account settings > Personal access tokens > Generate new token ; permissions « Read-only », « Read & Write », « Read, Write, Delete » ; dépôts : My Hub > Repositories > Create repository ; 1 dépôt privé sur un compte Personal ; limites 100 pulls / 6 h sans compte, 200 avec un compte Personal). Comportements de la CLI mesurés dans le lab : connexion web par code à usage unique quand on tape `docker login` sans -u, invite « Password: » avec -u, avertissement « credentials are stored unencrypted ». Le registre privé (sections 3 et 4) est entièrement mesuré (captures/15-*.txt). Fait découvert : déclarer `insecure-registries` remplace la liste par défaut 127.0.0.0/8 et ::1/128 (InsecureRegistryCIDRs devient null) et casse localhost:5000 ; corrigé en ajoutant les deux plages. Le TD 08 utilisait l'ID de l'image dans `docker tag` : gardé en variante, le nom est plus lisible. -->
 
@@ -134,14 +134,14 @@ docker login -u <identifiant>
 À l'invite `Password:`, **coller le jeton** (rien ne s'affiche pendant la saisie, c'est normal), puis ++enter++. Docker répond `Login Succeeded`, précédé d'un avertissement :
 
 ```text
-WARNING! Your credentials are stored unencrypted in '/home/tssr/.docker/config.json'.
+WARNING! Your credentials are stored unencrypted in '/home/adminlab/.docker/config.json'.
 Configure a credential helper to remove this warning. See
 https://docs.docker.com/go/credential-store/
 
 Login Succeeded
 ```
 
-Sur une Debian sans bureau, aucun coffre de mots de passe n'est installé : le jeton est rangé dans `~/.docker/config.json`, simplement **encodé** en base64 (ce n'est pas un chiffrement), lisible seulement par `tssr` (droits `600`). C'est une raison de plus d'utiliser un jeton limité et qui expire. `docker logout` l'efface.
+Sur une Debian sans bureau, aucun coffre de mots de passe n'est installé : le jeton est rangé dans `~/.docker/config.json`, simplement **encodé** en base64 (ce n'est pas un chiffrement), lisible seulement par `adminlab` (droits `600`). C'est une raison de plus d'utiliser un jeton limité et qui expire. `docker logout` l'efface.
 
 !!! info "Et `docker login` sans `-u` ?"
     Sans identifiant, Docker propose une **connexion par le navigateur** :

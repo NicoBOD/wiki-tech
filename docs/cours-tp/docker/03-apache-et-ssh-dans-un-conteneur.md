@@ -39,7 +39,7 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🖥️ **PC hôte** (PowerShell) · 🐧 **VM** `docker-hote`, connecté en `tssr` · 📦 **dans le conteneur** `debian` · 🌐 **navigateur du PC** · ✍️ **exercice**. Aucun conteneur ne doit utiliser les ports 8080 et 2222 de la VM : vérifier avec `docker ps`.
+    🖥️ **PC hôte** (PowerShell) · 🐧 **VM** `docker-hote`, connecté en `adminlab` · 📦 **dans le conteneur** `debian` · 🌐 **navigateur du PC** · ✍️ **exercice**. Aucun conteneur ne doit utiliser les ports 8080 et 2222 de la VM : vérifier avec `docker ps`.
 
 <!-- NOTE DE RÉDACTION (non affichée) : reprend tel quel le déroulé du TD « 02 Déployer un serveur Apache et SSH dans un conteneur Debian avec Docker » v1 du formateur (mêmes commandes, mêmes ports 8080 et 2222, même conteneur « debian »). Ajouts : explication de -dit et du processus principal, connexion SSH depuis le PC, section « que se passe-t-il au redémarrage » (mesurée : après docker restart, curl échoue avec le code 56, apache2 et sshd « not running »), section « pourquoi on ne fait pas ça en production », exercices. Le mot de passe root du conteneur est celui du lab. Sorties recopiées du lab (2026-11-24). -->
 
@@ -60,7 +60,7 @@ VERSION_ID="13"
 VERSION="13 (trixie)"
 ```
 
-On fera la même vérification **dans** le conteneur : il faudra savoir à tout moment si l'on tape dans la VM ou dans le conteneur. Le plus simple est de regarder l'**invite** du terminal : `tssr@docker-hote:~$` dans la VM, `root@` suivi d'un identifiant dans le conteneur.
+On fera la même vérification **dans** le conteneur : il faudra savoir à tout moment si l'on tape dans la VM ou dans le conteneur. Le plus simple est de regarder l'**invite** du terminal : `adminlab@docker-hote:~$` dans la VM, `root@` suivi d'un identifiant dans le conteneur.
 
 ### 1.2 Démarrer le conteneur
 
@@ -249,7 +249,7 @@ VERSION_CODENAME=trixie
 
     Enregistrer et quitter : ++ctrl+x++, puis ++y++ (*yes* : `nano` est en anglais dans ce conteneur, sans traductions) et ++enter++.
 
-4. 📦 Donner un mot de passe à `root` (il n'en a pas dans l'image) : taper `TutoDocker2026!` deux fois.
+4. 📦 Donner un mot de passe à `root` (il n'en a pas dans l'image) : taper `TutoDocker-Lab1!` deux fois.
 
     ```bash
     passwd

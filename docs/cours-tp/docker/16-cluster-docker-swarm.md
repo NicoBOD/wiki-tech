@@ -39,7 +39,7 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🖥️ **PC hôte** · 🐧 dans une VM : **1️⃣** `docker-hote` (le manager), **2️⃣** `docker-n2`, **3️⃣** `docker-n3` · 🌐 **navigateur** · ✍️ **exercice** · 🛟 **instantané**. Toutes les commandes Docker se tapent en `tssr`, sauf mention de `sudo`. Point de départ : l'instantané `06-registre` (fin de la partie 15).
+    🖥️ **PC hôte** · 🐧 dans une VM : **1️⃣** `docker-hote` (le manager), **2️⃣** `docker-n2`, **3️⃣** `docker-n3` · 🌐 **navigateur** · ✍️ **exercice** · 🛟 **instantané**. Toutes les commandes Docker se tapent en `adminlab`, sauf mention de `sudo`. Point de départ : l'instantané `06-registre` (fin de la partie 15).
 
 <!-- NOTE DE RÉDACTION (non affichée) : le support « 14 TD - Cluster Docker Swarm » du formateur est un brouillon inachevé (création de VM par Vagrant, aucune commande Swarm) : partie écrite d'après la documentation officielle de Docker (swarm-tutorial, ingress, admin_guide, overlay, lue le 2026-11-24) et entièrement exécutée le 2026-11-24 sur trois VM KVM : docker-hote (192.168.8.71, 2 vCPU, 4 Go), docker-n2 (.73) et docker-n3 (.74), 1 vCPU / 1 Go / 20 Go chacune, Debian 13.7 en image cloud, Docker 29.10.0 installé par le script publié en partie 1 (54 s et 48 s). Sorties dans captures/16-*.txt. Mesure de panne : virsh destroy de docker-n3 à 13:00:36 ; nœud « Down » à 13:00:50 ; réplique remplaçante « Starting » à 13:00:55, « Running » à 13:00:57 ; une requête curl par seconde sur 192.168.8.71:8080 : 1 échec sur 70. Mémoire utilisée par un worker avec une réplique : environ 350 Mo sur 967. Les onglets Workstation et VirtualBox (création des VM, réseau) sont écrits d'après la documentation des éditeurs, non testés sur ces hyperviseurs ; le piège de l'adresse 10.0.2.15 commune à toutes les VM en NAT VirtualBox découle du fonctionnement documenté de ce mode. -->
 
@@ -95,7 +95,7 @@ Les deux nouvelles VM sont petites : Docker et quelques conteneurs légers tienn
 | `docker-n2` | 1 | 1 Go | 20 Go | Worker |
 | `docker-n3` | 1 | 1 Go | 20 Go | Worker |
 
-1. 🖥️ Créer les deux VM en refaisant, pour chacune, les **sections 2.1 à 2.4 de la [partie 1](01-decouvrir-et-installer-docker.md#2-creer-la-vm-docker-hote)** : réglages de la VM, installation de Debian 13 sans bureau (comptes `root` et `tssr`, mot de passe du lab), adresse de la VM (sous VirtualBox, **configuration de la carte `enp0s8`**), connexion SSH. Changer seulement le **nom d'hôte** (`docker-n2`, `docker-n3`) et les ressources du tableau. **Ne pas** refaire la section 3 de la partie 1 : Docker s'installe plus bas, par le script. Éteindre `docker-plateforme` si elle tourne : les trois VM du cluster demandent 6 Go.
+1. 🖥️ Créer les deux VM en refaisant, pour chacune, les **sections 2.1 à 2.4 de la [partie 1](01-decouvrir-et-installer-docker.md#2-creer-la-vm-docker-hote)** : réglages de la VM, installation de Debian 13 sans bureau (comptes `root` et `adminlab`, mot de passe du lab), adresse de la VM (sous VirtualBox, **configuration de la carte `enp0s8`**), connexion SSH. Changer seulement le **nom d'hôte** (`docker-n2`, `docker-n3`) et les ressources du tableau. **Ne pas** refaire la section 3 de la partie 1 : Docker s'installe plus bas, par le script. Éteindre `docker-plateforme` si elle tourne : les trois VM du cluster demandent 6 Go.
 
     === "VMware Workstation"
 
@@ -120,17 +120,17 @@ Dans la suite, les adresses sont celles du lab : `192.168.8.71` pour `docker-hot
 
 ### 2.2 Installer Docker sur les deux workers
 
-2️⃣ 3️⃣ Sur **chacune** des deux nouvelles VM, connecté en SSH en `tssr`, devenir `root` avec `su -`, puis :
+2️⃣ 3️⃣ Sur **chacune** des deux nouvelles VM, connecté en SSH en `adminlab`, devenir `root` avec `su -`, puis :
 
-1. Installer `sudo` (que Debian n'installe pas quand `root` a un mot de passe, voir la section 3.2 de la partie 1) et `curl`, et autoriser `tssr` à utiliser `sudo` :
+1. Installer `sudo` (que Debian n'installe pas quand `root` a un mot de passe, voir la section 3.2 de la partie 1) et `curl`, et autoriser `adminlab` à utiliser `sudo` :
 
     ```bash
     apt update
     apt install -y sudo curl
-    usermod -aG sudo tssr
+    usermod -aG sudo adminlab
     ```
 
-2. Installer Docker avec le script de la partie 1, en répondant `oui`, `oui`, `oui`, puis `tssr` :
+2. Installer Docker avec le script de la partie 1, en répondant `oui`, `oui`, `oui`, puis `adminlab` :
 
     ```bash
     curl -fsSLO https://wiki.bodaine.fr/cours-tp/docker/fichiers/installer-docker.sh
@@ -140,7 +140,7 @@ Dans la suite, les adresses sont celles du lab : `192.168.8.71` pour `docker-hot
 
     L'installation prend moins d'une minute.
 
-3. Fermer **toutes** les sessions (`exit` deux fois) et se reconnecter en `tssr` : les groupes `sudo` et `docker` ne sont pris en compte qu'à la connexion. Vérifier : `id -nG` contient `sudo` et `docker`, et `docker version --format '{{.Server.Version}}'` affiche `29.10.0` (ou plus récent).
+3. Fermer **toutes** les sessions (`exit` deux fois) et se reconnecter en `adminlab` : les groupes `sudo` et `docker` ne sont pris en compte qu'à la connexion. Vérifier : `id -nG` contient `sudo` et `docker`, et `docker version --format '{{.Server.Version}}'` affiche `29.10.0` (ou plus récent).
 
 !!! tip "Juste après le démarrage d'une VM neuve"
     Si le script s'arrête sur `Could not get lock /var/lib/apt/lists/lock`, une mise à jour automatique tourne encore : attendre une minute et relancer.

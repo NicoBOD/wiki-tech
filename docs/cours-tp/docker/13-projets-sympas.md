@@ -38,7 +38,7 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `tssr` · 🌐 **navigateur du PC** · ✍️ **exercice**. Point de départ : l'instantané `05-exploitation`. Ces images sont **grosses** (souvent plusieurs Go) : vérifier la place disponible avec `df -h /` et `docker system df` avant de commencer, et supprimer chaque projet après l'avoir essayé.
+    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `adminlab` · 🌐 **navigateur du PC** · ✍️ **exercice**. Point de départ : l'instantané `05-exploitation`. Ces images sont **grosses** (souvent plusieurs Go) : vérifier la place disponible avec `df -h /` et `docker system df` avant de commencer, et supprimer chaque projet après l'avoir essayé.
 
 <!-- NOTE DE RÉDACTION (non affichée) : projets demandés par le formateur (emulatorjs, Kasm Workspaces, dockurr, Open WebUI, Presenton, agent Hermes à la place de Moodle). Testés dans le lab le 2026-11-24 : Kasm (image kasmweb/firefox seule), Open WebUI 0.13.4 relié à l'Ollama du poste du formateur (modèle ministral-3, via un tunnel SSH, réponse obtenue), Hermes Agent v0.23.4 (image téléchargée et démarrée ; assistant de configuration non déroulé, il demande un fournisseur de modèle). Uptime Kuma déployé par Coolify en partie 11. Présentés d'après leur README, non lancés : dockur/windows (ISO Windows de plusieurs Go, 4 Go de RAM par défaut), Presenton, RomM. linuxserver/emulatorjs est archivé depuis juin 2025 : RomM, qui intègre EmulatorJS, le remplace. -->
 
@@ -66,7 +66,7 @@ status: publié
 1. 🐧 Lancer l'image Firefox :
 
     ```bash
-    docker run -d --name kasm-firefox --shm-size=512m -p 6901:6901 -e VNC_PW=TutoDocker2026! kasmweb/firefox:1.18.0-rolling-daily
+    docker run -d --name kasm-firefox --shm-size=512m -p 6901:6901 -e VNC_PW=TutoDocker-Lab1! kasmweb/firefox:1.18.0-rolling-daily
     ```
 
     | Option | Rôle |
@@ -75,7 +75,7 @@ status: publié
     | `-p 6901:6901` | L'interface web, en HTTPS (certificat autosigné) |
     | `-e VNC_PW=…` | Le mot de passe de l'utilisateur `kasm_user` |
 
-2. 🌐 Ouvrir `https://IP-de-la-VM:6901`, accepter l'alerte de certificat, puis se connecter avec `kasm_user` / `TutoDocker2026!`. Firefox s'affiche dans l'onglet : il tourne **dans le conteneur**, sur la VM.
+2. 🌐 Ouvrir `https://IP-de-la-VM:6901`, accepter l'alerte de certificat, puis se connecter avec `kasm_user` / `TutoDocker-Lab1!`. Firefox s'affiche dans l'onglet : il tourne **dans le conteneur**, sur la VM.
 
     ![Firefox affiché dans un onglet du navigateur du PC : barre d'adresse et page d'accueil de Firefox, servis par le conteneur Kasm.](images/13-kasm-firefox.png){ loading=lazy }
     /// caption
@@ -107,7 +107,7 @@ Un modèle de langage demande beaucoup de mémoire et, idéalement, une carte gr
 2. 🖥️ Ouvrir une **seconde** fenêtre PowerShell et y créer le tunnel, à laisser ouvert pendant tout le TP :
 
     ```powershell
-    ssh -N -R 127.0.0.1:11434:127.0.0.1:11434 tssr@IP-de-la-VM
+    ssh -N -R 127.0.0.1:11434:127.0.0.1:11434 adminlab@IP-de-la-VM
     ```
 
     `-R` crée sur la **VM** un port 11434, réservé à la VM elle-même (`127.0.0.1`), qui mène au port 11434 du **PC**, où écoute Ollama. `-N` : pas de terminal, seulement le tunnel. La fenêtre semble figée après le mot de passe : c'est normal.
@@ -134,7 +134,7 @@ Un modèle de langage demande beaucoup de mémoire et, idéalement, une carte gr
     curl -s http://localhost:3000/health
     ```
 
-2. 🌐 Ouvrir `http://IP-de-la-VM:3000`, cliquer sur **Démarrer**, puis créer le **compte administrateur** (le premier compte créé l'est automatiquement) : nom `Administrateur`, e-mail `admin@lab.local`, mot de passe `TutoDocker2026!`, **Créer un compte administrateur**.
+2. 🌐 Ouvrir `http://IP-de-la-VM:3000`, cliquer sur **Démarrer**, puis créer le **compte administrateur** (le premier compte créé l'est automatiquement) : nom `Administrateur`, e-mail `admin@lab.local`, mot de passe `TutoDocker-Lab1!`, **Créer un compte administrateur**.
 3. 🌐 En haut de la conversation, choisir le modèle (par exemple `ministral-3:latest`), et poser une question.
 
     ![Open WebUI en français : la question « En une phrase : qu'est-ce qu'un conteneur Docker ? » et la réponse du modèle ministral-3, suivies de questions de suivi proposées.](images/13-open-webui-ministral.png){ loading=lazy }

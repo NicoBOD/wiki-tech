@@ -38,7 +38,7 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🐧 **VM** `docker-hote`, connecté en `tssr` · 📦 **dans un conteneur** · ✍️ **exercice**. Suite directe de la [partie 5](05-volumes-et-dossiers-montes.md) : seul `portainer` tourne.
+    🐧 **VM** `docker-hote`, connecté en `adminlab` · 📦 **dans un conteneur** · ✍️ **exercice**. Suite directe de la [partie 5](05-volumes-et-dossiers-montes.md) : seul `portainer` tourne.
 
 <!-- NOTE DE RÉDACTION (non affichée) : reprend le TD « 04 Faire une sauvegarde d'un conteneur sous forme d'image » v1 du formateur (mêmes noms : debian_test, debian-ping-nano, ping-terminator, backup-2025-image-debian-ping-nano.tar). Corrections : « docker exec -it debian_test bash -c "…" exit » (le mot exit était collé à la commande) ; ajout de la preuve que commit n'inclut pas les volumes (mesurée : /data vide dans l'image), et de l'historique opaque d'une image commitée. Exemple Dockerfile de l'alternative gardé, renvoyé à la partie 14 pour la pratique. Sorties du lab, 2026-11-24. -->
 
@@ -148,7 +148,7 @@ ls -lh backup-2025-image-debian-ping-nano.tar
 ```
 
 ```text
--rw------- 1 tssr tssr 66M 24 nov.  06:51 backup-2025-image-debian-ping-nano.tar
+-rw------- 1 adminlab adminlab 66M 24 nov.  06:51 backup-2025-image-debian-ping-nano.tar
 ```
 
 Cette archive contient **toutes les couches** de l'image : on peut la copier sur une clé USB ou un autre serveur (`scp`), même sans accès à Internet ni à un registre.

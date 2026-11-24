@@ -38,7 +38,7 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `tssr` · 🌐 **navigateur** du PC · ✍️ **exercice** · 🛟 **instantané**. Point de départ : l'instantané `05-exploitation` (fin de la partie 12), ou la VM telle qu'elle est à la fin de la partie 13.
+    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `adminlab` · 🌐 **navigateur** du PC · ✍️ **exercice** · 🛟 **instantané**. Point de départ : l'instantané `05-exploitation` (fin de la partie 12), ou la VM telle qu'elle est à la fin de la partie 13.
 
 <!-- NOTE DE RÉDACTION (non affichée) : partie construite à partir des supports du formateur 05 (TD Dockerfile), 06 (TP SSH), 07 (correction du TP) et 09 (pile LAMP + WordPress). Tout a été exécuté le 2026-11-24 sur docker-hote (Debian 13.7, Docker 29.10.0), sorties dans captures/14-*.txt du lab. Écarts corrigés : EXPOSE présenté comme documentaire (le TD disait « il faut toujours exposer les ports aussi avec -p », ce qui laissait croire que EXPOSE ouvrait le port) ; -p 80:80 remplacé par -p 8080:80 (port 80 pris par NPM depuis la partie 9 : erreur « port is already allocated » mesurée) ; « RUN : Démarrer le service SSH » du corrigé remplacé par CMD ; `RUN mkdir /var/run/sshd` fait ÉCHOUER la construction sur debian:13 (« File exists », le paquet openssh-server 1:10.0p1-7+deb13u4 crée déjà /run/sshd) → `mkdir -p /run/sshd` ; debian:latest → debian:13 ; mot de passe du corrigé remplacé par celui du lab ; dans le 09, `service mysql start` répond « mysql: unrecognized service » sur Debian 13 (service `mariadb`) et la base n'est pas créée, alors que l'assistant WordPress s'affiche quand même → corrigé, et IF NOT EXISTS ajouté (sinon erreurs à chaque redémarrage) ; LABEL maintainer (adresse e-mail) retiré ; chemin /home/<formateur>/docker/lamp-wordpress remplacé par ~/lamp-wordpress. -->
 
@@ -342,7 +342,7 @@ En partie 3, on a installé SSH **à la main** dans un conteneur Debian, et on a
 **Mission :** écrire un Dockerfile qui construit une image `debian-ssh` à partir de `debian:13`, avec :
 
 - le serveur SSH installé (paquet `openssh-server`) ;
-- un utilisateur **`user`** (avec un dossier personnel et le shell `/bin/bash`), mot de passe `TutoDocker2026!` ;
+- un utilisateur **`user`** (avec un dossier personnel et le shell `/bin/bash`), mot de passe `TutoDocker-Lab1!` ;
 - le port 22 documenté ;
 - le serveur SSH lancé automatiquement, au premier plan, à chaque démarrage du conteneur.
 
@@ -374,7 +374,7 @@ Puis : construire l'image, démarrer un conteneur `debian-ssh-container` qui pub
     RUN mkdir -p /run/sshd
     # Créer un utilisateur nommé « user » avec un mot de passe
     RUN useradd -ms /bin/bash user && \
-        echo 'user:TutoDocker2026!' | chpasswd
+        echo 'user:TutoDocker-Lab1!' | chpasswd
     # Documenter le port du serveur SSH
     EXPOSE 22
     # Démarrer le serveur SSH au premier plan à chaque lancement du conteneur
@@ -389,7 +389,7 @@ Puis : construire l'image, démarrer un conteneur `debian-ssh-container` qui pub
     | `rm -rf /var/lib/apt/lists/*` | Supprime la liste des paquets, inutile une fois l'installation faite, **dans le même `RUN`** (section 2) |
     | `mkdir -p /run/sshd` | `sshd` range des fichiers de travail dans `/run/sshd` et refuse de démarrer si ce dossier manque. Sur Debian 13, le paquet le crée déjà : `-p` évite l'erreur « File exists » si le dossier existe, et le crée sur les systèmes où il manque |
     | `useradd -ms /bin/bash user` | Crée l'utilisateur `user` : `-m` crée son dossier personnel `/home/user`, `-s /bin/bash` choisit son shell |
-    | `echo 'user:TutoDocker2026!' | chpasswd` | `chpasswd` reçoit `utilisateur:motdepasse` et définit le mot de passe. Les guillemets **simples** empêchent le shell d'interpréter le `!` |
+    | `echo 'user:TutoDocker-Lab1!' | chpasswd` | `chpasswd` reçoit `utilisateur:motdepasse` et définit le mot de passe. Les guillemets **simples** empêchent le shell d'interpréter le `!` |
     | `EXPOSE 22` | Documente le port de SSH. **N'ouvre rien** : la publication se fait avec `-p` au lancement |
     | `CMD ["/usr/sbin/sshd", "-D"]` | **Commande de démarrage** du conteneur (ce n'est pas un `RUN`, qui s'exécuterait une seule fois, pendant la construction). `-D` (*don't detach*) garde `sshd` au premier plan : il devient le processus principal et le conteneur reste en vie |
 
@@ -438,7 +438,7 @@ Puis : construire l'image, démarrer un conteneur `debian-ssh-container` qui pub
     ssh user@localhost -p 54321
     ```
 
-    Répondre `yes` à la question sur l'empreinte du serveur (première connexion), puis taper le mot de passe `TutoDocker2026!`. Dans la session :
+    Répondre `yes` à la question sur l'empreinte du serveur (première connexion), puis taper le mot de passe `TutoDocker-Lab1!`. Dans la session :
 
     ```bash
     whoami; hostname; cat /etc/debian_version; id
@@ -467,7 +467,7 @@ Puis : construire l'image, démarrer un conteneur `debian-ssh-container` qui pub
     ```
 
     ```text
-    RUN /bin/sh -c useradd -ms /bin/bash user &&     echo 'user:TutoDocker2026!' | chpasswd # buildkit
+    RUN /bin/sh -c useradd -ms /bin/bash user &&     echo 'user:TutoDocker-Lab1!' | chpasswd # buildkit
     ```
 
     Toute personne qui récupère l'image lit le mot de passe. Même chose pour un fichier copié dans l'image : le script `init.sh` de la section 5 contient le mot de passe de la base, lisible par `docker run --rm --entrypoint cat lamp-wordpress /init.sh`. Pour un lab, c'est acceptable ; pour une image partagée (partie 15), jamais. En production, les secrets se passent **au lancement** (variables d'environnement, fichiers montés, *secrets* Docker), pas dans l'image. Et, comme en partie 3, un serveur SSH dans un conteneur reste une exception : pour administrer un conteneur, `docker exec` suffit.
@@ -546,7 +546,7 @@ Le script doit démarrer MariaDB, créer la base et l'utilisateur de WordPress, 
     service mariadb start
     # Crée la base et l'utilisateur de WordPress (IF NOT EXISTS : pas d'erreur au redémarrage du conteneur)
     mysql -e "CREATE DATABASE IF NOT EXISTS wordpress DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-    mysql -e "CREATE USER IF NOT EXISTS 'wordpress'@'localhost' IDENTIFIED BY 'TutoDocker2026!';"
+    mysql -e "CREATE USER IF NOT EXISTS 'wordpress'@'localhost' IDENTIFIED BY 'TutoDocker-Lab1!';"
     mysql -e "GRANT ALL PRIVILEGES ON wordpress.* TO 'wordpress'@'localhost';"
     mysql -e "FLUSH PRIVILEGES;"
     # Démarre Apache au premier plan : c'est lui qui garde le conteneur en vie
@@ -633,7 +633,7 @@ Le script doit démarrer MariaDB, créer la base et l'utilisateur de WordPress, 
     |---|---|
     | Nom de la base de données | `wordpress` |
     | Identifiant | `wordpress` |
-    | Mot de passe | `TutoDocker2026!` |
+    | Mot de passe | `TutoDocker-Lab1!` |
     | Adresse de la base de données | `localhost` (la base est **dans le même conteneur**) |
     | Préfixe des tables | `wp_` (ne pas changer) |
 
@@ -649,7 +649,7 @@ Le script doit démarrer MariaDB, créer la base et l'utilisateur de WordPress, 
     WordPress joint bien la base créée par `init.sh`
     ///
 
-4. 🌐 Cliquer sur **Lancer l'installation**, puis remplir **Titre du site** (au choix), **Identifiant** `admin`, **Mot de passe** `TutoDocker2026!` (WordPress le juge « Forte ») et **Votre e-mail** avec une adresse fictive (`admin@lab.local`). Cliquer sur **Installer WordPress** : le message « Quel succès ! » confirme l'installation.
+4. 🌐 Cliquer sur **Lancer l'installation**, puis remplir **Titre du site** (au choix), **Identifiant** `admin`, **Mot de passe** `TutoDocker-Lab1!` (WordPress le juge « Forte ») et **Votre e-mail** avec une adresse fictive (`admin@lab.local`). Cliquer sur **Installer WordPress** : le message « Quel succès ! » confirme l'installation.
 
 ### 5.5 Pourquoi on ne fait pas ainsi en production
 

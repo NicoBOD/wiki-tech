@@ -149,9 +149,9 @@ Docker Desktop est présenté en [partie 4](04-portainer-et-lazydocker.md). Un a
 | Carte réseau principale (VirtualBox seulement) | La première carte, `enp0s3` |
 | Nom de machine | `docker-hote` |
 | Domaine | laisser vide |
-| Mot de passe du superutilisateur (`root`) | `TutoDocker2026!` |
-| Nom complet et identifiant du nouvel utilisateur | `tssr` et `tssr` |
-| Mot de passe de `tssr` | `TutoDocker2026!` |
+| Mot de passe du superutilisateur (`root`) | `TutoDocker-Lab1!` |
+| Nom complet et identifiant du nouvel utilisateur | `adminlab` et `adminlab` |
+| Mot de passe de `adminlab` | `TutoDocker-Lab1!` |
 | Partitionnement | Assisté, utiliser un disque entier, tout dans une seule partition |
 | Sélection des logiciels | **Décocher** « environnement de bureau Debian » et « GNOME » ; **cocher** « serveur SSH » et « utilitaires usuels du système » |
 | Programme de démarrage GRUB | Oui, sur le disque proposé (`/dev/sda`, ou `/dev/nvme0n1` sur certaines VM Workstation) |
@@ -189,10 +189,10 @@ ip -br a
 
 ### 2.4 Se connecter en SSH depuis le PC
 
-🖥️ Ouvrir **PowerShell** sur le PC et se connecter avec le compte `tssr` (remplacer `IP-de-la-VM` par l'adresse notée) :
+🖥️ Ouvrir **PowerShell** sur le PC et se connecter avec le compte `adminlab` (remplacer `IP-de-la-VM` par l'adresse notée) :
 
 ```powershell
-ssh tssr@IP-de-la-VM
+ssh adminlab@IP-de-la-VM
 ```
 
 À la première connexion, répondre `yes` pour accepter l'empreinte de la VM, puis taper le mot de passe (rien ne s'affiche pendant la saisie, c'est normal). À partir de maintenant, toutes les commandes 🐧 peuvent se taper dans cette fenêtre, où le **copier-coller** fonctionne.
@@ -209,36 +209,36 @@ Debian propose son propre paquet Docker, `docker.io`. Il s'installe en une comma
 !!! danger "Ne pas mélanger les deux"
     Les paquets `docker.io` (Debian) et `docker-ce` (Docker) **entrent en conflit**. Si `docker.io` a déjà été installé sur une machine, le désinstaller d'abord : `apt remove docker.io docker-compose docker-doc podman-docker containerd runc`.
 
-### 3.2 Donner les droits d'administration à `tssr`
+### 3.2 Donner les droits d'administration à `adminlab`
 
-Quand un mot de passe `root` est défini pendant l'installation, Debian **n'installe pas** `sudo`. Or toutes les commandes de la documentation Docker commencent par `sudo`. On l'installe donc, et on autorise `tssr` à s'en servir.
+Quand un mot de passe `root` est défini pendant l'installation, Debian **n'installe pas** `sudo`. Or toutes les commandes de la documentation Docker commencent par `sudo`. On l'installe donc, et on autorise `adminlab` à s'en servir.
 
-1. 🖥️ Démarrer la VM, puis s'y connecter en SSH depuis PowerShell : `ssh tssr@IP-de-la-VM`.
+1. 🖥️ Démarrer la VM, puis s'y connecter en SSH depuis PowerShell : `ssh adminlab@IP-de-la-VM`.
 2. 🐧 Devenir **`root`** avec `su -` (le mot de passe demandé est celui de `root`), puis :
 
     ```bash
     apt update
     apt install -y sudo
-    usermod -aG sudo tssr
+    usermod -aG sudo adminlab
     ```
 
-3. 🐧 Taper `exit` **deux fois** : la première fois pour quitter `root` et revenir à `tssr`, la seconde pour fermer la session SSH. Les groupes d'un utilisateur ne sont lus qu'à la **connexion** : une session ouverte avant le `usermod` ne connaît pas encore le groupe `sudo`.
-4. 🖥️ Se reconnecter : `ssh tssr@IP-de-la-VM`.
-5. 🐧 Vérifier les groupes **de la session en cours**, puis que `sudo` fonctionne (il demande le mot de passe de `tssr`) :
+3. 🐧 Taper `exit` **deux fois** : la première fois pour quitter `root` et revenir à `adminlab`, la seconde pour fermer la session SSH. Les groupes d'un utilisateur ne sont lus qu'à la **connexion** : une session ouverte avant le `usermod` ne connaît pas encore le groupe `sudo`.
+4. 🖥️ Se reconnecter : `ssh adminlab@IP-de-la-VM`.
+5. 🐧 Vérifier les groupes **de la session en cours**, puis que `sudo` fonctionne (il demande le mot de passe de `adminlab`) :
 
     ```bash
     id -nG
     sudo -v
     ```
 
-    La liste affichée par `id -nG` doit **contenir** `sudo` (l'installateur de Debian ajoute aussi `tssr` à d'autres groupes comme `cdrom`, `audio` ou `video` : c'est normal). `sudo -v` ne doit afficher aucune erreur.
+    La liste affichée par `id -nG` doit **contenir** `sudo` (l'installateur de Debian ajoute aussi `adminlab` à d'autres groupes comme `cdrom`, `audio` ou `video` : c'est normal). `sudo -v` ne doit afficher aucune erreur.
 
-    !!! failure "`tssr n'apparaît pas dans le fichier sudoers`"
-        La session a été ouverte **avant** l'ajout au groupe `sudo`. Fermer **toutes** les sessions de `tssr` (y compris celle d'où l'on avait tapé `su -`) et se reconnecter.
+    !!! failure "`adminlab n'apparaît pas dans le fichier sudoers`"
+        La session a été ouverte **avant** l'ajout au groupe `sudo`. Fermer **toutes** les sessions de `adminlab` (y compris celle d'où l'on avait tapé `su -`) et se reconnecter.
 
 ### 3.3 Ajouter le dépôt de Docker
 
-🐧 En `tssr`, taper les commandes **une par une** (le mot de passe de `tssr` est demandé au premier `sudo`) :
+🐧 En `adminlab`, taper les commandes **une par une** (le mot de passe de `adminlab` est demandé au premier `sudo`) :
 
 ```bash
 # Outils nécessaires pour télécharger en HTTPS
@@ -357,7 +357,7 @@ sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin d
 
 ### 4.1 Le constat
 
-🐧 En `tssr`, sans `sudo` :
+🐧 En `adminlab`, sans `sudo` :
 
 ```bash
 docker ps
@@ -377,12 +377,12 @@ ls -l /var/run/docker.sock
 srw-rw---- 1 root docker 0 24 nov.  00:07 /var/run/docker.sock
 ```
 
-### 4.2 Ajouter `tssr` au groupe `docker`
+### 4.2 Ajouter `adminlab` au groupe `docker`
 
-1. 🐧 Ajouter `tssr` au groupe :
+1. 🐧 Ajouter `adminlab` au groupe :
 
     ```bash
-    sudo usermod -aG docker tssr
+    sudo usermod -aG docker adminlab
     ```
 
 2. 🐧 Se **déconnecter** (`exit`) puis se **reconnecter** en SSH : comme pour `sudo`, le nouveau groupe n'est pris en compte qu'à la connexion suivante.
@@ -394,11 +394,11 @@ srw-rw---- 1 root docker 0 24 nov.  00:07 /var/run/docker.sock
     ```
 
     ```text
-    tssr … sudo … docker
+    adminlab … sudo … docker
     CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
     ```
 
-    La liste des conteneurs en marche est vide, mais la commande fonctionne : `tssr` parle maintenant à Docker sans `sudo`.
+    La liste des conteneurs en marche est vide, mais la commande fonctionne : `adminlab` parle maintenant à Docker sans `sudo`.
 
 !!! danger "Le groupe `docker` vaut le compte `root`"
     Être membre du groupe `docker`, c'est pouvoir demander à Docker de **monter tout le disque de la machine** dans un conteneur dont on est `root`. Une seule commande, sans aucun mot de passe, suffit pour lire le fichier des mots de passe chiffrés de la VM :
@@ -440,7 +440,7 @@ Cette section est **facultative** : elle repart d'une Debian neuve pour essayer 
 
 Le script [`installer-docker.sh`](fichiers/installer-docker.sh) reprend **exactement** les étapes de la section 3, avec des questions à chaque étape et des messages en couleur. Il fonctionne en `root` (même sans `sudo` installé) ou avec `sudo`.
 
-1. 🖥️ Revenir à l'instantané `00-debian-installee` (VM éteinte), redémarrer la VM, s'y connecter en SSH en `tssr`, puis 🐧 devenir `root` avec `su -` (SSH refuse la connexion directe de `root` par mot de passe).
+1. 🖥️ Revenir à l'instantané `00-debian-installee` (VM éteinte), redémarrer la VM, s'y connecter en SSH en `adminlab`, puis 🐧 devenir `root` avec `su -` (SSH refuse la connexion directe de `root` par mot de passe).
 2. 🐧 Télécharger le script, puis **le lire** avant de l'exécuter :
 
     ```bash
@@ -456,7 +456,7 @@ Le script [`installer-docker.sh`](fichiers/installer-docker.sh) reprend **exacte
     ./installer-docker.sh
     ```
 
-    Répondre `oui` aux trois questions, puis `tssr` quand le script demande le nom de l'utilisateur :
+    Répondre `oui` aux trois questions, puis `adminlab` quand le script demande le nom de l'utilisateur :
 
     ```text
     [INFO] Voulez-vous supprimer les anciennes versions de Docker ? (oui/non)
@@ -466,10 +466,10 @@ Le script [`installer-docker.sh`](fichiers/installer-docker.sh) reprend **exacte
     Hello from Docker!
     [SUCCÈS] Docker installé avec succès.
     [INFO] Voulez-vous ajouter un utilisateur au groupe docker ? (oui/non)
-    [SUCCÈS] L'utilisateur tssr a été ajouté au groupe docker. Il doit se déconnecter et se reconnecter pour que ce soit pris en compte.
+    [SUCCÈS] L'utilisateur adminlab a été ajouté au groupe docker. Il doit se déconnecter et se reconnecter pour que ce soit pris en compte.
     ```
 
-    Le script n'installe pas `sudo` : si on l'utilise sur une machine neuve, refaire la [section 3.2](#32-donner-les-droits-dadministration-a-tssr) pour que `tssr` puisse administrer la machine.
+    Le script n'installe pas `sudo` : si on l'utilise sur une machine neuve, refaire la [section 3.2](#32-donner-les-droits-dadministration-a-adminlab) pour que `adminlab` puisse administrer la machine.
 
 !!! failure "Dépannage du script"
     - **`Permission denied`** au lancement de `./installer-docker.sh` : le fichier n'est pas exécutable. Vérifier avec `ls -l installer-docker.sh` (il doit y avoir des `x`), puis `chmod +x installer-docker.sh`. On peut aussi le lancer sans ce droit : `bash installer-docker.sh`.
@@ -482,7 +482,7 @@ Le script [`installer-docker.sh`](fichiers/installer-docker.sh) reprend **exacte
 ## 6. Vérifier son lab
 
 !!! success "Vérifier son lab"
-    🐧 En `tssr`, dans une **nouvelle** session SSH :
+    🐧 En `adminlab`, dans une **nouvelle** session SSH :
 
     ```bash
     docker --version          # Docker version 29.x
@@ -496,7 +496,7 @@ Le script [`installer-docker.sh`](fichiers/installer-docker.sh) reprend **exacte
     ```text
     Docker version 29.10.0, build fdd4b8e
     enabled
-    tssr … sudo … docker
+    adminlab … sudo … docker
     Hello from Docker!
     ```
 
@@ -514,7 +514,7 @@ Le script [`installer-docker.sh`](fichiers/installer-docker.sh) reprend **exacte
     d) une image téléchargeable depuis Docker Hub.
 2. Pourquoi un conteneur démarre-t-il beaucoup plus vite qu'une VM ?
 3. Quelle commande installe Docker **depuis les dépôts de Debian** ? Pourquoi préfère-t-on le dépôt de Docker ?
-4. À quoi sert `sudo usermod -aG docker tssr` ? Quel risque cette commande fait-elle prendre ?
+4. À quoi sert `sudo usermod -aG docker adminlab` ? Quel risque cette commande fait-elle prendre ?
 5. Comment vérifier que le service Docker est en marche et qu'il démarrera avec la machine ?
 6. Pourquoi faut-il se déconnecter puis se reconnecter après avoir ajouté un utilisateur à un groupe ?
 
@@ -522,7 +522,7 @@ Le script [`installer-docker.sh`](fichiers/installer-docker.sh) reprend **exacte
     1. **b)**. Un conteneur est une image qui tourne. Il ne contient **pas** de système d'exploitation complet (réponse a) : il partage le noyau de la machine. Docker ne crée pas de VM (réponse c), et ce qu'on télécharge depuis Docker Hub, ce sont des **images**, pas des conteneurs (réponse d).
     2. Il n'y a **pas de système d'exploitation à démarrer** : le noyau de la machine tourne déjà. Démarrer un conteneur, c'est seulement lancer un programme dans un espace isolé (espaces de noms et groupes de contrôle).
     3. `apt install docker.io`. Le dépôt de Docker fournit la **dernière version** (29.10 contre 26.1 dans Debian 13), ses correctifs au fil de l'eau, et le module Docker Compose.
-    4. Elle permet à `tssr` d'utiliser Docker **sans `sudo`**, parce que le groupe `docker` a accès au socket `/var/run/docker.sock`. Le risque : tout membre du groupe `docker` peut devenir **`root`** sur la machine (par exemple en montant `/` dans un conteneur). On n'y met que des administrateurs de confiance.
+    4. Elle permet à `adminlab` d'utiliser Docker **sans `sudo`**, parce que le groupe `docker` a accès au socket `/var/run/docker.sock`. Le risque : tout membre du groupe `docker` peut devenir **`root`** sur la machine (par exemple en montant `/` dans un conteneur). On n'y met que des administrateurs de confiance.
     5. `sudo systemctl status docker` : la ligne `Active: active (running)` montre qu'il tourne, et le mot `enabled` sur la ligne `Loaded` qu'il démarrera avec la machine. `systemctl is-enabled docker` répond directement `enabled`.
     6. La liste des groupes d'un utilisateur est **calculée à la connexion** et transmise à tous les programmes de la session. Une session déjà ouverte garde l'ancienne liste.
 

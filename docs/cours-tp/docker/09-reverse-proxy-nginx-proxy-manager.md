@@ -40,7 +40,7 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `tssr` · 🌐 **navigateur du PC** · ✍️ **exercice**. Point de départ : l'instantané `03-fin-jour-2`. Les ports **80**, **81** et **443** de la VM doivent être libres : `docker ps` ne doit montrer que `portainer`.
+    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `adminlab` · 🌐 **navigateur du PC** · ✍️ **exercice**. Point de départ : l'instantané `03-fin-jour-2`. Les ports **80**, **81** et **443** de la VM doivent être libres : `docker ps` ne doit montrer que `portainer`.
 
 <!-- NOTE DE RÉDACTION (non affichée) : reprend le TD « 11 Reverse proxy NPM dans Docker » v1.2 et le TD/TP « 12 Déplacer un conteneur Portainer derrière un reverse proxy » du formateur. Mises à jour vérifiées dans le lab (NPM 2.17.1, 2026-11-24) : plus d'identifiants par défaut (admin@example.com / changeme) : NPM demande de créer le compte administrateur au premier accès ; interface disponible en français ; variable TZ de la documentation ajoutée. Domaines : *.docker.test (TLD réservé aux tests, RFC 2606) au lieu de sous-domaines de tutotech.org. Conteneur Portainer : nom « portainer » du jour 1 au lieu de « portainer-container » (même déroulé). Correction : « docker docker rm -f » (doublon). Captures prises avec la résolution forcée du navigateur, le fichier hosts du PC hôte du lab n'a pas été modifié. -->
 
@@ -176,7 +176,7 @@ La ligne `Envoi d'une requête 'ping' sur portainer.docker.test [IP-de-la-VM] �
     |---|---|
     | **Nom complet** | `Administrateur` |
     | **Adresse e-mail** | `admin@lab.local` (ne sert que d'identifiant de connexion : elle n'est jamais utilisée sur le réseau) |
-    | **Nouveau mot de passe** | `TutoDocker2026!` |
+    | **Nouveau mot de passe** | `TutoDocker-Lab1!` |
 
 4. 🌐 Cliquer sur **Enregistrer** : le **Tableau de bord** s'affiche, sans aucun hôte pour l'instant.
 
@@ -309,7 +309,7 @@ Essayer seul d'abord ; le corrigé détaillé est replié ci-dessous.
 
     NPM est maintenant sur ses deux réseaux.
 
-    **5. Vérifier.** 🌐 Rafraîchir `http://portainer.docker.test` (si l'erreur 502 persiste, attendre quelques secondes : Portainer démarre). La page de connexion de Portainer s'affiche, et les identifiants `admin` / `TutoDocker2026!` fonctionnent : le volume a gardé le compte.
+    **5. Vérifier.** 🌐 Rafraîchir `http://portainer.docker.test` (si l'erreur 502 persiste, attendre quelques secondes : Portainer démarre). La page de connexion de Portainer s'affiche, et les identifiants `admin` / `TutoDocker-Lab1!` fonctionnent : le volume a gardé le compte.
 
     ![Page de connexion de Portainer, « Log in to your account », avec les champs Username et Password et le bouton Login.](images/09-portainer-par-son-nom.png){ loading=lazy }
     /// caption

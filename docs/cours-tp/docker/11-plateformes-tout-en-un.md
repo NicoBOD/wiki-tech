@@ -138,7 +138,7 @@ Coolify prend la main sur Docker et sur les ports 80, 443, 8000, 6001 et 6002 de
 
 ## 4. Créer le compte et connecter le serveur
 
-1. 🌐 Ouvrir `http://IP-de-plateforme:8000` : la page **Register** (inscription) s'affiche. Remplir **Name** (`Administrateur`), **Email** (`admin@lab.local`), **Password** et **Confirm Password** (`TutoDocker2026!`), puis **Create Account**.
+1. 🌐 Ouvrir `http://IP-de-plateforme:8000` : la page **Register** (inscription) s'affiche. Remplir **Name** (`Administrateur`), **Email** (`admin@lab.local`), **Password** et **Confirm Password** (`TutoDocker-Lab1!`), puis **Create Account**.
 2. 🌐 L'assistant **Welcome to Coolify** s'ouvre : **Continue**.
 3. 🌐 **Choose Server Type** (type de serveur) : choisir **This machine** (cette machine). Coolify déploiera sur la VM où il est installé ; il saurait aussi piloter d'autres serveurs en SSH, ou en créer chez des hébergeurs.
 
@@ -195,7 +195,7 @@ Coolify publie chaque service sous un **nom de domaine**, derrière son reverse 
     Uptime Kuma, déployé et publié par Coolify, sans une ligne de configuration.
     ///
 
-✍️ **Exercice** — Terminer l'installation d'Uptime Kuma (base **SQLite**, compte `admin` / `TutoDocker2026!`), puis ajouter une **sonde** (*monitor*) de type **HTTP(s)** qui surveille Nginx Proxy Manager sur `docker-hote` (`http://IP-de-la-VM:81`). Éteindre `docker-hote` et regarder la sonde passer au rouge.
+✍️ **Exercice** — Terminer l'installation d'Uptime Kuma (base **SQLite**, compte `admin` / `TutoDocker-Lab1!`), puis ajouter une **sonde** (*monitor*) de type **HTTP(s)** qui surveille Nginx Proxy Manager sur `docker-hote` (`http://IP-de-la-VM:81`). Éteindre `docker-hote` et regarder la sonde passer au rouge.
 
 ??? success "Réponse"
     Dans Uptime Kuma : **Ajouter une nouvelle sonde**, **Type de sonde** **HTTP(s)**, URL `http://IP-de-la-VM:81`, intervalle par défaut (60 s), **Sauvegarder**. La sonde est verte (**En ligne**) tant que NPM répond ; une à deux minutes après l'extinction de `docker-hote`, elle passe **Hors ligne** et l'historique montre la coupure. On pourrait y ajouter une notification (courriel, Discord, Telegram…).

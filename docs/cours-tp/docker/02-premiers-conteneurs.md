@@ -38,7 +38,7 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `tssr` · 📦 **dans un conteneur** · 🌐 **navigateur du PC** · ✍️ **exercice**. Point de départ : l'instantané `01-docker-installe`. 🖥️ Démarrer la VM, puis s'y connecter en SSH : `ssh tssr@IP-de-la-VM`.
+    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `adminlab` · 📦 **dans un conteneur** · 🌐 **navigateur du PC** · ✍️ **exercice**. Point de départ : l'instantané `01-docker-installe`. 🖥️ Démarrer la VM, puis s'y connecter en SSH : `ssh adminlab@IP-de-la-VM`.
 
 <!-- NOTE DE RÉDACTION (non affichée) : reprend la section « Utiliser les commandes Docker de base » et l'aide-mémoire du cours « 00 Théorie Docker » du formateur, réorganisés en TP. Correction : « docker run -it ubuntu /bin/ » (commande tronquée) → « docker run -it debian:13 bash ». Sorties recopiées de la VM de test (Docker 29.10.0, 2026-11-24) ; la colonne EXTRA et les colonnes DISK USAGE / CONTENT SIZE de « docker images » sont propres à Docker 29. -->
 
@@ -524,7 +524,7 @@ Conteneurs arrêtés et images inutilisées s'accumulent vite.
 ## 9. Vérifier son lab
 
 !!! success "Vérifier son lab"
-    🐧 En `tssr` :
+    🐧 En `adminlab` :
 
     ```bash
     docker run -d --name controle -p 8080:80 nginx

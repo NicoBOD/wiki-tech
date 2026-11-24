@@ -159,24 +159,24 @@ Ce lab est **pédagogique** : les mots de passe sont écrits ici volontairement 
 
 | Où | Compte | Mot de passe | Créé en |
 |---|---|---|---|
-| VM `docker-hote` | `root` (administrateur) | `TutoDocker2026!` | Partie 1 |
-| VM `docker-hote` | `tssr` (utilisateur, membre des groupes `sudo` et `docker`) | `TutoDocker2026!` | Partie 1 |
-| Conteneur `debian` (SSH) | `root` | `TutoDocker2026!` | Partie 3 |
-| Portainer | `admin` | `TutoDocker2026!` | Partie 4 |
-| MariaDB (essais de la partie 5) | `root` | `TutoDocker2026!` | Partie 5 |
-| MariaDB de Nextcloud | `root`, et `nextcloud` (base `nextcloud`) | `TutoDocker2026!` | Partie 8 |
-| Nextcloud | `admin` | `TutoDocker2026!` | Parties 8 et 10 |
-| Nginx Proxy Manager | `admin@lab.local` | `TutoDocker2026!` | Partie 9 |
-| Coolify | `admin@lab.local` | `TutoDocker2026!` | Partie 11 |
-| Uptime Kuma | `admin` | `TutoDocker2026!` | Partie 11 |
-| Kasm (Firefox) | `kasm_user` | `TutoDocker2026!` | Partie 13 |
-| Open WebUI | `admin@lab.local` | `TutoDocker2026!` | Partie 13 |
-| VM `docker-plateforme` | `root` et `tssr` | `TutoDocker2026!` | Partie 11 |
-| MariaDB de WordPress | `root`, et `wordpress` (base `wordpress`) | `TutoDocker2026!` | Partie 10 |
-| Conteneur `debian-ssh-container` (SSH, port 54321) | `user` | `TutoDocker2026!` | Partie 14 |
-| WordPress de l'image LAMP (base `wordpress`, puis site) | `wordpress` (base), `admin` (site) | `TutoDocker2026!` | Partie 14 |
+| VM `docker-hote` | `root` (administrateur) | `TutoDocker-Lab1!` | Partie 1 |
+| VM `docker-hote` | `adminlab` (utilisateur, membre des groupes `sudo` et `docker`) | `TutoDocker-Lab1!` | Partie 1 |
+| Conteneur `debian` (SSH) | `root` | `TutoDocker-Lab1!` | Partie 3 |
+| Portainer | `admin` | `TutoDocker-Lab1!` | Partie 4 |
+| MariaDB (essais de la partie 5) | `root` | `TutoDocker-Lab1!` | Partie 5 |
+| MariaDB de Nextcloud | `root`, et `nextcloud` (base `nextcloud`) | `TutoDocker-Lab1!` | Partie 8 |
+| Nextcloud | `admin` | `TutoDocker-Lab1!` | Parties 8 et 10 |
+| Nginx Proxy Manager | `admin@lab.local` | `TutoDocker-Lab1!` | Partie 9 |
+| Coolify | `admin@lab.local` | `TutoDocker-Lab1!` | Partie 11 |
+| Uptime Kuma | `admin` | `TutoDocker-Lab1!` | Partie 11 |
+| Kasm (Firefox) | `kasm_user` | `TutoDocker-Lab1!` | Partie 13 |
+| Open WebUI | `admin@lab.local` | `TutoDocker-Lab1!` | Partie 13 |
+| VM `docker-plateforme` | `root` et `adminlab` | `TutoDocker-Lab1!` | Partie 11 |
+| MariaDB de WordPress | `root`, et `wordpress` (base `wordpress`) | `TutoDocker-Lab1!` | Partie 10 |
+| Conteneur `debian-ssh-container` (SSH, port 54321) | `user` | `TutoDocker-Lab1!` | Partie 14 |
+| WordPress de l'image LAMP (base `wordpress`, puis site) | `wordpress` (base), `admin` (site) | `TutoDocker-Lab1!` | Partie 14 |
 | Docker Hub | son propre compte, avec un **jeton d'accès** | personnel, jamais publié | Partie 15 |
-| VM `docker-n2` et `docker-n3` | `root` et `tssr` | `TutoDocker2026!` | Partie 16 |
+| VM `docker-n2` et `docker-n3` | `root` et `adminlab` | `TutoDocker-Lab1!` | Partie 16 |
 
 !!! info "Pourquoi un mot de passe aussi long ?"
     Portainer refuse les mots de passe de **moins de 12 caractères**. Plutôt que d'avoir un mot de passe différent par logiciel, le lab en utilise un seul, assez long pour être accepté partout. Sur un clavier AZERTY, le `!` se tape **sans** ++shift++, sur la touche à gauche de la touche ++shift++ de droite.
@@ -243,7 +243,7 @@ Dans les TP, chaque action précise où elle se fait :
 Les commandes à taper sont dans des blocs de code ; le texte après `#` est un commentaire, il ne se tape pas. Les interfaces qui n'existent qu'en anglais (Portainer, Coolify…) ont leurs menus écrits **en gras, en anglais**, avec une traduction entre parenthèses.
 
 !!! tip "Travailler en SSH depuis le PC"
-    La console de l'hyperviseur ne permet pas toujours le copier-coller. Mieux vaut ouvrir **PowerShell** sur le PC et se connecter à la VM en SSH : `ssh tssr@IP-de-la-VM`. Le copier-coller fonctionne alors normalement (clic droit pour coller dans le terminal Windows).
+    La console de l'hyperviseur ne permet pas toujours le copier-coller. Mieux vaut ouvrir **PowerShell** sur le PC et se connecter à la VM en SSH : `ssh adminlab@IP-de-la-VM`. Le copier-coller fonctionne alors normalement (clic droit pour coller dans le terminal Windows).
 
 !!! info "S'entraîner en ligne"
     Le bac à sable en ligne historique de Docker, *Play with Docker*, a fermé le 1er mars 2026. Pour réviser hors du lab, des plateformes comme [Killercoda](https://killercoda.com/) ou [iximiuz Labs](https://labs.iximiuz.com/) proposent des terminaux Docker dans le navigateur (compte gratuit requis). Elles ne sont pas nécessaires pour suivre le parcours.

@@ -38,7 +38,7 @@ status: publié
 ---
 
 !!! info "Convention de lecture"
-    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `tssr` · 📦 **dans un conteneur** · ✍️ **exercice**. Suite de la partie 6 : seul `portainer` tourne.
+    🖥️ **PC hôte** · 🐧 **VM** `docker-hote`, connecté en `adminlab` · 📦 **dans un conteneur** · ✍️ **exercice**. Suite de la partie 6 : seul `portainer` tourne.
 
 <!-- NOTE DE RÉDACTION (non affichée) : reprend la section « Les réseaux Docker » du cours « 00 Théorie Docker » du formateur (bridge, host, none, overlay, macvlan, réseaux personnalisés, tableau de synthèse), transformée en TP. Corrections : « docker run --rm --network=none busybox ifconfig » remplacé par la lecture de /proc/net/dev (sortie mesurée) ; macvlan : ajout de la limite « la VM ne joint pas ses propres conteneurs macvlan » (mesurée dans le lab : joignable depuis le PC, pas depuis la VM) et du mode promiscuité nécessaire dans les hyperviseurs ; ajout de la publication sur 127.0.0.1 et du contournement du pare-feu (règles DNAT de la chaîne DOCKER relevées). Overlay seulement cité : pratiqué en partie 16 (Swarm). Sorties du lab, 2026-11-24. -->
 
@@ -430,13 +430,13 @@ docker rm -f prive
 
 ## 8. Exercice
 
-✍️ Créer deux réseaux, `front` et `back`. Lancer un conteneur `bdd` (image `mariadb:11.8`, mot de passe root `TutoDocker2026!`) sur `back` seulement, et un conteneur `web` (image `nginx`) sur `front` **et** `back`. Lancer enfin un conteneur jetable `intrus` sur `front` seulement. Vérifier que `web` résout le nom `bdd`, et que `intrus`, lui, ne le résout pas.
+✍️ Créer deux réseaux, `front` et `back`. Lancer un conteneur `bdd` (image `mariadb:11.8`, mot de passe root `TutoDocker-Lab1!`) sur `back` seulement, et un conteneur `web` (image `nginx`) sur `front` **et** `back`. Lancer enfin un conteneur jetable `intrus` sur `front` seulement. Vérifier que `web` résout le nom `bdd`, et que `intrus`, lui, ne le résout pas.
 
 ??? success "Réponse"
     ```bash
     docker network create front
     docker network create back
-    docker run -d --name bdd --network back -e MARIADB_ROOT_PASSWORD='TutoDocker2026!' mariadb:11.8
+    docker run -d --name bdd --network back -e MARIADB_ROOT_PASSWORD='TutoDocker-Lab1!' mariadb:11.8
     docker run -d --name web --network front nginx
     docker network connect back web
     docker exec web getent hosts bdd                                   # répond : 172.x.x.x bdd
