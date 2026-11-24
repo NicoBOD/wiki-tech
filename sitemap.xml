@@ -237,6 +237,18 @@
          <lastmod>2026-11-24</lastmod>
     </url>
     <url>
+         <loc>https://wiki.bodaine.fr/cours-tp/docker/09-reverse-proxy-nginx-proxy-manager/</loc>
+         <lastmod>2026-11-24</lastmod>
+    </url>
+    <url>
+         <loc>https://wiki.bodaine.fr/cours-tp/docker/10-nextcloud-https-derriere-le-proxy/</loc>
+         <lastmod>2026-11-24</lastmod>
+    </url>
+    <url>
+         <loc>https://wiki.bodaine.fr/cours-tp/docker/11-plateformes-tout-en-un/</loc>
+         <lastmod>2026-11-24</lastmod>
+    </url>
+    <url>
          <loc>https://wiki.bodaine.fr/cours-tp/pfsense-ha/</loc>
          <lastmod>2026-11-24</lastmod>
     </url>

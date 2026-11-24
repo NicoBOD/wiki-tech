@@ -2721,6 +2721,8 @@
       
         
       
+        
+      
     
     
     
@@ -2896,6 +2898,68 @@
     
   
     Jour 2 — Données, réseaux et Docker Compose
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="09-reverse-proxy-nginx-proxy-manager/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jour 3 — Publier des services
   
 
     
@@ -3448,21 +3512,21 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align: center;">9. Un reverse proxy avec Nginx Proxy Manager</td>
+<td style="text-align: center;"><a href="09-reverse-proxy-nginx-proxy-manager/">9. Un reverse proxy avec Nginx Proxy Manager</a></td>
 <td>Cours et TP</td>
 <td>2 h</td>
 <td>Fichier <code>hosts</code>, hôtes de proxy, réseaux Docker partagés, Portainer derrière le proxy</td>
 <td><code>docker-hote</code></td>
 </tr>
 <tr>
-<td style="text-align: center;">10. Nextcloud en <abbr title="HTTP sécurisé par TLS">HTTPS</abbr> derrière le reverse proxy</td>
+<td style="text-align: center;"><a href="10-nextcloud-https-derriere-le-proxy/">10. Nextcloud en <abbr title="HTTP sécurisé par TLS">HTTPS</abbr> derrière le reverse proxy</a></td>
 <td>TP</td>
 <td>2 h</td>
 <td>Compose et proxy, certificat autosigné, WordPress en exercice</td>
 <td><code>docker-hote</code></td>
 </tr>
 <tr>
-<td style="text-align: center;">11. Les plateformes tout-en-un</td>
+<td style="text-align: center;"><a href="11-plateformes-tout-en-un/">11. Les plateformes tout-en-un</a></td>
 <td>Cours et TP</td>
 <td>2 h</td>
 <td>Coolify, Cosmos Server, BunkerWeb</td>
@@ -3630,6 +3694,7 @@
 </div>
 </div>
 </div>
+<p>La <abbr title="Virtual Machine — machine virtuelle">VM</abbr> <code>docker-plateforme</code> de la partie 11 se branche sur le <strong>même réseau</strong> que <code>docker-hote</code> (mêmes réglages) et reçoit elle aussi son adresse par <abbr title="Dynamic Host Configuration Protocol — attribution automatique d'adresses IP">DHCP</abbr> : elle est écrite <strong>IP-de-plateforme</strong>.</p>
 <p>À l'intérieur de la <abbr title="Virtual Machine — machine virtuelle">VM</abbr>, Docker crée en plus son propre réseau privé pour les conteneurs, <code>172.17.0.0/16</code> par défaut : on le découvre en <a href="02-premiers-conteneurs/">partie 2</a>.</p>
 <h2 id="comptes-et-mots-de-passe">Comptes et mots de passe<a class="headerlink" href="#comptes-et-mots-de-passe" title="Permanent link">&para;</a></h2>
 <p>Ce lab est <strong>pédagogique</strong> : les mots de passe sont écrits ici volontairement pour que chacun puisse suivre à l'identique. En production, chaque mot de passe serait unique, long et rangé dans un gestionnaire de mots de passe.</p>
@@ -3683,7 +3748,37 @@
 <td>Nextcloud</td>
 <td><code>admin</code></td>
 <td><code>TutoDocker2026!</code></td>
-<td>Partie 8</td>
+<td>Parties 8 et 10</td>
+</tr>
+<tr>
+<td>Nginx Proxy Manager</td>
+<td><code>admin@lab.local</code></td>
+<td><code>TutoDocker2026!</code></td>
+<td>Partie 9</td>
+</tr>
+<tr>
+<td>Coolify</td>
+<td><code>admin@lab.local</code></td>
+<td><code>TutoDocker2026!</code></td>
+<td>Partie 11</td>
+</tr>
+<tr>
+<td>Uptime Kuma</td>
+<td><code>admin</code></td>
+<td><code>TutoDocker2026!</code></td>
+<td>Partie 11</td>
+</tr>
+<tr>
+<td><abbr title="Virtual Machine — machine virtuelle">VM</abbr> <code>docker-plateforme</code></td>
+<td><code>root</code> et <code>tssr</code></td>
+<td><code>TutoDocker2026!</code></td>
+<td>Partie 11</td>
+</tr>
+<tr>
+<td>MariaDB de WordPress</td>
+<td><code>root</code>, et <code>wordpress</code> (base <code>wordpress</code>)</td>
+<td><code>TutoDocker2026!</code></td>
+<td>Partie 10</td>
 </tr>
 </tbody>
 </table>
@@ -3749,7 +3844,19 @@
 <td><code>03-fin-jour-2</code></td>
 <td><code>docker-hote</code></td>
 <td>Fin de la partie 8, <abbr title="Virtual Machine — machine virtuelle">VM</abbr> éteinte, Nextcloud arrêté (<code>docker compose down</code>) mais ses volumes gardés</td>
-<td>Le jour 3, qui remet Nextcloud derrière un reverse proxy</td>
+<td>Le jour 3</td>
+</tr>
+<tr>
+<td><code>04-fin-jour-3</code></td>
+<td><code>docker-hote</code></td>
+<td>Fin de la partie 10, <abbr title="Virtual Machine — machine virtuelle">VM</abbr> éteinte : NPM, Portainer et Nextcloud derrière le proxy en <abbr title="HTTP sécurisé par TLS">HTTPS</abbr></td>
+<td>La partie 11 et le jour 4</td>
+</tr>
+<tr>
+<td><code>00-debian-installee</code>, <code>01-coolify</code></td>
+<td><code>docker-plateforme</code></td>
+<td>Partie 11 : avant, puis après l'installation de Coolify et d'Uptime Kuma</td>
+<td>L'installation de Coolify</td>
 </tr>
 </tbody>
 </table>
@@ -3825,7 +3932,7 @@
 </tr>
 </tbody>
 </table>
-<p>Les commandes à taper sont dans des blocs de code ; le texte après <code>#</code> est un commentaire, il ne se tape pas. Les interfaces qui n'existent qu'en anglais (Portainer, Nginx Proxy Manager…) ont leurs menus écrits <strong>en gras, en anglais</strong>, avec une traduction entre parenthèses.</p>
+<p>Les commandes à taper sont dans des blocs de code ; le texte après <code>#</code> est un commentaire, il ne se tape pas. Les interfaces qui n'existent qu'en anglais (Portainer, Coolify…) ont leurs menus écrits <strong>en gras, en anglais</strong>, avec une traduction entre parenthèses.</p>
 <div class="admonition tip">
 <p class="admonition-title">Travailler en <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> depuis le PC</p>
 <p>La console de l'hyperviseur ne permet pas toujours le copier-coller. Mieux vaut ouvrir <strong>PowerShell</strong> sur le PC et se connecter à la <abbr title="Virtual Machine — machine virtuelle">VM</abbr> en <abbr title="Secure Shell — protocole d'administration à distance chiffré">SSH</abbr> : <code>ssh tssr@IP-de-la-VM</code>. Le copier-coller fonctionne alors normalement (clic droit pour coller dans le terminal Windows).</p>

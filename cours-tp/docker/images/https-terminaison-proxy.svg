@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="260" viewBox="0 0 900 260" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="14">
+  <title>Le HTTPS s'arrête au reverse proxy</title>
+  <defs><marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#455a64"/></marker></defs>
+  <rect x="10" y="80" width="180" height="90" rx="10" fill="#ffffff" stroke="#607d8b" stroke-width="2"/>
+  <text x="100" y="112" text-anchor="middle" font-weight="bold">🌐 Navigateur</text>
+  <text x="100" y="136" text-anchor="middle" font-size="12">https://nextcloud.docker.test</text>
+  <rect x="330" y="80" width="200" height="90" rx="10" fill="#e8f5e9" stroke="#43a047" stroke-width="2"/>
+  <text x="430" y="112" text-anchor="middle" font-weight="bold">Nginx Proxy Manager</text>
+  <text x="430" y="136" text-anchor="middle" font-size="12">déchiffre avec le certificat</text>
+  <text x="430" y="154" text-anchor="middle" font-size="12">ajoute X-Forwarded-Proto: https</text>
+  <rect x="680" y="80" width="200" height="90" rx="10" fill="#e1f5fe" stroke="#0288d1" stroke-width="2"/>
+  <text x="780" y="112" text-anchor="middle" font-weight="bold" fill="#01579b">nextcloud</text>
+  <text x="780" y="136" text-anchor="middle" font-size="12">reçoit du HTTP simple</text>
+  <text x="780" y="154" text-anchor="middle" font-size="11">croit l'en-tête si trusted_proxies</text>
+  <line x1="190" y1="125" x2="328" y2="125" stroke="#2e7d32" stroke-width="4" marker-end="url(#m)"/>
+  <text x="259" y="110" text-anchor="middle" font-weight="bold" fill="#2e7d32">HTTPS</text>
+  <text x="259" y="150" text-anchor="middle" font-size="12" fill="#2e7d32">chiffré (port 443)</text>
+  <line x1="530" y1="125" x2="678" y2="125" stroke="#ef6c00" stroke-width="4" stroke-dasharray="8 5" marker-end="url(#m)"/>
+  <text x="604" y="110" text-anchor="middle" font-weight="bold" fill="#ef6c00">HTTP</text>
+  <text x="604" y="150" text-anchor="middle" font-size="12" fill="#ef6c00">réseau Docker app</text>
+  <text x="450" y="225" text-anchor="middle" font-size="13" fill="#546e7a">Le chiffrement s'arrête au proxy : sans réglage, Nextcloud pense être joint en HTTP.</text>
+</svg>
