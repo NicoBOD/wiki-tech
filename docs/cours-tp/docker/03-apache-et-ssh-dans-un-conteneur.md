@@ -356,21 +356,51 @@ Dans une VM, systemd relance les services ; dans le conteneur, Docker ne relance
 ✍️ **Exercice** — Remettre le site et SSH en service **sans** recréer le conteneur, puis vérifier avec `curl` et `ssh`.
 
 ??? success "Réponse"
-    ```bash
-    docker exec debian service apache2 start
-    docker exec debian service ssh start
-    curl http://localhost:8080
-    ssh root@localhost -p2222 hostname
-    ```
+    Les fichiers sont toujours dans le conteneur : il suffit de **relancer les deux services**, comme aux sections 2.2 et 3.1. Inutile d'entrer dans le conteneur : `docker exec` y lance une commande depuis la VM.
 
-    ```text
-    Welcome to Docker
-    root@localhost's password:
-    0d0be42f5b3e
-    ```
+    1. 🐧 Relancer Apache et SSH :
 
-    La connexion SSH répond avec le nom de machine du conteneur (son identifiant).
-    Tout revient, puisque les fichiers sont toujours là. Mais il faudra recommencer **à chaque redémarrage** : ce n'est pas tenable sur un serveur.
+        ```bash
+        docker exec debian service apache2 start
+        docker exec debian service ssh start
+        ```
+
+    2. 🐧 Vérifier le **site web**. C'est la même commande qui échouait juste après le redémarrage (`curl: (56)`) :
+
+        ```bash
+        curl http://localhost:8080
+        ```
+
+        ```text
+        Welcome to Docker
+        ```
+
+        La page revient : Apache écoute de nouveau derrière le port 8080.
+
+    3. 🐧 Vérifier **SSH**. On cherche une preuve simple : derrière le port 2222, est-ce bien le serveur SSH **du conteneur** qui répond ? On pourrait ouvrir une session comme en section 3.2, regarder l'invite, puis taper `exit`. Plus rapide : écrire une commande **à la fin** de `ssh`. SSH se connecte, exécute cette seule commande de l'autre côté, affiche son résultat, puis se déconnecte tout seul.
+
+        On choisit `hostname`, qui affiche le **nom de la machine** sur laquelle elle s'exécute. C'est elle qui dit **qui a répondu** :
+
+        ```bash
+        ssh root@localhost -p2222 hostname
+        ```
+
+        Taper le mot de passe de `root` du conteneur (`TutoDocker-Lab1!`, choisi en section 3.1) :
+
+        ```text
+        root@localhost's password:
+        0d0be42f5b3e
+        ```
+
+        | Ce qu'on voit | Ce que ça prouve |
+        |---|---|
+        | La demande de mot de passe | Un serveur SSH répond derrière le port 2222 : `sshd` tourne de nouveau dans le conteneur. Sans la relance, la connexion échoue, car plus rien n'écoute |
+        | `0d0be42f5b3e` | La commande s'est exécutée **dans le conteneur**, et non dans la VM : Docker donne à chaque conteneur, comme nom de machine, son **identifiant court**. Tapée directement dans la VM, `hostname` afficherait `docker-hote` |
+
+    !!! tip "Comparer soi-même"
+        🐧 Dans la VM, `hostname` affiche `docker-hote`, et `docker ps --format '{{.ID}}  {{.Names}}'` affiche `0d0be42f5b3e  debian` : c'est bien le même identifiant que celui renvoyé par SSH. L'identifiant change d'un conteneur à l'autre : chez soi, la valeur est différente.
+
+    Tout revient, puisque les fichiers sont toujours là. Mais il faudra recommencer ces deux `service … start` **à chaque redémarrage** du conteneur : ce n'est pas tenable sur un serveur. La section suivante explique pourquoi, et la partie 14 montre la bonne méthode (un conteneur dont le programme principal est le service lui-même).
 
 ## 5. Pourquoi on ne fait pas ça en production
 
