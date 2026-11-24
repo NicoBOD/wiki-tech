@@ -37,6 +37,14 @@ Tous les TP se déroulent dans un **laboratoire virtuel** : les captures d'écra
 
     [:octicons-arrow-right-24: Commencer le parcours](virtualisation/index.md)
 
+- :material-docker:{ .lg .middle } __Docker en 5 jours__
+
+    ---
+
+    Installer Docker sur Debian, lancer et dépanner des conteneurs, les gérer avec Portainer et LazyDocker, garder leurs données, les brancher sur le réseau, publier des services derrière un reverse proxy en HTTPS, puis construire ses images et monter un cluster Swarm. Un parcours pensé pour les administrateurs systèmes et réseaux.
+
+    [:octicons-arrow-right-24: Commencer le parcours](docker/index.md)
+
 </div>
 
 ## Autres cours et TP du wiki
