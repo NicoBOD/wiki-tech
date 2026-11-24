@@ -263,7 +263,7 @@ docker system df
 - [dockur/windows](https://github.com/dockur/windows) — Windows dans un conteneur.
 - [Presenton](https://github.com/presenton/presenton) — présentations générées par IA.
 - [RomM](https://github.com/rommapp/romm) — bibliothèque de jeux rétro avec EmulatorJS.
-- Partie précédente : [Exploiter Docker au quotidien](12-exploiter-docker-au-quotidien.md).
+- Partie précédente : [Exploiter Docker au quotidien](12-exploiter-docker-au-quotidien.md) · Partie suivante : [Construire ses images avec un Dockerfile](14-construire-ses-images-dockerfile.md).
 
 *[IA]: Intelligence artificielle
 *[RAG]: Retrieval-Augmented Generation — réponses appuyées sur des documents
