@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Carte mentale du parcours sur les tests</title>
+  <desc id="d">Au centre, « Tester ». Cinq branches : pourquoi tester, les niveaux de tests, les tests de performance, les tests de sécurité, l'automatisation CI/CD. Chaque branche porte ses notions clés et ses outils.</desc>
+  <rect x="0" y="0" width="900" height="560" rx="16" fill="#ffffff"/>
+  <rect x="12" y="12" width="876" height="536" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <g stroke="#94a3b8" stroke-width="3" fill="none">
+    <path d="M450 280 C 380 200, 300 150, 230 120"/>
+    <path d="M450 280 C 540 200, 600 150, 670 120"/>
+    <path d="M450 280 C 360 300, 300 330, 210 330"/>
+    <path d="M450 280 C 540 300, 600 330, 690 330"/>
+    <path d="M450 280 C 450 360, 450 400, 450 440"/>
+  </g>
+  <ellipse cx="450" cy="280" rx="80" ry="40" fill="#1e3a8a"/>
+  <text x="450" y="288" text-anchor="middle" font-size="22" font-weight="700" fill="#ffffff">Tester</text>
+  <!-- Branche 1 -->
+  <rect x="40" y="40" width="300" height="130" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="190" y="66" text-anchor="middle" font-size="16" font-weight="700" fill="#1d4ed8">1. Pourquoi tester ?</text>
+  <text x="56" y="92" font-size="13" fill="#1e293b">• Trouver les défauts tôt (moins cher)</text>
+  <text x="56" y="114" font-size="13" fill="#1e293b">• Erreur → défaut → défaillance</text>
+  <text x="56" y="136" font-size="13" fill="#1e293b">• Cycle en V, pyramide des tests</text>
+  <text x="56" y="158" font-size="13" fill="#1e293b">• Non-régression, recette</text>
+  <!-- Branche 2 -->
+  <rect x="560" y="40" width="300" height="130" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="710" y="66" text-anchor="middle" font-size="16" font-weight="700" fill="#15803d">2. Tests unitaires</text>
+  <text x="576" y="92" font-size="13" fill="#1e293b">• Une seule fonction, isolée</text>
+  <text x="576" y="114" font-size="13" fill="#1e293b">• Préparer – Agir – Vérifier</text>
+  <text x="576" y="136" font-size="13" fill="#1e293b">• Doublures, couverture, TDD</text>
+  <text x="576" y="158" font-size="13" fill="#1e293b">• pytest, Pester, JUnit…</text>
+  <!-- Branche 3 -->
+  <rect x="30" y="270" width="300" height="130" rx="10" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+  <text x="180" y="296" text-anchor="middle" font-size="16" font-weight="700" fill="#c2410c">3. Performance et charge</text>
+  <text x="46" y="322" font-size="13" fill="#1e293b">• Charge, stress, pic, endurance</text>
+  <text x="46" y="344" font-size="13" fill="#1e293b">• Temps de réponse, débit, erreurs</text>
+  <text x="46" y="366" font-size="13" fill="#1e293b">• Percentiles, Apdex</text>
+  <text x="46" y="388" font-size="13" fill="#1e293b">• JMeter, k6, Gatling, Locust</text>
+  <!-- Branche 4 -->
+  <rect x="570" y="270" width="300" height="130" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="720" y="296" text-anchor="middle" font-size="16" font-weight="700" fill="#b91c1c">4. Sécurité</text>
+  <text x="586" y="322" font-size="13" fill="#1e293b">• Audit, scan, test d'intrusion</text>
+  <text x="586" y="344" font-size="13" fill="#1e293b">• CVE, CVSS, OWASP Top 10</text>
+  <text x="586" y="366" font-size="13" fill="#1e293b">• Autorisation écrite obligatoire</text>
+  <text x="586" y="388" font-size="13" fill="#1e293b">• Nmap, OpenVAS, ZAP, Burp…</text>
+  <!-- Branche 5 -->
+  <rect x="290" y="420" width="320" height="120" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+  <text x="450" y="446" text-anchor="middle" font-size="16" font-weight="700" fill="#6d28d9">5. Intégration et CI/CD</text>
+  <text x="306" y="472" font-size="13" fill="#1e293b">• Tests d'intégration</text>
+  <text x="306" y="494" font-size="13" fill="#1e293b">• Pipeline : construire, tester, livrer</text>
+  <text x="306" y="516" font-size="13" fill="#1e293b">• Jenkins, GitLab CI, GitHub Actions</text>
+</svg>

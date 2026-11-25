@@ -346,6 +346,14 @@ nav:
         - "16. Un cluster Docker Swarm": cours-tp/docker/16-cluster-docker-swarm.md
         - "17. Défi final": cours-tp/docker/17-defi-final.md
       - Annexes: cours-tp/docker/annexes.md
+    - Les tests en informatique:
+      - cours-tp/tests/index.md
+      - "1. Comprendre les tests": cours-tp/tests/01-comprendre-les-tests.md
+      - "2. Les tests unitaires": cours-tp/tests/02-tests-unitaires.md
+      - "3. Tests de performance et de charge": cours-tp/tests/03-tests-de-performance-et-de-charge.md
+      - "4. Tests de sécurité": cours-tp/tests/04-tests-de-securite.md
+      - "5. Tests d'intégration et CI/CD": cours-tp/tests/05-tests-integration-et-ci-cd.md
+      - "Annexes : cas de synthèse et glossaire": cours-tp/tests/annexes.md
   - Tags: tags.md
 
 copyright: >

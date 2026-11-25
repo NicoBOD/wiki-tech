@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="300" viewBox="0 0 900 300" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Les étapes d'un test d'intrusion</title>
+  <desc id="d">Six étapes enchaînées de gauche à droite : 1 cadrage et autorisation écrite, 2 reconnaissance, 3 cartographie et scan, 4 recherche de vulnérabilités, 5 exploitation et post-exploitation, 6 rapport et restitution. Une flèche de retour indique qu'après les corrections, un contre-audit vérifie qu'elles fonctionnent.</desc>
+  <defs>
+    <marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+  </defs>
+  <rect x="0" y="0" width="900" height="300" rx="16" fill="#ffffff"/>
+  <rect x="12" y="12" width="876" height="276" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <g font-size="13" fill="#1e293b" text-anchor="middle">
+    <rect x="28" y="60" width="128" height="110" rx="10" fill="#1e3a8a"/>
+    <text x="92" y="90" fill="#ffffff" font-weight="700" font-size="20">1</text>
+    <text x="92" y="116" fill="#ffffff" font-weight="700">Cadrage</text>
+    <text x="92" y="136" fill="#ffffff">autorisation</text>
+    <text x="92" y="154" fill="#ffffff">écrite</text>
+    <rect x="170" y="60" width="128" height="110" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="234" y="90" font-weight="700" font-size="20">2</text>
+    <text x="234" y="116" font-weight="700">Reconnaissance</text>
+    <text x="234" y="136">infos publiques,</text>
+    <text x="234" y="154">DNS, annuaires</text>
+    <rect x="312" y="60" width="128" height="110" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="376" y="90" font-weight="700" font-size="20">3</text>
+    <text x="376" y="116" font-weight="700">Cartographie</text>
+    <text x="376" y="136">machines, ports,</text>
+    <text x="376" y="154">services (Nmap)</text>
+    <rect x="454" y="60" width="128" height="110" rx="10" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+    <text x="518" y="90" font-weight="700" font-size="20">4</text>
+    <text x="518" y="116" font-weight="700">Vulnérabilités</text>
+    <text x="518" y="136">scanners, CVE,</text>
+    <text x="518" y="154">analyse manuelle</text>
+    <rect x="596" y="60" width="128" height="110" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+    <text x="660" y="90" font-weight="700" font-size="20">5</text>
+    <text x="660" y="116" font-weight="700">Exploitation</text>
+    <text x="660" y="136">preuve, élévation</text>
+    <text x="660" y="154">de privilèges</text>
+    <rect x="738" y="60" width="134" height="110" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+    <text x="805" y="90" font-weight="700" font-size="20">6</text>
+    <text x="805" y="116" font-weight="700">Rapport</text>
+    <text x="805" y="136">risques classés,</text>
+    <text x="805" y="154">recommandations</text>
+  </g>
+  <g stroke="#475569" stroke-width="2">
+    <line x1="156" y1="115" x2="168" y2="115" marker-end="url(#fl)"/>
+    <line x1="298" y1="115" x2="310" y2="115" marker-end="url(#fl)"/>
+    <line x1="440" y1="115" x2="452" y2="115" marker-end="url(#fl)"/>
+    <line x1="582" y1="115" x2="594" y2="115" marker-end="url(#fl)"/>
+    <line x1="724" y1="115" x2="736" y2="115" marker-end="url(#fl)"/>
+  </g>
+  <path d="M805 172 C 805 250, 92 250, 92 174" fill="none" stroke="#16a34a" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#fl)"/>
+  <text x="450" y="268" text-anchor="middle" font-size="13" fill="#15803d">Corrections par l'équipe, puis contre-audit pour vérifier qu'elles fonctionnent</text>
+</svg>

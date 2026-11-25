@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="430" viewBox="0 0 900 430" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Arborescence d'un plan de test JMeter</title>
+  <desc id="d">Arbre à gauche : Plan de test « Charge intranet », qui contient un Groupe d'unités « 50 utilisateurs », qui contient une Requête HTTP « Page d'accueil » (avec une Assertion Réponse « Code 200 attendu »), un Compteur de temps fixe de 200 ms et un récepteur Rapport agrégé. À droite, le rôle de chaque élément est expliqué.</desc>
+  <rect x="0" y="0" width="900" height="430" rx="16" fill="#ffffff"/>
+  <rect x="12" y="12" width="876" height="406" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <g stroke="#94a3b8" stroke-width="2" fill="none">
+    <polyline points="60,76 60,132 90,132"/>
+    <polyline points="110,152 110,202 140,202"/>
+    <polyline points="110,202 110,352 140,352"/>
+    <polyline points="110,302 140,302"/>
+    <polyline points="160,222 160,252 190,252"/>
+  </g>
+  <g font-size="14" fill="#1e293b">
+    <rect x="30" y="40" width="300" height="36" rx="6" fill="#1e3a8a"/>
+    <text x="44" y="64" fill="#ffffff" font-weight="700">🧪 Plan de test : Charge intranet</text>
+    <rect x="90" y="114" width="290" height="36" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="104" y="138" font-weight="700">👥 Groupe d'unités : 50 utilisateurs</text>
+    <rect x="140" y="184" width="255" height="36" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+    <text x="154" y="208">🌐 Requête HTTP : Page d'accueil</text>
+    <rect x="190" y="234" width="200" height="36" rx="6" fill="#fef9c3" stroke="#ca8a04" stroke-width="2"/>
+    <text x="204" y="258">✔️ Assertion : code 200</text>
+    <rect x="140" y="284" width="255" height="36" rx="6" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+    <text x="154" y="308">⏱️ Compteur de temps : 200 ms</text>
+    <rect x="140" y="334" width="255" height="36" rx="6" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text x="154" y="358">📊 Récepteur : Rapport agrégé</text>
+  </g>
+  <g font-size="13" fill="#334155">
+    <text x="440" y="64"><tspan font-weight="700">Plan de test</tspan> : le conteneur de tout le scénario.</text>
+    <text x="440" y="132"><tspan font-weight="700">Groupe d'unités</tspan> : les utilisateurs virtuels (combien,</text>
+    <text x="440" y="150">en combien de secondes ils arrivent, combien de tours).</text>
+    <text x="440" y="208"><tspan font-weight="700">Échantillonneur</tspan> : la requête envoyée au serveur.</text>
+    <text x="440" y="258"><tspan font-weight="700">Assertion</tspan> : la réponse est-elle correcte ?</text>
+    <text x="440" y="304"><tspan font-weight="700">Compteur de temps</tspan> : la pause de « réflexion »</text>
+    <text x="440" y="322">d'un humain entre deux clics.</text>
+    <text x="440" y="358"><tspan font-weight="700">Récepteur</tspan> : collecte et affiche les résultats.</text>
+  </g>
+</svg>
