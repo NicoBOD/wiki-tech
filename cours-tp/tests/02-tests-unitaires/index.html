@@ -4038,7 +4038,7 @@
 <h1 id="les-tests-unitaires">Les tests unitaires<a class="headerlink" href="#les-tests-unitaires" title="Permanent link">&para;</a></h1>
 <div class="admonition abstract">
 <p class="admonition-title">Résumé</p>
-<p>Un <strong>test unitaire</strong> vérifie, en quelques millisecondes, qu'un petit morceau de code fait exactement ce qu'on attend de lui. Cette partie explique le principe, le montre sur un exemple complet en <strong>Python</strong> avec <strong>pytest</strong> (avec les vrais messages affichés quand un test réussit ou échoue), présente les <strong>doublures</strong>, la <strong>couverture de code</strong> et le <strong><abbr title="Test-Driven Development : développement piloté par les tests">TDD</abbr></strong>, puis applique tout cela à un script <strong>PowerShell</strong> avec <strong>Pester</strong>. Chaque ligne de code est expliquée : il n'est pas nécessaire de savoir programmer.</p>
+<p>Un <strong>test unitaire</strong> vérifie, en quelques millisecondes, qu'un petit morceau de code fait exactement ce qu'on attend de lui. Cette partie explique le principe, le montre sur un exemple complet en <strong>Python</strong> avec <strong>pytest</strong> (avec les messages affichés quand un test réussit ou échoue), présente les <strong>doublures</strong>, la <strong>couverture de code</strong> et le <strong><abbr title="Test-Driven Development : développement piloté par les tests">TDD</abbr></strong>, puis applique tout cela à un script <strong>PowerShell</strong> avec <strong>Pester</strong>. Les lignes importantes du code sont expliquées : il n'est pas nécessaire de savoir programmer.</p>
 </div>
 <table>
 <thead>
@@ -4082,11 +4082,11 @@
 <li><strong>Agir</strong> : appeler la fonction testée ;</li>
 <li><strong>Vérifier</strong> : comparer le résultat obtenu au résultat attendu. Cette vérification s'appelle une <strong>assertion</strong>.</li>
 </ol>
-<p>Chaque langage a son <strong>framework de test</strong>, un outil prêt à l'emploi qui trouve les tests, les lance et affiche le bilan : <strong>pytest</strong> pour Python, <strong>Pester</strong> pour PowerShell, bats-core pour Bash, JUnit pour Java, xUnit ou NUnit pour .NET, Jest pour JavaScript. La plupart produisent un rapport au format <strong>JUnit XML</strong>, que les outils d'intégration continue comme Jenkins savent lire.</p>
+<p>Chaque langage a son <strong>framework de test</strong>, un outil prêt à l'emploi qui trouve les tests, les lance et affiche le bilan : <strong>pytest</strong> pour Python, <strong>Pester</strong> pour PowerShell, bats-core pour Bash, JUnit pour Java, xUnit ou NUnit pour .NET, Jest pour JavaScript. La plupart produisent un rapport au format <strong>JUnit <abbr title="eXtensible Markup Language">XML</abbr></strong>, que les outils d'intégration continue comme Jenkins savent lire (<a href="../05-tests-integration-et-ci-cd/">partie 5</a>).</p>
 <hr />
 <h2 id="2-exemple-complet-avec-pytest">2. Exemple complet avec pytest 🐍<a class="headerlink" href="#2-exemple-complet-avec-pytest" title="Permanent link">&para;</a></h2>
 <h3 id="21-le-code-a-tester">2.1 Le code à tester<a class="headerlink" href="#21-le-code-a-tester" title="Permanent link">&para;</a></h3>
-<p>Un petit module Python, <code>reseau.py</code>, avec deux fonctions utiles à un administrateur réseau :</p>
+<p>Un petit <strong>module</strong> Python (un fichier de code réutilisable), <code>reseau.py</code>, avec deux fonctions utiles à un administrateur réseau :</p>
 <div class="highlight"><span class="filename">reseau.py</span><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="sd">"""Petites fonctions utiles à un administrateur réseau."""</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
@@ -4096,7 +4096,7 @@
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">morceaux</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>                 <span class="c1"># il faut exactement 4 nombres</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="k">return</span> <span class="kc">False</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="k">for</span> <span class="n">morceau</span> <span class="ow">in</span> <span class="n">morceaux</span><span class="p">:</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">morceau</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>          <span class="c1"># uniquement des chiffres</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">morceau</span><span class="o">.</span><span class="n">isascii</span><span class="p">()</span> <span class="ow">and</span> <span class="n">morceau</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()):</span>  <span class="c1"># uniquement des chiffres de 0 à 9</span>
 <a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>            <span class="k">return</span> <span class="kc">False</span>
 <a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">morceau</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">:</span>             <span class="c1"># chaque nombre entre 0 et 255</span>
 <a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>            <span class="k">return</span> <span class="kc">False</span>
@@ -4188,7 +4188,7 @@
 <a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>test_reseau.py:38: AssertionError
 <a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>========================= 1 failed, 8 passed in 0.03s ==========================
 </code></pre></div>
-<p>Le <code>F</code> signale l'échec (<em>failed</em>), la ligne <code>&gt;</code> l'assertion en cause, et les lignes <code>E</code> l'explication : <code>nombre_hotes(32)</code> renvoie <strong>-1</strong> au lieu de 1, car 2⁰ - 2 = -1. Le test a trouvé un <strong>vrai défaut</strong> : les cas <code>/32</code> (une machine) et <code>/31</code> (un lien point à point entre deux routeurs, dont les deux adresses sont utilisables selon la <abbr title="Request for Comments : document qui décrit une norme d'Internet">RFC</abbr> 3021) ne sont pas gérés. On corrige :</p>
+<p>Le <code>F</code> signale l'échec (<em>failed</em>), la ligne <code>&gt;</code> l'assertion en cause, et les lignes <code>E</code> l'explication : <code>nombre_hotes(32)</code> renvoie <strong>-1</strong> au lieu de 1, car 2⁰ - 2 = -1. Le test a trouvé un <strong>vrai défaut</strong> : les cas <code>/32</code> (une machine) et <code>/31</code> (un lien point à point entre deux routeurs, dont les deux adresses sont utilisables selon la <abbr title="Request for Comments : document qui décrit une norme d'Internet">RFC</abbr> 3021) ne sont pas gérés. On corrige en ajoutant, dans <code>nombre_hotes</code>, juste avant la dernière ligne :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>    <span class="k">if</span> <span class="n">prefixe</span> <span class="o">==</span> <span class="mi">32</span><span class="p">:</span>
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>        <span class="k">return</span> <span class="mi">1</span>  <span class="c1"># une seule machine (route d'hôte)</span>
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="k">if</span> <span class="n">prefixe</span> <span class="o">==</span> <span class="mi">31</span><span class="p">:</span>
@@ -4206,6 +4206,7 @@
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>-----------------------------------------
 <a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>reseau.py      14      0   100%
 </code></pre></div>
+<p>Ce tableau s'obtient avec l'extension <code>pytest-cov</code> (<code>pip install pytest-cov</code>), puis la commande <code>pytest --cov=reseau --cov-report=term-missing</code>.</p>
 <p><strong>100 % de couverture… et pourtant le défaut du <code>/32</code> était là.</strong> La couverture dit quelles lignes ont été <strong>exécutées</strong>, pas si elles ont été vérifiées avec les <strong>bonnes valeurs</strong>. C'est un bon indicateur pour repérer le code jamais testé, pas une preuve de qualité. Il faut surtout tester les <strong>cas limites</strong> : valeurs vides, nulles, maximales, juste au-dessus et juste au-dessous des limites.</p>
 <h3 id="33-le-developpement-pilote-par-les-tests-tdd">3.3 Le développement piloté par les tests (<abbr title="Test-Driven Development : développement piloté par les tests">TDD</abbr>)<a class="headerlink" href="#33-le-developpement-pilote-par-les-tests-tdd" title="Permanent link">&para;</a></h3>
 <p>Le <strong><abbr title="Test-Driven Development : développement piloté par les tests">TDD</abbr></strong> (<em>Test-Driven Development</em>) inverse l'ordre habituel : on écrit le test <strong>avant</strong> le code, en cycles de quelques minutes. 🔴 <strong>Rouge</strong> : écrire un test, qui échoue puisque le code n'existe pas. 🟢 <strong>Vert</strong> : écrire le code le plus simple qui le fait réussir. 🔵 <strong>Remanier</strong> : améliorer le code en gardant les tests au vert. On réfléchit ainsi au résultat attendu avant d'écrire la moindre ligne.</p>
@@ -4222,7 +4223,7 @@
 <a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="k">return</span> <span class="nv">$pourcentLibre</span> <span class="o">-ge</span> <span class="nv">$SeuilPourcent</span>
 <a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="p">}</span>
 </code></pre></div>
-<p>Elle lit le lecteur avec <code>Get-PSDrive</code> et renvoie <code>$true</code> s'il reste au moins 10 % d'espace libre. Sur un vrai disque, l'espace libre change sans cesse : le test ne serait pas reproductible. On remplace donc <code>Get-PSDrive</code> par une <strong>doublure</strong> :</p>
+<p><code>param(...)</code> déclare ses deux paramètres : le lecteur, et le seuil (10 % par défaut). Elle lit le lecteur avec <code>Get-PSDrive</code>, calcule le pourcentage libre et renvoie <code>$true</code> s'il est supérieur ou égal (<code>-ge</code>) au seuil. Sur un vrai disque, l'espace libre change sans cesse : le test ne serait pas reproductible. On remplace donc <code>Get-PSDrive</code> par une <strong>doublure</strong> :</p>
 <figure>
 <p><img alt="À gauche, en production, la fonction interroge le vrai disque avec Get-PSDrive ; à droite, pendant le test, une doublure renvoie une réponse fixée (95 Go utilisés, 5 Go libres)" loading="lazy" src="../images/schema-doublure-de-test.svg" /></p>
 <figcaption>
@@ -4255,7 +4256,7 @@
 <tbody>
 <tr>
 <td><code>BeforeAll</code></td>
-<td>S'exécute avant tous les tests : ici, charge le script à tester</td>
+<td>S'exécute avant tous les tests : ici, charge le script à tester (le point <code>.</code> en début de ligne exécute le script dans la session du test)</td>
 </tr>
 <tr>
 <td><code>Describe</code></td>

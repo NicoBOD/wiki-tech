@@ -3729,7 +3729,7 @@
 <h1 id="les-tests-en-informatique">Les tests en informatique<a class="headerlink" href="#les-tests-en-informatique" title="Permanent link">&para;</a></h1>
 <div class="admonition abstract">
 <p class="admonition-title">Résumé</p>
-<p>Ce cours en cinq parties explique <strong>pourquoi et comment on teste</strong> un logiciel, un script ou une infrastructure, du plus petit morceau de code jusqu'à la mise en production automatique. Il ne demande aucune installation : chaque partie se lit en 15 à 20 minutes et s'appuie sur des schémas, des définitions et des exemples réels dont les résultats sont recopiés tels qu'ils s'affichent.</p>
+<p>Ce cours en cinq parties explique <strong>pourquoi et comment on teste</strong> un logiciel, un script ou une infrastructure, du plus petit morceau de code jusqu'à la mise en production automatique. Il ne demande aucune installation : chaque partie se lit en 15 à 20 minutes et s'appuie sur des schémas, des définitions et des exemples commentés, avec les résultats affichés par les outils.</p>
 <p>À la fin du parcours, le vocabulaire des tests n'a plus de secret : test unitaire, test de charge, scan de vulnérabilités, test d'intrusion, intégration continue, pipeline… Chaque notion est reliée au quotidien d'un administrateur d'infrastructure : tester un script avant de le lancer sur 300 serveurs, vérifier qu'un serveur web tiendra la rentrée, prouver qu'une faille est corrigée, automatiser tout cela à chaque modification.</p>
 </div>
 <table>
@@ -3746,7 +3746,11 @@
 </tr>
 <tr>
 <td>Durée totale</td>
-<td>Environ 1 h 30 de lecture, questions de révision comprises</td>
+<td>Environ 1 h 40 de lecture, questions de révision et cas de synthèse compris</td>
+</tr>
+<tr>
+<td>Version décrite</td>
+<td>Python 3.12, pytest 9.2, PowerShell 7.4, Pester 6.2, JMeter 5.6.3, Nmap 7.94, Jenkins LTS 2.555 et suivantes</td>
 </tr>
 <tr>
 <td>Outils présentés</td>
@@ -3796,7 +3800,7 @@
 <td style="text-align: center;"><a href="03-tests-de-performance-et-de-charge/">3. Tests de performance et de charge</a></td>
 <td>Cours</td>
 <td>15 min</td>
-<td>Charge, stress, pic, endurance, indicateurs, percentiles, Apdex, JMeter de A à Z</td>
+<td>Charge, stress, pic, endurance, indicateurs, percentiles, Apdex, JMeter, de la construction du plan de test à son exécution</td>
 </tr>
 <tr>
 <td style="text-align: center;"><a href="04-tests-de-securite/">4. Tests de sécurité</a></td>
@@ -3814,7 +3818,7 @@
 <td style="text-align: center;"><a href="annexes/">Annexes</a></td>
 <td>Synthèse</td>
 <td>15 min</td>
-<td>Cas de synthèse corrigé, glossaire de tous les termes</td>
+<td>Cas de synthèse corrigé, glossaire des termes principaux</td>
 </tr>
 </tbody>
 </table>
@@ -3840,7 +3844,7 @@
 <tbody>
 <tr>
 <td><code>bloc de code</code></td>
-<td>Commande à taper, fichier de configuration ou résultat affiché par un outil, recopié tel quel</td>
+<td>Commande à taper, fichier de configuration ou résultat affiché par un outil</td>
 </tr>
 <tr>
 <td>🐍</td>
@@ -3854,10 +3858,6 @@
 <td>🐧</td>
 <td>Commande lancée sur un poste Linux</td>
 </tr>
-<tr>
-<td>⚠️</td>
-<td>Point d'attention : légalité, risque pour la production</td>
-</tr>
 </tbody>
 </table>
 <p>Les encadrés « Pourquoi ? » expliquent l'intérêt de chaque notion. Les <strong>questions de révision</strong> de fin de partie ont un corrigé replié : chercher la réponse avant de l'ouvrir. Les termes techniques sont définis à leur première apparition et rassemblés dans le <a href="annexes/#2-glossaire">glossaire</a>. Les noms d'outils et les menus qui n'existent qu'en anglais sont traduits entre parenthèses.</p>
@@ -3867,7 +3867,7 @@
 </div>
 <h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="https://www.cftl.fr/certifications/istqb-foundation/">Syllabus <abbr title="International Software Testing Qualifications Board">ISTQB</abbr> Niveau Fondation (CFTL)</a> — le référentiel international du vocabulaire des tests, traduit en français par le Comité français des tests logiciels.</li>
+<li><a href="https://www.cftl.fr/certifications/istqb-foundation/">Syllabus <abbr title="International Software Testing Qualifications Board">ISTQB</abbr> Foundation (CFTL)</a> — le référentiel international du vocabulaire des tests, traduit en français par le Comité français des tests logiciels.</li>
 <li><a href="https://docs.pytest.org/">Documentation de pytest</a> — l'outil de tests unitaires Python utilisé en partie 2.</li>
 <li><a href="https://jmeter.apache.org/usermanual/index.html">Manuel utilisateur d'Apache JMeter</a> — l'outil de tests de charge de la partie 3.</li>
 <li><a href="https://owasp.org/Top10/2025/"><abbr title="Open Worldwide Application Security Project">OWASP</abbr> Top 10:2025</a> — le classement des risques des applications web cité en partie 4.</li>

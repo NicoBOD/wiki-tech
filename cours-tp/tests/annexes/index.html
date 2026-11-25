@@ -3777,6 +3777,10 @@
 <td>15 min pour le cas de synthèse ; le glossaire sert de référence</td>
 </tr>
 <tr>
+<td>Version décrite</td>
+<td>Indépendante des outils</td>
+</tr>
+<tr>
 <td>Place dans le parcours</td>
 <td>Annexes du parcours <a href="../">Les tests en informatique</a></td>
 </tr>
@@ -3802,19 +3806,21 @@
 <summary>Corrigé proposé</summary>
 <p>Il n'existe pas de réponse unique ; voici une stratégie argumentée.</p>
 <ol>
-<li><strong>Pester.</strong> Découper le script en fonctions testables : construire l'identifiant (<code>prenom.nom</code>), gérer les homonymes, les accents et les noms composés (« Hélène Dupont-Lefèvre »), appeler l'<abbr title="Application Programming Interface : interface de programmation">API</abbr> de l'application. Remplacer par des <strong>doublures</strong> (<code>Mock</code>) la commande <code>Get-ADUser</code> et l'appel à l'<abbr title="Application Programming Interface : interface de programmation">API</abbr>. Tester les <strong>cas limites</strong> : annuaire vide, agent sans prénom, <abbr title="Application Programming Interface : interface de programmation">API</abbr> indisponible.</li>
+<li><strong>Pester.</strong> Découper le script en fonctions testables : construire l'identifiant (<code>prenom.nom</code>), gérer les homonymes, les accents et les noms composés (« Hélène Dupont-Lefèvre »), appeler l'<abbr title="Application Programming Interface : interface de programmation">API</abbr> de l'application. Remplacer par des <strong>doublures</strong> (<code>Mock</code>) la commande <code>Get-ADUser</code> et l'appel à l'<abbr title="Application Programming Interface : interface de programmation">API</abbr> (sur un poste sans le module Active Directory, déclarer d'abord une fonction vide <code>function Get-ADUser {}</code> pour que Pester puisse la remplacer). Tester les <strong>cas limites</strong> : annuaire vide, agent sans prénom, <abbr title="Application Programming Interface : interface de programmation">API</abbr> indisponible.</li>
 <li><strong>En recette</strong>, avec un annuaire de test et des comptes fictifs : les comptes sont-ils vraiment créés ? Le compte de service a-t-il les bons droits ? Les accents arrivent-ils intacts ? Les serveurs web joignent-ils la base (pare-feu, <abbr title="Domain Name System">DNS</abbr>, certificats) ? Le répartiteur de charge fonctionne-t-il si un serveur s'arrête ?</li>
 <li>Un <strong>test de pic</strong> : une grande partie des agents se connecte dans le même quart d'heure. Exigence possible : « avec 400 utilisateurs simultanés, 95 % des pages en moins de 2 secondes, moins de 1 % d'erreurs ». <strong>JMeter</strong> en ligne de commande, depuis une autre machine, avec un scénario réaliste (connexion, consultation du solde, dépôt d'une demande), en surveillant les serveurs. Puis un <strong>test d'endurance</strong> d'une nuit. Le tout en recette dimensionnée comme la production.</li>
-<li><strong>Scan de vulnérabilités</strong> authentifié des trois serveurs (OpenVAS ou Nessus) ; <strong>Nmap</strong> depuis Internet pour vérifier que seul le port 443 est ouvert ; <strong>Lynis</strong> sur les serveurs Linux ; <strong>ZAP</strong> sur l'application ; un <strong>test d'intrusion</strong> en boîte grise centré sur le <strong>contrôle d'accès</strong> (A01 : un agent ne doit pas voir les congés d'un autre). <strong>Autorisation écrite</strong> de la direction obligatoire. Contre-audit après corrections.</li>
+<li><strong>Scan de vulnérabilités</strong> authentifié des trois serveurs (OpenVAS ou Nessus) ; <strong>Nmap</strong> sur tous les ports (<code>nmap -p- &lt;adresse&gt;</code>) depuis Internet pour vérifier que seul le port 443 est ouvert ; <strong>Lynis</strong> sur les serveurs Linux ; <strong>ZAP</strong> sur l'application ; un <strong>test d'intrusion</strong> en boîte grise centré sur le <strong>contrôle d'accès</strong> (A01 : un agent ne doit pas voir les congés d'un autre). <strong>Autorisation écrite</strong> de la direction obligatoire. Contre-audit après corrections.</li>
 <li>Du plus rapide au plus lent : tests unitaires → analyses statiques et <abbr title="Software Composition Analysis">SCA</abbr> → déploiement en recette → tests d'intégration → scan ZAP → test de charge (la nuit) → <strong>validation humaine</strong> → production. Rapports JUnit publiés, alerte en cas d'échec, secrets dans les identifiants Jenkins.</li>
-<li>La page répond en HTTPS avec un certificat valide, un compte de test se connecte et voit son solde, les journaux ne montrent pas d'erreur, la supervision voit les trois serveurs. Et le <strong>retour arrière</strong> (l'ancien intranet prêt à être rallumé) est vérifié.</li>
+<li>La page répond en <abbr title="HTTP sécurisé par TLS">HTTPS</abbr> avec un certificat valide, un compte de test se connecte et voit son solde, les journaux ne montrent pas d'erreur, la supervision voit les trois serveurs. Et le <strong>retour arrière</strong> (l'ancien intranet prêt à être rallumé) est vérifié.</li>
 </ol>
 </details>
 <hr />
 <h2 id="2-glossaire">2. Glossaire<a class="headerlink" href="#2-glossaire" title="Permanent link">&para;</a></h2>
-<p><strong>Agent (Jenkins)</strong> — Machine qui exécute les builds confiés par le contrôleur.</p>
+<p><strong>Agent, contrôleur, job, build (Jenkins)</strong> — Machine qui exécute les tâches ; serveur central ; tâche configurée ; exécution numérotée d'une tâche.</p>
 <p><strong>Apdex</strong> — Indice de satisfaction des utilisateurs entre 0 et 1, calculé à partir des temps de réponse.</p>
+<p><strong><abbr title="Application Programming Interface : interface de programmation">API</abbr></strong> — Interface qui permet à des programmes de dialoguer entre eux.</p>
 <p><strong>Assertion</strong> — Vérification automatique que le résultat obtenu est égal au résultat attendu.</p>
+<p><strong>Big bang / intégration incrémentale</strong> — Assembler tous les composants d'un coup / un par un, avant de tester.</p>
 <p><strong>Boîte noire / grise / blanche</strong> — Connaissance de l'intérieur du système au moment du test : aucune, partielle, complète.</p>
 <p><strong>Cas de test</strong> — Description d'un test : conditions de départ, actions, données, résultat attendu.</p>
 <p><strong>Couverture de code</strong> — Part du code exécutée au moins une fois par les tests.</p>
@@ -3822,16 +3828,19 @@
 <p><strong>CVSS</strong> — Note de gravité d'une vulnérabilité, de 0 à 10.</p>
 <p><strong>Cycle en V</strong> — Modèle où chaque étape de conception est vérifiée par un niveau de test correspondant.</p>
 <p><strong>Débit</strong> — Nombre de requêtes traitées par seconde.</p>
+<p><strong>Décaler à gauche</strong> (<em>shift left</em>) — Placer les tests le plus tôt possible dans le pipeline.</p>
 <p><strong>Défaillance</strong> — Comportement incorrect observé quand un défaut s'exécute.</p>
 <p><strong>Défaut</strong> (bug) — Imperfection dans le code ou la configuration.</p>
 <p><strong>Déploiement continu</strong> — Mise en production automatique de chaque version qui passe tous les tests.</p>
 <p><strong>DevOps / DevSecOps</strong> — Démarche qui rapproche développement et exploitation ; avec la sécurité intégrée à chaque étape.</p>
 <p><strong>Doublure</strong> (<em>mock</em>, <em>stub</em>) — Objet qui remplace une dépendance réelle (disque, base, annuaire) pendant un test.</p>
 <p><strong>Durcissement</strong> — Réduction de la surface d'attaque d'un système.</p>
+<p><strong>Environnement de recette</strong> (ou de préproduction) — Copie fidèle de la production, réservée aux tests.</p>
 <p><strong>Erreur</strong> — Action humaine qui crée un défaut.</p>
 <p><strong>Exploit</strong> — Programme ou technique qui utilise concrètement une vulnérabilité.</p>
 <p><strong>Faux positif</strong> — Alerte pour un problème qui n'existe pas réellement.</p>
 <p><strong>Goulet d'étranglement</strong> — Composant qui sature le premier et limite tout le système.</p>
+<p><strong>IaC</strong> (<em>Infrastructure as Code</em>) — Infrastructure décrite par des fichiers de code (Ansible, Terraform).</p>
 <p><strong>Intégration continue</strong> — Construction et test automatiques à chaque modification envoyée dans le dépôt.</p>
 <p><strong>Jenkinsfile</strong> — Fichier qui décrit un pipeline Jenkins, versionné avec le projet.</p>
 <p><strong>Linter</strong> — Outil d'analyse statique qui repère les erreurs dans le code (shellcheck, PSScriptAnalyzer).</p>
@@ -3839,17 +3848,22 @@
 <p><strong>OWASP</strong> — Fondation qui publie des guides et outils libres de sécurité applicative, dont le Top 10.</p>
 <p><strong>Percentile</strong> — Valeur sous laquelle se trouve un pourcentage donné des mesures (P95 : 95 % des requêtes sont plus rapides).</p>
 <p><strong>Pipeline</strong> — Suite d'étapes automatiques qu'une modification traverse du dépôt à la production.</p>
+<p><strong>Port</strong> — Numéro par lequel un service réseau écoute sur une machine (22 pour <abbr title="Secure Shell">SSH</abbr>, 443 pour <abbr title="HTTP sécurisé par TLS">HTTPS</abbr>).</p>
+<p><strong>Proxy</strong> — Intermédiaire placé entre un navigateur et un site, qui voit passer toutes les requêtes.</p>
 <p><strong>Pyramide des tests</strong> — Beaucoup de tests unitaires, moins de tests d'intégration, peu de tests de bout en bout.</p>
-<p><strong>Recette</strong> — Vérification, par le client ou les utilisateurs, que le système répond au besoin.</p>
+<p><strong>Recette</strong> (test d'acceptation) — Vérification, par le client ou les utilisateurs, que le système répond au besoin.</p>
 <p><strong>Régression (test de)</strong> — Nouvelle exécution des tests existants pour vérifier qu'une modification n'a rien cassé.</p>
+<p><strong>SAST / DAST / <abbr title="Software Composition Analysis">SCA</abbr></strong> — Analyse du code source sans l'exécuter / attaque de l'application en fonctionnement / inventaire des bibliothèques vulnérables.</p>
 <p><strong>Scan de vulnérabilités</strong> — Recherche automatique des failles connues sur des machines ou des applications.</p>
 <p><strong>Surface d'attaque</strong> — Tout ce qu'un attaquant peut atteindre : ports, applications, comptes, personnes.</p>
 <p><strong>TDD</strong> — Écrire le test avant le code, en cycles rouge – vert – remanier.</p>
 <p><strong>Test d'endurance / de pic / de stress / de charge</strong> — Charge normale sur une longue durée / montée brutale et brève / au-delà de la capacité jusqu'à la rupture / charge attendue.</p>
 <p><strong>Test d'intégration</strong> — Vérifie que plusieurs composants fonctionnent correctement ensemble.</p>
 <p><strong>Test d'intrusion</strong> (<em>pentest</em>) — Simulation d'attaque autorisée qui exploite les failles pour prouver un impact réel.</p>
+<p><strong>Test de confirmation</strong> — Nouvelle exécution du test qui avait échoué, pour vérifier une correction.</p>
 <p><strong>Test de fumée</strong> — Quelques vérifications rapides après une installation ou un déploiement.</p>
 <p><strong>Test fonctionnel / non fonctionnel</strong> — Vérifie ce que fait le système / comment il le fait (performance, sécurité…).</p>
+<p><strong>Test négatif</strong> — Test qui vérifie que ce qui doit être refusé ou bloqué l'est vraiment.</p>
 <p><strong>Test unitaire</strong> — Test automatique d'un petit morceau de code isolé, le plus souvent une fonction.</p>
 <p><strong>Vulnérabilité</strong> — Faiblesse d'un système qui peut être exploitée pour nuire.</p>
 <p><strong>Webhook</strong> — Requête HTTP envoyée automatiquement par un service pour en prévenir un autre d'un événement.</p>

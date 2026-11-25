@@ -4065,6 +4065,10 @@
 <td>15 min de lecture et de questions</td>
 </tr>
 <tr>
+<td>Version décrite</td>
+<td>Indépendante des outils</td>
+</tr>
+<tr>
 <td>Place dans le parcours</td>
 <td>Partie 1 sur 5 du parcours <a href="../">Les tests en informatique</a></td>
 </tr>
@@ -4116,8 +4120,8 @@
 </div>
 <h3 id="14-deux-defaillances-celebres">1.4 Deux défaillances célèbres<a class="headerlink" href="#14-deux-defaillances-celebres" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>Ariane 5, vol 501 (4 juin 1996).</strong> Une trentaine de secondes après le décollage, la fusée dévie et s'autodétruit. Un logiciel <strong>réutilisé d'Ariane 4</strong> convertissait une valeur de vitesse dans un format trop petit pour la trajectoire, plus rapide, d'Ariane 5. Il n'avait pas été testé avec les données de vol d'Ariane 5.</li>
-<li><strong>Panne CrowdStrike (19 juillet 2024).</strong> Une mise à jour d'un <strong>fichier de configuration</strong> de l'antivirus d'entreprise CrowdStrike Falcon fait planter environ 8,5 millions d'ordinateurs Windows dans le monde : aéroports, hôpitaux, banques. Le fichier défectueux a échappé aux contrôles automatiques de l'éditeur et a été envoyé à tous les clients en même temps.</li>
+<li><strong>Ariane 5, vol 501 (4 juin 1996).</strong> Une trentaine de secondes après le décollage, la fusée dévie et s'autodétruit. Un logiciel <strong>réutilisé d'Ariane 4</strong> convertissait une valeur liée à la vitesse horizontale, codée sur 64 bits, en un entier de 16 bits : un format assez grand pour la trajectoire d'Ariane 4, trop petit pour celle, plus rapide, d'Ariane 5. Il n'avait pas été testé avec les données de vol d'Ariane 5.</li>
+<li><strong>Panne CrowdStrike (19 juillet 2024).</strong> Une mise à jour d'un <strong>fichier de configuration</strong> de CrowdStrike Falcon, un logiciel de sécurité installé sur les postes des entreprises, fait planter environ 8,5 millions d'ordinateurs Windows dans le monde : aéroports, hôpitaux, banques. Le fichier défectueux a échappé aux contrôles automatiques de l'éditeur et a été envoyé d'un coup à tous les postes connectés, sans déploiement progressif.</li>
 </ul>
 <p>La leçon pour un administrateur : <strong>toute mise à jour, même de configuration, se teste</strong>, puis se déploie d'abord sur un petit groupe de machines.</p>
 <h3 id="15-les-sept-principes-des-tests">1.5 Les sept principes des tests<a class="headerlink" href="#15-les-sept-principes-des-tests" title="Permanent link">&para;</a></h3>
@@ -4142,7 +4146,7 @@
 </figcaption>
 </figure>
 <p>La branche de gauche descend du général au détail, la branche de droite remonte du détail au général : chaque niveau de test vérifie l'étape de conception qui lui fait face. Les tests se <strong>préparent</strong> donc dès la branche de gauche.</p>
-<p>Dans les <strong>méthodes agiles</strong> (Scrum, Kanban…), on livre de petites fonctionnalités toutes les deux à quatre semaines : chaque livraison parcourt les mêmes niveaux de tests, en miniature et le plus souvent <strong>automatiquement</strong> (<a href="../05-tests-integration-et-ci-cd/">partie 5</a>).</p>
+<p>Dans les <strong>méthodes agiles</strong> (des méthodes d'organisation du travail en équipe comme Scrum ou Kanban), on livre de petites fonctionnalités toutes les deux à quatre semaines : chaque livraison parcourt les mêmes niveaux de tests, en miniature et le plus souvent <strong>automatiquement</strong> (<a href="../05-tests-integration-et-ci-cd/">partie 5</a>).</p>
 <h3 id="22-les-quatre-niveaux-de-tests">2.2 Les quatre niveaux de tests<a class="headerlink" href="#22-les-quatre-niveaux-de-tests" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -4256,7 +4260,7 @@
 </tr>
 </tbody>
 </table>
-<p>On ne teste pas en production : une organisation sérieuse sépare au moins un environnement de <strong>développement</strong>, un environnement de <strong>recette</strong> (copie fidèle de la production, pour les tests) et la <strong>production</strong>.</p>
+<p>On ne teste pas en production : une organisation sérieuse sépare au moins un environnement de <strong>développement</strong>, un environnement de <strong>recette</strong> ou de <strong>préproduction</strong> (une copie fidèle de la production, réservée aux tests : à ne pas confondre avec la recette au sens de validation par les utilisateurs) et la <strong>production</strong>.</p>
 <div class="admonition warning">
 <p class="admonition-title">Données de test et <abbr title="Règlement général sur la protection des données">RGPD</abbr></p>
 <p>Copier la base de production en recette, c'est copier des <strong>données personnelles</strong> dans un environnement souvent moins protégé. On les <strong>anonymise</strong>, ou on génère des données fictives.</p>
@@ -4264,7 +4268,7 @@
 <hr />
 <h2 id="5-questions-de-revision">5. Questions de révision<a class="headerlink" href="#5-questions-de-revision" title="Permanent link">&para;</a></h2>
 <ol>
-<li>Un script contient <code>rm -rf $DOSSIER/</code> et la variable <code>DOSSIER</code> est vide sur un serveur. Identifier l'erreur, le défaut et la défaillance.</li>
+<li>Un script de nettoyage contient <code>rm -rf "$DOSSIER"/*</code> et la variable <code>DOSSIER</code> est vide sur un serveur. Identifier l'erreur, le défaut et la défaillance.</li>
 <li>Quelle est la différence entre un test de confirmation et un test de régression ?</li>
 <li>Pourquoi la pyramide des tests place-t-elle les tests unitaires à la base ?</li>
 <li>Classer en fonctionnel ou non fonctionnel : (a) le site supporte 2 000 connexions simultanées ; (b) l'export <abbr title="Comma-Separated Values : fichier texte de données séparées par des virgules">CSV</abbr> contient toutes les colonnes ; &copy; la page s'affiche en moins de 2 secondes.</li>
@@ -4272,7 +4276,7 @@
 <details class="success">
 <summary>Corrigé</summary>
 <ol>
-<li><strong>Erreur</strong> : l'auteur n'a pas prévu le cas d'une variable vide. <strong>Défaut</strong> : la ligne <code>rm -rf $DOSSIER/</code>, qui devient <code>rm -rf /</code>. <strong>Défaillance</strong> : le serveur efface son système de fichiers. Un test du cas « variable vide » ou l'analyse statique de <code>shellcheck</code> l'auraient signalé.</li>
+<li><strong>Erreur</strong> : l'auteur n'a pas prévu le cas d'une variable vide. <strong>Défaut</strong> : la ligne <code>rm -rf "$DOSSIER"/*</code>, qui devient <code>rm -rf /*</code>. <strong>Défaillance</strong> : tout le contenu de la racine <code>/</code> est effacé, le serveur est détruit. Un test du cas « variable vide » l'aurait révélé, et l'analyse statique de <code>shellcheck</code> le signale (avertissement SC2115, qui conseille d'écrire <code>"${DOSSIER:?}"</code> pour arrêter le script si la variable est vide).</li>
 <li>Le test de <strong>confirmation</strong> rejoue le test qui avait échoué, pour vérifier la correction. Le test de <strong>régression</strong> rejoue tous les autres, pour vérifier que la correction n'a rien cassé ailleurs.</li>
 <li>Parce qu'ils sont <strong>rapides, précis et peu coûteux</strong> : des centaines s'exécutent en quelques secondes à chaque modification, et un échec désigne l'endroit exact du problème.</li>
 <li>(a) non fonctionnel (charge) ; (b) fonctionnel ; &copy; non fonctionnel (temps de réponse).</li>
@@ -4281,12 +4285,12 @@
 <hr />
 <h2 id="ressources">Ressources<a class="headerlink" href="#ressources" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="https://www.cftl.fr/certifications/istqb-foundation/">Syllabus <abbr title="International Software Testing Qualifications Board">ISTQB</abbr> Niveau Fondation (CFTL)</a> — vocabulaire officiel des tests en français.</li>
+<li><a href="https://www.cftl.fr/certifications/istqb-foundation/">Syllabus <abbr title="International Software Testing Qualifications Board">ISTQB</abbr> Foundation (CFTL)</a> — vocabulaire officiel des tests en français.</li>
 <li><a href="https://www.esa.int/Newsroom/Press_Releases/Ariane_501_-_Presentation_of_Inquiry_Board_report">Rapport d'enquête sur l'échec d'Ariane 501 (ESA, en anglais)</a> — l'enquête officielle.</li>
 <li><a href="https://www.crowdstrike.com/en-us/blog/falcon-content-update-preliminary-post-incident-report/">Rapport préliminaire de CrowdStrike (en anglais)</a> — l'analyse de la panne du 19 juillet 2024 par l'éditeur.</li>
 <li><a href="https://martinfowler.com/articles/practical-test-pyramid.html">The Practical Test Pyramid, Martin Fowler (en anglais)</a> — la pyramide des tests en détail.</li>
 </ul>
-<p>Partie suivante : <a href="../02-tests-unitaires/">Les tests unitaires</a></p>
+<p>Retour à l'<a href="../">accueil du parcours</a> · Partie suivante : <a href="../02-tests-unitaires/">Les tests unitaires</a></p>
 
 
 

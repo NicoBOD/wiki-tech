@@ -27,8 +27,8 @@
   <g font-size="13" fill="#334155">
     <text x="440" y="64"><tspan font-weight="700">Plan de test</tspan> : le conteneur de tout le scénario.</text>
     <text x="440" y="132"><tspan font-weight="700">Groupe d'unités</tspan> : les utilisateurs virtuels (combien,</text>
-    <text x="440" y="150">en combien de secondes ils arrivent, combien de tours).</text>
-    <text x="440" y="208"><tspan font-weight="700">Échantillonneur</tspan> : la requête envoyée au serveur.</text>
+    <text x="440" y="150">en combien de secondes ils arrivent, combien d'itérations).</text>
+    <text x="440" y="208"><tspan font-weight="700">Requête HTTP</tspan> : ce qu'envoie chaque utilisateur.</text>
     <text x="440" y="258"><tspan font-weight="700">Assertion</tspan> : la réponse est-elle correcte ?</text>
     <text x="440" y="304"><tspan font-weight="700">Compteur de temps</tspan> : la pause de « réflexion »</text>
     <text x="440" y="322">d'un humain entre deux clics.</text>
