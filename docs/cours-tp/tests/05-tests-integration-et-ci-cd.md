@@ -49,7 +49,7 @@ Les défauts d'intégration se cachent dans les **points de contact** :
 
 Beaucoup de ces défauts viennent de l'**environnement** (réseau, droits, certificats), pas du code : ils concernent directement l'administrateur.
 
-Intégrer tous les composants d'un coup puis tester (l'intégration **big bang**) rend les pannes difficiles à localiser. On préfère l'intégration **incrémentale** : on ajoute les composants un par un, en remplaçant ceux qui ne sont pas encore prêts par des doublures (**bouchons** ou **pilotes**). Les tests d'intégration s'exécutent dans un environnement de **recette** ; les conteneurs Docker simplifient beaucoup la tâche, en démarrant une vraie base de données le temps du test.
+Intégrer tous les composants d'un coup puis tester (l'intégration **big bang**) rend les pannes difficiles à localiser. On préfère l'intégration **incrémentale** : on ajoute les composants un par un, en remplaçant ceux qui ne sont pas encore prêts par des doublures (**bouchons**). Les tests d'intégration s'exécutent dans un environnement dédié, jamais en production : souvent un environnement **jetable** créé par le pipeline avec des **conteneurs** Docker (des programmes isolés qui démarrent en quelques secondes, par exemple une vraie base de données le temps du test), ou l'environnement de recette.
 
 ---
 
@@ -94,20 +94,26 @@ Bénéfices : des défauts trouvés en minutes, des mises en production **petite
 | **Build** | Une exécution numérotée d'un job (#1, #2…), avec son journal et ses résultats |
 | **Identifiants** (*credentials*) | Le coffre de Jenkins pour les mots de passe, clés SSH et jetons, utilisés sans jamais apparaître en clair |
 
-Jenkins s'installe depuis le dépôt de paquets officiel sous Linux, avec un installateur sous Windows, ou dans un conteneur Docker (image `jenkins/jenkins:lts`). Depuis sa version stable (**LTS**, *Long-Term Support*) 2.555.1, il demande **Java 21 ou 25**. L'interface web écoute par défaut sur le port **8080**, et l'assistant du premier démarrage demande un mot de passe initial écrit dans `/var/lib/jenkins/secrets/initialAdminPassword` (installation par paquet Linux).
+Jenkins s'installe depuis le dépôt de paquets officiel sous Linux, avec un installateur sous Windows, ou dans un conteneur Docker (image `jenkins/jenkins:lts`). Depuis sa version stable (**LTS**, *Long-Term Support*) 2.555.1, il demande **Java 21 ou 25**. L'interface web écoute par défaut sur le port **8080**, et l'assistant du premier démarrage demande un mot de passe initial écrit dans `/var/lib/jenkins/secrets/initialAdminPassword` (installation par paquet Linux ; avec Docker, il s'affiche dans le journal du conteneur).
 
 !!! warning "Jenkins est une cible de choix"
     Jenkins détient les clés de tout ce qu'il déploie. Un Jenkins compromis, c'est toute l'infrastructure compromise. Ne pas l'exposer sur Internet sans protection, garder Jenkins **et ses plugins** à jour, exécuter les builds sur des agents plutôt que sur le contrôleur, et ranger tous les secrets dans les **identifiants**.
 
 ### 3.2 Le Jenkinsfile
 
-Un **Jenkinsfile** est un fichier texte placé à la racine du dépôt Git, qui décrit le pipeline : c'est le **pipeline as code**. Le pipeline est ainsi versionné, relu et historisé comme le reste du projet. Voici un Jenkinsfile en syntaxe **déclarative** (la plus simple), qui enchaîne les tests vus dans ce parcours pour un projet de scripts déployés avec Ansible :
+Un **Jenkinsfile** est un fichier texte placé à la racine du dépôt Git, qui décrit le pipeline : c'est le **pipeline as code**. Le pipeline est ainsi versionné, relu et historisé comme le reste du projet. Voici un Jenkinsfile en syntaxe **déclarative** (la plus simple), qui enchaîne les tests vus dans ce parcours pour un projet de scripts déployés avec **Ansible** (un outil qui configure automatiquement des serveurs). L'agent doit disposer des outils appelés : Python et pytest, ansible-lint, Trivy, Ansible et JMeter.
 
 ```groovy title="Jenkinsfile"
 pipeline {
     agent any                                   // exécuter sur n'importe quel agent disponible
 
     stages {
+        stage('Analyse statique') {             // test statique : erreurs du playbook Ansible
+            steps {
+                sh 'ansible-lint deploiement.yml'
+            }
+        }
+
         stage('Tests unitaires') {              // partie 2 : pytest produit un rapport JUnit XML
             steps {
                 sh 'python3 -m pytest --junitxml=rapports/unitaires.xml tests_unitaires'
@@ -132,14 +138,18 @@ pipeline {
             }
         }
 
-        stage('Test de charge') {               // partie 3 : JMeter en ligne de commande
+        stage('Tests de charge') {              // partie 3 : JMeter en ligne de commande
             steps {
+                sh 'rm -rf rapport-charge resultats.jtl'   // JMeter exige un dossier de rapport vide
                 sh 'jmeter -n -t plan-intranet.jmx -l resultats.jtl -e -o rapport-charge'
             }
         }
 
         stage('Déployer en production') {
-            when { branch 'main' }              // seulement pour la branche principale
+            when {
+                branch 'main'                   // seulement pour la branche principale
+                beforeInput true                // vérifier la condition AVANT de demander la validation
+            }
             input {                             // livraison continue : un humain valide
                 message 'Mettre cette version en production ?'
                 ok 'Déployer'
@@ -168,7 +178,8 @@ pipeline {
 | `agent any` | Où exécuter : n'importe quel agent (ou un agent précis, ou un conteneur Docker) |
 | `stages` / `stage('…')` | La liste des étapes, chacune avec le nom affiché dans l'interface |
 | `steps` / `sh` | Les commandes de l'étape ; `sh` lance une commande sur un agent Linux (`powershell` ou `bat` sous Windows) |
-| `when { branch 'main' }` | L'étape ne s'exécute que pour la branche `main` (dans un job *Multibranch Pipeline*) |
+| `when { branch 'main' }` | L'étape ne s'exécute que pour la branche `main`. Une **branche** est une ligne de travail parallèle dans Git ; `main` est la branche principale. Cette condition ne fonctionne que dans un job *Multibranch Pipeline*, qui crée un pipeline par branche |
+| `beforeInput true` | Évalue la condition `when` avant `input` : sans elle, Jenkins demanderait la validation même sur une autre branche |
 | `input` | Met le pipeline en pause jusqu'à ce qu'une personne autorisée clique sur **Déployer** |
 | `post` | Ce qui s'exécute à la fin : `always` (toujours), `failure` (en cas d'échec), `success` (en cas de réussite) |
 | `junit` | Lit les rapports JUnit XML et affiche les tests réussis et échoués, et leur évolution |
@@ -176,6 +187,8 @@ pipeline {
 
 !!! question "Comment Jenkins sait-il qu'un test a échoué ?"
     Grâce au **code de retour** des commandes : par convention, un programme qui réussit renvoie **0**, et un autre nombre en cas d'échec. `pytest` renvoie 1 si un test échoue ; `trivy` renvoie 1 s'il trouve une faille élevée ou critique, parce qu'on lui a demandé `--exit-code 1`. Dès qu'une commande renvoie autre chose que 0, Jenkins marque l'étape en échec, **arrête le pipeline** (rien n'est déployé) et exécute le bloc `post`.
+
+    Attention : **JMeter renvoie 0 même si des assertions échouent**. Pour que le test de charge devienne une vraie barrière, il faut ajouter un seuil (par exemple le plugin Jenkins *Performance*, ou un petit script qui lit le fichier `.jtl` et renvoie 1 si le taux d'erreur ou le P95 dépassent l'exigence).
 
 ### 3.3 Déclencher le pipeline et lire les résultats
 
@@ -239,6 +252,8 @@ Partie précédente : [Tests de sécurité](04-tests-de-securite.md) · Suite : 
 *[DevOps]: Développement (Dev) et exploitation (Ops)
 *[LTS]: Long-Term Support : version maintenue sur une longue durée
 *[IaC]: Infrastructure as Code : infrastructure décrite sous forme de code
+*[SSH]: Secure Shell
+*[HTTP]: HyperText Transfer Protocol
 *[DNS]: Domain Name System
 *[SAST]: Static Application Security Testing
 *[DAST]: Dynamic Application Security Testing
