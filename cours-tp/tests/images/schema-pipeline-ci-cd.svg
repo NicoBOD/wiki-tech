@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="380" viewBox="0 0 920 380" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Un pipeline CI/CD et ses tests</title>
+  <desc id="d">De gauche à droite : un administrateur pousse une modification dans le dépôt Git ; Jenkins la reçoit et enchaîne les étapes Construire, Tests unitaires, Analyse de sécurité, Tests d'intégration, puis Déployer en recette, Tests de performance, et enfin Déployer en production. Les étapes jusqu'aux tests d'intégration forment l'intégration continue ; la suite forme la livraison continue, avec une validation humaine avant la production, ou le déploiement continu sans validation humaine. Si une étape échoue, le pipeline s'arrête et l'auteur est prévenu.</desc>
+  <defs>
+    <marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+    <marker id="flr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+  </defs>
+  <rect x="0" y="0" width="920" height="380" rx="16" fill="#ffffff"/>
+  <rect x="12" y="12" width="896" height="356" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <!-- bandeaux -->
+  <rect x="140" y="40" width="430" height="34" rx="8" fill="#dbeafe"/>
+  <text x="355" y="62" text-anchor="middle" font-size="14" font-weight="700" fill="#1d4ed8">Intégration continue (CI)</text>
+  <rect x="580" y="40" width="315" height="34" rx="8" fill="#dcfce7"/>
+  <text x="737" y="62" text-anchor="middle" font-size="14" font-weight="700" fill="#15803d">Livraison / déploiement continu (CD)</text>
+  <g font-size="13" fill="#1e293b" text-anchor="middle">
+    <rect x="24" y="110" width="100" height="70" rx="10" fill="#1e3a8a"/>
+    <text x="74" y="140" fill="#ffffff" font-weight="700">git push</text>
+    <text x="74" y="160" fill="#ffffff">dépôt Git</text>
+    <rect x="140" y="110" width="98" height="70" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="189" y="150" font-weight="700">Construire</text>
+    <rect x="250" y="110" width="98" height="70" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="299" y="142" font-weight="700">Tests</text>
+    <text x="299" y="160" font-weight="700">unitaires</text>
+    <rect x="360" y="110" width="98" height="70" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="409" y="142" font-weight="700">Analyse de</text>
+    <text x="409" y="160" font-weight="700">sécurité</text>
+    <rect x="470" y="110" width="100" height="70" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="520" y="142" font-weight="700">Tests</text>
+    <text x="520" y="160" font-weight="700">d'intégration</text>
+    <rect x="582" y="110" width="98" height="70" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+    <text x="631" y="142" font-weight="700">Déployer</text>
+    <text x="631" y="160" font-weight="700">en recette</text>
+    <rect x="692" y="110" width="98" height="70" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+    <text x="741" y="142" font-weight="700">Tests de</text>
+    <text x="741" y="160" font-weight="700">performance</text>
+    <rect x="802" y="110" width="94" height="70" rx="10" fill="#16a34a"/>
+    <text x="849" y="142" fill="#ffffff" font-weight="700">Déployer</text>
+    <text x="849" y="160" fill="#ffffff" font-weight="700">en prod</text>
+  </g>
+  <g stroke="#475569" stroke-width="2">
+    <line x1="124" y1="145" x2="138" y2="145" marker-end="url(#fl)"/>
+    <line x1="238" y1="145" x2="248" y2="145" marker-end="url(#fl)"/>
+    <line x1="348" y1="145" x2="358" y2="145" marker-end="url(#fl)"/>
+    <line x1="458" y1="145" x2="468" y2="145" marker-end="url(#fl)"/>
+    <line x1="570" y1="145" x2="580" y2="145" marker-end="url(#fl)"/>
+    <line x1="680" y1="145" x2="690" y2="145" marker-end="url(#fl)"/>
+    <line x1="790" y1="145" x2="800" y2="145" marker-end="url(#fl)"/>
+  </g>
+  <text x="796" y="204" font-size="12" fill="#334155" text-anchor="middle">✋ validation humaine ?</text>
+  <path d="M299 182 C 299 250, 74 250, 74 184" fill="none" stroke="#dc2626" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#flr)"/>
+  <text x="190" y="262" text-anchor="middle" font-size="12" fill="#b91c1c">un test échoue : arrêt et alerte</text>
+  <g font-size="13" fill="#334155">
+    <text x="30" y="300"><tspan font-weight="700">Livraison continue</tspan> : tout est prêt, un humain clique pour mettre en production.</text>
+    <text x="30" y="324"><tspan font-weight="700">Déploiement continu</tspan> : si tous les tests passent, la mise en production est automatique.</text>
+    <text x="30" y="348">Toutes ces étapes sont orchestrées par un outil comme <tspan font-weight="700">Jenkins</tspan>, GitLab CI ou GitHub Actions.</text>
+  </g>
+</svg>

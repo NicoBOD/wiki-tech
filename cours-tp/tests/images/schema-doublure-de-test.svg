@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="330" viewBox="0 0 860 330" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Une doublure remplace une dépendance pendant un test unitaire</title>
+  <desc id="d">À gauche, en production : la fonction Test-EspaceLibre interroge le vrai disque avec Get-PSDrive, dont la réponse change sans cesse. À droite, pendant le test : la même fonction reçoit une fausse réponse fixée par le test (95 Go utilisés, 5 Go libres), grâce à une doublure. Le résultat devient prévisible et le test s'exécute sans toucher au disque.</desc>
+  <defs>
+    <marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+  </defs>
+  <rect x="0" y="0" width="860" height="330" rx="16" fill="#ffffff"/>
+  <rect x="12" y="12" width="836" height="306" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <line x1="430" y1="30" x2="430" y2="300" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="6 6"/>
+  <text x="220" y="48" text-anchor="middle" font-size="16" font-weight="700" fill="#1e293b">En production</text>
+  <text x="640" y="48" text-anchor="middle" font-size="16" font-weight="700" fill="#1e293b">Pendant le test unitaire</text>
+  <g text-anchor="middle" font-size="14" fill="#1e293b">
+    <rect x="110" y="70" width="220" height="56" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="220" y="96" font-weight="700">Test-EspaceLibre</text>
+    <text x="220" y="115" font-size="12">(la fonction à tester)</text>
+    <rect x="110" y="190" width="220" height="56" rx="8" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+    <text x="220" y="216" font-weight="700">Get-PSDrive</text>
+    <text x="220" y="235" font-size="12">lit le vrai disque C:</text>
+    <text x="220" y="280" font-size="12" fill="#b91c1c">Réponse différente à chaque fois</text>
+    <rect x="530" y="70" width="220" height="56" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="640" y="96" font-weight="700">Test-EspaceLibre</text>
+    <text x="640" y="115" font-size="12">(la même fonction)</text>
+    <rect x="530" y="190" width="220" height="56" rx="8" fill="#fef9c3" stroke="#ca8a04" stroke-width="2" stroke-dasharray="7 4"/>
+    <text x="640" y="216" font-weight="700">Doublure (Mock)</text>
+    <text x="640" y="235" font-size="12">renvoie 95 Go utilisés, 5 Go libres</text>
+    <text x="640" y="280" font-size="12" fill="#15803d">Réponse fixée par le test : résultat prévisible</text>
+  </g>
+  <line x1="220" y1="128" x2="220" y2="186" stroke="#475569" stroke-width="2" marker-end="url(#fl)"/>
+  <line x1="640" y1="128" x2="640" y2="186" stroke="#475569" stroke-width="2" marker-end="url(#fl)"/>
+</svg>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="420" viewBox="0 0 820 420" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">La pyramide des tests</title>
+  <desc id="d">Une pyramide à trois étages. En bas, large : beaucoup de tests unitaires, rapides et peu coûteux. Au milieu : des tests d'intégration. En haut, étroit : peu de tests de bout en bout, lents et coûteux. Deux flèches sur le côté : vers le haut, les tests sont plus lents, plus chers et plus fragiles ; vers le bas, ils sont plus nombreux et plus rapides.</desc>
+  <defs>
+    <marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+  </defs>
+  <rect x="0" y="0" width="820" height="420" rx="16" fill="#ffffff"/>
+  <rect x="12" y="12" width="796" height="396" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <polygon points="330,40 410,40 470,140 270,140" fill="#fecaca" stroke="#dc2626" stroke-width="2"/>
+  <polygon points="270,148 470,148 540,258 200,258" fill="#fed7aa" stroke="#ea580c" stroke-width="2"/>
+  <polygon points="200,266 540,266 620,380 120,380" fill="#bbf7d0" stroke="#16a34a" stroke-width="2"/>
+  <g text-anchor="middle" fill="#1e293b">
+    <text x="370" y="92" font-size="15" font-weight="700">Bout en bout</text>
+    <text x="370" y="114" font-size="12">(système, interface)</text>
+    <text x="370" y="200" font-size="15" font-weight="700">Tests d'intégration</text>
+    <text x="370" y="222" font-size="12">(modules ensemble, base de données, API)</text>
+    <text x="370" y="320" font-size="15" font-weight="700">Tests unitaires</text>
+    <text x="370" y="342" font-size="12">(une fonction à la fois, en millisecondes)</text>
+  </g>
+  <line x1="680" y1="370" x2="680" y2="56" stroke="#475569" stroke-width="2.5" marker-end="url(#fl)"/>
+  <g font-size="13" fill="#334155">
+    <text x="695" y="70">plus lents</text>
+    <text x="695" y="90">plus chers</text>
+    <text x="695" y="110">plus fragiles</text>
+    <text x="695" y="330">plus nombreux</text>
+    <text x="695" y="350">plus rapides</text>
+    <text x="695" y="370">plus précis</text>
+  </g>
+</svg>

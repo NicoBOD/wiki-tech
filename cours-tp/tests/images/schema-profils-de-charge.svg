@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="520" viewBox="0 0 880 520" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <title id="t">Les quatre profils de tests de performance</title>
+  <desc id="d">Quatre petits graphiques du nombre d'utilisateurs simultanés en fonction du temps. Test de charge : montée progressive jusqu'à la charge attendue, palier, descente. Test de stress : montée en escalier au-delà de la capacité prévue, jusqu'à la rupture. Test de pic : charge basse puis bond brutal et bref. Test d'endurance : charge normale maintenue pendant de nombreuses heures. Une ligne pointillée marque la capacité prévue sur chaque graphique.</desc>
+  <rect x="0" y="0" width="880" height="520" rx="16" fill="#ffffff"/>
+  <rect x="12" y="12" width="856" height="496" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <g font-size="12" fill="#475569">
+    <!-- cadre 1 -->
+    <g transform="translate(40,30)">
+      <text x="180" y="18" text-anchor="middle" font-size="15" font-weight="700" fill="#1d4ed8">Test de charge</text>
+      <line x1="30" y1="200" x2="380" y2="200" stroke="#475569" stroke-width="1.5"/>
+      <line x1="30" y1="200" x2="30" y2="30" stroke="#475569" stroke-width="1.5"/>
+      <line x1="30" y1="90" x2="380" y2="90" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="6 5"/>
+      <text x="378" y="84" text-anchor="end" fill="#dc2626">capacité prévue</text>
+      <polyline points="30,200 110,110 300,110 360,200" fill="none" stroke="#2563eb" stroke-width="3"/>
+      <text x="205" y="104" text-anchor="middle">charge attendue</text>
+      <text x="205" y="222" text-anchor="middle">temps →</text>
+      <text x="22" y="40" text-anchor="end" transform="rotate(-90 22 40)">utilisateurs</text>
+    </g>
+    <!-- cadre 2 -->
+    <g transform="translate(450,30)">
+      <text x="180" y="18" text-anchor="middle" font-size="15" font-weight="700" fill="#b91c1c">Test de stress</text>
+      <line x1="30" y1="200" x2="380" y2="200" stroke="#475569" stroke-width="1.5"/>
+      <line x1="30" y1="200" x2="30" y2="30" stroke="#475569" stroke-width="1.5"/>
+      <line x1="30" y1="110" x2="380" y2="110" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="6 5"/>
+      <text x="378" y="126" text-anchor="end" fill="#dc2626">capacité prévue</text>
+      <polyline points="30,200 30,170 90,170 90,140 150,140 150,110 210,110 210,80 270,80 270,50 320,50" fill="none" stroke="#dc2626" stroke-width="3"/>
+      <text x="330" y="46" fill="#b91c1c" font-weight="700">rupture ?</text>
+      <text x="205" y="222" text-anchor="middle">temps →</text>
+    </g>
+    <!-- cadre 3 -->
+    <g transform="translate(40,270)">
+      <text x="180" y="18" text-anchor="middle" font-size="15" font-weight="700" fill="#c2410c">Test de pic</text>
+      <line x1="30" y1="200" x2="380" y2="200" stroke="#475569" stroke-width="1.5"/>
+      <line x1="30" y1="200" x2="30" y2="30" stroke="#475569" stroke-width="1.5"/>
+      <line x1="30" y1="90" x2="380" y2="90" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="6 5"/>
+      <polyline points="30,170 170,170 180,45 220,45 230,170 380,170" fill="none" stroke="#ea580c" stroke-width="3"/>
+      <text x="245" y="60">bond brutal et bref</text>
+      <text x="205" y="222" text-anchor="middle">temps →</text>
+    </g>
+    <!-- cadre 4 -->
+    <g transform="translate(450,270)">
+      <text x="180" y="18" text-anchor="middle" font-size="15" font-weight="700" fill="#15803d">Test d'endurance</text>
+      <line x1="30" y1="200" x2="380" y2="200" stroke="#475569" stroke-width="1.5"/>
+      <line x1="30" y1="200" x2="30" y2="30" stroke="#475569" stroke-width="1.5"/>
+      <line x1="30" y1="90" x2="380" y2="90" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="6 5"/>
+      <polyline points="30,200 60,130 370,130" fill="none" stroke="#16a34a" stroke-width="3"/>
+      <text x="215" y="122" text-anchor="middle">charge normale pendant 8, 24, 72 h…</text>
+      <text x="205" y="222" text-anchor="middle">temps (heures) →</text>
+    </g>
+  </g>
+</svg>
