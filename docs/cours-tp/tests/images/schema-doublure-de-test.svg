@@ -20,7 +20,7 @@
     <rect x="530" y="70" width="220" height="56" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
     <text x="640" y="96" font-weight="700">Test-EspaceLibre</text>
     <text x="640" y="115" font-size="12">(la même fonction)</text>
-    <rect x="530" y="190" width="220" height="56" rx="8" fill="#fef9c3" stroke="#ca8a04" stroke-width="2" stroke-dasharray="7 4"/>
+    <rect x="515" y="190" width="250" height="56" rx="8" fill="#fef9c3" stroke="#ca8a04" stroke-width="2" stroke-dasharray="7 4"/>
     <text x="640" y="216" font-weight="700">Doublure (Mock)</text>
     <text x="640" y="235" font-size="12">renvoie 95 Go utilisés, 5 Go libres</text>
     <text x="640" y="280" font-size="12" fill="#15803d">Réponse fixée par le test : résultat prévisible</text>

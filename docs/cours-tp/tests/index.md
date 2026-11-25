@@ -24,14 +24,15 @@ status: publié
 # Les tests en informatique
 
 !!! abstract "Résumé"
-    Ce cours en cinq parties explique **pourquoi et comment on teste** un logiciel, un script ou une infrastructure, du plus petit morceau de code jusqu'à la mise en production automatique. Il ne demande aucune installation : chaque partie se lit en 15 à 20 minutes et s'appuie sur des schémas, des définitions et des exemples réels dont les résultats sont recopiés tels qu'ils s'affichent.
+    Ce cours en cinq parties explique **pourquoi et comment on teste** un logiciel, un script ou une infrastructure, du plus petit morceau de code jusqu'à la mise en production automatique. Il ne demande aucune installation : chaque partie se lit en 15 à 20 minutes et s'appuie sur des schémas, des définitions et des exemples commentés, avec les résultats affichés par les outils.
 
     À la fin du parcours, le vocabulaire des tests n'a plus de secret : test unitaire, test de charge, scan de vulnérabilités, test d'intrusion, intégration continue, pipeline… Chaque notion est reliée au quotidien d'un administrateur d'infrastructure : tester un script avant de le lancer sur 300 serveurs, vérifier qu'un serveur web tiendra la rentrée, prouver qu'une faille est corrigée, automatiser tout cela à chaque modification.
 
 | Propriété | Valeur |
 |-----------|--------|
 | Public | Administrateurs et techniciens systèmes et réseaux ; aucune expérience de développement n'est demandée |
-| Durée totale | Environ 1 h 30 de lecture, questions de révision comprises |
+| Durée totale | Environ 1 h 40 de lecture, questions de révision et cas de synthèse compris |
+| Version décrite | Python 3.12, pytest 9.2, PowerShell 7.4, Pester 6.2, JMeter 5.6.3, Nmap 7.94, Jenkins LTS 2.555 et suivantes |
 | Outils présentés | pytest, Pester, JMeter, Nmap, OpenVAS, Nessus, ZAP, Burp Suite, Lynis, Jenkins |
 | Dernière mise à jour | 2026-11-25 |
 
@@ -54,10 +55,10 @@ status: publié
 |:---:|---|---|---|
 | [1. Comprendre les tests](01-comprendre-les-tests.md) | Cours | 15 min | Pourquoi tester, vocabulaire, cycle en V, pyramide des tests, types et niveaux de tests, tests en administration système |
 | [2. Les tests unitaires](02-tests-unitaires.md) | Cours | 15 min | Définition, méthode Préparer-Agir-Vérifier, exemple pytest, doublures, couverture de code, TDD, Pester pour PowerShell |
-| [3. Tests de performance et de charge](03-tests-de-performance-et-de-charge.md) | Cours | 15 min | Charge, stress, pic, endurance, indicateurs, percentiles, Apdex, JMeter de A à Z |
+| [3. Tests de performance et de charge](03-tests-de-performance-et-de-charge.md) | Cours | 15 min | Charge, stress, pic, endurance, indicateurs, percentiles, Apdex, JMeter, de la construction du plan de test à son exécution |
 | [4. Tests de sécurité](04-tests-de-securite.md) | Cours | 20 min | Audit, scan, test d'intrusion, CVE et CVSS, cadre légal, OWASP Top 10, Nmap, OpenVAS, Nessus, ZAP, Burp, Lynis |
 | [5. Tests d'intégration et CI/CD](05-tests-integration-et-ci-cd.md) | Cours | 20 min | Tests d'intégration, intégration et livraison continues, pipeline, Jenkins et Jenkinsfile, tests d'infrastructure |
-| [Annexes](annexes.md) | Synthèse | 15 min | Cas de synthèse corrigé, glossaire de tous les termes |
+| [Annexes](annexes.md) | Synthèse | 15 min | Cas de synthèse corrigé, glossaire des termes principaux |
 
 !!! tip "Suivre l'ordre"
     Chaque partie réutilise le vocabulaire des précédentes : la partie 5 assemble dans un même pipeline les tests unitaires de la partie 2, les tests de charge de la partie 3 et les analyses de sécurité de la partie 4.
@@ -73,11 +74,10 @@ Les cinq parties du parcours et leurs notions clés.
 
 | Repère | Signification |
 |---|---|
-| `bloc de code` | Commande à taper, fichier de configuration ou résultat affiché par un outil, recopié tel quel |
+| `bloc de code` | Commande à taper, fichier de configuration ou résultat affiché par un outil |
 | 🐍 | Exemple en Python |
 | 🪟 | Exemple en PowerShell |
 | 🐧 | Commande lancée sur un poste Linux |
-| ⚠️ | Point d'attention : légalité, risque pour la production |
 
 Les encadrés « Pourquoi ? » expliquent l'intérêt de chaque notion. Les **questions de révision** de fin de partie ont un corrigé replié : chercher la réponse avant de l'ouvrir. Les termes techniques sont définis à leur première apparition et rassemblés dans le [glossaire](annexes.md#2-glossaire). Les noms d'outils et les menus qui n'existent qu'en anglais sont traduits entre parenthèses.
 
@@ -86,7 +86,7 @@ Les encadrés « Pourquoi ? » expliquent l'intérêt de chaque notion. Les **qu
 
 ## Ressources
 
-- [Syllabus ISTQB Niveau Fondation (CFTL)](https://www.cftl.fr/certifications/istqb-foundation/) — le référentiel international du vocabulaire des tests, traduit en français par le Comité français des tests logiciels.
+- [Syllabus ISTQB Foundation (CFTL)](https://www.cftl.fr/certifications/istqb-foundation/) — le référentiel international du vocabulaire des tests, traduit en français par le Comité français des tests logiciels.
 - [Documentation de pytest](https://docs.pytest.org/) — l'outil de tests unitaires Python utilisé en partie 2.
 - [Manuel utilisateur d'Apache JMeter](https://jmeter.apache.org/usermanual/index.html) — l'outil de tests de charge de la partie 3.
 - [OWASP Top 10:2025](https://owasp.org/Top10/2025/) — le classement des risques des applications web cité en partie 4.

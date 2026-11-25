@@ -24,7 +24,7 @@ status: publié
 # Tests de sécurité
 
 !!! abstract "Résumé"
-    Un système peut être rapide et fonctionnel, et pourtant ouvert à tous les vents. Les **tests de sécurité** cherchent les failles **avant** les attaquants. Cette partie présente le vocabulaire (**vulnérabilité**, **CVE**, **CVSS**), le **cadre légal**, les familles de tests (**audit**, **scan de vulnérabilités**, **test d'intrusion**), le classement **OWASP Top 10**, puis les outils de référence : **Nmap** (avec un exemple réel), **Greenbone/OpenVAS**, **Nessus**, **OWASP ZAP**, **Burp Suite** et **Lynis**.
+    Un système peut être rapide et fonctionnel, et pourtant ouvert à tous les vents. Les **tests de sécurité** cherchent les failles **avant** les attaquants. Cette partie présente le vocabulaire (**vulnérabilité**, **CVE**, **CVSS**), le **cadre légal**, les familles de tests (**audit**, **scan de vulnérabilités**, **test d'intrusion**), le classement **OWASP Top 10**, puis les outils de référence : **Nmap** (avec un exemple), **Greenbone/OpenVAS**, **Nessus**, **OWASP ZAP**, **Burp Suite** et **Lynis**.
 
 | Propriété | Valeur |
 |-----------|--------|
@@ -54,16 +54,16 @@ On teste la sécurité pour **découvrir les failles** et les corriger par ordre
 | **Surface d'attaque** | Tout ce qu'un attaquant peut atteindre : ports ouverts, applications, comptes, personnes |
 | **Durcissement** (*hardening*) | Réduire la surface d'attaque : désactiver le superflu, renforcer les réglages |
 
-Une **CVE** (*Common Vulnerabilities and Exposures*) est l'identifiant unique d'une vulnérabilité publique, de la forme `CVE-année-numéro`. Par exemple, **CVE-2021-44228** est la faille **Log4Shell**, découverte en décembre 2021 dans la bibliothèque Java Log4j : écrire un simple texte piégé dans un journal suffisait à prendre le contrôle d'un serveur. Grâce à cet identifiant, éditeurs, scanners et administrateurs parlent de la même faille. En France, le **CERT-FR** (ANSSI) publie avis et alertes en citant les CVE.
+Une **CVE** (*Common Vulnerabilities and Exposures*) est l'identifiant unique d'une vulnérabilité publique, de la forme `CVE-année-numéro`. Par exemple, **CVE-2021-44228** est la faille **Log4Shell**, découverte en décembre 2021 dans **Log4j**, une bibliothèque Java (un morceau de code réutilisable, intégré à des milliers d'applications) : écrire un simple texte piégé dans un journal suffisait à prendre le contrôle d'un serveur. Grâce à cet identifiant, éditeurs, scanners et administrateurs parlent de la même faille. En France, le **CERT-FR** (ANSSI) publie avis et alertes en citant les CVE.
 
-Le **CVSS** (*Common Vulnerability Scoring System*) note la gravité d'une vulnérabilité de **0 à 10** : exploitable à distance ? sans compte ? avec quel impact ? La version actuelle est CVSS 4.0 (2023), mais beaucoup d'outils affichent encore des scores 3.1. Échelle : **faible** de 0,1 à 3,9, **moyenne** de 4,0 à 6,9, **élevée** de 7,0 à 8,9, **critique** de 9,0 à 10. Log4Shell a reçu **10,0**. Le score aide à prioriser, mais il ignore le contexte : une faille « moyenne » sur un serveur exposé à Internet peut être plus urgente qu'une faille « élevée » sur une machine isolée.
+Le **CVSS** (*Common Vulnerability Scoring System*) note la gravité d'une vulnérabilité de **0 à 10** : exploitable à distance ? sans compte ? avec quel impact ? La version actuelle est CVSS 4.0 (2023), mais beaucoup d'outils affichent encore des scores 3.1. Échelle : **faible** de 0,1 à 3,9, **moyenne** de 4,0 à 6,9, **élevée** de 7,0 à 8,9, **critique** de 9,0 à 10. Log4Shell a reçu **10,0** (en CVSS 3.1). Le score aide à prioriser, mais il ignore le contexte : une faille « moyenne » sur un serveur exposé à Internet peut être plus urgente qu'une faille « élevée » sur une machine isolée.
 
 ---
 
 ## 3. Le cadre légal : une autorisation écrite avant tout
 
 !!! danger "Tester sans autorisation est un délit"
-    En France, l'**article 323-1 du Code pénal** punit l'accès ou le maintien frauduleux dans un système informatique de **3 ans d'emprisonnement et 100 000 € d'amende**, davantage si des données sont modifiées ou si le système appartient à l'État. « Je voulais seulement vérifier » n'est pas une défense.
+    En France, l'**article 323-1 du Code pénal** punit l'accès ou le maintien frauduleux dans un système informatique de **3 ans d'emprisonnement et 100 000 € d'amende**. La peine monte à 5 ans et 150 000 € si des données sont supprimées ou modifiées ou si le fonctionnement du système est altéré, et à 7 ans et 300 000 € pour un traitement de données personnelles mis en œuvre par l'État. « Je voulais seulement vérifier » n'est pas une défense.
 
 Avant tout scan ou test d'intrusion d'un système qui n'est pas le sien, il faut une **autorisation écrite** du propriétaire (**convention d'audit**) qui précise le **périmètre** (adresses, applications, et ce qui est exclu), les **dates**, les **techniques** permises ou interdites, les **contacts d'urgence** et la **confidentialité** des résultats. Un hébergeur ou un fournisseur de cloud a aussi ses propres règles. En France, l'ANSSI qualifie **PASSI** les prestataires d'audit qui respectent son référentiel.
 
@@ -141,7 +141,7 @@ Plusieurs catégories relèvent directement de l'administrateur : **A02** (confi
 
 **Nmap** (*Network Mapper*), créé en 1997, découvre les machines actives, leurs **ports** ouverts (les « portes » numérotées par lesquelles un service écoute : 22 pour SSH, 443 pour HTTPS) et les services qui y répondent.
 
-🐧 Exemple réel sur un serveur web de test (`-sV` : détecter la version des services) :
+🐧 Exemple : scan d'un serveur web de test (`-sV` : détecter la version des services) :
 
 ```bash
 nmap -sV 172.17.0.2
@@ -188,7 +188,7 @@ Ces deux outils se placent comme **proxy** entre le navigateur et le site : chaq
 5. Pourquoi un scan authentifié donne-t-il de meilleurs résultats ?
 
 ??? success "Corrigé"
-    1. C'est l'identifiant de la faille **Log4Shell** (Log4j, 2021). La note de **10,0** est la gravité maximale : exploitable à distance, sans compte, avec prise de contrôle complète.
+    1. C'est l'identifiant de la faille **Log4Shell** (Log4j, 2021). La note de **10,0** (CVSS 3.1) est la gravité maximale : exploitable à distance, sans compte, avec prise de contrôle complète.
     2. Que c'est **illégal** sans autorisation écrite du propriétaire (article 323-1 du Code pénal). Pour s'entraîner : son propre lab ou `scanme.nmap.org`.
     3. Le **scan** est automatique, large, et ne trouve que des failles connues ; le **test d'intrusion** est mené par un humain, en profondeur, et exploite les failles pour prouver un impact. On planifie le **scan** chaque semaine.
     4. `open` : un service accepte les connexions ; `closed` : la machine répond mais rien n'écoute ; `filtered` : pas de réponse, un pare-feu bloque probablement.
@@ -219,4 +219,6 @@ Partie précédente : [Tests de performance et de charge](03-tests-de-performanc
 *[SCA]: Software Composition Analysis
 *[CIS]: Center for Internet Security
 *[TLS]: Transport Layer Security
+*[SSH]: Secure Shell
+*[HTTPS]: HTTP sécurisé par TLS
 *[SQL]: Structured Query Language

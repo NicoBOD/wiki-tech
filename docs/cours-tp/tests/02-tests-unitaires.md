@@ -24,7 +24,7 @@ status: publié
 # Les tests unitaires
 
 !!! abstract "Résumé"
-    Un **test unitaire** vérifie, en quelques millisecondes, qu'un petit morceau de code fait exactement ce qu'on attend de lui. Cette partie explique le principe, le montre sur un exemple complet en **Python** avec **pytest** (avec les vrais messages affichés quand un test réussit ou échoue), présente les **doublures**, la **couverture de code** et le **TDD**, puis applique tout cela à un script **PowerShell** avec **Pester**. Chaque ligne de code est expliquée : il n'est pas nécessaire de savoir programmer.
+    Un **test unitaire** vérifie, en quelques millisecondes, qu'un petit morceau de code fait exactement ce qu'on attend de lui. Cette partie explique le principe, le montre sur un exemple complet en **Python** avec **pytest** (avec les messages affichés quand un test réussit ou échoue), présente les **doublures**, la **couverture de code** et le **TDD**, puis applique tout cela à un script **PowerShell** avec **Pester**. Les lignes importantes du code sont expliquées : il n'est pas nécessaire de savoir programmer.
 
 | Propriété | Valeur |
 |-----------|--------|
@@ -52,7 +52,7 @@ Presque tous les tests suivent le même plan en trois temps, appelé **AAA** en 
 2. **Agir** : appeler la fonction testée ;
 3. **Vérifier** : comparer le résultat obtenu au résultat attendu. Cette vérification s'appelle une **assertion**.
 
-Chaque langage a son **framework de test**, un outil prêt à l'emploi qui trouve les tests, les lance et affiche le bilan : **pytest** pour Python, **Pester** pour PowerShell, bats-core pour Bash, JUnit pour Java, xUnit ou NUnit pour .NET, Jest pour JavaScript. La plupart produisent un rapport au format **JUnit XML**, que les outils d'intégration continue comme Jenkins savent lire.
+Chaque langage a son **framework de test**, un outil prêt à l'emploi qui trouve les tests, les lance et affiche le bilan : **pytest** pour Python, **Pester** pour PowerShell, bats-core pour Bash, JUnit pour Java, xUnit ou NUnit pour .NET, Jest pour JavaScript. La plupart produisent un rapport au format **JUnit XML**, que les outils d'intégration continue comme Jenkins savent lire ([partie 5](05-tests-integration-et-ci-cd.md)).
 
 ---
 
@@ -60,7 +60,7 @@ Chaque langage a son **framework de test**, un outil prêt à l'emploi qui trouv
 
 ### 2.1 Le code à tester
 
-Un petit module Python, `reseau.py`, avec deux fonctions utiles à un administrateur réseau :
+Un petit **module** Python (un fichier de code réutilisable), `reseau.py`, avec deux fonctions utiles à un administrateur réseau :
 
 ```python title="reseau.py"
 """Petites fonctions utiles à un administrateur réseau."""
@@ -72,7 +72,7 @@ def est_ipv4_valide(adresse: str) -> bool:
     if len(morceaux) != 4:                 # il faut exactement 4 nombres
         return False
     for morceau in morceaux:
-        if not morceau.isdigit():          # uniquement des chiffres
+        if not (morceau.isascii() and morceau.isdigit()):  # uniquement des chiffres de 0 à 9
             return False
         if int(morceau) > 255:             # chaque nombre entre 0 et 255
             return False
@@ -180,7 +180,7 @@ test_reseau.py:38: AssertionError
 ========================= 1 failed, 8 passed in 0.03s ==========================
 ```
 
-Le `F` signale l'échec (*failed*), la ligne `>` l'assertion en cause, et les lignes `E` l'explication : `nombre_hotes(32)` renvoie **-1** au lieu de 1, car 2⁰ - 2 = -1. Le test a trouvé un **vrai défaut** : les cas `/32` (une machine) et `/31` (un lien point à point entre deux routeurs, dont les deux adresses sont utilisables selon la RFC 3021) ne sont pas gérés. On corrige :
+Le `F` signale l'échec (*failed*), la ligne `>` l'assertion en cause, et les lignes `E` l'explication : `nombre_hotes(32)` renvoie **-1** au lieu de 1, car 2⁰ - 2 = -1. Le test a trouvé un **vrai défaut** : les cas `/32` (une machine) et `/31` (un lien point à point entre deux routeurs, dont les deux adresses sont utilisables selon la RFC 3021) ne sont pas gérés. On corrige en ajoutant, dans `nombre_hotes`, juste avant la dernière ligne :
 
 ```python
     if prefixe == 32:
@@ -210,6 +210,8 @@ Name        Stmts   Miss  Cover   Missing
 reseau.py      14      0   100%
 ```
 
+Ce tableau s'obtient avec l'extension `pytest-cov` (`pip install pytest-cov`), puis la commande `pytest --cov=reseau --cov-report=term-missing`.
+
 **100 % de couverture… et pourtant le défaut du `/32` était là.** La couverture dit quelles lignes ont été **exécutées**, pas si elles ont été vérifiées avec les **bonnes valeurs**. C'est un bon indicateur pour repérer le code jamais testé, pas une preuve de qualité. Il faut surtout tester les **cas limites** : valeurs vides, nulles, maximales, juste au-dessus et juste au-dessous des limites.
 
 ### 3.3 Le développement piloté par les tests (TDD)
@@ -234,7 +236,7 @@ function Test-EspaceLibre {
 }
 ```
 
-Elle lit le lecteur avec `Get-PSDrive` et renvoie `$true` s'il reste au moins 10 % d'espace libre. Sur un vrai disque, l'espace libre change sans cesse : le test ne serait pas reproductible. On remplace donc `Get-PSDrive` par une **doublure** :
+`param(...)` déclare ses deux paramètres : le lecteur, et le seuil (10 % par défaut). Elle lit le lecteur avec `Get-PSDrive`, calcule le pourcentage libre et renvoie `$true` s'il est supérieur ou égal (`-ge`) au seuil. Sur un vrai disque, l'espace libre change sans cesse : le test ne serait pas reproductible. On remplace donc `Get-PSDrive` par une **doublure** :
 
 ![À gauche, en production, la fonction interroge le vrai disque avec Get-PSDrive ; à droite, pendant le test, une doublure renvoie une réponse fixée (95 Go utilisés, 5 Go libres)](images/schema-doublure-de-test.svg){ loading=lazy }
 /// caption
@@ -261,7 +263,7 @@ Describe 'Test-EspaceLibre' {
 
 | Mot-clé | Rôle |
 |---|---|
-| `BeforeAll` | S'exécute avant tous les tests : ici, charge le script à tester |
+| `BeforeAll` | S'exécute avant tous les tests : ici, charge le script à tester (le point `.` en début de ligne exécute le script dans la session du test) |
 | `Describe` | Un groupe de tests, souvent un par fonction |
 | `It` | Un test, avec sa description en langage courant |
 | `Mock` | Crée une **doublure** : pendant ce test, `Get-PSDrive` renvoie l'objet indiqué au lieu de lire le disque |
@@ -320,4 +322,5 @@ Partie précédente : [Comprendre les tests](01-comprendre-les-tests.md) · Part
 
 *[AAA]: Arrange, Act, Assert : Préparer, Agir, Vérifier
 *[TDD]: Test-Driven Development : développement piloté par les tests
+*[XML]: eXtensible Markup Language
 *[RFC]: Request for Comments : document qui décrit une norme d'Internet

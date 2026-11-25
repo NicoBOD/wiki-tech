@@ -23,7 +23,7 @@ status: publié
 # Tests de performance et de charge
 
 !!! abstract "Résumé"
-    Un service peut fonctionner parfaitement avec un utilisateur… et s'effondrer le jour de la rentrée, quand 2 000 personnes se connectent en même temps. Cette partie présente les quatre grands **tests de performance** (charge, stress, pic, endurance), les **indicateurs** à savoir lire (temps de réponse, percentiles, débit, taux d'erreur, Apdex), puis **Apache JMeter**, l'outil libre de référence, avec un test de charge réel lancé en ligne de commande.
+    Un service peut fonctionner parfaitement avec un utilisateur… et s'effondrer le jour de la rentrée, quand 2 000 personnes se connectent en même temps. Cette partie présente les quatre grands **tests de performance** (charge, stress, pic, endurance), les **indicateurs** à savoir lire (temps de réponse, percentiles, débit, taux d'erreur, Apdex), puis **Apache JMeter**, l'outil libre de référence, avec un exemple de test de charge lancé en ligne de commande.
 
 | Propriété | Valeur |
 |-----------|--------|
@@ -53,10 +53,10 @@ Les quatre profils de tests de performance. La ligne rouge pointillée marque la
 | **Test de charge** (*load test*) | Le système tient-il la charge **attendue** (par exemple 500 utilisateurs) ? | Temps de réponse et taux d'erreur en conditions normales et aux heures de pointe |
 | **Test de stress** (*stress test*) | Jusqu'où tient-il, et **comment casse-t-il** ? On dépasse la charge prévue, par paliers, jusqu'à la rupture | Le point de rupture, le maillon faible, et la capacité à **revenir à la normale** quand la charge baisse |
 | **Test de pic** (*spike test*) | Supporte-t-il une **arrivée brutale** (ouverture des inscriptions, début d'un examen en ligne) ? | Files d'attente saturées, délais dépassés |
-| **Test d'endurance** (*soak test*) | Tient-il **dans la durée** (8, 24 ou 72 heures de charge normale) ? | **Fuites de mémoire**, disques qui se remplissent de journaux, ralentissement progressif |
+| **Test d'endurance** (*soak test*) | Tient-il **dans la durée** (8, 24 ou 72 heures de charge normale) ? | **Fuites de mémoire** (un programme qui ne rend pas la mémoire dont il n'a plus besoin et finit par la saturer), disques qui se remplissent de journaux, ralentissement progressif |
 
 !!! question "Pourquoi l'administrateur est-il en première ligne ?"
-    Les causes d'une mauvaise performance sont souvent **dans l'infrastructure** : machine virtuelle sous-dimensionnée, disque lent, base de données sans index, limite de connexions trop basse dans le serveur web, pare-feu saturé. Pendant le test, l'administrateur surveille les ressources de chaque serveur (`top` sous Linux, Analyseur de performances sous Windows, ou un outil de supervision comme Zabbix ou Grafana) pour trouver le **goulet d'étranglement** : le composant qui sature le premier et ralentit tout le reste.
+    Les causes d'une mauvaise performance sont souvent **dans l'infrastructure** : machine virtuelle sous-dimensionnée, disque lent, base de données sans index (la « table des matières » qui permet de retrouver vite une ligne), limite de connexions trop basse dans le serveur web, pare-feu saturé. Pendant le test, l'administrateur surveille les ressources de chaque serveur (`top` sous Linux, Analyseur de performances sous Windows, ou un outil de supervision comme Zabbix ou Grafana) pour trouver le **goulet d'étranglement** : le composant qui sature le premier et ralentit tout le reste.
 
 ### 1.3 Les indicateurs
 
@@ -74,7 +74,7 @@ La **moyenne** des temps de réponse est trompeuse. Sur 100 requêtes, si 95 ré
 
 Une exigence sérieuse s'écrit donc ainsi : « **95 % des pages en moins de 2 secondes, avec 500 utilisateurs simultanés et moins de 1 % d'erreurs** ».
 
-L'**Apdex** (*Application Performance Index*) résume la satisfaction en un nombre entre 0 et 1. Sous un seuil **T**, une requête est « satisfaisante » ; un peu au-delà, « tolérable » ; très au-delà, « frustrante ». Apdex = (satisfaisantes + tolérables ÷ 2) ÷ total. Un Apdex de 1 signifie que tous les utilisateurs sont satisfaits ; sous 0,7, la situation est jugée médiocre. JMeter utilise par défaut T = 500 ms et un seuil de frustration de 1 500 ms.
+L'**Apdex** (*Application Performance Index*) résume la satisfaction en un nombre entre 0 et 1. Sous un seuil **T**, une requête est « satisfaisante » ; entre T et le seuil de frustration (4 × T dans la définition d'origine), « tolérable » ; au-delà, « frustrante ». Apdex = (satisfaisantes + tolérables ÷ 2) ÷ total. Un Apdex de 1 signifie que tous les utilisateurs sont satisfaits ; sous 0,7, la situation est jugée médiocre. JMeter fixe ses propres seuils, réglables : T = 500 ms et un seuil de frustration de 1 500 ms.
 
 ---
 
@@ -101,14 +101,14 @@ Un plan de test minimal : qui, quoi, comment vérifier, à quel rythme, et où l
 | Élément (nom à l'écran) | Nom anglais | Rôle |
 |---|---|---|
 | **Groupe d'unités** | *Thread Group* | Les utilisateurs virtuels : **Nombre d'unités** (combien), **Durée de montée en charge** (en combien de secondes ils arrivent tous), **Nombre d'itérations** (combien de fois chacun rejoue le scénario) |
-| **Requête HTTP** | *HTTP Request* | Ce qu'envoie chaque utilisateur : serveur, port, méthode (GET, POST), chemin de la page |
+| **Requête HTTP** | *HTTP Request* | Ce qu'envoie chaque utilisateur : serveur, port, méthode (GET pour lire une page, POST pour envoyer un formulaire), chemin de la page |
 | **Assertion Réponse** | *Response Assertion* | Vérifie que la réponse est correcte (code 200, présence d'un texte). Sans assertion, une page d'erreur rapide passerait pour un succès |
 | **Compteur de temps fixe** | *Constant Timer* | La pause entre deux actions, qui imite le temps de « réflexion » d'un humain |
 | **Arbre de résultats**, **Rapport agrégé** | *Listeners* (récepteurs) | Affichent chaque requête (pour la mise au point) ou les statistiques |
 
 Plutôt que de saisir les requêtes à la main, JMeter peut aussi **enregistrer** une navigation réelle en se plaçant comme intermédiaire (*proxy*) entre le navigateur et le site.
 
-### 2.3 Exemple réel : la page d'accueil d'un intranet
+### 2.3 Exemple : la page d'accueil d'un intranet
 
 Le plan de test `plan-intranet.jmx` simule **50 utilisateurs** qui arrivent en **10 secondes** et chargent chacun **100 fois** la page d'accueil, avec une pause de **200 ms** entre deux chargements. Une assertion vérifie le code HTTP **200** (« OK »). Total attendu : 50 × 100 = **5 000 requêtes**.
 
@@ -125,7 +125,7 @@ Le plan de test `plan-intranet.jmx` simule **50 utilisateurs** qui arrivent en *
 | `-l` | Le fichier des résultats bruts (une ligne par requête) |
 | `-e -o rapport` | Générer à la fin un rapport HTML dans le dossier `rapport` (vide ou inexistant) |
 
-Sortie réelle de ce test, lancé contre un petit serveur web de test :
+Résultat pour un petit serveur web de test :
 
 ```text
 Created the tree successfully using plan-intranet.jmx
@@ -137,7 +137,7 @@ Tidying up ...    @ 2026 Nov 25 15:35:13 GMT+01:00 (1795617313539)
 ... end of run
 ```
 
-La dernière ligne `summary =` est le bilan : **5 000 requêtes en 30 secondes**, un **débit de 167 requêtes par seconde**, un temps de réponse moyen inférieur à 1 ms (maximum 33 ms) et **0 % d'erreur**. Les lignes `summary +` donnent l'état intermédiaire : `Active: 50` signifie que les 50 utilisateurs travaillaient en même temps.
+La dernière ligne `summary =` est le bilan : **5 000 requêtes en 30 secondes**, un **débit de 167 requêtes par seconde**, un temps de réponse moyen inférieur à 1 ms (la console arrondit : `Avg: 0` signifie moins de 1 ms ; maximum 33 ms) et **0 % d'erreur**. Les lignes `summary +` donnent l'état intermédiaire : `Active: 50` signifie que les 50 utilisateurs travaillaient en même temps.
 
 Le fichier `rapport/index.html` présente un tableau de bord complet. Pour ce test :
 
@@ -146,7 +146,7 @@ Le fichier `rapport/index.html` présente un tableau de bord complet. Pour ce te
 | Erreurs | 0 % |
 | Temps de réponse médian | 1 ms |
 | P90 / P95 / P99 | 1 / 2 / 4 ms |
-| Débit | environ 169 requêtes/s |
+| Débit | environ 169 requêtes/s (calculé sur la durée exacte des requêtes, d'où un léger écart avec la console) |
 | Apdex | 1,0 |
 
 Ce serveur, qui ne renvoie qu'une petite page statique, n'est pas à la peine. Le débit est d'ailleurs limité par les **pauses** des utilisateurs simulés (200 ms entre deux requêtes), pas par le serveur. Avec une vraie application, on augmenterait le nombre d'unités ou on supprimerait les pauses (test de stress) pour trouver le point où percentiles et taux d'erreur se dégradent.
@@ -192,4 +192,7 @@ Autres outils courants : **k6** (scénarios en JavaScript, très utilisé dans l
 Partie précédente : [Les tests unitaires](02-tests-unitaires.md) · Partie suivante : [Tests de sécurité](04-tests-de-securite.md)
 
 *[Apdex]: Application Performance Index
+*[HTTP]: HyperText Transfer Protocol
+*[HTTPS]: HTTP sécurisé par TLS
+*[FTP]: File Transfer Protocol
 *[LDAP]: Lightweight Directory Access Protocol

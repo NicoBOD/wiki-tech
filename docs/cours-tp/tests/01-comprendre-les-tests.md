@@ -28,6 +28,7 @@ status: publié
 |-----------|--------|
 | Difficulté | Débutant — aucun prérequis |
 | Durée estimée | 15 min de lecture et de questions |
+| Version décrite | Indépendante des outils |
 | Place dans le parcours | Partie 1 sur 5 du parcours [Les tests en informatique](index.md) |
 | Dernière mise à jour | 2026-11-25 |
 
@@ -62,8 +63,8 @@ On teste pour **trouver des défauts** avant les utilisateurs, **vérifier** que
 
 ### 1.4 Deux défaillances célèbres
 
-- **Ariane 5, vol 501 (4 juin 1996).** Une trentaine de secondes après le décollage, la fusée dévie et s'autodétruit. Un logiciel **réutilisé d'Ariane 4** convertissait une valeur de vitesse dans un format trop petit pour la trajectoire, plus rapide, d'Ariane 5. Il n'avait pas été testé avec les données de vol d'Ariane 5.
-- **Panne CrowdStrike (19 juillet 2024).** Une mise à jour d'un **fichier de configuration** de l'antivirus d'entreprise CrowdStrike Falcon fait planter environ 8,5 millions d'ordinateurs Windows dans le monde : aéroports, hôpitaux, banques. Le fichier défectueux a échappé aux contrôles automatiques de l'éditeur et a été envoyé à tous les clients en même temps.
+- **Ariane 5, vol 501 (4 juin 1996).** Une trentaine de secondes après le décollage, la fusée dévie et s'autodétruit. Un logiciel **réutilisé d'Ariane 4** convertissait une valeur liée à la vitesse horizontale, codée sur 64 bits, en un entier de 16 bits : un format assez grand pour la trajectoire d'Ariane 4, trop petit pour celle, plus rapide, d'Ariane 5. Il n'avait pas été testé avec les données de vol d'Ariane 5.
+- **Panne CrowdStrike (19 juillet 2024).** Une mise à jour d'un **fichier de configuration** de CrowdStrike Falcon, un logiciel de sécurité installé sur les postes des entreprises, fait planter environ 8,5 millions d'ordinateurs Windows dans le monde : aéroports, hôpitaux, banques. Le fichier défectueux a échappé aux contrôles automatiques de l'éditeur et a été envoyé d'un coup à tous les postes connectés, sans déploiement progressif.
 
 La leçon pour un administrateur : **toute mise à jour, même de configuration, se teste**, puis se déploie d'abord sur un petit groupe de machines.
 
@@ -94,7 +95,7 @@ Le cycle en V : chaque étape de conception a son niveau de test.
 
 La branche de gauche descend du général au détail, la branche de droite remonte du détail au général : chaque niveau de test vérifie l'étape de conception qui lui fait face. Les tests se **préparent** donc dès la branche de gauche.
 
-Dans les **méthodes agiles** (Scrum, Kanban…), on livre de petites fonctionnalités toutes les deux à quatre semaines : chaque livraison parcourt les mêmes niveaux de tests, en miniature et le plus souvent **automatiquement** ([partie 5](05-tests-integration-et-ci-cd.md)).
+Dans les **méthodes agiles** (des méthodes d'organisation du travail en équipe comme Scrum ou Kanban), on livre de petites fonctionnalités toutes les deux à quatre semaines : chaque livraison parcourt les mêmes niveaux de tests, en miniature et le plus souvent **automatiquement** ([partie 5](05-tests-integration-et-ci-cd.md)).
 
 ### 2.2 Les quatre niveaux de tests
 
@@ -155,7 +156,7 @@ Un administrateur d'infrastructure teste en permanence, souvent sans le nommer a
 | Exposition d'un service sur Internet | Il n'a pas de faille connue et n'ouvre que les ports utiles (sécurité) |
 | Plan de sauvegarde et de reprise | On sait **restaurer** un fichier, un serveur, basculer sur le site de secours |
 
-On ne teste pas en production : une organisation sérieuse sépare au moins un environnement de **développement**, un environnement de **recette** (copie fidèle de la production, pour les tests) et la **production**.
+On ne teste pas en production : une organisation sérieuse sépare au moins un environnement de **développement**, un environnement de **recette** ou de **préproduction** (une copie fidèle de la production, réservée aux tests : à ne pas confondre avec la recette au sens de validation par les utilisateurs) et la **production**.
 
 !!! warning "Données de test et RGPD"
     Copier la base de production en recette, c'est copier des **données personnelles** dans un environnement souvent moins protégé. On les **anonymise**, ou on génère des données fictives.
@@ -164,13 +165,13 @@ On ne teste pas en production : une organisation sérieuse sépare au moins un e
 
 ## 5. Questions de révision
 
-1. Un script contient `rm -rf $DOSSIER/` et la variable `DOSSIER` est vide sur un serveur. Identifier l'erreur, le défaut et la défaillance.
+1. Un script de nettoyage contient `rm -rf "$DOSSIER"/*` et la variable `DOSSIER` est vide sur un serveur. Identifier l'erreur, le défaut et la défaillance.
 2. Quelle est la différence entre un test de confirmation et un test de régression ?
 3. Pourquoi la pyramide des tests place-t-elle les tests unitaires à la base ?
 4. Classer en fonctionnel ou non fonctionnel : (a) le site supporte 2 000 connexions simultanées ; (b) l'export CSV contient toutes les colonnes ; (c) la page s'affiche en moins de 2 secondes.
 
 ??? success "Corrigé"
-    1. **Erreur** : l'auteur n'a pas prévu le cas d'une variable vide. **Défaut** : la ligne `rm -rf $DOSSIER/`, qui devient `rm -rf /`. **Défaillance** : le serveur efface son système de fichiers. Un test du cas « variable vide » ou l'analyse statique de `shellcheck` l'auraient signalé.
+    1. **Erreur** : l'auteur n'a pas prévu le cas d'une variable vide. **Défaut** : la ligne `rm -rf "$DOSSIER"/*`, qui devient `rm -rf /*`. **Défaillance** : tout le contenu de la racine `/` est effacé, le serveur est détruit. Un test du cas « variable vide » l'aurait révélé, et l'analyse statique de `shellcheck` le signale (avertissement SC2115, qui conseille d'écrire `"${DOSSIER:?}"` pour arrêter le script si la variable est vide).
     2. Le test de **confirmation** rejoue le test qui avait échoué, pour vérifier la correction. Le test de **régression** rejoue tous les autres, pour vérifier que la correction n'a rien cassé ailleurs.
     3. Parce qu'ils sont **rapides, précis et peu coûteux** : des centaines s'exécutent en quelques secondes à chaque modification, et un échec désigne l'endroit exact du problème.
     4. (a) non fonctionnel (charge) ; (b) fonctionnel ; (c) non fonctionnel (temps de réponse).
@@ -179,12 +180,12 @@ On ne teste pas en production : une organisation sérieuse sépare au moins un e
 
 ## Ressources
 
-- [Syllabus ISTQB Niveau Fondation (CFTL)](https://www.cftl.fr/certifications/istqb-foundation/) — vocabulaire officiel des tests en français.
+- [Syllabus ISTQB Foundation (CFTL)](https://www.cftl.fr/certifications/istqb-foundation/) — vocabulaire officiel des tests en français.
 - [Rapport d'enquête sur l'échec d'Ariane 501 (ESA, en anglais)](https://www.esa.int/Newsroom/Press_Releases/Ariane_501_-_Presentation_of_Inquiry_Board_report) — l'enquête officielle.
 - [Rapport préliminaire de CrowdStrike (en anglais)](https://www.crowdstrike.com/en-us/blog/falcon-content-update-preliminary-post-incident-report/) — l'analyse de la panne du 19 juillet 2024 par l'éditeur.
 - [The Practical Test Pyramid, Martin Fowler (en anglais)](https://martinfowler.com/articles/practical-test-pyramid.html) — la pyramide des tests en détail.
 
-Partie suivante : [Les tests unitaires](02-tests-unitaires.md)
+Retour à l'[accueil du parcours](index.md) · Partie suivante : [Les tests unitaires](02-tests-unitaires.md)
 
 *[ISTQB]: International Software Testing Qualifications Board
 *[RGPD]: Règlement général sur la protection des données

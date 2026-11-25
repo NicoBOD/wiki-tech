@@ -49,7 +49,7 @@ Tous les TP se déroulent dans un **laboratoire virtuel** : les captures d'écra
 
     ---
 
-    Comprendre pourquoi et comment on teste, du script à l'infrastructure : tests unitaires avec pytest et Pester, tests de charge avec JMeter, tests de sécurité (scan, test d'intrusion, Nmap, OpenVAS, ZAP), puis automatisation de tous les tests dans un pipeline CI/CD avec Jenkins. Un cours de 1 h 30, sans installation.
+    Comprendre pourquoi et comment on teste, du script à l'infrastructure : tests unitaires avec pytest et Pester, tests de charge avec JMeter, tests de sécurité (scan, test d'intrusion, Nmap, OpenVAS, ZAP), puis automatisation de tous les tests dans un pipeline CI/CD avec Jenkins. Un cours de 1 h 40, sans installation.
 
     [:octicons-arrow-right-24: Commencer le parcours](tests/index.md)
 
